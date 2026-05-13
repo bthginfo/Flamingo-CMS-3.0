@@ -9,6 +9,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null };
 
 export function FaqSection({ data }: Props) {
   const headline = (data.headline as string) || '';
+  const badgeText = (data.badgeText as string) || '';
   const items = (data.items as { question: string; answer: string }[]) || [];
   const expandFirst = data.expandFirst !== false;
   const ref = useRef(null);
@@ -22,10 +23,12 @@ export function FaqSection({ data }: Props) {
         transition={{ duration: 0.6 }}
         className="text-center mb-14"
       >
-        <div className="section-badge">
-          <HelpCircle size={14} />
-          <span>Häufige Fragen</span>
-        </div>
+        {badgeText && (
+          <div className="section-badge">
+            <HelpCircle size={14} />
+            <span>{badgeText}</span>
+          </div>
+        )}
         {headline && <h2 className="section-headline">{headline}</h2>}
       </motion.div>
 

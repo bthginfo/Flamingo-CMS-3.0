@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { cn } from '@/lib/utils';
+import { DynamicIcon } from '@/components/ui/icon-map';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -50,7 +51,7 @@ export function UspStripSection({ data }: Props) {
             >
               {item.icon && (
                 <div className="text-4xl mb-4 transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1">
-                  {item.icon}
+                  <DynamicIcon name={item.icon} size={32} className="text-brand-primary" />
                 </div>
               )}
               <h3 className="font-display font-semibold text-lg mb-1.5 text-gray-900">{item.title}</h3>

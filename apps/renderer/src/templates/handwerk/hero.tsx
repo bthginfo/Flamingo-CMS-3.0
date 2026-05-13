@@ -11,6 +11,8 @@ type Props = { data: Record<string, unknown>; variant?: string | null };
 export function HeroSection({ data }: Props) {
   const headline = (data.headline as string) || 'Willkommen';
   const subline = (data.subline as string) || '';
+  const badgeText = (data.badgeText as string) || '';
+  const trustItems = (data.trustItems as string[]) || [];
   const primaryCta = data.primaryCta as { label: string; href: string } | undefined;
   const secondaryCta = data.secondaryCta as { label: string; href: string } | undefined;
   const { scrollY } = useScroll();
@@ -37,18 +39,20 @@ export function HeroSection({ data }: Props) {
       <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20 lg:py-0">
         <div className="max-w-4xl">
           {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-flex items-center gap-2.5 bg-white/[0.07] backdrop-blur-md border border-white/[0.12] rounded-full px-5 py-2.5 text-sm text-white/90 mb-8"
-          >
-            <Shield size={15} className="text-brand-accent" />
-            <span className="font-medium">Zertifizierter Meisterbetrieb seit 1987</span>
-            <div className="flex -space-x-0.5 ml-2">
-              {[1,2,3,4,5].map(i => <Star key={i} size={12} className="fill-brand-accent text-brand-accent" />)}
-            </div>
-          </motion.div>
+          {badgeText && (
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="inline-flex items-center gap-2.5 bg-white/[0.07] backdrop-blur-md border border-white/[0.12] rounded-full px-5 py-2.5 text-sm text-white/90 mb-8"
+            >
+              <Shield size={15} className="text-brand-accent" />
+              <span className="font-medium">{badgeText}</span>
+              <div className="flex -space-x-0.5 ml-2">
+                {[1,2,3,4,5].map(i => <Star key={i} size={12} className="fill-brand-accent text-brand-accent" />)}
+              </div>
+            </motion.div>
+          )}
 
           {/* Headline with text generate effect */}
           <TextGenerateEffect
@@ -96,19 +100,21 @@ export function HeroSection({ data }: Props) {
           </motion.div>
 
           {/* Trust indicators */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 1.3 }}
-            className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-white/40"
-          >
-            {['Kostenlose Beratung', '24h Notdienst', '10 Jahre Garantie'].map((item, i) => (
-              <span key={i} className="flex items-center gap-2">
-                <CheckCircle size={14} className="text-brand-accent/70" />
-                {item}
-              </span>
-            ))}
-          </motion.div>
+          {trustItems.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 1.3 }}
+              className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-white/40"
+            >
+              {trustItems.map((item, i) => (
+                <span key={i} className="flex items-center gap-2">
+                  <CheckCircle size={14} className="text-brand-accent/70" />
+                  {item}
+                </span>
+              ))}
+            </motion.div>
+          )}
         </div>
       </motion.div>
 

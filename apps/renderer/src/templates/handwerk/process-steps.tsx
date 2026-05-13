@@ -2,11 +2,13 @@
 
 import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { DynamicIcon } from '@/components/ui/icon-map';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
 export function ProcessStepsSection({ data }: Props) {
   const headline = (data.headline as string) || '';
+  const badgeText = (data.badgeText as string) || '';
   const steps = (data.steps as { title: string; text: string; icon?: string }[]) || [];
   const containerRef = useRef(null);
   const inView = useInView(containerRef, { once: true, margin: '-80px' });
@@ -27,9 +29,11 @@ export function ProcessStepsSection({ data }: Props) {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <div className="section-badge">
-            <span>So funktioniert&apos;s</span>
-          </div>
+          {badgeText && (
+            <div className="section-badge">
+              <span>{badgeText}</span>
+            </div>
+          )}
           {headline && <h2 className="section-headline">{headline}</h2>}
         </motion.div>
 
@@ -54,7 +58,7 @@ export function ProcessStepsSection({ data }: Props) {
                 <div className="shrink-0 relative z-10">
                   <div className="w-16 h-16 rounded-2xl bg-white shadow-lg border border-gray-100 flex items-center justify-center transition-all duration-500 group-hover:shadow-glow group-hover:scale-110 group-hover:border-brand-primary/20">
                     {step.icon ? (
-                      <span className="text-2xl">{step.icon}</span>
+                      <DynamicIcon name={step.icon} size={24} className="text-brand-primary" />
                     ) : (
                       <span className="font-display font-bold text-xl bg-gradient-to-br from-brand-primary to-brand-secondary bg-clip-text text-transparent">
                         {String(i + 1).padStart(2, '0')}

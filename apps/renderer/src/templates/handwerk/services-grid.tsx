@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { HoverEffect } from '@/components/ui/hover-effect';
+import { DynamicIcon } from '@/components/ui/icon-map';
 import { ArrowRight } from 'lucide-react';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
@@ -10,6 +11,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null };
 export function ServicesGridSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
+  const badgeText = (data.badgeText as string) || '';
   const cards = (data.manualCards as { title: string; text?: string; icon?: string }[]) || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
@@ -17,7 +19,7 @@ export function ServicesGridSection({ data }: Props) {
   const hoverItems = cards.map(c => ({
     title: c.title,
     description: c.text || '',
-    icon: c.icon ? <span className="text-2xl">{c.icon}</span> : undefined,
+    icon: c.icon ? <DynamicIcon name={c.icon} size={24} className="text-brand-primary" /> : undefined,
   }));
 
   return (
@@ -28,9 +30,11 @@ export function ServicesGridSection({ data }: Props) {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="text-center mb-16"
       >
-        <div className="section-badge">
-          <span>Unsere Leistungen</span>
-        </div>
+        {badgeText && (
+          <div className="section-badge">
+            <span>{badgeText}</span>
+          </div>
+        )}
         {headline && <h2 className="section-headline">{headline}</h2>}
         {subline && <p className="section-subline">{subline}</p>}
       </motion.div>

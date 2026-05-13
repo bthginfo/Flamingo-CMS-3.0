@@ -15,7 +15,7 @@ export function SiteFooter({ footer, brand }: { footer: FooterData | null; brand
 
       {/* CTA Band */}
       {footer.cta?.label && (
-        <div className="max-w-7xl mx-auto px-6 -mt-16 relative z-10 mb-16">
+        <div className="max-w-7xl mx-auto px-6 pt-16 relative z-10 mb-16">
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-primary to-brand-secondary p-12 text-center shadow-2xl">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:30px_30px]" />
             <div className="relative z-10">
@@ -36,9 +36,11 @@ export function SiteFooter({ footer, brand }: { footer: FooterData | null; brand
         {/* Brand column */}
         <div className="md:col-span-1">
           <div className="font-display font-bold text-xl mb-4">{brand.companyName}</div>
-          <p className="text-sm text-gray-400 leading-relaxed">
-            Ihr zuverlässiger Partner für Qualitätshandwerk in der Region.
-          </p>
+          {brand.tagline && (
+            <p className="text-sm text-gray-400 leading-relaxed">
+              {brand.tagline}
+            </p>
+          )}
         </div>
         {footer.columns.map((col, i) => (
           <div key={i}>

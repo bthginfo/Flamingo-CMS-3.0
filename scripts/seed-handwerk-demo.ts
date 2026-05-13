@@ -39,6 +39,15 @@ async function main() {
 }
 
 async function seedContent(tenantId: string) {
+  // ── Clean existing data ────────────────────────────────────────
+  await db.delete(schema.publishedSnapshots).where(eq(schema.publishedSnapshots.tenantId, tenantId));
+  await db.delete(schema.pageSections).where(eq(schema.pageSections.tenantId, tenantId));
+  await db.delete(schema.pages).where(eq(schema.pages.tenantId, tenantId));
+  await db.delete(schema.navigation).where(eq(schema.navigation.tenantId, tenantId));
+  await db.delete(schema.footer).where(eq(schema.footer.tenantId, tenantId));
+  await db.delete(schema.globalSettings).where(eq(schema.globalSettings.tenantId, tenantId));
+  console.log('🧹 Cleaned existing data');
+
   // ── 2. Admin secret (password: "demo2024") ────────────────────
   const hash = '$2a$12$HMKCVT2eAmQj0huq6SUShOGHQOVNO4FWi4teS8IbQvrrymkpRjVHK';
   await db.insert(schema.adminSecrets).values({
@@ -94,9 +103,9 @@ async function seedContent(tenantId: string) {
       {
         title: 'Kontakt',
         items: [
-          { text: '📞 0221 / 98 76 54 0', href: 'tel:+492219876540' },
-          { text: '✉️ info@mueller-soehne.de', href: 'mailto:info@mueller-soehne.de' },
-          { text: '📍 Handwerkerstraße 12, 50667 Köln' },
+          { text: '0221 / 98 76 54 0', href: 'tel:+492219876540' },
+          { text: 'info@mueller-soehne.de', href: 'mailto:info@mueller-soehne.de' },
+          { text: 'Handwerkerstraße 12, 50667 Köln' },
         ],
       },
       {
@@ -137,6 +146,8 @@ async function seedContent(tenantId: string) {
         headline: 'Ihr Meisterbetrieb für Heizung, Sanitär & Bäder',
         subline: 'Seit über 35 Jahren vertrauen Kölner Familien und Unternehmen auf unsere Handwerkskunst. Von der Heizungswartung bis zur kompletten Badsanierung – wir sind für Sie da.',
         variant: 'split',
+        badgeText: 'Meisterbetrieb seit 1987',
+        trustItems: ['Über 2.500 zufriedene Kunden', '4,9 ★ Google-Bewertung', 'Festpreisgarantie'],
         primaryCta: { label: 'Kostenlos beraten lassen', href: '/kontakt' },
         secondaryCta: { label: 'Unsere Leistungen', href: '/leistungen' },
       },
@@ -144,10 +155,10 @@ async function seedContent(tenantId: string) {
     {
       type: 'uspStrip', sortOrder: 1, data: {
         items: [
-          { icon: '🏆', title: 'Meisterbetrieb', text: 'Zertifizierter Fachbetrieb mit Meisterqualität seit 1987' },
-          { icon: '⚡', title: '24/7 Notdienst', text: 'Rohrbruch oder Heizungsausfall? Wir sind rund um die Uhr für Sie da' },
-          { icon: '💰', title: 'Festpreisgarantie', text: 'Transparente Kosten – keine versteckten Gebühren, versprochen' },
-          { icon: '🌿', title: 'Energieberatung', text: 'Staatlich geförderte Heizungsmodernisierung mit bis zu 70% Zuschuss' },
+          { icon: 'trophy', title: 'Meisterbetrieb', text: 'Zertifizierter Fachbetrieb mit Meisterqualität seit 1987' },
+          { icon: 'zap', title: '24/7 Notdienst', text: 'Rohrbruch oder Heizungsausfall? Wir sind rund um die Uhr für Sie da' },
+          { icon: 'wallet', title: 'Festpreisgarantie', text: 'Transparente Kosten – keine versteckten Gebühren, versprochen' },
+          { icon: 'leaf', title: 'Energieberatung', text: 'Staatlich geförderte Heizungsmodernisierung mit bis zu 70% Zuschuss' },
         ],
         layout: 'cards',
       },
@@ -156,14 +167,15 @@ async function seedContent(tenantId: string) {
       type: 'servicesGrid', sortOrder: 2, data: {
         headline: 'Unsere Leistungen',
         subline: 'Alles aus einer Hand – von der Planung bis zur Umsetzung',
+        badgeText: 'Leistungen',
         source: 'manual',
         manualCards: [
-          { title: 'Heizungsinstallation', text: 'Gas, Wärmepumpe, Pellets oder Solar – wir finden die perfekte Lösung für Ihr Zuhause.', icon: '🔥' },
-          { title: 'Badsanierung', text: 'Vom barrierefreien Bad bis zum Wellness-Traumbad. Komplettservice inklusive Fliesen.', icon: '🚿' },
-          { title: 'Sanitärinstallation', text: 'Professionelle Rohrverlegung, Anschlüsse und Reparaturen für Neu- und Altbau.', icon: '🔧' },
-          { title: 'Wartung & Service', text: 'Regelmäßige Heizungswartung verlängert die Lebensdauer und spart Energiekosten.', icon: '🛠️' },
-          { title: 'Notdienst 24/7', text: 'Rohrbruch, Heizungsausfall oder verstopfte Leitung? Wir kommen sofort!', icon: '🚨' },
-          { title: 'Energieberatung', text: 'BAFA-zertifizierte Energieberatung und Förderanträge für Ihre Heizungsmodernisierung.', icon: '📊' },
+          { title: 'Heizungsinstallation', text: 'Gas, Wärmepumpe, Pellets oder Solar – wir finden die perfekte Lösung für Ihr Zuhause.', icon: 'flame' },
+          { title: 'Badsanierung', text: 'Vom barrierefreien Bad bis zum Wellness-Traumbad. Komplettservice inklusive Fliesen.', icon: 'shower' },
+          { title: 'Sanitärinstallation', text: 'Professionelle Rohrverlegung, Anschlüsse und Reparaturen für Neu- und Altbau.', icon: 'wrench' },
+          { title: 'Wartung & Service', text: 'Regelmäßige Heizungswartung verlängert die Lebensdauer und spart Energiekosten.', icon: 'settings' },
+          { title: 'Notdienst 24/7', text: 'Rohrbruch, Heizungsausfall oder verstopfte Leitung? Wir kommen sofort!', icon: 'siren' },
+          { title: 'Energieberatung', text: 'BAFA-zertifizierte Energieberatung und Förderanträge für Ihre Heizungsmodernisierung.', icon: 'bar-chart' },
         ],
         sort: 'priority',
       },
@@ -171,12 +183,13 @@ async function seedContent(tenantId: string) {
     {
       type: 'processSteps', sortOrder: 3, data: {
         headline: 'So läuft Ihr Projekt ab',
+        badgeText: 'Unser Prozess',
         steps: [
-          { title: 'Kostenlose Erstberatung', text: 'Wir besprechen Ihre Wünsche und begutachten die Gegebenheiten vor Ort – komplett unverbindlich.', icon: '📋' },
-          { title: 'Individuelle Planung', text: 'Unsere Meister erstellen einen detaillierten Plan mit 3D-Visualisierung und Festpreisangebot.', icon: '📐' },
-          { title: 'Professionelle Umsetzung', text: 'Unser erfahrenes Team setzt Ihr Projekt termingerecht und sauber um. Bauschutt? Nehmen wir mit.', icon: '👷' },
-          { title: 'Qualitätskontrolle', text: 'Gemeinsame Abnahme aller Arbeiten. Erst wenn Sie zufrieden sind, ist der Auftrag erledigt.', icon: '✅' },
-          { title: 'Langzeit-Service', text: 'Auch nach dem Projekt sind wir für Sie da – mit Wartungsverträgen und schnellem Support.', icon: '🤝' },
+          { title: 'Kostenlose Erstberatung', text: 'Wir besprechen Ihre Wünsche und begutachten die Gegebenheiten vor Ort – komplett unverbindlich.', icon: 'clipboard' },
+          { title: 'Individuelle Planung', text: 'Unsere Meister erstellen einen detaillierten Plan mit 3D-Visualisierung und Festpreisangebot.', icon: 'ruler' },
+          { title: 'Professionelle Umsetzung', text: 'Unser erfahrenes Team setzt Ihr Projekt termingerecht und sauber um. Bauschutt? Nehmen wir mit.', icon: 'hard-hat' },
+          { title: 'Qualitätskontrolle', text: 'Gemeinsame Abnahme aller Arbeiten. Erst wenn Sie zufrieden sind, ist der Auftrag erledigt.', icon: 'check-circle' },
+          { title: 'Langzeit-Service', text: 'Auch nach dem Projekt sind wir für Sie da – mit Wartungsverträgen und schnellem Support.', icon: 'handshake' },
         ],
         style: 'timeline',
       },
@@ -196,6 +209,7 @@ async function seedContent(tenantId: string) {
     {
       type: 'faq', sortOrder: 5, data: {
         headline: 'Häufige Fragen',
+        badgeText: 'FAQ',
         source: 'manual',
         items: [
           { question: 'Was kostet eine Badsanierung?', answer: 'Eine komplette Badsanierung beginnt ab ca. 8.000 € für ein Standardbad. Den genauen Preis erhalten Sie nach der kostenlosen Erstberatung als Festpreisangebot – ohne versteckte Kosten.' },
@@ -235,7 +249,14 @@ async function seedContent(tenantId: string) {
     data: {
       headline: 'Sprechen Sie uns an',
       introText: 'Ob Neubau, Sanierung oder Notfall – wir sind für Sie da. Rufen Sie uns an oder nutzen Sie das Kontaktformular für eine kostenlose Erstberatung.',
+      badgeText: 'Kontakt',
       formEnabled: true, showOpeningHours: true,
+      infoCards: [
+        { icon: 'phone', label: 'Telefon', value: '0221 / 98 76 54 0' },
+        { icon: 'mail', label: 'E-Mail', value: 'info@mueller-soehne.de' },
+        { icon: 'map-pin', label: 'Standort', value: 'Köln & Umgebung' },
+        { icon: 'clock', label: 'Öffnungszeiten', value: 'Mo–Fr 07:30–17:00' },
+      ],
       submitLabel: 'Nachricht senden',
       gdprCheckboxText: 'Ich stimme der Verarbeitung meiner Daten gemäß der Datenschutzerklärung zu.',
     },

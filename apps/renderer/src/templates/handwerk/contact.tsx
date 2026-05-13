@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, Send, ArrowRight } from 'lucide-react';
+import { DynamicIcon } from '@/components/ui/icon-map';
 import { cn } from '@/lib/utils';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
@@ -12,16 +13,17 @@ const inputClass = 'w-full bg-white border border-gray-200 rounded-xl px-5 py-4 
 export function ContactSection({ data }: Props) {
   const headline = (data.headline as string) || 'Kontakt';
   const introText = (data.introText as string) || '';
+  const badgeText = (data.badgeText as string) || '';
   const formEnabled = data.formEnabled !== false;
   const submitLabel = (data.submitLabel as string) || 'Nachricht senden';
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
-  const infoCards = [
-    { icon: Phone, label: 'Telefon', value: 'Jetzt anrufen', color: 'from-blue-500/10 to-blue-600/5' },
-    { icon: Mail, label: 'E-Mail', value: 'Schreiben Sie uns', color: 'from-emerald-500/10 to-emerald-600/5' },
-    { icon: MapPin, label: 'Standort', value: 'München & Umgebung', color: 'from-orange-500/10 to-orange-600/5' },
-    { icon: Clock, label: 'Öffnungszeiten', value: 'Mo\u2013Fr 7:00\u201318:00', color: 'from-purple-500/10 to-purple-600/5' },
+  const infoCards = (data.infoCards as { icon: string; label: string; value: string }[]) || [
+    { icon: 'phone', label: 'Telefon', value: '' },
+    { icon: 'mail', label: 'E-Mail', value: '' },
+    { icon: 'map-pin', label: 'Standort', value: '' },
+    { icon: 'clock', label: 'Öffnungszeiten', value: '' },
   ];
 
   return (
@@ -32,10 +34,12 @@ export function ContactSection({ data }: Props) {
         transition={{ duration: 0.6 }}
         className="text-center mb-16"
       >
-        <div className="section-badge">
-          <Mail size={14} />
-          <span>Kontakt aufnehmen</span>
-        </div>
+        {badgeText && (
+          <div className="section-badge">
+            <Mail size={14} />
+            <span>{badgeText}</span>
+          </div>
+        )}
         <h2 className="section-headline">{headline}</h2>
         {introText && <p className="section-subline">{introText}</p>}
       </motion.div>
@@ -51,8 +55,8 @@ export function ContactSection({ data }: Props) {
               transition={{ duration: 0.4, delay: i * 0.1 }}
               className="flex items-center gap-4 p-5 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer"
             >
-              <div className={cn('w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center text-brand-primary transition-transform group-hover:scale-110', card.color)}>
-                <card.icon size={20} />
+              <div className={cn('w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform group-hover:scale-110')}>
+                <DynamicIcon name={card.icon} size={20} />
               </div>
               <div>
                 <div className="text-xs text-slate-400 uppercase tracking-wider font-medium">{card.label}</div>
