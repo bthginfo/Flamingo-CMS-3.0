@@ -1,0 +1,19 @@
+{
+  "name": "flamingo-cms",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev:marketing": "pnpm --filter @flamingo/marketing dev",
+    "dev:admin": "pnpm --filter @flamingo/admin dev",
+    "dev:renderer": "pnpm --filter @flamingo/renderer dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "db:generate": "pnpm --filter @flamingo/db generate",
+    "db:push": "pnpm --filter @flamingo/db push"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0"
+  },
+  "packageManager": "pnpm@9.15.0"
+}
