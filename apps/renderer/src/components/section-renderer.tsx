@@ -8,6 +8,9 @@ import { FaqSection } from '@/templates/handwerk/faq';
 import { CtaBandSection } from '@/templates/handwerk/cta-band';
 import { ContactSection } from '@/templates/handwerk/contact';
 import { MapSection } from '@/templates/handwerk/map';
+import { ServiceDetailSection } from '@/templates/handwerk/service-detail';
+import { PortfolioSection } from '@/templates/handwerk/portfolio';
+import { TeamSection } from '@/templates/handwerk/team';
 
 const SECTION_COMPONENTS: Record<string, React.FC<{ data: Record<string, unknown>; variant?: string | null }>> = {
   hero: HeroSection,
@@ -19,6 +22,9 @@ const SECTION_COMPONENTS: Record<string, React.FC<{ data: Record<string, unknown
   ctaBand: CtaBandSection,
   contact: ContactSection,
   map: MapSection,
+  serviceDetail: ServiceDetailSection,
+  portfolio: PortfolioSection,
+  team: TeamSection,
 };
 
 const SPACING: Record<string, string> = {

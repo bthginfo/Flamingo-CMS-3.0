@@ -5,6 +5,7 @@ import { ArrowRight, Shield, Phone, Star, CheckCircle } from 'lucide-react';
 import { Spotlight } from '@/components/ui/spotlight';
 import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -13,6 +14,7 @@ export function HeroSection({ data }: Props) {
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
   const trustItems = (data.trustItems as string[]) || [];
+  const bgImage = (data.bgImage as string) || '';
   const primaryCta = data.primaryCta as { label: string; href: string } | undefined;
   const secondaryCta = data.secondaryCta as { label: string; href: string } | undefined;
   const { scrollY } = useScroll();
@@ -22,8 +24,24 @@ export function HeroSection({ data }: Props) {
   return (
     <div className="relative min-h-screen flex items-center overflow-hidden -mt-[72px] pt-[72px]">
       {/* Background layers */}
-      <div className="absolute inset-0 bg-hero-gradient" />
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE0VjZoLTJWMGgtNHY2aC0ydjhoLTJ2LThoLTJWMGgtNHY2aC0ydjhoNFYyaDRWNmgydi04aDJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-40" />
+      {bgImage ? (
+        <>
+          <Image
+            src={bgImage}
+            alt=""
+            fill
+            className="object-cover"
+            priority
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/90 via-brand-dark/70 to-brand-dark/50" />
+        </>
+      ) : (
+        <>
+          <div className="absolute inset-0 bg-hero-gradient" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE0VjZoLTJWMGgtNHY2aC0ydjhoLTJ2LThoLTJWMGgtNHY2aC0ydjhoNFYyaDRWNmgydi04aDJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-40" />
+        </>
+      )}
 
       {/* Spotlight effect */}
       <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="rgba(46, 134, 193, 0.15)" />

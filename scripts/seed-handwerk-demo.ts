@@ -148,6 +148,7 @@ async function seedContent(tenantId: string) {
         variant: 'split',
         badgeText: 'Meisterbetrieb seit 1987',
         trustItems: ['Über 2.500 zufriedene Kunden', '4,9 ★ Google-Bewertung', 'Festpreisgarantie'],
+        bgImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80',
         primaryCta: { label: 'Kostenlos beraten lassen', href: '/kontakt' },
         secondaryCta: { label: 'Unsere Leistungen', href: '/leistungen' },
       },
@@ -170,12 +171,12 @@ async function seedContent(tenantId: string) {
         badgeText: 'Leistungen',
         source: 'manual',
         manualCards: [
-          { title: 'Heizungsinstallation', text: 'Gas, Wärmepumpe, Pellets oder Solar – wir finden die perfekte Lösung für Ihr Zuhause.', icon: 'flame' },
-          { title: 'Badsanierung', text: 'Vom barrierefreien Bad bis zum Wellness-Traumbad. Komplettservice inklusive Fliesen.', icon: 'shower' },
-          { title: 'Sanitärinstallation', text: 'Professionelle Rohrverlegung, Anschlüsse und Reparaturen für Neu- und Altbau.', icon: 'wrench' },
-          { title: 'Wartung & Service', text: 'Regelmäßige Heizungswartung verlängert die Lebensdauer und spart Energiekosten.', icon: 'settings' },
-          { title: 'Notdienst 24/7', text: 'Rohrbruch, Heizungsausfall oder verstopfte Leitung? Wir kommen sofort!', icon: 'siren' },
-          { title: 'Energieberatung', text: 'BAFA-zertifizierte Energieberatung und Förderanträge für Ihre Heizungsmodernisierung.', icon: 'bar-chart' },
+          { title: 'Heizungsinstallation', text: 'Gas, Wärmepumpe, Pellets oder Solar – wir finden die perfekte Lösung für Ihr Zuhause.', icon: 'flame', image: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80', mediaType: 'image' },
+          { title: 'Badsanierung', text: 'Vom barrierefreien Bad bis zum Wellness-Traumbad. Komplettservice inklusive Fliesen.', icon: 'shower', image: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80', mediaType: 'image' },
+          { title: 'Sanitärinstallation', text: 'Professionelle Rohrverlegung, Anschlüsse und Reparaturen für Neu- und Altbau.', icon: 'wrench', image: 'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=600&q=80', mediaType: 'image' },
+          { title: 'Wartung & Service', text: 'Regelmäßige Heizungswartung verlängert die Lebensdauer und spart Energiekosten.', icon: 'settings', image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=600&q=80', mediaType: 'image' },
+          { title: 'Notdienst 24/7', text: 'Rohrbruch, Heizungsausfall oder verstopfte Leitung? Wir kommen sofort!', icon: 'siren', image: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=600&q=80', mediaType: 'image' },
+          { title: 'Energieberatung', text: 'BAFA-zertifizierte Energieberatung und Förderanträge für Ihre Heizungsmodernisierung.', icon: 'bar-chart', image: 'https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=600&q=80', mediaType: 'image' },
         ],
         sort: 'priority',
       },
@@ -271,6 +272,226 @@ async function seedContent(tenantId: string) {
     },
   });
   console.log('✅ Kontaktseite');
+
+  // === LEISTUNGEN ===
+  const [leistungenPage] = await db.insert(schema.pages).values({
+    tenantId, title: 'Leistungen', slug: 'leistungen', type: 'free', status: 'published', visible: true, sortOrder: 1,
+  }).returning();
+
+  const leistungenSections = [
+    {
+      type: 'hero', sortOrder: 0, data: {
+        headline: 'Unsere Leistungen im Überblick',
+        subline: 'Von der Heizungsmodernisierung bis zur Komplett-Badsanierung – alles aus einer Meisterhand.',
+        badgeText: 'Leistungen',
+        bgImage: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1920&q=80',
+        primaryCta: { label: 'Kostenlose Beratung', href: '/kontakt' },
+      },
+    },
+    {
+      type: 'serviceDetail', sortOrder: 1, data: {
+        headline: 'Was wir für Sie tun',
+        subline: 'Jede Leistung aus einer Hand – von der Beratung bis zur Umsetzung',
+        badgeText: 'Unser Angebot',
+        items: [
+          {
+            title: 'Heizungsinstallation & Modernisierung',
+            text: 'Ob Gasbrennwert, Wärmepumpe, Pelletheizung oder Solarthermie – wir beraten Sie herstellerunabhängig und finden die wirtschaftlichste Lösung. Inklusive Förderantrag und Entsorgung der Altanlage.',
+            image: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80',
+            mediaType: 'image',
+            features: ['Alle Energieträger', 'BAFA-Förderung bis 70%', 'Festpreisgarantie', '2 Jahre Vollgarantie'],
+            ctaLabel: 'Beratung anfragen',
+            ctaHref: '/kontakt',
+          },
+          {
+            title: 'Badsanierung & Badplanung',
+            text: 'Ihr Traumbad in 3D geplant und professionell umgesetzt. Vom barrierefreien Seniorenbad bis zur Wellness-Oase. Fliesen, Sanitär und Elektro – alles aus einer Hand.',
+            image: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80',
+            mediaType: 'image',
+            features: ['3D-Planung inklusive', 'Barrierefreie Lösungen', 'Komplettservice', 'Festtermin-Garantie'],
+            ctaLabel: 'Bad planen lassen',
+            ctaHref: '/kontakt',
+          },
+          {
+            title: 'Sanitär & Rohrleitungsbau',
+            text: 'Professionelle Trinkwasser- und Abwasserinstallation nach den neuesten Normen. Reparaturen, Neuverlegung und Sanierung von Rohrleitungssystemen in Alt- und Neubau.',
+            image: 'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=800&q=80',
+            mediaType: 'image',
+            features: ['Trinkwasserhygiene', 'Altbau-Expertise', 'Leckortung', 'Schnelle Reparatur'],
+            ctaLabel: 'Jetzt anfragen',
+            ctaHref: '/kontakt',
+          },
+          {
+            title: 'Notdienst – 24/7 für Sie da',
+            text: 'Rohrbruch am Wochenende? Heizungsausfall im Winter? Unser Notdienst-Team ist rund um die Uhr erreichbar und in der Regel innerhalb von 60 Minuten vor Ort.',
+            image: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&q=80',
+            mediaType: 'image',
+            features: ['24/7 erreichbar', '< 60 Min. Anfahrt', 'Transparente Kosten', 'Köln & Umgebung'],
+            ctaLabel: 'Notdienst rufen',
+            ctaHref: 'tel:+492219876540',
+          },
+        ],
+      },
+    },
+    {
+      type: 'ctaBand', sortOrder: 2, data: {
+        headline: 'Welche Leistung benötigen Sie?',
+        subline: 'Wir beraten Sie kostenlos und unverbindlich – rufen Sie uns an oder nutzen Sie unser Kontaktformular.',
+        ctaPrimary: { label: 'Kostenlos beraten lassen', href: '/kontakt' },
+        background: 'gradient',
+      },
+    },
+  ];
+
+  for (const s of leistungenSections) {
+    await db.insert(schema.pageSections).values({
+      tenantId, pageId: leistungenPage.id, type: s.type, data: s.data, sortOrder: s.sortOrder, visible: true,
+    });
+  }
+  console.log('✅ Leistungen-Seite');
+
+  // === REFERENZEN ===
+  const [referenzenPage] = await db.insert(schema.pages).values({
+    tenantId, title: 'Referenzen', slug: 'referenzen', type: 'free', status: 'published', visible: true, sortOrder: 2,
+  }).returning();
+
+  const referenzenSections = [
+    {
+      type: 'hero', sortOrder: 0, data: {
+        headline: 'Unsere Referenzen',
+        subline: 'Überzeugen Sie sich selbst – hier zeigen wir ausgewählte Projekte aus Köln und Umgebung.',
+        badgeText: 'Referenzen',
+        bgImage: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1920&q=80',
+        primaryCta: { label: 'Ihr Projekt starten', href: '/kontakt' },
+      },
+    },
+    {
+      type: 'portfolio', sortOrder: 1, data: {
+        headline: 'Ausgewählte Projekte',
+        subline: 'Jedes Projekt ist einzigartig – genau wie unsere Kunden',
+        badgeText: 'Portfolio',
+        projects: [
+          {
+            title: 'Komplett-Badsanierung in Ehrenfeld',
+            category: 'Badsanierung',
+            description: 'Aus einem 80er-Jahre Bad wurde eine moderne Wellness-Oase mit bodengleicher Dusche, freistehender Badewanne und Fußbodenheizung.',
+            image: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80',
+            stats: [{ label: 'Dauer', value: '12 Tage' }, { label: 'Fläche', value: '14 m²' }],
+          },
+          {
+            title: 'Wärmepumpe für Einfamilienhaus',
+            category: 'Heizung',
+            description: 'Umstellung von Öl auf Luft-Wasser-Wärmepumpe mit 70% BAFA-Förderung. Heizkosten um 60% gesenkt.',
+            image: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80',
+            stats: [{ label: 'Einsparung', value: '60%' }, { label: 'Förderung', value: '70%' }],
+          },
+          {
+            title: 'Rohrsanierung Mehrfamilienhaus',
+            category: 'Sanitär',
+            description: 'Komplette Erneuerung der Steigleitungen in einem 6-Parteien-Haus. Koordination mit Mietern und termingerechte Fertigstellung.',
+            image: 'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=800&q=80',
+            stats: [{ label: 'Wohneinheiten', value: '6' }, { label: 'Dauer', value: '3 Wo.' }],
+          },
+          {
+            title: 'Notdienst-Einsatz: Rohrbruch Nippes',
+            category: 'Notdienst',
+            description: 'Sonntagabend, Wasserrohrbruch in der Küche. Innerhalb von 40 Minuten vor Ort, Schaden behoben und Trocknung eingeleitet.',
+            image: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=800&q=80',
+            stats: [{ label: 'Anfahrt', value: '40 Min.' }, { label: 'Reparatur', value: '2 Std.' }],
+          },
+        ],
+      },
+    },
+    {
+      type: 'testimonials', sortOrder: 2, data: {
+        headline: 'Das sagen unsere Kunden',
+        badgeText: 'Kundenstimmen',
+        items: [
+          { quote: 'Die komplette Badsanierung war in 2 Wochen fertig – und das Ergebnis ist fantastisch! Alles aus einer Hand, super Team.', name: 'Familie Schneider', context: 'Badsanierung in Ehrenfeld', rating: 5 },
+          { quote: 'Heizungsausfall am Sonntagabend und Herr Müller war innerhalb von 45 Minuten da. So muss Handwerk sein!', name: 'Thomas K.', context: 'Notdienst in Nippes', rating: 5 },
+          { quote: 'Dank der Energieberatung haben wir 65% Förderung für unsere neue Wärmepumpe bekommen.', name: 'Andrea & Peter M.', context: 'Heizungsmodernisierung in Rodenkirchen', rating: 5 },
+        ],
+        layout: 'cards',
+      },
+    },
+    {
+      type: 'ctaBand', sortOrder: 3, data: {
+        headline: 'Ihr Projekt könnte das nächste sein',
+        subline: 'Lassen Sie sich kostenlos beraten – wir freuen uns auf Ihre Anfrage.',
+        ctaPrimary: { label: 'Projekt besprechen', href: '/kontakt' },
+        background: 'gradient',
+      },
+    },
+  ];
+
+  for (const s of referenzenSections) {
+    await db.insert(schema.pageSections).values({
+      tenantId, pageId: referenzenPage.id, type: s.type, data: s.data, sortOrder: s.sortOrder, visible: true,
+    });
+  }
+  console.log('✅ Referenzen-Seite');
+
+  // === ÜBER UNS ===
+  const [ueberUnsPage] = await db.insert(schema.pages).values({
+    tenantId, title: 'Über uns', slug: 'ueber-uns', type: 'free', status: 'published', visible: true, sortOrder: 3,
+  }).returning();
+
+  const ueberUnsSections = [
+    {
+      type: 'hero', sortOrder: 0, data: {
+        headline: 'Über Müller & Söhne',
+        subline: 'Drei Generationen Handwerkskunst – seit 1987 Ihr zuverlässiger Partner in Köln.',
+        badgeText: 'Über uns',
+        bgImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80',
+        primaryCta: { label: 'Kontakt aufnehmen', href: '/kontakt' },
+      },
+    },
+    {
+      type: 'team', sortOrder: 1, data: {
+        headline: 'Unser Team',
+        subline: 'Die Menschen hinter Müller & Söhne – erfahren, engagiert, zuverlässig',
+        badgeText: 'Das Team',
+        storyHeadline: 'Unsere Geschichte',
+        storyText: 'Was 1987 als Ein-Mann-Betrieb in einer Kölner Hinterhofwerkstatt begann, ist heute ein Team aus 12 Fachkräften.\n\nGründer Hans Müller legte den Grundstein mit seiner Vision: Handwerk auf Meisterniveau – ehrlich, fair und persönlich. Heute führen seine Söhne Michael und Stefan das Unternehmen in zweiter Generation weiter.\n\nMit über 2.500 erfolgreich abgeschlossenen Projekten und einer Google-Bewertung von 4,9 Sternen sind wir stolz auf das Vertrauen unserer Kunden.',
+        storyImage: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&q=80',
+        stats: [
+          { value: '37+', label: 'Jahre Erfahrung' },
+          { value: '2.500+', label: 'Projekte' },
+          { value: '12', label: 'Mitarbeiter' },
+          { value: '4,9 ★', label: 'Google-Bewertung' },
+        ],
+        members: [
+          { name: 'Michael Müller', role: 'Geschäftsführer & Meister', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80', bio: 'Heizungsbaumeister mit 20 Jahren Berufserfahrung. Spezialist für Wärmepumpen und energetische Sanierung.' },
+          { name: 'Stefan Müller', role: 'Geschäftsführer & Meister', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80', bio: 'Sanitärmeister und Experte für Badsanierung. Zertifizierter Energieberater (BAFA).' },
+          { name: 'Klaus Weber', role: 'Obermonteur Heizung', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80', bio: '15 Jahre im Team. Spezialist für Fußbodenheizung und Heizungshydraulik.' },
+          { name: 'Sarah Klein', role: 'Büro & Kundenbetreuung', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80', bio: 'Ihr erster Ansprechpartner am Telefon. Koordiniert Termine und Notdienst-Einsätze.' },
+        ],
+        values: [
+          { icon: 'shield', title: 'Meisterqualität', text: 'Alle Arbeiten werden von ausgebildeten Meistern geplant und überwacht.' },
+          { icon: 'heart', title: 'Persönlich & Fair', text: 'Wir behandeln jedes Projekt, als wäre es unser eigenes Zuhause.' },
+          { icon: 'target', title: 'Termintreue', text: 'Wenn wir einen Termin zusagen, dann halten wir ihn – ohne Ausreden.' },
+          { icon: 'trending-up', title: 'Weiterbildung', text: 'Regelmäßige Schulungen sichern Know-how auf dem neuesten Stand.' },
+          { icon: 'leaf', title: 'Nachhaltigkeit', text: 'Wir beraten stets mit Blick auf Effizienz und Umweltverträglichkeit.' },
+          { icon: 'handshake', title: 'Transparenz', text: 'Festpreise, klare Kommunikation und keine versteckten Kosten.' },
+        ],
+      },
+    },
+    {
+      type: 'ctaBand', sortOrder: 2, data: {
+        headline: 'Lernen Sie uns kennen',
+        subline: 'Vereinbaren Sie einen unverbindlichen Beratungstermin – wir freuen uns auf Sie!',
+        ctaPrimary: { label: 'Termin vereinbaren', href: '/kontakt' },
+        background: 'gradient',
+      },
+    },
+  ];
+
+  for (const s of ueberUnsSections) {
+    await db.insert(schema.pageSections).values({
+      tenantId, pageId: ueberUnsPage.id, type: s.type, data: s.data, sortOrder: s.sortOrder, visible: true,
+    });
+  }
+  console.log('✅ Über-uns-Seite');
 
   // ── 7. Publish Snapshot ───────────────────────────────────────
   const allPages = await db.select().from(schema.pages).where(eq(schema.pages.tenantId, tenantId));
