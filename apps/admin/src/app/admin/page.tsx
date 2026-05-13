@@ -1,0 +1,104 @@
+import { getSession } from '@/lib/session';
+import { getDb } from '@/lib/db';
+import { pages, pageSections, collectionItems, publishedSnapshots, tenants } from '@flamingo/db';
+import { eq, count, and } from 'drizzle-orm';
+import { FileText, Layers, FolderOpen, Rocket, Eye, Globe } from 'lucide-react';
+import Link from 'next/link';
+
+export default async function DashboardPage() {
+  const session = await getSession();
+  if (!session) return null;
+
+  const db = getDb();
+  const tid = session.tenantId;
+
+  const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tid));
+  const [pageCount] = await db.select({ value: count() }).from(pages).where(eq(pages.tenantId, tid));
+  const [sectionCount] = await db.select({ value: count() }).from(pageSections).where(eq(pageSections.tenantId, tid));
+  const [itemCount] = await db.select({ value: count() }).from(collectionItems).where(eq(collectionItems.tenantId, tid));
+  const [snapCount] = await db.select({ value: count() }).from(publishedSnapshots).where(and(eq(publishedSnapshots.tenantId, tid), eq(publishedSnapshots.isActive, true)));
+
+  const stats = [
+    { label: 'Seiten', value: pageCount?.value ?? 0, icon: FileText, href: '/admin/pages' },
+    { label: 'Sections', value: sectionCount?.value ?? 0, icon: Layers, href: '/admin/pages' },
+    { label: 'Collection Items', value: itemCount?.value ?? 0, icon: FolderOpen, href: '/admin/collections' },
+    { label: 'Live Snapshot', value: snapCount?.value ?? 0 ? 'Aktiv' : 'Keiner', icon: Rocket, href: '#' },
+  ];
+
+  return (
+    <>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-semibold text-zinc-900">Dashboard</h1>
+          <p className="text-sm text-zinc-500 mt-1">
+            {tenant?.name ?? 'Tenant'} · {tenant?.industry ?? '–'} · Stil: {tenant?.activeStyle ?? 'classic'}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Link href="/admin/pages" className="admin-btn-secondary">
+            <Eye size={16} /> Preview
+          </Link>
+          <button className="admin-btn-primary" disabled>
+            <Rocket size={16} /> Veröffentlichen
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {stats.map((s) => (
+          <Link key={s.label} href={s.href} className="admin-card p-5 hover:shadow-md transition-shadow group">
+            <div className="flex items-center justify-between mb-3">
+              <s.icon size={20} className="text-zinc-400 group-hover:text-admin-accent transition-colors" />
+            </div>
+            <p className="text-2xl font-semibold text-zinc-900">{s.value}</p>
+            <p className="text-sm text-zinc-500 mt-0.5">{s.label}</p>
+          </Link>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="admin-card p-6">
+          <h2 className="font-semibold text-zinc-900 mb-4">Schnellzugriff</h2>
+          <div className="space-y-2">
+            {[
+              { label: 'Startseite bearbeiten', href: '/admin/pages', icon: '🏠' },
+              { label: 'Leistung hinzufügen', href: '/admin/collections', icon: '⚡' },
+              { label: 'Referenz hinzufügen', href: '/admin/collections', icon: '📸' },
+              { label: 'SEO prüfen', href: '/admin/seo', icon: '🔍' },
+            ].map((q) => (
+              <Link
+                key={q.label}
+                href={q.href}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-zinc-50 transition-colors text-sm"
+              >
+                <span>{q.icon}</span>
+                <span>{q.label}</span>
+                <span className="ml-auto text-zinc-300">→</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="admin-card p-6">
+          <h2 className="font-semibold text-zinc-900 mb-4">Status</h2>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-600">Website</span>
+              <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" /> Online
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-600">Draft Status</span>
+              <span className="text-amber-600 font-medium">Noch keine Inhalte</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-600">Letzter Publish</span>
+              <span className="text-zinc-400">–</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

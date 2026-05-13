@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-admin-bg text-zinc-900 antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+}
+
+@layer components {
+  .admin-card {
+    @apply bg-admin-card rounded-xl border border-admin-border shadow-sm;
+  }
+  .admin-input {
+    @apply w-full rounded-lg border border-admin-border bg-white px-3.5 py-2.5 text-sm
+           placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-admin-accent/30
+           focus:border-admin-accent transition-colors;
+  }
+  .admin-label {
+    @apply text-sm font-medium text-zinc-700 mb-1.5 block;
+  }
+  .admin-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5
+           text-sm font-medium transition-all focus-visible:outline-none
+           focus-visible:ring-2 focus-visible:ring-admin-accent/50 disabled:opacity-50;
+  }
+  .admin-btn-primary {
+    @apply admin-btn bg-admin-accent text-white hover:bg-admin-accent/90 active:scale-[0.98];
+  }
+  .admin-btn-secondary {
+    @apply admin-btn bg-zinc-100 text-zinc-700 hover:bg-zinc-200 active:scale-[0.98];
+  }
+  .admin-btn-ghost {
+    @apply admin-btn bg-transparent text-zinc-600 hover:bg-zinc-100;
+  }
+  .admin-btn-danger {
+    @apply admin-btn bg-red-600 text-white hover:bg-red-700 active:scale-[0.98];
+  }
+}
