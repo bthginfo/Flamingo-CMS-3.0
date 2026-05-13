@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, Routes, Route, useLocation } from 'react-router-
 import type { TemplateKey } from '@/lib/types';
 import { Imprint, Privacy } from './Legal';
 import { BlogIndex, BlogPost, NotFound } from './Blog';
+import { TemplateGallery } from './Templates';
 import Seo from '@/components/Seo';
 import {
   Marquee, AnimatedCounter, RotatingWord, ScrollProgress, Accordion, useReveal,
@@ -219,6 +220,7 @@ export default function AgencyShowcase() {
         <Route path="/" element={<ShowcaseShell />}>
           <Route index element={<Landing />} />
 
+          <Route path="templates" element={<TemplateGallery />} />
           <Route path="prozess" element={<ProcessPage />} />
           <Route path="preise" element={<Pricing />} />
           <Route path="ueber-uns" element={<AboutPage />} />
@@ -277,6 +279,7 @@ function ShowcaseShell() {
   useReveal();
 
   const NAV = [
+    { to: '/templates', label: 'Templates' },
     { to: '/prozess', label: 'Ablauf' },
     { to: '/preise', label: 'Preise' },
     { to: '/ueber-uns', label: 'Über uns' },
