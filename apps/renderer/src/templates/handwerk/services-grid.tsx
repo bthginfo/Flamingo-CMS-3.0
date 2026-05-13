@@ -1,3 +1,7 @@
+'use client';
+
+import { AnimateOnScroll, StaggerOnScroll, fadeUp } from '@/components/animate';
+
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
 export function ServicesGridSection({ data }: Props) {
@@ -6,17 +10,25 @@ export function ServicesGridSection({ data }: Props) {
   const cards = (data.manualCards as { title: string; text?: string; icon?: string }[]) || [];
   return (
     <div>
-      {headline && <h2 className="text-3xl font-bold text-center mb-2">{headline}</h2>}
-      {subline && <p className="text-center text-gray-600 mb-8">{subline}</p>}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <AnimateOnScroll className="text-center mb-12">
+        {headline && <h2 className="section-headline">{headline}</h2>}
+        {subline && <p className="section-subline">{subline}</p>}
+      </AnimateOnScroll>
+      <StaggerOnScroll className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((card, i) => (
-          <div key={i} className="bg-gray-50 rounded-xl p-6 hover:shadow-md transition">
-            {card.icon && <div className="text-2xl mb-3">{card.icon}</div>}
-            <h3 className="font-semibold text-lg mb-2">{card.title}</h3>
-            {card.text && <p className="text-gray-600 text-sm">{card.text}</p>}
-          </div>
+          <AnimateOnScroll key={i} variants={fadeUp}>
+            <div className="card-hover p-8 group">
+              {card.icon && (
+                <div className="w-14 h-14 rounded-xl bg-brand-primary/5 flex items-center justify-center text-2xl mb-5 transition-colors duration-300 group-hover:bg-brand-primary/10">
+                  {card.icon}
+                </div>
+              )}
+              <h3 className="font-display font-semibold text-lg mb-3">{card.title}</h3>
+              {card.text && <p className="text-gray-500 text-sm leading-relaxed">{card.text}</p>}
+            </div>
+          </AnimateOnScroll>
         ))}
-      </div>
+      </StaggerOnScroll>
     </div>
   );
 }

@@ -1,102 +1,68 @@
-# PLAN v1 — Flamingo Media CMS + Renderer
+# PLAN v2 — Flamingo Media CMS + Renderer
 
-> Erstellt: 2026-05-13
+> Erstellt: 2026-05-13 | Zuletzt aktualisiert: 2026-05-13
 > Status: Aktiv
+
+---
+
+## Fortschritt
+
+### ✅ Erledigt
+
+| # | Milestone | Commit |
+|---|-----------|--------|
+| M1 | Monorepo Scaffold + Marketing 1:1 portiert | d600ddb |
+| M2 | DB-Schema (21 Tabellen, Neon Postgres) | b7a1d6f |
+| M3 | GitHub + Vercel Deployment | 3ab95e5 |
+| M4 | Zod-Schemas + Auth-Package | d3dfe59 |
+| M5 | Admin-App Scaffold (Login, Sidebar, Dashboard) | 8a370a0 |
+| M6 | Page Editor + Section Builder (DnD) | 3379507 |
+| M7 | Collections CRUD | 9453e3b |
+| M8 | Draft/Preview/Publish Engine (Snapshot-Versioning) | 22995b5 |
+| M9 | Renderer + Handwerk-Template (Skeleton) | 832e21c |
+| M10 | Demo-Seed (Müller & Söhne) + Nav/Footer | 3ecb4ae |
+
+### 🔨 In Arbeit
+
+| # | Milestone | Beschreibung |
+|---|-----------|--------------|
+| M11 | Handwerk Premium-Design | Framer Motion, Typografie, Animationen, Hover-Effekte, responsive |
+
+### ⬜ Offen
+
+| # | Milestone | Prio | Beschreibung |
+|---|-----------|------|--------------|
+| M12 | Admin Settings-Seiten | Hoch | Brand, Kontakt, Nav, Footer, SEO, Skripte, Mail, Legal, Passwort — echte Formulare |
+| M13 | Media-Upload (Vercel Blob) | Hoch | Bildverwaltung im Admin, Upload + Auswahl in Section-Editoren |
+| M14 | Template-Galerie auf Marketing-Seite | Hoch | Übersicht aller Templates + Live-Preview mit Demo-Content |
+| M15 | Kontaktformular-Backend | Mittel | SMTP-Versand via tenant_smtp oder Plattform-Mail |
+| M16 | SEO-Engine | Mittel | Meta-Tags, OG-Tags, Sitemap.xml, robots.txt pro Tenant |
+| M17 | Consent/Cookie-Banner | Mittel | Script-Kategorien + DSGVO-Banner im Renderer |
+| M18 | Mobile Navigation (Renderer) | Mittel | Hamburger-Menu im Renderer-Header |
+| M19 | Passwort-Ändern im Admin | Niedrig | Security-Seite funktional machen |
+| M20 | Rollback-Funktion | Niedrig | Ältere Snapshots reaktivieren |
+| M21 | Audit-Log UI | Niedrig | Änderungen im Admin anzeigen (Tabelle existiert) |
+| M22 | Provisioning-System | Niedrig | Auto-Anlage neuer Kunden (Tenant + Domain + Vercel-Projekt) |
+| M23 | Weitere Branchen-Templates | Später | Restaurant, Salon, Hotel, etc. |
 
 ---
 
 ## Architekturentscheidungen
 
-### A1: Monorepo (Turborepo)
-- **Entscheidung:** Monorepo mit Turborepo
-- **Begründung:** Shared Code (DB, Schemas, UI) zwischen Marketing, Admin, Renderer. Ein Repo = ein PR für Cross-Cutting Changes. Turbo cached Builds effizient. Pro-Kunde-Deployment via separater Vercel-Projekte, die denselben Code referenzieren.
-- **Tradeoffs:** Etwas komplexere initiale Einrichtung. Vercel unterstützt Monorepos nativ.
-- **Auswirkung Marketing 1:1:** Marketing-App ist eigenständig, eigene Dependencies, keine UI-Package-Abhängigkeit erzwungen.
-- **Auswirkung Deployment:** Jede App hat eigenes Vercel-Projekt. Renderer-App wird pro Kunde als eigenes Vercel-Projekt deployed mit TENANT_ID Env Var.
+| ID | Entscheidung | Begründung |
+|----|-------------|------------|
+| A1 | Monorepo (Turborepo + pnpm) | Shared Code, ein PR für Cross-Cutting, Turbo caches Builds |
+| A2 | Next.js 15 App Router | SSR/SSG für Renderer, Server Actions, ISR, Vercel-native |
+| A3 | Marketing als eigene Next.js-App | SEO/SSG besser als Vite SPA, react-router client-side als Brücke |
+| A4 | Drizzle ORM | Leichtgewichtig, SQL-nah, Edge-kompatibel, JSONB-Snapshots |
+| A5 | Auth = bcrypt + jose JWT | MVP-tauglich, HttpOnly Cookie, Middleware Guard |
 
-### A2: Next.js App Router für Admin + Renderer
-- **Entscheidung:** Next.js 15 App Router
-- **Begründung:** SSR/SSG für Renderer (SEO, Performance), Server Actions für Admin, ISR für Publish/Cache, native Vercel-Integration.
-- **Tradeoffs:** Marketing-Repo ist Vite SPA — wird als separate Next.js-App migriert (minimale technische Anpassung: react-router → Next.js file routing).
+## Repos & URLs
 
-### A3: Marketing-App als eigenständige Next.js-App
-- **Entscheidung:** Marketing-Seiten werden in eine eigene Next.js-App (`apps/marketing`) portiert
-- **Begründung:** Das Original ist Vite + react-router SPA. Für SEO und Performance ist SSR/SSG besser. 1:1 optische Gleichheit bleibt erhalten, nur technische Routing-Schicht ändert sich.
-- **TECHNISCH NOTWENDIGE ANPASSUNG:** react-router-dom → Next.js App Router file-based routing. BrowserRouter/Routes/Route entfällt. Links werden zu next/link. Komponenten, Styles, Assets, Fonts, Animationen bleiben 1:1.
-
-### A4: Drizzle ORM
-- **Entscheidung:** Drizzle ORM (nicht Prisma)
-- **Begründung:** Leichtgewichtiger, SQL-nah, kein Generator-Step, bessere Edge-Kompatibilität, JSON-Operationen direkt. Für ein Custom CMS mit JSONB-Snapshots ideal. Type-safe ohne Codegen.
-- **Tradeoffs:** Weniger Ökosystem als Prisma, aber ausreichend für dieses Projekt.
-- **Migration:** drizzle-kit generate + push.
-- **Seed:** TypeScript Seed-Scripts pro Branche.
-
-### A5: Auth = Passwort + Cookie
-- **Entscheidung:** Kein Auth-Framework, eigener Passwort-Check
-- **Begründung:** MVP-Anforderung. bcrypt Hash, HttpOnly/Secure/SameSite Cookie, Server-side Middleware Guard.
-
----
-
-## Meilensteine
-
-### M1: Monorepo Scaffold + Marketing 1:1
-- **Ziel:** Turborepo-Monorepo aufsetzen, Marketing-Seiten 1:1 portieren
-- **Outcome:** Marketing-Seiten laufen unter /, /prozess, /preise, /ueber-uns, /kontakt mit identischem Aussehen
-- **Betroffene Bereiche:** apps/marketing, configs
-- **Definition of Done:**
-  - Alle 5 Marketing-Routen rendern korrekt
-  - Fonts, Assets, Animationen, Effekte identisch
-  - Build erfolgreich
-  - Responsive identisch
-- **Test/Check:** Build, Dev-Server, visuelle Prüfung aller 5 Seiten
-- **Risiken:** Framer Motion + Lenis Kompatibilität mit Next.js SSR (mittel, lösbar mit 'use client')
-- **Next Actions:**
-  1. Turborepo + pnpm Workspace initialisieren
-  2. apps/marketing als Next.js App scaffolden
-  3. Marketing-Komponenten 1:1 kopieren
-  4. Routing anpassen (react-router → file-based)
-  5. Assets + Fonts übernehmen
-  6. Tailwind Config übernehmen
-  7. Build + visuelle Prüfung
-
-### M2: Datenbank-Schema + Packages
-- **Ziel:** Postgres-Schema mit Drizzle, alle Tabellen, Migrations
-- **Outcome:** 21 Tabellen, Indexes, Types, Seed-Grundlage
-- **Betroffene Bereiche:** packages/db
-- **Definition of Done:** Schema kompiliert, Migration generiert, Types exportiert
-- **Test/Check:** drizzle-kit push gegen lokale/dev DB, TypeCheck
-- **Risiken:** Neon/Vercel Postgres Connection Pooling
-
-### M3: CMS Admin Shell + Auth
-- **Ziel:** Admin-App mit Passwortschutz, Sidebar, Dashboard
-- **Outcome:** Login, geschützter Bereich, Navigationsstruktur
-- **Betroffene Bereiche:** apps/admin, packages/auth
-- **Definition of Done:** Login funktioniert, Admin Shell rendert, alle Menüpunkte sichtbar
-
-### M4: Seiteneditor + Section Builder
-- **Ziel:** Pages CRUD, Section hinzufügen/entfernen/sortieren, Draft speichern
-- **Outcome:** Vollständiger Seiteneditor mit Section-Formular
-- **Betroffene Bereiche:** apps/admin, packages/cms-core, packages/schemas
-
-### M5: Collections + Content-Modell
-- **Ziel:** Services, Projects, Team, News Collections im Admin
-- **Outcome:** CRUD für Collection Items, Slug-Verwaltung
-- **Betroffene Bereiche:** apps/admin, packages/db
-
-### M6: Draft → Preview → Publish
-- **Ziel:** Draft-State, Preview-URLs, Publish-Snapshots, Rollback
-- **Outcome:** Vollständiger Content-Lifecycle
-- **Betroffene Bereiche:** packages/cms-core, apps/admin, apps/renderer
-
-### M7: Renderer + Handwerk Template
-- **Ziel:** Frontend-Renderer, Section Registry, 3 Design-Styles, Handwerk Demo Content
-- **Outcome:** Funktionierende Kundenwebsite aus Snapshot
-- **Betroffene Bereiche:** apps/renderer, packages/renderer-core, packages/seeds
-
-### M8: Global Settings + SEO + Media
-- **Ziel:** Brand, Kontakt, Navigation, Footer, SEO, Vercel Blob Media
-- **Outcome:** Alle Settings im Admin steuerbar
-- **Betroffene Bereiche:** apps/admin, packages/db, packages/media, packages/seo
+- **GitHub:** https://github.com/bthginfo/Flamingo-CMS-3.0
+- **Vercel (Marketing):** flamingo-cms-3-0
+- **DB:** Neon `neondb` (eu-central-1)
+- **SMTP:** smtp.ionos.de / hello@flamingomedia.online
 
 ### M9: Provisioning + Multi-Tenant Deployment
 - **Ziel:** Tenant anlegen, Vercel-Projekt erstellen, Domain verbinden
