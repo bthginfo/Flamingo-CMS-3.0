@@ -1,9 +1,17 @@
-export default function NavigationPage() {
+import { getNavigationSettings, getFooterSettings } from '../settings-actions';
+import { NavigationForm } from './navigation-form';
+import { FooterForm } from './footer-form';
+
+export default async function NavigationPage() {
+  const [nav, footerData] = await Promise.all([getNavigationSettings(), getFooterSettings()]);
+
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Navigation & Footer</h1>
-      <div className="admin-card">
-        <p className="text-gray-500">Dieser Bereich wird bald verfügbar sein.</p>
+      <h1 className="text-2xl font-bold mb-1">Navigation & Footer</h1>
+      <p className="text-zinc-500 text-sm mb-8">Verwalten Sie die Hauptnavigation und den Footer Ihrer Website.</p>
+      <div className="space-y-10">
+        <NavigationForm initial={nav.items} />
+        <FooterForm initial={footerData} />
       </div>
     </div>
   );
