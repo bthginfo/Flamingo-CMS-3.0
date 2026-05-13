@@ -1,13 +1,22 @@
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
+import { getTenantNav, getTenantFooter, getTenantBrand } from '@/lib/tenant-data';
 import { notFound } from 'next/navigation';
 import { SectionRenderer } from '@/components/section-renderer';
+import { SiteHeader } from '@/components/site-header';
+import { SiteFooter } from '@/components/site-footer';
 
 export default async function CatchAllPage({ params }: { params: Promise<{ slug?: string[] }> }) {
   const { slug } = await params;
   const tenantId = await resolveTenant();
   if (!tenantId) notFound();
 
-  const snapshot = await getActiveSnapshot(tenantId);
+  const [snapshot, navItems, footerData, { brand, contact }] = await Promise.all([
+    getActiveSnapshot(tenantId),
+    getTenantNav(tenantId),
+    getTenantFooter(tenantId),
+    getTenantBrand(tenantId),
+  ]);
+
   if (!snapshot) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -30,10 +39,14 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   const visibleSections = page.sections.filter(s => s.visible);
 
   return (
-    <main>
-      {visibleSections.map((section) => (
-        <SectionRenderer key={section.id} section={section} />
-      ))}
-    </main>
+    <>
+      <SiteHeader navItems={navItems} brand={brand} contact={contact} />
+      <main>
+        {visibleSections.map((section) => (
+          <SectionRenderer key={section.id} section={section} />
+        ))}
+      </main>
+      <SiteFooter footer={footerData} brand={brand} />
+    </>
   );
 }
