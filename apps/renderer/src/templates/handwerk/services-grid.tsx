@@ -1,6 +1,9 @@
 'use client';
 
-import { AnimateOnScroll, StaggerOnScroll, fadeUp } from '@/components/animate';
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { HoverEffect } from '@/components/ui/hover-effect';
+import { ArrowRight } from 'lucide-react';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -8,27 +11,37 @@ export function ServicesGridSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const cards = (data.manualCards as { title: string; text?: string; icon?: string }[]) || [];
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
+
+  const hoverItems = cards.map(c => ({
+    title: c.title,
+    description: c.text || '',
+    icon: c.icon ? <span className="text-2xl">{c.icon}</span> : undefined,
+  }));
+
   return (
-    <div>
-      <AnimateOnScroll className="text-center mb-12">
+    <div ref={ref}>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="text-center mb-16"
+      >
+        <div className="section-badge">
+          <span>Unsere Leistungen</span>
+        </div>
         {headline && <h2 className="section-headline">{headline}</h2>}
         {subline && <p className="section-subline">{subline}</p>}
-      </AnimateOnScroll>
-      <StaggerOnScroll className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cards.map((card, i) => (
-          <AnimateOnScroll key={i} variants={fadeUp}>
-            <div className="card-hover p-8 group">
-              {card.icon && (
-                <div className="w-14 h-14 rounded-xl bg-brand-primary/5 flex items-center justify-center text-2xl mb-5 transition-colors duration-300 group-hover:bg-brand-primary/10">
-                  {card.icon}
-                </div>
-              )}
-              <h3 className="font-display font-semibold text-lg mb-3">{card.title}</h3>
-              {card.text && <p className="text-gray-500 text-sm leading-relaxed">{card.text}</p>}
-            </div>
-          </AnimateOnScroll>
-        ))}
-      </StaggerOnScroll>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <HoverEffect items={hoverItems} />
+      </motion.div>
     </div>
   );
 }

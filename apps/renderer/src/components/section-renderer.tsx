@@ -30,10 +30,10 @@ const SPACING: Record<string, string> = {
 };
 
 const CONTAINER: Record<string, string> = {
-  default: 'max-w-6xl mx-auto px-4',
-  wide: 'max-w-7xl mx-auto px-4',
-  narrow: 'max-w-3xl mx-auto px-4',
-  full: 'w-full',
+  default: 'max-w-7xl mx-auto px-6',
+  wide: 'max-w-[1400px] mx-auto px-6',
+  narrow: 'max-w-3xl mx-auto px-6',
+  full: 'w-full px-6',
 };
 
 export function SectionRenderer({ section }: { section: SnapshotSection }) {
@@ -43,6 +43,17 @@ export function SectionRenderer({ section }: { section: SnapshotSection }) {
       <div className="py-8 text-center text-gray-400 text-sm">
         Unbekannter Sektionstyp: {section.type}
       </div>
+    );
+  }
+
+  // Hero and CTA band are full-bleed — skip spacing/container
+  const isFullBleed = section.type === 'hero';
+
+  if (isFullBleed) {
+    return (
+      <section id={section.anchorId ?? undefined}>
+        <Component data={section.data} variant={section.variant} />
+      </section>
     );
   }
 

@@ -1,7 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Phone } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ArrowRight, Shield, Phone, Star, CheckCircle } from 'lucide-react';
+import { Spotlight } from '@/components/ui/spotlight';
+import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
+import { cn } from '@/lib/utils';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -10,70 +13,107 @@ export function HeroSection({ data }: Props) {
   const subline = (data.subline as string) || '';
   const primaryCta = data.primaryCta as { label: string; href: string } | undefined;
   const secondaryCta = data.secondaryCta as { label: string; href: string } | undefined;
+  const { scrollY } = useScroll();
+  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const y = useTransform(scrollY, [0, 400], [0, 100]);
 
   return (
-    <div className="relative min-h-[85vh] flex items-center overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-brand-dark via-brand-primary to-brand-secondary" />
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE0VjZoLTJWMGgtNHY2aC0ydjhoLTJ2LThoLTJWMGgtNHY2aC0ydjhoNFYyaDRWNmgydi04aDJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-50" />
-      {/* Decorative elements */}
-      <div className="absolute top-20 right-10 w-72 h-72 bg-brand-accent/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-brand-secondary/20 rounded-full blur-3xl" />
+    <div className="relative min-h-screen flex items-center overflow-hidden -mt-[72px] pt-[72px]">
+      {/* Background layers */}
+      <div className="absolute inset-0 bg-hero-gradient" />
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE0VjZoLTJWMGgtNHY2aC0ydjhoLTJ2LThoLTJWMGgtNHY2aC0ydjhoNFYyaDRWNmgydi04aDJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-40" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 w-full">
-        <div className="max-w-3xl">
+      {/* Spotlight effect */}
+      <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="rgba(46, 134, 193, 0.15)" />
+
+      {/* Gradient orbs */}
+      <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-brand-accent/8 rounded-full blur-[120px] animate-pulse-slow" />
+      <div className="absolute bottom-0 -left-20 w-[500px] h-[500px] bg-brand-secondary/15 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-primary/5 rounded-full blur-[150px]" />
+
+      {/* Noise texture overlay */}
+      <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
+
+      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20 lg:py-0">
+        <div className="max-w-4xl">
           {/* Badge */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 text-sm text-white/90 mb-8"
+            className="inline-flex items-center gap-2.5 bg-white/[0.07] backdrop-blur-md border border-white/[0.12] rounded-full px-5 py-2.5 text-sm text-white/90 mb-8"
           >
-            <Shield size={16} className="text-brand-accent" />
-            <span>Zertifizierter Meisterbetrieb seit 1987</span>
+            <Shield size={15} className="text-brand-accent" />
+            <span className="font-medium">Zertifizierter Meisterbetrieb seit 1987</span>
+            <div className="flex -space-x-0.5 ml-2">
+              {[1,2,3,4,5].map(i => <Star key={i} size={12} className="fill-brand-accent text-brand-accent" />)}
+            </div>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] text-white mb-6 tracking-tight"
-          >
-            {headline}
-          </motion.h1>
+          {/* Headline with text generate effect */}
+          <TextGenerateEffect
+            words={headline}
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white !leading-[1.02]"
+            duration={0.6}
+          />
 
           {subline && (
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-lg sm:text-xl text-white/80 leading-relaxed mb-10 max-w-2xl"
+              transition={{ duration: 0.7, delay: 0.8 }}
+              className="text-lg sm:text-xl text-white/60 leading-relaxed mb-12 max-w-2xl mt-8"
             >
               {subline}
             </motion.p>
           )}
 
+          {/* CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4"
+            transition={{ duration: 0.6, delay: 1.0 }}
+            className="flex flex-col sm:flex-row gap-4 mb-16"
           >
             {primaryCta?.label && (
-              <a href={primaryCta.href} className="btn-primary text-base group">
-                {primaryCta.label}
-                <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+              <a
+                href={primaryCta.href}
+                className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-full bg-brand-accent px-8 py-4 font-semibold text-gray-900 transition-all duration-300 hover:shadow-glow-accent hover:-translate-y-0.5 text-base"
+              >
+                <span className="relative z-10 flex items-center gap-2.5">
+                  {primaryCta.label}
+                  <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
+                <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.3),transparent)] bg-[length:200%_100%]" />
               </a>
             )}
             {secondaryCta?.label && (
-              <a href={secondaryCta.href} className="btn-secondary text-base group">
+              <a href={secondaryCta.href} className="btn-secondary group !rounded-full">
                 <Phone size={18} />
                 {secondaryCta.label}
               </a>
             )}
           </motion.div>
+
+          {/* Trust indicators */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1.3 }}
+            className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-white/40"
+          >
+            {['Kostenlose Beratung', '24h Notdienst', '10 Jahre Garantie'].map((item, i) => (
+              <span key={i} className="flex items-center gap-2">
+                <CheckCircle size={14} className="text-brand-accent/70" />
+                {item}
+              </span>
+            ))}
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
+
+      {/* Bottom gradient fade into next section */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
     </div>
   );
 }

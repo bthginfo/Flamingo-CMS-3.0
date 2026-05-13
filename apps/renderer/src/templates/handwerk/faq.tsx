@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
-import { AnimateOnScroll, StaggerOnScroll, fadeUp } from '@/components/animate';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { ChevronDown, HelpCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -11,19 +11,36 @@ export function FaqSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const items = (data.items as { question: string; answer: string }[]) || [];
   const expandFirst = data.expandFirst !== false;
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <div className="bg-surface rounded-3xl p-8 sm:p-12 lg:p-16">
-      <AnimateOnScroll className="text-center mb-12">
+    <div ref={ref} className="max-w-4xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.6 }}
+        className="text-center mb-14"
+      >
+        <div className="section-badge">
+          <HelpCircle size={14} />
+          <span>Häufige Fragen</span>
+        </div>
         {headline && <h2 className="section-headline">{headline}</h2>}
-      </AnimateOnScroll>
-      <StaggerOnScroll className="max-w-3xl mx-auto space-y-3">
+      </motion.div>
+
+      <div className="space-y-3">
         {items.map((item, i) => (
-          <AnimateOnScroll key={i} variants={fadeUp}>
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.4, delay: i * 0.08 }}
+          >
             <FaqItem question={item.question} answer={item.answer} defaultOpen={expandFirst && i === 0} />
-          </AnimateOnScroll>
+          </motion.div>
         ))}
-      </StaggerOnScroll>
+      </div>
     </div>
   );
 }
@@ -31,18 +48,21 @@ export function FaqSection({ data }: Props) {
 function FaqItem({ question, answer, defaultOpen }: { question: string; answer: string; defaultOpen: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+    <div className={cn(
+      'rounded-2xl border transition-all duration-300 overflow-hidden',
+      open ? 'bg-white shadow-lg border-gray-200' : 'bg-white/50 border-gray-100 hover:bg-white hover:shadow-sm',
+    )}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-full text-left px-6 py-5 font-display font-semibold text-[15px] flex justify-between items-center gap-4 hover:bg-gray-50/50 transition-colors"
+        className="w-full text-left px-7 py-6 font-display font-semibold text-[16px] flex justify-between items-center gap-4 transition-colors"
       >
-        <span>{question}</span>
+        <span className="text-gray-900">{question}</span>
         <motion.span
           animate={{ rotate: open ? 180 : 0 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="shrink-0 text-gray-400"
+          className={cn('shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors', open ? 'bg-brand-primary text-white' : 'bg-gray-100 text-gray-400')}
         >
-          <ChevronDown size={20} />
+          <ChevronDown size={16} />
         </motion.span>
       </button>
       <AnimatePresence initial={false}>
@@ -53,7 +73,7 @@ function FaqItem({ question, answer, defaultOpen }: { question: string; answer: 
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="px-6 pb-5 text-gray-500 leading-relaxed text-[15px] border-t border-gray-50 pt-4">
+            <div className="px-7 pb-6 text-slate-500 leading-relaxed text-[15px]">
               {answer}
             </div>
           </motion.div>

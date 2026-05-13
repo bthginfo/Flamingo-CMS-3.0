@@ -4,12 +4,14 @@
 
 :root {
   --brand-primary: #1a5276;
+  --brand-primary-rgb: 26 82 118;
   --brand-secondary: #2e86c1;
   --brand-accent: #f39c12;
   --brand-dark: #0d2137;
-  --text-primary: #1a1a2e;
-  --text-secondary: #4a5568;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
   --surface: #f8fafc;
+  --radius: 0.75rem;
 }
 
 html {
@@ -21,34 +23,113 @@ html {
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
   }
 
   ::selection {
     background-color: var(--brand-accent);
     color: #1a1a1a;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
 }
 
 @layer components {
   .section-headline {
-    @apply text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.1];
+    @apply font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] text-center;
   }
 
   .section-subline {
-    @apply text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto mt-4;
+    @apply text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto mt-5 text-center leading-relaxed;
+  }
+
+  .section-badge {
+    @apply inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-6;
+    background: rgba(26, 82, 118, 0.05);
+    border: 1px solid rgba(26, 82, 118, 0.1);
+    color: var(--brand-primary);
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 font-semibold px-7 py-3.5 rounded-xl text-white transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5;
+    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 text-base;
     background: var(--brand-accent);
     color: #1a1a1a;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 font-semibold px-7 py-3.5 rounded-xl border-2 border-white/30 text-white transition-all duration-300 hover:bg-white/10 hover:border-white/60;
+    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 rounded-xl border-2 border-white/20 text-white transition-all duration-300 hover:bg-white/10 hover:border-white/40 text-base backdrop-blur-sm;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 rounded-xl border-2 border-gray-200 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:border-gray-300 text-base;
   }
 
   .card-hover {
-    @apply bg-white rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-gray-200;
+    @apply bg-white rounded-2xl border border-gray-100/80 shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1 hover:border-gray-200;
+  }
+
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-lg;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-primary via-brand-secondary to-brand-primary;
+  }
+}
+
+/* Aceternity: Spotlight animation */
+@keyframes spotlight {
+  0% {
+    opacity: 0;
+    transform: translate(-72%, -62%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -40%) scale(1);
+  }
+}
+
+/* Infinite scroll for testimonials */
+@keyframes scroll {
+  to {
+    transform: translate(calc(-50% - 0.75rem));
+  }
+}
+
+/* Shimmer for buttons */
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* Slow pulse for gradient mesh */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@layer utilities {
+  .animate-spotlight {
+    animation: spotlight 2s ease 0.75s 1 forwards;
+  }
+  .animate-scroll {
+    animation: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
+  }
+  .animate-shimmer {
+    animation: shimmer 3s linear infinite;
+  }
+  .animate-pulse-slow {
+    animation: pulse-slow 8s ease-in-out infinite;
   }
 }
