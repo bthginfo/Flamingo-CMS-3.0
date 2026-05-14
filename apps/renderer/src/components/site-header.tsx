@@ -7,9 +7,9 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-
 import { Menu, X, Phone, Mail, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-import type { NavItem, BrandData, ContactData } from '@/lib/tenant-data';
+import type { NavItem, NavCta, BrandData, ContactData } from '@/lib/tenant-data';
 
-export function SiteHeader({ navItems, brand, contact, darkBg = true }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean }) {
+export function SiteHeader({ navItems, brand, contact, darkBg = true, cta }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -94,7 +94,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true }: { navIte
                 </Link>
               ))}
               <Link
-                href="/kontakt"
+                href={cta?.href || '/kontakt'}
                 className={cn(
                   'inline-flex items-center gap-2 text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-300',
                   (scrolled || !darkBg)
@@ -102,7 +102,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true }: { navIte
                     : 'bg-white/10 text-white border border-white/25 hover:bg-white/20 backdrop-blur-sm',
                 )}
               >
-                Termin vereinbaren
+                {cta?.label || 'Termin vereinbaren'}
                 <ArrowRight size={14} />
               </Link>
             </nav>
@@ -168,11 +168,11 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true }: { navIte
                   className="mt-6"
                 >
                   <Link
-                    href="/kontakt"
+                    href={cta?.href || '/kontakt'}
                     onClick={() => setMobileOpen(false)}
                     className="inline-flex items-center justify-center gap-2 w-full text-center bg-brand-primary text-white font-semibold py-4 rounded-full text-lg hover:bg-brand-dark transition"
                   >
-                    Termin vereinbaren <ArrowRight size={18} />
+                    {cta?.label || 'Termin vereinbaren'} <ArrowRight size={18} />
                   </Link>
                 </motion.div>
               </nav>

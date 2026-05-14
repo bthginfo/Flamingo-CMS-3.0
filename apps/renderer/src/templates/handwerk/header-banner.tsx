@@ -1,0 +1,37 @@
+'use client';
+
+import { X } from 'lucide-react';
+import { useState } from 'react';
+
+type Props = { data: Record<string, unknown>; variant?: string | null };
+
+export function HeaderBannerSection({ data }: Props) {
+  const [dismissed, setDismissed] = useState(false);
+  const items = (data.items as { text: string; link?: string }[]) || [];
+  const style = (data.style as string) || 'neutral';
+
+  if (dismissed || items.length === 0) return null;
+
+  const bgClass = style === 'warning' ? 'bg-amber-500 text-amber-950'
+    : style === 'info' ? 'bg-blue-600 text-white'
+    : 'bg-brand-dark text-white/80';
+
+  return (
+    <div className={`relative ${bgClass} text-xs py-2 text-center`}>
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-center gap-6">
+        {items.map((item, i) => (
+          <span key={i}>
+            {item.link ? (
+              <a href={item.link} className="hover:underline font-medium">{item.text}</a>
+            ) : (
+              <span>{item.text}</span>
+            )}
+          </span>
+        ))}
+      </div>
+      <button onClick={() => setDismissed(true)} className="absolute right-3 top-1/2 -translate-y-1/2 opacity-60 hover:opacity-100">
+        <X size={14} />
+      </button>
+    </div>
+  );
+}

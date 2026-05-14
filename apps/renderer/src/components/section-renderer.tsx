@@ -17,6 +17,7 @@ import { StatsSection } from '@/templates/handwerk/stats';
 import { LogoCloudSection } from '@/templates/handwerk/logo-cloud';
 import { GalleryGridSection } from '@/templates/handwerk/gallery-grid';
 import { RichTextSection } from '@/templates/handwerk/rich-text';
+import { HeaderBannerSection } from '@/templates/handwerk/header-banner';
 
 const SECTION_COMPONENTS: Record<string, React.FC<{ data: Record<string, unknown>; variant?: string | null }>> = {
   hero: HeroSection,
@@ -37,6 +38,7 @@ const SECTION_COMPONENTS: Record<string, React.FC<{ data: Record<string, unknown
   logoCloud: LogoCloudSection,
   galleryGrid: GalleryGridSection,
   richText: RichTextSection,
+  headerBanner: HeaderBannerSection,
 };
 
 const SPACING: Record<string, string> = {

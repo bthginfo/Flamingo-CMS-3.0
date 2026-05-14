@@ -739,6 +739,32 @@ function RichTextEditor({ data, onSave }: EditorProps) {
   );
 }
 
+// ─── Header Banner Editor ────────────────────────────────────────
+function HeaderBannerEditor({ data, onSave }: EditorProps) {
+  const [items, setItems] = useState<{ text: string; link: string }[]>(
+    (data.items as { text: string; link?: string }[])?.map(i => ({ text: i.text, link: i.link || '' })) || []
+  );
+  const [style, setStyle] = useState((data.style as string) || 'neutral');
+
+  return (
+    <div className="space-y-3">
+      <SelectField label="Stil" value={style} options={['neutral', 'info', 'warning']} onChange={setStyle} />
+      <label className="text-xs font-medium text-zinc-600">Einträge</label>
+      {items.map((item, i) => (
+        <div key={i} className="flex gap-2 items-start">
+          <div className="flex-1 space-y-1">
+            <input className="admin-input text-xs w-full" value={item.text} onChange={e => setItems(items.map((t, idx) => idx === i ? { ...t, text: e.target.value } : t))} placeholder="Text" />
+            <input className="admin-input text-xs w-full" value={item.link} onChange={e => setItems(items.map((t, idx) => idx === i ? { ...t, link: e.target.value } : t))} placeholder="Link (optional)" />
+          </div>
+          <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600 text-xs mt-1">×</button>
+        </div>
+      ))}
+      <button onClick={() => setItems([...items, { text: '', link: '' }])} className="text-xs text-blue-600 hover:underline">+ Eintrag</button>
+      <button onClick={() => onSave({ items: items.filter(i => i.text.trim()).map(i => ({ text: i.text, ...(i.link.trim() ? { link: i.link } : {}) })), style })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
+    </div>
+  );
+}
+
 // ─── Editor registry ─────────────────────────────────────────────
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
@@ -759,4 +785,5 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   portfolio: PortfolioEditor,
   team: TeamEditor,
   richText: RichTextEditor,
+  headerBanner: HeaderBannerEditor,
 };

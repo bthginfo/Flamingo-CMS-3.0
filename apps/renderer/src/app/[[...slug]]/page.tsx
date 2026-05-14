@@ -74,7 +74,7 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   if (!result) notFound();
 
   const { tenantId, snapshot, page } = result;
-  const [navItems, footerData, { brand, contact, socialLinks }, tenantStyle] = await Promise.all([
+  const [navData, footerData, { brand, contact, socialLinks }, tenantStyle] = await Promise.all([
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
@@ -105,7 +105,7 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   return (
     <div style={styleCssVars as React.CSSProperties}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={firstSectionIsHero} />
+      <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} />
       <main>
         {visibleSections.map((section) => (
           <SectionRenderer key={section.id} section={section} collections={snapshot.collections} />
