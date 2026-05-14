@@ -12,7 +12,7 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/admin/:path*',
+        source: '/:path*',
         headers: [
           {
             key: 'X-Frame-Options',
