@@ -1,14 +1,66 @@
 'use client';
 
-import { useState } from 'react';
-import { Save } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Save, Check } from 'lucide-react';
 import { ImageUploadField } from '@/components/image-upload-field';
 import { LinkField } from '@/components/link-field';
 import { IconPickerField } from '@/components/icon-picker-field';
 
-// Generic section data editor that renders a JSON editor per section type.
-// Future improvement: schema-driven auto-form from Zod schemas.
+// Auto-save hook: debounces saves, shows status
+function useAutoSave(data: Record<string, unknown>, onSave: (data: Record<string, unknown>) => void, delayMs = 1500) {
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const initialRef = useRef(data);
+  const isFirstRender = useRef(true);
 
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    // Skip if data hasn't actually changed from what we loaded
+    if (JSON.stringify(data) === JSON.stringify(initialRef.current)) return;
+
+    setStatus('idle');
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      setStatus('saving');
+      onSave(data);
+      initialRef.current = data;
+      setStatus('saved');
+      setTimeout(() => setStatus('idle'), 2000);
+    }, delayMs);
+
+    return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
+  }, [JSON.stringify(data)]);
+
+  const saveNow = useCallback(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (JSON.stringify(data) !== JSON.stringify(initialRef.current)) {
+      setStatus('saving');
+      onSave(data);
+      initialRef.current = data;
+      setStatus('saved');
+      setTimeout(() => setStatus('idle'), 2000);
+    }
+  }, [data, onSave]);
+
+  return { status, saveNow };
+}
+
+function SaveIndicator({ status, onSave }: { status: 'idle' | 'saving' | 'saved'; onSave: () => void }) {
+  return (
+    <div className="flex items-center gap-2 mt-3">
+      <button onClick={onSave} className="admin-btn-primary text-xs flex items-center gap-1">
+        <Save size={12} /> Speichern
+      </button>
+      {status === 'saving' && <span className="text-xs text-blue-500">Wird gespeichert...</span>}
+      {status === 'saved' && <span className="text-xs text-green-600 flex items-center gap-1"><Check size={12} /> Gespeichert</span>}
+    </div>
+  );
+}
+
+// Generic section data editor that renders a JSON editor per section type.
 export function SectionDataEditor({ type, data, onSave }: { type: string; data: Record<string, unknown>; onSave: (data: Record<string, unknown>) => void }) {
   const Editor = EDITORS[type] ?? GenericJsonEditor;
   return <Editor data={data} onSave={onSave} />;
@@ -56,6 +108,7 @@ function HeroEditor({ data, onSave }: EditorProps) {
     primaryCta: (data.primaryCta as { label: string; href: string }) || { label: '', href: '' },
     secondaryCta: (data.secondaryCta as { label: string; href: string }) || { label: '', href: '' },
   });
+  const { status, saveNow } = useAutoSave(d, onSave);
 
   return (
     <div className="space-y-3">
@@ -82,7 +135,7 @@ function HeroEditor({ data, onSave }: EditorProps) {
         <Field label="Sekundärer CTA Label" value={d.secondaryCta.label} onChange={(v) => setD({ ...d, secondaryCta: { ...d.secondaryCta, label: v } })} />
         <LinkField label="Sekundärer CTA Link" value={d.secondaryCta.href} onChange={(v) => setD({ ...d, secondaryCta: { ...d.secondaryCta, href: v } })} />
       </div>
-      <button onClick={() => onSave(d)} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
+      <SaveIndicator status={status} onSave={saveNow} />
     </div>
   );
 }
