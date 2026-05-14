@@ -2,6 +2,7 @@ import { getDb } from './db';
 import { tenants, tenantDomains, pages, pageSections, collections, collectionItems } from '@flamingo/db';
 import { eq, and, asc } from 'drizzle-orm';
 import { headers } from 'next/headers';
+import { unstable_cache } from 'next/cache';
 
 export type SnapshotPage = {
   id: string;
@@ -63,9 +64,14 @@ export async function resolveTenant(): Promise<string | null> {
   return tenant?.id ?? null;
 }
 
-/** Get live data for the tenant directly from pages/page_sections tables. */
+/** Get live data for the tenant (cached for public frontend, invalidated on publish). */
 export async function getActiveSnapshot(tenantId: string): Promise<Snapshot | null> {
-  return getDraftSnapshot(tenantId);
+  const cached = unstable_cache(
+    async () => getDraftSnapshot(tenantId),
+    [`snapshot-${tenantId}`],
+    { revalidate: 60, tags: [`tenant-${tenantId}`] }
+  );
+  return cached();
 }
 
 /** Build a live snapshot from pages/page_sections/collections tables. */
