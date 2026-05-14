@@ -60,7 +60,7 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   if (!result) notFound();
 
   const { tenantId, snapshot, page } = result;
-  const [navItems, footerData, { brand, contact }] = await Promise.all([
+  const [navItems, footerData, { brand, contact, socialLinks }] = await Promise.all([
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
@@ -77,7 +77,7 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
           <SectionRenderer key={section.id} section={section} collections={snapshot.collections} />
         ))}
       </main>
-      <SiteFooter footer={footerData} brand={brand} />
+      <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />
     </>
   );
 }

@@ -5,7 +5,8 @@ import { eq, and } from 'drizzle-orm';
 export type NavItem = { label: string; href: string; type?: string };
 export type FooterColumn = { title: string; items: { text: string; href?: string }[] };
 export type FooterData = { columns: FooterColumn[]; legalLinks: { label: string; href: string }[]; cta?: { label: string; href: string } };
-export type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string };
+export type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string };
+export type SocialLinks = Record<string, string>;
 export type ContactData = { phone?: string; email?: string; address?: string };
 
 export async function getTenantNav(tenantId: string): Promise<NavItem[]> {
@@ -21,10 +22,10 @@ export async function getTenantFooter(tenantId: string): Promise<FooterData | nu
   return { columns: f.columns as FooterColumn[], legalLinks: f.legalLinks as { label: string; href: string }[], cta: f.cta as { label: string; href: string } | undefined };
 }
 
-export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandData; contact: ContactData }> {
+export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandData; contact: ContactData; socialLinks: SocialLinks }> {
   const db = getDb();
   const [s] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
-  return { brand: (s?.brand as BrandData) || {}, contact: (s?.contact as ContactData) || {} };
+  return { brand: (s?.brand as BrandData) || {}, contact: (s?.contact as ContactData) || {}, socialLinks: (s?.socialLinks as SocialLinks) || {} };
 }
 
 export type SeoGlobalData = {

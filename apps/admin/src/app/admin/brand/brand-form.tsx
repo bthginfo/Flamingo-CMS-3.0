@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { saveBrandSettings } from '../settings-actions';
 import { toast } from 'sonner';
+import { ImageUploadField } from '@/components/image-upload-field';
 
-type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string };
+type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string };
 
 export function BrandForm({ initial }: { initial: BrandData }) {
   const [form, setForm] = useState({
@@ -13,6 +14,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     primaryColor: initial.primaryColor || '#1a5276',
     secondaryColor: initial.secondaryColor || '#2e86c1',
     accentColor: initial.accentColor || '#f39c12',
+    logoUrl: initial.logoUrl || '',
   });
   const [saving, setSaving] = useState(false);
 
@@ -41,6 +43,11 @@ export function BrandForm({ initial }: { initial: BrandData }) {
           <label className="admin-label">Slogan / Tagline</label>
           <input className="admin-input" value={form.tagline} onChange={e => setForm(f => ({ ...f, tagline: e.target.value }))} placeholder="z.B. Ihr Experte für Heizung & Sanitär" />
         </div>
+        <ImageUploadField
+          label="Logo"
+          value={form.logoUrl}
+          onChange={(url) => setForm(f => ({ ...f, logoUrl: url }))}
+        />
       </div>
 
       <div className="admin-card p-6 space-y-5">

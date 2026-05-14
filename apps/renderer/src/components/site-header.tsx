@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Menu, X, Phone, Mail, ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import type { NavItem, BrandData, ContactData } from '@/lib/tenant-data';
 
@@ -71,8 +72,12 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true }: { navIte
             : 'bg-transparent',
         )}>
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-[72px]">
-            <Link href="/" className="font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || !darkBg) ? brand.primaryColor : 'white' }}>
-              {brand.companyName || 'Firmenname'}
+            <Link href="/" className="flex items-center gap-2 font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || !darkBg) ? brand.primaryColor : 'white' }}>
+              {brand.logoUrl ? (
+                <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto object-contain" />
+              ) : (
+                brand.companyName || 'Firmenname'
+              )}
             </Link>
 
             <nav className="hidden md:flex items-center gap-8">
@@ -126,8 +131,12 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true }: { navIte
             >
               {/* Close button */}
               <div className="flex items-center justify-between h-[72px] px-6">
-                <Link href="/" className="font-display font-bold text-xl tracking-tight" style={{ color: brand.primaryColor }}>
-                  {brand.companyName || 'Firmenname'}
+                <Link href="/" className="flex items-center gap-2 font-display font-bold text-xl tracking-tight" style={{ color: brand.primaryColor }}>
+                  {brand.logoUrl ? (
+                    <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto object-contain" />
+                  ) : (
+                    brand.companyName || 'Firmenname'
+                  )}
                 </Link>
                 <button onClick={() => setMobileOpen(false)} className="p-2 rounded-lg text-gray-700 hover:bg-gray-100">
                   <X size={24} />
