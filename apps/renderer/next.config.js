@@ -15,12 +15,8 @@ const nextConfig = {
         source: '/:path*',
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'ALLOW-FROM https://www.flamingomedia.online https://flamingomedia.online',
-          },
-          {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://www.flamingomedia.online https://flamingomedia.online http://localhost:3000",
+            value: "frame-ancestors 'self' https://www.flamingomedia.online https://flamingomedia.online https://flamingo-cms-3-0.vercel.app https://*.vercel.app http://localhost:*",
           },
         ],
       },
