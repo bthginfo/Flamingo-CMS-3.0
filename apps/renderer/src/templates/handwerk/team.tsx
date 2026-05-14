@@ -29,6 +29,8 @@ export function TeamSection({ data }: Props) {
   const storyHeadline = (data.storyHeadline as string) || '';
   const storyText = (data.storyText as string) || '';
   const storyImage = (data.storyImage as string) || '';
+  const valuesHeadline = (data.valuesHeadline as string) || 'Unsere Werte';
+  const membersHeadline = (data.membersHeadline as string) || 'Unser Team';
   const members = (data.members as TeamMember[]) || [];
   const values = (data.values as ValueItem[]) || [];
   const stats = (data.stats as { value: string; label: string }[]) || [];
@@ -106,7 +108,7 @@ export function TeamSection({ data }: Props) {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="mb-24"
         >
-          <h3 className="font-display font-bold text-2xl text-center mb-12 text-gray-900">Unsere Werte</h3>
+          <h3 className="font-display font-bold text-2xl text-center mb-12 text-gray-900">{valuesHeadline}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {values.map((val, i) => (
               <div key={i} className="p-8 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 group">
@@ -134,7 +136,7 @@ export function TeamSection({ data }: Props) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <h3 className="font-display font-bold text-2xl text-center mb-12 text-gray-900">Unser Team</h3>
+          <h3 className="font-display font-bold text-2xl text-center mb-12 text-gray-900">{membersHeadline}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {members.map((m, i) => (
               <div key={i} className="text-center group">

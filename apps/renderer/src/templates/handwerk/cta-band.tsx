@@ -9,6 +9,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null };
 export function CtaBandSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
+  const badgeText = (data.badgeText as string) || '';
   const cta = data.ctaPrimary as { label: string; href: string } | undefined;
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
@@ -47,7 +48,7 @@ export function CtaBandSection({ data }: Props) {
           className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 text-sm mb-8"
         >
           <Sparkles size={14} className="text-brand-accent" />
-          <span>Jetzt Termin sichern</span>
+          <span>{badgeText || 'Jetzt Termin sichern'}</span>
         </motion.div>
 
         <motion.h2

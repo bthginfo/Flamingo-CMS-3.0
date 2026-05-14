@@ -9,6 +9,9 @@ type Props = { data: Record<string, unknown>; variant?: string | null };
 
 export function TestimonialsSection({ data }: Props) {
   const headline = (data.headline as string) || '';
+  const badgeText = (data.badgeText as string) || 'Kundenstimmen';
+  const ratingValue = (data.ratingValue as string) || '';
+  const ratingCount = (data.ratingCount as string) || '';
   const items = (data.items as { quote: string; name: string; context?: string; rating?: number }[]) || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
@@ -29,15 +32,17 @@ export function TestimonialsSection({ data }: Props) {
         className="text-center mb-14"
       >
         <div className="section-badge">
-          <span>Kundenstimmen</span>
+          <span>{badgeText}</span>
         </div>
         {headline && <h2 className="section-headline">{headline}</h2>}
-        <div className="flex items-center justify-center gap-2 mt-5">
-          <div className="flex gap-0.5">
-            {[1,2,3,4,5].map(n => <Star key={n} size={18} className="fill-yellow-400 text-yellow-400" />)}
+        {(ratingValue || ratingCount) && (
+          <div className="flex items-center justify-center gap-2 mt-5">
+            <div className="flex gap-0.5">
+              {[1,2,3,4,5].map(n => <Star key={n} size={18} className="fill-yellow-400 text-yellow-400" />)}
+            </div>
+            <span className="text-slate-500 text-sm ml-2 font-medium">{ratingValue && `${ratingValue} / 5`}{ratingCount && ` aus ${ratingCount}+ Bewertungen`}</span>
           </div>
-          <span className="text-slate-500 text-sm ml-2 font-medium">4.9 / 5 aus {items.length * 28}+ Bewertungen</span>
-        </div>
+        )}
       </motion.div>
 
       <motion.div

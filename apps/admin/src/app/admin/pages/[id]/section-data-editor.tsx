@@ -124,19 +124,19 @@ function CtaBandEditor({ data, onSave }: EditorProps) {
   const [d, setD] = useState({
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
+    badgeText: (data.badgeText as string) || '',
     ctaPrimary: (data.ctaPrimary as { label: string; href: string }) || { label: '', href: '' },
-    background: (data.background as string) || 'surface',
   });
 
   return (
     <div className="space-y-3">
+      <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <div className="grid grid-cols-2 gap-3">
         <Field label="CTA Label" value={d.ctaPrimary.label} onChange={(v) => setD({ ...d, ctaPrimary: { ...d.ctaPrimary, label: v } })} />
         <LinkField label="CTA Link" value={d.ctaPrimary.href} onChange={(v) => setD({ ...d, ctaPrimary: { ...d.ctaPrimary, href: v } })} />
       </div>
-      <SelectField label="Hintergrund" value={d.background} options={['surface', 'gradient', 'image']} onChange={(v) => setD({ ...d, background: v })} />
       <button onClick={() => onSave(d)} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
     </div>
   );
@@ -145,6 +145,9 @@ function CtaBandEditor({ data, onSave }: EditorProps) {
 // ─── Testimonials Editor ────────────────────────────────────────
 function TestimonialsEditor({ data, onSave }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [badgeText, setBadgeText] = useState((data.badgeText as string) || 'Kundenstimmen');
+  const [ratingValue, setRatingValue] = useState((data.ratingValue as string) || '');
+  const [ratingCount, setRatingCount] = useState((data.ratingCount as string) || '');
   const [items, setItems] = useState<{ quote: string; name: string; context: string; rating: number }[]>(
     (data.items as { quote: string; name: string; context: string; rating: number }[]) || []
   );
@@ -154,7 +157,12 @@ function TestimonialsEditor({ data, onSave }: EditorProps) {
 
   return (
     <div className="space-y-3">
+      <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       <Field label="Headline" value={headline} onChange={setHeadline} />
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Bewertungsdurchschnitt (z.B. 4.9)" value={ratingValue} onChange={setRatingValue} />
+        <Field label="Anzahl Bewertungen (z.B. 150)" value={ratingCount} onChange={setRatingCount} />
+      </div>
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -167,7 +175,7 @@ function TestimonialsEditor({ data, onSave }: EditorProps) {
       ))}
       <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Bewertung hinzufügen</button>
       <div>
-        <button onClick={() => onSave({ headline, items, layout: 'cards' })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
+        <button onClick={() => onSave({ headline, badgeText, ratingValue, ratingCount, items, layout: 'cards' })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
       </div>
     </div>
   );
@@ -639,6 +647,8 @@ function TeamEditor({ data, onSave }: EditorProps) {
   const [storyHeadline, setStoryHeadline] = useState((data.storyHeadline as string) || '');
   const [storyText, setStoryText] = useState((data.storyText as string) || '');
   const [storyImage, setStoryImage] = useState((data.storyImage as string) || '');
+  const [valuesHeadline, setValuesHeadline] = useState((data.valuesHeadline as string) || 'Unsere Werte');
+  const [membersHeadline, setMembersHeadline] = useState((data.membersHeadline as string) || 'Unser Team');
   const [members, setMembers] = useState<{ name: string; role: string; image: string; bio: string }[]>(
     ((data.members as Record<string, unknown>[]) || []).map(m => ({
       name: (m.name as string) || '', role: (m.role as string) || '', image: (m.image as string) || '', bio: (m.bio as string) || '',
@@ -678,6 +688,7 @@ function TeamEditor({ data, onSave }: EditorProps) {
       <button onClick={() => setTeamStats([...teamStats, { value: '', label: '' }])} className="text-sm text-blue-600 hover:underline">+ Statistik</button>
 
       <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Werte</h4>
+      <Field label="Werte-Überschrift" value={valuesHeadline} onChange={setValuesHeadline} />
       {values.map((v, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -698,6 +709,7 @@ function TeamEditor({ data, onSave }: EditorProps) {
       <button onClick={() => setValues([...values, { icon: '', title: '', text: '', image: '', mediaType: 'icon' }])} className="text-sm text-blue-600 hover:underline">+ Wert</button>
 
       <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Team-Mitglieder</h4>
+      <Field label="Team-Überschrift" value={membersHeadline} onChange={setMembersHeadline} />
       {members.map((m, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setMembers(members.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -711,7 +723,7 @@ function TeamEditor({ data, onSave }: EditorProps) {
       ))}
       <button onClick={() => setMembers([...members, { name: '', role: '', image: '', bio: '' }])} className="text-sm text-blue-600 hover:underline">+ Mitglied</button>
 
-      <div><button onClick={() => onSave({ headline, subline, badgeText, storyHeadline, storyText, storyImage, members, stats: teamStats, values })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
+      <div><button onClick={() => onSave({ headline, subline, badgeText, storyHeadline, storyText, storyImage, valuesHeadline, membersHeadline, members, stats: teamStats, values })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
     </div>
   );
 }
