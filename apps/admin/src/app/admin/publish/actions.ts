@@ -7,6 +7,7 @@ import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import crypto from 'crypto';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 
 async function requireSession() {
   const session = await getSession();
@@ -38,6 +39,10 @@ async function collectSnapshot(tenantId: string) {
 
 /** Publish: create a new snapshot version and mark it active. */
 export async function publishAction() {
+  const cookieStore = await cookies();
+  if (cookieStore.get('flamingo_demo')?.value === '1') {
+    return { error: 'Veröffentlichung ist im Demo-Modus deaktiviert.' };
+  }
   const session = await requireSession();
   const db = getDb();
   const tenantId = session.tenantId;

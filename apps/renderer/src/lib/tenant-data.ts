@@ -1,6 +1,6 @@
 import { getDb } from '@/lib/db';
-import { navigation, footer, globalSettings } from '@flamingo/db';
-import { eq } from 'drizzle-orm';
+import { navigation, footer, globalSettings, seoGlobal, seoPage } from '@flamingo/db';
+import { eq, and } from 'drizzle-orm';
 
 export type NavItem = { label: string; href: string; type?: string };
 export type FooterColumn = { title: string; items: { text: string; href?: string }[] };
@@ -25,4 +25,50 @@ export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandDa
   const db = getDb();
   const [s] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
   return { brand: (s?.brand as BrandData) || {}, contact: (s?.contact as ContactData) || {} };
+}
+
+export type SeoGlobalData = {
+  defaultTitle: string | null;
+  titleTemplate: string | null;
+  defaultDescription: string | null;
+  defaultOgImage: string | null;
+  canonicalBase: string | null;
+  locale: string;
+  robots: string;
+};
+
+export type SeoPageData = {
+  metaTitle: string | null;
+  metaDescription: string | null;
+  ogImage: string | null;
+  canonical: string | null;
+  noindex: boolean;
+};
+
+export async function getTenantSeoGlobal(tenantId: string): Promise<SeoGlobalData | null> {
+  const db = getDb();
+  const [row] = await db.select().from(seoGlobal).where(eq(seoGlobal.tenantId, tenantId)).limit(1);
+  if (!row) return null;
+  return {
+    defaultTitle: row.defaultTitle,
+    titleTemplate: row.titleTemplate,
+    defaultDescription: row.defaultDescription,
+    defaultOgImage: row.defaultOgImage,
+    canonicalBase: row.canonicalBase,
+    locale: row.locale,
+    robots: row.robots,
+  };
+}
+
+export async function getTenantSeoPage(tenantId: string, pageId: string): Promise<SeoPageData | null> {
+  const db = getDb();
+  const [row] = await db.select().from(seoPage).where(and(eq(seoPage.tenantId, tenantId), eq(seoPage.pageId, pageId))).limit(1);
+  if (!row) return null;
+  return {
+    metaTitle: row.metaTitle,
+    metaDescription: row.metaDescription,
+    ogImage: row.ogImage,
+    canonical: row.canonical,
+    noindex: row.noindex,
+  };
 }

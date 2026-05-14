@@ -9,6 +9,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { updatePageAction, addSectionAction, deleteSectionAction, updateSectionAction, updateSectionMetaAction, reorderSectionsAction } from '../actions';
 import { toast } from 'sonner';
 import { SectionDataEditor } from './section-data-editor';
+import { PageSeoPanel } from './page-seo-panel';
 
 const SECTION_TYPES: { type: string; label: string; description: string }[] = [
   { type: 'hero', label: 'Hero', description: 'Hauptbanner der Seite' },
@@ -225,6 +226,9 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
 
   return (
     <div>
+      {/* SEO Panel */}
+      <PageSeoPanel pageId={page.id} />
+
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">
         <Link href="/admin/pages" className="text-gray-500 hover:text-gray-800"><ArrowLeft size={20} /></Link>
