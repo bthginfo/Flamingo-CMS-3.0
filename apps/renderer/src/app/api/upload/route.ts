@@ -3,14 +3,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  const body = (await request.json()) as HandleUploadBody;
+  // Clone before reading so handleUpload can also read the body
+  const body = (await request.clone().json()) as HandleUploadBody;
 
   try {
     const jsonResponse = await handleUpload({
       body,
       request,
       onBeforeGenerateToken: async (pathname) => {
-        // Auth check
         const session = await getSession();
         if (!session) throw new Error('Unauthorized');
 
@@ -21,15 +21,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
-        // This runs on Vercel after upload is complete
-        // We handle saving the record client-side after upload
+        // Runs on Vercel after upload completes
       },
     });
 
     return NextResponse.json(jsonResponse);
   } catch (error) {
+    const message = (error as Error).message;
+    console.error('Upload error:', message);
     return NextResponse.json(
-      { error: (error as Error).message },
+      { error: message },
       { status: 400 },
     );
   }
