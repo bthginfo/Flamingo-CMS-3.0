@@ -1,6 +1,6 @@
 import { getDb } from './db';
-import { publishedSnapshots, tenants, tenantDomains } from '@flamingo/db';
-import { eq, and } from 'drizzle-orm';
+import { publishedSnapshots, tenants, tenantDomains, pages, pageSections } from '@flamingo/db';
+import { eq, and, asc } from 'drizzle-orm';
 import { headers } from 'next/headers';
 
 export type SnapshotPage = {
@@ -72,4 +72,35 @@ export async function getActiveSnapshot(tenantId: string): Promise<Snapshot | nu
     .limit(1);
   if (!snap) return null;
   return snap.snapshot as unknown as Snapshot;
+}
+
+/** Build a live draft snapshot from page_sections (unpublished state). */
+export async function getDraftSnapshot(tenantId: string): Promise<Snapshot | null> {
+  const db = getDb();
+  const allPages = await db.select().from(pages).where(eq(pages.tenantId, tenantId)).orderBy(asc(pages.sortOrder));
+  if (allPages.length === 0) return null;
+
+  const allSections = await db.select().from(pageSections).where(eq(pageSections.tenantId, tenantId)).orderBy(asc(pageSections.sortOrder));
+
+  const snapshotPages: SnapshotPage[] = allPages.map(p => ({
+    id: p.id,
+    title: p.title,
+    slug: p.slug,
+    visible: p.visible,
+    sections: allSections
+      .filter(s => s.pageId === p.id)
+      .map(s => ({
+        id: s.id,
+        type: s.type,
+        variant: s.variant,
+        visible: s.visible,
+        container: s.container,
+        spacingTop: s.spacingTop,
+        spacingBottom: s.spacingBottom,
+        anchorId: s.anchorId,
+        data: s.data,
+      })),
+  }));
+
+  return { pages: snapshotPages, collections: [], generatedAt: new Date().toISOString() };
 }

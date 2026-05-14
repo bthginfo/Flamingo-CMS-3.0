@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, useEffect } from 'react';
+import { useState, useTransition, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, ExternalLink, Rocket } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
@@ -59,11 +59,11 @@ type Page = {
   type: string;
 };
 
-function SortableSection({ section, onDelete, onToggleVisible, onSaveData, onSaveMeta }: {
+function SortableSection({ section, onDelete, onToggleVisible, onChangeData, onSaveMeta }: {
   section: Section;
   onDelete: () => void;
   onToggleVisible: () => void;
-  onSaveData: (data: Record<string, unknown>) => void;
+  onChangeData: (data: Record<string, unknown>) => void;
   onSaveMeta: (meta: Record<string, unknown>) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -94,7 +94,7 @@ function SortableSection({ section, onDelete, onToggleVisible, onSaveData, onSav
       </div>
       {expanded && (
         <div className="p-4">
-          <SectionDataEditor type={section.type} data={section.data} onSave={onSaveData} />
+          <SectionDataEditor type={section.type} data={section.data} onChange={onChangeData} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
             <SectionMetaEditor section={section} onSave={onSaveMeta} />
@@ -161,9 +161,12 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
   const [showAddMenu, setShowAddMenu] = useState(false);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [pending, startTransition] = useTransition();
+  const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
+  const [hasDirty, setHasDirty] = useState(false);
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
 
   // Sync props from server component on navigation/revalidation
@@ -211,23 +214,41 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
     }
   }
 
-  function handleSaveSectionData(sectionId: string, data: Record<string, unknown>) {
-    const prev = sections;
-    setSections(s => s.map(sec => sec.id === sectionId ? { ...sec, data } : sec));
-    startTransition(async () => {
-      try {
-        const result = await updateSectionAction(sectionId, data, page.id);
-        if (result && 'error' in result) {
-          toast.error(result.error);
-          setSections(prev);
-        } else {
-          toast.success(`Gespeichert: ${(result as any)?.debug?.headline || Object.keys(data).join(',')}`);
-        }
-      } catch (e) {
-        toast.error('Speichern fehlgeschlagen');
-        setSections(prev);
+  const handleSectionChange = useCallback((sectionId: string, data: Record<string, unknown>) => {
+    pendingChanges.current.set(sectionId, data);
+    setHasDirty(true);
+    setSaved(false);
+  }, []);
+
+  async function handleSaveAll() {
+    setSaving(true);
+    try {
+      // Save page title/slug/visible
+      await updatePageAction(page.id, { title: page.title, slug: page.slug, visible: page.visible });
+      // Save all dirty sections
+      const entries = Array.from(pendingChanges.current.entries());
+      const results = await Promise.all(
+        entries.map(([sectionId, data]) => updateSectionAction(sectionId, data, page.id))
+      );
+      const errors = results.filter(r => r && 'error' in r);
+      if (errors.length > 0) {
+        toast.error(`${errors.length} Sektion(en) konnten nicht gespeichert werden`);
+      } else {
+        // Update local sections state with pending data
+        setSections(s => s.map(sec => {
+          const newData = pendingChanges.current.get(sec.id);
+          return newData ? { ...sec, data: newData } : sec;
+        }));
+        pendingChanges.current.clear();
+        setHasDirty(false);
+        setSaved(true);
+        toast.success('Gespeichert');
       }
-    });
+    } catch (e) {
+      toast.error('Speichern fehlgeschlagen');
+    } finally {
+      setSaving(false);
+    }
   }
 
   function handleSaveSectionMeta(sectionId: string, meta: Record<string, unknown>) {
@@ -237,13 +258,7 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
     });
   }
 
-  function handleSavePage() {
-    startTransition(async () => {
-      await updatePageAction(page.id, { title: page.title, slug: page.slug, visible: page.visible });
-      setHasUnsavedChanges(false);
-      toast.success('Seite gespeichert');
-    });
-  }
+
 
   async function handlePublish() {
     setPublishing(true);
@@ -270,19 +285,16 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
       <div className="flex items-center gap-4 mb-6">
         <Link href="/admin/pages" className="text-gray-500 hover:text-gray-800"><ArrowLeft size={20} /></Link>
         <div className="flex-1">
-          <input className="text-2xl font-bold bg-transparent border-none outline-none w-full" value={page.title} onChange={(e) => setPage({ ...page, title: e.target.value })} />
+          <input className="text-2xl font-bold bg-transparent border-none outline-none w-full" value={page.title} onChange={(e) => { setPage({ ...page, title: e.target.value }); setHasDirty(true); setSaved(false); }} />
           <div className="flex items-center gap-3 mt-1">
             <span className="text-sm text-gray-500">/</span>
-            <input className="text-sm text-gray-500 bg-transparent border-none outline-none" value={page.slug} onChange={(e) => setPage({ ...page, slug: e.target.value })} />
+            <input className="text-sm text-gray-500 bg-transparent border-none outline-none" value={page.slug} onChange={(e) => { setPage({ ...page, slug: e.target.value }); setHasDirty(true); setSaved(false); }} />
           </div>
         </div>
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={page.visible} onChange={() => setPage({ ...page, visible: !page.visible })} />
+          <input type="checkbox" checked={page.visible} onChange={() => { setPage({ ...page, visible: !page.visible }); setHasDirty(true); setSaved(false); }} />
           Sichtbar
         </label>
-        <button onClick={handleSavePage} disabled={pending} className="admin-btn-primary flex items-center gap-2">
-          <Save size={16} /> Seiten-Titel speichern
-        </button>
       </div>
 
       {/* Section List with DnD */}
@@ -294,7 +306,7 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
               section={section}
               onDelete={() => handleDeleteSection(section.id)}
               onToggleVisible={() => handleToggleVisible(section.id)}
-              onSaveData={(data) => handleSaveSectionData(section.id, data)}
+              onChangeData={(data) => handleSectionChange(section.id, data)}
               onSaveMeta={(meta) => handleSaveSectionMeta(section.id, meta)}
             />
           ))}
@@ -326,21 +338,33 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
 
       {/* FAB Bar */}
       <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
-        <a
-          href={`${rendererUrl}/${page.slug === 'home' ? '' : page.slug}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-full shadow-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-        >
-          <ExternalLink size={16} /> Vorschau
-        </a>
-        <button
-          onClick={handlePublish}
-          disabled={publishing}
-          className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <Rocket size={16} /> {publishing ? 'Wird veröffentlicht…' : 'Veröffentlichen'}
-        </button>
+        {!saved ? (
+          <button
+            onClick={handleSaveAll}
+            disabled={saving}
+            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <Save size={16} /> {saving ? 'Speichert…' : 'Speichern'}
+          </button>
+        ) : (
+          <>
+            <a
+              href={`${rendererUrl}/preview/${page.slug === 'home' ? '' : page.slug}?token=${encodeURIComponent(process.env.NEXT_PUBLIC_PREVIEW_SECRET || 'preview')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-full shadow-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <ExternalLink size={16} /> Vorschau
+            </a>
+            <button
+              onClick={handlePublish}
+              disabled={publishing}
+              className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <Rocket size={16} /> {publishing ? 'Wird veröffentlicht…' : 'Veröffentlichen'}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

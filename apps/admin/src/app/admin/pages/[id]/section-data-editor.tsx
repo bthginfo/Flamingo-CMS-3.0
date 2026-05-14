@@ -1,80 +1,40 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Save, Check } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Save } from 'lucide-react';
 import { ImageUploadField } from '@/components/image-upload-field';
 import { LinkField } from '@/components/link-field';
 import { IconPickerField } from '@/components/icon-picker-field';
 
-// Auto-save hook: debounces saves, shows status
-function useAutoSave(data: Record<string, unknown>, onSave: (data: Record<string, unknown>) => void, delayMs = 1500) {
-  const [status, setStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const initialRef = useRef(data);
-  const isFirstRender = useRef(true);
-
+// Reports current editor data to parent on every change (skip initial render).
+function useReport(data: Record<string, unknown>, onChange: (d: Record<string, unknown>) => void) {
+  const isFirst = useRef(true);
+  const serialized = JSON.stringify(data);
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    // Skip if data hasn't actually changed from what we loaded
-    if (JSON.stringify(data) === JSON.stringify(initialRef.current)) return;
-
-    setStatus('idle');
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      setStatus('saving');
-      onSave(data);
-      initialRef.current = data;
-      setStatus('saved');
-      setTimeout(() => setStatus('idle'), 2000);
-    }, delayMs);
-
-    return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
-  }, [JSON.stringify(data)]);
-
-  const saveNow = useCallback(() => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    if (JSON.stringify(data) !== JSON.stringify(initialRef.current)) {
-      setStatus('saving');
-      onSave(data);
-      initialRef.current = data;
-      setStatus('saved');
-      setTimeout(() => setStatus('idle'), 2000);
-    }
-  }, [data, onSave]);
-
-  return { status, saveNow };
+    if (isFirst.current) { isFirst.current = false; return; }
+    onChange(JSON.parse(serialized));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serialized]);
 }
 
-function SaveIndicator({ status, onSave }: { status: 'idle' | 'saving' | 'saved'; onSave: () => void }) {
-  return (
-    <div className="flex items-center gap-2 mt-3">
-      <button onClick={onSave} className="admin-btn-primary text-xs flex items-center gap-1">
-        <Save size={12} /> Speichern
-      </button>
-      {status === 'saving' && <span className="text-xs text-blue-500">Wird gespeichert...</span>}
-      {status === 'saved' && <span className="text-xs text-green-600 flex items-center gap-1"><Check size={12} /> Gespeichert</span>}
-    </div>
-  );
-}
-
-// Generic section data editor that renders a JSON editor per section type.
-export function SectionDataEditor({ type, data, onSave }: { type: string; data: Record<string, unknown>; onSave: (data: Record<string, unknown>) => void }) {
+// Generic section data editor that renders a form per section type.
+export function SectionDataEditor({ type, data, onChange }: { type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void }) {
   const Editor = EDITORS[type] ?? GenericJsonEditor;
-  return <Editor data={data} onSave={onSave} />;
+  return <Editor data={data} onChange={onChange} />;
 }
 
-function GenericJsonEditor({ data, onSave }: EditorProps) {
+type EditorProps = { data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void };
+
+// GenericJsonEditor keeps a button because JSON may be invalid mid-edit
+function GenericJsonEditor({ data, onChange }: EditorProps) {
   const [json, setJson] = useState(JSON.stringify(data, null, 2));
   const [error, setError] = useState('');
 
-  function handleSave() {
+  function handleApply() {
     try {
       const parsed = JSON.parse(json);
       setError('');
-      onSave(parsed);
+      onChange(parsed);
     } catch {
       setError('Ungültiges JSON');
     }
@@ -82,22 +42,15 @@ function GenericJsonEditor({ data, onSave }: EditorProps) {
 
   return (
     <div>
-      <textarea
-        className="admin-input font-mono text-xs w-full"
-        rows={12}
-        value={json}
-        onChange={(e) => setJson(e.target.value)}
-      />
+      <textarea className="admin-input font-mono text-xs w-full" rows={12} value={json} onChange={(e) => setJson(e.target.value)} />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
-      <button onClick={handleSave} className="admin-btn-primary text-xs mt-2 flex items-center gap-1"><Save size={12} /> Speichern</button>
+      <button onClick={handleApply} className="admin-btn-primary text-xs mt-2 flex items-center gap-1"><Save size={12} /> Übernehmen</button>
     </div>
   );
 }
 
-type EditorProps = { data: Record<string, unknown>; onSave: (data: Record<string, unknown>) => void };
-
 // ─── Hero Editor ─────────────────────────────────────────────────
-function HeroEditor({ data, onSave }: EditorProps) {
+function HeroEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
@@ -108,7 +61,7 @@ function HeroEditor({ data, onSave }: EditorProps) {
     primaryCta: (data.primaryCta as { label: string; href: string }) || { label: '', href: '' },
     secondaryCta: (data.secondaryCta as { label: string; href: string }) || { label: '', href: '' },
   });
-  const { status, saveNow } = useAutoSave(d, onSave);
+  useReport(d as unknown as Record<string, unknown>, onChange);
 
   return (
     <div className="space-y-3">
@@ -135,18 +88,18 @@ function HeroEditor({ data, onSave }: EditorProps) {
         <Field label="Sekundärer CTA Label" value={d.secondaryCta.label} onChange={(v) => setD({ ...d, secondaryCta: { ...d.secondaryCta, label: v } })} />
         <LinkField label="Sekundärer CTA Link" value={d.secondaryCta.href} onChange={(v) => setD({ ...d, secondaryCta: { ...d.secondaryCta, href: v } })} />
       </div>
-      <SaveIndicator status={status} onSave={saveNow} />
     </div>
   );
 }
 
 // ─── FAQ Editor ──────────────────────────────────────────────────
-function FaqEditor({ data, onSave }: EditorProps) {
+function FaqEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
   const [items, setItems] = useState<{ question: string; answer: string }[]>(
     (data.items as { question: string; answer: string }[]) || []
   );
+  useReport({ headline, badgeText, items, source: 'manual', layout: 'accordion', expandFirst: true }, onChange);
 
   function addItem() { setItems([...items, { question: '', answer: '' }]); }
   function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
@@ -165,21 +118,19 @@ function FaqEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Frage hinzufügen</button>
-      <div>
-        <button onClick={() => onSave({ headline, badgeText, items, source: 'manual', layout: 'accordion', expandFirst: true })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
-      </div>
     </div>
   );
 }
 
 // ─── CTA Band Editor ────────────────────────────────────────────
-function CtaBandEditor({ data, onSave }: EditorProps) {
+function CtaBandEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
     badgeText: (data.badgeText as string) || '',
     ctaPrimary: (data.ctaPrimary as { label: string; href: string }) || { label: '', href: '' },
   });
+  useReport(d as unknown as Record<string, unknown>, onChange);
 
   return (
     <div className="space-y-3">
@@ -190,13 +141,12 @@ function CtaBandEditor({ data, onSave }: EditorProps) {
         <Field label="CTA Label" value={d.ctaPrimary.label} onChange={(v) => setD({ ...d, ctaPrimary: { ...d.ctaPrimary, label: v } })} />
         <LinkField label="CTA Link" value={d.ctaPrimary.href} onChange={(v) => setD({ ...d, ctaPrimary: { ...d.ctaPrimary, href: v } })} />
       </div>
-      <button onClick={() => onSave(d)} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
     </div>
   );
 }
 
 // ─── Testimonials Editor ────────────────────────────────────────
-function TestimonialsEditor({ data, onSave }: EditorProps) {
+function TestimonialsEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || 'Kundenstimmen');
   const [ratingValue, setRatingValue] = useState((data.ratingValue as string) || '');
@@ -204,6 +154,7 @@ function TestimonialsEditor({ data, onSave }: EditorProps) {
   const [items, setItems] = useState<{ quote: string; name: string; context: string; rating: number }[]>(
     (data.items as { quote: string; name: string; context: string; rating: number }[]) || []
   );
+  useReport({ headline, badgeText, ratingValue, ratingCount, items, layout: 'cards' }, onChange);
 
   function addItem() { setItems([...items, { quote: '', name: '', context: '', rating: 5 }]); }
   function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
@@ -227,27 +178,24 @@ function TestimonialsEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Bewertung hinzufügen</button>
-      <div>
-        <button onClick={() => onSave({ headline, badgeText, ratingValue, ratingCount, items, layout: 'cards' })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
-      </div>
     </div>
   );
 }
 
 // ─── Map Editor ──────────────────────────────────────────────────
-function MapEditor({ data, onSave }: EditorProps) {
+function MapEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({
     embedUrl: (data.embedUrl as string) || '',
     headline: (data.headline as string) || '',
     height: (data.height as string) || 'm',
   });
+  useReport({ ...d, provider: 'embed' }, onChange);
 
   return (
     <div className="space-y-3">
       <Field label="Headline (optional)" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Google Maps Embed-URL" value={d.embedUrl} onChange={(v) => setD({ ...d, embedUrl: v })} />
       <SelectField label="Höhe" value={d.height} options={['s', 'm', 'l']} onChange={(v) => setD({ ...d, height: v })} />
-      <button onClick={() => onSave({ ...d, provider: 'embed' })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
     </div>
   );
 }
@@ -278,12 +226,13 @@ function SelectField({ label, value, options, onChange }: { label: string; value
 }
 
 // ─── CTA Links Editor ────────────────────────────────────────────
-function CtaLinksEditor({ data, onSave }: EditorProps) {
+function CtaLinksEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [links, setLinks] = useState<{ label: string; href: string; icon: string; description: string }[]>(
     (data.links as { label: string; href: string; icon: string; description: string }[]) || []
   );
+  useReport({ headline, subline, links }, onChange);
 
   function addLink() { setLinks([...links, { label: '', href: '', icon: '', description: '' }]); }
   function removeLink(i: number) { setLinks(links.filter((_, idx) => idx !== i)); }
@@ -309,13 +258,12 @@ function CtaLinksEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={addLink} className="text-sm text-blue-600 hover:underline">+ Link hinzufügen</button>
-      <div><button onClick={() => onSave({ headline, subline, links })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
     </div>
   );
 }
 
 // ─── News Preview Editor ─────────────────────────────────────────
-function NewsPreviewEditor({ data, onSave }: EditorProps) {
+function NewsPreviewEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({
     headline: (data.headline as string) || 'Aktuelles',
     subline: (data.subline as string) || '',
@@ -323,6 +271,7 @@ function NewsPreviewEditor({ data, onSave }: EditorProps) {
     linkLabel: (data.linkLabel as string) || 'Alle Beiträge',
     linkHref: (data.linkHref as string) || '/news',
   });
+  useReport(d, onChange);
 
   return (
     <div className="space-y-3">
@@ -334,17 +283,17 @@ function NewsPreviewEditor({ data, onSave }: EditorProps) {
         <Field label="Link Href" value={d.linkHref} onChange={(v) => setD({ ...d, linkHref: v })} />
       </div>
       <p className="text-xs text-gray-400">Die News-Items werden automatisch aus der verknüpften Collection geladen.</p>
-      <button onClick={() => onSave(d)} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
     </div>
   );
 }
 
 // ─── Stats Editor ────────────────────────────────────────────────
-function StatsEditor({ data, onSave }: EditorProps) {
+function StatsEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [stats, setStats] = useState<{ value: number; suffix: string; prefix: string; label: string; icon: string }[]>(
     (data.stats as { value: number; suffix: string; prefix: string; label: string; icon: string }[]) || []
   );
+  useReport({ headline, stats }, onChange);
 
   function addStat() { setStats([...stats, { value: 0, suffix: '', prefix: '', label: '', icon: '' }]); }
   function removeStat(i: number) { setStats(stats.filter((_, idx) => idx !== i)); }
@@ -369,18 +318,18 @@ function StatsEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={addStat} className="text-sm text-blue-600 hover:underline">+ Statistik hinzufügen</button>
-      <div><button onClick={() => onSave({ headline, stats })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
     </div>
   );
 }
 
 // ─── Logo Cloud Editor ───────────────────────────────────────────
-function LogoCloudEditor({ data, onSave }: EditorProps) {
+function LogoCloudEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [logos, setLogos] = useState<{ src: string; alt: string; href: string }[]>(
     (data.logos as { src: string; alt: string; href: string }[]) || []
   );
+  useReport({ headline, subline, logos }, onChange);
 
   function addLogo() { setLogos([...logos, { src: '', alt: '', href: '' }]); }
   function removeLogo(i: number) { setLogos(logos.filter((_, idx) => idx !== i)); }
@@ -400,18 +349,18 @@ function LogoCloudEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={addLogo} className="text-sm text-blue-600 hover:underline">+ Logo hinzufügen</button>
-      <div><button onClick={() => onSave({ headline, subline, logos })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
     </div>
   );
 }
 
 // ─── Gallery Grid Editor ─────────────────────────────────────────
-function GalleryGridEditor({ data, onSave }: EditorProps) {
+function GalleryGridEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [images, setImages] = useState<{ src: string; alt: string; caption: string }[]>(
     (data.images as { src: string; alt: string; caption: string }[]) || []
   );
+  useReport({ headline, subline, images }, onChange);
 
   function addImage() { setImages([...images, { src: '', alt: '', caption: '' }]); }
   function removeImage(i: number) { setImages(images.filter((_, idx) => idx !== i)); }
@@ -431,16 +380,17 @@ function GalleryGridEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={addImage} className="text-sm text-blue-600 hover:underline">+ Bild hinzufügen</button>
-      <div><button onClick={() => onSave({ headline, subline, images })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
     </div>
   );
 }
 
 // ─── USP Strip Editor ────────────────────────────────────────────
-function UspStripEditor({ data, onSave }: EditorProps) {
+function UspStripEditor({ data, onChange }: EditorProps) {
   const [items, setItems] = useState<{ icon: string; title: string; text: string }[]>(
     (data.items as { icon: string; title: string; text: string }[]) || []
   );
+  useReport({ items }, onChange);
+
   function addItem() { setItems([...items, { icon: '', title: '', text: '' }]); }
   function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
@@ -458,19 +408,20 @@ function UspStripEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ USP hinzufügen</button>
-      <div><button onClick={() => onSave({ items })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
     </div>
   );
 }
 
 // ─── Services Grid Editor ────────────────────────────────────────
-function ServicesGridEditor({ data, onSave }: EditorProps) {
+function ServicesGridEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
   const [cards, setCards] = useState<{ title: string; text: string; icon: string; image: string; mediaType: string }[]>(
     (data.manualCards as { title: string; text: string; icon: string; image: string; mediaType: string }[]) || []
   );
+  useReport({ headline, subline, badgeText, manualCards: cards }, onChange);
+
   function addCard() { setCards([...cards, { title: '', text: '', icon: '', image: '', mediaType: 'icon' }]); }
   function removeCard(i: number) { setCards(cards.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setCards(cards.map((c, idx) => idx === i ? { ...c, [field]: val } : c)); }
@@ -498,18 +449,19 @@ function ServicesGridEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Karte hinzufügen</button>
-      <div><button onClick={() => onSave({ headline, subline, badgeText, manualCards: cards })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
     </div>
   );
 }
 
 // ─── Process Steps Editor ────────────────────────────────────────
-function ProcessStepsEditor({ data, onSave }: EditorProps) {
+function ProcessStepsEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
   const [steps, setSteps] = useState<{ title: string; text: string; icon: string }[]>(
     (data.steps as { title: string; text: string; icon: string }[]) || []
   );
+  useReport({ headline, badgeText, steps }, onChange);
+
   function addStep() { setSteps([...steps, { title: '', text: '', icon: '' }]); }
   function removeStep(i: number) { setSteps(steps.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setSteps(steps.map((s, idx) => idx === i ? { ...s, [field]: val } : s)); }
@@ -529,13 +481,12 @@ function ProcessStepsEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={addStep} className="text-sm text-blue-600 hover:underline">+ Schritt hinzufügen</button>
-      <div><button onClick={() => onSave({ headline, badgeText, steps })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
     </div>
   );
 }
 
 // ─── Contact Editor ──────────────────────────────────────────────
-function ContactEditor({ data, onSave }: EditorProps) {
+function ContactEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || 'Kontakt');
   const [introText, setIntroText] = useState((data.introText as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
@@ -544,6 +495,8 @@ function ContactEditor({ data, onSave }: EditorProps) {
   const [infoCards, setInfoCards] = useState<{ icon: string; label: string; value: string }[]>(
     (data.infoCards as { icon: string; label: string; value: string }[]) || []
   );
+  useReport({ headline, introText, badgeText, submitLabel, formEnabled, infoCards }, onChange);
+
   function addCard() { setInfoCards([...infoCards, { icon: '', label: '', value: '' }]); }
   function removeCard(i: number) { setInfoCards(infoCards.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setInfoCards(infoCards.map((c, idx) => idx === i ? { ...c, [field]: val } : c)); }
@@ -570,13 +523,12 @@ function ContactEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Info-Karte hinzufügen</button>
-      <div><button onClick={() => onSave({ headline, introText, badgeText, submitLabel, formEnabled, infoCards })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
     </div>
   );
 }
 
 // ─── Service Detail Editor ───────────────────────────────────────
-function ServiceDetailEditor({ data, onSave }: EditorProps) {
+function ServiceDetailEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
@@ -592,6 +544,11 @@ function ServiceDetailEditor({ data, onSave }: EditorProps) {
       ctaHref: (it.ctaHref as string) || '',
     }))
   );
+  useReport({
+    headline, subline, badgeText,
+    items: items.map(it => ({ ...it, features: it.features.split('\n').map(f => f.trim()).filter(Boolean) })),
+  }, onChange);
+
   function addItem() { setItems([...items, { title: '', text: '', icon: '', image: '', mediaType: 'icon', features: '', ctaLabel: '', ctaHref: '' }]); }
   function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
@@ -624,19 +581,12 @@ function ServiceDetailEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Leistung hinzufügen</button>
-      <div><button onClick={() => onSave({
-        headline, subline, badgeText,
-        items: items.map(it => ({
-          ...it,
-          features: it.features.split('\n').map(f => f.trim()).filter(Boolean),
-        })),
-      })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
     </div>
   );
 }
 
 // ─── Portfolio Editor ────────────────────────────────────────────
-function PortfolioEditor({ data, onSave }: EditorProps) {
+function PortfolioEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
@@ -649,6 +599,8 @@ function PortfolioEditor({ data, onSave }: EditorProps) {
       stats: ((p.stats as { label: string; value: string }[]) || []),
     }))
   );
+  useReport({ headline, subline, badgeText, projects }, onChange);
+
   function addProject() { setProjects([...projects, { title: '', category: '', description: '', image: '', stats: [] }]); }
   function removeProject(i: number) { setProjects(projects.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setProjects(projects.map((p, idx) => idx === i ? { ...p, [field]: val } : p)); }
@@ -687,13 +639,12 @@ function PortfolioEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={addProject} className="text-sm text-blue-600 hover:underline">+ Projekt hinzufügen</button>
-      <div><button onClick={() => onSave({ headline, subline, badgeText, projects })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
     </div>
   );
 }
 
 // ─── Team Editor ─────────────────────────────────────────────────
-function TeamEditor({ data, onSave }: EditorProps) {
+function TeamEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
@@ -718,6 +669,7 @@ function TeamEditor({ data, onSave }: EditorProps) {
       image: (v.image as string) || '', mediaType: (v.mediaType as string) || 'icon',
     }))
   );
+  useReport({ headline, subline, badgeText, storyHeadline, storyText, storyImage, valuesHeadline, membersHeadline, members, stats: teamStats, values }, onChange);
 
   return (
     <div className="space-y-4">
@@ -775,16 +727,15 @@ function TeamEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={() => setMembers([...members, { name: '', role: '', image: '', bio: '' }])} className="text-sm text-blue-600 hover:underline">+ Mitglied</button>
-
-      <div><button onClick={() => onSave({ headline, subline, badgeText, storyHeadline, storyText, storyImage, valuesHeadline, membersHeadline, members, stats: teamStats, values })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
     </div>
   );
 }
 
 // ─── Rich Text Editor ────────────────────────────────────────────
-function RichTextEditor({ data, onSave }: EditorProps) {
+function RichTextEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [content, setContent] = useState((data.content as string) || '');
+  useReport({ headline, content }, onChange);
 
   return (
     <div className="space-y-3">
@@ -799,17 +750,17 @@ function RichTextEditor({ data, onSave }: EditorProps) {
         />
         <p className="text-[10px] text-zinc-400 mt-1">HTML-Tags: &lt;h2&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;a&gt; werden unterstützt.</p>
       </div>
-      <button onClick={() => onSave({ headline, content })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
     </div>
   );
 }
 
 // ─── Header Banner Editor ────────────────────────────────────────
-function HeaderBannerEditor({ data, onSave }: EditorProps) {
+function HeaderBannerEditor({ data, onChange }: EditorProps) {
   const [items, setItems] = useState<{ text: string; link: string }[]>(
     (data.items as { text: string; link?: string }[])?.map(i => ({ text: i.text, link: i.link || '' })) || []
   );
   const [style, setStyle] = useState((data.style as string) || 'neutral');
+  useReport({ items: items.filter(i => i.text.trim()).map(i => ({ text: i.text, ...(i.link.trim() ? { link: i.link } : {}) })), style }, onChange);
 
   return (
     <div className="space-y-3">
@@ -825,7 +776,6 @@ function HeaderBannerEditor({ data, onSave }: EditorProps) {
         </div>
       ))}
       <button onClick={() => setItems([...items, { text: '', link: '' }])} className="text-xs text-blue-600 hover:underline">+ Eintrag</button>
-      <button onClick={() => onSave({ items: items.filter(i => i.text.trim()).map(i => ({ text: i.text, ...(i.link.trim() ? { link: i.link } : {}) })), style })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
     </div>
   );
 }
