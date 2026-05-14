@@ -27,7 +27,7 @@ const NAV = [
   { href: '/admin/security', label: 'Passwort & Zugang', icon: Lock },
 ];
 
-const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'http://localhost:3002';
+const RENDERER_URL = '';
 
 export function Sidebar({ tenantId }: { tenantId: string }) {
   const pathname = usePathname();

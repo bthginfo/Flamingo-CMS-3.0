@@ -274,7 +274,7 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
     }
   }
 
-  const rendererUrl = process.env.NEXT_PUBLIC_RENDERER_URL || 'http://localhost:3002';
+  const rendererUrl = '';
 
   return (
     <div>
