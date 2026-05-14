@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { createSessionToken } from '@flamingo/auth';
 
 const DEMO_TENANT_ID = 'f50cbf53-279d-43f3-b58b-f5ae3d550ab2';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const token = await createSessionToken(DEMO_TENANT_ID);
+  const origin = request.nextUrl.origin;
 
-  const response = NextResponse.redirect(new URL('/admin/pages', process.env.NEXT_PUBLIC_ADMIN_URL || 'http://localhost:3001'));
+  const response = NextResponse.redirect(new URL('/admin/pages', origin));
   
   response.cookies.set('flamingo_admin_session', token, {
     path: '/admin',
