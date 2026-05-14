@@ -537,3 +537,8 @@
   .news-body img { max-width: 100%; height: auto; border-radius: 1rem; margin: 1em 0; }
   .news-body hr { border: 0; border-top: 1px solid #e2e8f0; margin: 2em 0; }
 }
+
+/* ─── Demo Playground inputs ──────────────────────────────────────────── */
+.demo-input {
+  @apply w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-white/20 focus:outline-none;
+}

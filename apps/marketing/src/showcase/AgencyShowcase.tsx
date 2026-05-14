@@ -20,6 +20,7 @@ import { ContactForm } from '@/components/ContactForm';
 import { CookieBanner } from '@/components/CookieBanner';
 import { MouseGlow } from '@/components/MouseGlow';
 import { scrollToTop } from '@/lib/scroll';
+import DemoPlayground from './DemoPlayground';
 
 /* ─── Brand ─────────────────────────────────────────────────────────── */
 const AGENCY = {
@@ -217,6 +218,7 @@ export default function AgencyShowcase() {
   return (
     <ConsentProvider>
       <Routes>
+        <Route path="/demo" element={<DemoPlayground />} />
         <Route path="/" element={<ShowcaseShell />}>
           <Route index element={<Landing />} />
 
@@ -350,6 +352,9 @@ function ShowcaseShell() {
             ))}
             <Link to="/kontakt" className="ml-4 btn-accent !py-2.5 !px-5 text-sm">
               Beratung <span aria-hidden>→</span>
+            </Link>
+            <Link to="/demo" className="ml-2 rounded-full border border-white/30 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/10">
+              Demo testen
             </Link>
           </nav>
           <button
