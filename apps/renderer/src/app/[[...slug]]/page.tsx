@@ -103,7 +103,7 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   };
 
   return (
-    <div style={styleCssVars as React.CSSProperties}>
+    <div data-style={tenantStyle.activeStyle} style={styleCssVars as React.CSSProperties}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} />
       <main>

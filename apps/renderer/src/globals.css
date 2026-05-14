@@ -38,6 +38,39 @@ html {
     text-transform: var(--style-heading-transform, none);
     font-family: var(--style-heading-font, var(--font-outfit));
   }
+
+  /* Style-aware overrides: cards, buttons, sections adapt to active style vars */
+  [data-style] .rounded-xl,
+  [data-style] .rounded-2xl,
+  [data-style] .rounded-3xl {
+    border-radius: var(--style-card-radius, 1rem);
+  }
+
+  [data-style] .rounded-full {
+    border-radius: var(--style-radius-full, 9999px);
+  }
+
+  [data-style] a[class*="rounded-full"],
+  [data-style] button[class*="rounded-full"] {
+    border-radius: var(--style-button-radius, 9999px);
+  }
+
+  [data-style] .shadow-lg,
+  [data-style] .shadow-xl {
+    box-shadow: var(--style-card-shadow, 0 4px 20px rgba(0,0,0,0.06));
+  }
+
+  [data-style] section:nth-child(even) {
+    background-color: var(--style-section-bg-alt, #f8fafc);
+  }
+
+  [data-style] section:nth-child(odd) {
+    background-color: var(--style-section-bg, #ffffff);
+  }
+
+  [data-style] section:first-child {
+    background-color: transparent;
+  }
 }
 
 @layer components {
