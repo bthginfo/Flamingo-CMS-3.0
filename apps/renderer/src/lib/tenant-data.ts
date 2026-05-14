@@ -3,6 +3,7 @@ import { navigation, footer, globalSettings, seoGlobal, seoPage, tenants } from 
 import { eq, and } from 'drizzle-orm';
 
 export type NavItem = { label: string; href: string; type?: string };
+export type NavCta = { label: string; href: string };
 export type FooterColumn = { title: string; items: { text: string; href?: string }[] };
 export type FooterData = { columns: FooterColumn[]; legalLinks: { label: string; href: string }[]; cta?: { label: string; href: string } };
 export type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string };
@@ -15,10 +16,14 @@ export async function getTenantStyle(tenantId: string): Promise<{ industry: stri
   return { industry: t?.industry ?? 'handwerk', activeStyle: t?.activeStyle ?? 'classic' };
 }
 
-export async function getTenantNav(tenantId: string): Promise<NavItem[]> {
+export async function getTenantNav(tenantId: string): Promise<{ items: NavItem[]; cta: NavCta | null }> {
   const db = getDb();
   const [nav] = await db.select().from(navigation).where(eq(navigation.tenantId, tenantId)).limit(1);
-  return (nav?.items as NavItem[]) || [];
+  const cta = nav?.cta as NavCta | undefined;
+  return {
+    items: (nav?.items as NavItem[]) || [],
+    cta: cta?.label ? cta : null,
+  };
 }
 
 export async function getTenantFooter(tenantId: string): Promise<FooterData | null> {

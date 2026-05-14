@@ -7,14 +7,15 @@ import { Plus, Trash2, GripVertical } from 'lucide-react';
 
 type NavItem = { label: string; href: string; type?: string };
 
-export function NavigationForm({ initial }: { initial: NavItem[] }) {
+export function NavigationForm({ initial, initialCta }: { initial: NavItem[]; initialCta?: { label: string; href: string } | null }) {
   const [items, setItems] = useState<NavItem[]>(initial.length > 0 ? initial : [{ label: '', href: '/', type: 'link' }]);
+  const [cta, setCta] = useState(initialCta || { label: 'Termin vereinbaren', href: '/kontakt' });
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      await saveNavigationSettings(items.filter(i => i.label.trim()));
+      await saveNavigationSettings(items.filter(i => i.label.trim()), cta.label.trim() ? cta : null);
       toast.success('Navigation gespeichert');
     } catch {
       toast.error('Fehler beim Speichern');
@@ -58,6 +59,23 @@ export function NavigationForm({ initial }: { initial: NavItem[] }) {
         <button type="button" onClick={() => setItems([...items, { label: '', href: '/', type: 'link' }])} className="admin-btn-secondary">
           <Plus size={16} /> Link hinzufügen
         </button>
+      </div>
+
+      <div className="border-t pt-5 mt-5 space-y-3">
+        <h3 className="font-semibold text-sm">CTA-Button (rechts in der Navigation)</h3>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs text-zinc-500 mb-1 block">Label</label>
+            <input className="admin-input" value={cta.label} onChange={e => setCta({ ...cta, label: e.target.value })} placeholder="z.B. Termin vereinbaren" />
+          </div>
+          <div>
+            <label className="text-xs text-zinc-500 mb-1 block">Link</label>
+            <input className="admin-input" value={cta.href} onChange={e => setCta({ ...cta, href: e.target.value })} placeholder="/kontakt" />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end pt-4">
         <button type="button" onClick={handleSave} disabled={saving} className="admin-btn-primary">
           {saving ? 'Speichern…' : 'Navigation speichern'}
         </button>

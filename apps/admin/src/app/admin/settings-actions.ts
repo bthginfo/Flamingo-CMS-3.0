@@ -85,17 +85,18 @@ export async function getNavigationSettings() {
   const [row] = await db.select().from(navigation).where(eq(navigation.tenantId, tenantId)).limit(1);
   return {
     items: (row?.items as { label: string; href: string; type?: string }[]) || [],
+    cta: (row?.cta as { label: string; href: string } | null) || null,
   };
 }
 
-export async function saveNavigationSettings(items: { label: string; href: string; type?: string }[]) {
+export async function saveNavigationSettings(items: { label: string; href: string; type?: string }[], cta?: { label: string; href: string } | null) {
   const tenantId = await requireTenant();
   const db = getDb();
   const [existing] = await db.select().from(navigation).where(eq(navigation.tenantId, tenantId)).limit(1);
   if (existing) {
-    await db.update(navigation).set({ items, updatedAt: new Date() }).where(eq(navigation.tenantId, tenantId));
+    await db.update(navigation).set({ items, cta: cta || {}, updatedAt: new Date() }).where(eq(navigation.tenantId, tenantId));
   } else {
-    await db.insert(navigation).values({ tenantId, items });
+    await db.insert(navigation).values({ tenantId, items, cta: cta || {} });
   }
   revalidatePath('/admin/navigation');
   return { success: true };
