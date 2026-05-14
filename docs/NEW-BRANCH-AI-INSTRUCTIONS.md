@@ -46,6 +46,74 @@ Das bedeutet konkret:
 □ Alle Pages (nicht nur home!) prüfen — auch /c/[collection]/[slug]
 ```
 
+### ❌ ANTI-PATTERN BEISPIELE — SO SIEHT EIN FEHLER AUS
+
+**FEHLER 1: Hartcodierter Text im Renderer-Template**
+```tsx
+// ❌ FALSCH — "Kundenstimmen" ist nicht editierbar!
+export function TestimonialsSection({ data }: Props) {
+  return (
+    <section>
+      <span className="badge">Kundenstimmen</span>
+      <h2>{(data.headline as string) || 'Was unsere Kunden sagen'}</h2>
+      <p>4.9/5 aus 120 Bewertungen</p>  {/* ❌ Komplett hartcodiert! */}
+    </section>
+  );
+}
+
+// ✅ RICHTIG — Alles aus data.xxx, Fallback nur nach ||
+export function TestimonialsSection({ data }: Props) {
+  return (
+    <section>
+      <span className="badge">{(data.badgeText as string) || 'Kundenstimmen'}</span>
+      <h2>{(data.headline as string) || 'Was unsere Kunden sagen'}</h2>
+      <p>{(data.ratingValue as string) || '4.9'}/5 aus {(data.ratingCount as string) || '120'} Bewertungen</p>
+    </section>
+  );
+}
+```
+
+**FEHLER 2: Editor onSave() fehlen Felder die das Template liest**
+```tsx
+// ❌ FALSCH — onSave() speichert NICHT badgeText, ratingValue, ratingCount
+onSave({ headline: localData.headline, items: localData.items });
+
+// ✅ RICHTIG — ALLE Felder die das Template liest sind in onSave()
+onSave({
+  headline: localData.headline,
+  badgeText: localData.badgeText,
+  ratingValue: localData.ratingValue,
+  ratingCount: localData.ratingCount,
+  items: localData.items,
+});
+```
+
+**FEHLER 3: Neues Renderer-Feld ohne Admin-Editor**
+```tsx
+// Template liest data.storyHeadline → aber Editor hat kein Input-Feld dafür
+// ❌ Der Admin kann den Text nie ändern!
+
+// ✅ RICHTIG: Für JEDES data.xxx im Template MUSS ein <Field> oder <input> im Editor existieren
+```
+
+### 🛑 STOP-AND-VERIFY GATE (PFLICHT nach jeder Section)
+
+Nach dem Erstellen/Ändern JEDER Section musst du folgende Verifikation durchführen:
+
+```bash
+# Schritt 1: Liste ALLE data.xxx Zugriffe im Template
+grep -oP 'data\.\w+' apps/renderer/src/templates/<branche>/<section>.tsx | sort -u
+
+# Schritt 2: Liste ALLE Keys im Editor onSave()
+grep -A 50 'onSave(' apps/admin/src/app/admin/pages/[id]/section-data-editor.tsx | grep -oP '\b\w+(?=:)' | head -30
+
+# Schritt 3: Vergleiche beide Listen — sie MÜSSEN identisch sein!
+# Wenn ein Feld im Template fehlt → hinzufügen
+# Wenn ein Feld im Editor fehlt → hinzufügen
+```
+
+**Du darfst NICHT zur nächsten Section weitergehen, bevor dieses Gate bestanden ist.**
+
 ### VERBOTEN — Niemals tun:
 1. **KEIN Handwerk-Code anfassen.** `apps/renderer/src/templates/handwerk/` ist READ-ONLY.
 2. **KEINEN existierenden Admin-Code für Handwerk ändern.**
@@ -217,6 +285,38 @@ Erstelle `apps/renderer/src/templates/<branche>/` mit allen Section-Komponenten.
 1. Jedes Feld das gerendert wird → MUSS ein `data.xxx` Feld sein
 2. Fallback: `(data.xxx as string) || 'Sinnvoller Standard'`
 3. KEIN hartcodierter Text in `<span>`, `<h2>`, `<h3>` etc.
+4. **Nach dem Erstellen: STOP-AND-VERIFY GATE durchführen (siehe oben)**
+
+**Vollständiges Beispiel einer korrekt implementierten Section:**
+```tsx
+// apps/renderer/src/templates/restaurant/cta-band.tsx
+'use client';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+
+interface Props { data: Record<string, unknown>; meta?: Record<string, unknown> }
+
+export default function CtaBandSection({ data }: Props) {
+  const headline = (data.headline as string) || 'Reservieren Sie jetzt';
+  const subline = (data.subline as string) || 'Wir freuen uns auf Ihren Besuch';
+  const badgeText = (data.badgeText as string) || 'Jetzt buchen';
+  const cta = (data.ctaPrimary as { label?: string; href?: string }) || {};
+
+  return (
+    <section className="py-20 bg-[var(--style-primary)]">
+      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}>
+        {badgeText && <span className="badge">{badgeText}</span>}
+        <h2>{headline}</h2>
+        <p>{subline}</p>
+        {cta.label && cta.href && (
+          <Link href={cta.href}>{cta.label}</Link>
+        )}
+      </motion.div>
+    </section>
+  );
+}
+// ✅ Felder: headline, subline, badgeText, ctaPrimary — ALLE im Editor onSave() vorhanden
+```
 
 #### 2.2 Admin-Editoren
 
@@ -299,6 +399,7 @@ In `apps/marketing/src/showcase/Templates.tsx`: Status auf `'live'` setzen.
 - [ ] Domain eingetragen
 
 ### Deployment & Verifikation
+- [ ] Lokaler Build ERFOLGREICH: `cd C:\...\flamingo-cms && pnpm build --filter @flamingo/renderer && pnpm build --filter @flamingo/admin`
 - [ ] `git push` → Vercel Build ERFOLGREICH (kein Error!)
 - [ ] Handwerk unverändert
 - [ ] Neue Branche rendert korrekt
