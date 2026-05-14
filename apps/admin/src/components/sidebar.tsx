@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, FileText, FolderOpen, Newspaper, Navigation,
-  Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, Rocket, ImageIcon, Inbox,
+  Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, Rocket, ImageIcon, Inbox, Eye,
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
 
@@ -26,6 +26,8 @@ const NAV = [
   { href: '/admin/legal', label: 'Impressum & Datenschutz', icon: Scale },
   { href: '/admin/security', label: 'Passwort & Zugang', icon: Lock },
 ];
+
+const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'http://localhost:3002';
 
 export function Sidebar({ tenantId }: { tenantId: string }) {
   const pathname = usePathname();
@@ -68,7 +70,16 @@ export function Sidebar({ tenantId }: { tenantId: string }) {
       </nav>
 
       {/* Footer */}
-      <div className="px-3 py-4 border-t border-sidebar-border">
+      <div className="px-3 py-4 border-t border-sidebar-border space-y-1">
+        <a
+          href={RENDERER_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full"
+        >
+          <Eye size={18} />
+          Vorschau
+        </a>
         <button
           onClick={async () => {
             await logoutAction();

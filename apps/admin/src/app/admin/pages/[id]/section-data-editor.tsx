@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import { Save } from 'lucide-react';
+import { ImageUploadField } from '@/components/image-upload-field';
+import { LinkField } from '@/components/link-field';
+import { IconPickerField } from '@/components/icon-picker-field';
 
 // Generic section data editor that renders a JSON editor per section type.
 // Future improvement: schema-driven auto-form from Zod schemas.
@@ -115,7 +118,7 @@ function CtaBandEditor({ data, onSave }: EditorProps) {
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <div className="grid grid-cols-2 gap-3">
         <Field label="CTA Label" value={d.ctaPrimary.label} onChange={(v) => setD({ ...d, ctaPrimary: { ...d.ctaPrimary, label: v } })} />
-        <Field label="CTA Link" value={d.ctaPrimary.href} onChange={(v) => setD({ ...d, ctaPrimary: { ...d.ctaPrimary, href: v } })} />
+        <LinkField label="CTA Link" value={d.ctaPrimary.href} onChange={(v) => setD({ ...d, ctaPrimary: { ...d.ctaPrimary, href: v } })} />
       </div>
       <SelectField label="Hintergrund" value={d.background} options={['surface', 'gradient', 'image']} onChange={(v) => setD({ ...d, background: v })} />
       <button onClick={() => onSave(d)} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
@@ -312,7 +315,7 @@ function LogoCloudEditor({ data, onSave }: EditorProps) {
       {logos.map((logo, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeLogo(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <Field label="Bild-URL" value={logo.src} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, src: v } : l))} />
+          <ImageUploadField label="Bild" value={logo.src} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, src: v } : l))} />
           <div className="grid grid-cols-2 gap-3">
             <Field label="Alt-Text" value={logo.alt} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, alt: v } : l))} />
             <Field label="Link (optional)" value={logo.href} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, href: v } : l))} />
@@ -343,7 +346,7 @@ function GalleryGridEditor({ data, onSave }: EditorProps) {
       {images.map((img, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeImage(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <Field label="Bild-URL" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
+          <ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
           <div className="grid grid-cols-2 gap-3">
             <Field label="Alt-Text" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
             <Field label="Bildunterschrift" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} />
@@ -371,7 +374,7 @@ function UspStripEditor({ data, onSave }: EditorProps) {
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-3 gap-3">
-            <Field label="Icon (Lucide)" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
+            <IconPickerField label="Icon" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
             <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Text" value={item.text} onChange={(v) => update(i, 'text', v)} />
           </div>
@@ -409,8 +412,8 @@ function ServicesGridEditor({ data, onSave }: EditorProps) {
           </div>
           <div className="grid grid-cols-3 gap-3">
             <SelectField label="Medientyp" value={card.mediaType} options={['icon', 'image']} onChange={(v) => update(i, 'mediaType', v)} />
-            <Field label="Icon (Lucide)" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
-            <Field label="Bild-URL" value={card.image} onChange={(v) => update(i, 'image', v)} />
+            <IconPickerField label="Icon" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
+            <ImageUploadField label="Bild" value={card.image} onChange={(v) => update(i, 'image', v)} />
           </div>
         </div>
       ))}
@@ -480,7 +483,7 @@ function ContactEditor({ data, onSave }: EditorProps) {
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-3 gap-3">
-            <Field label="Icon (Lucide)" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
+            <IconPickerField label="Icon" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
             <Field label="Label" value={card.label} onChange={(v) => update(i, 'label', v)} />
             <Field label="Wert" value={card.value} onChange={(v) => update(i, 'value', v)} />
           </div>
@@ -527,8 +530,8 @@ function ServiceDetailEditor({ data, onSave }: EditorProps) {
           </div>
           <div className="grid grid-cols-3 gap-3">
             <SelectField label="Medientyp" value={item.mediaType} options={['icon', 'image']} onChange={(v) => update(i, 'mediaType', v)} />
-            <Field label="Icon (Lucide)" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
-            <Field label="Bild-URL" value={item.image} onChange={(v) => update(i, 'image', v)} />
+            <Field label="Icon" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
+            <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
           </div>
           <Field label="Features (eine pro Zeile)" value={item.features} onChange={(v) => update(i, 'features', v)} multiline />
           <div className="grid grid-cols-2 gap-3">
@@ -579,7 +582,7 @@ function PortfolioEditor({ data, onSave }: EditorProps) {
             <Field label="Kategorie" value={proj.category} onChange={(v) => update(i, 'category', v)} />
           </div>
           <Field label="Beschreibung" value={proj.description} onChange={(v) => update(i, 'description', v)} multiline />
-          <Field label="Bild-URL" value={proj.image} onChange={(v) => update(i, 'image', v)} />
+          <ImageUploadField label="Bild" value={proj.image} onChange={(v) => update(i, 'image', v)} />
         </div>
       ))}
       <button onClick={addProject} className="text-sm text-blue-600 hover:underline">+ Projekt hinzufügen</button>
@@ -654,7 +657,7 @@ function TeamEditor({ data, onSave }: EditorProps) {
             <Field label="Name" value={m.name} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, name: v } : mem))} />
             <Field label="Rolle" value={m.role} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, role: v } : mem))} />
           </div>
-          <Field label="Bild-URL" value={m.image} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, image: v } : mem))} />
+          <ImageUploadField label="Bild" value={m.image} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, image: v } : mem))} />
           <Field label="Bio" value={m.bio} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, bio: v } : mem))} multiline />
         </div>
       ))}
