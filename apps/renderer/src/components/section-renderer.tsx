@@ -19,7 +19,7 @@ import { GalleryGridSection } from '@/templates/handwerk/gallery-grid';
 import { RichTextSection } from '@/templates/handwerk/rich-text';
 import { HeaderBannerSection } from '@/templates/handwerk/header-banner';
 
-const SECTION_COMPONENTS: Record<string, React.FC<{ data: Record<string, unknown>; variant?: string | null }>> = {
+const SECTION_COMPONENTS: Record<string, React.FC<{ data: Record<string, unknown>; variant?: string | null; styleVariant?: string }>> = {
   hero: HeroSection,
   uspStrip: UspStripSection,
   servicesGrid: ServicesGridSection,
@@ -56,7 +56,7 @@ const CONTAINER: Record<string, string> = {
   full: 'w-full px-6',
 };
 
-export function SectionRenderer({ section, collections }: { section: SnapshotSection; collections?: SnapshotCollection[] }) {
+export function SectionRenderer({ section, collections, styleVariant }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string }) {
   const Component = SECTION_COMPONENTS[section.type];
 
   // Inject collection items into newsPreview sections
@@ -93,7 +93,7 @@ export function SectionRenderer({ section, collections }: { section: SnapshotSec
   if (isFullBleed) {
     return (
       <section id={section.anchorId ?? undefined}>
-        <Component data={section.data} variant={section.variant} />
+        <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
       </section>
     );
   }
@@ -105,7 +105,7 @@ export function SectionRenderer({ section, collections }: { section: SnapshotSec
   return (
     <section id={section.anchorId ?? undefined} className={`${spacingClass} ${spacingBottomClass}`}>
       <div className={containerClass}>
-        <Component data={section.data} variant={section.variant} />
+        <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
       </div>
     </section>
   );

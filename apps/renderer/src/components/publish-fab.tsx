@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Rocket } from 'lucide-react';
+import { Rocket, ExternalLink } from 'lucide-react';
 import { publishAction } from '@/app/admin/publish/actions';
 
 export function PublishFab() {
@@ -16,7 +16,7 @@ export function PublishFab() {
         alert(result.error);
       } else {
         setDone(true);
-        setTimeout(() => setDone(false), 3000);
+        setTimeout(() => setDone(false), 5000);
       }
     } finally {
       setPublishing(false);
@@ -24,7 +24,17 @@ export function PublishFab() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
+      {done && (
+        <a
+          href="/preview/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-full shadow-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          <ExternalLink size={16} /> Vorschau
+        </a>
+      )}
       <button
         onClick={handlePublish}
         disabled={publishing}
