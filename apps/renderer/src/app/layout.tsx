@@ -12,6 +12,7 @@ const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit', weight: [
 export const metadata: Metadata = {
   title: { default: 'Flamingo CMS', template: '%s' },
   description: 'Powered by Flamingo CMS',
+  icons: { icon: '/favicon.svg' },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
