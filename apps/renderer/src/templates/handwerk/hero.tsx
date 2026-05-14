@@ -77,7 +77,7 @@ export function HeroSection({ data }: Props) {
                 {[1,2,3,4,5].map(i => <Star key={i} size={12} className="fill-brand-accent text-brand-accent" />)}
               </div>
             </motion.div>
-          )
+          )}
 
           {subline && (
             <motion.p
