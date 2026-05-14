@@ -48,7 +48,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
         <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} />
         <main>
           {visibleSections.map((section) => (
-            <SectionRenderer key={section.id} section={section} collections={snapshot.collections} />
+            <SectionRenderer key={section.id} section={section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} />
           ))}
         </main>
         <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />
