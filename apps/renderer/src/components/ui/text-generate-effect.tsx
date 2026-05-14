@@ -36,10 +36,10 @@ export function TextGenerateEffect({
           {wordsArray.map((word, idx) => (
             <motion.span
               key={word + idx}
-              className="opacity-0 inline-block"
+              className="opacity-0 inline-block mr-[0.25em]"
               style={{ filter: filter ? 'blur(10px)' : 'none' }}
             >
-              {word}{' '}
+              {word}
             </motion.span>
           ))}
         </div>
