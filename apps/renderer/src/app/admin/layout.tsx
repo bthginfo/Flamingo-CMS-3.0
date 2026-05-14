@@ -2,6 +2,7 @@ import { getSession } from '@/lib/session';
 import { Sidebar } from '@/components/sidebar';
 import { cookies } from 'next/headers';
 import { DemoBanner } from '@/components/demo-banner';
+import { PublishFab } from '@/components/publish-fab';
 import { Toaster } from 'sonner';
 
 // Disable Next.js fetch() data cache for all admin routes
@@ -38,6 +39,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           {children}
         </div>
       </main>
+      <PublishFab />
       <Toaster position="top-right" richColors closeButton />
     </div>
   );
