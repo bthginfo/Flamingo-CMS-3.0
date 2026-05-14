@@ -32,8 +32,10 @@ html {
   }
 
   h1, h2, h3, h4, h5, h6 {
-    letter-spacing: -0.025em;
+    letter-spacing: var(--style-heading-tracking, -0.025em);
     text-wrap: balance;
+    font-weight: var(--style-heading-weight, 700);
+    text-transform: var(--style-heading-transform, none);
   }
 }
 
@@ -47,28 +49,35 @@ html {
   }
 
   .section-badge {
-    @apply inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium mb-6;
+    @apply inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium mb-6;
+    border-radius: var(--style-radius-full, 9999px);
     background: rgba(26, 82, 118, 0.05);
     border: 1px solid rgba(26, 82, 118, 0.1);
     color: var(--brand-primary);
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 text-base;
+    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 text-base;
+    border-radius: var(--style-button-radius, 9999px);
     background: var(--brand-accent);
     color: #1a1a1a;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 rounded-xl border-2 border-white/20 text-white transition-all duration-300 hover:bg-white/10 hover:border-white/40 text-base backdrop-blur-sm;
+    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 border-2 border-white/20 text-white transition-all duration-300 hover:bg-white/10 hover:border-white/40 text-base backdrop-blur-sm;
+    border-radius: var(--style-button-radius, 9999px);
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 rounded-xl border-2 border-gray-200 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:border-gray-300 text-base;
+    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 border-2 border-gray-200 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:border-gray-300 text-base;
+    border-radius: var(--style-button-radius, 9999px);
   }
 
   .card-hover {
-    @apply bg-white rounded-2xl border border-gray-100/80 shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1 hover:border-gray-200;
+    @apply bg-white border transition-all duration-500 hover:shadow-xl hover:-translate-y-1;
+    border-radius: var(--style-card-radius, 1rem);
+    border-color: rgba(0,0,0,0.06);
+    box-shadow: var(--style-card-shadow, 0 4px 20px rgba(0,0,0,0.06));
   }
 
   .glass {

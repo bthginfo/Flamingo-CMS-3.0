@@ -49,8 +49,10 @@ function HeroEditor({ data, onSave }: EditorProps) {
   const [d, setD] = useState({
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
+    badgeText: (data.badgeText as string) || '',
     variant: (data.variant as string) || 'split',
-    backgroundImage: (data.backgroundImage as string) || '',
+    bgImage: (data.bgImage as string) || '',
+    trustItems: (data.trustItems as string[]) || [],
     primaryCta: (data.primaryCta as { label: string; href: string }) || { label: '', href: '' },
     secondaryCta: (data.secondaryCta as { label: string; href: string }) || { label: '', href: '' },
   });
@@ -59,8 +61,19 @@ function HeroEditor({ data, onSave }: EditorProps) {
     <div className="space-y-3">
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
       <SelectField label="Variante" value={d.variant} options={['split', 'centered', 'editorial', 'fullBleedMedia']} onChange={(v) => setD({ ...d, variant: v })} />
-      <ImageUploadField label="Hintergrundbild" value={d.backgroundImage} onChange={(v) => setD({ ...d, backgroundImage: v })} />
+      <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
+      <div className="space-y-2">
+        <label className="text-xs font-medium text-zinc-600">Trust-Elemente</label>
+        {d.trustItems.map((item, i) => (
+          <div key={i} className="flex gap-2">
+            <input className="admin-input flex-1 text-xs" value={item} onChange={(e) => setD({ ...d, trustItems: d.trustItems.map((t, idx) => idx === i ? e.target.value : t) })} />
+            <button onClick={() => setD({ ...d, trustItems: d.trustItems.filter((_, idx) => idx !== i) })} className="text-red-400 hover:text-red-600 text-xs">×</button>
+          </div>
+        ))}
+        <button onClick={() => setD({ ...d, trustItems: [...d.trustItems, ''] })} className="text-xs text-blue-600 hover:underline">+ Trust-Element</button>
+      </div>
       <div className="grid grid-cols-2 gap-3">
         <Field label="Primärer CTA Label" value={d.primaryCta.label} onChange={(v) => setD({ ...d, primaryCta: { ...d.primaryCta, label: v } })} />
         <LinkField label="Primärer CTA Link" value={d.primaryCta.href} onChange={(v) => setD({ ...d, primaryCta: { ...d.primaryCta, href: v } })} />
@@ -77,6 +90,7 @@ function HeroEditor({ data, onSave }: EditorProps) {
 // ─── FAQ Editor ──────────────────────────────────────────────────
 function FaqEditor({ data, onSave }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
   const [items, setItems] = useState<{ question: string; answer: string }[]>(
     (data.items as { question: string; answer: string }[]) || []
   );
@@ -99,7 +113,7 @@ function FaqEditor({ data, onSave }: EditorProps) {
       ))}
       <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Frage hinzufügen</button>
       <div>
-        <button onClick={() => onSave({ headline, items, source: 'manual', layout: 'accordion', expandFirst: true })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
+        <button onClick={() => onSave({ headline, badgeText, items, source: 'manual', layout: 'accordion', expandFirst: true })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
       </div>
     </div>
   );
@@ -565,15 +579,16 @@ function PortfolioEditor({ data, onSave }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
-  const [projects, setProjects] = useState<{ title: string; category: string; description: string; image: string }[]>(
+  const [projects, setProjects] = useState<{ title: string; category: string; description: string; image: string; stats: { label: string; value: string }[] }[]>(
     ((data.projects as Record<string, unknown>[]) || []).map(p => ({
       title: (p.title as string) || '',
       category: (p.category as string) || '',
       description: (p.description as string) || '',
       image: (p.image as string) || '',
+      stats: ((p.stats as { label: string; value: string }[]) || []),
     }))
   );
-  function addProject() { setProjects([...projects, { title: '', category: '', description: '', image: '' }]); }
+  function addProject() { setProjects([...projects, { title: '', category: '', description: '', image: '', stats: [] }]); }
   function removeProject(i: number) { setProjects(projects.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setProjects(projects.map((p, idx) => idx === i ? { ...p, [field]: val } : p)); }
 
@@ -591,6 +606,23 @@ function PortfolioEditor({ data, onSave }: EditorProps) {
           </div>
           <Field label="Beschreibung" value={proj.description} onChange={(v) => update(i, 'description', v)} multiline />
           <ImageUploadField label="Bild" value={proj.image} onChange={(v) => update(i, 'image', v)} />
+          <div className="space-y-2">
+            <label className="text-xs font-medium text-zinc-600">Statistiken</label>
+            {proj.stats.map((s, j) => (
+              <div key={j} className="flex gap-2">
+                <input className="admin-input flex-1 text-xs" placeholder="Wert" value={s.value} onChange={(e) => {
+                  const newStats = [...proj.stats]; newStats[j] = { ...newStats[j], value: e.target.value };
+                  setProjects(projects.map((p, idx) => idx === i ? { ...p, stats: newStats } : p));
+                }} />
+                <input className="admin-input flex-1 text-xs" placeholder="Label" value={s.label} onChange={(e) => {
+                  const newStats = [...proj.stats]; newStats[j] = { ...newStats[j], label: e.target.value };
+                  setProjects(projects.map((p, idx) => idx === i ? { ...p, stats: newStats } : p));
+                }} />
+                <button onClick={() => setProjects(projects.map((p, idx) => idx === i ? { ...p, stats: p.stats.filter((_, si) => si !== j) } : p))} className="text-red-400 text-xs">×</button>
+              </div>
+            ))}
+            <button onClick={() => setProjects(projects.map((p, idx) => idx === i ? { ...p, stats: [...p.stats, { value: '', label: '' }] } : p))} className="text-xs text-blue-600 hover:underline">+ Statistik</button>
+          </div>
         </div>
       ))}
       <button onClick={addProject} className="text-sm text-blue-600 hover:underline">+ Projekt hinzufügen</button>
@@ -617,9 +649,10 @@ function TeamEditor({ data, onSave }: EditorProps) {
       value: (s.value as string) || '', label: (s.label as string) || '',
     }))
   );
-  const [values, setValues] = useState<{ icon: string; title: string; text: string }[]>(
+  const [values, setValues] = useState<{ icon: string; title: string; text: string; image: string; mediaType: string }[]>(
     ((data.values as Record<string, unknown>[]) || []).map(v => ({
       icon: (v.icon as string) || '', title: (v.title as string) || '', text: (v.text as string) || '',
+      image: (v.image as string) || '', mediaType: (v.mediaType as string) || 'icon',
     }))
   );
 
@@ -632,7 +665,7 @@ function TeamEditor({ data, onSave }: EditorProps) {
       <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Firmengeschichte</h4>
       <Field label="Story-Headline" value={storyHeadline} onChange={setStoryHeadline} />
       <Field label="Story-Text" value={storyText} onChange={setStoryText} multiline />
-      <Field label="Story-Bild-URL" value={storyImage} onChange={setStoryImage} />
+      <ImageUploadField label="Story-Bild" value={storyImage} onChange={setStoryImage} />
 
       <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Statistiken</h4>
       {teamStats.map((s, i) => (
@@ -648,14 +681,21 @@ function TeamEditor({ data, onSave }: EditorProps) {
       {values.map((v, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-3 gap-3">
-            <Field label="Icon" value={v.icon} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, icon: val } : vl))} />
+          <div className="grid grid-cols-2 gap-3">
             <Field label="Titel" value={v.title} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, title: val } : vl))} />
             <Field label="Text" value={v.text} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, text: val } : vl))} />
           </div>
+          <div className="grid grid-cols-2 gap-3">
+            <SelectField label="Medientyp" value={v.mediaType} options={['icon', 'image']} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, mediaType: val } : vl))} />
+            {v.mediaType === 'icon' ? (
+              <IconPickerField label="Icon" value={v.icon} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, icon: val } : vl))} />
+            ) : (
+              <ImageUploadField label="Bild" value={v.image} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, image: val } : vl))} />
+            )}
+          </div>
         </div>
       ))}
-      <button onClick={() => setValues([...values, { icon: '', title: '', text: '' }])} className="text-sm text-blue-600 hover:underline">+ Wert</button>
+      <button onClick={() => setValues([...values, { icon: '', title: '', text: '', image: '', mediaType: 'icon' }])} className="text-sm text-blue-600 hover:underline">+ Wert</button>
 
       <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Team-Mitglieder</h4>
       {members.map((m, i) => (

@@ -17,6 +17,12 @@ module.exports = {
         display: ['var(--font-outfit)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
+        style: 'var(--style-radius-md, 1rem)',
+        'style-sm': 'var(--style-radius-sm, 0.5rem)',
+        'style-lg': 'var(--style-radius-lg, 1.5rem)',
+        'style-full': 'var(--style-radius-full, 9999px)',
+        'style-card': 'var(--style-card-radius, 1rem)',
+        'style-button': 'var(--style-button-radius, 9999px)',
         '2xl': '1rem',
         '3xl': '1.5rem',
         '4xl': '2rem',

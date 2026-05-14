@@ -1,5 +1,5 @@
 import { getDb } from '@/lib/db';
-import { navigation, footer, globalSettings, seoGlobal, seoPage } from '@flamingo/db';
+import { navigation, footer, globalSettings, seoGlobal, seoPage, tenants } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 
 export type NavItem = { label: string; href: string; type?: string };
@@ -8,6 +8,12 @@ export type FooterData = { columns: FooterColumn[]; legalLinks: { label: string;
 export type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string };
 export type SocialLinks = Record<string, string>;
 export type ContactData = { phone?: string; email?: string; address?: string };
+
+export async function getTenantStyle(tenantId: string): Promise<{ industry: string; activeStyle: string }> {
+  const db = getDb();
+  const [t] = await db.select({ industry: tenants.industry, activeStyle: tenants.activeStyle }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  return { industry: t?.industry ?? 'handwerk', activeStyle: t?.activeStyle ?? 'classic' };
+}
 
 export async function getTenantNav(tenantId: string): Promise<NavItem[]> {
   const db = getDb();

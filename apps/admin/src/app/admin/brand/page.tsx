@@ -1,13 +1,16 @@
-import { getBrandSettings } from '../settings-actions';
+import { getBrandSettings, getTenantInfo } from '../settings-actions';
 import { BrandForm } from './brand-form';
+import { StyleSwitcher } from './style-switcher';
 
 export default async function BrandPage() {
   const { brand } = await getBrandSettings();
+  const tenantInfo = await getTenantInfo();
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-1">Marke & Design</h1>
-      <p className="text-zinc-500 text-sm mb-8">Firmenname, Slogan und Farbschema Ihrer Website.</p>
+      <p className="text-zinc-500 text-sm mb-8">Firmenname, Slogan, Farbschema und Stil Ihrer Website.</p>
+      <StyleSwitcher industry={tenantInfo.industry} activeStyle={tenantInfo.activeStyle} />
       <BrandForm initial={brand} />
     </div>
   );

@@ -1,5 +1,6 @@
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
-import { getTenantNav, getTenantFooter, getTenantBrand, getTenantSeoGlobal, getTenantSeoPage } from '@/lib/tenant-data';
+import { getTenantNav, getTenantFooter, getTenantBrand, getTenantSeoGlobal, getTenantSeoPage, getTenantStyle } from '@/lib/tenant-data';
+import { getStyleCssVars } from '@/lib/styles';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { SectionRenderer } from '@/components/section-renderer';
@@ -60,17 +61,19 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   if (!result) notFound();
 
   const { tenantId, snapshot, page } = result;
-  const [navItems, footerData, { brand, contact, socialLinks }] = await Promise.all([
+  const [navItems, footerData, { brand, contact, socialLinks }, tenantStyle] = await Promise.all([
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
+    getTenantStyle(tenantId),
   ]);
 
+  const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
   const visibleSections = page.sections.filter(s => s.visible);
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
 
   return (
-    <>
+    <div style={styleCssVars as React.CSSProperties}>
       <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={firstSectionIsHero} />
       <main>
         {visibleSections.map((section) => (
@@ -78,6 +81,6 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
         ))}
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />
-    </>
+    </div>
   );
 }
