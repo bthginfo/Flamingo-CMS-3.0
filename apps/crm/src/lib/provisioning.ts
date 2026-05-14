@@ -201,7 +201,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     slug: input.slug,
     domain: input.domain,
     domainConfigured,
-    adminUrl: `${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://flamingo-admin.vercel.app'}/admin`,
+    adminUrl: `${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://admin.flamingomedia.online'}/admin`,
     rendererUrl: input.domain ? `https://${input.domain}` : `https://${input.slug}.${baseRendererDomain}`,
   };
 }

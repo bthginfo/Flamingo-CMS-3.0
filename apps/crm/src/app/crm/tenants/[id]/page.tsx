@@ -141,7 +141,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
                 <ExternalLink size={14} /> Renderer öffnen
               </a>
             )}
-            <a href={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://flamingo-admin.vercel.app'}/admin`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800">
+            <a href={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://admin.flamingomedia.online'}/admin`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800">
               <Shield size={14} /> Admin öffnen
             </a>
           </div>
