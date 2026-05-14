@@ -7,19 +7,59 @@
 
 ## 🚨 ABSOLUT KRITISCHE REGELN
 
+### GOLDENE REGEL: 100% FELD-ABDECKUNG
+
+**Jedes einzelne Textstück, Bild, Link oder konfigurierbare Element, das im Renderer (Frontend) angezeigt wird, MUSS im Admin-Panel bearbeitbar sein. Keine Ausnahmen. 0% Toleranz.**
+
+Das bedeutet konkret:
+- **NIEMALS** benutzer-sichtbaren Text hartcodieren in Renderer-Templates. Immer `(data.feldName as string) || 'Standardwert'` verwenden.
+- Jedes Feld das im Admin-Editor gespeichert wird (`onSave()`) MUSS im Renderer-Template gelesen werden.
+- Jedes Feld das das Renderer-Template liest MUSS im Admin-Editor bearbeitbar sein.
+- Globale Elemente (Nav CTA-Button, Footer CTA, Top-Bar Infos) sind über Settings editierbar.
+- Section-Meta (Spacing, Container, Anchor, Variante) sind über den SectionMetaEditor editierbar.
+
+### Pflicht-Workflow bei JEDER Template-/Editor-Änderung:
+
+```
+1. NEUES RENDERER-FELD HINZUFÜGEN?
+   → SOFORT entsprechendes Editor-Feld in section-data-editor.tsx hinzufügen
+   → SOFORT prüfen, dass onSave() den Schlüssel enthält
+
+2. NEUES ADMIN-FELD HINZUFÜGEN?
+   → SOFORT im Renderer-Template auslesen und rendern
+   → SOFORT prüfen, dass data.feldName im Template steht
+
+3. NACH JEDER ÄNDERUNG an einem Section-Type:
+   → MENTAL CHECKLIST durchgehen (siehe unten)
+   → Build ausführen und auf TypeScript-Errors prüfen
+```
+
+### Feld-Abdeckung Mental-Checkliste (bei JEDER Änderung):
+
+```
+□ Admin-Editor speichert Feld X → Renderer-Template liest Feld X?
+□ Renderer-Template liest Feld Y → Admin-Editor hat Eingabe für Feld Y?
+□ Kein hartcodierter deutscher Text im Renderer? (nur Fallback-Defaults nach ||)
+□ Neue Section-Types in BEIDEN Registries eingetragen?
+   - section-data-editor.tsx → EDITORS Map
+   - section-renderer.tsx → SECTION_COMPONENTS Map
+□ Alle Pages (nicht nur home!) prüfen — auch /c/[collection]/[slug]
+```
+
 ### VERBOTEN — Niemals tun:
-1. **KEIN Handwerk-Code anfassen.** `apps/renderer/src/templates/handwerk/` ist READ-ONLY. Du darfst dort NICHTS ändern, löschen oder hinzufügen.
-2. **KEINEN existierenden Admin-Code ändern.** `apps/admin/src/app/admin/pages/[id]/section-data-editor.tsx`, `page-editor.tsx` und alle Handwerk-bezogenen Dateien sind READ-ONLY.
-3. **KEINEN globalen Renderer-Code ändern** — `apps/renderer/src/components/section-renderer.tsx`, `site-header.tsx`, `site-footer.tsx`, `[[...slug]]/page.tsx`, `snapshot.ts`, `tenant-data.ts`, `globals.css`, `tailwind.config.ts` sind READ-ONLY.
-4. **KEINE Annahmen treffen.** Wenn dir etwas unklar ist, FRAGE den Benutzer. Entscheide niemals selbstständig über Architektur, Design oder Inhalte.
-5. **KEINE generischen Kopien.** Handwerk darf als Referenz betrachtet, aber NIE 1:1 kopiert werden. Jede Branche muss eigene Identität haben.
-6. **KEINE Seiteneffekte.** Nach deiner Arbeit muss `apps/renderer/src/templates/handwerk/` identisch sein wie vorher. Der Handwerk-Renderer und der Handwerk-Admin müssen exakt gleich funktionieren.
+1. **KEIN Handwerk-Code anfassen.** `apps/renderer/src/templates/handwerk/` ist READ-ONLY.
+2. **KEINEN existierenden Admin-Code für Handwerk ändern.**
+3. **KEINE Annahmen treffen.** Wenn dir etwas unklar ist, FRAGE den Benutzer.
+4. **KEINE generischen 1:1 Kopien.** Jede Branche muss eigene Identität haben.
+5. **KEINE Seiteneffekte.** Nach deiner Arbeit muss Handwerk identisch funktionieren.
+6. **KEINEN hartcodierten Text** in Renderer-Templates (siehe Goldene Regel).
 
 ### PFLICHT — Immer tun:
 1. **Jeden Schritt begründen.** Vor jeder Aktion: erkläre in 1-2 Sätzen WARUM du das tust.
-2. **Bestätigung einholen.** Bevor du eine Datei erstellst/änderst, beschreibe was du vorhast und warte auf Zustimmung des Benutzers.
-3. **Testen.** Nach jedem Meilenstein: Build ausführen (`pnpm build --filter @flamingo/renderer --filter @flamingo/admin`) und sicherstellen, dass keine Errors auftreten.
-4. **Am Ende verifizieren**, dass Handwerk noch funktioniert: `curl -s localhost:3002 | grep "Meisterbetrieb"` (oder äquivalent).
+2. **100% Feld-Audit** nach jeder Section: Alle Felder im Editor ↔ alle Felder im Template abgleichen.
+3. **Testen.** Nach jedem Meilenstein: Build ausführen und sicherstellen, dass keine Errors auftreten.
+4. **ALLE Consumer-Pages prüfen** — `[[...slug]]/page.tsx` UND `c/[collection]/[slug]/page.tsx` müssen kompilieren.
+5. **Am Ende verifizieren**, dass Handwerk noch funktioniert.
 
 ---
 
@@ -29,68 +69,78 @@
 ```
 flamingo-cms/
 ├── apps/
-│   ├── admin/        ← Tenant-Admin (Next.js, Port 3001)
-│   ├── renderer/     ← Frontend-Renderer (Next.js, Port 3002)
-│   ├── marketing/    ← Marketing-Website (Next.js, Port 3000)
-│   └── crm/          ← CRM/Provisioning (Next.js, Port 3003)
+│   ├── admin/        ← Tenant-Admin (Next.js 15, Port 3001)
+│   ├── renderer/     ← Frontend-Renderer (Next.js 15, Port 3002)
+│   ├── marketing/    ← Marketing-Website (Next.js 15, Port 3000)
+│   └── crm/          ← CRM/Provisioning (Next.js 15, Port 3003)
 ├── packages/
-│   ├── db/           ← Drizzle ORM Schema + DB-Client
+│   ├── db/           ← Drizzle ORM Schema + DB-Client (Neon Postgres)
+│   ├── schemas/      ← Zod Validierungsschemas
 │   └── auth/         ← JWT Auth + Password Hashing
 └── scripts/          ← Seed-Scripts
 ```
 
-### Wie die Renderer-Pipeline funktioniert
-1. **Request kommt rein** → `[[...slug]]/page.tsx`
-2. **Tenant-Auflösung** → `snapshot.ts:resolveTenant()` — findet Tenant via Hostname (oder Fallback: erster aktiver Tenant)
-3. **Snapshot laden** → `snapshot.ts:getActiveSnapshot()` — aktiver published snapshot aus DB
-4. **Seite finden** → Slug-Match in den Snapshot-Pages
-5. **Style-Vars laden** → `styles.ts:getStyleCssVars(industry, activeStyle)` → CSS Custom Properties
-6. **Rendern** → `<SectionRenderer>` mappt `section.type` auf React-Komponente aus `SECTION_COMPONENTS`
-7. **Header/Footer** → Global, aus `tenant-data.ts` (Navigation, Brand, Contact, Social Links)
+### Datenbank
+- **ORM:** Drizzle ORM mit Neon Postgres
+- **Schema:** `packages/db/src/schema/index.ts`
+- **Schema pushen:** `cd packages/db && DATABASE_URL="..." npx drizzle-kit push`
+- **Wichtig:** Nach Schema-Änderung IMMER `drizzle-kit push` ausführen
 
-### Wie der Section-Renderer funktioniert (`section-renderer.tsx`)
+### Deployment
+- Alle Apps deployen zu Vercel via GitHub push (auto-deploy auf `main`)
+- Vercel Team: `juliusvingelheim-2692s-projects`
+- Renderer Cache-Invalidierung: POST `/api/revalidate` mit `x-revalidate-secret` Header
+- **WICHTIG:** Nach jedem `git push` abwarten ob der Vercel Build erfolgreich ist. Bei Fehlern sofort fixen.
+
+### Wie die Renderer-Pipeline funktioniert
+1. **Request** → `[[...slug]]/page.tsx` oder `c/[collection]/[slug]/page.tsx`
+2. **Tenant-Auflösung** → `snapshot.ts:resolveTenant()` via Hostname
+3. **Snapshot laden** → `snapshot.ts:getActiveSnapshot()` aus DB
+4. **Tenant-Daten** → `tenant-data.ts` liefert nav (items + CTA), footer (columns + CTA), brand, contact, socialLinks
+5. **Style-Vars** → `styles.ts:getStyleCssVars(industry, activeStyle)` → CSS Custom Properties auf Root-Div
+6. **Rendern** → `<SectionRenderer>` mappt `section.type` auf React-Komponente
+7. **Header** → `<SiteHeader>` bekommt navItems, brand, contact, cta
+8. **Footer** → `<SiteFooter>` bekommt footer (mit CTA), brand, contact, socialLinks
+
+### Wie der Section-Renderer funktioniert
 ```typescript
+// section-renderer.tsx
 const SECTION_COMPONENTS: Record<string, React.FC<Props>> = {
   hero: HeroSection,
   uspStrip: UspStripSection,
-  // ... alle 18 Handwerk-Section-Types
+  // ... alle Section-Types
 };
 ```
-**WICHTIG:** Dieser Import-Block importiert aktuell NUR aus `@/templates/handwerk/`. Für eine neue Branche musst du diesen Mechanismus erweitern — aber OHNE den bestehenden Code zu ändern. Siehe Abschnitt "Technische Umsetzung" weiter unten.
+Für eine neue Branche: NEUEN branchen-agnostischen Wrapper erstellen (siehe Phase 1).
 
 ### Wie der Admin-Editor funktioniert
-- `page-editor.tsx` hat `SECTION_TYPES[]` — die verfügbaren Section-Typen im Dropdown
-- `section-data-editor.tsx` hat `EDITORS: Record<string, React.FC>` — die Editor-Komponenten pro Type
-- Beide Dateien sind aktuell Handwerk-spezifisch und DÜRFEN NICHT geändert werden
+- `page-editor.tsx` hat `SECTION_TYPES[]` — verfügbare Section-Typen im Dropdown
+- `section-data-editor.tsx` hat `EDITORS: Record<string, React.FC>` — Editor-Komponenten pro Type
+- `SectionMetaEditor` (in page-editor.tsx) — Spacing, Container, Variante, Anchor-ID pro Section
+- **Settings-Seiten:**
+  - `/admin/brand` → Firmenname, Tagline, Logo, Farben
+  - `/admin/contact` → Telefon, E-Mail, Adresse, Öffnungszeiten
+  - `/admin/social` → Instagram, Facebook, Google, LinkedIn, YouTube, TikTok
+  - `/admin/navigation` → Nav-Links + CTA-Button (Label + Link)
+  - `/admin/navigation` (Footer-Tab) → Footer-Spalten, Legal-Links, Footer-CTA
 
-### Wie das Style-System funktioniert (`styles.ts`)
-```typescript
-export const INDUSTRY_STYLES: Record<string, IndustryStyles> = {
-  tradesman: { // ← DB-Enum-Wert, NICHT "handwerk"
-    label: 'Handwerk',
-    styles: {
-      classic: { cssVars: { '--style-radius-sm': '0.5rem', ... } },
-      modern: { cssVars: { ... } },
-      bold: { cssVars: { ... } },
-    },
-  },
-};
-```
-**WICHTIG:** Der Key muss dem DB-Enum-Wert entsprechen (z.B. `restaurant`, `salon`, `hotel`). Siehe `packages/db/src/schema/index.ts`:
+### Save & Publish Flow
+1. Admin bearbeitet Section → `updateSectionAction(sectionId, data, pageId)` → DB + `revalidatePath`
+2. Admin klickt "Veröffentlichen" (FAB-Bar) → `publishAction()` → Snapshot + Renderer-Revalidierung
+3. **WICHTIG:** Jede Server Action die Daten ändert MUSS `revalidatePath()` aufrufen!
+
+### Style-System
+- Styles: `apps/renderer/src/lib/styles.ts` — CSS Custom Properties pro Industry/Style
+- Angewendet: Inline auf Root-Div via `getStyleCssVars()`
+- Konsumiert: `globals.css` Component-Layer-Klassen
+- DB-Enum für Industry: `packages/db/src/schema/index.ts` → `industryEnum`
 ```typescript
 export const industryEnum = pgEnum('industry', [
   'tradesman', 'restaurant', 'salon', 'hotel', 'tourism',
   'consulting', 'medical', 'fitness', 'wedding', 'cafe', 'bar',
 ]);
 ```
-
-### Wie die Marketing-Seite Branchen zeigt
-In `apps/marketing/src/showcase/Templates.tsx` gibt es ein `TEMPLATES[]`-Array. Jede Branche hat:
-```typescript
-{ key: 'restaurant', name: 'Restaurant', tagline: '...', description: '...', 
-  image: '...', color: '#...', features: ['...'], status: 'live' | 'coming' }
-```
-Wenn `status: 'live'`, wird ein "Live-Demo" Button angezeigt, der zu `/demo` verlinkt.
+**WICHTIG:** Der Key in `INDUSTRY_STYLES` muss dem DB-Enum entsprechen (`tradesman`, nicht `handwerk`).
 
 ---
 
@@ -98,286 +148,266 @@ Wenn `status: 'live'`, wird ein "Live-Demo" Button angezeigt, der zu `/demo` ver
 
 ### Phase 1: Architektur-Erweiterung (einmalig, falls noch nicht geschehen)
 
-Der Section-Renderer muss branchen-agnostisch werden. **Aktuell importiert er hartcodiert aus `handwerk/`.**
+Der Section-Renderer muss branchen-agnostisch werden.
 
-**LÖSUNG:** Der `section-renderer.tsx` und der Admin-Editor müssen so erweitert werden, dass sie die Branche des aktuellen Tenants kennen und die passenden Templates/Editoren laden.
-
-> ⚠️ **DU DARFST DEN BESTEHENDEN CODE NICHT ÄNDERN.**
-> Stattdessen: Erstelle einen NEUEN Section-Renderer-Wrapper, der basierend auf der Branche den richtigen Section-Component wählt. **FRAGE den Benutzer nach dem genauen Ansatz bevor du beginnst.**
-
-**Empfohlene Architektur (muss vom Benutzer bestätigt werden):**
+**Empfohlene Architektur:**
 
 ```
 apps/renderer/src/templates/
 ├── handwerk/          ← BESTEHEND, NICHT ANFASSEN
-│   ├── hero.tsx
-│   ├── faq.tsx
-│   └── ... (18 Dateien)
-├── restaurant/        ← NEU
-│   ├── hero.tsx       ← Eigene Hero-Implementierung
-│   ├── menu.tsx       ← Branchen-spezifisch: Speisekarte
-│   └── ...
-└── index.ts           ← NEU: Registry die section-renderer.tsx nutzt
+├── restaurant/        ← NEU — eigenes Design
+└── index.ts           ← NEU — Registry pro Branche
 ```
 
 **Registry-Pattern (`templates/index.ts`):**
 ```typescript
-// Dieses Pattern erlaubt es, Templates pro Branche zu registrieren
-// OHNE bestehenden Code zu ändern
 import * as handwerk from './handwerk';
 import * as restaurant from './restaurant';
 
 export const INDUSTRY_TEMPLATES: Record<string, Record<string, React.FC<SectionProps>>> = {
-  tradesman: {
-    hero: handwerk.HeroSection,
-    uspStrip: handwerk.UspStripSection,
-    // ... alle 18 bestehenden
-  },
-  restaurant: {
-    hero: restaurant.HeroSection,
-    menu: restaurant.MenuSection,
-    // ... alle restaurant-spezifischen
-  },
+  tradesman: { hero: handwerk.HeroSection, ... },
+  restaurant: { hero: restaurant.HeroSection, menu: restaurant.MenuSection, ... },
 };
 ```
 
-**ABER:** Dieses Pattern erfordert eine Änderung an `section-renderer.tsx` — was verboten ist. **DAHER:**
-- Erstelle `apps/renderer/src/components/industry-section-renderer.tsx` als NEUEN Wrapper
-- Ändere NUR `apps/renderer/src/app/[[...slug]]/page.tsx` — ersetze `<SectionRenderer>` durch `<IndustrySectionRenderer industry={tenantStyle.industry}>` (diese eine Änderung ist erlaubt und muss vom Benutzer bestätigt werden)
-- Der bestehende `section-renderer.tsx` bleibt 100% unverändert als Fallback
+**Wrapper erstellen:**
+- `apps/renderer/src/components/industry-section-renderer.tsx` — wählt Template basierend auf Branche
+- `apps/admin/src/app/admin/pages/[id]/industry-section-editor.tsx` — Admin-Wrapper
 
-Gleiches gilt für den Admin:
-- Erstelle `apps/admin/src/app/admin/pages/[id]/industry-section-editor.tsx` als NEUEN Wrapper
-- Der bestehende `section-data-editor.tsx` bleibt unverändert
+**BEVOR du irgendwas änderst:** Bestätigung vom Benutzer einholen!
 
 ### Phase 2: Branche implementieren
 
-Für jede neue Branche müssen diese Dinge erstellt werden:
-
 #### 2.1 Renderer-Templates
-Erstelle `apps/renderer/src/templates/<branche>/` mit allen benötigten Section-Komponenten.
 
-**Design-Anforderungen:**
-- **Gleiche Qualität wie Handwerk.** Mindestens 18 Sections, davon einige branchen-spezifisch.
-- **Moderne Libraries verwenden:** Framer Motion für Animationen, Lucide für Icons, Next/Image für Bilder.
-- **2026-Feeling:** Glassmorphism, subtile Animationen, Gradient Meshes, Spotlight-Effekte, Micro-Interactions.
-- **Responsive:** Mobile-first, alle Breakpoints (sm, md, lg, xl).
-- **Tailwind CSS:** Alle Styles mit Tailwind, keine CSS-Module. Nutze die CSS Custom Properties aus dem Style-System (`var(--style-*)`).
-- **Dark/Light Awareness:** Hero-Sections mit dunklem Hintergrund, Content-Sections hell.
+Erstelle `apps/renderer/src/templates/<branche>/` mit allen Section-Komponenten.
 
-**Standard-Sections (müssen existieren, aber komplett eigenes Design):**
+**Standard-Sections (müssen mindestens existieren):**
 | Type | Beschreibung |
 |------|-------------|
-| `hero` | Heldenbild — eigenes Layout & Animationen, NICHT von Handwerk kopiert |
-| `uspStrip` | Vorteile-Leiste mit Icons |
-| `servicesGrid` | Leistungen/Angebote als Karten |
+| `hero` | Heldenbild — eigenes Layout, NICHT von Handwerk kopiert |
+| `uspStrip` | Vorteile-Leiste |
+| `servicesGrid` | Leistungen/Angebote |
 | `processSteps` | Ablauf-Timeline |
-| `testimonials` | Kundenstimmen mit Bewertungen |
-| `faq` | Häufige Fragen (Akkordeon) |
-| `ctaBand` | Call-to-Action Banner |
+| `testimonials` | Kundenstimmen (mit editierbarem badgeText, ratingValue, ratingCount!) |
+| `faq` | FAQ-Akkordeon |
+| `ctaBand` | CTA-Banner (mit editierbarem badgeText!) |
 | `contact` | Kontaktformular + Infos |
 | `map` | Karteneinbettung |
-| `team` | Team-Vorstellung |
-| `portfolio` | Referenz-/Projektgalerie |
-| `richText` | Freitext/HTML (Impressum etc.) |
+| `team` | Team (mit editierbarem valuesHeadline, membersHeadline!) |
+| `portfolio` | Projektgalerie |
+| `richText` | Freitext/HTML |
 | `stats` | Zahlen & Fakten |
 | `galleryGrid` | Bildergalerie |
-| `ctaLinks` | CTA-Link-Buttons |
-| `newsPreview` | News/Blog-Vorschau |
+| `ctaLinks` | CTA-Buttons |
+| `newsPreview` | News-Vorschau |
 | `logoCloud` | Partner-Logos |
+| `headerBanner` | Hinweisleiste (items + style) |
+| `serviceDetail` | Detail-Leistungsbeschreibung |
 
 **Branchen-spezifische Sections (Beispiele):**
 | Branche | Sections |
 |---------|----------|
-| Restaurant | `menu` (Speisekarte), `reservierung` (Reservierungs-Widget), `events` (Veranstaltungen) |
-| Salon | `preisliste` (Behandlungen + Preise), `buchung` (Online-Buchung), `vorherNachher` (Slider) |
-| Hotel | `zimmer` (Zimmerkatalog), `verfuegbarkeit` (Kalender), `angebote` (Saisonale Pakete) |
-| Medical | `leistungenDetail` (Behandlungen), `sprechstunden` (Öffnungszeiten), `patientenInfo` |
-| Consulting | `caseStudies` (Fallstudien), `expertise` (Kompetenzfelder), `insights` (Blog) |
+| Restaurant | `menu` (Speisekarte), `reservierung`, `events` |
+| Salon | `preisliste`, `buchung`, `vorherNachher` (Slider) |
+| Hotel | `zimmer`, `verfuegbarkeit`, `angebote` |
+| Medical | `leistungenDetail`, `sprechstunden`, `patientenInfo` |
+
+**⚠️ BEI JEDER SECTION:**
+1. Jedes Feld das gerendert wird → MUSS ein `data.xxx` Feld sein
+2. Fallback: `(data.xxx as string) || 'Sinnvoller Standard'`
+3. KEIN hartcodierter Text in `<span>`, `<h2>`, `<h3>` etc.
 
 #### 2.2 Admin-Editoren
-Erstelle Editoren für jede branchen-spezifische Section. Der Editor muss alle Felder abdecken, die die Section braucht.
 
-**Regeln:**
-- Jeder Editor bekommt `{ data, onChange }` Props
-- Verwende dieselben UI-Patterns wie die bestehenden Editoren (admin-input, admin-label CSS-Klassen)
-- Wiederverwendbare Felder: `ImageUploadField`, `LinkField`, `IconPickerField` existieren bereits in `apps/admin/src/components/`
-- Erstelle neue Felder nur wenn nötig (z.B. Preis-Feld, Zeitslot-Feld)
+Für jede branchen-spezifische Section einen Editor erstellen.
 
-#### 2.3 Style-Varianten
-Füge 3 Stil-Varianten in `apps/renderer/src/lib/styles.ts` hinzu:
+**KRITISCHE REGELN für Editoren:**
+- `onSave()` MUSS ALLE Felder enthalten die das Template liest
+- Wiederverwendbare Felder: `ImageUploadField`, `LinkField`, `IconPickerField` existieren in `apps/admin/src/components/`
+- Shared Helper: `Field`, `SelectField` existieren in section-data-editor.tsx
 
-```typescript
-// In INDUSTRY_STYLES hinzufügen (NICHT tradesman überschreiben):
-restaurant: {
-  label: 'Restaurant',
-  styles: {
-    classic: { label: 'Klassisch', description: '...', cssVars: { ... } },
-    modern: { label: 'Modern', description: '...', cssVars: { ... } },
-    bold: { label: 'Bold', description: '...', cssVars: { ... } },
-  },
-},
+**Verifizierung nach jedem Editor:**
+```
+Für Section-Type "xxx":
+1. Editor onSave(): Welche Keys werden gespeichert? → Liste erstellen
+2. Template: Welche data.xxx werden gelesen? → Liste erstellen
+3. BEIDE Listen vergleichen → müssen identisch sein
 ```
 
-**Design-Richtlinien für Stile:**
-- `classic` — Zeitlos, warm, traditionell. Abgerundete Ecken, weiche Schatten.
-- `modern` — Minimalistisch, clean, flat. Kleine Radien, keine Schatten, feine Borders.
-- `bold` — Dynamisch, stark, auffällig. Eckig (0 Radius), Offset-Schatten, Uppercase.
+#### 2.3 Style-Varianten
+
+3 Stile in `styles.ts` hinzufügen — `classic`, `modern`, `bold`:
+- `classic` — Zeitlos, warm, abgerundete Ecken, weiche Schatten
+- `modern` — Minimalistisch, feine Borders, weight 500, tight tracking
+- `bold` — Dynamisch, eckig (0 Radius), Offset-Schatten, Uppercase, weight 900
 
 #### 2.4 Seed-Script
-Erstelle `scripts/seed-<branche>-demo.ts`:
-- Erstellt einen neuen Tenant (nutzt den passenden industry-Enum-Wert)
-- Admin-Passwort: `demo2024`
-- Erstellt GlobalSettings (Brand, Contact, Social Links, Opening Hours)
-- Erstellt Navigation + Footer
-- Erstellt 5+ Seiten mit realistischem Premium-Content
-- Erstellt Collections mit Items (z.B. News-Artikel, Speisekarten-Kategorien)
-- Publiziert einen Snapshot
-- Erstellt eine Domain-Zuordnung (z.B. `<slug>.flamingomedia.online`)
 
-**Content-Qualität:**
-- Deutsche Texte, professionell und realistisch
-- Fiktive aber glaubwürdige Firma inkl. Adresse, Telefon, E-Mail
-- Alle Bilder von Unsplash mit `?w=800&q=80` für Thumbnails, `?w=1920&q=80` für Heroes
-- Keine Platzhalter-Texte wie "Lorem ipsum"
-- Mindestens 5 FAQ-Fragen, 4 Testimonials, 4 Team-Mitglieder, 6 Leistungen
+Erstelle `scripts/seed-<branche>-demo.ts`:
+- Neuer Tenant mit passendem `industry` Enum-Wert
+- Admin-Passwort: `demo2024`
+- GlobalSettings (Brand, Contact, Social Links, Opening Hours)
+- Navigation mit CTA + Footer mit CTA + Legal-Links
+- Mindestens 5 Seiten mit realistischem Premium-Content (DEUTSCH)
+- Collections mit Items (z.B. News)
+- Published Snapshot
+- Domain-Zuordnung
+
+**Content-Qualität:** Deutsche Texte, professionell, fiktiv aber glaubwürdig. Unsplash-Bilder. Keine Platzhalter.
 
 #### 2.5 Marketing-Seite
-In `apps/marketing/src/showcase/Templates.tsx`:
-- Ändere den `status` der neuen Branche von `'coming'` auf `'live'`
-- Aktualisiere `description` und `features` falls nötig
 
-#### 2.6 Demo-Playground
-Die Demo-Playground Seite embedded die Admin-App in einem iFrame. Es ist bereits ein funktionierender Demo-Login implementiert unter `/admin/demo-login`. Für neue Branchen muss ein eigener Demo-Tenant existieren (via Seed-Script).
+In `apps/marketing/src/showcase/Templates.tsx`: Status auf `'live'` setzen.
 
 ---
 
 ## 📋 VOLLSTÄNDIGE CHECKLISTE
 
-Arbeite diese Punkte IN DIESER REIHENFOLGE ab. Hake jeden Punkt ab und zeige dem Benutzer den Fortschritt.
-
 ### Vorbereitung
 - [ ] Dieses Dokument vollständig gelesen
 - [ ] Zielbranche mit Benutzer bestätigt
-- [ ] Farbschema, Stimmung und Designrichtung mit Benutzer abgestimmt
-- [ ] Seitenstruktur und branchen-spezifische Sections mit Benutzer bestätigt
+- [ ] Design-Richtung abgestimmt
 
-### Architektur (falls noch nicht vorhanden)
-- [ ] `apps/renderer/src/templates/index.ts` — Industry Template Registry erstellen
-- [ ] `apps/renderer/src/components/industry-section-renderer.tsx` — Branchen-aware Wrapper
-- [ ] `apps/renderer/src/app/[[...slug]]/page.tsx` — Einmalige Änderung: IndustrySectionRenderer nutzen (BESTÄTIGUNG EINHOLEN)
-- [ ] `apps/admin/src/app/admin/pages/[id]/industry-section-editor.tsx` — Admin-Wrapper
-- [ ] Verifizieren: Handwerk funktioniert noch identisch
+### Architektur (einmalig)
+- [ ] Template Registry erstellt
+- [ ] Industry Section Renderer erstellt
+- [ ] Admin Wrapper erstellt
+- [ ] Handwerk funktioniert noch identisch
 
-### Branchen-Templates (Renderer)
-- [ ] `apps/renderer/src/templates/<branche>/hero.tsx`
-- [ ] `apps/renderer/src/templates/<branche>/` — Alle Standard-Sections (mind. 17)
-- [ ] `apps/renderer/src/templates/<branche>/` — Alle branchen-spezifischen Sections
-- [ ] Template Registry um neue Branche erweitert
-- [ ] Build: `pnpm build --filter @flamingo/renderer` ohne Errors
+### Templates (Renderer)
+- [ ] Alle Standard-Sections implementiert (mindestens 19)
+- [ ] Alle branchen-spezifischen Sections implementiert
+- [ ] **100% FELD-AUDIT:** Jede Section → Admin-Felder = Renderer-Felder
+- [ ] Keine hartcodierten Texte
+- [ ] Template Registry erweitert
+- [ ] Build erfolgreich: `pnpm build --filter @flamingo/renderer`
 
 ### Admin-Editoren
-- [ ] Editoren für alle branchen-spezifischen Sections
-- [ ] Editor Registry um neue Branche erweitert
-- [ ] Build: `pnpm build --filter @flamingo/admin` ohne Errors
+- [ ] Editoren für branchen-spezifische Sections
+- [ ] Editor Registry erweitert
+- [ ] **100% FELD-AUDIT:** Jeder Editor onSave() = Template data.xxx
+- [ ] Build erfolgreich: `pnpm build --filter @flamingo/admin`
 
 ### Style-Varianten
-- [ ] `classic` Stil in `styles.ts` hinzugefügt
-- [ ] `modern` Stil in `styles.ts` hinzugefügt
-- [ ] `bold` Stil in `styles.ts` hinzugefügt
+- [ ] `classic`, `modern`, `bold` in styles.ts
+- [ ] CSS Vars werden in globals.css konsumiert
 
 ### Demo-Content
-- [ ] Seed-Script erstellt (`scripts/seed-<branche>-demo.ts`)
-- [ ] Seed-Script ausgeführt
+- [ ] Seed-Script erstellt und ausgeführt
 - [ ] Snapshot veröffentlicht
-- [ ] Domain in `tenant_domains` Tabelle eingetragen
+- [ ] Domain eingetragen
 
-### Marketing-Seite
-- [ ] Template-Status auf `'live'` gesetzt
-- [ ] Features-Liste aktualisiert
-
-### Vercel / Deployment
-- [ ] Domain zum Renderer-Vercel-Projekt hinzugefügt (via CRM oder API)
-- [ ] Push to main
-
-### Finale Verifizierung
-- [ ] Handwerk-Renderer zeigt identisches Design wie vorher
-- [ ] Handwerk-Admin funktioniert identisch
-- [ ] Neue Branche rendert korrekt im Renderer
-- [ ] Neue Branche hat funktionierenden Admin-Editor
-- [ ] Alle 3 Stile (classic/modern/bold) funktionieren
-- [ ] Marketing-Seite zeigt neue Branche als "Live"
-- [ ] `pnpm build` für alle Apps erfolgreich
+### Deployment & Verifikation
+- [ ] `git push` → Vercel Build ERFOLGREICH (kein Error!)
+- [ ] Handwerk unverändert
+- [ ] Neue Branche rendert korrekt
+- [ ] Admin-Editor für alle Sections funktioniert
+- [ ] Alle 3 Stile funktionieren
+- [ ] **FINALES FELD-AUDIT:** Jede Section auf jeder Seite prüfen
 
 ---
 
 ## 📂 DATEI-REFERENZEN
 
-### READ-ONLY (NICHT anfassen)
+### READ-ONLY
 | Datei | Zweck |
 |-------|-------|
-| `apps/renderer/src/templates/handwerk/*` | Alle 18 Handwerk-Templates |
-| `apps/renderer/src/components/section-renderer.tsx` | Aktueller Section-Renderer |
-| `apps/renderer/src/components/site-header.tsx` | Header-Komponente |
-| `apps/renderer/src/components/site-footer.tsx` | Footer-Komponente |
-| `apps/renderer/src/globals.css` | Globale Styles |
-| `apps/renderer/tailwind.config.ts` | Tailwind Config |
-| `apps/admin/src/app/admin/pages/[id]/section-data-editor.tsx` | Handwerk Admin-Editoren |
+| `apps/renderer/src/templates/handwerk/*` | Alle 19 Handwerk-Templates |
+| `apps/admin/src/app/admin/pages/[id]/section-data-editor.tsx` | Handwerk-Editoren |
 | `apps/admin/src/app/admin/pages/[id]/page-editor.tsx` | Handwerk Section-Types |
 
-### LESEN als Referenz, aber NICHT kopieren
-| Datei | Warum relevant |
-|-------|----------------|
-| `apps/renderer/src/templates/handwerk/hero.tsx` | Zeigt Quality-Bar für Animationen, Framer Motion, Aceternity UI |
-| `apps/renderer/src/templates/handwerk/testimonials.tsx` | Zeigt InfiniteMovingCards Pattern |
-| `apps/renderer/src/lib/styles.ts` | Zeigt wie Style-Varianten definiert werden |
-| `scripts/seed-handwerk-demo.ts` | Zeigt Seed-Script Struktur |
+### LESEN als Referenz
+| Datei | Warum |
+|-------|-------|
+| `apps/renderer/src/templates/handwerk/hero.tsx` | Quality-Bar: Animationen, Framer Motion |
+| `apps/renderer/src/lib/styles.ts` | Style-Varianten-Struktur |
+| `scripts/seed-handwerk-demo.ts` | Seed-Script-Struktur |
 
-### ERSTELLEN (neue Dateien)
+### ERSTELLEN für neue Branche
 | Datei | Zweck |
 |-------|-------|
-| `apps/renderer/src/templates/<branche>/*.tsx` | Alle Section-Templates |
-| `apps/renderer/src/templates/index.ts` | Industry Template Registry |
-| `apps/renderer/src/components/industry-section-renderer.tsx` | Branchen-Wrapper |
-| `apps/admin/src/app/admin/pages/[id]/industry-section-editor.tsx` | Admin Editor Wrapper |
-| `apps/renderer/src/lib/styles.ts` | Neue Stile HINZUFÜGEN (nicht ersetzen!) |
-| `apps/marketing/src/showcase/Templates.tsx` | Status auf 'live' ändern |
-| `scripts/seed-<branche>-demo.ts` | Seed-Script |
+| `apps/renderer/src/templates/<branche>/*.tsx` | Section-Templates |
+| `apps/renderer/src/templates/index.ts` | Template-Registry (einmalig) |
+| `apps/renderer/src/components/industry-section-renderer.tsx` | Wrapper (einmalig) |
+| `scripts/seed-<branche>-demo.ts` | Demo-Seed |
 
-### MINIMALE ÄNDERUNG erlaubt (nur mit Bestätigung)
-| Datei | Was ändern |
-|-------|-----------|
-| `apps/renderer/src/app/[[...slug]]/page.tsx` | `<SectionRenderer>` → `<IndustrySectionRenderer>` |
+### Existierende Dateien die erweitert werden
+| Datei | Was hinzufügen |
+|-------|---------------|
+| `apps/renderer/src/lib/styles.ts` | Neue industry styles (NICHT tradesman überschreiben!) |
+| `apps/marketing/src/showcase/Templates.tsx` | Status auf 'live' |
+
+---
+
+## 🔗 AKTUELLE SECTION-TYPES & IHRE FELDER (Stand: Mai 2026)
+
+Diese Liste zeigt exakt welche Felder pro Section-Type im Admin editierbar und im Renderer gerendert werden. **Nutze dies als Referenz für 100%-Abdeckung.**
+
+| Section | Felder |
+|---------|--------|
+| **hero** | headline, subline, badgeText, variant, bgImage, trustItems[], primaryCta{label,href}, secondaryCta{label,href} |
+| **uspStrip** | items[{icon,title,text}] |
+| **servicesGrid** | headline, subline, badgeText, manualCards[{title,text,icon,image,mediaType}] |
+| **processSteps** | headline, badgeText, steps[{title,text,icon}] |
+| **testimonials** | headline, badgeText, ratingValue, ratingCount, items[{quote,name,context,rating}] |
+| **faq** | headline, badgeText, items[{question,answer}] |
+| **ctaBand** | headline, subline, badgeText, ctaPrimary{label,href} |
+| **contact** | headline, introText, badgeText, submitLabel, formEnabled, infoCards[{icon,label,value}] |
+| **map** | headline, embedUrl, height(s/m/l) |
+| **serviceDetail** | headline, subline, badgeText, items[{title,text,icon,image,mediaType,features[],ctaLabel,ctaHref}] |
+| **portfolio** | headline, subline, badgeText, projects[{title,category,description,image,stats[]}] |
+| **team** | headline, subline, badgeText, storyHeadline, storyText, storyImage, valuesHeadline, membersHeadline, members[{name,role,image,bio}], stats[{value,label}], values[{icon,title,text,image,mediaType}] |
+| **ctaLinks** | headline, subline, links[{label,href,icon,description}] |
+| **newsPreview** | headline, subline, collectionKey, linkLabel, linkHref |
+| **stats** | headline, stats[{value,suffix,prefix,label,icon}] |
+| **logoCloud** | headline, subline, logos[{src,alt,href}] |
+| **galleryGrid** | headline, subline, images[{src,alt,caption}] |
+| **richText** | headline, content(HTML) |
+| **headerBanner** | items[{text,link}], style(neutral/info/warning) |
+
+### Globale Elemente (NICHT Section-Data)
+| Element | Editierbar über | Gerendert in |
+|---------|----------------|--------------|
+| Nav-Links | Admin → Navigation → items[] | SiteHeader navItems |
+| Nav CTA-Button | Admin → Navigation → cta{label,href} | SiteHeader CTA |
+| Top-Bar Telefon | Admin → Kontakt → phone | SiteHeader top-bar |
+| Top-Bar E-Mail | Admin → Kontakt → email | SiteHeader top-bar |
+| Top-Bar Tagline | Admin → Marke → tagline | SiteHeader top-bar |
+| Footer Spalten | Admin → Footer → columns[{title,items}] | SiteFooter columns |
+| Footer Legal-Links | Admin → Footer → legalLinks[{label,href}] | SiteFooter bottom |
+| Footer CTA | Admin → Footer → cta{label,href} | SiteFooter CTA banner |
+| Logo | Admin → Marke → logoUrl | SiteHeader + SiteFooter |
+| Firmenname | Admin → Marke → companyName | SiteHeader + SiteFooter |
+| Adresse | Admin → Kontakt → address | SiteFooter |
+| Social Links | Admin → Social → [platform URLs] | SiteFooter icons |
 
 ---
 
 ## 🎨 DESIGN-STANDARDS
 
-### Qualitäts-Mindestanforderungen
-Jede Section muss folgendes bieten:
-1. **Framer Motion Animationen** — Fade-in, slide-up, stagger-children bei Scroll
-2. **Responsive Design** — Mobile, Tablet, Desktop. Keine Breakpoint-Bugs.
-3. **CSS Custom Properties** — Alle Radien, Schatten, Gewichte über `var(--style-*)` steuerbar
-4. **Hover-States** — Jedes interaktive Element hat einen sichtbaren Hover-Effekt
-5. **Accessibility** — Semantisches HTML, alt-Texte, Keyboard-Navigation
-6. **Loading States** — Next/Image mit priority für Above-the-fold, lazy für den Rest
-7. **Dark Hero** — Erste Section (Hero) hat dunklen Hintergrund, weiße Schrift
-8. **Performance** — Keine unnötigen Re-Renders, keine schweren Libraries
+### Qualitäts-Anforderungen
+1. **Framer Motion** — Fade-in, slide-up, stagger bei Scroll
+2. **Responsive** — Mobile-first, alle Breakpoints
+3. **CSS Custom Properties** — Alle über `var(--style-*)` steuerbar
+4. **Hover-States** — Jedes interaktive Element
+5. **Dark Hero** — Hero hat dunklen Hintergrund
+6. **Performance** — Next/Image, priority für above-fold
+7. **2026-Feeling** — Glassmorphism, Gradient Meshes, Micro-Interactions
 
 ### Tech Stack
-| Library | Version | Zweck |
-|---------|---------|-------|
-| Next.js | 15.x | Framework |
-| React | 19.x | UI |
-| Framer Motion | 11.x | Animationen |
-| Lucide React | 0.475+ | Icons |
-| Tailwind CSS | 3.4.x | Styling |
-| @tailwindcss/typography | 0.5.x | Prose-Styles |
+| Library | Zweck |
+|---------|-------|
+| Next.js 15 | Framework |
+| React 19 | UI |
+| Framer Motion 11 | Animationen |
+| Lucide React | Icons |
+| Tailwind CSS 3.4 | Styling |
 
-### Aceternity UI Patterns (bereits im Projekt)
-Diese Custom-Komponenten existieren und können wiederverwendet werden:
-- `@/components/ui/spotlight` — Leuchteffekt auf dunklem Hintergrund
-- `@/components/ui/text-generate-effect` — Buchstabe-für-Buchstabe Text-Animation
+### Vorhandene Custom-Komponenten
+- `@/components/ui/spotlight` — Leuchteffekt
+- `@/components/ui/text-generate-effect` — Text-Animation
+- `@/components/ui/infinite-moving-cards` — Endlos-Karussell
 
 ---
 
@@ -393,6 +423,16 @@ id UUID PK, name VARCHAR, slug VARCHAR UNIQUE, industry ENUM, active_style VARCH
 tenant_id UUID FK, brand JSONB, contact JSONB, opening_hours JSONB, social_links JSONB
 ```
 
+### navigation
+```sql
+tenant_id UUID FK, items JSONB, cta JSONB
+```
+
+### footer
+```sql
+tenant_id UUID FK, columns JSONB, legal_links JSONB, cta JSONB
+```
+
 ### pages
 ```sql
 tenant_id UUID FK, title VARCHAR, slug VARCHAR, type ENUM(free/collection_overview/legal/system), status ENUM, visible BOOL, sort_order INT
@@ -400,7 +440,7 @@ tenant_id UUID FK, title VARCHAR, slug VARCHAR, type ENUM(free/collection_overvi
 
 ### page_sections
 ```sql
-tenant_id UUID FK, page_id UUID FK, type VARCHAR, variant VARCHAR, data JSONB, sort_order INT, visible BOOL
+tenant_id UUID FK, page_id UUID FK, type VARCHAR, variant VARCHAR, data JSONB, sort_order INT, visible BOOL, container VARCHAR, spacing_top VARCHAR, spacing_bottom VARCHAR, anchor_id VARCHAR
 ```
 
 ### published_snapshots
@@ -422,36 +462,20 @@ Bei jeder Interaktion:
 
 1. **Sage, was du als nächstes tust** und warum
 2. **Zeige den genauen Dateinamen** und beschreibe den Inhalt
-3. **Warte auf "OK" oder "Weiter"** bevor du die Datei erstellst/änderst
-4. **Nach jeder größeren Phase:** Build ausführen und Ergebnis zeigen
-5. **Bei Fehlern:** Zeige den Error, erkläre die Ursache, schlage einen Fix vor — und warte auf Bestätigung
-
-**Beispiel-Dialog:**
-```
-KI: "Ich erstelle jetzt apps/renderer/src/templates/restaurant/hero.tsx — 
-    eine Fullscreen-Hero Section mit Video-Hintergrund Option, animiertem 
-    Headline-Text und einem Reservierungs-CTA. Das Design nutzt Framer Motion 
-    für Scroll-Parallax und Glassmorphism für die CTA-Buttons."
-    
-    Soll ich fortfahren?
-
-User: OK
-
-KI: [erstellt die Datei]
-    ✅ hero.tsx erstellt (142 Zeilen)
-    Nächster Schritt: menu.tsx — die Speisekarten-Section...
-```
+3. **Warte auf Bestätigung** bevor du Architektur-Änderungen machst
+4. **Nach jeder Section:** 100% Feld-Audit durchführen und Ergebnis zeigen
+5. **Nach jeder Phase:** Build ausführen und Ergebnis zeigen
+6. **Bei Fehlern:** Error zeigen, Ursache erklären, Fix vorschlagen
 
 ---
 
-## 📝 ZUSAMMENFASSUNG DER AUFGABE
+## 📝 ZUSAMMENFASSUNG
 
-Du sollst eine **vollständig eigenständige Branchen-Implementierung** erstellen, die:
-1. Einen komplett eigenen Satz von Section-Templates hat (eigenes Design!)
-2. Eigene Admin-Editoren für branchen-spezifische Sections hat
-3. 3 Style-Varianten (classic/modern/bold) hat
-4. Einen vollständig befüllten Demo-Tenant mit Premium-Content hat
-5. Auf der Marketing-Seite als "Live" angezeigt wird
-6. Den bestehenden Handwerk-Branch **in keiner Weise** beeinflusst
-
-**Das Ergebnis muss top-notch 2026 Webdesign sein.** Keine generischen Bootstrap-Layouts. Kein "das reicht"-Mentalität. Denke an Award-Winning Designs.
+Du erstellst eine **vollständig eigenständige Branchen-Implementierung**, die:
+1. ✅ Einen eigenen Satz Section-Templates hat (eigenes Design)
+2. ✅ **100% Feld-Abdeckung** hat (Admin ↔ Renderer, keine Ausnahmen)
+3. ✅ 3 Style-Varianten hat
+4. ✅ Einen Demo-Tenant mit Premium-Content hat
+5. ✅ Auf der Marketing-Seite als "Live" angezeigt wird
+6. ✅ Den bestehenden Handwerk-Branch **in keiner Weise** beeinflusst
+7. ✅ **Keinen hartcodierten benutzer-sichtbaren Text** enthält
