@@ -114,6 +114,7 @@ export function ContactSection({ data }: Props) {
                   <CheckCircle className="text-green-500" size={48} />
                   <p className="text-lg font-semibold text-gray-900">Vielen Dank!</p>
                   <p className="text-sm text-gray-500">Ihre Nachricht wurde erfolgreich gesendet. Wir melden uns zeitnah.</p>
+                  <button type="button" onClick={() => setStatus('idle')} className="text-sm text-brand-primary hover:underline mt-2">Neue Nachricht senden</button>
                 </div>
               ) : (
                 <>

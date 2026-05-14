@@ -15,20 +15,32 @@ type Submission = {
   createdAt: Date;
 };
 
-export function InboxList({ submissions }: { submissions: Submission[] }) {
+export function InboxList({ submissions: initial }: { submissions: Submission[] }) {
   const [selected, setSelected] = useState<string | null>(null);
-  const active = submissions.find(s => s.id === selected);
+  const [items, setItems] = useState(initial);
+  const active = items.find(s => s.id === selected);
+
+  async function markRead(id: string) {
+    await updateSubmissionStatus(id, 'read');
+    setItems(prev => prev.map(s => s.id === id ? { ...s, status: 'read' as const } : s));
+  }
+
+  async function archive(id: string) {
+    await updateSubmissionStatus(id, 'archived');
+    setItems(prev => prev.filter(s => s.id !== id));
+    if (selected === id) setSelected(null);
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* List */}
       <div className="lg:col-span-1 space-y-2 max-h-[70vh] overflow-y-auto">
-        {submissions.map(s => (
+        {items.map(s => (
           <button
             key={s.id}
             onClick={async () => {
               setSelected(s.id);
-              if (s.status === 'new') await updateSubmissionStatus(s.id, 'read');
+              if (s.status === 'new') await markRead(s.id);
             }}
             className={`w-full text-left p-4 rounded-xl border transition-all ${
               selected === s.id ? 'border-brand-primary bg-brand-primary/5' : 'border-zinc-200 hover:border-zinc-300'
@@ -51,7 +63,7 @@ export function InboxList({ submissions }: { submissions: Submission[] }) {
             <div className="flex items-center justify-between">
               <h2 className="font-semibold text-lg">{active.name}</h2>
               <button
-                onClick={() => updateSubmissionStatus(active.id, 'archived')}
+                onClick={() => archive(active.id)}
                 className="text-xs text-zinc-500 hover:text-zinc-700 flex items-center gap-1"
               >
                 <Archive size={14} /> Archivieren

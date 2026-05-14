@@ -22,14 +22,32 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  let tenantId: string;
   try {
-    const tenantId = await requireTenant();
-    const body = await req.json();
-    const { host, port, user, pass, from } = body;
-    const db = getDb();
-    await db.update(globalSettings).set({ smtp: { host, port: Number(port) || 587, user, pass, from }, updatedAt: new Date() }).where(eq(globalSettings.tenantId, tenantId));
-    return NextResponse.json({ success: true });
+    tenantId = await requireTenant();
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+    const host = typeof body.host === 'string' ? body.host.trim() : '';
+    const port = Number(body.port) || 587;
+    const user = typeof body.user === 'string' ? body.user.trim() : '';
+    const pass = typeof body.pass === 'string' ? body.pass : '';
+    const from = typeof body.from === 'string' ? body.from.trim() : '';
+
+    // Allow saving empty config (= disable SMTP), but validate if partially filled
+    const hasAnyField = host || user || pass || from;
+    if (hasAnyField && (!host || !user || !from)) {
+      return NextResponse.json({ error: 'Host, Benutzername und Absender sind Pflichtfelder.' }, { status: 400 });
+    }
+
+    const smtp = hasAnyField ? { host, port, user, pass, from } : null;
+    const db = getDb();
+    await db.update(globalSettings).set({ smtp, updatedAt: new Date() }).where(eq(globalSettings.tenantId, tenantId));
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'Interner Fehler.' }, { status: 500 });
   }
 }

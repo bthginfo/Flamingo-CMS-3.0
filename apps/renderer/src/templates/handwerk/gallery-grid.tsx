@@ -1,9 +1,9 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { X } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -14,6 +14,22 @@ export function GalleryGridSection({ data }: Props) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const [lightbox, setLightbox] = useState<number | null>(null);
+
+  const navigate = useCallback((dir: 1 | -1) => {
+    setLightbox(prev => prev !== null ? (prev + dir + images.length) % images.length : null);
+  }, [images.length]);
+
+  useEffect(() => {
+    if (lightbox === null) return;
+    document.body.style.overflow = 'hidden';
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(null);
+      if (e.key === 'ArrowRight') navigate(1);
+      if (e.key === 'ArrowLeft') navigate(-1);
+    };
+    window.addEventListener('keydown', handler);
+    return () => { window.removeEventListener('keydown', handler); document.body.style.overflow = ''; };
+  }, [lightbox, navigate]);
 
   return (
     <div ref={ref}>
@@ -54,9 +70,15 @@ export function GalleryGridSection({ data }: Props) {
             className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
             onClick={() => setLightbox(null)}
           >
-            <button className="absolute top-4 right-4 text-white/80 hover:text-white" onClick={() => setLightbox(null)}>
+            <button className="absolute top-4 right-4 text-white/80 hover:text-white z-10" onClick={() => setLightbox(null)}>
               <X size={28} />
             </button>
+            {images.length > 1 && (
+              <>
+                <button className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white z-10" onClick={(e) => { e.stopPropagation(); navigate(-1); }}><ChevronLeft size={36} /></button>
+                <button className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white z-10" onClick={(e) => { e.stopPropagation(); navigate(1); }}><ChevronRight size={36} /></button>
+              </>
+            )}
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}

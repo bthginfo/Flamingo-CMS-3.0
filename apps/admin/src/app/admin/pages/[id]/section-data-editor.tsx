@@ -356,6 +356,315 @@ function GalleryGridEditor({ data, onSave }: EditorProps) {
   );
 }
 
+// ─── USP Strip Editor ────────────────────────────────────────────
+function UspStripEditor({ data, onSave }: EditorProps) {
+  const [items, setItems] = useState<{ icon: string; title: string; text: string }[]>(
+    (data.items as { icon: string; title: string; text: string }[]) || []
+  );
+  function addItem() { setItems([...items, { icon: '', title: '', text: '' }]); }
+  function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
+  function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
+
+  return (
+    <div className="space-y-3">
+      {items.map((item, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-3 gap-3">
+            <Field label="Icon (Lucide)" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
+            <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label="Text" value={item.text} onChange={(v) => update(i, 'text', v)} />
+          </div>
+        </div>
+      ))}
+      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ USP hinzufügen</button>
+      <div><button onClick={() => onSave({ items })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
+    </div>
+  );
+}
+
+// ─── Services Grid Editor ────────────────────────────────────────
+function ServicesGridEditor({ data, onSave }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
+  const [cards, setCards] = useState<{ title: string; text: string; icon: string; image: string; mediaType: string }[]>(
+    (data.manualCards as { title: string; text: string; icon: string; image: string; mediaType: string }[]) || []
+  );
+  function addCard() { setCards([...cards, { title: '', text: '', icon: '', image: '', mediaType: 'icon' }]); }
+  function removeCard(i: number) { setCards(cards.filter((_, idx) => idx !== i)); }
+  function update(i: number, field: string, val: string) { setCards(cards.map((c, idx) => idx === i ? { ...c, [field]: val } : c)); }
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
+      {cards.map((card, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Titel" value={card.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label="Beschreibung" value={card.text} onChange={(v) => update(i, 'text', v)} />
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <SelectField label="Medientyp" value={card.mediaType} options={['icon', 'image']} onChange={(v) => update(i, 'mediaType', v)} />
+            <Field label="Icon (Lucide)" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
+            <Field label="Bild-URL" value={card.image} onChange={(v) => update(i, 'image', v)} />
+          </div>
+        </div>
+      ))}
+      <button onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Karte hinzufügen</button>
+      <div><button onClick={() => onSave({ headline, subline, badgeText, manualCards: cards })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
+    </div>
+  );
+}
+
+// ─── Process Steps Editor ────────────────────────────────────────
+function ProcessStepsEditor({ data, onSave }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
+  const [steps, setSteps] = useState<{ title: string; text: string; icon: string }[]>(
+    (data.steps as { title: string; text: string; icon: string }[]) || []
+  );
+  function addStep() { setSteps([...steps, { title: '', text: '', icon: '' }]); }
+  function removeStep(i: number) { setSteps(steps.filter((_, idx) => idx !== i)); }
+  function update(i: number, field: string, val: string) { setSteps(steps.map((s, idx) => idx === i ? { ...s, [field]: val } : s)); }
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
+      {steps.map((step, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-3 gap-3">
+            <Field label="Titel" value={step.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label="Beschreibung" value={step.text} onChange={(v) => update(i, 'text', v)} />
+            <Field label="Icon (optional)" value={step.icon} onChange={(v) => update(i, 'icon', v)} />
+          </div>
+        </div>
+      ))}
+      <button onClick={addStep} className="text-sm text-blue-600 hover:underline">+ Schritt hinzufügen</button>
+      <div><button onClick={() => onSave({ headline, badgeText, steps })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
+    </div>
+  );
+}
+
+// ─── Contact Editor ──────────────────────────────────────────────
+function ContactEditor({ data, onSave }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || 'Kontakt');
+  const [introText, setIntroText] = useState((data.introText as string) || '');
+  const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
+  const [submitLabel, setSubmitLabel] = useState((data.submitLabel as string) || 'Nachricht senden');
+  const [formEnabled, setFormEnabled] = useState(data.formEnabled !== false);
+  const [infoCards, setInfoCards] = useState<{ icon: string; label: string; value: string }[]>(
+    (data.infoCards as { icon: string; label: string; value: string }[]) || []
+  );
+  function addCard() { setInfoCards([...infoCards, { icon: '', label: '', value: '' }]); }
+  function removeCard(i: number) { setInfoCards(infoCards.filter((_, idx) => idx !== i)); }
+  function update(i: number, field: string, val: string) { setInfoCards(infoCards.map((c, idx) => idx === i ? { ...c, [field]: val } : c)); }
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Einleitungstext" value={introText} onChange={setIntroText} multiline />
+      <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
+      <Field label="Button-Text" value={submitLabel} onChange={setSubmitLabel} />
+      <label className="flex items-center gap-2 text-sm">
+        <input type="checkbox" checked={formEnabled} onChange={(e) => setFormEnabled(e.target.checked)} />
+        <span className="text-gray-600">Formular anzeigen</span>
+      </label>
+      <h4 className="text-sm font-medium text-gray-700 pt-2">Info-Karten</h4>
+      {infoCards.map((card, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-3 gap-3">
+            <Field label="Icon (Lucide)" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
+            <Field label="Label" value={card.label} onChange={(v) => update(i, 'label', v)} />
+            <Field label="Wert" value={card.value} onChange={(v) => update(i, 'value', v)} />
+          </div>
+        </div>
+      ))}
+      <button onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Info-Karte hinzufügen</button>
+      <div><button onClick={() => onSave({ headline, introText, badgeText, submitLabel, formEnabled, infoCards })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
+    </div>
+  );
+}
+
+// ─── Service Detail Editor ───────────────────────────────────────
+function ServiceDetailEditor({ data, onSave }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
+  const [items, setItems] = useState<{ title: string; text: string; icon: string; image: string; mediaType: string; features: string; ctaLabel: string; ctaHref: string }[]>(
+    ((data.items as Record<string, unknown>[]) || []).map(it => ({
+      title: (it.title as string) || '',
+      text: (it.text as string) || '',
+      icon: (it.icon as string) || '',
+      image: (it.image as string) || '',
+      mediaType: (it.mediaType as string) || 'icon',
+      features: ((it.features as string[]) || []).join('\n'),
+      ctaLabel: (it.ctaLabel as string) || '',
+      ctaHref: (it.ctaHref as string) || '',
+    }))
+  );
+  function addItem() { setItems([...items, { title: '', text: '', icon: '', image: '', mediaType: 'icon', features: '', ctaLabel: '', ctaHref: '' }]); }
+  function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
+  function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
+      {items.map((item, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label="Beschreibung" value={item.text} onChange={(v) => update(i, 'text', v)} />
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <SelectField label="Medientyp" value={item.mediaType} options={['icon', 'image']} onChange={(v) => update(i, 'mediaType', v)} />
+            <Field label="Icon (Lucide)" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
+            <Field label="Bild-URL" value={item.image} onChange={(v) => update(i, 'image', v)} />
+          </div>
+          <Field label="Features (eine pro Zeile)" value={item.features} onChange={(v) => update(i, 'features', v)} multiline />
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="CTA Label" value={item.ctaLabel} onChange={(v) => update(i, 'ctaLabel', v)} />
+            <Field label="CTA Link" value={item.ctaHref} onChange={(v) => update(i, 'ctaHref', v)} />
+          </div>
+        </div>
+      ))}
+      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Leistung hinzufügen</button>
+      <div><button onClick={() => onSave({
+        headline, subline, badgeText,
+        items: items.map(it => ({
+          ...it,
+          features: it.features.split('\n').map(f => f.trim()).filter(Boolean),
+        })),
+      })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
+    </div>
+  );
+}
+
+// ─── Portfolio Editor ────────────────────────────────────────────
+function PortfolioEditor({ data, onSave }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
+  const [projects, setProjects] = useState<{ title: string; category: string; description: string; image: string }[]>(
+    ((data.projects as Record<string, unknown>[]) || []).map(p => ({
+      title: (p.title as string) || '',
+      category: (p.category as string) || '',
+      description: (p.description as string) || '',
+      image: (p.image as string) || '',
+    }))
+  );
+  function addProject() { setProjects([...projects, { title: '', category: '', description: '', image: '' }]); }
+  function removeProject(i: number) { setProjects(projects.filter((_, idx) => idx !== i)); }
+  function update(i: number, field: string, val: string) { setProjects(projects.map((p, idx) => idx === i ? { ...p, [field]: val } : p)); }
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
+      {projects.map((proj, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => removeProject(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Titel" value={proj.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label="Kategorie" value={proj.category} onChange={(v) => update(i, 'category', v)} />
+          </div>
+          <Field label="Beschreibung" value={proj.description} onChange={(v) => update(i, 'description', v)} multiline />
+          <Field label="Bild-URL" value={proj.image} onChange={(v) => update(i, 'image', v)} />
+        </div>
+      ))}
+      <button onClick={addProject} className="text-sm text-blue-600 hover:underline">+ Projekt hinzufügen</button>
+      <div><button onClick={() => onSave({ headline, subline, badgeText, projects })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
+    </div>
+  );
+}
+
+// ─── Team Editor ─────────────────────────────────────────────────
+function TeamEditor({ data, onSave }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
+  const [storyHeadline, setStoryHeadline] = useState((data.storyHeadline as string) || '');
+  const [storyText, setStoryText] = useState((data.storyText as string) || '');
+  const [storyImage, setStoryImage] = useState((data.storyImage as string) || '');
+  const [members, setMembers] = useState<{ name: string; role: string; image: string; bio: string }[]>(
+    ((data.members as Record<string, unknown>[]) || []).map(m => ({
+      name: (m.name as string) || '', role: (m.role as string) || '', image: (m.image as string) || '', bio: (m.bio as string) || '',
+    }))
+  );
+  const [teamStats, setTeamStats] = useState<{ value: string; label: string }[]>(
+    ((data.stats as Record<string, unknown>[]) || []).map(s => ({
+      value: (s.value as string) || '', label: (s.label as string) || '',
+    }))
+  );
+  const [values, setValues] = useState<{ icon: string; title: string; text: string }[]>(
+    ((data.values as Record<string, unknown>[]) || []).map(v => ({
+      icon: (v.icon as string) || '', title: (v.title as string) || '', text: (v.text as string) || '',
+    }))
+  );
+
+  return (
+    <div className="space-y-4">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
+
+      <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Firmengeschichte</h4>
+      <Field label="Story-Headline" value={storyHeadline} onChange={setStoryHeadline} />
+      <Field label="Story-Text" value={storyText} onChange={setStoryText} multiline />
+      <Field label="Story-Bild-URL" value={storyImage} onChange={setStoryImage} />
+
+      <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Statistiken</h4>
+      {teamStats.map((s, i) => (
+        <div key={i} className="flex gap-3 items-end">
+          <Field label="Wert" value={s.value} onChange={(v) => setTeamStats(teamStats.map((st, idx) => idx === i ? { ...st, value: v } : st))} />
+          <Field label="Label" value={s.label} onChange={(v) => setTeamStats(teamStats.map((st, idx) => idx === i ? { ...st, label: v } : st))} />
+          <button onClick={() => setTeamStats(teamStats.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600 text-xs pb-2">×</button>
+        </div>
+      ))}
+      <button onClick={() => setTeamStats([...teamStats, { value: '', label: '' }])} className="text-sm text-blue-600 hover:underline">+ Statistik</button>
+
+      <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Werte</h4>
+      {values.map((v, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-3 gap-3">
+            <Field label="Icon" value={v.icon} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, icon: val } : vl))} />
+            <Field label="Titel" value={v.title} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, title: val } : vl))} />
+            <Field label="Text" value={v.text} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, text: val } : vl))} />
+          </div>
+        </div>
+      ))}
+      <button onClick={() => setValues([...values, { icon: '', title: '', text: '' }])} className="text-sm text-blue-600 hover:underline">+ Wert</button>
+
+      <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Team-Mitglieder</h4>
+      {members.map((m, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => setMembers(members.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Name" value={m.name} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, name: v } : mem))} />
+            <Field label="Rolle" value={m.role} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, role: v } : mem))} />
+          </div>
+          <Field label="Bild-URL" value={m.image} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, image: v } : mem))} />
+          <Field label="Bio" value={m.bio} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, bio: v } : mem))} multiline />
+        </div>
+      ))}
+      <button onClick={() => setMembers([...members, { name: '', role: '', image: '', bio: '' }])} className="text-sm text-blue-600 hover:underline">+ Mitglied</button>
+
+      <div><button onClick={() => onSave({ headline, subline, badgeText, storyHeadline, storyText, storyImage, members, stats: teamStats, values })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
+    </div>
+  );
+}
+
 // ─── Editor registry ─────────────────────────────────────────────
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
@@ -368,4 +677,11 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   stats: StatsEditor,
   logoCloud: LogoCloudEditor,
   galleryGrid: GalleryGridEditor,
+  uspStrip: UspStripEditor,
+  servicesGrid: ServicesGridEditor,
+  processSteps: ProcessStepsEditor,
+  contact: ContactEditor,
+  serviceDetail: ServiceDetailEditor,
+  portfolio: PortfolioEditor,
+  team: TeamEditor,
 };
