@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, ExternalLink, Rocket } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
@@ -166,6 +166,10 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
   const [pending, startTransition] = useTransition();
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
 
+  // Sync props from server component on navigation/revalidation
+  useEffect(() => { setPage(initialPage); }, [initialPage]);
+  useEffect(() => { setSections(initialSections); }, [initialSections]);
+
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -208,10 +212,21 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
   }
 
   function handleSaveSectionData(sectionId: string, data: Record<string, unknown>) {
-    setSections(prev => prev.map(s => s.id === sectionId ? { ...s, data } : s));
+    const prev = sections;
+    setSections(s => s.map(sec => sec.id === sectionId ? { ...sec, data } : sec));
     startTransition(async () => {
-      await updateSectionAction(sectionId, data, page.id);
-      toast.success('Daten gespeichert');
+      try {
+        const result = await updateSectionAction(sectionId, data, page.id);
+        if (result && 'error' in result) {
+          toast.error(result.error);
+          setSections(prev);
+        } else {
+          toast.success('Daten gespeichert');
+        }
+      } catch (e) {
+        toast.error('Speichern fehlgeschlagen');
+        setSections(prev);
+      }
     });
   }
 

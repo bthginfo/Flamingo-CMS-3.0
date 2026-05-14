@@ -111,22 +111,20 @@ export async function getFooterSettings() {
   return {
     columns: (row?.columns as { title: string; items: { text: string; href?: string }[] }[]) || [],
     legalLinks: (row?.legalLinks as { label: string; href: string }[]) || [],
-    cta: (row?.cta as { label: string; href: string } | null) || null,
   };
 }
 
 export async function saveFooterSettings(data: {
   columns: { title: string; items: { text: string; href?: string }[] }[];
   legalLinks: { label: string; href: string }[];
-  cta: { label: string; href: string } | null;
 }) {
   const tenantId = await requireTenant();
   const db = getDb();
   const [existing] = await db.select().from(footer).where(eq(footer.tenantId, tenantId)).limit(1);
   if (existing) {
-    await db.update(footer).set({ columns: data.columns, legalLinks: data.legalLinks, cta: data.cta || {}, updatedAt: new Date() }).where(eq(footer.tenantId, tenantId));
+    await db.update(footer).set({ columns: data.columns, legalLinks: data.legalLinks, updatedAt: new Date() }).where(eq(footer.tenantId, tenantId));
   } else {
-    await db.insert(footer).values({ tenantId, columns: data.columns, legalLinks: data.legalLinks, cta: data.cta || {} });
+    await db.insert(footer).values({ tenantId, columns: data.columns, legalLinks: data.legalLinks });
   }
   revalidatePath('/admin/navigation');
   return { success: true };
