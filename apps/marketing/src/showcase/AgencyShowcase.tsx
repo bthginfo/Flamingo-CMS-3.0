@@ -873,25 +873,30 @@ type DeviceItem = {
   src: string;
   label: string;
   caption: string;
+  image?: string; // static image fallback instead of iframe
 };
+
+const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'https://flamingo-renderer.vercel.app';
+
+const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://flamingo-admin-git-main-juliusvingelheim-2692s-projects.vercel.app';
 
 const DEVICE_ITEMS: DeviceItem[] = [
   {
     kind: 'laptop',
-    src: '/preview/restaurant/style/classic?embed=1',
-    label: 'Restaurant · Klassisch',
-    caption: 'Restaurant-Template auf dem Desktop',
+    src: `${RENDERER_URL}/`,
+    label: 'Handwerk · Home',
+    caption: 'Handwerk-Template auf dem Desktop',
   },
   {
     kind: 'tablet',
-    src: '/admin-demo?embed=1',
+    src: `${ADMIN_URL_SHOWCASE}/admin/demo-login`,
     label: 'Admin-Bereich',
     caption: 'Inhalte pflegen, ohne Code',
   },
   {
     kind: 'phone',
-    src: '/preview/salon/style/bold?embed=1',
-    label: 'Salon · Bold',
+    src: `${RENDERER_URL}/leistungen`,
+    label: 'Handwerk · Leistungen',
     caption: 'Mobile zuerst gedacht',
   },
 ];
@@ -947,16 +952,23 @@ function LiveDeviceFrame({ item }: { item: DeviceItem }) {
   }, [dims.vw]);
 
   const iframe = mount ? (
+    item.image ? (
+      <img
+        src={item.image}
+        alt={item.label}
+        style={{
+          width: `${dims.vw}px`,
+          height: `${dims.vh}px`,
+          objectFit: 'cover',
+          objectPosition: 'top left',
+        }}
+      />
+    ) : (
     <iframe
       title={item.label}
       src={item.src}
       loading="lazy"
       tabIndex={-1}
-      // Disable interactions so the mockup behaves like a screenshot.
-      // No allow-* tokens → cannot run inline scripts that aren't
-      // already part of the same-origin SPA bundle (which is fine —
-      // it's our own app).
-      sandbox="allow-same-origin allow-scripts"
       style={{
         width: `${dims.vw}px`,
         height: `${dims.vh}px`,
@@ -964,6 +976,7 @@ function LiveDeviceFrame({ item }: { item: DeviceItem }) {
         pointerEvents: 'none',
       }}
     />
+    )
   ) : (
     <div
       style={{ width: `${dims.vw}px`, height: `${dims.vh}px` }}
