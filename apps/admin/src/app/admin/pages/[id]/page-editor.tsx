@@ -281,7 +281,7 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
           Sichtbar
         </label>
         <button onClick={handleSavePage} disabled={pending} className="admin-btn-primary flex items-center gap-2">
-          <Save size={16} /> Speichern
+          <Save size={16} /> Seiten-Titel speichern
         </button>
       </div>
 
