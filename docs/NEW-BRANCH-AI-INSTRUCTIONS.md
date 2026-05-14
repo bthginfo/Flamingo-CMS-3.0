@@ -110,7 +110,7 @@ Nach dem Erstellen/Ändern JEDER Section musst du folgende Verifikation durchfü
 grep -oP 'data\.\w+' apps/renderer/src/templates/<branche>/<section>.tsx | sort -u
 
 # Schritt 2: Liste ALLE Keys im Editor onChange()
-grep -A 50 'onChange(' apps/admin/src/app/admin/pages/[id]/section-data-editor.tsx | grep -oP '\b\w+(?=:)' | head -30
+grep -A 50 'onChange(' apps/renderer/src/app/admin/pages/[id]/section-data-editor.tsx | grep -oP '\b\w+(?=:)' | head -30
 
 # Schritt 3: Vergleiche beide Listen — sie MÜSSEN identisch sein!
 # Wenn ein Feld im Template fehlt → hinzufügen
@@ -142,8 +142,11 @@ grep -A 50 'onChange(' apps/admin/src/app/admin/pages/[id]/section-data-editor.t
 ```
 flamingo-cms/
 ├── apps/
-│   ├── admin/        ← Tenant-Admin (Next.js 15, Port 3001)
-│   ├── renderer/     ← Frontend-Renderer (Next.js 15, Port 3002)
+│   ├── renderer/     ← Unified App: Frontend + Admin (Next.js 15, Port 3002)
+│   │   ├── src/app/           ← Public routes (/, /c/, /preview/)
+│   │   ├── src/app/admin/     ← Admin-Panel (/admin/*)
+│   │   ├── src/app/api/       ← API routes (upload, contact, revalidate)
+│   │   └── src/middleware.ts  ← Auth guard for /admin/*
 │   ├── marketing/    ← Marketing-Website (Next.js 15, Port 3000)
 │   └── crm/          ← CRM/Provisioning (Next.js 15, Port 3003)
 ├── packages/
@@ -152,6 +155,10 @@ flamingo-cms/
 │   └── auth/         ← JWT Auth + Password Hashing
 └── scripts/          ← Seed-Scripts
 ```
+
+> **WICHTIG:** Admin und Renderer sind in EINEM Vercel-Projekt deployed.
+> Kundendomain (z.B. www.meinhandwerk.de) → Frontend unter `/`
+> Admin-Login → `/admin` (gleiche Domain)
 
 ### Datenbank
 - **ORM:** Drizzle ORM mit Neon Postgres
@@ -245,7 +252,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, React.FC<SectionP
 
 **Wrapper erstellen:**
 - `apps/renderer/src/components/industry-section-renderer.tsx` — wählt Template basierend auf Branche
-- `apps/admin/src/app/admin/pages/[id]/industry-section-editor.tsx` — Admin-Wrapper
+- `apps/renderer/src/app/admin/pages/[id]/industry-section-editor.tsx` — Admin-Wrapper
 
 **BEVOR du irgendwas änderst:** Bestätigung vom Benutzer einholen!
 
@@ -329,7 +336,7 @@ Für jede branchen-spezifische Section einen Editor erstellen.
 
 **KRITISCHE REGELN für Editoren:**
 - `onChange()` MUSS ALLE Felder enthalten die das Template liest
-- Wiederverwendbare Felder: `ImageUploadField`, `LinkField`, `IconPickerField` existieren in `apps/admin/src/components/`
+- Wiederverwendbare Felder: `ImageUploadField`, `LinkField`, `IconPickerField` existieren in `apps/renderer/src/components/`
 - Shared Helper: `Field`, `SelectField` existieren in section-data-editor.tsx
 
 **Verifizierung nach jedem Editor:**
@@ -438,8 +445,8 @@ In `apps/marketing/src/showcase/Templates.tsx`:
 | Datei | Zweck |
 |-------|-------|
 | `apps/renderer/src/templates/handwerk/*` | Alle 19 Handwerk-Templates |
-| `apps/admin/src/app/admin/pages/[id]/section-data-editor.tsx` | Handwerk-Editoren |
-| `apps/admin/src/app/admin/pages/[id]/page-editor.tsx` | Handwerk Section-Types |
+| `apps/renderer/src/app/admin/pages/[id]/section-data-editor.tsx` | Handwerk-Editoren |
+| `apps/renderer/src/app/admin/pages/[id]/page-editor.tsx` | Handwerk Section-Types |
 
 ### LESEN als Referenz
 | Datei | Warum |

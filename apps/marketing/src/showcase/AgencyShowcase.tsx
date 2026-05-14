@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, Outlet, Routes, Route, useLocation } from 'react-router-dom';
 import type { TemplateKey } from '@/lib/types';
 import { Imprint, Privacy } from './Legal';
-import { BlogIndex, BlogPost, NotFound } from './Blog';
+import { NotFound } from './Blog';
 import { TemplateGallery } from './Templates';
 import Seo from '@/components/Seo';
 import {
@@ -229,8 +229,6 @@ export default function AgencyShowcase() {
           <Route path="kontakt" element={<Contact />} />
           <Route path="impressum" element={<Imprint />} />
           <Route path="datenschutz" element={<Privacy />} />
-          <Route path="studio/notizen" element={<BlogIndex />} />
-          <Route path="studio/notiz/:slug" element={<BlogPost />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 
@@ -433,21 +431,23 @@ function ShowcaseFooter() {
 
         <div className="grid md:grid-cols-4 gap-8 py-14 text-sm">
           <div>
-            <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Studio</p>
+            <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Angebot</p>
             <ul className="space-y-2">
               <li><Link to="/templates" className="hover:text-accent">Templates</Link></li>
               <li><Link to="/prozess" className="hover:text-accent">Ablauf</Link></li>
               <li><Link to="/preise" className="hover:text-accent">Preise</Link></li>
-              <li><Link to="/studio/notizen" className="hover:text-accent">Studio-Notizen</Link></li>
               <li><Link to="/ueber-uns" className="hover:text-accent">Über uns</Link></li>
+              <li><Link to="/kontakt" className="hover:text-accent">Kontakt</Link></li>
             </ul>
           </div>
           <div>
-            <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Templates</p>
+            <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Branchen</p>
             <ul className="space-y-2">
-              <li><Link to="/preview/restaurant" className="hover:text-accent">Restaurant</Link></li>
-              <li><Link to="/preview/salon" className="hover:text-accent">Salon &amp; Beauty</Link></li>
-              <li><Link to="/preview/tradesman" className="hover:text-accent">Handwerk</Link></li>
+              <li><Link to="/templates" className="hover:text-accent">Restaurant</Link></li>
+              <li><Link to="/templates" className="hover:text-accent">Salon &amp; Beauty</Link></li>
+              <li><Link to="/templates" className="hover:text-accent">Handwerk</Link></li>
+              <li><Link to="/templates" className="hover:text-accent">Hotel &amp; Tourismus</Link></li>
+              <li><Link to="/templates" className="hover:text-accent">Praxis &amp; Beratung</Link></li>
             </ul>
           </div>
           <div>
@@ -878,7 +878,7 @@ type DeviceItem = {
 
 const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'https://flamingo-renderer.vercel.app';
 
-const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://flamingo-admin-git-main-juliusvingelheim-2692s-projects.vercel.app';
+const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://flamingo-renderer.vercel.app';
 
 const DEVICE_ITEMS: DeviceItem[] = [
   {
