@@ -84,7 +84,7 @@ export async function updateSectionAction(sectionId: string, data: Record<string
   if (result.length === 0) {
     return { error: 'Section nicht gefunden oder keine Berechtigung' };
   }
-  return { success: true };
+  return { success: true, debug: { sectionId, pageId, dataKeys: Object.keys(data), headline: (data.headline as string)?.substring(0, 50) } };
 }
 
 export async function updateSectionMetaAction(sectionId: string, meta: { visible?: boolean; titleInternal?: string; variant?: string; container?: string; spacingTop?: string; spacingBottom?: string; anchorId?: string }, pageId?: string) {

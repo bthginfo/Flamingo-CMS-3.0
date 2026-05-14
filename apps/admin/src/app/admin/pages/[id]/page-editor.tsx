@@ -221,7 +221,7 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
           toast.error(result.error);
           setSections(prev);
         } else {
-          toast.success('Daten gespeichert');
+          toast.success(`Gespeichert: ${(result as any)?.debug?.headline || Object.keys(data).join(',')}`);
         }
       } catch (e) {
         toast.error('Speichern fehlgeschlagen');
