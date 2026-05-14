@@ -3,8 +3,47 @@
 import { useState, useEffect } from 'react';
 import { ExternalLink, FileText } from 'lucide-react';
 import { getPagesAction } from '@/app/admin/pages/actions';
+import { getCollectionLinksAction } from '@/app/admin/collections/actions';
 
 type ButtonValue = { label: string; href: string };
+type CollectionGroup = { key: string; label: string; items: { title: string; slug: string }[] };
+
+function useInternalLinks(mode: string) {
+  const [pages, setPages] = useState<{ id: string; title: string; slug: string }[]>([]);
+  const [cols, setCols] = useState<CollectionGroup[]>([]);
+  useEffect(() => {
+    if (mode === 'internal') {
+      getPagesAction().then((p) => setPages(p.map(pg => ({ id: pg.id, title: pg.title, slug: pg.slug }))));
+      getCollectionLinksAction().then(setCols);
+    }
+  }, [mode]);
+  return { pages, cols };
+}
+
+function InternalSelect({ value, onChange, pages, cols }: { value: string; onChange: (v: string) => void; pages: { id: string; title: string; slug: string }[]; cols: CollectionGroup[] }) {
+  return (
+    <select className="admin-input w-full mt-0.5" value={value} onChange={(e) => onChange(e.target.value)}>
+      <option value="">-- Ziel --</option>
+      <optgroup label="Seiten">
+        {pages.map(p => <option key={p.id} value={`/${p.slug}`}>{p.title} (/{p.slug})</option>)}
+      </optgroup>
+      {cols.filter(c => c.items.length > 0).map(c => (
+        <optgroup key={c.key} label={c.label}>
+          {c.items.map(item => <option key={item.slug} value={`/c/${c.key}/${item.slug}`}>{item.title}</option>)}
+        </optgroup>
+      ))}
+      <optgroup label="Sektionen (Anker)">
+        <option value="#hero">Hero</option>
+        <option value="#leistungen">Leistungen</option>
+        <option value="#kontakt">Kontakt</option>
+        <option value="#faq">FAQ</option>
+        <option value="#team">Team</option>
+        <option value="#portfolio">Portfolio</option>
+        <option value="#bewertungen">Bewertungen</option>
+      </optgroup>
+    </select>
+  );
+}
 
 /**
  * Combined button editor: label + internal/external link selection.
@@ -12,13 +51,7 @@ type ButtonValue = { label: string; href: string };
 export function ButtonField({ label: fieldLabel, value, onChange }: { label: string; value: ButtonValue; onChange: (v: ButtonValue) => void }) {
   const isInternal = value.href.startsWith('/') || value.href.startsWith('#') || value.href === '';
   const [mode, setMode] = useState<'external' | 'internal'>(value.href && !isInternal ? 'external' : 'internal');
-  const [pages, setPages] = useState<{ id: string; title: string; slug: string }[]>([]);
-
-  useEffect(() => {
-    if (mode === 'internal') {
-      getPagesAction().then((p) => setPages(p.map(pg => ({ id: pg.id, title: pg.title, slug: pg.slug }))));
-    }
-  }, [mode]);
+  const { pages, cols } = useInternalLinks(mode);
 
   return (
     <div className="text-sm border rounded p-3 bg-gray-50/50 space-y-2">
@@ -61,27 +94,7 @@ export function ButtonField({ label: fieldLabel, value, onChange }: { label: str
               placeholder="https://..."
             />
           ) : (
-            <select
-              className="admin-input w-full mt-0.5"
-              value={value.href}
-              onChange={(e) => onChange({ ...value, href: e.target.value })}
-            >
-              <option value="">-- Ziel --</option>
-              <optgroup label="Seiten">
-                {pages.map(p => (
-                  <option key={p.id} value={`/${p.slug}`}>{p.title} (/{p.slug})</option>
-                ))}
-              </optgroup>
-              <optgroup label="Sektionen (Anker)">
-                <option value="#hero">Hero</option>
-                <option value="#leistungen">Leistungen</option>
-                <option value="#kontakt">Kontakt</option>
-                <option value="#faq">FAQ</option>
-                <option value="#team">Team</option>
-                <option value="#portfolio">Portfolio</option>
-                <option value="#bewertungen">Bewertungen</option>
-              </optgroup>
-            </select>
+            <InternalSelect value={value.href} onChange={(v) => onChange({ ...value, href: v })} pages={pages} cols={cols} />
           )}
         </label>
       </div>
@@ -96,13 +109,7 @@ export function ButtonField({ label: fieldLabel, value, onChange }: { label: str
 export function DetailLinkField({ label: fieldLabel, value, onChange }: { label: string; value: string; onChange: (href: string) => void }) {
   const isInternal = value.startsWith('/') || value.startsWith('#') || value === '';
   const [mode, setMode] = useState<'external' | 'internal'>(value && !isInternal ? 'external' : 'internal');
-  const [pages, setPages] = useState<{ id: string; title: string; slug: string }[]>([]);
-
-  useEffect(() => {
-    if (mode === 'internal') {
-      getPagesAction().then((p) => setPages(p.map(pg => ({ id: pg.id, title: pg.title, slug: pg.slug }))));
-    }
-  }, [mode]);
+  const { pages, cols } = useInternalLinks(mode);
 
   return (
     <div className="text-sm">
@@ -133,27 +140,7 @@ export function DetailLinkField({ label: fieldLabel, value, onChange }: { label:
           placeholder="https://..."
         />
       ) : (
-        <select
-          className="admin-input w-full"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-        >
-          <option value="">-- Ziel auswählen --</option>
-          <optgroup label="Seiten">
-            {pages.map(p => (
-              <option key={p.id} value={`/${p.slug}`}>{p.title} (/{p.slug})</option>
-            ))}
-          </optgroup>
-          <optgroup label="Sektionen (Anker)">
-            <option value="#hero">Hero</option>
-            <option value="#leistungen">Leistungen</option>
-            <option value="#kontakt">Kontakt</option>
-            <option value="#faq">FAQ</option>
-            <option value="#team">Team</option>
-            <option value="#portfolio">Portfolio</option>
-            <option value="#bewertungen">Bewertungen</option>
-          </optgroup>
-        </select>
+        <InternalSelect value={value} onChange={onChange} pages={pages} cols={cols} />
       )}
     </div>
   );

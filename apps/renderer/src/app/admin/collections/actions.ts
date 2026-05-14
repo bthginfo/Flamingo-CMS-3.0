@@ -87,3 +87,17 @@ export async function deleteItemAction(itemId: string) {
   await db.delete(collectionItems).where(and(eq(collectionItems.id, itemId), eq(collectionItems.tenantId, session.tenantId)));
   revalidatePath('/admin/collections');
 }
+
+/** Returns all collections with their items for the internal link selector. */
+export async function getCollectionLinksAction() {
+  const session = await requireSession();
+  const db = getDb();
+  const cols = await db.select().from(collections).where(eq(collections.tenantId, session.tenantId)).orderBy(asc(collections.key));
+  const items = await db.select({ id: collectionItems.id, collectionId: collectionItems.collectionId, title: collectionItems.title, slug: collectionItems.slug })
+    .from(collectionItems).where(eq(collectionItems.tenantId, session.tenantId)).orderBy(asc(collectionItems.priority));
+  return cols.map(c => ({
+    key: c.key,
+    label: c.label,
+    items: items.filter(i => i.collectionId === c.id).map(i => ({ title: i.title, slug: i.slug })),
+  }));
+}
