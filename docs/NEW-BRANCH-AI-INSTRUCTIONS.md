@@ -13,7 +13,7 @@
 
 Das bedeutet konkret:
 - **NIEMALS** benutzer-sichtbaren Text hartcodieren in Renderer-Templates. Immer `(data.feldName as string) || 'Standardwert'` verwenden.
-- Jedes Feld das im Admin-Editor gespeichert wird (`onSave()`) MUSS im Renderer-Template gelesen werden.
+- Jedes Feld das im Admin-Editor gemeldet wird (`onChange()`) MUSS im Renderer-Template gelesen werden.
 - Jedes Feld das das Renderer-Template liest MUSS im Admin-Editor bearbeitbar sein.
 - Globale Elemente (Nav CTA-Button, Footer CTA, Top-Bar Infos) sind über Settings editierbar.
 - Section-Meta (Spacing, Container, Anchor, Variante) sind über den SectionMetaEditor editierbar.
@@ -23,11 +23,16 @@ Das bedeutet konkret:
 ```
 1. NEUES RENDERER-FELD HINZUFÜGEN?
    → SOFORT entsprechendes Editor-Feld in section-data-editor.tsx hinzufügen
-   → SOFORT prüfen, dass onSave() den Schlüssel enthält
+   → SOFORT prüfen, dass onChange() den Schlüssel enthält
 
 2. NEUES ADMIN-FELD HINZUFÜGEN?
    → SOFORT im Renderer-Template auslesen und rendern
    → SOFORT prüfen, dass data.feldName im Template steht
+
+> **WICHTIG: Save-Flow**
+> Editoren haben KEINE eigenen Speicher-Buttons mehr. Stattdessen verwenden sie das `onChange`-Pattern:
+> Jeder Editor bekommt `{ data, onChange }` als Props. Bei jeder Änderung wird `onChange(newData)` aufgerufen.
+> Der übergeordnete Page-Editor sammelt alle Änderungen und speichert sie über den globalen FAB-Button ("Speichern").
 
 3. NACH JEDER ÄNDERUNG an einem Section-Type:
    → MENTAL CHECKLIST durchgehen (siehe unten)
@@ -73,13 +78,13 @@ export function TestimonialsSection({ data }: Props) {
 }
 ```
 
-**FEHLER 2: Editor onSave() fehlen Felder die das Template liest**
+**FEHLER 2: Editor onChange() fehlen Felder die das Template liest**
 ```tsx
-// ❌ FALSCH — onSave() speichert NICHT badgeText, ratingValue, ratingCount
-onSave({ headline: localData.headline, items: localData.items });
+// ❌ FALSCH — onChange() meldet NICHT badgeText, ratingValue, ratingCount
+onChange({ headline: localData.headline, items: localData.items });
 
-// ✅ RICHTIG — ALLE Felder die das Template liest sind in onSave()
-onSave({
+// ✅ RICHTIG — ALLE Felder die das Template liest sind in onChange()
+onChange({
   headline: localData.headline,
   badgeText: localData.badgeText,
   ratingValue: localData.ratingValue,
@@ -104,8 +109,8 @@ Nach dem Erstellen/Ändern JEDER Section musst du folgende Verifikation durchfü
 # Schritt 1: Liste ALLE data.xxx Zugriffe im Template
 grep -oP 'data\.\w+' apps/renderer/src/templates/<branche>/<section>.tsx | sort -u
 
-# Schritt 2: Liste ALLE Keys im Editor onSave()
-grep -A 50 'onSave(' apps/admin/src/app/admin/pages/[id]/section-data-editor.tsx | grep -oP '\b\w+(?=:)' | head -30
+# Schritt 2: Liste ALLE Keys im Editor onChange()
+grep -A 50 'onChange(' apps/admin/src/app/admin/pages/[id]/section-data-editor.tsx | grep -oP '\b\w+(?=:)' | head -30
 
 # Schritt 3: Vergleiche beide Listen — sie MÜSSEN identisch sein!
 # Wenn ein Feld im Template fehlt → hinzufügen
@@ -315,7 +320,7 @@ export default function CtaBandSection({ data }: Props) {
     </section>
   );
 }
-// ✅ Felder: headline, subline, badgeText, ctaPrimary — ALLE im Editor onSave() vorhanden
+// ✅ Felder: headline, subline, badgeText, ctaPrimary — ALLE im Editor onChange() vorhanden
 ```
 
 #### 2.2 Admin-Editoren
@@ -323,14 +328,14 @@ export default function CtaBandSection({ data }: Props) {
 Für jede branchen-spezifische Section einen Editor erstellen.
 
 **KRITISCHE REGELN für Editoren:**
-- `onSave()` MUSS ALLE Felder enthalten die das Template liest
+- `onChange()` MUSS ALLE Felder enthalten die das Template liest
 - Wiederverwendbare Felder: `ImageUploadField`, `LinkField`, `IconPickerField` existieren in `apps/admin/src/components/`
 - Shared Helper: `Field`, `SelectField` existieren in section-data-editor.tsx
 
 **Verifizierung nach jedem Editor:**
 ```
 Für Section-Type "xxx":
-1. Editor onSave(): Welche Keys werden gespeichert? → Liste erstellen
+1. Editor onChange(): Welche Keys werden gemeldet? → Liste erstellen
 2. Template: Welche data.xxx werden gelesen? → Liste erstellen
 3. BEIDE Listen vergleichen → müssen identisch sein
 ```
@@ -358,7 +363,25 @@ Erstelle `scripts/seed-<branche>-demo.ts`:
 
 #### 2.5 Marketing-Seite
 
-In `apps/marketing/src/showcase/Templates.tsx`: Status auf `'live'` setzen.
+In `apps/marketing/src/showcase/Templates.tsx`:
+
+1. **Neuen Eintrag zum `TEMPLATES`-Array hinzufügen** (falls die Branche noch nicht existiert):
+```ts
+{
+  key: '<branche>',           // z.B. 'restaurant', 'salon'
+  name: '<Anzeigename>',       // z.B. 'Restaurant'
+  tagline: '<Kurze Tagline>',  // z.B. 'Reservierungen & Menükarten'
+  description: '<2-3 Sätze die das Template beschreiben>',
+  image: '/showcase/<branche>-preview.png',  // Screenshot in apps/marketing/public/showcase/
+  color: '<Tailwind-Farbe>',   // z.B. 'amber', 'rose', 'emerald'
+  features: ['Feature 1', 'Feature 2', 'Feature 3', 'Feature 4'],
+  status: 'live' as const,
+}
+```
+
+2. **Falls Eintrag bereits mit `status: 'coming'` existiert:** Status auf `'live'` setzen.
+
+3. **Preview-Screenshot erstellen:** Ein PNG-Screenshot der fertigen Demo-Seite unter `apps/marketing/public/showcase/<branche>-preview.png` ablegen.
 
 ---
 
@@ -386,7 +409,7 @@ In `apps/marketing/src/showcase/Templates.tsx`: Status auf `'live'` setzen.
 ### Admin-Editoren
 - [ ] Editoren für branchen-spezifische Sections
 - [ ] Editor Registry erweitert
-- [ ] **100% FELD-AUDIT:** Jeder Editor onSave() = Template data.xxx
+- [ ] **100% FELD-AUDIT:** Jeder Editor onChange() = Template data.xxx
 - [ ] Build erfolgreich: `pnpm build --filter @flamingo/admin`
 
 ### Style-Varianten
@@ -437,7 +460,7 @@ In `apps/marketing/src/showcase/Templates.tsx`: Status auf `'live'` setzen.
 | Datei | Was hinzufügen |
 |-------|---------------|
 | `apps/renderer/src/lib/styles.ts` | Neue industry styles (NICHT tradesman überschreiben!) |
-| `apps/marketing/src/showcase/Templates.tsx` | Status auf 'live' |
+| `apps/marketing/src/showcase/Templates.tsx` | TEMPLATES-Eintrag + Status auf 'live' |
 
 ---
 
