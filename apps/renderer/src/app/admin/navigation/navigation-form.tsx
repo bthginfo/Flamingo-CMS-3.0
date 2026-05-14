@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { saveNavigationSettings } from '../settings-actions';
 import { toast } from 'sonner';
+import { useSaveState } from '@/components/save-context';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
 
 type NavItem = { label: string; href: string; type?: string };
@@ -11,12 +12,14 @@ export function NavigationForm({ initial, initialCta }: { initial: NavItem[]; in
   const [items, setItems] = useState<NavItem[]>(initial.length > 0 ? initial : [{ label: '', href: '/', type: 'link' }]);
   const [cta, setCta] = useState(initialCta || { label: 'Termin vereinbaren', href: '/kontakt' });
   const [saving, setSaving] = useState(false);
+  const { markSaved } = useSaveState();
 
   const handleSave = async () => {
     setSaving(true);
     try {
       await saveNavigationSettings(items.filter(i => i.label.trim()), cta.label.trim() ? cta : null);
       toast.success('Navigation gespeichert');
+      markSaved();
     } catch {
       toast.error('Fehler beim Speichern');
     } finally {
