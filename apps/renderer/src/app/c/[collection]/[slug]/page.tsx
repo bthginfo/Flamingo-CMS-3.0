@@ -10,7 +10,7 @@ export default async function CollectionItemPage({ params }: { params: Promise<{
   const tenantId = await resolveTenant();
   if (!tenantId) notFound();
 
-  const [snapshot, navItems, footerData, { brand, contact }] = await Promise.all([
+  const [snapshot, navData, footerData, { brand, contact, socialLinks }] = await Promise.all([
     getActiveSnapshot(tenantId),
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
@@ -27,11 +27,11 @@ export default async function CollectionItemPage({ params }: { params: Promise<{
 
   return (
     <>
-      <SiteHeader navItems={navItems} brand={brand} contact={contact} />
+      <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} />
       <main>
         <CollectionDetail item={item} collection={col} />
       </main>
-      <SiteFooter footer={footerData} brand={brand} />
+      <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />
     </>
   );
 }
