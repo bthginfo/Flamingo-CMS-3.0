@@ -9,6 +9,23 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'ALLOW-FROM https://flamingo-cms-3-0.vercel.app https://www.flamingomedia.online',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self' https://flamingo-cms-3-0.vercel.app https://www.flamingomedia.online http://localhost:3000",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
