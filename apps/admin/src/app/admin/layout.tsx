@@ -3,6 +3,10 @@ import { Sidebar } from '@/components/sidebar';
 import { cookies } from 'next/headers';
 import { DemoBanner } from '@/components/demo-banner';
 
+// Disable Next.js fetch() data cache for all admin routes
+// This ensures DB reads always return fresh data
+export const fetchCache = 'force-no-store';
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
 
