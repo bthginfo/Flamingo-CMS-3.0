@@ -1,8 +1,10 @@
-import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
-import { getTenantSeoGlobal } from '@/lib/tenant-data';
 import type { MetadataRoute } from 'next';
 
+export const dynamic = 'force-dynamic';
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { resolveTenant, getActiveSnapshot } = await import('@/lib/snapshot');
+  const { getTenantSeoGlobal } = await import('@/lib/tenant-data');
   const tenantId = await resolveTenant();
   if (!tenantId) return [];
 

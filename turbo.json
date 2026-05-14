@@ -3,7 +3,8 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": ["DATABASE_URL", "ADMIN_JWT_SECRET", "NEXT_PUBLIC_ADMIN_URL", "BLOB_READ_WRITE_TOKEN"]
     },
     "lint": {
       "dependsOn": ["^build"]
