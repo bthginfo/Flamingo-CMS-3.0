@@ -1,10 +1,5 @@
+import { redirect } from 'next/navigation';
+
 export default function NewsPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">News & Blog</h1>
-      <div className="admin-card">
-        <p className="text-gray-500">Dieser Bereich wird bald verfügbar sein.</p>
-      </div>
-    </div>
-  );
+  redirect('/admin/collections/news');
 }

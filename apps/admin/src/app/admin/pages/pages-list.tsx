@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FileText, Trash2, Eye, EyeOff } from 'lucide-react';
+import { FileText, Trash2, Eye, EyeOff, Pencil, ChevronRight } from 'lucide-react';
 import { useTransition } from 'react';
 
 type Page = {
@@ -27,51 +27,46 @@ export function PagesList({ pages, deleteAction }: { pages: Page[]; deleteAction
   }
 
   return (
-    <div className="admin-card overflow-hidden p-0">
-      <table className="w-full text-sm">
-        <thead className="bg-gray-50 border-b text-left">
-          <tr>
-            <th className="px-4 py-3 font-medium">Titel</th>
-            <th className="px-4 py-3 font-medium">Slug</th>
-            <th className="px-4 py-3 font-medium">Status</th>
-            <th className="px-4 py-3 font-medium">Sichtbar</th>
-            <th className="px-4 py-3 font-medium text-right">Aktionen</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y">
-          {pages.map((page) => (
-            <tr key={page.id} className="hover:bg-gray-50">
-              <td className="px-4 py-3">
-                <Link href={`/admin/pages/${page.id}`} className="text-blue-600 hover:underline font-medium">
-                  {page.title}
-                </Link>
-              </td>
-              <td className="px-4 py-3 text-gray-500">/{page.slug}</td>
-              <td className="px-4 py-3">
-                <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${page.status === 'published' ? 'bg-green-100 text-green-800' : page.status === 'draft' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}`}>
-                  {page.status === 'published' ? 'Veröffentlicht' : page.status === 'draft' ? 'Entwurf' : page.status}
+    <div className="space-y-3">
+      {pages.map((page) => (
+        <div key={page.id} className="admin-card p-0 overflow-hidden hover:border-blue-300 hover:shadow-md transition-all group">
+          <div className="flex items-center">
+            <Link href={`/admin/pages/${page.id}`} className="flex-1 flex items-center gap-4 px-5 py-4">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 group-hover:bg-blue-100 transition-colors">
+                <FileText size={18} className="text-blue-500" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-zinc-900 group-hover:text-blue-600 transition-colors">{page.title}</p>
+                <p className="text-xs text-zinc-400 mt-0.5">/{page.slug || '(Startseite)'}</p>
+              </div>
+              <div className="flex items-center gap-3 shrink-0">
+                <span className={`inline-block px-2.5 py-1 rounded-full text-[11px] font-medium ${page.status === 'published' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+                  {page.status === 'published' ? 'Live' : 'Entwurf'}
                 </span>
-              </td>
-              <td className="px-4 py-3">
-                {page.visible ? <Eye size={16} className="text-green-600" /> : <EyeOff size={16} className="text-gray-400" />}
-              </td>
-              <td className="px-4 py-3 text-right">
-                <button
-                  disabled={pending}
-                  onClick={() => {
-                    if (confirm(`Seite "${page.title}" wirklich löschen?`)) {
-                      startTransition(() => deleteAction(page.id));
-                    }
-                  }}
-                  className="text-red-500 hover:text-red-700 p-1"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                {page.visible ? <Eye size={14} className="text-emerald-500" /> : <EyeOff size={14} className="text-zinc-300" />}
+                <div className="flex items-center gap-1 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Pencil size={14} />
+                  <span className="text-xs font-medium">Bearbeiten</span>
+                  <ChevronRight size={14} />
+                </div>
+              </div>
+            </Link>
+            <div className="px-3 border-l">
+              <button
+                disabled={pending}
+                onClick={() => {
+                  if (confirm(`Seite "${page.title}" wirklich löschen?`)) {
+                    startTransition(() => deleteAction(page.id));
+                  }
+                }}
+                className="text-zinc-300 hover:text-red-500 p-2 transition-colors"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

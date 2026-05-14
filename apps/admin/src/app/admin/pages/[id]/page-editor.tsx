@@ -31,6 +31,7 @@ const SECTION_TYPES: { type: string; label: string; description: string }[] = [
   { type: 'serviceDetail', label: 'Leistungs-Detail', description: 'Detaillierte Leistungsbeschreibung' },
   { type: 'portfolio', label: 'Portfolio', description: 'Referenzprojekte-Galerie' },
   { type: 'team', label: 'Team', description: 'Team-Mitglieder' },
+  { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
   { type: 'headerBanner', label: 'Header-Banner', description: 'Obere Hinweisleiste' },
 ];
 
@@ -70,14 +71,15 @@ function SortableSection({ section, onDelete, onToggleVisible, onSaveData, onSav
   const typeInfo = SECTION_TYPES.find(t => t.type === section.type);
 
   return (
-    <div ref={setNodeRef} style={style} className="admin-card mb-3 p-0 overflow-hidden">
-      <div className="flex items-center px-4 py-3 bg-gray-50 border-b">
-        <button {...attributes} {...listeners} className="cursor-grab mr-3 text-gray-400 hover:text-gray-600">
+    <div ref={setNodeRef} style={style} className={`admin-card mb-3 p-0 overflow-hidden ${expanded ? 'ring-2 ring-blue-500/20 border-blue-300' : ''}`}>
+      <div className={`flex items-center px-4 py-3 border-b cursor-pointer ${expanded ? 'bg-blue-50' : 'bg-gray-50 hover:bg-gray-100'} transition-colors`} onClick={() => setExpanded(!expanded)}>
+        <button {...attributes} {...listeners} className="cursor-grab mr-3 text-gray-400 hover:text-gray-600" onClick={(e) => e.stopPropagation()}>
           <GripVertical size={18} />
         </button>
-        <div className="flex-1 min-w-0">
-          <span className="font-medium text-sm">{typeInfo?.label ?? section.type}</span>
-          {section.titleInternal && <span className="ml-2 text-xs text-gray-400">({section.titleInternal})</span>}
+        <div className="flex-1 min-w-0 flex items-center gap-2">
+          <span className={`font-medium text-sm ${expanded ? 'text-blue-700' : ''}`}>{typeInfo?.label ?? section.type}</span>
+          {section.titleInternal && <span className="text-xs text-gray-400">({section.titleInternal})</span>}
+          {!expanded && <span className="text-[10px] text-zinc-400 ml-1">— Klicken zum Bearbeiten</span>}
         </div>
         <button onClick={onToggleVisible} className="p-1 mr-2" title={section.visible ? 'Ausblenden' : 'Einblenden'}>
           {section.visible ? <Eye size={16} className="text-green-600" /> : <EyeOff size={16} className="text-gray-400" />}

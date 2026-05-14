@@ -16,6 +16,7 @@ import { NewsPreviewSection } from '@/templates/handwerk/news-preview';
 import { StatsSection } from '@/templates/handwerk/stats';
 import { LogoCloudSection } from '@/templates/handwerk/logo-cloud';
 import { GalleryGridSection } from '@/templates/handwerk/gallery-grid';
+import { RichTextSection } from '@/templates/handwerk/rich-text';
 
 const SECTION_COMPONENTS: Record<string, React.FC<{ data: Record<string, unknown>; variant?: string | null }>> = {
   hero: HeroSection,
@@ -35,6 +36,7 @@ const SECTION_COMPONENTS: Record<string, React.FC<{ data: Record<string, unknown
   stats: StatsSection,
   logoCloud: LogoCloudSection,
   galleryGrid: GalleryGridSection,
+  richText: RichTextSection,
 };
 
 const SPACING: Record<string, string> = {

@@ -716,6 +716,29 @@ function TeamEditor({ data, onSave }: EditorProps) {
   );
 }
 
+// ─── Rich Text Editor ────────────────────────────────────────────
+function RichTextEditor({ data, onSave }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [content, setContent] = useState((data.content as string) || '');
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline (optional)" value={headline} onChange={setHeadline} />
+      <div>
+        <label className="text-xs font-medium text-zinc-600 mb-1 block">Inhalt (HTML)</label>
+        <textarea
+          className="admin-input w-full min-h-[300px] font-mono text-xs leading-relaxed"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="<h2>Überschrift</h2>\n<p>Ihr Text hier...</p>"
+        />
+        <p className="text-[10px] text-zinc-400 mt-1">HTML-Tags: &lt;h2&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;a&gt; werden unterstützt.</p>
+      </div>
+      <button onClick={() => onSave({ headline, content })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
+    </div>
+  );
+}
+
 // ─── Editor registry ─────────────────────────────────────────────
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
@@ -735,4 +758,5 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   serviceDetail: ServiceDetailEditor,
   portfolio: PortfolioEditor,
   team: TeamEditor,
+  richText: RichTextEditor,
 };

@@ -14,6 +14,10 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function handleUpload(file: File) {
+    if (file.size > 1024 * 1024) {
+      alert('Maximale Dateigröße: 1 MB');
+      return;
+    }
     setUploading(true);
     try {
       const blob = await upload(file.name, file, {

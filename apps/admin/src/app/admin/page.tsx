@@ -5,6 +5,8 @@ import { eq, count, and } from 'drizzle-orm';
 import { FileText, Layers, FolderOpen, Rocket, Eye, Globe } from 'lucide-react';
 import Link from 'next/link';
 
+const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'http://localhost:3002';
+
 export default async function DashboardPage() {
   const session = await getSession();
   if (!session) return null;
@@ -35,9 +37,9 @@ export default async function DashboardPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href="/admin/pages" className="admin-btn-secondary">
+          <a href={RENDERER_URL} target="_blank" rel="noopener noreferrer" className="admin-btn-secondary">
             <Eye size={16} /> Preview
-          </Link>
+          </a>
           <button className="admin-btn-primary" disabled>
             <Rocket size={16} /> Veröffentlichen
           </button>

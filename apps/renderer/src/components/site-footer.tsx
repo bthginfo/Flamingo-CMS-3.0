@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, MapPin, Phone, Mail, Instagram, Facebook, Linkedin, Youtube } from 'lucide-react';
+import { Heart, MapPin, Phone, Mail, Instagram, Facebook, Linkedin, Youtube, Globe, Music } from 'lucide-react';
 import type { FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 
 const SOCIAL_ICONS: Record<string, React.ElementType> = {
-  instagram: Instagram, facebook: Facebook, linkedin: Linkedin, youtube: Youtube,
+  instagram: Instagram, facebook: Facebook, linkedin: Linkedin, youtube: Youtube, google: Globe, tiktok: Music,
 };
 
 export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: FooterData | null; brand: BrandData; contact?: ContactData; socialLinks?: SocialLinks }) {
