@@ -11,6 +11,8 @@ module.exports = {
           dark: 'var(--brand-dark, #0d2137)',
         },
         surface: 'var(--surface, #f8fafc)',
+        sidebar: { DEFAULT: '#0f0f14', fg: '#ffffff', muted: '#71717a', active: '#F24171', border: '#27272a' },
+        admin: { bg: '#fafafa', card: '#ffffff', border: '#e4e4e7', muted: '#71717a', accent: '#F24171' },
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
