@@ -50,6 +50,7 @@ function HeroEditor({ data, onSave }: EditorProps) {
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
     variant: (data.variant as string) || 'split',
+    backgroundImage: (data.backgroundImage as string) || '',
     primaryCta: (data.primaryCta as { label: string; href: string }) || { label: '', href: '' },
     secondaryCta: (data.secondaryCta as { label: string; href: string }) || { label: '', href: '' },
   });
@@ -59,13 +60,14 @@ function HeroEditor({ data, onSave }: EditorProps) {
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <SelectField label="Variante" value={d.variant} options={['split', 'centered', 'editorial', 'fullBleedMedia']} onChange={(v) => setD({ ...d, variant: v })} />
+      <ImageUploadField label="Hintergrundbild" value={d.backgroundImage} onChange={(v) => setD({ ...d, backgroundImage: v })} />
       <div className="grid grid-cols-2 gap-3">
         <Field label="Primärer CTA Label" value={d.primaryCta.label} onChange={(v) => setD({ ...d, primaryCta: { ...d.primaryCta, label: v } })} />
-        <Field label="Primärer CTA Link" value={d.primaryCta.href} onChange={(v) => setD({ ...d, primaryCta: { ...d.primaryCta, href: v } })} />
+        <LinkField label="Primärer CTA Link" value={d.primaryCta.href} onChange={(v) => setD({ ...d, primaryCta: { ...d.primaryCta, href: v } })} />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <Field label="Sekundärer CTA Label" value={d.secondaryCta.label} onChange={(v) => setD({ ...d, secondaryCta: { ...d.secondaryCta, label: v } })} />
-        <Field label="Sekundärer CTA Link" value={d.secondaryCta.href} onChange={(v) => setD({ ...d, secondaryCta: { ...d.secondaryCta, href: v } })} />
+        <LinkField label="Sekundärer CTA Link" value={d.secondaryCta.href} onChange={(v) => setD({ ...d, secondaryCta: { ...d.secondaryCta, href: v } })} />
       </div>
       <button onClick={() => onSave(d)} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
     </div>
@@ -410,10 +412,13 @@ function ServicesGridEditor({ data, onSave }: EditorProps) {
             <Field label="Titel" value={card.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Beschreibung" value={card.text} onChange={(v) => update(i, 'text', v)} />
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <SelectField label="Medientyp" value={card.mediaType} options={['icon', 'image']} onChange={(v) => update(i, 'mediaType', v)} />
-            <IconPickerField label="Icon" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
-            <ImageUploadField label="Bild" value={card.image} onChange={(v) => update(i, 'image', v)} />
+            {card.mediaType === 'icon' ? (
+              <IconPickerField label="Icon" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
+            ) : (
+              <ImageUploadField label="Bild" value={card.image} onChange={(v) => update(i, 'image', v)} />
+            )}
           </div>
         </div>
       ))}
@@ -528,10 +533,13 @@ function ServiceDetailEditor({ data, onSave }: EditorProps) {
             <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Beschreibung" value={item.text} onChange={(v) => update(i, 'text', v)} />
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <SelectField label="Medientyp" value={item.mediaType} options={['icon', 'image']} onChange={(v) => update(i, 'mediaType', v)} />
-            <Field label="Icon" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
-            <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
+            {item.mediaType === 'icon' ? (
+              <IconPickerField label="Icon" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
+            ) : (
+              <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
+            )}
           </div>
           <Field label="Features (eine pro Zeile)" value={item.features} onChange={(v) => update(i, 'features', v)} multiline />
           <div className="grid grid-cols-2 gap-3">

@@ -5,8 +5,8 @@ import { getSessionCookieName } from '@flamingo/auth';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow login page and API routes
-  if (pathname === '/admin/login' || pathname.startsWith('/api/')) {
+  // Allow login page, demo-login and API routes
+  if (pathname === '/admin/login' || pathname === '/admin/demo-login' || pathname.startsWith('/api/')) {
     return NextResponse.next();
   }
 
