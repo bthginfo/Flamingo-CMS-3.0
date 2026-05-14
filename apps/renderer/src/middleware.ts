@@ -21,7 +21,7 @@ export function middleware(request: NextRequest) {
     response.cookies.set(getSessionCookieName(), demoToken, {
       path: '/admin',
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       secure: true,
       maxAge: 60 * 60,
     });
@@ -29,7 +29,7 @@ export function middleware(request: NextRequest) {
       response.cookies.set('flamingo_demo', '1', {
         path: '/admin',
         httpOnly: false,
-        sameSite: 'lax',
+        sameSite: 'none',
         secure: true,
         maxAge: 60 * 60,
       });
