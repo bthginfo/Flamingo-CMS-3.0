@@ -93,6 +93,21 @@ export async function publishAction() {
 
   revalidatePath('/admin');
   revalidatePath('/admin/pages');
+
+  // Revalidate renderer cache
+  const rendererUrl = process.env.NEXT_PUBLIC_RENDERER_URL || 'http://localhost:3002';
+  const revalidateSecret = process.env.REVALIDATE_SECRET;
+  if (revalidateSecret) {
+    try {
+      await fetch(`${rendererUrl}/api/revalidate`, {
+        method: 'POST',
+        headers: { 'x-revalidate-secret': revalidateSecret },
+      });
+    } catch {
+      // Renderer revalidation failed, not critical
+    }
+  }
+
   return { version: nextVersion, checksum };
 }
 
