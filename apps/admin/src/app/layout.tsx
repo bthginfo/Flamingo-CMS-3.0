@@ -19,6 +19,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
         <Toaster position="top-right" richColors closeButton />
+        {/* Remove Vercel toolbar/feedback widget if injected */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function hideVercelToolbar() {
+            var observer = new MutationObserver(function(mutations) {
+              var el = document.querySelector('vercel-live-feedback, [data-vercel-toolbar], #__vercel_live_token');
+              if (el) { el.remove(); observer.disconnect(); }
+            });
+            observer.observe(document.documentElement, { childList: true, subtree: true });
+            setTimeout(function() { observer.disconnect(); }, 10000);
+          })();
+        `}} />
       </body>
     </html>
   );

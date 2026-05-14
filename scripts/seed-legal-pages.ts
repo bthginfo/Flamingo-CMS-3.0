@@ -92,7 +92,7 @@ async function main() {
     }).returning();
     await db.insert(schema.pageSections).values({
       tenantId: TENANT_ID, pageId: imp.id, type: 'richText', sortOrder: 0, visible: true,
-      data: { headline: 'Impressum', html: IMPRESSUM_HTML },
+      data: { headline: 'Impressum', content: IMPRESSUM_HTML },
     });
     console.log('Created Impressum');
   } else {
@@ -105,7 +105,7 @@ async function main() {
     }).returning();
     await db.insert(schema.pageSections).values({
       tenantId: TENANT_ID, pageId: ds.id, type: 'richText', sortOrder: 0, visible: true,
-      data: { headline: 'Datenschutzerkl\u00e4rung', html: DATENSCHUTZ_HTML },
+      data: { headline: 'Datenschutzerkl\u00e4rung', content: DATENSCHUTZ_HTML },
     });
     console.log('Created Datenschutz');
   } else {

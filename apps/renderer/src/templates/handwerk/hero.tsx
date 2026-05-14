@@ -56,13 +56,20 @@ export function HeroSection({ data }: Props) {
 
       <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20 lg:py-0">
         <div className="max-w-4xl">
+          {/* Headline with text generate effect */}
+          <TextGenerateEffect
+            words={headline}
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white !leading-[1.02]"
+            duration={0.6}
+          />
+
           {/* Badge */}
           {badgeText && (
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center gap-2.5 bg-white/[0.07] backdrop-blur-md border border-white/[0.12] rounded-full px-5 py-2.5 text-sm text-white/90 mb-8"
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="inline-flex items-center gap-2.5 bg-white/[0.07] backdrop-blur-md border border-white/[0.12] rounded-full px-5 py-2.5 text-sm text-white/90 mt-6"
             >
               <Shield size={15} className="text-brand-accent" />
               <span className="font-medium">{badgeText}</span>
@@ -70,14 +77,7 @@ export function HeroSection({ data }: Props) {
                 {[1,2,3,4,5].map(i => <Star key={i} size={12} className="fill-brand-accent text-brand-accent" />)}
               </div>
             </motion.div>
-          )}
-
-          {/* Headline with text generate effect */}
-          <TextGenerateEffect
-            words={headline}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white !leading-[1.02]"
-            duration={0.6}
-          />
+          )
 
           {subline && (
             <motion.p
