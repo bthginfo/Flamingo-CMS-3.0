@@ -2,11 +2,12 @@
 
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, ExternalLink, Rocket } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { updatePageAction, addSectionAction, deleteSectionAction, updateSectionAction, updateSectionMetaAction, reorderSectionsAction } from '../actions';
+import { publishAction } from '../../publish/actions';
 import { toast } from 'sonner';
 import { SectionDataEditor } from './section-data-editor';
 import { PageSeoPanel } from './page-seo-panel';
@@ -160,6 +161,8 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [pending, startTransition] = useTransition();
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
 
@@ -199,7 +202,7 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
     const section = sections.find(s => s.id === sectionId);
     if (section) {
       startTransition(async () => {
-        await updateSectionMetaAction(sectionId, { visible: !section.visible });
+        await updateSectionMetaAction(sectionId, { visible: !section.visible }, page.id);
       });
     }
   }
@@ -207,14 +210,14 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
   function handleSaveSectionData(sectionId: string, data: Record<string, unknown>) {
     setSections(prev => prev.map(s => s.id === sectionId ? { ...s, data } : s));
     startTransition(async () => {
-      await updateSectionAction(sectionId, data);
+      await updateSectionAction(sectionId, data, page.id);
       toast.success('Daten gespeichert');
     });
   }
 
   function handleSaveSectionMeta(sectionId: string, meta: Record<string, unknown>) {
     startTransition(async () => {
-      await updateSectionMetaAction(sectionId, meta);
+      await updateSectionMetaAction(sectionId, meta, page.id);
       toast.success('Einstellungen gespeichert');
     });
   }
@@ -222,9 +225,26 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
   function handleSavePage() {
     startTransition(async () => {
       await updatePageAction(page.id, { title: page.title, slug: page.slug, visible: page.visible });
+      setHasUnsavedChanges(false);
       toast.success('Seite gespeichert');
     });
   }
+
+  async function handlePublish() {
+    setPublishing(true);
+    try {
+      const result = await publishAction();
+      if ('error' in result) {
+        toast.error(result.error);
+      } else {
+        toast.success(`Version ${result.version} veröffentlicht`);
+      }
+    } finally {
+      setPublishing(false);
+    }
+  }
+
+  const rendererUrl = process.env.NEXT_PUBLIC_RENDERER_URL || 'http://localhost:3002';
 
   return (
     <div>
@@ -287,6 +307,25 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
             ))}
           </div>
         )}
+      </div>
+
+      {/* FAB Bar */}
+      <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
+        <a
+          href={`${rendererUrl}/${page.slug === 'home' ? '' : page.slug}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-full shadow-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          <ExternalLink size={16} /> Vorschau
+        </a>
+        <button
+          onClick={handlePublish}
+          disabled={publishing}
+          className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          <Rocket size={16} /> {publishing ? 'Wird veröffentlicht…' : 'Veröffentlichen'}
+        </button>
       </div>
     </div>
   );
