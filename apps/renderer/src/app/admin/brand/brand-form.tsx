@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { saveBrandSettings } from '../settings-actions';
 import { toast } from 'sonner';
+import { useSaveState } from '@/components/save-context';
 import { ImageUploadField } from '@/components/image-upload-field';
 
 type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string };
@@ -17,6 +18,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     logoUrl: initial.logoUrl || '',
   });
   const [saving, setSaving] = useState(false);
+  const { markSaved } = useSaveState();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +26,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     try {
       await saveBrandSettings(form);
       toast.success('Marken-Einstellungen gespeichert');
+      markSaved();
     } catch {
       toast.error('Fehler beim Speichern');
     } finally {

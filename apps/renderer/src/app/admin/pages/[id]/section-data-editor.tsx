@@ -55,7 +55,6 @@ function HeroEditor({ data, onChange }: EditorProps) {
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
     badgeText: (data.badgeText as string) || '',
-    variant: (data.variant as string) || 'split',
     bgImage: (data.bgImage as string) || '',
     trustItems: (data.trustItems as string[]) || [],
     primaryCta: (data.primaryCta as { label: string; href: string }) || { label: '', href: '' },
@@ -68,7 +67,6 @@ function HeroEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
-      <SelectField label="Variante" value={d.variant} options={['split', 'centered', 'editorial', 'fullBleedMedia']} onChange={(v) => setD({ ...d, variant: v })} />
       <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
       <div className="space-y-2">
         <label className="text-xs font-medium text-zinc-600">Trust-Elemente</label>

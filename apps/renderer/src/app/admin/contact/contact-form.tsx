@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { saveContactSettings, saveOpeningHours } from '../settings-actions';
 import { toast } from 'sonner';
+import { useSaveState } from '@/components/save-context';
 import { Plus, Trash2 } from 'lucide-react';
 
 type ContactData = { phone?: string; email?: string; address?: string };
@@ -16,6 +17,7 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
   });
   const [hours, setHours] = useState<HoursRow[]>(initialHours.length > 0 ? initialHours : [{ day: '', hours: '' }]);
   const [saving, setSaving] = useState(false);
+  const { markSaved } = useSaveState();
 
   const handleSaveContact = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +25,7 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
     try {
       await saveContactSettings(contact);
       toast.success('Kontaktdaten gespeichert');
+      markSaved();
     } catch {
       toast.error('Fehler beim Speichern');
     } finally {

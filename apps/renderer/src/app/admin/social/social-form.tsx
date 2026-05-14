@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { saveSocialLinks } from '../settings-actions';
 import { toast } from 'sonner';
+import { useSaveState } from '@/components/save-context';
 
 const PLATFORMS = [
   { key: 'instagram', label: 'Instagram', placeholder: 'https://instagram.com/...' },
@@ -16,6 +17,7 @@ const PLATFORMS = [
 export function SocialForm({ initial }: { initial: Record<string, string> }) {
   const [links, setLinks] = useState<Record<string, string>>(initial);
   const [saving, setSaving] = useState(false);
+  const { markSaved } = useSaveState();
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +26,7 @@ export function SocialForm({ initial }: { initial: Record<string, string> }) {
       const filtered = Object.fromEntries(Object.entries(links).filter(([, v]) => v.trim()));
       await saveSocialLinks(filtered);
       toast.success('Social-Media-Links gespeichert');
+      markSaved();
     } catch {
       toast.error('Fehler beim Speichern');
     } finally {

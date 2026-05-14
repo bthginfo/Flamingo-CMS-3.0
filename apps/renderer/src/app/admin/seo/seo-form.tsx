@@ -2,11 +2,13 @@
 
 import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
+import { useSaveState } from '@/components/save-context';
 import { getSeoGlobalAction, saveSeoGlobalAction } from './actions';
 import { Save } from 'lucide-react';
 
 export function SeoForm() {
   const [pending, startTransition] = useTransition();
+  const { markSaved } = useSaveState();
   const [data, setData] = useState({
     defaultTitle: '',
     titleTemplate: '',
@@ -35,6 +37,7 @@ export function SeoForm() {
     startTransition(async () => {
       await saveSeoGlobalAction(data);
       toast.success('SEO-Einstellungen gespeichert');
+      markSaved();
     });
   }
 

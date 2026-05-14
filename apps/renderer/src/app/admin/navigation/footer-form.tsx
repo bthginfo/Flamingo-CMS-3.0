@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { saveFooterSettings } from '../settings-actions';
 import { toast } from 'sonner';
+import { useSaveState } from '@/components/save-context';
 import { Plus, Trash2 } from 'lucide-react';
 
 type FooterColumn = { title: string; items: { text: string; href?: string }[] };
@@ -15,6 +16,7 @@ export function FooterForm({ initial }: { initial: FooterData }) {
   const [columns, setColumns] = useState<FooterColumn[]>(initial.columns);
   const [legalLinks, setLegalLinks] = useState(initial.legalLinks);
   const [saving, setSaving] = useState(false);
+  const { markSaved } = useSaveState();
 
   const handleSave = async () => {
     setSaving(true);
@@ -24,6 +26,7 @@ export function FooterForm({ initial }: { initial: FooterData }) {
         legalLinks: legalLinks.filter(l => l.label.trim()),
       });
       toast.success('Footer gespeichert');
+      markSaved();
     } catch {
       toast.error('Fehler beim Speichern');
     } finally {
