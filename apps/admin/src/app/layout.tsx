@@ -19,16 +19,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
         <Toaster position="top-right" richColors closeButton />
-        {/* Remove Vercel toolbar/feedback widget if injected */}
+        {/* Hide Vercel toolbar/feedback widget via CSS + DOM removal */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          vercel-live-feedback, [data-vercel-toolbar], #__vercel_live_token,
+          vercel-toolbar, vercel-widget, [id^="vercel-"], [class*="vercel-live"],
+          .vercel-live-feedback-wrapper, [data-nextjs-dialog-overlay] { 
+            display: none !important; visibility: hidden !important; 
+            width: 0 !important; height: 0 !important; overflow: hidden !important;
+          }
+        `}} />
         <script dangerouslySetInnerHTML={{ __html: `
-          (function hideVercelToolbar() {
-            var observer = new MutationObserver(function(mutations) {
-              var el = document.querySelector('vercel-live-feedback, [data-vercel-toolbar], #__vercel_live_token');
-              if (el) { el.remove(); observer.disconnect(); }
-            });
-            observer.observe(document.documentElement, { childList: true, subtree: true });
-            setTimeout(function() { observer.disconnect(); }, 10000);
-          })();
+          new MutationObserver(function(m,o){
+            document.querySelectorAll('vercel-live-feedback,vercel-toolbar,[data-vercel-toolbar],[id^="vercel-"],[class*="vercel-live"]').forEach(function(e){e.remove()});
+          }).observe(document.documentElement,{childList:true,subtree:true});
         `}} />
       </body>
     </html>
