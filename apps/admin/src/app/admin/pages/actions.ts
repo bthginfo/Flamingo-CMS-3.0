@@ -80,7 +80,9 @@ export async function addSectionAction(pageId: string, type: string) {
 export async function updateSectionAction(sectionId: string, data: Record<string, unknown>, pageId: string) {
   const session = await requireSession();
   const db = getDb();
+  console.log('[updateSection] sectionId:', sectionId, 'tenantId:', session.tenantId, 'dataKeys:', Object.keys(data));
   const result = await db.update(pageSections).set({ data, updatedAt: new Date() }).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId))).returning({ id: pageSections.id });
+  console.log('[updateSection] result:', JSON.stringify(result));
   if (result.length === 0) {
     return { error: 'Section nicht gefunden oder keine Berechtigung' };
   }
