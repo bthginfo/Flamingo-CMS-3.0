@@ -7,7 +7,7 @@ import { Menu, X, Phone, Mail, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { NavItem, BrandData, ContactData } from '@/lib/tenant-data';
 
-export function SiteHeader({ navItems, brand, contact }: { navItems: NavItem[]; brand: BrandData; contact: ContactData }) {
+export function SiteHeader({ navItems, brand, contact, darkBg = true }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -60,7 +60,7 @@ export function SiteHeader({ navItems, brand, contact }: { navItems: NavItem[]; 
             : 'bg-transparent',
         )}>
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-[72px]">
-            <Link href="/" className="font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: scrolled ? brand.primaryColor : 'white' }}>
+            <Link href="/" className="font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || !darkBg) ? brand.primaryColor : 'white' }}>
               {brand.companyName || 'Firmenname'}
             </Link>
 
@@ -71,7 +71,7 @@ export function SiteHeader({ navItems, brand, contact }: { navItems: NavItem[]; 
                   href={item.href}
                   className={cn(
                     'text-[13px] font-medium tracking-wide uppercase transition-colors duration-300 hover:text-brand-accent',
-                    scrolled ? 'text-gray-600' : 'text-white/80',
+                    (scrolled || !darkBg) ? 'text-gray-600' : 'text-white/80',
                   )}
                 >
                   {item.label}
@@ -81,7 +81,7 @@ export function SiteHeader({ navItems, brand, contact }: { navItems: NavItem[]; 
                 href="/kontakt"
                 className={cn(
                   'inline-flex items-center gap-2 text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-300',
-                  scrolled
+                  (scrolled || !darkBg)
                     ? 'bg-brand-primary text-white hover:bg-brand-dark shadow-md hover:shadow-lg'
                     : 'bg-white/10 text-white border border-white/25 hover:bg-white/20 backdrop-blur-sm',
                 )}
@@ -95,7 +95,7 @@ export function SiteHeader({ navItems, brand, contact }: { navItems: NavItem[]; 
               onClick={() => setMobileOpen(!mobileOpen)}
               className={cn(
                 'md:hidden p-2 rounded-lg transition-colors',
-                scrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10',
+                (scrolled || !darkBg) ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10',
               )}
             >
               {mobileOpen ? <X size={24} /> : <Menu size={24} />}

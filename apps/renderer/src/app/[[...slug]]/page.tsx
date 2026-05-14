@@ -37,10 +37,11 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   if (!page || !page.visible) notFound();
 
   const visibleSections = page.sections.filter(s => s.visible);
+  const firstSectionIsHero = visibleSections[0]?.type === 'hero';
 
   return (
     <>
-      <SiteHeader navItems={navItems} brand={brand} contact={contact} />
+      <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={firstSectionIsHero} />
       <main>
         {visibleSections.map((section) => (
           <SectionRenderer key={section.id} section={section} collections={snapshot.collections} />

@@ -186,12 +186,14 @@ export function TemplateGallery() {
 
                 {/* CTA */}
                 {template.status === 'live' ? (
-                  <Link
-                    to="/kontakt"
+                  <a
+                    href="https://mueller-soehne.flamingomedia.online"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent-color)] hover:underline"
                   >
                     Live-Demo ansehen →
-                  </Link>
+                  </a>
                 ) : (
                   <span className="text-sm text-slate-400">Verfügbar ab Q3 2026</span>
                 )}
