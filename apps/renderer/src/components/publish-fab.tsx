@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Save, Rocket, ExternalLink } from 'lucide-react';
-import { publishAction } from '@/app/admin/publish/actions';
+import { publishAction } from '@/app/admin/actions/publish';
 import { useSaveState } from './save-context';
 
 export function PublishFab() {
