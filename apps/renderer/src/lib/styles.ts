@@ -16,7 +16,7 @@ export type IndustryStyles = {
 };
 
 export const INDUSTRY_STYLES: Record<string, IndustryStyles> = {
-  handwerk: {
+  tradesman: {
     label: 'Handwerk',
     styles: {
       classic: {

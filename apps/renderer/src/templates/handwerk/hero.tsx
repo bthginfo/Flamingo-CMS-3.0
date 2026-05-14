@@ -22,7 +22,7 @@ export function HeroSection({ data }: Props) {
   const y = useTransform(scrollY, [0, 400], [0, 100]);
 
   return (
-    <div className="relative min-h-screen flex items-center overflow-hidden -mt-[72px] pt-[72px]">
+    <div className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px]">
       {/* Background layers */}
       {bgImage ? (
         <>
