@@ -7,7 +7,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { updatePageAction, addSectionAction, deleteSectionAction, updateSectionAction, updateSectionMetaAction, reorderSectionsAction } from '../actions';
-import { publishAction } from '../../publish/actions';
+import { publishAction } from '../../actions/publish';
 import { toast } from 'sonner';
 import { SectionDataEditor } from './section-data-editor';
 import { PageSeoPanel } from './page-seo-panel';

@@ -147,8 +147,7 @@ flamingo-cms/
 │   │   ├── src/app/admin/     ← Admin-Panel (/admin/*)
 │   │   ├── src/app/api/       ← API routes (upload, contact, revalidate)
 │   │   └── src/middleware.ts  ← Auth guard for /admin/*
-│   ├── marketing/    ← Marketing-Website (Next.js 15, Port 3000)
-│   └── crm/          ← CRM/Provisioning (Next.js 15, Port 3003)
+│   └── marketing/    ← Marketing-Website + CRM (Next.js 15, Port 3000)
 ├── packages/
 │   ├── db/           ← Drizzle ORM Schema + DB-Client (Neon Postgres)
 │   ├── schemas/      ← Zod Validierungsschemas
@@ -206,8 +205,18 @@ Für eine neue Branche: NEUEN branchen-agnostischen Wrapper erstellen (siehe Pha
 
 ### Save & Publish Flow
 1. Admin bearbeitet Section → `updateSectionAction(sectionId, data, pageId)` → DB + `revalidatePath`
-2. Admin klickt "Veröffentlichen" (FAB-Bar) → `publishAction()` → Snapshot + Renderer-Revalidierung
-3. **WICHTIG:** Jede Server Action die Daten ändert MUSS `revalidatePath()` aufrufen!
+2. Settings-Seiten (Brand, Contact, etc.) → Speichern-Button → Server Action → `markSaved()` auf SaveContext
+3. Nach jedem Speichern erscheint der globale **PublishFab** (unten rechts) mit "Vorschau" + "Veröffentlichen"
+4. Admin klickt "Veröffentlichen" → `publishAction()` → Snapshot + Renderer-Revalidierung
+5. **WICHTIG:** Jede Server Action die Daten ändert MUSS `revalidatePath()` aufrufen!
+6. **Es gibt KEINE separate /admin/publish Seite mehr** — alles läuft über den globalen FAB.
+
+### SaveContext (Global State)
+- `SaveProvider` wraps admin layout
+- `useSaveState()` → `{ state, markDirty, markSaving, markSaved, reset }`
+- States: `idle` → `dirty` → `saving` → `saved`
+- Jede Settings-Seite ruft `markSaved()` nach erfolgreichem Speichern auf
+- Der PublishFab reagiert auf `state === 'saved'` und zeigt dann Vorschau + Veröffentlichen
 
 ### Style-System
 - Styles: `apps/renderer/src/lib/styles.ts` — CSS Custom Properties pro Industry/Style
@@ -354,6 +363,24 @@ Für Section-Type "xxx":
 - `modern` — Minimalistisch, feine Borders, weight 500, tight tracking
 - `bold` — Dynamisch, eckig (0 Radius), Offset-Schatten, Uppercase, weight 900
 
+**WICHTIG: Style-Varianten sind NICHT nur CSS-Variablen!**
+Jede Section-Komponente hat **komplett unterschiedliches JSX/Layout** pro Variante:
+```tsx
+// Beispiel: hero.tsx
+function HeroClassic({ data }: Props) { /* Zentriert, weich */ }
+function HeroModern({ data }: Props) { /* Asymmetrisch, minimalistisch */ }
+function HeroBold({ data }: Props) { /* Fullscreen, brutalistisch */ }
+
+export default function HeroSection({ data, styleVariant }: Props) {
+  if (styleVariant === 'modern') return <HeroModern data={data} />;
+  if (styleVariant === 'bold') return <HeroBold data={data} />;
+  return <HeroClassic data={data} />;
+}
+```
+- Der `styleVariant` wird vom `SectionRenderer` als Prop durchgereicht
+- Er kommt aus `tenant.activeStyle` (DB-Feld `active_style`)
+- **NIEMALS** CMS-Content basierend auf Style-Variante ausblenden — alle Felder werden in allen Varianten gerendert
+
 #### 2.4 Seed-Script
 
 Erstelle `scripts/seed-<branche>-demo.ts`:
@@ -477,7 +504,7 @@ Diese Liste zeigt exakt welche Felder pro Section-Type im Admin editierbar und i
 
 | Section | Felder |
 |---------|--------|
-| **hero** | headline, subline, badgeText, variant, bgImage, trustItems[], primaryCta{label,href}, secondaryCta{label,href} |
+| **hero** | headline, subline, badgeText, bgImage, trustItems[], primaryCta{label,href}, secondaryCta{label,href} |
 | **uspStrip** | items[{icon,title,text}] |
 | **servicesGrid** | headline, subline, badgeText, manualCards[{title,text,icon,image,mediaType}] |
 | **processSteps** | headline, badgeText, steps[{title,text,icon}] |
