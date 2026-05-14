@@ -2,6 +2,7 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
+import { validateSectionData } from '@/lib/validate-section';
 import { pages, pageSections } from '@flamingo/db';
 import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
@@ -80,7 +81,14 @@ export async function addSectionAction(pageId: string, type: string) {
 export async function updateSectionAction(sectionId: string, data: Record<string, unknown>, pageId: string) {
   const session = await requireSession();
   const db = getDb();
-  const result = await db.update(pageSections).set({ data, updatedAt: new Date() }).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId))).returning({ id: pageSections.id });
+  // Validate & sanitize section data
+  let cleanData: Record<string, unknown>;
+  try {
+    cleanData = validateSectionData(data);
+  } catch (e) {
+    return { error: 'Ungültige Section-Daten' };
+  }
+  const result = await db.update(pageSections).set({ data: cleanData, updatedAt: new Date() }).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId))).returning({ id: pageSections.id });
   if (result.length === 0) {
     return { error: 'Section nicht gefunden oder keine Berechtigung' };
   }

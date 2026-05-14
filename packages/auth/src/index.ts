@@ -16,7 +16,13 @@ export async function verifyPassword(plain: string, hash: string): Promise<boole
 
 // ─── JWT session token ──────────────────────────────────────────────
 function getSecret() {
-  const s = process.env.ADMIN_JWT_SECRET || process.env.PREVIEW_SECRET || 'flamingo-dev-secret';
+  const s = process.env.ADMIN_JWT_SECRET || process.env.PREVIEW_SECRET;
+  if (!s) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('ADMIN_JWT_SECRET must be set in production');
+    }
+    return new TextEncoder().encode('flamingo-dev-secret-NOT-FOR-PRODUCTION');
+  }
   return new TextEncoder().encode(s);
 }
 
