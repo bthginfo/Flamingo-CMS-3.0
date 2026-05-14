@@ -43,12 +43,25 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
   return {
     title,
     description,
+    ...(brand.logoUrl && {
+      icons: {
+        icon: brand.logoUrl,
+        apple: brand.logoUrl,
+      },
+    }),
     openGraph: {
       title,
       description,
-      ...(ogImage && { images: [{ url: ogImage }] }),
+      type: page.slug === '' || page.slug === 'home' || page.slug === 'startseite' ? 'website' : 'article',
+      ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630 }] }),
       locale: seoGlobal?.locale || 'de_DE',
       siteName: brand.companyName || undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      ...(ogImage && { images: [ogImage] }),
     },
     ...(canonical && { alternates: { canonical } }),
     robots: seoPage?.noindex ? 'noindex,nofollow' : (seoGlobal?.robots || 'index,follow'),
@@ -72,8 +85,26 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   const visibleSections = page.sections.filter(s => s.visible);
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
 
+  // JSON-LD structured data
+  const isHome = !slug || slug.length === 0;
+  const jsonLd = isHome ? {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: brand.companyName || '',
+    ...(brand.logoUrl && { logo: brand.logoUrl, image: brand.logoUrl }),
+    ...(contact.phone && { telephone: contact.phone }),
+    ...(contact.email && { email: contact.email }),
+    ...(contact.address && { address: { '@type': 'PostalAddress', streetAddress: contact.address } }),
+  } : {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: page.title,
+    ...(brand.companyName && { isPartOf: { '@type': 'WebSite', name: brand.companyName } }),
+  };
+
   return (
     <div style={styleCssVars as React.CSSProperties}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={firstSectionIsHero} />
       <main>
         {visibleSections.map((section) => (
