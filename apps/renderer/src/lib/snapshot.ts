@@ -1,5 +1,5 @@
 import { getDb } from './db';
-import { publishedSnapshots, tenants, tenantDomains, pages, pageSections } from '@flamingo/db';
+import { tenants, tenantDomains, pages, pageSections, collections, collectionItems } from '@flamingo/db';
 import { eq, and, asc } from 'drizzle-orm';
 import { headers } from 'next/headers';
 
@@ -63,24 +63,20 @@ export async function resolveTenant(): Promise<string | null> {
   return tenant?.id ?? null;
 }
 
-/** Get the active published snapshot for the current tenant. */
+/** Get live data for the tenant directly from pages/page_sections tables. */
 export async function getActiveSnapshot(tenantId: string): Promise<Snapshot | null> {
-  const db = getDb();
-  const [snap] = await db.select()
-    .from(publishedSnapshots)
-    .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)))
-    .limit(1);
-  if (!snap) return null;
-  return snap.snapshot as unknown as Snapshot;
+  return getDraftSnapshot(tenantId);
 }
 
-/** Build a live draft snapshot from page_sections (unpublished state). */
+/** Build a live snapshot from pages/page_sections/collections tables. */
 export async function getDraftSnapshot(tenantId: string): Promise<Snapshot | null> {
   const db = getDb();
   const allPages = await db.select().from(pages).where(eq(pages.tenantId, tenantId)).orderBy(asc(pages.sortOrder));
   if (allPages.length === 0) return null;
 
   const allSections = await db.select().from(pageSections).where(eq(pageSections.tenantId, tenantId)).orderBy(asc(pageSections.sortOrder));
+  const allCollections = await db.select().from(collections).where(eq(collections.tenantId, tenantId));
+  const allItems = await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, tenantId), eq(collectionItems.published, true))).orderBy(asc(collectionItems.priority));
 
   const snapshotPages: SnapshotPage[] = allPages.map(p => ({
     id: p.id,
@@ -102,5 +98,24 @@ export async function getDraftSnapshot(tenantId: string): Promise<Snapshot | nul
       })),
   }));
 
-  return { pages: snapshotPages, collections: [], generatedAt: new Date().toISOString() };
+  const snapshotCollections: SnapshotCollection[] = allCollections.map(c => ({
+    id: c.id,
+    key: c.key,
+    label: c.label,
+    schema: c.schema as Record<string, unknown> | null,
+    settings: c.settings as Record<string, unknown> | null ?? null,
+    items: allItems
+      .filter(i => i.collectionId === c.id)
+      .map(i => ({
+        id: i.id,
+        slug: i.slug,
+        title: i.title,
+        data: i.data as Record<string, unknown>,
+        priority: i.priority,
+        createdAt: (i.createdAt as Date)?.toISOString?.() ?? '',
+        updatedAt: (i.updatedAt as Date)?.toISOString?.() ?? '',
+      })),
+  }));
+
+  return { pages: snapshotPages, collections: snapshotCollections, generatedAt: new Date().toISOString() };
 }

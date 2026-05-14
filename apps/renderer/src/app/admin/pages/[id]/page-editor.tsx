@@ -267,7 +267,7 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
       if ('error' in result) {
         toast.error(result.error);
       } else {
-        toast.success(`Version ${result.version} veröffentlicht`);
+        toast.success('Änderungen veröffentlicht');
       }
     } finally {
       setPublishing(false);
