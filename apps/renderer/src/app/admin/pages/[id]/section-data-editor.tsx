@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Save } from 'lucide-react';
 import { ImageUploadField } from '@/components/image-upload-field';
-import { LinkField } from '@/components/link-field';
+import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { IconPickerField } from '@/components/icon-picker-field';
 
 // Reports current editor data to parent on every change (skip initial render).
@@ -78,14 +78,8 @@ function HeroEditor({ data, onChange }: EditorProps) {
         ))}
         <button onClick={() => setD({ ...d, trustItems: [...d.trustItems, ''] })} className="text-xs text-blue-600 hover:underline">+ Trust-Element</button>
       </div>
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Primärer CTA Label" value={d.primaryCta.label} onChange={(v) => setD({ ...d, primaryCta: { ...d.primaryCta, label: v } })} />
-        <LinkField label="Primärer CTA Link" value={d.primaryCta.href} onChange={(v) => setD({ ...d, primaryCta: { ...d.primaryCta, href: v } })} />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Sekundärer CTA Label" value={d.secondaryCta.label} onChange={(v) => setD({ ...d, secondaryCta: { ...d.secondaryCta, label: v } })} />
-        <LinkField label="Sekundärer CTA Link" value={d.secondaryCta.href} onChange={(v) => setD({ ...d, secondaryCta: { ...d.secondaryCta, href: v } })} />
-      </div>
+      <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
+      <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
     </div>
   );
 }
@@ -135,10 +129,7 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
       <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="CTA Label" value={d.ctaPrimary.label} onChange={(v) => setD({ ...d, ctaPrimary: { ...d.ctaPrimary, label: v } })} />
-        <LinkField label="CTA Link" value={d.ctaPrimary.href} onChange={(v) => setD({ ...d, ctaPrimary: { ...d.ctaPrimary, href: v } })} />
-      </div>
+      <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
     </div>
   );
 }
@@ -245,10 +236,8 @@ function CtaLinksEditor({ data, onChange }: EditorProps) {
       {links.map((link, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeLink(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Label" value={link.label} onChange={(v) => updateLink(i, 'label', v)} />
-            <Field label="Link (href)" value={link.href} onChange={(v) => updateLink(i, 'href', v)} />
-          </div>
+          <Field label="Label" value={link.label} onChange={(v) => updateLink(i, 'label', v)} />
+          <DetailLinkField label="Link" value={link.href} onChange={(v) => updateLink(i, 'href', v)} />
           <div className="grid grid-cols-2 gap-3">
             <Field label="Icon (Lucide-Name)" value={link.icon} onChange={(v) => updateLink(i, 'icon', v)} />
             <Field label="Beschreibung" value={link.description} onChange={(v) => updateLink(i, 'description', v)} />
@@ -276,10 +265,7 @@ function NewsPreviewEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <Field label="Collection-Key (z.B. news, blog)" value={d.collectionKey} onChange={(v) => setD({ ...d, collectionKey: v })} />
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Link Label" value={d.linkLabel} onChange={(v) => setD({ ...d, linkLabel: v })} />
-        <Field label="Link Href" value={d.linkHref} onChange={(v) => setD({ ...d, linkHref: v })} />
-      </div>
+      <ButtonField label="Link" value={{ label: d.linkLabel, href: d.linkHref }} onChange={(v) => setD({ ...d, linkLabel: v.label, linkHref: v.href })} />
       <p className="text-xs text-gray-400">Die News-Items werden automatisch aus der verknüpften Collection geladen.</p>
     </div>
   );
@@ -340,10 +326,8 @@ function LogoCloudEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeLogo(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <ImageUploadField label="Bild" value={logo.src} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, src: v } : l))} />
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Alt-Text" value={logo.alt} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, alt: v } : l))} />
-            <Field label="Link (optional)" value={logo.href} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, href: v } : l))} />
-          </div>
+          <Field label="Alt-Text" value={logo.alt} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, alt: v } : l))} />
+          <DetailLinkField label="Link (optional)" value={logo.href} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, href: v } : l))} />
         </div>
       ))}
       <button onClick={addLogo} className="text-sm text-blue-600 hover:underline">+ Logo hinzufügen</button>
@@ -438,10 +422,7 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={headline} onChange={setHeadline} />
       <Field label="Subline" value={subline} onChange={setSubline} />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="CTA-Button Label" value={ctaLabel} onChange={setCtaLabel} placeholder="z.B. Alle Leistungen" />
-        <Field label="CTA-Button Link" value={ctaHref} onChange={setCtaHref} placeholder="z.B. /leistungen" />
-      </div>
+      <ButtonField label="CTA-Button" value={{ label: ctaLabel, href: ctaHref }} onChange={(v) => { setCtaLabel(v.label); setCtaHref(v.href); }} />
       {cards.map((card, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -457,7 +438,7 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
               <ImageUploadField label="Bild" value={card.image} onChange={(v) => update(i, 'image', v)} />
             )}
           </div>
-          <Field label="Detail-Link (optional)" value={card.href} onChange={(v) => update(i, 'href', v)} placeholder="z.B. /leistungen/bad-sanierung" />
+          <DetailLinkField label="Detail-Link (optional)" value={card.href} onChange={(v) => update(i, 'href', v)} />
         </div>
       ))}
       <button onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Karte hinzufügen</button>
@@ -586,10 +567,7 @@ function ServiceDetailEditor({ data, onChange }: EditorProps) {
             )}
           </div>
           <Field label="Features (eine pro Zeile)" value={item.features} onChange={(v) => update(i, 'features', v)} multiline />
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="CTA Label" value={item.ctaLabel} onChange={(v) => update(i, 'ctaLabel', v)} />
-            <Field label="CTA Link" value={item.ctaHref} onChange={(v) => update(i, 'ctaHref', v)} />
-          </div>
+          <ButtonField label="CTA" value={{ label: item.ctaLabel, href: item.ctaHref }} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, ctaLabel: v.label, ctaHref: v.href } : it))} />
         </div>
       ))}
       <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Leistung hinzufügen</button>
@@ -625,10 +603,7 @@ function PortfolioEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={headline} onChange={setHeadline} />
       <Field label="Subline" value={subline} onChange={setSubline} />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="CTA-Button Label" value={ctaLabel} onChange={setCtaLabel} placeholder="z.B. Alle Referenzen" />
-        <Field label="CTA-Button Link" value={ctaHref} onChange={setCtaHref} placeholder="z.B. /referenzen" />
-      </div>
+      <ButtonField label="CTA-Button" value={{ label: ctaLabel, href: ctaHref }} onChange={(v) => { setCtaLabel(v.label); setCtaHref(v.href); }} />
       {projects.map((proj, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeProject(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -638,7 +613,7 @@ function PortfolioEditor({ data, onChange }: EditorProps) {
           </div>
           <Field label="Beschreibung" value={proj.description} onChange={(v) => update(i, 'description', v)} multiline />
           <ImageUploadField label="Bild" value={proj.image} onChange={(v) => update(i, 'image', v)} />
-          <Field label="Detail-Link (optional)" value={proj.href} onChange={(v) => update(i, 'href', v)} placeholder="z.B. /referenzen/projekt-name" />
+          <DetailLinkField label="Detail-Link (optional)" value={proj.href} onChange={(v) => update(i, 'href', v)} />
           <div className="space-y-2">
             <label className="text-xs font-medium text-zinc-600">Statistiken</label>
             {proj.stats.map((s, j) => (

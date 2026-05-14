@@ -346,7 +346,7 @@ Für jede branchen-spezifische Section einen Editor erstellen.
 
 **KRITISCHE REGELN für Editoren:**
 - `onChange()` MUSS ALLE Felder enthalten die das Template liest
-- Wiederverwendbare Felder: `ImageUploadField`, `LinkField`, `IconPickerField` existieren in `apps/renderer/src/components/`
+- Wiederverwendbare Felder: `ImageUploadField`, `ButtonField` (Label + Intern/Extern-Link), `DetailLinkField` (nur Intern/Extern-Link ohne Label), `IconPickerField` existieren in `apps/renderer/src/components/`
 - Shared Helper: `Field`, `SelectField` existieren in section-data-editor.tsx
 
 **Verifizierung nach jedem Editor:**
