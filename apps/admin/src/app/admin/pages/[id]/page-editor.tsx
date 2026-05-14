@@ -15,6 +15,11 @@ const SECTION_TYPES: { type: string; label: string; description: string }[] = [
   { type: 'uspStrip', label: 'USP-Leiste', description: 'Einzigartige Verkaufsargumente' },
   { type: 'servicesGrid', label: 'Leistungen', description: 'Leistungs-Grid' },
   { type: 'processSteps', label: 'Ablauf', description: 'Prozess-Schritte Timeline' },
+  { type: 'ctaLinks', label: 'CTA-Links', description: 'Button-Links zu Unterseiten' },
+  { type: 'newsPreview', label: 'News-Vorschau', description: 'Aktuelle Beiträge (News/Blog)' },
+  { type: 'stats', label: 'Zahlen & Fakten', description: 'Animierte Statistik-Zähler' },
+  { type: 'logoCloud', label: 'Logo-Cloud', description: 'Partner- & Zertifikats-Logos' },
+  { type: 'galleryGrid', label: 'Galerie', description: 'Bildergalerie mit Lightbox' },
   { type: 'projectGallery', label: 'Projekte', description: 'Projekt-Galerie' },
   { type: 'trust', label: 'Vertrauen', description: 'Zertifikate & Partner' },
   { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen' },
@@ -22,6 +27,9 @@ const SECTION_TYPES: { type: string; label: string; description: string }[] = [
   { type: 'ctaBand', label: 'CTA-Band', description: 'Call-to-Action Banner' },
   { type: 'contact', label: 'Kontakt', description: 'Kontaktformular' },
   { type: 'map', label: 'Karte', description: 'Google Maps Einbettung' },
+  { type: 'serviceDetail', label: 'Leistungs-Detail', description: 'Detaillierte Leistungsbeschreibung' },
+  { type: 'portfolio', label: 'Portfolio', description: 'Referenzprojekte-Galerie' },
+  { type: 'team', label: 'Team', description: 'Team-Mitglieder' },
   { type: 'headerBanner', label: 'Header-Banner', description: 'Obere Hinweisleiste' },
 ];
 

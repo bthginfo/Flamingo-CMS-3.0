@@ -23,8 +23,28 @@ export type SnapshotSection = {
   data: Record<string, unknown>;
 };
 
+export type SnapshotCollectionItem = {
+  id: string;
+  slug: string;
+  title: string;
+  data: Record<string, unknown>;
+  priority: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type SnapshotCollection = {
+  id: string;
+  key: string;
+  label: string;
+  schema: Record<string, unknown> | null;
+  settings: Record<string, unknown> | null;
+  items: SnapshotCollectionItem[];
+};
+
 export type Snapshot = {
   pages: SnapshotPage[];
+  collections?: SnapshotCollection[];
   generatedAt: string;
 };
 

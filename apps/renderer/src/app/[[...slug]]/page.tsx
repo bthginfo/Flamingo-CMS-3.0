@@ -43,7 +43,7 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
       <SiteHeader navItems={navItems} brand={brand} contact={contact} />
       <main>
         {visibleSections.map((section) => (
-          <SectionRenderer key={section.id} section={section} />
+          <SectionRenderer key={section.id} section={section} collections={snapshot.collections} />
         ))}
       </main>
       <SiteFooter footer={footerData} brand={brand} />

@@ -2,7 +2,7 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { pages, pageSections, publishedSnapshots, publishHistory, draftStates } from '@flamingo/db';
+import { pages, pageSections, publishedSnapshots, publishHistory, draftStates, collections, collectionItems } from '@flamingo/db';
 import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import crypto from 'crypto';
@@ -19,11 +19,17 @@ async function collectSnapshot(tenantId: string) {
   const db = getDb();
   const allPages = await db.select().from(pages).where(eq(pages.tenantId, tenantId)).orderBy(asc(pages.sortOrder));
   const allSections = await db.select().from(pageSections).where(eq(pageSections.tenantId, tenantId)).orderBy(asc(pageSections.sortOrder));
+  const allCollections = await db.select().from(collections).where(eq(collections.tenantId, tenantId));
+  const allItems = await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, tenantId), eq(collectionItems.published, true))).orderBy(asc(collectionItems.priority));
 
   const snapshot = {
     pages: allPages.map(p => ({
       ...p,
       sections: allSections.filter(s => s.pageId === p.id),
+    })),
+    collections: allCollections.map(c => ({
+      ...c,
+      items: allItems.filter(i => i.collectionId === c.id),
     })),
     generatedAt: new Date().toISOString(),
   };

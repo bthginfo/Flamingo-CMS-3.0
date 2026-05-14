@@ -197,6 +197,165 @@ function SelectField({ label, value, options, onChange }: { label: string; value
   );
 }
 
+// ─── CTA Links Editor ────────────────────────────────────────────
+function CtaLinksEditor({ data, onSave }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [links, setLinks] = useState<{ label: string; href: string; icon: string; description: string }[]>(
+    (data.links as { label: string; href: string; icon: string; description: string }[]) || []
+  );
+
+  function addLink() { setLinks([...links, { label: '', href: '', icon: '', description: '' }]); }
+  function removeLink(i: number) { setLinks(links.filter((_, idx) => idx !== i)); }
+  function updateLink(i: number, field: string, val: string) {
+    setLinks(links.map((l, idx) => idx === i ? { ...l, [field]: val } : l));
+  }
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      {links.map((link, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => removeLink(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Label" value={link.label} onChange={(v) => updateLink(i, 'label', v)} />
+            <Field label="Link (href)" value={link.href} onChange={(v) => updateLink(i, 'href', v)} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Icon (Lucide-Name)" value={link.icon} onChange={(v) => updateLink(i, 'icon', v)} />
+            <Field label="Beschreibung" value={link.description} onChange={(v) => updateLink(i, 'description', v)} />
+          </div>
+        </div>
+      ))}
+      <button onClick={addLink} className="text-sm text-blue-600 hover:underline">+ Link hinzufügen</button>
+      <div><button onClick={() => onSave({ headline, subline, links })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
+    </div>
+  );
+}
+
+// ─── News Preview Editor ─────────────────────────────────────────
+function NewsPreviewEditor({ data, onSave }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || 'Aktuelles',
+    subline: (data.subline as string) || '',
+    collectionKey: (data.collectionKey as string) || 'news',
+    linkLabel: (data.linkLabel as string) || 'Alle Beiträge',
+    linkHref: (data.linkHref as string) || '/news',
+  });
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <Field label="Collection-Key (z.B. news, blog)" value={d.collectionKey} onChange={(v) => setD({ ...d, collectionKey: v })} />
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Link Label" value={d.linkLabel} onChange={(v) => setD({ ...d, linkLabel: v })} />
+        <Field label="Link Href" value={d.linkHref} onChange={(v) => setD({ ...d, linkHref: v })} />
+      </div>
+      <p className="text-xs text-gray-400">Die News-Items werden automatisch aus der verknüpften Collection geladen.</p>
+      <button onClick={() => onSave(d)} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button>
+    </div>
+  );
+}
+
+// ─── Stats Editor ────────────────────────────────────────────────
+function StatsEditor({ data, onSave }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [stats, setStats] = useState<{ value: number; suffix: string; prefix: string; label: string; icon: string }[]>(
+    (data.stats as { value: number; suffix: string; prefix: string; label: string; icon: string }[]) || []
+  );
+
+  function addStat() { setStats([...stats, { value: 0, suffix: '', prefix: '', label: '', icon: '' }]); }
+  function removeStat(i: number) { setStats(stats.filter((_, idx) => idx !== i)); }
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      {stats.map((stat, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => removeStat(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-3 gap-3">
+            <label className="block text-sm"><span className="text-gray-600 text-xs">Wert</span>
+              <input type="number" className="admin-input mt-1 w-full" value={stat.value} onChange={(e) => setStats(stats.map((s, idx) => idx === i ? { ...s, value: Number(e.target.value) } : s))} />
+            </label>
+            <Field label="Prefix" value={stat.prefix} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, prefix: v } : s))} />
+            <Field label="Suffix (+, %, etc.)" value={stat.suffix} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, suffix: v } : s))} />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Label" value={stat.label} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} />
+            <Field label="Icon (Lucide-Name)" value={stat.icon} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, icon: v } : s))} />
+          </div>
+        </div>
+      ))}
+      <button onClick={addStat} className="text-sm text-blue-600 hover:underline">+ Statistik hinzufügen</button>
+      <div><button onClick={() => onSave({ headline, stats })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
+    </div>
+  );
+}
+
+// ─── Logo Cloud Editor ───────────────────────────────────────────
+function LogoCloudEditor({ data, onSave }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [logos, setLogos] = useState<{ src: string; alt: string; href: string }[]>(
+    (data.logos as { src: string; alt: string; href: string }[]) || []
+  );
+
+  function addLogo() { setLogos([...logos, { src: '', alt: '', href: '' }]); }
+  function removeLogo(i: number) { setLogos(logos.filter((_, idx) => idx !== i)); }
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      {logos.map((logo, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => removeLogo(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <Field label="Bild-URL" value={logo.src} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, src: v } : l))} />
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Alt-Text" value={logo.alt} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, alt: v } : l))} />
+            <Field label="Link (optional)" value={logo.href} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, href: v } : l))} />
+          </div>
+        </div>
+      ))}
+      <button onClick={addLogo} className="text-sm text-blue-600 hover:underline">+ Logo hinzufügen</button>
+      <div><button onClick={() => onSave({ headline, subline, logos })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
+    </div>
+  );
+}
+
+// ─── Gallery Grid Editor ─────────────────────────────────────────
+function GalleryGridEditor({ data, onSave }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [images, setImages] = useState<{ src: string; alt: string; caption: string }[]>(
+    (data.images as { src: string; alt: string; caption: string }[]) || []
+  );
+
+  function addImage() { setImages([...images, { src: '', alt: '', caption: '' }]); }
+  function removeImage(i: number) { setImages(images.filter((_, idx) => idx !== i)); }
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      {images.map((img, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => removeImage(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <Field label="Bild-URL" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Alt-Text" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
+            <Field label="Bildunterschrift" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} />
+          </div>
+        </div>
+      ))}
+      <button onClick={addImage} className="text-sm text-blue-600 hover:underline">+ Bild hinzufügen</button>
+      <div><button onClick={() => onSave({ headline, subline, images })} className="admin-btn-primary text-xs flex items-center gap-1"><Save size={12} /> Speichern</button></div>
+    </div>
+  );
+}
+
 // ─── Editor registry ─────────────────────────────────────────────
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
@@ -204,4 +363,9 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   ctaBand: CtaBandEditor,
   testimonials: TestimonialsEditor,
   map: MapEditor,
+  ctaLinks: CtaLinksEditor,
+  newsPreview: NewsPreviewEditor,
+  stats: StatsEditor,
+  logoCloud: LogoCloudEditor,
+  galleryGrid: GalleryGridEditor,
 };

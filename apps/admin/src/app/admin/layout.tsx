@@ -1,10 +1,13 @@
-import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/session';
 import { Sidebar } from '@/components/sidebar';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
-  if (!session) redirect('/admin/login');
+
+  // Login page is nested under /admin but doesn't need sidebar/auth
+  if (!session) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden">

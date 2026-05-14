@@ -1,4 +1,4 @@
-import type { SnapshotSection } from '@/lib/snapshot';
+import type { SnapshotSection, SnapshotCollection } from '@/lib/snapshot';
 import { HeroSection } from '@/templates/handwerk/hero';
 import { UspStripSection } from '@/templates/handwerk/usp-strip';
 import { ServicesGridSection } from '@/templates/handwerk/services-grid';
@@ -11,6 +11,11 @@ import { MapSection } from '@/templates/handwerk/map';
 import { ServiceDetailSection } from '@/templates/handwerk/service-detail';
 import { PortfolioSection } from '@/templates/handwerk/portfolio';
 import { TeamSection } from '@/templates/handwerk/team';
+import { CtaLinksSection } from '@/templates/handwerk/cta-links';
+import { NewsPreviewSection } from '@/templates/handwerk/news-preview';
+import { StatsSection } from '@/templates/handwerk/stats';
+import { LogoCloudSection } from '@/templates/handwerk/logo-cloud';
+import { GalleryGridSection } from '@/templates/handwerk/gallery-grid';
 
 const SECTION_COMPONENTS: Record<string, React.FC<{ data: Record<string, unknown>; variant?: string | null }>> = {
   hero: HeroSection,
@@ -25,6 +30,11 @@ const SECTION_COMPONENTS: Record<string, React.FC<{ data: Record<string, unknown
   serviceDetail: ServiceDetailSection,
   portfolio: PortfolioSection,
   team: TeamSection,
+  ctaLinks: CtaLinksSection,
+  newsPreview: NewsPreviewSection,
+  stats: StatsSection,
+  logoCloud: LogoCloudSection,
+  galleryGrid: GalleryGridSection,
 };
 
 const SPACING: Record<string, string> = {
@@ -42,8 +52,29 @@ const CONTAINER: Record<string, string> = {
   full: 'w-full px-6',
 };
 
-export function SectionRenderer({ section }: { section: SnapshotSection }) {
+export function SectionRenderer({ section, collections }: { section: SnapshotSection; collections?: SnapshotCollection[] }) {
   const Component = SECTION_COMPONENTS[section.type];
+
+  // Inject collection items into newsPreview sections
+  if (section.type === 'newsPreview' && collections) {
+    const key = (section.data.collectionKey as string) || 'news';
+    const col = collections.find(c => c.key === key);
+    if (col) {
+      section = {
+        ...section,
+        data: {
+          ...section.data,
+          items: col.items.slice(0, 3).map(item => ({
+            title: item.title,
+            slug: item.slug,
+            image: (item.data.image as string) || undefined,
+            excerpt: (item.data.excerpt as string) || undefined,
+            date: item.createdAt,
+          })),
+        },
+      };
+    }
+  }
   if (!Component) {
     return (
       <div className="py-8 text-center text-gray-400 text-sm">

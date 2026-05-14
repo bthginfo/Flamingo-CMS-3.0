@@ -1,8 +1,8 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Phone, Mail, MapPin, Clock, Send, ArrowRight } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { cn } from '@/lib/utils';
 
@@ -18,6 +18,8 @@ export function ContactSection({ data }: Props) {
   const submitLabel = (data.submitLabel as string) || 'Nachricht senden';
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [error, setError] = useState('');
 
   const infoCards = (data.infoCards as { icon: string; label: string; value: string }[]) || [
     { icon: 'phone', label: 'Telefon', value: '' },
@@ -74,23 +76,72 @@ export function ContactSection({ data }: Props) {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="lg:col-span-3"
           >
-            <form className="bg-white rounded-3xl border border-gray-100 shadow-lg p-8 sm:p-10 space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <input type="text" placeholder="Ihr Name" required className={inputClass} />
-                <input type="email" placeholder="E-Mail Adresse" required className={inputClass} />
-              </div>
-              <input type="tel" placeholder="Telefon (optional)" className={inputClass} />
-              <textarea placeholder="Wie können wir Ihnen helfen?" rows={5} required className={cn(inputClass, 'resize-none')} />
-              <button
-                type="submit"
-                className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-brand-primary px-8 py-4 font-semibold text-white transition-all duration-300 hover:shadow-glow hover:-translate-y-0.5"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  <Send size={16} />
-                  {submitLabel}
-                </span>
-                <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.15),transparent)] bg-[length:200%_100%]" />
-              </button>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setStatus('loading');
+                const form = e.currentTarget;
+                const fd = new FormData(form);
+                try {
+                  const res = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      name: fd.get('name'),
+                      email: fd.get('email'),
+                      phone: fd.get('phone') || null,
+                      message: fd.get('message'),
+                      page: window.location.pathname,
+                    }),
+                  });
+                  if (res.ok) {
+                    setStatus('success');
+                    form.reset();
+                  } else {
+                    const data = await res.json();
+                    setError(data.error || 'Fehler beim Senden.');
+                    setStatus('error');
+                  }
+                } catch {
+                  setError('Verbindungsfehler. Bitte versuchen Sie es erneut.');
+                  setStatus('error');
+                }
+              }}
+              className="bg-white rounded-3xl border border-gray-100 shadow-lg p-8 sm:p-10 space-y-5"
+            >
+              {status === 'success' ? (
+                <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
+                  <CheckCircle className="text-green-500" size={48} />
+                  <p className="text-lg font-semibold text-gray-900">Vielen Dank!</p>
+                  <p className="text-sm text-gray-500">Ihre Nachricht wurde erfolgreich gesendet. Wir melden uns zeitnah.</p>
+                </div>
+              ) : (
+                <>
+                  {status === 'error' && (
+                    <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl p-3">
+                      <AlertCircle size={16} />
+                      {error}
+                    </div>
+                  )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <input name="name" type="text" placeholder="Ihr Name" required className={inputClass} />
+                    <input name="email" type="email" placeholder="E-Mail Adresse" required className={inputClass} />
+                  </div>
+                  <input name="phone" type="tel" placeholder="Telefon (optional)" className={inputClass} />
+                  <textarea name="message" placeholder="Wie können wir Ihnen helfen?" rows={5} required className={cn(inputClass, 'resize-none')} />
+                  <button
+                    type="submit"
+                    disabled={status === 'loading'}
+                    className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-brand-primary px-8 py-4 font-semibold text-white transition-all duration-300 hover:shadow-glow hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    <span className="relative z-10 flex items-center gap-2">
+                      <Send size={16} />
+                      {status === 'loading' ? 'Wird gesendet…' : submitLabel}
+                    </span>
+                    <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.15),transparent)] bg-[length:200%_100%]" />
+                  </button>
+                </>
+              )}
             </form>
           </motion.div>
         )}

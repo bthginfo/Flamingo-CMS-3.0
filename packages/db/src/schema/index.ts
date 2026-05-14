@@ -66,6 +66,7 @@ export const globalSettings = pgTable('global_settings', {
   socialLinks: jsonb('social_links').$type<Record<string, unknown>>().default({}),
   design: jsonb('design').$type<Record<string, unknown>>().default({}),
   banners: jsonb('banners').$type<Record<string, unknown>[]>().default([]),
+  smtp: jsonb('smtp').$type<{ host: string; port: number; user: string; pass: string; from: string } | null>().default(null),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
@@ -340,4 +341,22 @@ export const auditLog = pgTable('audit_log', {
 }, (t) => [
   index('audit_log_tenant_idx').on(t.tenantId),
   index('audit_log_entity_idx').on(t.entityType, t.entityId),
+]);
+
+// ─── 22. form_submissions ────────────────────────────────────────────
+export const submissionStatusEnum = pgEnum('submission_status', ['new', 'read', 'archived']);
+
+export const formSubmissions = pgTable('form_submissions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 200 }).notNull(),
+  email: varchar('email', { length: 320 }).notNull(),
+  phone: varchar('phone', { length: 50 }),
+  message: text('message').notNull(),
+  page: varchar('page', { length: 200 }),
+  status: submissionStatusEnum('status').notNull().default('new'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('form_submissions_tenant_idx').on(t.tenantId),
+  index('form_submissions_status_idx').on(t.tenantId, t.status),
 ]);
