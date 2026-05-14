@@ -199,14 +199,14 @@ function MapEditor({ data, onChange }: EditorProps) {
 }
 
 // ─── Shared field components ─────────────────────────────────────
-function Field({ label, value, onChange, multiline }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean }) {
+function Field({ label, value, onChange, multiline, placeholder }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean; placeholder?: string }) {
   return (
     <label className="block text-sm">
       <span className="text-gray-600 text-xs">{label}</span>
       {multiline ? (
-        <textarea className="admin-input mt-1 w-full" rows={3} value={value} onChange={(e) => onChange(e.target.value)} />
+        <textarea className="admin-input mt-1 w-full" rows={3} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
       ) : (
-        <input className="admin-input mt-1 w-full" value={value} onChange={(e) => onChange(e.target.value)} />
+        <input className="admin-input mt-1 w-full" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
       )}
     </label>
   );
@@ -415,12 +415,21 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
-  const [cards, setCards] = useState<{ title: string; text: string; icon: string; image: string; mediaType: string }[]>(
-    (data.manualCards as { title: string; text: string; icon: string; image: string; mediaType: string }[]) || []
+  const [ctaLabel, setCtaLabel] = useState((data.ctaLabel as string) || '');
+  const [ctaHref, setCtaHref] = useState((data.ctaHref as string) || '');
+  const [cards, setCards] = useState<{ title: string; text: string; icon: string; image: string; mediaType: string; href: string }[]>(
+    ((data.manualCards as Record<string, unknown>[]) || []).map(c => ({
+      title: (c.title as string) || '',
+      text: (c.text as string) || '',
+      icon: (c.icon as string) || '',
+      image: (c.image as string) || '',
+      mediaType: (c.mediaType as string) || 'icon',
+      href: (c.href as string) || '',
+    }))
   );
-  useReport({ headline, subline, badgeText, manualCards: cards }, onChange);
+  useReport({ headline, subline, badgeText, ctaLabel, ctaHref, manualCards: cards }, onChange);
 
-  function addCard() { setCards([...cards, { title: '', text: '', icon: '', image: '', mediaType: 'icon' }]); }
+  function addCard() { setCards([...cards, { title: '', text: '', icon: '', image: '', mediaType: 'icon', href: '' }]); }
   function removeCard(i: number) { setCards(cards.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setCards(cards.map((c, idx) => idx === i ? { ...c, [field]: val } : c)); }
 
@@ -429,6 +438,10 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={headline} onChange={setHeadline} />
       <Field label="Subline" value={subline} onChange={setSubline} />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="CTA-Button Label" value={ctaLabel} onChange={setCtaLabel} placeholder="z.B. Alle Leistungen" />
+        <Field label="CTA-Button Link" value={ctaHref} onChange={setCtaHref} placeholder="z.B. /leistungen" />
+      </div>
       {cards.map((card, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -444,6 +457,7 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
               <ImageUploadField label="Bild" value={card.image} onChange={(v) => update(i, 'image', v)} />
             )}
           </div>
+          <Field label="Detail-Link (optional)" value={card.href} onChange={(v) => update(i, 'href', v)} placeholder="z.B. /leistungen/bad-sanierung" />
         </div>
       ))}
       <button onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Karte hinzufügen</button>
@@ -588,18 +602,21 @@ function PortfolioEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
-  const [projects, setProjects] = useState<{ title: string; category: string; description: string; image: string; stats: { label: string; value: string }[] }[]>(
+  const [ctaLabel, setCtaLabel] = useState((data.ctaLabel as string) || '');
+  const [ctaHref, setCtaHref] = useState((data.ctaHref as string) || '');
+  const [projects, setProjects] = useState<{ title: string; category: string; description: string; image: string; href: string; stats: { label: string; value: string }[] }[]>(
     ((data.projects as Record<string, unknown>[]) || []).map(p => ({
       title: (p.title as string) || '',
       category: (p.category as string) || '',
       description: (p.description as string) || '',
       image: (p.image as string) || '',
+      href: (p.href as string) || '',
       stats: ((p.stats as { label: string; value: string }[]) || []),
     }))
   );
-  useReport({ headline, subline, badgeText, projects }, onChange);
+  useReport({ headline, subline, badgeText, ctaLabel, ctaHref, projects }, onChange);
 
-  function addProject() { setProjects([...projects, { title: '', category: '', description: '', image: '', stats: [] }]); }
+  function addProject() { setProjects([...projects, { title: '', category: '', description: '', image: '', href: '', stats: [] }]); }
   function removeProject(i: number) { setProjects(projects.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setProjects(projects.map((p, idx) => idx === i ? { ...p, [field]: val } : p)); }
 
@@ -608,6 +625,10 @@ function PortfolioEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={headline} onChange={setHeadline} />
       <Field label="Subline" value={subline} onChange={setSubline} />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="CTA-Button Label" value={ctaLabel} onChange={setCtaLabel} placeholder="z.B. Alle Referenzen" />
+        <Field label="CTA-Button Link" value={ctaHref} onChange={setCtaHref} placeholder="z.B. /referenzen" />
+      </div>
       {projects.map((proj, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeProject(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -617,6 +638,7 @@ function PortfolioEditor({ data, onChange }: EditorProps) {
           </div>
           <Field label="Beschreibung" value={proj.description} onChange={(v) => update(i, 'description', v)} multiline />
           <ImageUploadField label="Bild" value={proj.image} onChange={(v) => update(i, 'image', v)} />
+          <Field label="Detail-Link (optional)" value={proj.href} onChange={(v) => update(i, 'href', v)} placeholder="z.B. /referenzen/projekt-name" />
           <div className="space-y-2">
             <label className="text-xs font-medium text-zinc-600">Statistiken</label>
             {proj.stats.map((s, j) => (
@@ -792,6 +814,7 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   galleryGrid: GalleryGridEditor,
   uspStrip: UspStripEditor,
   servicesGrid: ServicesGridEditor,
+  newsGrid: NewsPreviewEditor,
   processSteps: ProcessStepsEditor,
   contact: ContactEditor,
   serviceDetail: ServiceDetailEditor,

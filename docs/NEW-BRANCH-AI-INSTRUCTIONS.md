@@ -290,6 +290,7 @@ Erstelle `apps/renderer/src/templates/<branche>/` mit allen Section-Komponenten.
 | `galleryGrid` | Bildergalerie |
 | `ctaLinks` | CTA-Buttons |
 | `newsPreview` | News-Vorschau |
+| `newsGrid` | News-Grid (Alias für newsPreview, zeigt Items im Grid) |
 | `logoCloud` | Partner-Logos |
 | `headerBanner` | Hinweisleiste (items + style) |
 | `serviceDetail` | Detail-Leistungsbeschreibung |
@@ -506,7 +507,7 @@ Diese Liste zeigt exakt welche Felder pro Section-Type im Admin editierbar und i
 |---------|--------|
 | **hero** | headline, subline, badgeText, bgImage, trustItems[], primaryCta{label,href}, secondaryCta{label,href} |
 | **uspStrip** | items[{icon,title,text}] |
-| **servicesGrid** | headline, subline, badgeText, manualCards[{title,text,icon,image,mediaType}] |
+| **servicesGrid** | headline, subline, badgeText, ctaLabel, ctaHref, manualCards[{title,text,icon,image,mediaType,href}] |
 | **processSteps** | headline, badgeText, steps[{title,text,icon}] |
 | **testimonials** | headline, badgeText, ratingValue, ratingCount, items[{quote,name,context,rating}] |
 | **faq** | headline, badgeText, items[{question,answer}] |
@@ -514,7 +515,7 @@ Diese Liste zeigt exakt welche Felder pro Section-Type im Admin editierbar und i
 | **contact** | headline, introText, badgeText, submitLabel, formEnabled, infoCards[{icon,label,value}] |
 | **map** | headline, embedUrl, height(s/m/l) |
 | **serviceDetail** | headline, subline, badgeText, items[{title,text,icon,image,mediaType,features[],ctaLabel,ctaHref}] |
-| **portfolio** | headline, subline, badgeText, projects[{title,category,description,image,stats[]}] |
+| **portfolio** | headline, subline, badgeText, ctaLabel, ctaHref, projects[{title,category,description,image,href,stats[]}] |
 | **team** | headline, subline, badgeText, storyHeadline, storyText, storyImage, valuesHeadline, membersHeadline, members[{name,role,image,bio}], stats[{value,label}], values[{icon,title,text,image,mediaType}] |
 | **ctaLinks** | headline, subline, links[{label,href,icon,description}] |
 | **newsPreview** | headline, subline, collectionKey, linkLabel, linkHref |

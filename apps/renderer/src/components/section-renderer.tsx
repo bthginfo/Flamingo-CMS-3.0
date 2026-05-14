@@ -34,6 +34,7 @@ const SECTION_COMPONENTS: Record<string, React.FC<{ data: Record<string, unknown
   team: TeamSection,
   ctaLinks: CtaLinksSection,
   newsPreview: NewsPreviewSection,
+  newsGrid: NewsPreviewSection,
   stats: StatsSection,
   logoCloud: LogoCloudSection,
   galleryGrid: GalleryGridSection,
@@ -59,8 +60,8 @@ const CONTAINER: Record<string, string> = {
 export function SectionRenderer({ section, collections, styleVariant }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string }) {
   const Component = SECTION_COMPONENTS[section.type];
 
-  // Inject collection items into newsPreview sections
-  if (section.type === 'newsPreview' && collections) {
+  // Inject collection items into newsPreview/newsGrid sections
+  if ((section.type === 'newsPreview' || section.type === 'newsGrid') && collections) {
     const key = (section.data.collectionKey as string) || 'news';
     const col = collections.find(c => c.key === key);
     if (col) {

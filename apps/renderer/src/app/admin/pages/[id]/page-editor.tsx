@@ -19,6 +19,7 @@ const SECTION_TYPES: { type: string; label: string; description: string }[] = [
   { type: 'processSteps', label: 'Ablauf', description: 'Prozess-Schritte Timeline' },
   { type: 'ctaLinks', label: 'CTA-Links', description: 'Button-Links zu Unterseiten' },
   { type: 'newsPreview', label: 'News-Vorschau', description: 'Aktuelle Beiträge (News/Blog)' },
+  { type: 'newsGrid', label: 'News-Grid', description: 'News-Beiträge als Grid' },
   { type: 'stats', label: 'Zahlen & Fakten', description: 'Animierte Statistik-Zähler' },
   { type: 'logoCloud', label: 'Logo-Cloud', description: 'Partner- & Zertifikats-Logos' },
   { type: 'galleryGrid', label: 'Galerie', description: 'Bildergalerie mit Lightbox' },
