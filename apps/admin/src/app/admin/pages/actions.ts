@@ -80,15 +80,21 @@ export async function addSectionAction(pageId: string, type: string) {
 export async function updateSectionAction(sectionId: string, data: Record<string, unknown>, pageId: string) {
   const session = await requireSession();
   const db = getDb();
-  await db.update(pageSections).set({ data, updatedAt: new Date() }).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId)));
-  revalidatePath(`/admin/pages/${pageId}`);
+  const result = await db.update(pageSections).set({ data, updatedAt: new Date() }).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId))).returning({ id: pageSections.id });
+  if (result.length === 0) {
+    return { error: 'Section nicht gefunden oder keine Berechtigung' };
+  }
+  return { success: true };
 }
 
 export async function updateSectionMetaAction(sectionId: string, meta: { visible?: boolean; titleInternal?: string; variant?: string; container?: string; spacingTop?: string; spacingBottom?: string; anchorId?: string }, pageId?: string) {
   const session = await requireSession();
   const db = getDb();
-  await db.update(pageSections).set({ ...meta, updatedAt: new Date() }).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId)));
-  if (pageId) revalidatePath(`/admin/pages/${pageId}`);
+  const result = await db.update(pageSections).set({ ...meta, updatedAt: new Date() }).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId))).returning({ id: pageSections.id });
+  if (result.length === 0) {
+    return { error: 'Section nicht gefunden oder keine Berechtigung' };
+  }
+  return { success: true };
 }
 
 export async function deleteSectionAction(sectionId: string, pageId: string) {

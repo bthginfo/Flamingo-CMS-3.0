@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, MapPin, Phone, Mail, Instagram, Facebook, Linkedin, Youtube, Globe, Music, ArrowRight } from 'lucide-react';
+import { Heart, MapPin, Phone, Mail, Instagram, Facebook, Linkedin, Youtube, Globe, Music } from 'lucide-react';
 import type { FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 
 const SOCIAL_ICONS: Record<string, React.ElementType> = {
@@ -14,18 +14,6 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
 
   return (
     <footer className="relative bg-brand-dark text-white overflow-hidden">
-      {/* Footer CTA Banner */}
-      {footer.cta?.label && (
-        <div className="relative z-10 max-w-7xl mx-auto px-6 -mt-12 mb-0">
-          <div className="bg-brand-primary rounded-2xl px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
-            <span className="text-white font-semibold text-lg">{footer.cta.label}</span>
-            <Link href={footer.cta.href} className="inline-flex items-center gap-2 bg-white text-brand-primary font-semibold px-6 py-3 rounded-full hover:bg-gray-100 transition-colors text-sm">
-              Jetzt anfragen <ArrowRight size={16} />
-            </Link>
-          </div>
-        </div>
-      )}
-
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-brand-primary/[0.04] rounded-full blur-[100px]" />

@@ -9,13 +9,11 @@ type FooterColumn = { title: string; items: { text: string; href?: string }[] };
 type FooterData = {
   columns: FooterColumn[];
   legalLinks: { label: string; href: string }[];
-  cta: { label: string; href: string } | null;
 };
 
 export function FooterForm({ initial }: { initial: FooterData }) {
   const [columns, setColumns] = useState<FooterColumn[]>(initial.columns);
   const [legalLinks, setLegalLinks] = useState(initial.legalLinks);
-  const [cta, setCta] = useState(initial.cta || { label: '', href: '' });
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
@@ -24,7 +22,6 @@ export function FooterForm({ initial }: { initial: FooterData }) {
       await saveFooterSettings({
         columns,
         legalLinks: legalLinks.filter(l => l.label.trim()),
-        cta: cta.label.trim() ? cta : null,
       });
       toast.success('Footer gespeichert');
     } catch {
@@ -43,21 +40,6 @@ export function FooterForm({ initial }: { initial: FooterData }) {
   return (
     <div className="admin-card p-6 space-y-6">
       <h2 className="font-semibold text-lg">Footer</h2>
-
-      {/* CTA */}
-      <div className="space-y-3 pb-5 border-b border-admin-border">
-        <h3 className="text-sm font-medium text-zinc-600">Call-to-Action Banner</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="admin-label">Button-Text</label>
-            <input className="admin-input" value={cta.label} onChange={e => setCta({ ...cta, label: e.target.value })} placeholder="z.B. Kostenlose Beratung" />
-          </div>
-          <div>
-            <label className="admin-label">Link</label>
-            <input className="admin-input" value={cta.href} onChange={e => setCta({ ...cta, href: e.target.value })} placeholder="/kontakt" />
-          </div>
-        </div>
-      </div>
 
       {/* Columns */}
       <div className="space-y-6">
