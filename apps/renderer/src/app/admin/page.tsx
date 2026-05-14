@@ -5,7 +5,7 @@ import { eq, count, and } from 'drizzle-orm';
 import { FileText, Layers, FolderOpen, Rocket, Eye, Globe } from 'lucide-react';
 import Link from 'next/link';
 
-const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'http://localhost:3002';
+const RENDERER_URL = '';
 
 export default async function DashboardPage() {
   const session = await getSession();

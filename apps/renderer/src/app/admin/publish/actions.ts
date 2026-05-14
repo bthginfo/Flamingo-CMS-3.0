@@ -94,12 +94,12 @@ export async function publishAction() {
   revalidatePath('/admin');
   revalidatePath('/admin/pages');
 
-  // Revalidate renderer cache
-  const rendererUrl = process.env.NEXT_PUBLIC_RENDERER_URL || 'http://localhost:3002';
+  // Revalidate renderer cache (same app, use relative URL with origin)
   const revalidateSecret = process.env.REVALIDATE_SECRET;
+  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3002';
   if (revalidateSecret) {
     try {
-      await fetch(`${rendererUrl}/api/revalidate`, {
+      await fetch(`${baseUrl}/api/revalidate`, {
         method: 'POST',
         headers: { 'x-revalidate-secret': revalidateSecret },
       });
