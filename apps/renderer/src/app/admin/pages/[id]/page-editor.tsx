@@ -159,9 +159,10 @@ function SectionMetaEditor({ section, onSave }: { section: Section; onSave: (met
         <button className="admin-btn-primary text-xs" onClick={() => onSave(meta)}>Meta speichern</button>
       </div>
     </div>
-    </PageSectionsProvider>
   );
-}export function PageEditor({ page: initialPage, sections: initialSections, industry }: { page: Page; sections: Section[]; industry: string }) {
+}
+
+export function PageEditor({ page: initialPage, sections: initialSections, industry }: { page: Page; sections: Section[]; industry: string }) {
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
   const sectionTypes = getSectionTypesForIndustry(industry);
@@ -348,7 +349,15 @@ function SectionMetaEditor({ section, onSave }: { section: Section; onSave: (met
 
       {/* FAB Bar */}
       <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
-        {!saved ? (
+        <a
+          href={`${rendererUrl}/preview/${page.slug === 'home' ? '' : page.slug}?token=${encodeURIComponent(process.env.NEXT_PUBLIC_PREVIEW_SECRET || 'preview')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-full shadow-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          <ExternalLink size={16} /> Vorschau
+        </a>
+        {hasDirty && !saved ? (
           <button
             onClick={handleSaveAll}
             disabled={saving}
@@ -357,25 +366,16 @@ function SectionMetaEditor({ section, onSave }: { section: Section; onSave: (met
             <Save size={16} /> {saving ? 'Speichert…' : 'Speichern'}
           </button>
         ) : (
-          <>
-            <a
-              href={`${rendererUrl}/preview/${page.slug === 'home' ? '' : page.slug}?token=${encodeURIComponent(process.env.NEXT_PUBLIC_PREVIEW_SECRET || 'preview')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-full shadow-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              <ExternalLink size={16} /> Vorschau
-            </a>
-            <button
-              onClick={handlePublish}
-              disabled={publishing}
-              className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Rocket size={16} /> {publishing ? 'Wird veröffentlicht…' : 'Veröffentlichen'}
-            </button>
-          </>
+          <button
+            onClick={handlePublish}
+            disabled={publishing}
+            className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <Rocket size={16} /> {publishing ? 'Wird veröffentlicht…' : 'Veröffentlichen'}
+          </button>
         )}
       </div>
     </div>
+    </PageSectionsProvider>
   );
 }
