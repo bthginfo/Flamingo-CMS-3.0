@@ -2,8 +2,8 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
-import { asButton, asList, type SectionProps } from './types';
+import { ArrowRight, Sparkles } from 'lucide-react';
+import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 
 export function SalonHeroSection({ data, styleVariant }: SectionProps) {
   const headline = (data.headline as string) || 'Salon';
@@ -15,33 +15,111 @@ export function SalonHeroSection({ data, styleVariant }: SectionProps) {
   const secondaryCta = asButton(data.secondaryCta);
   const bookingHint = (data.bookingHint as string) || '';
   const ratingText = (data.ratingText as string) || '';
-  const isModern = styleVariant === 'modern';
-  const isBold = styleVariant === 'bold';
 
+  const props = { headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta, bookingHint, ratingText };
+
+  if (styleVariant === 'modern') return <HeroModern {...props} />;
+  if (styleVariant === 'bold') return <HeroBold {...props} />;
+  return <HeroClassic {...props} />;
+}
+
+type HeroProps = {
+  headline: string; subline: string; badgeText: string; bgImage: string;
+  trustItems: string[]; primaryCta: ButtonValue; secondaryCta: ButtonValue;
+  bookingHint: string; ratingText: string;
+};
+
+/* ─── CLASSIC: Fullscreen bg, organic rose gradient overlay, flowing curves, centered elegant typography ─── */
+function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta, bookingHint, ratingText }: HeroProps) {
   return (
-    <section className={`relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] ${isModern ? 'bg-[var(--style-section-bg)]' : 'bg-[var(--style-text-primary)]'}`}>
+    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px]">
+      {bgImage ? (
+        <>
+          <Image src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#6b2148]/85 via-[#8b3a62]/65 to-[#c0528a]/40" />
+        </>
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-[#6b2148] via-[#8b3a62] to-[#c0528a]" />
+      )}
+      {/* Organic flowing curve */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 overflow-hidden">
+        <svg viewBox="0 0 1440 120" className="w-full text-[var(--style-section-bg)]" preserveAspectRatio="none"><path fill="currentColor" d="M0,60 C360,120 720,0 1080,80 C1260,100 1380,40 1440,60 L1440,120 L0,120Z" /></svg>
+      </div>
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-20 text-center">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
+          {badgeText && (
+            <motion.p initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-2 text-xs font-bold uppercase tracking-widest text-white/90 backdrop-blur-sm">
+              <Sparkles size={14} />{badgeText}
+            </motion.p>
+          )}
+        </motion.div>
+        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }} className="mt-6 text-5xl sm:text-6xl lg:text-8xl font-[var(--style-heading-weight)] leading-[0.95] text-white" style={{ textShadow: '0 2px 30px rgba(107,33,72,0.5)' }}>{headline}</motion.h1>
+        {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }} className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-white/80">{subline}</motion.p>}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 font-semibold text-[var(--style-text-primary)] shadow-lg">{primaryCta.label}<ArrowRight size={17} /></a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-white/35 px-7 py-3 font-semibold text-white">{secondaryCta.label}</a>}
+        </motion.div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-white/80">
+          {bookingHint && <span className="rounded-full bg-white/15 px-4 py-2 backdrop-blur-sm">{bookingHint}</span>}
+          {ratingText && <span className="rounded-full bg-white/15 px-4 py-2 backdrop-blur-sm">{ratingText}</span>}
+          {trustItems.map((item) => <span key={item} className="rounded-full bg-white/15 px-4 py-2 backdrop-blur-sm">{item}</span>)}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── MODERN: Split layout (text left / image right), clean minimalist, dusty-rose accents ─── */
+function HeroModern({ headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta, bookingHint, ratingText }: HeroProps) {
+  return (
+    <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[var(--style-section-bg)]">
+      {bgImage && <Image src={bgImage} alt="" fill className="object-cover lg:left-1/2 lg:w-1/2" priority sizes="50vw" />}
+      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-16 px-6 py-20 lg:grid-cols-2">
+        <div className="max-w-xl">
+          {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[var(--style-text-secondary)]">{badgeText}</p>}
+          <h1 className="mt-6 text-5xl font-light leading-[1.05] text-[var(--style-text-primary)] sm:text-6xl lg:text-7xl">{headline}</h1>
+          {subline && <p className="mt-7 max-w-lg text-lg font-light leading-8 text-[var(--style-text-secondary)]">{subline}</p>}
+          <div className="mt-3 h-px w-16 bg-[var(--style-accent)]" />
+          <div className="mt-8 flex flex-wrap gap-3">
+            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border border-[var(--style-text-primary)] px-6 py-3 font-light text-[var(--style-text-primary)]">{primaryCta.label}<ArrowRight size={16} /></a>}
+            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[var(--style-text-secondary)]">{secondaryCta.label}</a>}
+          </div>
+          <div className="mt-10 flex flex-wrap gap-3 text-sm text-[var(--style-text-secondary)]">
+            {bookingHint && <span className="border-b border-[var(--style-accent)] pb-1">{bookingHint}</span>}
+            {ratingText && <span className="border-b border-[var(--style-accent)] pb-1">{ratingText}</span>}
+            {trustItems.map((item) => <span key={item} className="border-b border-[var(--style-accent)] pb-1">{item}</span>)}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── BOLD: Fullscreen dark, hot-pink diagonal stripe, uppercase brutalist ─── */
+function HeroBold({ headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta, bookingHint, ratingText }: HeroProps) {
+  return (
+    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111]">
       {bgImage && (
         <>
-          <Image src={bgImage} alt="" fill priority className={`object-cover ${isModern ? 'lg:left-1/2 lg:w-1/2' : ''}`} sizes="100vw" />
-          {!isModern && <div className="absolute inset-0 bg-black/40" />}
-          {!isModern && <div className="absolute inset-0" style={{ background: 'var(--style-hero-overlay)' }} />}
+          <Image src={bgImage} alt="" fill className="object-cover opacity-30" priority sizes="100vw" />
+          <div className="absolute inset-0 bg-black/50" />
         </>
       )}
-      <div className={`relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-10 px-6 py-20 ${isModern ? 'lg:grid-cols-2' : ''}`}>
-        <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="max-w-4xl">
-          {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${isModern ? 'text-[var(--style-text-secondary)]' : 'text-white/70'}`}>{badgeText}</p>}
-          <h1 className={`mt-5 text-5xl sm:text-6xl lg:text-8xl font-[var(--style-heading-weight)] leading-[0.95] ${isBold ? 'uppercase' : ''} ${isModern ? 'text-[var(--style-text-primary)]' : 'text-white'}`} style={!isModern ? { textShadow: '0 2px 20px rgba(0,0,0,0.5)' } : undefined}>{headline}</h1>
-          {subline && <p className={`mt-7 max-w-2xl text-lg leading-8 ${isModern ? 'text-[var(--style-text-secondary)]' : 'text-white/80'}`} style={!isModern ? { textShadow: '0 2px 20px rgba(0,0,0,0.5)' } : undefined}>{subline}</p>}
-          <div className="mt-8 flex flex-wrap gap-3">
-            {primaryCta.label && <a href={primaryCta.href || '#'} className={`inline-flex items-center gap-2 rounded-[var(--style-button-radius)] px-5 py-3 font-semibold ${isModern ? 'bg-[var(--style-badge-bg)] text-[var(--style-text-primary)]' : 'bg-white text-[var(--style-text-primary)]'}`}>{primaryCta.label}<ArrowRight size={17} /></a>}
-            {secondaryCta.label && <a href={secondaryCta.href || '#'} className={`inline-flex items-center gap-2 rounded-[var(--style-button-radius)] border px-5 py-3 font-semibold ${isModern ? 'border-black/15 text-[var(--style-text-primary)]' : 'border-white/35 text-white'}`}>{secondaryCta.label}</a>}
-          </div>
-          <div className={`mt-10 flex flex-wrap gap-3 text-sm ${isModern ? 'text-[var(--style-text-secondary)]' : 'text-white/80'}`}>
-            {bookingHint && <span className={`rounded-full px-4 py-2 ${isModern ? 'bg-[var(--style-badge-bg)]' : 'bg-black/25'}`}>{bookingHint}</span>}
-            {ratingText && <span className={`rounded-full px-4 py-2 ${isModern ? 'bg-[var(--style-badge-bg)]' : 'bg-black/25'}`}>{ratingText}</span>}
-            {trustItems.map((item) => <span key={item} className={`rounded-full px-4 py-2 ${isModern ? 'bg-[var(--style-badge-bg)]' : 'bg-black/25'}`}>{item}</span>)}
-          </div>
-        </motion.div>
+      {/* Diagonal hot-pink stripe */}
+      <div className="absolute inset-0 overflow-hidden"><div className="absolute -right-20 top-[20%] h-24 w-[140%] rotate-[-8deg] bg-[var(--style-accent)]" /></div>
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-20">
+        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--style-accent)]">{badgeText}</p>}
+        <h1 className="mt-5 text-5xl font-black uppercase leading-[0.95] text-white sm:text-7xl lg:text-9xl">{headline}</h1>
+        {subline && <p className="mt-7 max-w-2xl text-lg font-bold uppercase leading-8 text-white/70">{subline}</p>}
+        <div className="mt-8 flex flex-wrap gap-3">
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 bg-[var(--style-accent)] px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{primaryCta.label}<ArrowRight size={17} /></a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-white px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{secondaryCta.label}</a>}
+        </div>
+        <div className="mt-10 flex flex-wrap gap-3 text-sm font-bold uppercase text-white/60">
+          {bookingHint && <span className="bg-white/10 px-4 py-2">{bookingHint}</span>}
+          {ratingText && <span className="bg-white/10 px-4 py-2">{ratingText}</span>}
+          {trustItems.map((item) => <span key={item} className="bg-white/10 px-4 py-2">{item}</span>)}
+        </div>
       </div>
     </section>
   );

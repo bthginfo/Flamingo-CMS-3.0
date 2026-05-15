@@ -1,25 +1,104 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { baseHeader, SectionHeader, asList } from './shared';
-import type { SectionProps } from './types';
+import { asList, type SectionProps } from './types';
 
 type Transformation = { title?: string; text?: string; beforeImage?: string; afterImage?: string; category?: string; caption?: string; cta?: { label?: string; href?: string } };
 
-export function BeforeAfterSection({ data }: SectionProps) {
-  const header = baseHeader(data, 'Vorher & Nachher', 'Transformation');
+export function BeforeAfterSection({ data, styleVariant }: SectionProps) {
+  const headline = (data.headline as string) || 'Vorher & Nachher';
+  const subline = (data.subline as string) || '';
+  const badgeText = (data.badgeText as string) || 'Transformation';
   const items = asList<Transformation>(data.items);
+
+  const props = { headline, subline, badgeText, items };
+
+  if (styleVariant === 'modern') return <BeforeAfterModern {...props} />;
+  if (styleVariant === 'bold') return <BeforeAfterBold {...props} />;
+  return <BeforeAfterClassic {...props} />;
+}
+
+type Props = { headline: string; subline: string; badgeText: string; items: Transformation[] };
+
+function BeforeAfterClassic({ headline, subline, badgeText, items }: Props) {
   return (
     <div>
-      <SectionHeader {...header} />
+      <div className="mb-10 max-w-3xl">
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-[var(--style-text-secondary)]">{badgeText}</motion.p>}
+        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-5xl font-[var(--style-heading-weight)] text-[var(--style-text-primary)]">{headline}</motion.h2>
+        {subline && <p className="mt-4 text-[var(--style-text-secondary)]">{subline}</p>}
+      </div>
       <div className="grid gap-6 md:grid-cols-2">
-        {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="overflow-hidden rounded-[var(--style-card-radius)] border border-black/10 bg-[var(--style-card-bg)] shadow-[var(--style-card-shadow)]">
+        {items.map((item, i) => (
+          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
             <div className="grid grid-cols-2">
               {item.beforeImage && <div className="relative aspect-square"><Image src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               {item.afterImage && <div className="relative aspect-square"><Image src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             </div>
-            <div className="p-5">{item.category && <p className="text-xs font-bold uppercase tracking-widest text-[var(--style-text-secondary)]">{item.category}</p>}<h3 className="mt-2 text-xl font-bold text-[var(--style-text-primary)]">{item.title || ''}</h3>{item.text && <p className="mt-3 text-sm text-[var(--style-text-secondary)]">{item.text}</p>}{item.caption && <p className="mt-2 text-xs text-[var(--style-text-secondary)]">{item.caption}</p>}{item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex font-semibold text-[var(--style-text-primary)]">{item.cta.label}</a>}</div>
+            <div className="p-5">
+              {item.category && <span className="inline-block rounded-full bg-[var(--style-badge-bg)] px-3 py-1 text-xs font-bold uppercase text-[var(--style-badge-text,#c0528a)]">{item.category}</span>}
+              <h3 className="mt-2 text-xl font-bold text-[var(--style-text-primary)]">{item.title || ''}</h3>
+              {item.text && <p className="mt-3 text-sm text-[var(--style-text-secondary)]">{item.text}</p>}
+              {item.caption && <p className="mt-2 text-xs text-[var(--style-text-secondary)]">{item.caption}</p>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex rounded-full bg-[var(--style-text-primary)] px-5 py-2 text-sm font-semibold text-white">{item.cta.label}</a>}
+            </div>
+          </motion.article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BeforeAfterModern({ headline, subline, badgeText, items }: Props) {
+  return (
+    <div>
+      <div className="mb-14 max-w-3xl">
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[var(--style-text-secondary)]">{badgeText}</p>}
+        <h2 className="mt-4 text-3xl font-light sm:text-5xl text-[var(--style-text-primary)]">{headline}</h2>
+        {subline && <p className="mt-4 font-light text-[var(--style-text-secondary)]">{subline}</p>}
+      </div>
+      <div className="grid gap-8 md:grid-cols-2">
+        {items.map((item, i) => (
+          <article key={`${item.title}-${i}`} className="border-b border-black/10 pb-8">
+            <div className="grid grid-cols-2 gap-1">
+              {item.beforeImage && <div className="relative aspect-square"><Image src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+              {item.afterImage && <div className="relative aspect-square"><Image src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+            </div>
+            <div className="mt-5">
+              {item.category && <p className="text-xs font-light uppercase tracking-[0.3em] text-[var(--style-text-secondary)]">{item.category}</p>}
+              <h3 className="mt-2 text-xl font-light text-[var(--style-text-primary)]">{item.title || ''}</h3>
+              {item.text && <p className="mt-3 text-sm font-light text-[var(--style-text-secondary)]">{item.text}</p>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex border-b border-[var(--style-accent)] pb-1 text-sm font-light text-[var(--style-text-primary)]">{item.cta.label}</a>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BeforeAfterBold({ headline, subline, badgeText, items }: Props) {
+  return (
+    <div>
+      <div className="mb-10 max-w-3xl">
+        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--style-accent)]">{badgeText}</p>}
+        <h2 className="mt-3 text-3xl font-black uppercase sm:text-5xl text-[var(--style-text-primary)]">{headline}</h2>
+        {subline && <p className="mt-4 font-bold text-[var(--style-text-secondary)]">{subline}</p>}
+      </div>
+      <div className="grid gap-6 md:grid-cols-2">
+        {items.map((item, i) => (
+          <article key={`${item.title}-${i}`} className="overflow-hidden border-2 border-[var(--style-text-primary)] bg-[#111] shadow-[4px_4px_0_var(--style-accent)]">
+            <div className="grid grid-cols-2">
+              {item.beforeImage && <div className="relative aspect-square"><Image src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+              {item.afterImage && <div className="relative aspect-square"><Image src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+            </div>
+            <div className="p-5">
+              {item.category && <span className="inline-block bg-[var(--style-accent)] px-3 py-1 text-xs font-black uppercase text-white">{item.category}</span>}
+              <h3 className="mt-2 text-xl font-black uppercase text-white">{item.title || ''}</h3>
+              {item.text && <p className="mt-3 text-sm text-white/70">{item.text}</p>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex bg-[var(--style-accent)] px-5 py-2 text-sm font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{item.cta.label}</a>}
+            </div>
           </article>
         ))}
       </div>
