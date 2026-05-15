@@ -6,4 +6,8 @@ export { SignatureDishesSection } from './signature-dishes';
 export { EventsSection } from './events';
 export { AmbienceSection } from './ambience';
 export { RestaurantContactSection } from './contact';
+export { RestaurantGallerySection } from './gallery';
+export { RestaurantFaqSection } from './faq';
+export { RestaurantStorySection } from './story';
+export { RestaurantTestimonialsSection } from './testimonials';
 export type { SectionProps } from './types';

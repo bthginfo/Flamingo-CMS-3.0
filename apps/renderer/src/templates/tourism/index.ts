@@ -12,4 +12,6 @@ export { DownloadGuidesSection } from './download-guides';
 export { TourismGallerySection } from './gallery';
 export { TourismFaqSection } from './faq';
 export { TourismContactSection } from './tourism-contact';
+export { TourismTestimonialsSection } from './testimonials';
+export { TourismStorySection } from './story';
 export type { SectionProps } from './types';

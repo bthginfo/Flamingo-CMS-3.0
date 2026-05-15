@@ -26,6 +26,7 @@ export const RESTAURANT_CONFIG = {
     { label: 'Startseite', href: '/', type: 'link' },
     { label: 'Speisekarte', href: '/speisekarte', type: 'link' },
     { label: 'Über uns', href: '/ueber-uns', type: 'link' },
+    { label: 'Galerie', href: '/galerie', type: 'link' },
     { label: 'Events', href: '/events', type: 'link' },
     { label: 'Reservierung', href: '/reservierung', type: 'link' },
     { label: 'Kontakt', href: '/kontakt', type: 'link' },
@@ -167,21 +168,76 @@ export const RESTAURANT_CONFIG = {
           subline: 'Die Geschichte der Trattoria Dal Maestro — eine Familientradition seit 1987',
           bgImage: 'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=1800&q=85',
         }},
-        { type: 'ambience', sortOrder: 1, data: {
+        { type: 'story', sortOrder: 1, data: {
           headline: 'Unsere Geschichte',
-          subline: 'Von Neapel nach München',
+          subline: 'Von Neapel nach München — eine Reise voller Leidenschaft',
+          badgeText: 'Seit 1987',
+          storyText: 'Als Giovanni Maestro 1987 mit seiner Frau Maria aus Neapel nach München kam, hatte er einen Traum: authentische italienische Küche in einem Restaurant, das sich wie ein zweites Zuhause anfühlt.\n\nHeute, über 35 Jahre später, führen ihre Kinder Marco und Lucia die Trattoria mit der gleichen Leidenschaft. Giovannis Original-Rezepte leben weiter — ergänzt durch moderne Interpretationen und eine erstklassige Weinkarte.',
           imagePrimary: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&q=80',
           imageSecondary: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80',
-          highlights: [
-            { title: '1987 — Der Anfang', text: 'Giovanni Maestro eröffnet mit seiner Frau Maria die erste Trattoria in der Maximilianstraße.', icon: 'clock' },
-            { title: 'Familientradition', text: 'Heute führt Sohn Marco die Weinbar, Tochter Lucia leitet den Service. Giovannis Rezepte leben weiter.', icon: 'heart' },
-            { title: 'Regionale Lieferanten', text: 'Wir beziehen Olivenöl, Käse und Wurst direkt von Familienbetrieben in Kampanien und der Toskana.', icon: 'truck' },
+          founderName: 'Giovanni Maestro',
+          founderRole: 'Gründer & Küchenchef',
+          founderQuote: 'Die beste Zutat ist immer die Liebe zum Detail.',
+          values: [
+            { icon: 'heart', title: 'Familientradition', text: 'Drei Generationen Leidenschaft für authentische italienische Küche.' },
+            { icon: 'truck', title: 'Regionale Lieferanten', text: 'Olivenöl, Käse und Wurst direkt von Familienbetrieben in Kampanien.' },
+            { icon: 'leaf', title: 'Saisonale Frische', text: 'Nur das Beste der Saison landet auf Ihrem Teller.' },
+          ],
+          milestones: [
+            { year: '1987', title: 'Eröffnung', text: 'Giovanni und Maria eröffnen die erste Trattoria in der Maximilianstraße.' },
+            { year: '2005', title: 'Nächste Generation', text: 'Marco übernimmt die Weinbar, Lucia den Service.' },
+            { year: '2019', title: 'Renovierung', text: 'Kompletter Umbau – modernes Design trifft italienische Tradition.' },
+            { year: '2024', title: 'Auszeichnung', text: 'Aufnahme in den Guide Michelin Bib Gourmand.' },
           ],
           ctaPrimary: { label: 'Speisekarte ansehen', href: '/speisekarte' },
         }},
-        { type: 'richText', sortOrder: 2, data: {
-          headline: 'Unsere Philosophie',
-          content: '<p>In der Trattoria Dal Maestro glauben wir an einfache, ehrliche Küche. Frische Zutaten, traditionelle Rezepte und die Leidenschaft für gutes Essen — das ist unser Geheimnis seit über 35 Jahren.</p><p>Unser Küchenchef Giovanni verwendet nur saisonale Produkte und bereitet jeden Tag frische Pasta von Hand zu. Die Weine werden von Sommelier Marco persönlich in Italien ausgewählt.</p>',
+        { type: 'testimonials', sortOrder: 2, data: {
+          headline: 'Was unsere Gäste sagen',
+          badgeText: 'Bewertungen',
+          ratingValue: '4.8/5',
+          ratingCount: 'über 1.200 Bewertungen',
+          items: [
+            { name: 'Thomas M.', quote: 'Die beste Pasta außerhalb Italiens! Das Trüffel-Risotto ist ein Gedicht.', context: 'Stammgast seit 2015', sourceLabel: 'Google', rating: 5 },
+            { name: 'Anna K.', quote: 'Wunderschönes Ambiente und ein Service, der seinesgleichen sucht. Perfekt für besondere Anlässe.', context: 'Hochzeits-Dinner', sourceLabel: 'TripAdvisor', rating: 5 },
+            { name: 'Dr. Stefan W.', quote: 'Marco hat ein unglaubliches Weinwissen. Die Weinprobe jeden ersten Donnerstag ist ein Muss!', context: 'Weinprobe-Teilnehmer', sourceLabel: 'Google', rating: 5 },
+          ],
+          ctaPrimary: { label: 'Tisch reservieren', href: '/reservierung' },
+        }},
+      ],
+    },
+    /* ─── Galerie ─── */
+    {
+      slug: 'galerie', title: 'Galerie', sections: [
+        { type: 'hero', sortOrder: 0, data: {
+          headline: 'Galerie',
+          subline: 'Einblicke in die Trattoria Dal Maestro',
+          bgImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1800&q=85',
+        }},
+        { type: 'gallery', sortOrder: 1, data: {
+          headline: 'Impressionen',
+          badgeText: 'Einblicke',
+          subline: 'Entdecken Sie das Ambiente, die Küche und besondere Momente',
+          images: [
+            { src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&q=80', alt: 'Restaurant-Innenraum', caption: 'Unser Gastraum mit Blick auf die offene Küche', category: 'Ambiente' },
+            { src: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80', alt: 'Feine Küche', caption: 'Frisch zubereitete Pasta mit saisonalen Zutaten', category: 'Küche' },
+            { src: 'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=900&q=80', alt: 'Weinkeller', caption: 'Unsere Weinbar mit über 200 italienischen Weinen', category: 'Wein' },
+            { src: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=900&q=80', alt: 'Trüffel-Gericht', caption: 'Saisonales Trüffel-Menü im Herbst', category: 'Küche' },
+            { src: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=900&q=80', alt: 'Terrasse', caption: 'Die Sommerterrasse in der Maximilianstraße', category: 'Ambiente' },
+            { src: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=900&q=80', alt: 'Event', caption: 'Weinprobe mit Sommelier Marco', category: 'Events' },
+          ],
+          ctaPrimary: { label: 'Tisch reservieren', href: '/reservierung' },
+        }},
+        { type: 'faq', sortOrder: 2, data: {
+          headline: 'Häufige Fragen',
+          badgeText: 'FAQ',
+          items: [
+            { question: 'Muss ich einen Tisch reservieren?', answer: 'Wir empfehlen eine Reservierung, besonders am Wochenende und für Events. Unter der Woche haben wir auch Walk-In-Plätze.' },
+            { question: 'Gibt es vegetarische und vegane Optionen?', answer: 'Selbstverständlich! Unsere Speisekarte bietet eine große Auswahl an vegetarischen Gerichten. Vegane Optionen sind gekennzeichnet oder können auf Wunsch zubereitet werden.' },
+            { question: 'Bieten Sie Catering oder private Events an?', answer: 'Ja, wir richten private Dinner und Events für bis zu 24 Personen aus. Für Catering-Anfragen kontaktieren Sie uns bitte direkt.' },
+            { question: 'Welche Allergene sind in den Gerichten enthalten?', answer: 'Alle Allergene sind in unserer Speisekarte gekennzeichnet. Unser Service-Team berät Sie gerne persönlich.' },
+            { question: 'Gibt es Parkmöglichkeiten?', answer: 'In der Nähe befindet sich das Parkhaus an der Maximilianstraße (5 Gehminuten). Alternativ sind wir mit der U-Bahn Lehel erreichbar.' },
+          ],
+          ctaPrimary: { label: 'Weitere Fragen? Kontaktieren Sie uns', href: '/kontakt' },
         }},
       ],
     },

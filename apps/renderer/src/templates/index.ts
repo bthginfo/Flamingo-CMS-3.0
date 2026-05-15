@@ -24,7 +24,11 @@ import {
   MenuSection,
   OpeningHoursSection,
   RestaurantContactSection,
+  RestaurantFaqSection,
+  RestaurantGallerySection,
   RestaurantHeroSection,
+  RestaurantStorySection,
+  RestaurantTestimonialsSection,
   ReservationSection,
   SignatureDishesSection,
 } from './restaurant';
@@ -41,6 +45,7 @@ import {
   LocationSection,
   OffersSection,
   RoomShowcaseSection,
+  HotelStorySection,
   WellnessSection,
 } from './hotel';
 import {
@@ -56,6 +61,8 @@ import {
   TourismFaqSection,
   TourismGallerySection,
   TourismHeroSection,
+  TourismStorySection,
+  TourismTestimonialsSection,
   TourRoutesSection,
   VisitorInfoSection,
 } from './tourism';
@@ -93,6 +100,8 @@ import {
   PracticeTeamSection,
   ServiceOverviewSection,
   TreatmentDetailSection as MedicalTreatmentDetailSection,
+  MedicalStorySection,
+  MedicalTestimonialsSection,
   ValuesGridSection,
 } from './medical';
 
@@ -130,6 +139,10 @@ export const RESTAURANT_TEMPLATES: Record<string, TemplateComponent> = {
   events: EventsSection,
   ambience: AmbienceSection,
   contact: RestaurantContactSection,
+  gallery: RestaurantGallerySection,
+  faq: RestaurantFaqSection,
+  story: RestaurantStorySection,
+  testimonials: RestaurantTestimonialsSection,
   richText: RichTextSection,
 };
 
@@ -150,6 +163,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     testimonials: HotelTestimonialsSection,
     faq: HotelFaqSection,
     contact: HotelContactSection,
+    story: HotelStorySection,
     richText: RichTextSection,
   },
   tourism: {
@@ -167,6 +181,8 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     gallery: TourismGallerySection,
     faq: TourismFaqSection,
     tourismContact: TourismContactSection,
+    testimonials: TourismTestimonialsSection,
+    story: TourismStorySection,
     richText: RichTextSection,
   },
   salon: {
@@ -205,6 +221,8 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     valuesGrid: ValuesGridSection,
     locationContact: MedicalLocationContactSection,
     faq: MedicalFaqSection,
+    testimonials: MedicalTestimonialsSection,
+    story: MedicalStorySection,
     richText: RichTextSection,
   },
 };

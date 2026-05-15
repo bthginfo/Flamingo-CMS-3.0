@@ -218,7 +218,57 @@ const MEDICAL_EDITORS: Record<string, FC<EditorProps>> = {
   valuesGrid: ValuesGridEditor,
   locationContact: LocationContactEditor,
   faq: FaqEditor,
+  testimonials: MedicalTestimonialsEditor,
+  story: MedicalStoryEditor,
 };
+
+function MedicalTestimonialsEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({ ...basicData(data), ratingValue: str(data.ratingValue), ratingCount: str(data.ratingCount), items: arr(data.items).map((t) => ({ name: str(t.name), quote: str(t.quote), context: str(t.context), sourceLabel: str(t.sourceLabel), rating: (t.rating as number) || 5 })), ctaPrimary: btn(data.ctaPrimary) });
+  useReport(d as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Basics d={d} setD={setD} />
+      <Field label="Bewertung (z.B. 4.9/5)" value={d.ratingValue} onChange={(v) => setD({ ...d, ratingValue: v })} />
+      <Field label="Anzahl Bewertungen" value={d.ratingCount} onChange={(v) => setD({ ...d, ratingCount: v })} />
+      <Repeater items={d.items} addLabel="+ Bewertung" onAdd={() => setD({ ...d, items: [...d.items, { name: '', quote: '', context: '', sourceLabel: '', rating: 5 }] })} render={(item, index) => (
+        <div className="space-y-3"><Field label="Name" value={item.name} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, name: v })} /><Field label="Zitat" value={item.quote} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, quote: v })} multiline /><Field label="Kontext" value={item.context} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, context: v })} /><Field label="Quelle" value={item.sourceLabel} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, sourceLabel: v })} /></div>
+      )} />
+      <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+    </div>
+  );
+}
+
+function MedicalStoryEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    ...basicData(data), storyText: str(data.storyText),
+    imagePrimary: str(data.imagePrimary), imageSecondary: str(data.imageSecondary),
+    founderName: str(data.founderName), founderRole: str(data.founderRole), founderQuote: str(data.founderQuote),
+    values: arr(data.values).map((v) => ({ icon: str(v.icon), title: str(v.title), text: str(v.text) })),
+    milestones: arr(data.milestones).map((m) => ({ year: str(m.year), title: str(m.title), text: str(m.text) })),
+    ctaPrimary: btn(data.ctaPrimary),
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Basics d={d} setD={setD} />
+      <Field label="Story-Text" value={d.storyText} onChange={(v) => setD({ ...d, storyText: v })} multiline />
+      <ImageUploadField label="Hauptbild" value={d.imagePrimary} onChange={(v) => setD({ ...d, imagePrimary: v })} />
+      <ImageUploadField label="Zweitbild" value={d.imageSecondary} onChange={(v) => setD({ ...d, imageSecondary: v })} />
+      <Field label="Gruender/Leiter Name" value={d.founderName} onChange={(v) => setD({ ...d, founderName: v })} />
+      <Field label="Rolle" value={d.founderRole} onChange={(v) => setD({ ...d, founderRole: v })} />
+      <Field label="Zitat" value={d.founderQuote} onChange={(v) => setD({ ...d, founderQuote: v })} multiline />
+      <p className="text-xs font-semibold text-gray-500 pt-2">Werte</p>
+      <Repeater items={d.values} addLabel="+ Wert" onAdd={() => setD({ ...d, values: [...d.values, { icon: '', title: '', text: '' }] })} render={(item, index) => (
+        <div className="space-y-3"><IconPickerField label="Icon" value={item.icon} onChange={(v) => setD({ ...d, values: d.values.map((x: any, i: number) => i === index ? { ...x, icon: v } : x) })} /><Field label="Titel" value={item.title} onChange={(v) => setD({ ...d, values: d.values.map((x: any, i: number) => i === index ? { ...x, title: v } : x) })} /><Field label="Text" value={item.text} onChange={(v) => setD({ ...d, values: d.values.map((x: any, i: number) => i === index ? { ...x, text: v } : x) })} multiline /></div>
+      )} />
+      <p className="text-xs font-semibold text-gray-500 pt-2">Meilensteine</p>
+      <Repeater items={d.milestones} addLabel="+ Meilenstein" onAdd={() => setD({ ...d, milestones: [...d.milestones, { year: '', title: '', text: '' }] })} render={(item, index) => (
+        <div className="space-y-3"><Field label="Jahr" value={item.year} onChange={(v) => setD({ ...d, milestones: d.milestones.map((x: any, i: number) => i === index ? { ...x, year: v } : x) })} /><Field label="Titel" value={item.title} onChange={(v) => setD({ ...d, milestones: d.milestones.map((x: any, i: number) => i === index ? { ...x, title: v } : x) })} /><Field label="Text" value={item.text} onChange={(v) => setD({ ...d, milestones: d.milestones.map((x: any, i: number) => i === index ? { ...x, text: v } : x) })} multiline /></div>
+      )} />
+      <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+    </div>
+  );
+}
 
 function ConfiguredField({ field, value, onChange }: { field: FieldConfig; value: unknown; onChange: (value: any) => void }) {
   if (field.kind === 'image') return <ImageUploadField label={field.label} value={str(value)} onChange={onChange} />;

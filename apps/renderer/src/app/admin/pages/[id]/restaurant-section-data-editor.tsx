@@ -303,7 +303,199 @@ const RESTAURANT_EDITORS: Record<string, React.FC<EditorProps>> = {
   signatureDishes: SignatureDishesEditor,
   events: EventsEditor,
   ambience: AmbienceEditor,
+  contact: RestaurantContactEditor,
+  gallery: RestaurantGalleryEditor,
+  faq: RestaurantFaqEditor,
+  story: RestaurantStoryEditor,
+  testimonials: RestaurantTestimonialsEditor,
 };
+
+function RestaurantContactEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    badgeText: (data.badgeText as string) || '',
+    introText: (data.introText as string) || '',
+    image: (data.image as string) || '',
+    mapEmbedUrl: (data.mapEmbedUrl as string) || '',
+    formEnabled: (data.formEnabled as boolean) ?? true,
+    namePlaceholder: (data.namePlaceholder as string) || '',
+    emailPlaceholder: (data.emailPlaceholder as string) || '',
+    messagePlaceholder: (data.messagePlaceholder as string) || '',
+    submitLabel: (data.submitLabel as string) || '',
+    infoCards: ((data.infoCards as Record<string, unknown>[]) || []).map(infoCardFromData),
+    primaryCta: (data.primaryCta as ButtonValue) || { label: '', href: '' },
+    secondaryCta: (data.secondaryCta as ButtonValue) || { label: '', href: '' },
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <Field label="Intro-Text" value={d.introText} onChange={(v) => setD({ ...d, introText: v })} multiline />
+      <ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <Field label="Karten-Embed-URL" value={d.mapEmbedUrl} onChange={(v) => setD({ ...d, mapEmbedUrl: v })} />
+      <Checkbox label="Formular anzeigen" checked={d.formEnabled} onChange={(v) => setD({ ...d, formEnabled: v })} />
+      <Field label="Name-Placeholder" value={d.namePlaceholder} onChange={(v) => setD({ ...d, namePlaceholder: v })} />
+      <Field label="E-Mail-Placeholder" value={d.emailPlaceholder} onChange={(v) => setD({ ...d, emailPlaceholder: v })} />
+      <Field label="Nachricht-Placeholder" value={d.messagePlaceholder} onChange={(v) => setD({ ...d, messagePlaceholder: v })} />
+      <Field label="Submit-Label" value={d.submitLabel} onChange={(v) => setD({ ...d, submitLabel: v })} />
+      {d.infoCards.map((card, i) => (
+        <div key={i} className="border rounded p-3 space-y-3">
+          <IconPickerField label="Icon" value={card.icon} onChange={(v) => setD({ ...d, infoCards: updateAt(d.infoCards, i, { ...card, icon: v }) })} />
+          <Field label="Label" value={card.label} onChange={(v) => setD({ ...d, infoCards: updateAt(d.infoCards, i, { ...card, label: v }) })} />
+          <Field label="Wert" value={card.value} onChange={(v) => setD({ ...d, infoCards: updateAt(d.infoCards, i, { ...card, value: v }) })} />
+          <button className="text-xs text-red-500" onClick={() => setD({ ...d, infoCards: d.infoCards.filter((_, j) => j !== i) })}>Entfernen</button>
+        </div>
+      ))}
+      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, infoCards: [...d.infoCards, { icon: '', label: '', value: '' }] })}>+ Info-Karte</button>
+      <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
+      <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
+    </div>
+  );
+}
+
+function RestaurantGalleryEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    badgeText: (data.badgeText as string) || '',
+    images: ((data.images as Record<string, unknown>[]) || []).map(galleryImageFromData),
+    ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' },
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      {d.images.map((img, i) => (
+        <div key={i} className="border rounded p-3 space-y-3">
+          <ImageUploadField label="Bild" value={img.src} onChange={(v) => setD({ ...d, images: updateAt(d.images, i, { ...img, src: v }) })} />
+          <Field label="Alt-Text" value={img.alt} onChange={(v) => setD({ ...d, images: updateAt(d.images, i, { ...img, alt: v }) })} />
+          <Field label="Bildunterschrift" value={img.caption} onChange={(v) => setD({ ...d, images: updateAt(d.images, i, { ...img, caption: v }) })} />
+          <Field label="Kategorie" value={img.category} onChange={(v) => setD({ ...d, images: updateAt(d.images, i, { ...img, category: v }) })} />
+          <button className="text-xs text-red-500" onClick={() => setD({ ...d, images: d.images.filter((_, j) => j !== i) })}>Entfernen</button>
+        </div>
+      ))}
+      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, images: [...d.images, { src: '', alt: '', caption: '', category: '' }] })}>+ Bild</button>
+      <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+    </div>
+  );
+}
+
+function RestaurantFaqEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    badgeText: (data.badgeText as string) || '',
+    items: ((data.items as Record<string, unknown>[]) || []).map(faqItemFromData),
+    ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' },
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      {d.items.map((item, i) => (
+        <div key={i} className="border rounded p-3 space-y-3">
+          <Field label="Frage" value={item.question} onChange={(v) => setD({ ...d, items: updateAt(d.items, i, { ...item, question: v }) })} />
+          <Field label="Antwort" value={item.answer} onChange={(v) => setD({ ...d, items: updateAt(d.items, i, { ...item, answer: v }) })} multiline />
+          <button className="text-xs text-red-500" onClick={() => setD({ ...d, items: d.items.filter((_, j) => j !== i) })}>Entfernen</button>
+        </div>
+      ))}
+      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, items: [...d.items, { question: '', answer: '' }] })}>+ Frage</button>
+      <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+    </div>
+  );
+}
+
+function RestaurantStoryEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    badgeText: (data.badgeText as string) || '',
+    storyText: (data.storyText as string) || '',
+    imagePrimary: (data.imagePrimary as string) || '',
+    imageSecondary: (data.imageSecondary as string) || '',
+    founderName: (data.founderName as string) || '',
+    founderRole: (data.founderRole as string) || '',
+    founderQuote: (data.founderQuote as string) || '',
+    values: ((data.values as Record<string, unknown>[]) || []).map(valueFromData),
+    milestones: ((data.milestones as Record<string, unknown>[]) || []).map(milestoneFromData),
+    ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' },
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <Field label="Story-Text" value={d.storyText} onChange={(v) => setD({ ...d, storyText: v })} multiline />
+      <ImageUploadField label="Hauptbild" value={d.imagePrimary} onChange={(v) => setD({ ...d, imagePrimary: v })} />
+      <ImageUploadField label="Zweitbild" value={d.imageSecondary} onChange={(v) => setD({ ...d, imageSecondary: v })} />
+      <Field label="Gruender-Name" value={d.founderName} onChange={(v) => setD({ ...d, founderName: v })} />
+      <Field label="Gruender-Rolle" value={d.founderRole} onChange={(v) => setD({ ...d, founderRole: v })} />
+      <Field label="Gruender-Zitat" value={d.founderQuote} onChange={(v) => setD({ ...d, founderQuote: v })} multiline />
+      <p className="text-xs font-semibold text-gray-500 pt-2">Werte</p>
+      {d.values.map((v, i) => (
+        <div key={i} className="border rounded p-3 space-y-3">
+          <IconPickerField label="Icon" value={v.icon} onChange={(val) => setD({ ...d, values: updateAt(d.values, i, { ...v, icon: val }) })} />
+          <Field label="Titel" value={v.title} onChange={(val) => setD({ ...d, values: updateAt(d.values, i, { ...v, title: val }) })} />
+          <Field label="Text" value={v.text} onChange={(val) => setD({ ...d, values: updateAt(d.values, i, { ...v, text: val }) })} multiline />
+          <button className="text-xs text-red-500" onClick={() => setD({ ...d, values: d.values.filter((_, j) => j !== i) })}>Entfernen</button>
+        </div>
+      ))}
+      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, values: [...d.values, { icon: '', title: '', text: '' }] })}>+ Wert</button>
+      <p className="text-xs font-semibold text-gray-500 pt-2">Meilensteine</p>
+      {d.milestones.map((m, i) => (
+        <div key={i} className="border rounded p-3 space-y-3">
+          <Field label="Jahr" value={m.year} onChange={(val) => setD({ ...d, milestones: updateAt(d.milestones, i, { ...m, year: val }) })} />
+          <Field label="Titel" value={m.title} onChange={(val) => setD({ ...d, milestones: updateAt(d.milestones, i, { ...m, title: val }) })} />
+          <Field label="Text" value={m.text} onChange={(val) => setD({ ...d, milestones: updateAt(d.milestones, i, { ...m, text: val }) })} multiline />
+          <button className="text-xs text-red-500" onClick={() => setD({ ...d, milestones: d.milestones.filter((_, j) => j !== i) })}>Entfernen</button>
+        </div>
+      ))}
+      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, milestones: [...d.milestones, { year: '', title: '', text: '' }] })}>+ Meilenstein</button>
+      <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+    </div>
+  );
+}
+
+function RestaurantTestimonialsEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    badgeText: (data.badgeText as string) || '',
+    ratingValue: (data.ratingValue as string) || '',
+    ratingCount: (data.ratingCount as string) || '',
+    items: ((data.items as Record<string, unknown>[]) || []).map(testimonialFromData),
+    ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' },
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <Field label="Bewertung (z.B. 4.8/5)" value={d.ratingValue} onChange={(v) => setD({ ...d, ratingValue: v })} />
+      <Field label="Anzahl Bewertungen" value={d.ratingCount} onChange={(v) => setD({ ...d, ratingCount: v })} />
+      {d.items.map((item, i) => (
+        <div key={i} className="border rounded p-3 space-y-3">
+          <Field label="Name" value={item.name} onChange={(v) => setD({ ...d, items: updateAt(d.items, i, { ...item, name: v }) })} />
+          <Field label="Zitat" value={item.quote} onChange={(v) => setD({ ...d, items: updateAt(d.items, i, { ...item, quote: v }) })} multiline />
+          <Field label="Kontext" value={item.context} onChange={(v) => setD({ ...d, items: updateAt(d.items, i, { ...item, context: v }) })} />
+          <Field label="Quelle" value={item.sourceLabel} onChange={(v) => setD({ ...d, items: updateAt(d.items, i, { ...item, sourceLabel: v }) })} />
+          <button className="text-xs text-red-500" onClick={() => setD({ ...d, items: d.items.filter((_, j) => j !== i) })}>Entfernen</button>
+        </div>
+      ))}
+      <button className="text-sm text-blue-600" onClick={() => setD({ ...d, items: [...d.items, { name: '', quote: '', context: '', sourceLabel: '', rating: 5 }] })}>+ Bewertung</button>
+      <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+    </div>
+  );
+}
 
 function Field({ label, value, onChange, multiline }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean }) {
   return (
@@ -411,4 +603,28 @@ function emptyEvent() {
 
 function highlightFromData(highlight: Record<string, unknown>) {
   return { title: (highlight.title as string) || '', text: (highlight.text as string) || '', icon: (highlight.icon as string) || '' };
+}
+
+function infoCardFromData(card: Record<string, unknown>) {
+  return { icon: (card.icon as string) || '', label: (card.label as string) || '', value: (card.value as string) || '' };
+}
+
+function galleryImageFromData(img: Record<string, unknown>) {
+  return { src: (img.src as string) || '', alt: (img.alt as string) || '', caption: (img.caption as string) || '', category: (img.category as string) || '' };
+}
+
+function faqItemFromData(item: Record<string, unknown>) {
+  return { question: (item.question as string) || '', answer: (item.answer as string) || '' };
+}
+
+function valueFromData(v: Record<string, unknown>) {
+  return { icon: (v.icon as string) || '', title: (v.title as string) || '', text: (v.text as string) || '' };
+}
+
+function milestoneFromData(m: Record<string, unknown>) {
+  return { year: (m.year as string) || '', title: (m.title as string) || '', text: (m.text as string) || '' };
+}
+
+function testimonialFromData(t: Record<string, unknown>) {
+  return { name: (t.name as string) || '', quote: (t.quote as string) || '', context: (t.context as string) || '', sourceLabel: (t.sourceLabel as string) || '', rating: (t.rating as number) || 5 };
 }

@@ -16,4 +16,6 @@ export { EquipmentHighlightsSection } from './equipment-highlights';
 export { ValuesGridSection } from './values-grid';
 export { MedicalLocationContactSection } from './location-contact';
 export { MedicalFaqSection } from './faq';
+export { MedicalTestimonialsSection } from './testimonials';
+export { MedicalStorySection } from './story';
 export type { SectionProps } from './types';

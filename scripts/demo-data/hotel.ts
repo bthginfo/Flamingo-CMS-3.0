@@ -22,6 +22,7 @@ export const HOTEL_CONFIG = {
     { label: 'Zimmer & Suiten', href: '/zimmer', type: 'link' },
     { label: 'Wellness', href: '/wellness', type: 'link' },
     { label: 'Kulinarik', href: '/kulinarik', type: 'link' },
+    { label: 'Über uns', href: '/ueber-uns', type: 'link' },
     { label: 'Erlebnisse', href: '/erlebnisse', type: 'link' },
     { label: 'Kontakt', href: '/kontakt', type: 'link' },
   ],
@@ -236,6 +237,45 @@ export const HOTEL_CONFIG = {
             { question: 'Wie komme ich am besten an?', answer: 'Mit dem Auto über die A13 Brenner → B186 nach Sölden. Per Bahn: Innsbruck Hbf → Bus 4166 (ca. 90 Min.).' },
           ],
           ctaPrimary: { label: 'Weitere Fragen? Kontakt', href: '/kontakt' },
+        }},
+      ],
+    },
+    /* ─── Über uns ─── */
+    {
+      slug: 'ueber-uns', title: 'Über uns', sections: [
+        { type: 'hero', sortOrder: 0, data: {
+          headline: 'Über das Alpenglow',
+          subline: 'Alpine Gastfreundschaft seit drei Generationen',
+          bgImage: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1800&q=85',
+        }},
+        { type: 'story', sortOrder: 1, data: {
+          headline: 'Unsere Geschichte',
+          subline: 'Vom Berggasthof zum 5-Sterne-Resort',
+          badgeText: 'Seit 1962',
+          storyText: 'Was 1962 als kleiner Berggasthof der Familie Hofer begann, ist heute eines der renommiertesten Resorts in den Ötztaler Alpen. Drei Generationen Gastfreundschaft haben das Alpenglow geprägt.\n\nUnsere Philosophie bleibt dieselbe: Wir verbinden alpine Tradition mit modernem Luxus und schaffen einen Ort, an dem Sie Kraft und Inspiration finden.',
+          imagePrimary: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&q=80',
+          imageSecondary: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80',
+          founderName: 'Elisabeth Hofer',
+          founderRole: 'Inhaberin & Gastgeberin',
+          founderQuote: 'Jeder Gast soll sich bei uns wie ein Teil der Familie fühlen.',
+          stats: [
+            { value: '60+', label: 'Jahre Tradition' },
+            { value: '82', label: 'Zimmer & Suiten' },
+            { value: '2.000m²', label: 'Spa-Bereich' },
+            { value: '4.8/5', label: 'Gästebewertung' },
+          ],
+          values: [
+            { icon: 'mountain', title: 'Alpine Verbundenheit', text: 'Tief verwurzelt in der Tiroler Bergwelt und ihrer Kultur.' },
+            { icon: 'sparkles', title: 'Nachhaltig & Lokal', text: 'Regionale Materialien, lokale Lieferanten, Ökostrom aus Wasserkraft.' },
+            { icon: 'heart', title: 'Persönliche Gastfreundschaft', text: 'Familiär geführt — kein anonymer Konzernbetrieb.' },
+          ],
+          milestones: [
+            { year: '1962', title: 'Gründung', text: 'Josef Hofer eröffnet den Berggasthof Alpenglow.' },
+            { year: '1985', title: 'Erweiterung', text: 'Sohn Markus baut 40 Zimmer und den ersten Spa-Bereich.' },
+            { year: '2010', title: 'Neubau', text: 'Kompletter Neubau als 5-Sterne-Resort mit 82 Zimmern.' },
+            { year: '2023', title: 'Auszeichnung', text: 'Aufnahme in die Leading Hotels of the World.' },
+          ],
+          ctaPrimary: { label: 'Zimmer entdecken', href: '/zimmer' },
         }},
       ],
     },

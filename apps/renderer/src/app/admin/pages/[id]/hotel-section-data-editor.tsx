@@ -266,6 +266,42 @@ function ContactEditor({ data, onChange }: EditorProps) {
   return <ContactLikeEditor d={d} setD={setD} />;
 }
 
+function HotelStoryEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '', subline: (data.subline as string) || '', badgeText: (data.badgeText as string) || '',
+    storyText: (data.storyText as string) || '',
+    imagePrimary: (data.imagePrimary as string) || '', imageSecondary: (data.imageSecondary as string) || '',
+    founderName: (data.founderName as string) || '', founderRole: (data.founderRole as string) || '', founderQuote: (data.founderQuote as string) || '',
+    stats: ((data.stats as Record<string, unknown>[]) || []).map((s) => ({ value: (s.value as string) || '', label: (s.label as string) || '' })),
+    values: ((data.values as Record<string, unknown>[]) || []).map(featureFromData),
+    milestones: ((data.milestones as Record<string, unknown>[]) || []).map((m) => ({ year: (m.year as string) || '', title: (m.title as string) || '', text: (m.text as string) || '' })),
+    ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' },
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Basics d={d} setD={setD} />
+      <Field label="Story-Text" value={d.storyText} onChange={(v) => setD({ ...d, storyText: v })} multiline />
+      <ImageUploadField label="Hauptbild" value={d.imagePrimary} onChange={(v) => setD({ ...d, imagePrimary: v })} />
+      <ImageUploadField label="Zweitbild" value={d.imageSecondary} onChange={(v) => setD({ ...d, imageSecondary: v })} />
+      <Field label="Gruender-Name" value={d.founderName} onChange={(v) => setD({ ...d, founderName: v })} />
+      <Field label="Gruender-Rolle" value={d.founderRole} onChange={(v) => setD({ ...d, founderRole: v })} />
+      <Field label="Gruender-Zitat" value={d.founderQuote} onChange={(v) => setD({ ...d, founderQuote: v })} multiline />
+      <p className="text-xs font-semibold text-gray-500 pt-2">Statistiken</p>
+      <Repeater items={d.stats} addLabel="+ Statistik" onAdd={() => setD({ ...d, stats: [...d.stats, { value: '', label: '' }] })} render={(item, index) => (
+        <div className="grid grid-cols-2 gap-3"><Field label="Wert" value={item.value} onChange={(v) => setD({ ...d, stats: updateAt(d.stats, index, { ...item, value: v }) })} /><Field label="Label" value={item.label} onChange={(v) => setD({ ...d, stats: updateAt(d.stats, index, { ...item, label: v }) })} /></div>
+      )} />
+      <p className="text-xs font-semibold text-gray-500 pt-2">Werte</p>
+      <FeatureRepeater d={{ ...d, features: d.values }} setD={(next) => { const n = typeof next === 'function' ? next({ ...d, features: d.values }) : next; setD({ ...d, values: n.features }); }} keyName="features" />
+      <p className="text-xs font-semibold text-gray-500 pt-2">Meilensteine</p>
+      <Repeater items={d.milestones} addLabel="+ Meilenstein" onAdd={() => setD({ ...d, milestones: [...d.milestones, { year: '', title: '', text: '' }] })} render={(item, index) => (
+        <div className="space-y-3"><Field label="Jahr" value={item.year} onChange={(v) => setD({ ...d, milestones: updateAt(d.milestones, index, { ...item, year: v }) })} /><Field label="Titel" value={item.title} onChange={(v) => setD({ ...d, milestones: updateAt(d.milestones, index, { ...item, title: v }) })} /><Field label="Text" value={item.text} onChange={(v) => setD({ ...d, milestones: updateAt(d.milestones, index, { ...item, text: v }) })} multiline /></div>
+      )} />
+      <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+    </div>
+  );
+}
+
 const HOTEL_EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HotelHeroEditor,
   bookingStrip: BookingStripEditor,
@@ -280,6 +316,7 @@ const HOTEL_EDITORS: Record<string, React.FC<EditorProps>> = {
   testimonials: TestimonialsEditor,
   faq: FaqEditor,
   contact: ContactEditor,
+  story: HotelStoryEditor,
 };
 
 function Basics({ d, setD }: { d: { headline: string; subline: string; badgeText: string }; setD: Dispatch<SetStateAction<any>> }) {

@@ -11,5 +11,6 @@ export { HotelGallerySection } from './gallery';
 export { HotelTestimonialsSection } from './testimonials';
 export { HotelFaqSection } from './faq';
 export { HotelContactSection } from './contact';
+export { HotelStorySection } from './story';
 export type { SectionProps } from './types';
 
