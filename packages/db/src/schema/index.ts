@@ -26,6 +26,7 @@ export const tenants = pgTable('tenants', {
   industry: industryEnum('industry').notNull(),
   activeStyle: varchar('active_style', { length: 50 }).notNull().default('classic'),
   status: tenantStatusEnum('status').notNull().default('active'),
+  isDemo: boolean('is_demo').notNull().default(false),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

@@ -125,3 +125,14 @@ export async function getDraftSnapshot(tenantId: string): Promise<Snapshot | nul
 
   return { pages: snapshotPages, collections: snapshotCollections, generatedAt: new Date().toISOString() };
 }
+
+/** Resolve demo tenant by industry (isDemo=true). */
+export async function resolveDemoTenant(industry: string): Promise<string | null> {
+  const db = getDb();
+  const [tenant] = await db
+    .select({ id: tenants.id })
+    .from(tenants)
+    .where(and(eq(tenants.industry, industry as typeof tenants.industry.enumValues[number]), eq(tenants.isDemo, true), eq(tenants.status, 'active')))
+    .limit(1);
+  return tenant?.id ?? null;
+}
