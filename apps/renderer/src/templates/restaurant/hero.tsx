@@ -2,8 +2,8 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
-import { asButton, asList, type SectionProps } from './types';
+import { ArrowRight, CheckCircle, Star, UtensilsCrossed } from 'lucide-react';
+import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 
 export function RestaurantHeroSection({ data, styleVariant }: SectionProps) {
   const headline = (data.headline as string) || 'Restaurant';
@@ -13,35 +13,236 @@ export function RestaurantHeroSection({ data, styleVariant }: SectionProps) {
   const trustItems = asList<string>(data.trustItems);
   const primaryCta = asButton(data.primaryCta);
   const secondaryCta = asButton(data.secondaryCta);
-  const isBold = styleVariant === 'bold';
-  const isModern = styleVariant === 'modern';
 
+  const props: HeroProps = { headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta };
+
+  if (styleVariant === 'modern') return <HeroModern {...props} />;
+  if (styleVariant === 'bold') return <HeroBold {...props} />;
+  return <HeroClassic {...props} />;
+}
+
+type HeroProps = {
+  headline: string;
+  subline: string;
+  badgeText: string;
+  bgImage: string;
+  trustItems: string[];
+  primaryCta: ButtonValue;
+  secondaryCta: ButtonValue;
+};
+
+/* ─── CLASSIC: Fullscreen bg, warm gradient overlay, grain texture, spotlight, staggered fade-in ─── */
+function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta }: HeroProps) {
   return (
-    <section className={`relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] ${isModern ? 'bg-white' : 'bg-[var(--style-text-primary)]'}`}>
+    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[var(--style-text-primary)]">
+      {/* Background image + overlays */}
       {bgImage && (
         <>
-          <Image src={bgImage} alt="" fill priority className={`object-cover ${isModern ? 'opacity-100 lg:left-1/2 lg:w-1/2' : ''}`} sizes="100vw" />
-          {!isModern && <div className="absolute inset-0 bg-black/40" />}
-          {!isModern && <div className="absolute inset-0" style={{ background: 'var(--style-hero-overlay)' }} />}
+          <Image src={bgImage} alt="" fill priority className="object-cover" sizes="100vw" />
+          <div className="absolute inset-0 bg-black/40" />
         </>
       )}
-      <div className={`relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-10 px-6 py-20 ${isModern ? 'lg:grid-cols-2' : ''}`}>
-        <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className={isModern ? 'max-w-2xl' : 'max-w-4xl'}>
-          {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${isModern ? 'text-[var(--style-text-secondary)]' : 'text-white/70'}`}>{badgeText}</p>}
-          <h1 className={`mt-5 text-5xl sm:text-6xl lg:text-8xl font-[var(--style-heading-weight)] leading-[0.95] ${isBold ? 'uppercase' : ''} ${isModern ? 'text-[var(--style-text-primary)]' : 'text-white'}`} style={!isModern ? { textShadow: '0 2px 20px rgba(0,0,0,0.5)' } : undefined}>
+      {/* Warm terra-cotta gradient overlay */}
+      <div className="absolute inset-0" style={{ background: 'var(--style-hero-overlay)' }} />
+      {/* SVG grain texture */}
+      <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC43IiBudW1PY3RhdmVzPSI0IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI24pIi8+PC9zdmc+')] bg-repeat" />
+      {/* Warm spotlight */}
+      <div className="absolute top-1/4 left-1/3 w-[700px] h-[700px] rounded-full blur-[150px] bg-[var(--style-brand)]/10 animate-pulse" style={{ animationDuration: '6s' }} />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Badge */}
+          {badgeText && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
+              className="inline-flex items-center gap-2.5 bg-white/[0.08] backdrop-blur-md border border-white/[0.12] rounded-full px-5 py-2.5 text-sm text-white/90 mb-8">
+              <UtensilsCrossed size={14} className="text-[var(--style-accent)]" />
+              <span className="font-medium">{badgeText}</span>
+              <div className="flex -space-x-0.5 ml-1">
+                {[1, 2, 3, 4, 5].map(i => <Star key={i} size={11} className="fill-[var(--style-accent)] text-[var(--style-accent)]" />)}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Headline */}
+          <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }}
+            className="text-5xl sm:text-6xl lg:text-8xl font-[var(--style-heading-weight)] leading-[0.95] text-white"
+            style={{ textShadow: '0 2px 24px rgba(0,0,0,0.5)' }}>
+            {headline}
+          </motion.h1>
+
+          {/* Subline */}
+          {subline && (
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.7 }}
+              className="mt-8 max-w-2xl mx-auto text-lg leading-8 text-white/70"
+              style={{ textShadow: '0 2px 16px rgba(0,0,0,0.4)' }}>
+              {subline}
+            </motion.p>
+          )}
+
+          {/* CTAs */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.9 }}
+            className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+            {primaryCta.label && (
+              <a href={primaryCta.href || '#'}
+                className="group inline-flex items-center justify-center gap-2 rounded-full bg-[var(--style-accent)] px-8 py-4 font-semibold text-[var(--style-text-primary)] transition-all hover:shadow-lg hover:-translate-y-0.5">
+                {primaryCta.label}
+                <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" />
+              </a>
+            )}
+            {secondaryCta.label && (
+              <a href={secondaryCta.href || '#'}
+                className="inline-flex items-center justify-center gap-2 text-white/80 font-medium hover:text-white transition-colors text-sm">
+                {secondaryCta.label}
+                <ArrowRight size={14} />
+              </a>
+            )}
+          </motion.div>
+
+          {/* Trust items */}
+          {trustItems.length > 0 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1.2 }}
+              className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-white/50">
+              {trustItems.map((item) => (
+                <span key={item} className="flex items-center gap-2">
+                  <CheckCircle size={14} className="text-[var(--style-accent)]/70" />{item}
+                </span>
+              ))}
+            </motion.div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── MODERN: Split layout, text left / image right, minimalist, generous whitespace ─── */
+function HeroModern({ headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta }: HeroProps) {
+  return (
+    <section className="relative min-h-screen flex items-center -mt-[112px] pt-[112px] bg-white">
+      <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-20">
+        {/* Text side */}
+        <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
+          {badgeText && (
+            <div className="flex items-center gap-3 text-sm text-[var(--style-text-muted)] mb-8 tracking-wide uppercase">
+              <span className="w-8 h-px bg-gray-300" />{badgeText}
+            </div>
+          )}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-gray-900 !leading-[1.1] tracking-tight">
             {headline}
           </h1>
-          {subline && <p className={`mt-7 max-w-2xl text-lg leading-8 ${isModern ? 'text-[var(--style-text-secondary)]' : 'text-white/72'}`} style={!isModern ? { textShadow: '0 2px 20px rgba(0,0,0,0.5)' } : undefined}>{subline}</p>}
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius)] bg-[var(--style-badge-bg)] px-6 py-3 font-semibold text-[var(--style-text-primary)]">{primaryCta.label}<ArrowRight size={17} /></a>}
-            {secondaryCta.label && <a href={secondaryCta.href || '#'} className={`inline-flex items-center justify-center rounded-[var(--style-button-radius)] border px-6 py-3 font-semibold ${isModern ? 'border-black/15 text-[var(--style-text-primary)]' : 'border-white/25 text-white'}`}>{secondaryCta.label}</a>}
+          {subline && (
+            <p className="text-lg text-[var(--style-text-muted)] leading-relaxed mt-8 max-w-lg">{subline}</p>
+          )}
+          <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
+            {primaryCta.label && (
+              <a href={primaryCta.href || '#'}
+                className="group inline-flex items-center gap-3 text-gray-900 font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-[var(--style-accent)] hover:text-[var(--style-accent)] transition-colors">
+                {primaryCta.label}
+                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+              </a>
+            )}
+            {secondaryCta.label && (
+              <a href={secondaryCta.href || '#'}
+                className="inline-flex items-center gap-2 text-[var(--style-text-muted)] hover:text-gray-600 transition-colors text-sm">
+                {secondaryCta.label}
+              </a>
+            )}
           </div>
           {trustItems.length > 0 && (
-            <div className={`mt-10 flex flex-wrap gap-3 text-sm ${isModern ? 'text-[var(--style-text-secondary)]' : 'text-white/60'}`}>
-              {trustItems.map((item) => <span key={item} className="border border-current/20 px-3 py-1">{item}</span>)}
+            <div className="flex flex-wrap gap-6 mt-16 text-xs text-[var(--style-text-muted)] uppercase tracking-wider">
+              {trustItems.map((item) => <span key={item}>{item}</span>)}
             </div>
           )}
         </motion.div>
+
+        {/* Image side */}
+        <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
+          {bgImage ? (
+            <div className="relative aspect-[4/5] rounded-[0.5rem] overflow-hidden">
+              <Image src={bgImage} alt="" fill className="object-cover" priority sizes="50vw" />
+            </div>
+          ) : (
+            <div className="aspect-[4/5] rounded-[0.5rem] bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-100" />
+          )}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── BOLD: Fullscreen dark bg, diagonal accent stripe, brutalist buttons, uppercase ─── */
+function HeroBold({ headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta }: HeroProps) {
+  return (
+    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[var(--style-text-primary)]">
+      {/* Background image + dark overlay */}
+      {bgImage && (
+        <>
+          <Image src={bgImage} alt="" fill priority className="object-cover" sizes="100vw" />
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-[var(--style-text-primary)]/75" />
+        </>
+      )}
+
+      {/* Diagonal accent stripe */}
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-[var(--style-accent)]/10 skew-x-[-12deg] translate-x-20" />
+      {/* Thick accent line */}
+      <div className="absolute top-[112px] left-0 w-full h-1.5 bg-[var(--style-accent)]" />
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
+        <div className="max-w-5xl">
+          {/* Badge as solid rectangle */}
+          {badgeText && (
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
+              className="inline-block bg-[var(--style-accent)] text-[var(--style-text-primary)] font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8">
+              {badgeText}
+            </motion.div>
+          )}
+
+          {/* Headline */}
+          <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] xl:text-[7rem] font-black text-white uppercase !leading-[0.9] tracking-tight"
+            style={{ textShadow: '0 4px 30px rgba(0,0,0,0.6)' }}>
+            {headline}
+          </motion.h1>
+
+          {/* Subline */}
+          {subline && (
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.4 }}
+              className="text-lg text-white/50 mt-8 max-w-2xl font-medium"
+              style={{ textShadow: '0 2px 16px rgba(0,0,0,0.4)' }}>
+              {subline}
+            </motion.p>
+          )}
+
+          {/* Brutalist CTAs */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
+            className="flex flex-col sm:flex-row gap-4 mt-12">
+            {primaryCta.label && (
+              <a href={primaryCta.href || '#'}
+                className="inline-flex items-center gap-3 bg-[var(--style-accent)] text-[var(--style-text-primary)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
+                {primaryCta.label}<ArrowRight size={18} />
+              </a>
+            )}
+            {secondaryCta.label && (
+              <a href={secondaryCta.href || '#'}
+                className="inline-flex items-center gap-2 border-2 border-white/30 text-white font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-white transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.1)]">
+                {secondaryCta.label}
+              </a>
+            )}
+          </motion.div>
+
+          {/* Trust items */}
+          {trustItems.length > 0 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
+              className="flex flex-wrap gap-6 mt-16 text-sm text-white/40 font-bold uppercase tracking-wider">
+              {trustItems.map((item) => (
+                <span key={item} className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-[var(--style-accent)]" />{item}
+                </span>
+              ))}
+            </motion.div>
+          )}
+        </div>
       </div>
     </section>
   );
