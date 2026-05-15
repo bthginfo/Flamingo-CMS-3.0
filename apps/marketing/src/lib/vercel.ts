@@ -111,6 +111,13 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
     { key: 'FIXED_TENANT_ID', value: tenantId, target: ['production', 'preview'], type: 'plain' },
   ];
 
+  // Forward optional env vars if available
+  const optionalVars = ['BLOB_READ_WRITE_TOKEN', 'ADMIN_JWT_SECRET'];
+  for (const key of optionalVars) {
+    const val = process.env[key];
+    if (val) envVars.push({ key, value: val, target: ['production', 'preview'], type: 'encrypted' });
+  }
+
   await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', envVars);
 
   return { projectId, projectUrl: `https://${projectName}.vercel.app` };
