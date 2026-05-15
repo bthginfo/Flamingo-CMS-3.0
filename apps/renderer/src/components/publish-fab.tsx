@@ -1,12 +1,17 @@
 'use client';
 
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { Rocket, ExternalLink } from 'lucide-react';
 import { publishAction } from '@/app/admin/actions/publish';
 
 export function PublishFab() {
+  const pathname = usePathname();
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
+
+  // Page editor has its own FAB bar
+  if (/^\/admin\/pages\/[^/]+$/.test(pathname)) return null;
 
   async function handlePublish() {
     setPublishing(true);
