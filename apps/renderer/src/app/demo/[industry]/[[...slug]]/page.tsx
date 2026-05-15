@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { resolveDemoTenant, getActiveSnapshot } from '@/lib/snapshot';
+import type { SnapshotSection } from '@/lib/snapshot';
 import { getTenantStyle, getTenantNav, getTenantFooter, getTenantBrand } from '@/lib/tenant-data';
 import { DemoPageShell } from '../../demo-page-shell';
 
@@ -12,6 +13,24 @@ const INDUSTRY_MAP: Record<string, string> = {
   tourism: 'tourism',
   medical: 'medical',
 };
+
+/** Recursively prefix internal hrefs in section data with the demo path */
+function prefixSectionHrefs(data: Record<string, unknown>, prefix: string): Record<string, unknown> {
+  const json = JSON.stringify(data);
+  // Match "href":"/" patterns that are internal links (not /demo/, not external)
+  const rewritten = json.replace(/"href"\s*:\s*"(\/(?!demo\/)[^"]*?)"/g, (_match, path) => {
+    // Skip anchors, tel:, mailto: etc. that somehow start with /
+    return `"href":"${prefix}${path}"`;
+  });
+  return JSON.parse(rewritten);
+}
+
+function prefixSections(sections: SnapshotSection[], prefix: string): SnapshotSection[] {
+  return sections.map(s => ({
+    ...s,
+    data: prefixSectionHrefs(s.data, prefix),
+  }));
+}
 
 export default async function DemoPage({ params }: { params: Promise<{ industry: string; slug?: string[] }> }) {
   const { industry, slug } = await params;
@@ -44,7 +63,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
 
   return (
     <DemoPageShell
-      sections={page.sections.filter(s => s.visible)}
+      sections={prefixSections(page.sections.filter(s => s.visible), demoPrefix)}
       industry={tenantStyle.industry}
       industryKey={industry}
       defaultStyle={tenantStyle.activeStyle}
