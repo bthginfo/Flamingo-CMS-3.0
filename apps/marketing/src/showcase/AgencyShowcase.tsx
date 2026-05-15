@@ -680,11 +680,11 @@ function ServicesSection() {
             </div>
             <h3 className="font-display text-3xl md:text-5xl leading-[1.05] tracking-tight">Branchen-Templates</h3>
             <p className="mt-6 text-base md:text-lg text-muted leading-relaxed max-w-xl">
-              Mehrseitige, animierte Templates für Restaurant, Salon, Handwerk, Praxen, Beratung,
-              Studios und viele mehr. Live-Vorschau im Browser, Farbschema in Sekunden.
+              Sechs Branchen live — Restaurant, Salon, Hotel, Tourismus, Arztpraxis und Handwerk.
+              Weitere folgen laufend. Live-Vorschau im Browser, Farbschema in Sekunden.
             </p>
             <div className="mt-8 flex gap-2">
-              {['Restaurant', 'Salon', 'Hotel', 'Tourismus', 'Handwerk', 'Praxis', 'Beratung', 'Studio'].map((b) => (
+              {['Restaurant', 'Salon', 'Hotel', 'Tourismus', 'Handwerk', 'Arztpraxis'].map((b) => (
                 <span key={b} className="hidden md:inline-block text-[11px] font-mono uppercase tracking-widest border border-line rounded-full px-2.5 py-1 text-muted">{b}</span>
               ))}
             </div>
@@ -752,12 +752,12 @@ function TemplatesPreviewSection() {
             <p className="eyebrow mb-5">Templates</p>
             <h2 className="headline-lg">
               Sechs Branchen.<br />
-              <em className="italic-pop">Ein System.</em>
+              <em className="italic-pop">Und es werden mehr.</em>
             </h2>
           </div>
           <p className="md:col-span-5 text-lg text-muted reveal">
             Jede Branche hat ein eigenes Template mit branchenspezifischen Sections, drei Stilrichtungen
-            und einem Admin, der genau die Felder zeigt, die Du brauchst. Alle sechs live klickbar.
+            und einem Admin, der genau die Felder zeigt, die Du brauchst. Weitere Branchen folgen laufend.
           </p>
         </div>
 
@@ -1466,16 +1466,16 @@ function NumbersSection() {
             In <em className="italic-pop">Zahlen.</em>
           </h2>
           <p className="md:col-span-5 text-lg text-muted reveal">
-            Sechs Branchen, drei Stilrichtungen, über 80 branchenspezifische Sections — ein Admin, mit dem Du alles selbst pflegst. Kein Agentur-Ticket nötig.
+            Sechs Branchen live, drei Stilrichtungen, über 80 Sections — ein Admin, mit dem Du alles selbst pflegst. Kein Agentur-Ticket nötig.
           </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 md:gap-y-0 reveal-stagger">
           {[
-            { v: 6, s: '', l: 'Branchen-Templates' },
+            { v: 6, s: '+', l: 'Branchen-Templates' },
             { v: 3, s: '', l: 'Stilrichtungen je Branche' },
             { v: 80, s: '+', l: 'Sections kombinierbar' },
-            { v: 15, s: '', l: 'Admin-Bereiche' },
+            { v: 7, s: ' Tage', l: 'Bis online (Ø)' },
           ].map((m, i) => (
             <div key={i} className="md:border-l border-line md:pl-8">
               <p className="num-display text-6xl md:text-8xl leading-none">
