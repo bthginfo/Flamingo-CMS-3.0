@@ -1,12 +1,14 @@
-'use client';
+﻿'use client';
 
+import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { Star } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps } from './types';
 
 type InfoCard = { icon?: string; label?: string; value?: string };
 
-export function HotelContactSection({ data }: SectionProps) {
+export function HotelContactSection({ data, styleVariant }: SectionProps) {
   const headline = (data.headline as string) || 'Kontakt';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || 'Anfrage';
@@ -21,38 +23,112 @@ export function HotelContactSection({ data }: SectionProps) {
   const routeCta = asButton(data.routeCta);
   const image = (data.image as string) || '';
 
+  const props = { headline, subline, badgeText, introText, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, formEnabled, infoCards, contactCta, routeCta, image };
+
+  if (styleVariant === 'modern') return <ContactModern {...props} />;
+  if (styleVariant === 'bold') return <ContactBold {...props} />;
+  return <ContactClassic {...props} />;
+}
+
+type Props = {
+  headline: string; subline: string; badgeText: string; introText: string;
+  namePlaceholder: string; emailPlaceholder: string; messagePlaceholder: string; submitLabel: string;
+  formEnabled: boolean; infoCards: InfoCard[]; contactCta: { label?: string; href?: string };
+  routeCta: { label?: string; href?: string }; image: string;
+};
+
+/* --- CLASSIC --- */
+function ContactClassic({ headline, subline, badgeText, introText, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, formEnabled, infoCards, contactCta, routeCta, image }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
-        <Header badgeText={badgeText} headline={headline} subline={subline} />
+        <div className="mb-6 max-w-3xl">
+          {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[var(--style-text-secondary)]"><Star size={12} className="text-[var(--style-badge-bg)]" />{badgeText}</motion.p>}
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-5xl font-[var(--style-heading-weight)] text-[var(--style-text-primary)]">{headline}</motion.h2>
+          {subline && <p className="mt-4 text-[var(--style-text-secondary)]">{subline}</p>}
+        </div>
         {introText && <p className="text-[var(--style-text-secondary)]">{introText}</p>}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
-            <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-black/10 pt-4">
-              <DynamicIcon name={card.icon || 'mail'} size={20} />
+            <motion.div key={`${card.label}-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[var(--style-badge-bg)]/20 pt-4">
+              <div className="text-[var(--style-badge-bg)]"><DynamicIcon name={card.icon || 'mail'} size={20} /></div>
               <div><p className="text-xs text-[var(--style-text-secondary)]">{card.label || ''}</p><p className="font-semibold text-[var(--style-text-primary)]">{card.value || ''}</p></div>
-            </div>
+            </motion.div>
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {contactCta.label && <a href={contactCta.href || '#'} className="rounded-[var(--style-button-radius)] bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white">{contactCta.label}</a>}
-          {routeCta.label && <a href={routeCta.href || '#'} className="rounded-[var(--style-button-radius)] border border-black/15 px-5 py-3 font-semibold text-[var(--style-text-primary)]">{routeCta.label}</a>}
+          {contactCta.label && <a href={contactCta.href || '#'} className="rounded-2xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{contactCta.label}</a>}
+          {routeCta.label && <a href={routeCta.href || '#'} className="rounded-2xl border border-black/15 px-5 py-3 font-semibold text-[var(--style-text-primary)]">{routeCta.label}</a>}
         </div>
       </div>
-      <div className="rounded-[var(--style-card-radius)] border border-black/10 bg-[var(--style-card-bg)] p-5 shadow-[var(--style-card-shadow)]">
-        {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-[var(--style-radius-md)]"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="rounded-[var(--style-button-radius)] bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white">{submitLabel}</button></form>}
+      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-lg">
+        {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="rounded-2xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{submitLabel}</button></form>}
+      </motion.div>
+    </div>
+  );
+}
+
+/* --- MODERN --- */
+function ContactModern({ headline, subline, badgeText, introText, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, formEnabled, infoCards, contactCta, routeCta, image }: Props) {
+  return (
+    <div className="grid gap-12 lg:grid-cols-2">
+      <div>
+        <div className="mb-8 max-w-3xl">
+          {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[var(--style-text-secondary)]">{badgeText}</p>}
+          <h2 className="mt-4 text-3xl font-light sm:text-5xl text-[var(--style-text-primary)]">{headline}</h2>
+          {subline && <p className="mt-4 font-light text-[var(--style-text-secondary)]">{subline}</p>}
+        </div>
+        {introText && <p className="font-light text-[var(--style-text-secondary)]">{introText}</p>}
+        <div className="mt-8 grid gap-4">
+          {infoCards.map((card, index) => (
+            <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-black/10 pt-4">
+              <DynamicIcon name={card.icon || 'mail'} size={18} className="text-[var(--style-text-secondary)]" />
+              <div><p className="text-xs font-light text-[var(--style-text-secondary)]">{card.label || ''}</p><p className="font-light text-[var(--style-text-primary)]">{card.value || ''}</p></div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 flex flex-wrap gap-4">
+          {contactCta.label && <a href={contactCta.href || '#'} className="font-light text-[var(--style-text-primary)] underline underline-offset-4">{contactCta.label}</a>}
+          {routeCta.label && <a href={routeCta.href || '#'} className="font-light text-[var(--style-text-secondary)] underline underline-offset-4">{routeCta.label}</a>}
+        </div>
+      </div>
+      <div className="border border-black/10 bg-[var(--style-card-bg)] p-8">
+        {image && <div className="relative mb-6 aspect-[16/10] overflow-hidden"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {formEnabled && <form className="grid gap-4"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="font-light text-[var(--style-text-primary)] underline underline-offset-4">{submitLabel}</button></form>}
       </div>
     </div>
   );
 }
 
-function Header({ badgeText, headline, subline }: { badgeText: string; headline: string; subline: string }) {
+/* --- BOLD --- */
+function ContactBold({ headline, subline, badgeText, introText, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, formEnabled, infoCards, contactCta, routeCta, image }: Props) {
   return (
-    <div className="mb-6 max-w-3xl">
-      {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[var(--style-text-secondary)]">{badgeText}</p>}
-      <h2 className="mt-3 text-3xl sm:text-5xl font-[var(--style-heading-weight)] text-[var(--style-text-primary)]">{headline}</h2>
-      {subline && <p className="mt-4 text-[var(--style-text-secondary)]">{subline}</p>}
+    <div className="grid gap-10 lg:grid-cols-2">
+      <div>
+        <div className="mb-6 max-w-3xl">
+          {badgeText && <p className="inline-block bg-[var(--style-badge-bg)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[var(--style-badge-text)]">{badgeText}</p>}
+          <h2 className="mt-4 text-3xl sm:text-5xl font-black uppercase text-[var(--style-text-primary)]">{headline}</h2>
+          {subline && <p className="mt-4 text-[var(--style-text-secondary)]">{subline}</p>}
+        </div>
+        {introText && <p className="text-[var(--style-text-secondary)]">{introText}</p>}
+        <div className="mt-6 grid gap-3">
+          {infoCards.map((card, index) => (
+            <div key={`${card.label}-${index}`} className="flex gap-4 border-t-2 border-[var(--style-text-primary)] pt-4">
+              <div className="text-[var(--style-badge-bg)]"><DynamicIcon name={card.icon || 'mail'} size={20} /></div>
+              <div><p className="text-xs font-bold uppercase text-[var(--style-text-secondary)]">{card.label || ''}</p><p className="font-black text-[var(--style-text-primary)]">{card.value || ''}</p></div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-8 flex flex-wrap gap-3">
+          {contactCta.label && <a href={contactCta.href || '#'} className="border-2 border-[var(--style-text-primary)] bg-[var(--style-text-primary)] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--style-badge-bg)]">{contactCta.label}</a>}
+          {routeCta.label && <a href={routeCta.href || '#'} className="border-2 border-[var(--style-text-primary)] px-5 py-3 font-black uppercase text-[var(--style-text-primary)]">{routeCta.label}</a>}
+        </div>
+      </div>
+      <div className="border-2 border-[var(--style-text-primary)] bg-[var(--style-card-bg)] p-5 shadow-[4px_4px_0_var(--style-text-primary)]">
+        {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="border-2 border-[var(--style-text-primary)] bg-[var(--style-text-primary)] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--style-badge-bg)]">{submitLabel}</button></form>}
+      </div>
     </div>
   );
 }
