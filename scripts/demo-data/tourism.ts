@@ -1,6 +1,9 @@
 /**
  * Rich demo seed: Tourism (Ötztal Tourismus)
- * ALL section types incl. gallery, faq, tourismContact
+ * Section types match template keys in templates/index.ts:
+ * hero, destinationHighlights, experienceGrid, seasonTeaser, eventsCalendar, placesMap,
+ * sightseeingList, tourRoutes, accommodationGrid, visitorInfo, downloadGuides,
+ * gallery, faq, tourismContact, richText
  */
 export const TOURISM_CONFIG = {
   slug: 'demo-tourism',
@@ -9,191 +12,246 @@ export const TOURISM_CONFIG = {
   activeStyle: 'classic',
   brand: {
     companyName: 'Ötztal Tourismus',
-    tagline: 'Erleben Sie die Ötztaler Alpen — Sommer & Winter',
-    primaryColor: '#065f46',
-    secondaryColor: '#059669',
-    accentColor: '#34d399',
+    tagline: 'Das Ötztal erleben — Natur, Abenteuer & Genuss in Tirol',
+    primaryColor: '#1a5c3a',
+    secondaryColor: '#2d8a56',
+    accentColor: '#a8d5ba',
   },
-  contact: { phone: '+43 5254 500 00', email: 'info@oetztal-tourismus.at', address: 'Gemeindestraße 4, 6450 Sölden, Tirol' },
-  socialLinks: { instagram: 'https://instagram.com/oetztal', facebook: 'https://facebook.com/oetztal', youtube: 'https://youtube.com/oetztal' },
-  openingHours: [{ day: 'Mo–Fr', hours: '08:00–18:00' }, { day: 'Sa', hours: '09:00–17:00' }, { day: 'So & Feiertage', hours: '09:00–12:00' }],
+  contact: { phone: '+43 57200 100', email: 'info@oetztal.com', address: 'Gemeindestraße 4, 6450 Sölden, Tirol' },
+  socialLinks: { instagram: 'https://instagram.com/oetztal', facebook: 'https://facebook.com/oetztal' },
+  openingHours: [{ day: 'Infobüro', hours: 'Mo–Fr 08:00–18:00, Sa 09:00–12:00' }],
   navItems: [
     { label: 'Startseite', href: '/', type: 'link' },
+    { label: 'Highlights', href: '/highlights', type: 'link' },
     { label: 'Erlebnisse', href: '/erlebnisse', type: 'link' },
     { label: 'Unterkünfte', href: '/unterkuenfte', type: 'link' },
-    { label: 'Veranstaltungen', href: '/veranstaltungen', type: 'link' },
-    { label: 'Galerie', href: '/galerie', type: 'link' },
+    { label: 'Wanderrouten', href: '/wanderrouten', type: 'link' },
     { label: 'Kontakt', href: '/kontakt', type: 'link' },
   ],
-  navCta: { label: 'Urlaub planen', href: '/kontakt' },
+  navCta: { label: 'Urlaub planen', href: '/erlebnisse' },
   footerColumns: [
-    { title: 'Erleben', items: [{ text: 'Wandern & Klettern', href: '/erlebnisse' }, { text: 'Skifahren & Winter', href: '/erlebnisse' }, { text: 'Veranstaltungen', href: '/veranstaltungen' }] },
-    { title: 'Planen', items: [{ text: 'Unterkünfte', href: '/unterkuenfte' }, { text: 'Anreise & Mobilität', href: '/kontakt' }, { text: 'Kontakt', href: '/kontakt' }] },
-    { title: 'Info-Büro', items: [{ text: 'Mo–Fr: 08:00–18:00' }, { text: 'Sa: 09:00–17:00' }, { text: 'So: 09:00–12:00' }] },
+    { title: 'Entdecken', items: [{ text: 'Highlights', href: '/highlights' }, { text: 'Erlebnisse', href: '/erlebnisse' }, { text: 'Wanderrouten', href: '/wanderrouten' }] },
+    { title: 'Planen', items: [{ text: 'Unterkünfte', href: '/unterkuenfte' }, { text: 'Events', href: '/events' }, { text: 'FAQ', href: '/faq' }] },
+    { title: 'Kontakt', items: [{ text: '+43 57200 100' }, { text: 'info@oetztal.com' }, { text: 'Gemeindestraße 4, 6450 Sölden' }] },
   ],
   footerLegalLinks: [{ label: 'Impressum', href: '/impressum' }, { label: 'Datenschutz', href: '/datenschutz' }],
-  footerCta: { label: 'Jetzt Urlaub planen', href: '/kontakt' },
+  footerCta: { label: 'Urlaub planen', href: '/erlebnisse' },
   pages: [
+    /* ─── Startseite ─── */
     {
       slug: 'startseite', title: 'Startseite', sections: [
         { type: 'hero', sortOrder: 0, data: {
-          headline: 'Ötztal — Wo Berge Geschichten erzählen',
-          subline: 'Entdecken Sie eines der vielseitigsten Alpentäler Tirols: Über 300 km Wanderwege, Europas höchster Wasserfall und Weltklasse-Skigebiete auf über 3.000 m.',
+          headline: 'Willkommen im Ötztal',
+          subline: '65 km alpines Hochtal in Tirol — von der Gletscherwelt bis zu den Thermalquellen. Entdecken Sie Natur und Abenteuer.',
           badgeText: 'Tirol, Österreich',
           bgImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=85',
-          trustItems: ['UNESCO Biosphärenpark', '250+ km Wanderwege', '2 Gletscherskigebiete'],
+          locationLabel: 'Tirol, Österreich',
+          seasonLabel: 'Ganzjahres-Destination',
+          trustItems: ['250+ km Wanderwege', '6 Skigebiete', 'Aqua Dome Therme'],
           primaryCta: { label: 'Erlebnisse entdecken', href: '/erlebnisse' },
-          secondaryCta: { label: 'Unterkunft finden', href: '/unterkuenfte' },
+          secondaryCta: { label: 'Unterkünfte finden', href: '/unterkuenfte' },
         }},
-        { type: 'tourismHighlights', sortOrder: 1, data: {
+        { type: 'destinationHighlights', sortOrder: 1, data: {
           headline: 'Highlights im Ötztal',
-          subline: 'Die Top-Erlebnisse für Ihren Aufenthalt',
-          badgeText: 'Ganzjährig',
-          highlights: [
-            { title: 'Stuibenfall — Tirols höchster Wasserfall', text: '159 Meter stürzt das Wasser in die Tiefe. Der gesicherte Klettersteig und die neue Aussichtsplattform bieten spektakuläre Perspektiven. Für Familien gibt es den leichten Wanderweg (45 Min.).', image: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=900&q=80', icon: 'waterfall', cta: { label: 'Mehr erfahren', href: '/erlebnisse' } },
-            { title: 'Sölden — Ski-Weltcup-Ort', text: 'Drei Dreitausender, 144 Pistenkilometer, schneesicher von Oktober bis Mai. Sölden ist Austragungsort des jährlichen FIS Ski-Weltcups und Drehort von James Bond "Spectre".', image: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80', icon: 'skiing', cta: { label: 'Skigebiet erkunden', href: '/erlebnisse' } },
-            { title: 'Ötzi-Fundstelle & Museum', text: 'Am Tisenjoch wurde 1991 die berühmteste Gletschermumie der Welt entdeckt. Das archäologische Freilichtmuseum in Umhausen erzählt die Geschichte des "Mannes aus dem Eis".', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80', icon: 'museum', cta: { label: 'Geschichte erleben', href: '/erlebnisse' } },
-            { title: 'AREA 47 — Outdoor-Playground', text: 'Europas größter Outdoor-Freizeitpark: Rafting, Canyoning, Wakeboarding, Hochseilgarten und vieles mehr. Adrenalin pur für Abenteuerlustige jeden Alters.', image: 'https://images.unsplash.com/photo-1530062845289-9109b2c9c868?w=900&q=80', icon: 'adventure', cta: { label: 'Abenteuer buchen', href: '/erlebnisse' } },
+          subline: 'Die Top-Attraktionen auf einen Blick',
+          badgeText: 'Must-See',
+          items: [
+            { title: 'Stuibenfall', text: 'Tirols höchster Wasserfall (159 m) mit spektakulärer Hängebrücke und Klettersteig.', image: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=900&q=80', category: 'Natur', cta: { label: 'Mehr erfahren', href: '/highlights' } },
+            { title: 'Ötzi-Fundstelle', text: 'Die berühmte Fundstelle der Gletschermumie am Similaun — erreichbar über den E5-Fernwanderweg.', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&q=80', category: 'Kultur', cta: { label: 'Mehr erfahren', href: '/highlights' } },
+            { title: 'Aqua Dome Therme', text: 'Futuristische Thermenanlage in Längenfeld mit Sole-Becken, Saunawelt und Bergpanorama.', image: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=900&q=80', category: 'Wellness', cta: { label: 'Mehr erfahren', href: '/highlights' } },
+            { title: 'Sölden — 007 Elements', text: 'James-Bond-Erlebniswelt auf 3.048 m am Gaislachkogl. Interaktive Kino-Installation im Berg.', image: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80', category: 'Erlebnis', cta: { label: 'Mehr erfahren', href: '/highlights' } },
           ],
+          ctaPrimary: { label: 'Alle Highlights entdecken', href: '/highlights' },
         }},
-        { type: 'tourismSeasons', sortOrder: 2, data: {
-          headline: 'Ganzjährig einzigartig',
-          subline: 'Jede Jahreszeit hat ihren eigenen Zauber',
+        { type: 'seasonTeaser', sortOrder: 2, data: {
+          headline: 'Das Ötztal in jeder Jahreszeit',
+          subline: 'Ganzjahres-Destination für Natur und Abenteuer',
           seasons: [
-            { title: 'Sommer', subtitle: 'Mai bis Oktober', description: 'Wandern, Klettern, Mountainbiken, Rafting und Baden — im Sommer zeigt sich das Ötztal von seiner vielfältigsten Seite. Über 250 km markierte Wanderwege, 16 Almen und der schönste Wasserfall Tirols warten.', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&q=80', activities: ['Wandern & Bergsteigen', 'Mountainbike & E-Bike', 'Klettern & Via Ferrata', 'Rafting & Canyoning', 'Baden im Piburger See'] },
-            { title: 'Winter', subtitle: 'November bis April', description: 'Zwei Weltklasse-Skigebiete, Langlaufloipen, Winterwanderwege und Rodelbahnen. Sölden und Obergurgl-Hochgurgl garantieren Schneesicherheit dank Gletscherlage.', image: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80', activities: ['Skifahren & Snowboard', 'Langlauf & Skating', 'Winterwandern', 'Rodeln', 'Skitourengehen'] },
+            { title: 'Sommer im Ötztal', text: 'Wandern, Klettern, Mountainbiken und Rafting — über 250 km markierte Wege und unzählige Gipfel.', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&q=80', category: 'Sommer', periodLabel: 'Juni–September', cta: { label: 'Sommeraktivitäten', href: '/erlebnisse' } },
+            { title: 'Winter im Ötztal', text: 'Sölden, Obergurgl-Hochgurgl und 4 weitere Skigebiete. 360 Pistenkilometer, Langlauf und Winterwandern.', image: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80', category: 'Winter', periodLabel: 'November–April', cta: { label: 'Wintererlebnisse', href: '/erlebnisse' } },
+            { title: 'Herbst — Ötztaler Almbabtrieb', text: 'Buntes Laub, klare Luft und der traditionsreiche Almbabtrieb — ein Tiroler Erlebnis.', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80', category: 'Herbst', periodLabel: 'September–Oktober', cta: { label: 'Herbstgenuss', href: '/erlebnisse' } },
           ],
         }},
-        { type: 'testimonials', sortOrder: 3, data: {
-          headline: 'Stimmen unserer Gäste',
-          subline: 'Was Besucher über das Ötztal sagen',
-          testimonials: [
-            { name: 'Familie Schneider', location: 'Stuttgart', rating: 5, text: 'Zum vierten Mal im Ötztal und jedes Jahr entdecken wir Neues. Die Wanderwege sind perfekt markiert, die Hütten gemütlich und die Bergkulisse unschlagbar.' },
-            { name: 'Marco B.', location: 'Mailand', rating: 5, text: 'Sölden ist nicht nur ein Skigebiet — es ist ein Erlebnis. Die Qualität der Pisten, die Gastfreundschaft und das Panorama sind erstklassig.' },
-            { name: 'Sarah & Tim', location: 'Berlin', rating: 5, text: 'AREA 47 war der absolute Wahnsinn! Canyoning im Ötztal hat unser Adrenalin-Level auf ein neues Level gebracht. Nächstes Jahr kommen wir zum Klettern wieder.' },
+        { type: 'gallery', sortOrder: 3, data: {
+          headline: 'Bildergalerie',
+          subline: 'Impressionen aus dem Ötztal',
+          images: [
+            { src: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&q=80', alt: 'Bergpanorama Ötztal', category: 'Natur' },
+            { src: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=900&q=80', alt: 'Stuibenfall', category: 'Natur' },
+            { src: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80', alt: 'Skigebiet Sölden', category: 'Winter' },
+            { src: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=900&q=80', alt: 'Aqua Dome', category: 'Wellness' },
+            { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80', alt: 'Herbst im Ötztal', category: 'Herbst' },
           ],
         }},
       ],
     },
+    /* ─── Highlights ─── */
+    {
+      slug: 'highlights', title: 'Highlights', sections: [
+        { type: 'hero', sortOrder: 0, data: {
+          headline: 'Highlights im Ötztal',
+          subline: 'Die schönsten Orte und Attraktionen in Tirols längstem Seitental',
+          bgImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=85',
+        }},
+        { type: 'sightseeingList', sortOrder: 1, data: {
+          headline: 'Sehenswürdigkeiten',
+          subline: 'Natur, Kultur und Architektur',
+          items: [
+            { title: 'Stuibenfall', text: 'Mit 159 m Tirols höchster Wasserfall. Hängebrücke, Aussichtsplattform und Klettersteig.', image: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=900&q=80', openingText: 'Frei zugänglich Mai–Okt.', category: 'Natur', cta: { label: 'Details', href: '/highlights' } },
+            { title: '007 Elements', text: 'James-Bond-Erlebniswelt auf 3.048 m. Interaktive Kino-Installation im Innern des Gaislachkogls.', image: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80', openingText: 'Täglich 09:00–16:00', category: 'Erlebnis', cta: { label: 'Tickets', href: '/highlights' } },
+            { title: 'Ötztaler Heimatmuseum', text: 'Geschichte des Ötztals von der Steinzeit bis heute. Ötzi-Ausstellung und traditionelle Stuben.', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80', openingText: 'Di–So 10:00–17:00', category: 'Kultur', cta: { label: 'Details', href: '/highlights' } },
+            { title: 'Area 47 — Outdoor-Playground', text: 'Europas größter Outdoor-Park: Rafting, Canyoning, Hochseilgarten, Wasserrutschen.', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80', openingText: 'Mai–Sep. 10:00–18:00', category: 'Sport', cta: { label: 'Tickets', href: '/highlights' } },
+          ],
+        }},
+      ],
+    },
+    /* ─── Erlebnisse ─── */
     {
       slug: 'erlebnisse', title: 'Erlebnisse', sections: [
         { type: 'hero', sortOrder: 0, data: {
-          headline: 'Erlebnisse im Ötztal',
-          subline: 'Von gemütlichen Almwanderungen bis zu adrenalingeladenen Outdoor-Abenteuern',
+          headline: 'Erlebnisse & Aktivitäten',
+          subline: 'Abenteuer, Entspannung und Genuss — für jeden etwas',
           bgImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=85',
-          primaryCta: { label: 'Erlebnis buchen', href: '/kontakt' },
         }},
-        { type: 'tourismActivities', sortOrder: 1, data: {
-          headline: 'Aktivitäten',
-          subline: 'Für jeden Geschmack das richtige Abenteuer',
-          activities: [
-            { title: 'Wandern & Bergsteigen', description: 'Über 250 km markierte Wege — von leichten Familienwanderungen entlang des Ötztaler Ache bis zu anspruchsvollen Hochtouren auf die Wildspitze (3.774 m).', image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=900&q=80', difficultyLabel: 'Leicht bis Schwer', durationLabel: '1–8 Stunden', seasonLabel: 'Mai–Oktober', cta: { label: 'Touren entdecken', href: '/erlebnisse' } },
-            { title: 'Mountainbike & E-Bike', description: '800+ Höhenmeter, Singletrails und Forstwege: Das Ötztal ist ein Paradies für Biker. E-Bike-Ladestationen an jeder Alm. Bike-Verleih direkt im Tal.', image: 'https://images.unsplash.com/photo-1544191696-102dbdaeeaa0?w=900&q=80', difficultyLabel: 'Mittel bis Schwer', durationLabel: '2–6 Stunden', seasonLabel: 'Mai–Oktober', cta: { label: 'Trails ansehen', href: '/erlebnisse' } },
-            { title: 'Skifahren in Sölden', description: '144 Pistenkilometer, 31 Lifte, 3 Dreitausender: BIG 3 Rallye, Gletscherskifahren auf dem Rettenbachferner und die legendäre Gaislachkogelbahn.', image: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80', difficultyLabel: 'Alle Schwierigkeitsgrade', durationLabel: 'Ganzer Tag', seasonLabel: 'Oktober–Mai', cta: { label: 'Skipass buchen', href: '/kontakt' } },
-            { title: 'Rafting & Canyoning', description: 'Die Ötztaler Ache gehört zu den besten Wildwasserflüssen Europas. Professionelle Guides für Anfänger und Fortgeschrittene. Ab 12 Jahren.', image: 'https://images.unsplash.com/photo-1530062845289-9109b2c9c868?w=900&q=80', difficultyLabel: 'Mittel', durationLabel: '2–4 Stunden', seasonLabel: 'Juni–September', cta: { label: 'Tour buchen', href: '/kontakt' } },
-            { title: 'Klettern & Klettersteige', description: '12 Klettersteige von A (leicht) bis D (sehr schwer), darunter der spektakuläre Stuibenfall-Klettersteig direkt am höchsten Wasserfall Tirols.', image: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=900&q=80', difficultyLabel: 'A bis D', durationLabel: '2–6 Stunden', seasonLabel: 'Juni–Oktober', cta: { label: 'Klettersteige ansehen', href: '/erlebnisse' } },
-            { title: 'Wellness & Therme', description: 'Aqua Dome in Längenfeld: Spektakuläre Thermenwelt mit Innen- und Außenbecken, Saunawelt und Spa-Treatments — eingebettet in die Berglandschaft.', image: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=900&q=80', difficultyLabel: 'Entspannt', durationLabel: 'Halber/Ganzer Tag', seasonLabel: 'Ganzjährig', cta: { label: 'Therme besuchen', href: '/kontakt' } },
+        { type: 'experienceGrid', sortOrder: 1, data: {
+          headline: 'Aktivitäten im Ötztal',
+          subline: 'Sommer & Winter',
+          items: [
+            { title: 'Geführte Gipfeltouren', text: 'Mit staatlich geprüften Bergführern auf die schönsten Gipfel der Ötztaler Alpen.', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&q=80', category: 'Wandern', durationLabel: '4–8 Std.', audienceLabel: 'Fortgeschrittene', difficultyLabel: 'Mittel–Schwer', priceLabel: 'Ab 65 € p.P.', cta: { label: 'Buchen', href: '/kontakt' } },
+            { title: 'E-Bike-Touren', text: 'Entspannt das Tal erkunden: geführte E-Bike-Touren zu Almen, Seen und Wasserfällen.', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80', category: 'Radfahren', durationLabel: '3–5 Std.', audienceLabel: 'Familien & Anfänger', difficultyLabel: 'Leicht', priceLabel: 'Ab 45 € p.P.', cta: { label: 'Buchen', href: '/kontakt' } },
+            { title: 'Wildwasser-Rafting', text: 'Adrenalin pur auf der Ötztaler Ache. Level I–IV verfügbar.', image: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=900&q=80', category: 'Wasser', durationLabel: '2–3 Std.', audienceLabel: 'Ab 14 Jahren', difficultyLabel: 'Mittel', priceLabel: 'Ab 55 € p.P.', cta: { label: 'Buchen', href: '/kontakt' } },
+            { title: 'Skifahren in Sölden', text: '144 Pistenkilometer, 31 Lifte, 2 Gletscherskigebiete und Après-Ski-Kultur.', image: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80', category: 'Ski', durationLabel: 'Tagespass', audienceLabel: 'Alle Level', difficultyLabel: 'Leicht–Schwer', priceLabel: 'Ab 62 € / Tag', cta: { label: 'Skipass kaufen', href: '/kontakt' } },
+            { title: 'Klettersteige', text: 'Vom Einsteiger-Klettersteig bis zur alpinen Herausforderung — bestens gesichert.', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80', category: 'Klettern', durationLabel: '3–6 Std.', audienceLabel: 'Sportliche', difficultyLabel: 'Mittel–Schwer', priceLabel: 'Ab 75 € p.P.', cta: { label: 'Buchen', href: '/kontakt' } },
+            { title: 'Paragliding Tandemflug', text: 'Über dem Ötztal schweben — Tandemflug mit erfahrenem Piloten und Bergpanorama.', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&q=80', category: 'Luft', durationLabel: '15–25 Min.', audienceLabel: 'Ab 6 Jahren', difficultyLabel: 'Leicht', priceLabel: 'Ab 130 €', cta: { label: 'Buchen', href: '/kontakt' } },
           ],
+          ctaPrimary: { label: 'Alle Erlebnisse', href: '/erlebnisse' },
         }},
       ],
     },
+    /* ─── Unterkünfte ─── */
     {
       slug: 'unterkuenfte', title: 'Unterkünfte', sections: [
         { type: 'hero', sortOrder: 0, data: {
           headline: 'Unterkünfte im Ötztal',
-          subline: 'Von der gemütlichen Ferienwohnung bis zum Luxushotel — finden Sie Ihre perfekte Basis',
+          subline: 'Vom Berghotel bis zur gemütlichen Ferienwohnung',
           bgImage: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1800&q=85',
         }},
-        { type: 'tourismAccommodation', sortOrder: 1, data: {
+        { type: 'accommodationGrid', sortOrder: 1, data: {
           headline: 'Übernachten im Ötztal',
-          subline: 'Über 500 Betriebe für jeden Geschmack und jedes Budget',
-          categories: [
-            { title: 'Hotels & Resorts', description: 'Von familiär bis 5-Sterne-Superior: Wellnesshotels, Sporthotels und Boutiquehotels mit Tiroler Charme.', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&q=80', priceLabel: 'Ab 80 € / Nacht', features: ['Frühstück/Halbpension', 'Wellnessbereiche', 'Ski-Depot', 'Kinderbetreuung'], cta: { label: 'Hotels entdecken', href: '/unterkuenfte' } },
-            { title: 'Ferienwohnungen', description: 'Ideal für Familien und längere Aufenthalte: Voll ausgestattete Apartments mit Küche und Bergblick.', image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=900&q=80', priceLabel: 'Ab 60 € / Nacht', features: ['Eigene Küche', 'Wohnbereich', 'Parkplatz', 'Flexible Buchung'], cta: { label: 'Wohnungen ansehen', href: '/unterkuenfte' } },
-            { title: 'Berghütten & Almen', description: 'Authentisches Bergerlebnis: Übernachten auf einer der 16 bewirtschafteten Almen im Ötztal. Einfach, ursprünglich, unvergesslich.', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80', priceLabel: 'Ab 35 € / Nacht', features: ['Hüttenübernachtung', 'Halbpension', 'Tiroler Küche', 'Naturerlebnis'], cta: { label: 'Hütten finden', href: '/unterkuenfte' } },
-            { title: 'Camping', description: 'Zwei moderne Campingplätze mit Komfortstellplätzen, Sanitärgebäuden und Brötchenservice — direkt am Fluss.', image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=900&q=80', priceLabel: 'Ab 25 € / Stellplatz', features: ['Stromanschluss', 'Sanitär', 'WLAN', 'Grillplätze'], cta: { label: 'Camping buchen', href: '/kontakt' } },
+          subline: 'Für jeden Geschmack und jedes Budget',
+          items: [
+            { title: 'Alpenglow Resort & Spa ★★★★★', text: 'Luxushotel mit Spa, Infinity-Pool und Ski-in/Ski-out in Sölden.', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&q=80', category: 'Hotel', typeLabel: '5-Sterne', priceLabel: 'Ab 280 € / Nacht', amenities: ['Spa', 'Pool', 'Restaurant', 'Ski-in/Ski-out'], cta: { label: 'Details', href: '/unterkuenfte' } },
+            { title: 'Gasthof Stern ★★★', text: 'Traditioneller Tiroler Gasthof mit Halbpension und Stube in Oetz.', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80', category: 'Gasthof', typeLabel: '3-Sterne', priceLabel: 'Ab 85 € / Nacht', amenities: ['Halbpension', 'Sauna', 'Parkplatz', 'WLAN'], cta: { label: 'Details', href: '/unterkuenfte' } },
+            { title: 'Ferienwohnung Alpenblick', text: 'Gemütliche Ferienwohnung für 4 Personen mit Balkon und Bergblick in Umhausen.', image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=900&q=80', category: 'Ferienwohnung', typeLabel: 'Apartment', priceLabel: 'Ab 110 € / Nacht', amenities: ['Küche', 'Balkon', 'WLAN', 'Parkplatz'], cta: { label: 'Details', href: '/unterkuenfte' } },
+            { title: 'Campingplatz Ötztal', text: 'Stellplätze und Mietchalets direkt an der Ötztaler Ache.', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80', category: 'Camping', typeLabel: 'Campingplatz', priceLabel: 'Ab 28 € / Nacht', amenities: ['Sanitäranlagen', 'Spielplatz', 'Grillplatz', 'Strom'], cta: { label: 'Details', href: '/unterkuenfte' } },
           ],
         }},
       ],
     },
+    /* ─── Wanderrouten ─── */
     {
-      slug: 'veranstaltungen', title: 'Veranstaltungen', sections: [
+      slug: 'wanderrouten', title: 'Wanderrouten', sections: [
         { type: 'hero', sortOrder: 0, data: {
-          headline: 'Veranstaltungen',
-          subline: 'Events, Feste und Highlights rund ums Jahr',
-          bgImage: 'https://images.unsplash.com/photo-1530062845289-9109b2c9c868?w=1800&q=85',
-        }},
-        { type: 'tourismEvents', sortOrder: 1, data: {
-          headline: 'Eventkalender',
-          subline: 'Die wichtigsten Termine im Überblick',
-          events: [
-            { title: 'FIS Ski-Weltcup Sölden', dateLabel: 'Oktober 2026', description: 'Der traditionelle Saisonauftakt im Ski-Weltcup am Rettenbachferner. Riesenslalom der Damen und Herren mit Rahmenprogramm und Live-Konzerten.', image: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80', locationLabel: 'Rettenbachferner, Sölden', cta: { label: 'Tickets sichern', href: '/kontakt' } },
-            { title: 'Ötztaler Radmarathon', dateLabel: 'August 2026', description: 'Einer der härtesten und beliebtesten Radmarathons Europas: 238 km, 5.500 Höhenmeter über 4 Alpenpässe. Limitiert auf 4.000 Starter.', image: 'https://images.unsplash.com/photo-1544191696-102dbdaeeaa0?w=900&q=80', locationLabel: 'Start & Ziel: Sölden', cta: { label: 'Anmeldung', href: '/kontakt' } },
-            { title: 'Ötztaler Almfest', dateLabel: 'Juli 2026', description: 'Traditionelles Tiroler Almfest mit Schuhplattler, Blasmusik, Handwerksvorführungen und Tiroler Kulinarik. Familienfreundlich mit Kinderprogramm.', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80', locationLabel: 'Verschiedene Almen', cta: { label: 'Programm ansehen', href: '/veranstaltungen' } },
-            { title: 'Electric Mountain Festival', dateLabel: 'April 2026', description: 'Das legendäre Après-Ski-Festival in Sölden mit internationalen DJs. Drei Tage Elektro, House und Techno auf der Giggijoch-Hütte.', image: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=900&q=80', locationLabel: 'Giggijoch, Sölden', cta: { label: 'Line-up & Tickets', href: '/kontakt' } },
-          ],
-        }},
-      ],
-    },
-    {
-      slug: 'galerie', title: 'Galerie', sections: [
-        { type: 'hero', sortOrder: 0, data: {
-          headline: 'Galerie',
-          subline: 'Das Ötztal in Bildern — lassen Sie sich inspirieren',
+          headline: 'Wanderrouten',
+          subline: 'Über 250 km markierte Wanderwege — vom Spaziergang bis zur Gipfeltour',
           bgImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=85',
         }},
-        { type: 'gallery', sortOrder: 1, data: {
-          headline: 'Bildergalerie',
-          subline: 'Impressionen aus dem Ötztal',
-          images: [
-            { src: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&q=80', alt: 'Ötztaler Alpen Panorama', caption: 'Blick auf die Ötztaler Alpen bei Sonnenaufgang', category: 'Landschaft' },
-            { src: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80', alt: 'Skifahren in Sölden', caption: 'Pistenvergnügen am Gaislachkogl', category: 'Winter' },
-            { src: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=900&q=80', alt: 'Wandern im Ötztal', caption: 'Auf dem Weg zur Breslauer Hütte', category: 'Sommer' },
-            { src: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=900&q=80', alt: 'Stuibenfall', caption: 'Tirols höchster Wasserfall — 159 Meter', category: 'Natur' },
-            { src: 'https://images.unsplash.com/photo-1530062845289-9109b2c9c868?w=900&q=80', alt: 'Rafting auf der Ötztaler Ache', caption: 'Wildwasser-Abenteuer auf der Ache', category: 'Abenteuer' },
-            { src: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80', alt: 'Berghütte', caption: 'Gemütliche Einkehr auf der Alm', category: 'Kulinarik' },
-            { src: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=900&q=80', alt: 'Aqua Dome Therme', caption: 'Entspannung im Aqua Dome Längenfeld', category: 'Wellness' },
-            { src: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=900&q=80', alt: 'Camping im Ötztal', caption: 'Naturnahes Camping am Fluss', category: 'Unterkunft' },
-            { src: 'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=900&q=80', alt: 'Klettersteig', caption: 'Klettersteig am Stuibenfall', category: 'Abenteuer' },
-            { src: 'https://images.unsplash.com/photo-1544191696-102dbdaeeaa0?w=900&q=80', alt: 'Radfahren', caption: 'Route des Ötztaler Radmarathons', category: 'Sommer' },
+        { type: 'tourRoutes', sortOrder: 1, data: {
+          headline: 'Beliebte Routen',
+          subline: 'Unsere Top-Empfehlungen',
+          routes: [
+            { title: 'Stuibenfall-Rundweg', text: 'Leichte Wanderung zum höchsten Wasserfall Tirols mit Hängebrücke.', image: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=900&q=80', category: 'Leicht', lengthLabel: '5,2 km', durationLabel: '2 Std.', difficultyLabel: 'Leicht', startLabel: 'Parkplatz Umhausen', highlights: ['Stuibenfall', 'Hängebrücke', 'Aussichtsplattform'], cta: { label: 'Route ansehen', href: '/wanderrouten' } },
+            { title: 'Obergurgler Zirbenweg', text: 'Panoramaweg durch den höchsten Zirbenwald Europas mit Blick auf 21 Dreitausender.', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80', category: 'Mittel', lengthLabel: '8,4 km', durationLabel: '3,5 Std.', difficultyLabel: 'Mittel', startLabel: 'Obergurgl Bergbahn', highlights: ['Zirbenwald', '21 Dreitausender-Panorama', 'Schönwieshütte'], cta: { label: 'Route ansehen', href: '/wanderrouten' } },
+            { title: 'Similaun — Ötzi-Fundstelle', text: 'Anspruchsvolle Hochtour zur berühmten Fundstelle der Gletschermumie auf 3.210 m.', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&q=80', category: 'Schwer', lengthLabel: '14,2 km', durationLabel: '7 Std.', difficultyLabel: 'Schwer', startLabel: 'Vernagt-Stausee', highlights: ['Ötzi-Fundstelle', 'Similaunhütte', 'Gletscherpanorama'], cta: { label: 'Route ansehen', href: '/wanderrouten' } },
+          ],
+          ctaPrimary: { label: 'Alle Routen auf Komoot', href: '/wanderrouten' },
+        }},
+      ],
+    },
+    /* ─── Events ─── */
+    {
+      slug: 'events', title: 'Events', sections: [
+        { type: 'hero', sortOrder: 0, data: {
+          headline: 'Events & Veranstaltungen',
+          subline: 'Traditionsreiche Feste und sportliche Highlights im Ötztal',
+          bgImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=85',
+        }},
+        { type: 'eventsCalendar', sortOrder: 1, data: {
+          headline: 'Veranstaltungskalender',
+          subline: 'Die nächsten Events',
+          events: [
+            { title: 'Ötztaler Radmarathon', text: 'Legendärer Radmarathon über 238 km und 5.500 Höhenmeter.', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80', dateLabel: '25.08.2024', locationLabel: 'Sölden', category: 'Sport', priceLabel: 'Startgebühr 95 €', cta: { label: 'Anmelden', href: '/kontakt' } },
+            { title: 'Ötztaler Almbabtrieb', text: 'Traditioneller Almbabtrieb mit geschmückten Kühen, Bauernmarkt und Livemusik.', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80', dateLabel: '14.09.2024', locationLabel: 'Umhausen', category: 'Tradition', priceLabel: 'Eintritt frei', cta: { label: 'Mehr Info', href: '/events' } },
+            { title: 'Electric Mountain Festival', text: 'Elektronische Musik auf 2.200 m — Après-Ski-Party der Superlative.', image: 'https://images.unsplash.com/photo-1565992441121-4367c2967103?w=900&q=80', dateLabel: '12.–15.12.2024', locationLabel: 'Sölden', category: 'Musik', priceLabel: 'Ab 45 € / Tag', cta: { label: 'Tickets', href: '/events' } },
           ],
         }},
       ],
     },
+    /* ─── FAQ ─── */
     {
-      slug: 'kontakt', title: 'Kontakt & Anreise', sections: [
+      slug: 'faq', title: 'FAQ', sections: [
         { type: 'hero', sortOrder: 0, data: {
-          headline: 'Kontakt & Anreise',
-          subline: 'Wir helfen Ihnen bei der Planung Ihres Ötztal-Urlaubs',
+          headline: 'Häufig gestellte Fragen',
+          subline: 'Alles Wissenswerte für Ihren Ötztal-Urlaub',
+          bgImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=85',
+        }},
+        { type: 'faq', sortOrder: 1, data: {
+          headline: 'FAQ',
+          subline: 'Wir beantworten Ihre Fragen',
+          items: [
+            { question: 'Wie komme ich ins Ötztal?', answer: 'Über die A12 (Inntal-Autobahn) und A13 (Brenner) zur Abfahrt Ötztal. Per Bahn: Bahnhof Ötztal-Bahnhof, dann Bus ins Tal.' },
+            { question: 'Gibt es eine Gästekarte?', answer: 'Ja! Die Ötztal Card ist bei teilnehmenden Unterkünften inklusive und bietet freie Bergbahnen und Busse.' },
+            { question: 'Wann ist die beste Reisezeit?', answer: 'Sommer (Juni–Sep.) für Wandern, Winter (Nov.–Apr.) für Ski. Herbst für Almbabtrieb und klare Luft.' },
+            { question: 'Ist das Ötztal familienfreundlich?', answer: 'Absolut! Kinderbetreuung an den Bergbahnen, Familienraften, Area 47 und viele leichte Wanderungen.' },
+            { question: 'Brauche ich ein Auto?', answer: 'Nicht unbedingt. Kostenlose Ötztal-Busse verkehren im gesamten Tal (Ötztal Card).' },
+          ],
+          ctaPrimary: { label: 'Noch Fragen? Kontakt', href: '/kontakt' },
+        }},
+        { type: 'visitorInfo', sortOrder: 2, data: {
+          headline: 'Gut zu wissen',
+          subline: 'Praktische Tipps für Ihren Aufenthalt',
+          introText: 'Damit Sie Ihren Ötztal-Urlaub optimal genießen können.',
+          blocks: [
+            { title: 'Anreise', icon: 'car', text: 'Das Ötztal ist über die A12/A13 sehr gut erreichbar.', items: ['Autobahn A12 → Ausfahrt Ötztal', 'Bahnhof Ötztal-Bahnhof', 'Kostenloser Ötztal-Bus'] },
+            { title: 'Ötztal Card', icon: 'ticket', text: 'Die Gästekarte ist Ihr Allround-Ticket.', items: ['Freie Bergbahnen', 'Freie Ötztal-Busse', 'Ermäßigungen bei Attraktionen'] },
+            { title: 'Wetter & Ausrüstung', icon: 'cloud', text: 'Alpine Lagen können wettertechnisch überraschen.', items: ['Wetterfeste Kleidung', 'Wanderschuhe empfohlen', 'Sonnenschutz (hohe UV-Strahlung)'] },
+          ],
+        }},
+      ],
+    },
+    /* ─── Kontakt ─── */
+    {
+      slug: 'kontakt', title: 'Kontakt', sections: [
+        { type: 'hero', sortOrder: 0, data: {
+          headline: 'Kontakt & Information',
+          subline: 'Wir beraten Sie gerne bei Ihrer Urlaubsplanung',
           bgImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=85',
         }},
         { type: 'tourismContact', sortOrder: 1, data: {
-          headline: 'Informationsbüro Ötztal Tourismus',
-          subline: 'Persönliche Beratung, Prospekte und Buchungsservice',
-          introText: 'Unser Team berät Sie gerne bei der Planung Ihres Aufenthalts — ob Unterkunft, Aktivitäten oder Veranstaltungen. Besuchen Sie uns im Info-Büro oder kontaktieren Sie uns telefonisch oder per E-Mail.',
-          image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&q=80',
+          headline: 'Infobüro Ötztal',
+          subline: 'Persönlich, telefonisch oder per E-Mail',
+          introText: 'Unser Team im Infobüro hilft Ihnen bei der Planung — von der Unterkunft bis zur Tourenempfehlung.',
+          image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80',
           formEnabled: true,
           infoCards: [
-            { icon: 'phone', label: 'Telefon', value: '+43 5254 500 00' },
-            { icon: 'mail', label: 'E-Mail', value: 'info@oetztal-tourismus.at' },
-            { icon: 'map', label: 'Adresse', value: 'Gemeindestraße 4, 6450 Sölden' },
-            { icon: 'clock', label: 'Öffnungszeiten', value: 'Mo–Fr 08–18, Sa 09–17, So 09–12' },
+            { icon: 'phone', label: 'Telefon', value: '+43 57200 100' },
+            { icon: 'mail', label: 'E-Mail', value: 'info@oetztal.com' },
+            { icon: 'map-pin', label: 'Adresse', value: 'Gemeindestraße 4, 6450 Sölden' },
+            { icon: 'clock', label: 'Bürozeiten', value: 'Mo–Fr 08:00–18:00, Sa 09:00–12:00' },
           ],
           primaryCta: { label: 'Nachricht senden', href: '/kontakt' },
-          secondaryCta: { label: 'Route planen', href: 'https://www.google.com/maps/dir//Gemeindestraße+4,+6450+Sölden' },
+          secondaryCta: { label: 'Anrufen', href: 'tel:+4357200100' },
         }},
-        { type: 'faq', sortOrder: 2, data: {
-          headline: 'Häufig gestellte Fragen',
-          subline: 'Das Wichtigste für Ihre Urlaubsplanung',
-          items: [
-            { question: 'Wie erreiche ich das Ötztal?', answer: 'Mit dem Auto über die A12 Inntalautobahn (Ausfahrt Ötztal). Mit der Bahn bis Ötztal Bahnhof, von dort verkehren regelmäßig Busse ins Tal. Von Innsbruck Flughafen ca. 60 Minuten Fahrtzeit.' },
-            { question: 'Wann ist die beste Reisezeit?', answer: 'Sommer (Juni–September): Ideal zum Wandern, Radfahren, Klettern. Winter (Dezember–April): Perfekt für Ski, Langlauf, Winterwandern. Gletscherskifahren ist sogar ab Oktober möglich.' },
-            { question: 'Gibt es eine Gästekarte?', answer: 'Ja! Die Ötztal Card ist Ihre All-inclusive-Karte: Bergbahnen, öffentlicher Nahverkehr, Freibäder, Museen und viele Partnerbetriebe inklusive. Erhältlich bei teilnehmenden Unterkünften.' },
-            { question: 'Ist das Ötztal familienfreundlich?', answer: 'Absolut! Zahlreiche Familienwanderwege, Spielplätze, der Erlebnispark WIDIVERSUM, Kinderbetreuung in vielen Hotels und spezielle Familien-Packages machen das Ötztal zum idealen Familienreiseziel.' },
-            { question: 'Brauche ich ein Auto vor Ort?', answer: 'Nicht unbedingt. Der Ötztal-Bus verkehrt regelmäßig zwischen allen Orten. Im Winter gibt es kostenlose Skibusse. Die Ötztal Card beinhaltet die Nutzung aller öffentlichen Verkehrsmittel im Tal.' },
-            { question: 'Kann ich im Sommer auf dem Gletscher Ski fahren?', answer: 'Nein, Sommer-Skifahren am Rettenbachferner wurde eingestellt. Die Gletscherskisaison startet im Oktober und endet im Mai. Im Sommer laden die Gletscher zum Wandern und Staunen ein.' },
+        { type: 'placesMap', sortOrder: 2, data: {
+          headline: 'Ötztal auf der Karte',
+          subline: 'Wichtige Orte im Überblick',
+          mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d43638.8!2d10.84!3d46.97!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x479d0e36a3b6f7a7%3A0x1234567890abcdef!2s6450+S%C3%B6lden!5e0!3m2!1sde!2sat!4v1700000000000',
+          places: [
+            { title: 'Sölden', text: 'Ski- und Wanderzentrum des Ötztals.', category: 'Ort', distanceLabel: 'Zentrum' },
+            { title: 'Obergurgl-Hochgurgl', text: 'Höchstes Kirchdorf Österreichs, schneesicheres Skigebiet.', category: 'Ort', distanceLabel: '15 km von Sölden' },
+            { title: 'Umhausen / Stuibenfall', text: 'Tirols höchster Wasserfall und Greifvogelpark.', category: 'Sehenswürdigkeit', distanceLabel: '20 km von Sölden' },
           ],
-          ctaPrimary: { label: 'Weitere Fragen? Kontaktieren Sie uns', href: '/kontakt' },
+          ctaPrimary: { label: 'Route planen', href: 'https://www.google.com/maps/dir//Sölden+Tirol' },
         }},
       ],
     },

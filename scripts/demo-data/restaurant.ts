@@ -1,9 +1,8 @@
 /**
  * Rich demo seed: Restaurant (Trattoria Dal Maestro)
- * ALL section types, ALL fields populated with realistic content.
+ * Section types match template keys in templates/index.ts:
+ * hero, menu, reservation, openingHours, signatureDishes, events, ambience, richText
  */
-import type { InferInsertModel } from 'drizzle-orm';
-
 export const RESTAURANT_CONFIG = {
   slug: 'demo-restaurant',
   name: 'Trattoria Dal Maestro',
@@ -11,191 +10,233 @@ export const RESTAURANT_CONFIG = {
   activeStyle: 'classic',
   brand: {
     companyName: 'Trattoria Dal Maestro',
-    tagline: 'Authentische italienische Küche in Innsbruck',
-    primaryColor: '#9a3412',
-    secondaryColor: '#c2410c',
-    accentColor: '#f59e0b',
+    tagline: 'Authentische italienische Küche seit 1987',
+    primaryColor: '#7e4023',
+    secondaryColor: '#b7632f',
+    accentColor: '#d4a574',
   },
-  contact: { phone: '+43 512 123 456', email: 'info@trattoria-dalmaestro.at', address: 'Maria-Theresien-Straße 24, 6020 Innsbruck' },
-  socialLinks: { instagram: 'https://instagram.com/trattoria-dalmaestro', facebook: 'https://facebook.com/trattoria-dalmaestro', google: 'https://g.page/trattoria-dalmaestro' },
+  contact: { phone: '+49 89 123 456 78', email: 'info@dal-maestro.de', address: 'Maximilianstraße 12, 80539 München' },
+  socialLinks: { instagram: 'https://instagram.com/dalmaestro', facebook: 'https://facebook.com/dalmaestro' },
   openingHours: [
-    { day: 'Di–Sa', hours: '11:30–14:30 & 17:30–23:00' },
+    { day: 'Mo–Fr', hours: '11:30–14:30, 17:30–23:00' },
+    { day: 'Sa', hours: '17:30–23:30' },
     { day: 'So', hours: '11:30–22:00' },
-    { day: 'Mo', hours: 'Ruhetag' },
   ],
   navItems: [
     { label: 'Startseite', href: '/', type: 'link' },
     { label: 'Speisekarte', href: '/speisekarte', type: 'link' },
-    { label: 'Ambiente', href: '/ambiente', type: 'link' },
+    { label: 'Über uns', href: '/ueber-uns', type: 'link' },
     { label: 'Events', href: '/events', type: 'link' },
     { label: 'Reservierung', href: '/reservierung', type: 'link' },
   ],
   navCta: { label: 'Tisch reservieren', href: '/reservierung' },
   footerColumns: [
-    { title: 'Küche', items: [{ text: 'Speisekarte', href: '/speisekarte' }, { text: 'Signature Dishes', href: '/' }, { text: 'Events & Catering', href: '/events' }] },
-    { title: 'Besuch', items: [{ text: 'Reservierung', href: '/reservierung' }, { text: 'Ambiente & Räume', href: '/ambiente' }, { text: 'Kontakt', href: '/reservierung' }] },
-    { title: 'Öffnungszeiten', items: [{ text: 'Di–Sa: 11:30–14:30 & 17:30–23:00' }, { text: 'So: 11:30–22:00' }, { text: 'Mo: Ruhetag' }] },
+    { title: 'Restaurant', items: [{ text: 'Speisekarte', href: '/speisekarte' }, { text: 'Über uns', href: '/ueber-uns' }, { text: 'Events', href: '/events' }] },
+    { title: 'Service', items: [{ text: 'Reservierung', href: '/reservierung' }, { text: 'Öffnungszeiten', href: '/reservierung' }] },
+    { title: 'Kontakt', items: [{ text: '+49 89 123 456 78' }, { text: 'info@dal-maestro.de' }, { text: 'Maximilianstraße 12, München' }] },
   ],
   footerLegalLinks: [{ label: 'Impressum', href: '/impressum' }, { label: 'Datenschutz', href: '/datenschutz' }],
-  footerCta: { label: 'Tisch reservieren', href: '/reservierung' },
+  footerCta: { label: 'Reservieren', href: '/reservierung' },
   pages: [
+    /* ─── Startseite ─── */
     {
       slug: 'startseite', title: 'Startseite', sections: [
         { type: 'hero', sortOrder: 0, data: {
           headline: 'Trattoria Dal Maestro',
-          subline: 'Authentische italienische Küche seit 1998 — mitten in der Innsbrucker Altstadt. Frische Pasta, edle Weine und herzliche Gastfreundschaft erwarten Sie.',
-          badgeText: 'Seit 1998',
+          subline: 'Seit 1987 servieren wir Ihnen authentische italienische Küche im Herzen Münchens — mit Liebe, frischen Zutaten und Leidenschaft.',
+          badgeText: 'Seit 1987',
           bgImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1800&q=85',
-          trustItems: ['Authentische italienische Küche', 'Seit 25 Jahren in Innsbruck', 'Familiengeführt in 2. Generation'],
+          trustItems: ['Frische Pasta täglich', 'Hauseigene Weinbar', 'Dachterrasse'],
           primaryCta: { label: 'Tisch reservieren', href: '/reservierung' },
-          secondaryCta: { label: 'Speisekarte entdecken', href: '/speisekarte' },
+          secondaryCta: { label: 'Speisekarte', href: '/speisekarte' },
         }},
         { type: 'signatureDishes', sortOrder: 1, data: {
-          headline: 'Unsere Signature-Gerichte',
-          subline: 'Drei Klassiker, die unsere Gäste immer wieder zurückbringen',
+          headline: 'Unsere Signature Dishes',
+          subline: 'Die Klassiker unserer Küche',
+          badgeText: 'Empfehlung des Hauses',
           dishes: [
-            { name: 'Osso Buco alla Milanese', description: 'Geschmorte Kalbshaxe nach Mailänder Art, serviert auf safrangelben Risotto mit Gremolata — unser meistbestelltes Gericht seit der Eröffnung.', price: '34,00 €', image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=900&q=80', imageAlt: 'Osso Buco mit Risotto', label: "Chef's Pick", ingredients: ['Kalbshaxe', 'Safranrisotto', 'Gremolata', 'Weißwein', 'Rosmarin'], cta: { label: 'Zur Speisekarte', href: '/speisekarte' } },
-            { name: 'Tagliatelle al Tartufo', description: 'Frische, handgerollte Tagliatelle mit schwarzem Trüffel aus Norcia, Parmigiano Reggiano 36 Monate und einem Hauch Trüffelöl.', price: '24,00 €', image: 'https://images.unsplash.com/photo-1556761223-4c4282c73f77?w=900&q=80', imageAlt: 'Frische Tagliatelle mit Trüffel', label: 'Saisonhighlight', ingredients: ['Frische Tagliatelle', 'Schwarzer Trüffel', 'Parmigiano Reggiano', 'Butter', 'Trüffelöl'], cta: { label: 'Zur Speisekarte', href: '/speisekarte' } },
-            { name: 'Tiramisù della Casa', description: 'Unser legendäres Hausdessert nach dem Originalrezept von Nonna Maria — mit Mascarpone, Espresso und Amaretto, 24 Stunden durchgezogen.', price: '12,00 €', image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=900&q=80', imageAlt: 'Klassisches Tiramisù', label: 'Dolce Vita', ingredients: ['Mascarpone', 'Espresso', 'Löffelbiskuit', 'Amaretto', 'Kakao'], cta: { label: 'Alle Dolci', href: '/speisekarte' } },
+            { name: 'Ossobuco alla Milanese', description: 'Geschmorte Kalbshaxe mit Safranrisotto und Gremolata — unser Signature Dish seit Tag 1.', price: '38 €', image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=900&q=80', label: 'Bestseller', ingredients: ['Kalbshaxe', 'Safranrisotto', 'Gremolata'] },
+            { name: 'Tagliatelle al Tartufo', description: 'Handgemachte Tagliatelle mit frischem schwarzem Trüffel aus dem Piemont, Parmigiano und Trüffelbutter.', price: '32 €', image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=900&q=80', label: 'Saisonal', ingredients: ['Frische Pasta', 'Schwarzer Trüffel', 'Parmigiano'] },
+            { name: 'Branzino al Forno', description: 'Ganzer Wolfsbarsch aus dem Ofen mit Zitronen-Kräuterkruste, Ofenkartoffeln und Grillgemüse.', price: '34 €', image: 'https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=900&q=80', label: 'Fisch', ingredients: ['Wolfsbarsch', 'Kräuterkruste', 'Ofenkartoffeln'] },
           ],
         }},
-        { type: 'reservation', sortOrder: 2, data: {
-          headline: 'Reservieren Sie Ihren Tisch',
-          subline: 'Genießen Sie einen unvergesslichen Abend in der Trattoria Dal Maestro',
-          introText: 'Ob romantisches Dinner zu zweit oder gesellige Runde mit Freunden — wir freuen uns auf Ihren Besuch. Reservieren Sie bequem online oder rufen Sie uns an.',
-          externalBookingCta: { label: 'Jetzt reservieren', href: '/reservierung' },
-          phoneCta: { label: '+43 512 123 456', href: 'tel:+43512123456' },
-          timeHint: 'Wir empfehlen eine Reservierung mindestens 2 Tage im Voraus, besonders für Freitag und Samstag.',
+        { type: 'ambience', sortOrder: 2, data: {
+          headline: 'Unser Ambiente',
+          subline: 'Genuss für alle Sinne',
+          badgeText: 'Seit 1987',
+          imagePrimary: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&q=80',
+          imageSecondary: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80',
+          imageTertiary: 'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=900&q=80',
+          highlights: [
+            { title: 'Dachterrasse mit Alpenblick', text: 'An lauen Abenden genießen Sie auf unserer Dachterrasse mediterranes Flair mit Blick auf die Frauenkirche.', icon: 'sun' },
+            { title: 'Hauseigene Weinbar', text: 'Über 300 Positionen aus allen Regionen Italiens, kuratiert von Sommelier Marco.', icon: 'wine' },
+            { title: 'Offene Show-Küche', text: 'Erleben Sie unseren Küchenchef Giovanni bei der Zubereitung — direkt vor Ihren Augen.', icon: 'flame' },
+          ],
+          ctaPrimary: { label: 'Reservieren', href: '/reservierung' },
+        }},
+        { type: 'events', sortOrder: 3, data: {
+          headline: 'Events & Specials',
+          subline: 'Kulinarische Highlights im Dal Maestro',
+          events: [
+            { title: 'Trüffel-Woche', dateLabel: '15.–21. November 2024', description: 'Eine ganze Woche im Zeichen des weißen Alba-Trüffels. 5-Gänge-Menü mit Weinbegleitung.', image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=900&q=80', priceLabel: '98 € p.P.', cta: { label: 'Reservieren', href: '/reservierung' } },
+            { title: 'Weinprobe Toskana', dateLabel: 'Jeden 1. Donnerstag', description: '6 ausgewählte Weine mit Antipasti-Begleitung. Sommelier Marco führt durch den Abend.', image: 'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=900&q=80', priceLabel: '59 € p.P.', cta: { label: 'Tickets', href: '/reservierung' } },
+            { title: 'Sunday Brunch Italiano', dateLabel: 'Jeden Sonntag', timeLabel: '10:30–14:00', description: 'Brunch-Buffet mit Antipasti, Pasta-Station, Dolci und Prosecco.', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80', priceLabel: '45 € p.P.', cta: { label: 'Reservieren', href: '/reservierung' } },
+          ],
+        }},
+        { type: 'openingHours', sortOrder: 4, data: {
+          headline: 'Öffnungszeiten',
+          subline: 'Wir freuen uns auf Ihren Besuch',
+          kitchenHoursHeadline: 'Küche',
+          kitchenHoursText: 'Warme Küche bis 30 Min. vor Schließung.',
+          holidayNote: 'An Feiertagen gesonderte Zeiten — bitte telefonisch erfragen.',
+          days: [
+            { label: 'Montag–Freitag', hours: '11:30–14:30, 17:30–23:00' },
+            { label: 'Samstag', hours: '17:30–23:30' },
+            { label: 'Sonntag', hours: '11:30–22:00' },
+            { label: 'Dienstag', hours: 'Ruhetag', closed: true },
+          ],
+          ctaPrimary: { label: 'Tisch reservieren', href: '/reservierung' },
         }},
       ],
     },
+    /* ─── Speisekarte ─── */
     {
       slug: 'speisekarte', title: 'Speisekarte', sections: [
         { type: 'hero', sortOrder: 0, data: {
           headline: 'Unsere Speisekarte',
-          subline: 'Frische Zutaten, traditionelle Rezepte, leidenschaftlich zubereitet — von der Vorspeise bis zum Dolce.',
+          subline: 'Frische Pasta, edle Weine, handgemachte Dolci — la dolce vita in München',
           bgImage: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=85',
-          primaryCta: { label: 'Tisch reservieren', href: '/reservierung' },
         }},
         { type: 'menu', sortOrder: 1, data: {
-          headline: 'La Carta',
-          footnote: 'Alle Gerichte werden mit frischen, saisonalen Zutaten zubereitet. Änderungen vorbehalten. Bitte informieren Sie uns über Allergien und Unverträglichkeiten.',
+          headline: 'Speisekarte',
+          subline: 'Saisonal & frisch',
+          badgeText: 'Täglich frisch',
+          footnote: 'Alle Preise inkl. MwSt. Allergene auf Anfrage.',
           categories: [
             {
-              title: 'Antipasti', description: 'Kleine Kostbarkeiten zum Einstimmen',
+              title: 'Antipasti',
+              description: 'Klassische italienische Vorspeisen',
               items: [
-                { name: 'Bruschetta Classica', description: 'Geröstetes Ciabatta mit marinierten San-Marzano-Tomaten, Knoblauch, frischem Basilikum und nativem Olivenöl extra.', price: '12,00 €', image: 'https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=900&q=80', tags: ['vegetarisch'], allergens: ['Gluten'] },
-                { name: 'Carpaccio di Manzo', description: 'Hauchdünn geschnittenes Rinderfilet mit Rucola, Parmigianspänen, Kapern und Zitronendressing.', price: '16,50 €', allergens: ['Milch'] },
-                { name: 'Burrata Pugliese', description: 'Cremige Burrata aus Apulien auf einem Bett von ofengerösteten Kirschtomaten und Basilikum-Pesto.', price: '15,00 €', image: 'https://images.unsplash.com/photo-1626200419199-391ae4be7a41?w=900&q=80', tags: ['vegetarisch'], allergens: ['Milch'] },
-                { name: 'Vitello Tonnato', description: 'Zartes Kalbfleisch in hauchdünnen Scheiben mit cremiger Thunfisch-Kapern-Sauce — ein Klassiker aus dem Piemont.', price: '17,50 €', allergens: ['Fisch', 'Ei'] },
-                { name: 'Cozze alla Marinara', description: 'Frische Miesmuscheln in würziger Tomaten-Weißwein-Sauce mit Knoblauch und Petersilie, serviert mit Focaccia.', price: '16,00 €', allergens: ['Weichtiere', 'Gluten'] },
-                { name: 'Insalata Caprese', description: 'Büffel-Mozzarella mit sonnengereiften Tomaten, frischem Basilikum und erstklassigem Olivenöl aus Ligurien.', price: '13,50 €', tags: ['vegetarisch'], allergens: ['Milch'] },
+                { name: 'Bruschetta Classica', description: 'Geröstetes Ciabatta mit Tomaten, Basilikum und nativem Olivenöl.', price: '9 €', vegetarian: true },
+                { name: 'Carpaccio di Manzo', description: 'Hauchdünnes Rinderfilet mit Rucola, Parmesan und Trüffelöl.', price: '16 €' },
+                { name: 'Burrata con Prosciutto', description: 'Cremige Burrata aus Apulien mit San-Daniele-Schinken und Feigen.', price: '18 €', highlighted: true },
+                { name: 'Vitello Tonnato', description: 'Kalbfleisch mit Thunfischcreme, Kapern und Zitrone.', price: '17 €' },
               ],
             },
             {
-              title: 'Primi Piatti — Pasta & Risotto', description: 'Täglich frisch in unserer offenen Küche zubereitet',
+              title: 'Pasta & Risotto',
+              description: 'Handgemachte Pasta — täglich frisch',
               items: [
-                { name: 'Tagliatelle al Tartufo', description: 'Handgerollte Tagliatelle mit schwarzem Trüffel, Parmigiano Reggiano 36 Monate und einem Hauch Trüffelöl.', price: '24,00 €', image: 'https://images.unsplash.com/photo-1556761223-4c4282c73f77?w=900&q=80', tags: ['vegetarisch'], allergens: ['Gluten', 'Milch', 'Ei'] },
-                { name: 'Risotto ai Funghi Porcini', description: 'Carnaroli-Risotto mit frischen Steinpilzen, Thymian und einem großzügigen Stück Butter zum Abschluss.', price: '21,00 €', tags: ['vegetarisch'], allergens: ['Milch'] },
-                { name: 'Spaghetti alle Vongole', description: 'Spaghetti mit frischen Venusmuscheln, Knoblauch, Chili, Petersilie und einem Schuss Vermentino.', price: '22,00 €', image: 'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=900&q=80', allergens: ['Gluten', 'Weichtiere'] },
-                { name: 'Ravioli di Spinaci e Ricotta', description: 'Hausgemachte Ravioli gefüllt mit Spinat und Ricotta in zerlassener Salbeibutter mit Pinienkernen.', price: '19,00 €', tags: ['vegetarisch'], allergens: ['Gluten', 'Milch', 'Ei', 'Nüsse'] },
-                { name: "Penne all'Arrabbiata", description: 'Penne in feuriger Tomatensauce mit Knoblauch, Peperoncino und frischer Petersilie — für alle, die es schärfer mögen.', price: '16,00 €', tags: ['vegetarisch', 'scharf', 'vegan'], allergens: ['Gluten'] },
-                { name: 'Gnocchi al Gorgonzola', description: 'Kartoffelgnocchi in samtiger Gorgonzola-Sahne-Sauce mit gerösteten Walnüssen und frischem Schnittlauch.', price: '18,50 €', tags: ['vegetarisch'], allergens: ['Gluten', 'Milch', 'Nüsse'] },
+                { name: 'Tagliatelle al Tartufo', description: 'Frische Tagliatelle mit schwarzem Trüffel und Parmigiano.', price: '32 €', highlighted: true },
+                { name: 'Spaghetti alle Vongole', description: 'Venusmuscheln, Weißwein, Knoblauch, Petersilie.', price: '24 €' },
+                { name: 'Risotto ai Funghi Porcini', description: 'Carnaroli-Risotto mit Steinpilzen und Thymian.', price: '26 €', vegetarian: true },
+                { name: 'Pappardelle al Ragù', description: 'Breite Bandnudeln mit langsam geschmortem Ragù vom Chianina-Rind.', price: '22 €' },
+                { name: 'Gnocchi alla Sorrentina', description: 'Kartoffelgnocchi mit Tomaten-Mozzarella-Gratin.', price: '19 €', vegetarian: true },
               ],
             },
             {
-              title: 'Secondi — Hauptgerichte', description: 'Fleisch & Fisch aus nachhaltiger Herkunft',
+              title: 'Secondi — Fleisch & Fisch',
+              description: 'Hauptgerichte aus erstklassigen Zutaten',
               items: [
-                { name: 'Osso Buco alla Milanese', description: 'Langsam geschmorte Kalbshaxe auf Safranrisotto mit Gremolata — unser Signature-Gericht seit 1998.', price: '34,00 €', image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=900&q=80', allergens: ['Milch'] },
-                { name: 'Saltimbocca alla Romana', description: 'Zartes Kalbsschnitzel mit luftgetrocknetem Prosciutto und Salbei, abgelöscht mit Marsala, dazu Blattspinat.', price: '29,00 €', allergens: ['Milch'] },
-                { name: 'Branzino al Forno', description: 'Ganzer Wolfsbarsch im Ofen gegart mit Kirschtomaten, Oliven, Kapern und frischen Kräutern.', price: '32,00 €', image: 'https://images.unsplash.com/photo-1534604973900-c43ab4c2e0ab?w=900&q=80', allergens: ['Fisch'] },
-                { name: 'Tagliata di Manzo', description: 'Gegrilltes Rinderrückensteak, aufgeschnitten auf Rucola-Bett mit Parmesan, Balsamico-Reduktion und Rosmarin-Kartoffeln.', price: '38,00 €', allergens: ['Milch'] },
-                { name: 'Scaloppine al Limone', description: 'Dünne Kalbsschnitzel in frischer Zitronen-Butter-Sauce mit Kapern, dazu saisonales Gemüse.', price: '28,00 €', allergens: ['Milch'] },
+                { name: 'Ossobuco alla Milanese', description: 'Geschmorte Kalbshaxe mit Safranrisotto.', price: '38 €', highlighted: true },
+                { name: 'Branzino al Forno', description: 'Ganzer Wolfsbarsch mit Zitronen-Kräuterkruste.', price: '34 €' },
+                { name: 'Tagliata di Manzo', description: 'Rosa gebratenes Rumpsteak mit Rucola und Parmesan.', price: '36 €' },
+                { name: 'Saltimbocca alla Romana', description: 'Kalbsschnitzel mit Salbei und Parmaschinken.', price: '29 €' },
               ],
             },
             {
-              title: 'Dolci', description: 'Süße Verführungen zum perfekten Abschluss',
+              title: 'Dolci',
+              description: 'Hausgemachte Desserts',
               items: [
-                { name: 'Tiramisù della Casa', description: 'Unser legendäres Hausdessert nach Nonna Marias Rezept — Mascarpone, Espresso, Amaretto, 24 Stunden durchgezogen.', price: '12,00 €', image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=900&q=80', allergens: ['Milch', 'Ei', 'Gluten'] },
-                { name: 'Panna Cotta ai Frutti di Bosco', description: 'Vanille-Panna-Cotta mit hausgemachtem Waldbeeren-Coulis und frischer Minze.', price: '10,00 €', tags: ['vegetarisch'], allergens: ['Milch'] },
-                { name: 'Affogato al Caffè', description: 'Cremiges Fior-di-Latte-Gelato, übergossen mit einem doppelten Espresso und optional einem Schuss Amaretto.', price: '9,50 €', tags: ['vegetarisch'], allergens: ['Milch'] },
-                { name: 'Cannoli Siciliani', description: 'Knusprige Teigröllchen gefüllt mit süßer Ricotta-Creme, kandierten Früchten und Pistazien aus Bronte.', price: '13,00 €', image: 'https://images.unsplash.com/photo-1611293388250-580b08c4a145?w=900&q=80', allergens: ['Gluten', 'Milch', 'Nüsse'] },
+                { name: 'Tiramisù della Casa', description: 'Unser Geheimrezept seit 1987 — mit Mascarpone und Amaretto.', price: '12 €', highlighted: true },
+                { name: 'Panna Cotta', description: 'Vanille-Panna-Cotta mit Waldbeerenspiegel.', price: '10 €', vegetarian: true },
+                { name: 'Affogato al Caffè', description: 'Vanilleeis mit frischem Espresso und Amaretti.', price: '9 €' },
               ],
             },
-          ],
-        }},
-      ],
-    },
-    {
-      slug: 'ambiente', title: 'Ambiente & Räume', sections: [
-        { type: 'hero', sortOrder: 0, data: {
-          headline: 'Ambiente & Räume',
-          subline: 'Wo Geschichte auf Genuss trifft — unser Restaurant in der Innsbrucker Altstadt',
-          bgImage: 'https://images.unsplash.com/photo-1550966871-3ed3cdb51f3a?w=1800&q=85',
-        }},
-        { type: 'ambience', sortOrder: 1, data: {
-          headline: 'Unsere Räumlichkeiten',
-          subline: 'Drei einzigartige Bereiche für unvergessliche Momente',
-          imagePrimary: 'https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=900&q=80',
-          imageSecondary: 'https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=900&q=80',
-          imageTertiary: 'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=900&q=80',
-          highlights: [
-            { title: 'Gewölbekeller aus dem 15. Jahrhundert', text: 'Originale Steinbögen und historisches Ambiente verleihen jedem Besuch einen besonderen Rahmen. Platz für bis zu 40 Gäste.', icon: 'castle' },
-            { title: 'Sonnenterrasse mit Alpenblick', text: 'Genießen Sie von Mai bis September die warme Jahreszeit mit Blick auf die Innsbrucker Nordkette. 24 Sitzplätze.', icon: 'sun' },
-            { title: 'Private Dining für bis zu 12 Personen', text: 'Unser Weinkeller bietet den perfekten Rahmen für Geburtstage, Jubiläen oder Geschäftsessen in exklusiver Atmosphäre.', icon: 'wine' },
           ],
           ctaPrimary: { label: 'Tisch reservieren', href: '/reservierung' },
         }},
       ],
     },
+    /* ─── Über uns ─── */
     {
-      slug: 'events', title: 'Events & Catering', sections: [
+      slug: 'ueber-uns', title: 'Über uns', sections: [
         { type: 'hero', sortOrder: 0, data: {
-          headline: 'Events & Catering',
-          subline: 'Gemeinsam feiern, genießen und die italienische Küche erleben — bei uns oder bei Ihnen',
-          bgImage: 'https://images.unsplash.com/photo-1530062845289-9109b2c9c868?w=1800&q=85',
-          primaryCta: { label: 'Event anfragen', href: '/reservierung' },
+          headline: 'Über uns',
+          subline: 'Die Geschichte der Trattoria Dal Maestro — eine Familientradition seit 1987',
+          bgImage: 'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=1800&q=85',
+        }},
+        { type: 'ambience', sortOrder: 1, data: {
+          headline: 'Unsere Geschichte',
+          subline: 'Von Neapel nach München',
+          imagePrimary: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&q=80',
+          imageSecondary: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80',
+          highlights: [
+            { title: '1987 — Der Anfang', text: 'Giovanni Maestro eröffnet mit seiner Frau Maria die erste Trattoria in der Maximilianstraße.', icon: 'clock' },
+            { title: 'Familientradition', text: 'Heute führt Sohn Marco die Weinbar, Tochter Lucia leitet den Service. Giovannis Rezepte leben weiter.', icon: 'heart' },
+            { title: 'Regionale Lieferanten', text: 'Wir beziehen Olivenöl, Käse und Wurst direkt von Familienbetrieben in Kampanien und der Toskana.', icon: 'truck' },
+          ],
+          ctaPrimary: { label: 'Speisekarte ansehen', href: '/speisekarte' },
+        }},
+        { type: 'richText', sortOrder: 2, data: {
+          headline: 'Unsere Philosophie',
+          content: '<p>In der Trattoria Dal Maestro glauben wir an einfache, ehrliche Küche. Frische Zutaten, traditionelle Rezepte und die Leidenschaft für gutes Essen — das ist unser Geheimnis seit über 35 Jahren.</p><p>Unser Küchenchef Giovanni verwendet nur saisonale Produkte und bereitet jeden Tag frische Pasta von Hand zu. Die Weine werden von Sommelier Marco persönlich in Italien ausgewählt.</p>',
+        }},
+      ],
+    },
+    /* ─── Events ─── */
+    {
+      slug: 'events', title: 'Events', sections: [
+        { type: 'hero', sortOrder: 0, data: {
+          headline: 'Events & Specials',
+          subline: 'Kulinarische Erlebnisse und private Feiern',
+          bgImage: 'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=1800&q=85',
         }},
         { type: 'events', sortOrder: 1, data: {
-          headline: 'Unsere Veranstaltungen',
-          subline: 'Regelmäßige Events und individuelle Angebote für jeden Anlass',
+          headline: 'Kommende Events',
+          subline: 'Reservieren Sie Ihren Platz',
           events: [
-            { title: 'Wein & Pasta Abend', dateLabel: 'Jeden letzten Freitag im Monat', timeLabel: '19:00 — 22:30 Uhr', description: 'Vier Gänge, vier Weine: Unser Sommelier Andrea führt Sie durch eine Reise von Südtirol bis Sizilien. Jeder Gang wird von Küchenchef Marco live erklärt und mit dem perfekten Wein begleitet. Inkl. Aperitivo, Wasser und Kaffee.', image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=900&q=80', imageAlt: 'Weingläser und Pasta auf festlich gedecktem Tisch', priceLabel: '49,00 € pro Person', cta: { label: 'Platz reservieren', href: '/reservierung' } },
-            { title: 'Kochkurs: Frische Pasta', dateLabel: 'Jeden 2. und 4. Samstag im Monat', timeLabel: '10:00 — 14:00 Uhr', description: 'Lernen Sie von Küchenchef Marco die Kunst der frischen Pasta: Tagliatelle, Ravioli und Gnocchi — von Hand gemacht, mit Liebe und den besten Zutaten. Inkl. gemeinsames Mittagessen mit Wein und Rezeptmappe.', image: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=900&q=80', imageAlt: 'Hände formen frische Pasta', priceLabel: '89,00 € pro Person', cta: { label: 'Kurs buchen', href: '/reservierung' } },
-            { title: 'Firmen-Events & Private Dining', dateLabel: 'Auf Anfrage', timeLabel: 'Individuell planbar', description: 'Ob Teambuilding, Kundenevent oder private Feier — wir gestalten Ihr Event nach Ihren Wünschen. Exklusiver Weinkeller für bis zu 12 Personen, Hauptsaal für Gruppen bis 60 Personen. Individuelle Menüzusammenstellung.', image: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=900&q=80', imageAlt: 'Elegantes Private Dining', priceLabel: 'Auf Anfrage', cta: { label: 'Anfrage senden', href: '/reservierung' } },
+            { title: 'Trüffel-Woche', dateLabel: '15.–21.11.2024', description: '5-Gänge-Degustationsmenü mit weißem Alba-Trüffel.', priceLabel: '98 € p.P.', image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=900&q=80', cta: { label: 'Reservieren', href: '/reservierung' } },
+            { title: 'Weinprobe Toskana', dateLabel: 'Jeden 1. Do. im Monat', timeLabel: '19:00–22:00', description: '6 Weine mit Antipasti. Sommelier Marco führt.', priceLabel: '59 € p.P.', image: 'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=900&q=80', cta: { label: 'Anmelden', href: '/reservierung' } },
+            { title: 'Sunday Brunch Italiano', dateLabel: 'Jeden Sonntag', timeLabel: '10:30–14:00', description: 'Brunch-Buffet mit Antipasti, Pasta-Station, Dolci und Prosecco.', priceLabel: '45 € p.P.', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80', cta: { label: 'Reservieren', href: '/reservierung' } },
+            { title: 'Private Dinner', dateLabel: 'Nach Vereinbarung', description: 'Exklusives Menü für geschlossene Gesellschaften bis 24 Personen.', priceLabel: 'Auf Anfrage', image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&q=80', cta: { label: 'Anfrage senden', href: '/reservierung' } },
           ],
         }},
       ],
     },
+    /* ─── Reservierung ─── */
     {
       slug: 'reservierung', title: 'Reservierung', sections: [
         { type: 'hero', sortOrder: 0, data: {
-          headline: 'Reservierung',
-          subline: 'Sichern Sie sich Ihren Lieblingstisch in der Trattoria Dal Maestro',
-          bgImage: 'https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=1800&q=85',
-          primaryCta: { label: 'Jetzt reservieren', href: '#reservation-form' },
-        }},
-        { type: 'openingHours', sortOrder: 1, data: {
-          headline: 'Unsere Öffnungszeiten',
-          days: [
-            { label: 'Dienstag — Samstag', hours: '11:30 — 14:30 Uhr & 17:30 — 23:00 Uhr' },
-            { label: 'Sonntag', hours: '11:30 — 22:00 Uhr' },
-            { label: 'Montag', hours: '', closed: true, note: 'Ruhetag' },
-          ],
-          kitchenHoursHeadline: 'Küchenzeiten',
-          kitchenHoursText: 'Warme Küche bis 30 Minuten vor Restaurantschluss.',
-          holidayNote: 'An Feiertagen nach gesonderter Ankündigung auf unserer Website und Social Media.',
-          ctaPrimary: { label: 'Tisch reservieren', href: '/reservierung' },
-        }},
-        { type: 'reservation', sortOrder: 2, data: {
           headline: 'Tisch reservieren',
-          introText: 'Füllen Sie einfach das Formular aus und wir bestätigen Ihre Reservierung innerhalb von 2 Stunden per E-Mail. Für kurzfristige Anfragen empfehlen wir einen Anruf.',
-          partySizeOptions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-          phoneCta: { label: 'Telefonisch: +43 512 123 456', href: 'tel:+43512123456' },
-          timeHint: 'Bitte beachten Sie: Reservierungen für Freitag und Samstag ab 19 Uhr sind besonders beliebt. Wir empfehlen eine Buchung mindestens 3 Tage im Voraus.',
-          policyText: 'Bitte informieren Sie uns mindestens 24 Stunden im Voraus, falls Sie Ihre Reservierung stornieren oder ändern möchten. Bei Nichterscheinen kann eine Gebühr von 25,00 € pro Person anfallen.',
-          externalBookingCta: { label: 'Oder buchen Sie über OpenTable', href: '/reservierung' },
+          subline: 'Sichern Sie sich Ihren Platz in der Trattoria Dal Maestro',
+          bgImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1800&q=85',
+        }},
+        { type: 'reservation', sortOrder: 1, data: {
+          headline: 'Reservierung',
+          subline: 'Online oder telefonisch',
+          introText: 'Reservieren Sie bequem online oder rufen Sie uns an. Für Gruppen ab 8 Personen bitten wir um telefonische Reservierung.',
+          formEnabled: true,
           submitLabel: 'Reservierung absenden',
+          partySizeOptions: ['1 Person', '2 Personen', '3 Personen', '4 Personen', '5 Personen', '6 Personen', '7+ Personen'],
+          timeHint: 'Reservierungen von Di–So möglich. Montag Ruhetag.',
+          policyText: 'Bei Nichterscheinen ohne Absage behalten wir uns eine No-Show-Gebühr von 25 € p.P. vor.',
+          image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&q=80',
+          phoneCta: { label: 'Anrufen: +49 89 123 456 78', href: 'tel:+498912345678' },
+        }},
+        { type: 'openingHours', sortOrder: 2, data: {
+          headline: 'Öffnungszeiten',
+          subline: 'Wann Sie uns besuchen können',
+          kitchenHoursHeadline: 'Küche',
+          kitchenHoursText: 'Warme Küche bis 30 Min. vor Schließung.',
+          holidayNote: 'An Feiertagen gesonderte Zeiten — bitte telefonisch erfragen.',
+          days: [
+            { label: 'Montag', hours: 'Ruhetag', closed: true },
+            { label: 'Dienstag–Freitag', hours: '11:30–14:30, 17:30–23:00' },
+            { label: 'Samstag', hours: '17:30–23:30' },
+            { label: 'Sonntag', hours: '11:30–22:00' },
+          ],
+          ctaPrimary: { label: 'Jetzt reservieren', href: '/reservierung' },
         }},
       ],
     },
