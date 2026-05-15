@@ -3,15 +3,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const DEMO_BASE = 'https://flamingo-renderer.vercel.app';
-
 const DEMO_LINKS: Record<string, string> = {
-  tradesman: `${DEMO_BASE}/demo/handwerk`,
-  restaurant: `${DEMO_BASE}/demo/restaurant`,
-  salon: `${DEMO_BASE}/demo/salon`,
-  hotel: `${DEMO_BASE}/demo/hotel`,
-  tourism: `${DEMO_BASE}/demo/tourism`,
-  medical: `${DEMO_BASE}/demo/medical`,
+  tradesman: '/demo/handwerk',
+  restaurant: '/demo/restaurant',
+  salon: '/demo/salon',
+  hotel: '/demo/hotel',
+  tourism: '/demo/tourism',
+  medical: '/demo/medical',
 };
 
 const TEMPLATES = [
@@ -208,7 +206,7 @@ export function TemplateGallery() {
                 {/* CTA */}
                 {template.status === 'live' ? (
                   <a
-                    href={DEMO_LINKS[template.key] || `${DEMO_BASE}/demo/${template.key}`}
+                    href={DEMO_LINKS[template.key] || `/demo/${template.key}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent-color)] hover:underline"

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Monitor, Tablet, Smartphone, ExternalLink } from 'lucide-react';
 
-const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://flamingo-renderer.vercel.app';
+const ADMIN_URL = '';
 
 export default function DemoPlayground() {
   const [viewport, setViewport] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
