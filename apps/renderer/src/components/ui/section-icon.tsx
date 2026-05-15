@@ -6,6 +6,13 @@ import {
   CheckCircle, Handshake, Shield, Phone, Star, Clock,
   Heart, Home, Users, Building2, Thermometer, Droplets,
   Settings, Award, MapPin, Mail, Calendar, FileText,
+  ShieldCheck, Banknote, Bath, Wifi, Waves, UtensilsCrossed,
+  Bus, BatteryCharging, Castle, Sun, Wine, Stethoscope,
+  Syringe, Brain, Plane, FlaskConical, BookOpen, Monitor,
+  PhoneCall, Activity, Dumbbell, MessageCircle, ClipboardCheck,
+  Hammer, Scissors, Sparkles, GraduationCap, Eye, Camera,
+  Mountain, Bike, Compass, Tent, Download, Landmark,
+  Palette, Gift, CreditCard, Armchair, Coffee,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -46,10 +53,64 @@ const ICON_MAP: Record<string, LucideIcon> = {
   building: Building2, firma: Building2,
   thermometer: Thermometer, temperatur: Thermometer,
   droplets: Droplets, wasser: Droplets, water: Droplets,
-  mappin: MapPin, standort: MapPin, location: MapPin,
+  mappin: MapPin, standort: MapPin, location: MapPin, 'map-pin': MapPin,
   mail: Mail, email: Mail,
   calendar: Calendar, termin: Calendar,
   file: FileText, dokument: FileText,
+
+  // Extended — Hotel
+  wifi: Wifi,
+  spa: Waves, wellness: Waves,
+  restaurant: UtensilsCrossed, utensils: UtensilsCrossed,
+  shuttle: Bus, bus: Bus,
+  charging: BatteryCharging,
+  castle: Castle,
+  armchair: Armchair, lounge: Armchair,
+  coffee: Coffee,
+  'credit-card': CreditCard,
+
+  // Extended — Restaurant
+  sun: Sun,
+  wine: Wine,
+
+  // Extended — Medical
+  stethoscope: Stethoscope,
+  syringe: Syringe,
+  brain: Brain,
+  plane: Plane,
+  flask: FlaskConical,
+  'book-open': BookOpen,
+  monitor: Monitor,
+  'phone-callback': PhoneCall, 'phone-call': PhoneCall,
+  activity: Activity,
+  dumbbell: Dumbbell, fitness: Dumbbell,
+  'graduation-cap': GraduationCap,
+  eye: Eye,
+
+  // Extended — Salon
+  scissors: Scissors,
+  sparkles: Sparkles,
+  message: MessageCircle,
+  palette: Palette,
+  gift: Gift,
+
+  // Extended — Tourism
+  mountain: Mountain,
+  bike: Bike,
+  compass: Compass,
+  tent: Tent,
+  download: Download,
+  landmark: Landmark,
+  camera: Camera,
+
+  // Extended — Handwerk
+  'shield-check': ShieldCheck,
+  banknote: Banknote,
+  bath: Bath,
+  'alert-triangle': AlertTriangle,
+  'message-circle': MessageCircle,
+  'clipboard-check': ClipboardCheck,
+  hammer: Hammer,
 };
 
 export function SectionIcon({
