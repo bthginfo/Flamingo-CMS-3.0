@@ -66,9 +66,11 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
             )}
           </div>
 
-          {/* Link columns */}
+          {/* Link columns – skip "Kontakt" column when contact info is already shown in the brand block */}
           <div className="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-10">
-            {footer.columns.map((col, i) => (
+            {footer.columns
+              .filter((col) => !(contact && col.title?.toLowerCase() === 'kontakt'))
+              .map((col, i) => (
               <div key={i}>
                 <h4 className="font-display font-semibold text-sm uppercase tracking-wider text-white/70 mb-5">{col.title}</h4>
                 <ul className="space-y-3">
