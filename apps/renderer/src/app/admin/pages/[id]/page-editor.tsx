@@ -9,8 +9,9 @@ import { CSS } from '@dnd-kit/utilities';
 import { updatePageAction, addSectionAction, deleteSectionAction, updateSectionAction, updateSectionMetaAction, reorderSectionsAction } from '../actions';
 import { publishAction } from '../../actions/publish';
 import { toast } from 'sonner';
-import { SectionDataEditor } from './section-data-editor';
+import { IndustrySectionDataEditor } from './industry-section-editor';
 import { PageSeoPanel } from './page-seo-panel';
+import { getSectionTypesForIndustry, type SectionTypeDefinition } from './section-types';
 
 const SECTION_TYPES: { type: string; label: string; description: string }[] = [
   { type: 'hero', label: 'Hero', description: 'Hauptbanner der Seite' },
@@ -60,8 +61,10 @@ type Page = {
   type: string;
 };
 
-function SortableSection({ section, onDelete, onToggleVisible, onChangeData, onSaveMeta }: {
+function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVisible, onChangeData, onSaveMeta }: {
   section: Section;
+  industry: string;
+  sectionTypes: SectionTypeDefinition[];
   onDelete: () => void;
   onToggleVisible: () => void;
   onChangeData: (data: Record<string, unknown>) => void;
@@ -70,7 +73,7 @@ function SortableSection({ section, onDelete, onToggleVisible, onChangeData, onS
   const [expanded, setExpanded] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
-  const typeInfo = SECTION_TYPES.find(t => t.type === section.type);
+  const typeInfo = sectionTypes.find(t => t.type === section.type);
 
   return (
     <div ref={setNodeRef} style={style} className={`admin-card mb-3 p-0 overflow-hidden ${expanded ? 'ring-2 ring-blue-500/20 border-blue-300' : ''}`}>
@@ -95,7 +98,7 @@ function SortableSection({ section, onDelete, onToggleVisible, onChangeData, onS
       </div>
       {expanded && (
         <div className="p-4">
-          <SectionDataEditor type={section.type} data={section.data} onChange={onChangeData} />
+          <IndustrySectionDataEditor industry={industry} type={section.type} data={section.data} onChange={onChangeData} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
             <SectionMetaEditor section={section} onSave={onSaveMeta} />
@@ -158,9 +161,10 @@ function SectionMetaEditor({ section, onSave }: { section: Section; onSave: (met
   );
 }
 
-export function PageEditor({ page: initialPage, sections: initialSections }: { page: Page; sections: Section[] }) {
+export function PageEditor({ page: initialPage, sections: initialSections, industry }: { page: Page; sections: Section[]; industry: string }) {
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
+  const sectionTypes = getSectionTypesForIndustry(industry);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -305,6 +309,8 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
             <SortableSection
               key={section.id}
               section={section}
+              industry={industry}
+              sectionTypes={sectionTypes}
               onDelete={() => handleDeleteSection(section.id)}
               onToggleVisible={() => handleToggleVisible(section.id)}
               onChangeData={(data) => handleSectionChange(section.id, data)}
@@ -327,7 +333,7 @@ export function PageEditor({ page: initialPage, sections: initialSections }: { p
         </button>
         {showAddMenu && (
           <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border rounded-lg shadow-lg max-h-80 overflow-auto z-10">
-            {SECTION_TYPES.map((st) => (
+            {sectionTypes.map((st) => (
               <button key={st.type} onClick={() => handleAddSection(st.type)} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b last:border-b-0">
                 <span className="font-medium text-sm">{st.label}</span>
                 <span className="text-xs text-gray-500 ml-2">{st.description}</span>

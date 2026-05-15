@@ -1,0 +1,351 @@
+'use client';
+
+import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react';
+import { ImageUploadField } from '@/components/image-upload-field';
+import { ButtonField, DetailLinkField } from '@/components/button-field';
+import { IconPickerField } from '@/components/icon-picker-field';
+
+type ButtonValue = { label: string; href: string };
+type EditorProps = { data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void };
+
+function useReport(data: Record<string, unknown>, onChange: (d: Record<string, unknown>) => void) {
+  const isFirst = useRef(true);
+  const serialized = JSON.stringify(data);
+  useEffect(() => {
+    if (isFirst.current) { isFirst.current = false; return; }
+    onChange(JSON.parse(serialized));
+  }, [serialized, onChange]);
+}
+
+export function HotelSectionDataEditor({ type, data, onChange }: { type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void }) {
+  const Editor = HOTEL_EDITORS[type];
+  return Editor ? <Editor data={data} onChange={onChange} /> : null;
+}
+
+export function hasHotelEditor(type: string): boolean {
+  return Boolean(HOTEL_EDITORS[type]);
+}
+
+function HotelHeroEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    badgeText: (data.badgeText as string) || '',
+    bgImage: (data.bgImage as string) || '',
+    trustItems: ((data.trustItems as string[]) || []).join('\n'),
+    primaryCta: (data.primaryCta as ButtonValue) || { label: '', href: '' },
+    secondaryCta: (data.secondaryCta as ButtonValue) || { label: '', href: '' },
+    availabilityHint: (data.availabilityHint as string) || '',
+    ratingText: (data.ratingText as string) || '',
+  });
+  useReport({ ...d, trustItems: lines(d.trustItems) }, onChange);
+  return (
+    <div className="space-y-3">
+      <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
+      <Field label="Trust-Items (eine pro Zeile)" value={d.trustItems} onChange={(v) => setD({ ...d, trustItems: v })} multiline />
+      <ButtonField label="Primaerer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
+      <ButtonField label="Sekundaerer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
+      <Field label="Verfuegbarkeits-Hinweis" value={d.availabilityHint} onChange={(v) => setD({ ...d, availabilityHint: v })} />
+      <Field label="Rating-Text" value={d.ratingText} onChange={(v) => setD({ ...d, ratingText: v })} />
+    </div>
+  );
+}
+
+function BookingStripEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    badgeText: (data.badgeText as string) || '',
+    arrivalLabel: (data.arrivalLabel as string) || '',
+    departureLabel: (data.departureLabel as string) || '',
+    guestsLabel: (data.guestsLabel as string) || '',
+    roomLabel: (data.roomLabel as string) || '',
+    submitCta: (data.submitCta as ButtonValue) || { label: '', href: '' },
+    secondaryCta: (data.secondaryCta as ButtonValue) || { label: '', href: '' },
+    bookingNote: (data.bookingNote as string) || '',
+    fields: ((data.fields as Record<string, unknown>[]) || []).map(fieldFromData),
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Basics d={d} setD={setD} />
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Anreise Label" value={d.arrivalLabel} onChange={(v) => setD({ ...d, arrivalLabel: v })} />
+        <Field label="Abreise Label" value={d.departureLabel} onChange={(v) => setD({ ...d, departureLabel: v })} />
+        <Field label="Gaeste Label" value={d.guestsLabel} onChange={(v) => setD({ ...d, guestsLabel: v })} />
+        <Field label="Zimmer Label" value={d.roomLabel} onChange={(v) => setD({ ...d, roomLabel: v })} />
+      </div>
+      <ButtonField label="Submit CTA" value={d.submitCta} onChange={(v) => setD({ ...d, submitCta: v })} />
+      <ButtonField label="Sekundaerer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
+      <Field label="Buchungs-Hinweis" value={d.bookingNote} onChange={(v) => setD({ ...d, bookingNote: v })} multiline />
+      <Repeater items={d.fields} addLabel="+ Feld" onAdd={() => setD({ ...d, fields: [...d.fields, fieldFromData({})] })} render={(field, index) => (
+        <div className="grid grid-cols-3 gap-3">
+          <Field label="Label" value={field.label} onChange={(v) => setD({ ...d, fields: updateAt(d.fields, index, { ...field, label: v }) })} />
+          <Field label="Wert" value={field.value} onChange={(v) => setD({ ...d, fields: updateAt(d.fields, index, { ...field, value: v }) })} />
+          <Field label="Typ" value={field.type} onChange={(v) => setD({ ...d, fields: updateAt(d.fields, index, { ...field, type: v }) })} />
+        </div>
+      )} />
+    </div>
+  );
+}
+
+function RoomShowcaseEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    badgeText: (data.badgeText as string) || '',
+    rooms: ((data.rooms as Record<string, unknown>[]) || []).map(roomFromData),
+    footerText: (data.footerText as string) || '',
+  });
+  useReport({ ...d, rooms: d.rooms.map((room) => ({ ...room, galleryImages: lines(room.galleryImages), features: lines(room.features) })) }, onChange);
+  return (
+    <div className="space-y-3">
+      <Basics d={d} setD={setD} />
+      <Repeater items={d.rooms} addLabel="+ Zimmer" onAdd={() => setD({ ...d, rooms: [...d.rooms, roomFromData({})] })} render={(room, index) => (
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3"><Field label="Name" value={room.name} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, name: v }) })} /><Field label="Preis" value={room.priceLabel} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, priceLabel: v }) })} /></div>
+          <Field label="Beschreibung" value={room.description} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, description: v }) })} multiline />
+          <ImageUploadField label="Bild" value={room.image} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, image: v }) })} />
+          <Field label="Galerie-Bilder (URLs, eine pro Zeile)" value={room.galleryImages} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, galleryImages: v }) })} multiline />
+          <div className="grid grid-cols-3 gap-3"><Field label="Groesse" value={room.sizeLabel} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, sizeLabel: v }) })} /><Field label="Belegung" value={room.occupancyLabel} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, occupancyLabel: v }) })} /><Field label="Bett" value={room.bedLabel} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, bedLabel: v }) })} /></div>
+          <Field label="Features (eine pro Zeile)" value={room.features} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, features: v }) })} multiline />
+          <ButtonField label="Detail CTA" value={room.detailCta} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, detailCta: v }) })} />
+          <ButtonField label="Buchungs CTA" value={room.bookingCta} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, bookingCta: v }) })} />
+          <Checkbox label="Highlight" checked={room.highlighted} onChange={(v) => setD({ ...d, rooms: updateAt(d.rooms, index, { ...room, highlighted: v }) })} />
+        </div>
+      )} />
+      <Field label="Footer-Text" value={d.footerText} onChange={(v) => setD({ ...d, footerText: v })} multiline />
+    </div>
+  );
+}
+
+function OffersEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({ headline: (data.headline as string) || '', subline: (data.subline as string) || '', badgeText: (data.badgeText as string) || '', offers: ((data.offers as Record<string, unknown>[]) || []).map(offerFromData), fallbackText: (data.fallbackText as string) || '' });
+  useReport({ ...d, offers: d.offers.map((offer) => ({ ...offer, includes: lines(offer.includes) })) }, onChange);
+  return (
+    <div className="space-y-3">
+      <Basics d={d} setD={setD} />
+      <Repeater items={d.offers} addLabel="+ Angebot" onAdd={() => setD({ ...d, offers: [...d.offers, offerFromData({})] })} render={(offer, index) => (
+        <div className="space-y-3">
+          <Field label="Titel" value={offer.title} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, title: v }) })} />
+          <Field label="Beschreibung" value={offer.description} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, description: v }) })} multiline />
+          <ImageUploadField label="Bild" value={offer.image} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, image: v }) })} />
+          <div className="grid grid-cols-3 gap-3"><Field label="Preis" value={offer.priceLabel} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, priceLabel: v }) })} /><Field label="Dauer" value={offer.durationLabel} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, durationLabel: v }) })} /><Field label="Gueltig bis" value={offer.validUntilLabel} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, validUntilLabel: v }) })} /></div>
+          <Field label="Inklusive (eine pro Zeile)" value={offer.includes} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, includes: v }) })} multiline />
+          <ButtonField label="CTA" value={offer.cta} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, cta: v }) })} />
+          <Field label="Detail-Link Label" value={offer.detailLabel} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, detailLabel: v }) })} />
+          <DetailLinkField label="Detail-Link" value={offer.detailHref} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, detailHref: v }) })} />
+          <Checkbox label="Highlight" checked={offer.highlighted} onChange={(v) => setD({ ...d, offers: updateAt(d.offers, index, { ...offer, highlighted: v }) })} />
+        </div>
+      )} />
+      <Field label="Fallback-Text" value={d.fallbackText} onChange={(v) => setD({ ...d, fallbackText: v })} multiline />
+    </div>
+  );
+}
+
+function AmenitiesEditor({ data, onChange }: EditorProps) {
+  return ListWithCtaEditor({
+    data,
+    onChange,
+    itemKey: 'items',
+    addLabel: '+ Ausstattung',
+    itemFactory: amenityFromData,
+    renderItem: ({ item, index, d, setD }) => (
+      <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-3"><Field label="Titel" value={item.title} onChange={(v) => setD({ ...d, items: updateAt(d.items, index, { ...item, title: v }) })} /><IconPickerField label="Icon" value={item.icon} onChange={(v) => setD({ ...d, items: updateAt(d.items, index, { ...item, icon: v }) })} /></div>
+        <Field label="Text" value={item.text} onChange={(v) => setD({ ...d, items: updateAt(d.items, index, { ...item, text: v }) })} multiline />
+        <Field label="Medientyp" value={item.mediaType} onChange={(v) => setD({ ...d, items: updateAt(d.items, index, { ...item, mediaType: v }) })} />
+        <ImageUploadField label="Bild" value={item.image} onChange={(v) => setD({ ...d, items: updateAt(d.items, index, { ...item, image: v }) })} />
+      </div>
+    ),
+  });
+}
+
+function WellnessEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({ headline: (data.headline as string) || '', subline: (data.subline as string) || '', badgeText: (data.badgeText as string) || '', introText: (data.introText as string) || '', imagePrimary: (data.imagePrimary as string) || '', imageSecondary: (data.imageSecondary as string) || '', treatments: ((data.treatments as Record<string, unknown>[]) || []).map(treatmentFromData), features: ((data.features as Record<string, unknown>[]) || []).map(featureFromData), ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' } });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Basics d={d} setD={setD} />
+      <Field label="Intro-Text" value={d.introText} onChange={(v) => setD({ ...d, introText: v })} multiline />
+      <ImageUploadField label="Hauptbild" value={d.imagePrimary} onChange={(v) => setD({ ...d, imagePrimary: v })} />
+      <ImageUploadField label="Zweitbild" value={d.imageSecondary} onChange={(v) => setD({ ...d, imageSecondary: v })} />
+      <TreatmentRepeater d={d} setD={setD} />
+      <FeatureRepeater d={d} setD={setD} />
+      <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+    </div>
+  );
+}
+
+function LocationEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({ headline: (data.headline as string) || '', subline: (data.subline as string) || '', badgeText: (data.badgeText as string) || '', addressText: (data.addressText as string) || '', mapEmbedUrl: (data.mapEmbedUrl as string) || '', image: (data.image as string) || '', transportItems: ((data.transportItems as Record<string, unknown>[]) || []).map(transportFromData), nearbyItems: ((data.nearbyItems as Record<string, unknown>[]) || []).map(nearbyFromData), routeCta: (data.routeCta as ButtonValue) || { label: '', href: '' } });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Basics d={d} setD={setD} />
+      <Field label="Adresse" value={d.addressText} onChange={(v) => setD({ ...d, addressText: v })} multiline />
+      <Field label="Map Embed URL" value={d.mapEmbedUrl} onChange={(v) => setD({ ...d, mapEmbedUrl: v })} />
+      <ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <TransportRepeater d={d} setD={setD} />
+      <NearbyRepeater d={d} setD={setD} />
+      <ButtonField label="Route CTA" value={d.routeCta} onChange={(v) => setD({ ...d, routeCta: v })} />
+    </div>
+  );
+}
+
+function HotelDiningEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({ headline: (data.headline as string) || '', subline: (data.subline as string) || '', badgeText: (data.badgeText as string) || '', introText: (data.introText as string) || '', image: (data.image as string) || '', openingText: (data.openingText as string) || '', menus: ((data.menus as Record<string, unknown>[]) || []).map(menuFromData), highlights: ((data.highlights as Record<string, unknown>[]) || []).map(highlightImageFromData), ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' } });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return <DiningLikeEditor d={d} setD={setD} />;
+}
+
+function EventSpacesEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({ headline: (data.headline as string) || '', subline: (data.subline as string) || '', badgeText: (data.badgeText as string) || '', spaces: ((data.spaces as Record<string, unknown>[]) || []).map(spaceFromData), processHeadline: (data.processHeadline as string) || '', processSteps: ((data.processSteps as Record<string, unknown>[]) || []).map(featureFromData), ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' } });
+  useReport({ ...d, spaces: d.spaces.map((space) => ({ ...space, seatingOptions: lines(space.seatingOptions), features: lines(space.features) })) }, onChange);
+  return (
+    <div className="space-y-3">
+      <Basics d={d} setD={setD} />
+      <Repeater items={d.spaces} addLabel="+ Raum" onAdd={() => setD({ ...d, spaces: [...d.spaces, spaceFromData({})] })} render={(space, index) => (
+        <div className="space-y-3">
+          <Field label="Name" value={space.name} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, name: v }) })} />
+          <Field label="Beschreibung" value={space.description} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, description: v }) })} multiline />
+          <ImageUploadField label="Bild" value={space.image} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, image: v }) })} />
+          <div className="grid grid-cols-2 gap-3"><Field label="Kapazitaet" value={space.capacityLabel} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, capacityLabel: v }) })} /><Field label="Groesse" value={space.sizeLabel} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, sizeLabel: v }) })} /></div>
+          <Field label="Bestuhlungen" value={space.seatingOptions} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, seatingOptions: v }) })} multiline />
+          <Field label="Features" value={space.features} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, features: v }) })} multiline />
+          <ButtonField label="Anfrage CTA" value={space.inquiryCta} onChange={(v) => setD({ ...d, spaces: updateAt(d.spaces, index, { ...space, inquiryCta: v }) })} />
+        </div>
+      )} />
+      <Field label="Prozess-Headline" value={d.processHeadline} onChange={(v) => setD({ ...d, processHeadline: v })} />
+      <FeatureRepeater d={d} setD={setD} keyName="processSteps" />
+      <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+    </div>
+  );
+}
+
+function GalleryEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({ headline: (data.headline as string) || '', subline: (data.subline as string) || '', badgeText: (data.badgeText as string) || '', images: ((data.images as Record<string, unknown>[]) || []).map(galleryFromData), ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' } });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Basics d={d} setD={setD} />
+      <Repeater items={d.images} addLabel="+ Bild" onAdd={() => setD({ ...d, images: [...d.images, galleryFromData({})] })} render={(image, index) => (
+        <div className="space-y-3"><ImageUploadField label="Bild" value={image.src} onChange={(v) => setD({ ...d, images: updateAt(d.images, index, { ...image, src: v }) })} /><Field label="Alt" value={image.alt} onChange={(v) => setD({ ...d, images: updateAt(d.images, index, { ...image, alt: v }) })} /><Field label="Caption" value={image.caption} onChange={(v) => setD({ ...d, images: updateAt(d.images, index, { ...image, caption: v }) })} /><Field label="Kategorie" value={image.category} onChange={(v) => setD({ ...d, images: updateAt(d.images, index, { ...image, category: v }) })} /></div>
+      )} />
+      <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+    </div>
+  );
+}
+
+function TestimonialsEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({ headline: (data.headline as string) || '', subline: (data.subline as string) || '', badgeText: (data.badgeText as string) || '', ratingValue: (data.ratingValue as string) || '', ratingCount: (data.ratingCount as string) || '', sourceLabel: (data.sourceLabel as string) || '', items: ((data.items as Record<string, unknown>[]) || []).map(testimonialFromData), ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' } });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return <TestimonialsLikeEditor d={d} setD={setD} />;
+}
+
+function FaqEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({ headline: (data.headline as string) || '', subline: (data.subline as string) || '', badgeText: (data.badgeText as string) || '', items: ((data.items as Record<string, unknown>[]) || []).map(faqFromData), ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' } });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-3">
+      <Basics d={d} setD={setD} />
+      <Repeater items={d.items} addLabel="+ Frage" onAdd={() => setD({ ...d, items: [...d.items, faqFromData({})] })} render={(item, index) => (
+        <div className="space-y-3"><Field label="Frage" value={item.question} onChange={(v) => setD({ ...d, items: updateAt(d.items, index, { ...item, question: v }) })} /><Field label="Antwort" value={item.answer} onChange={(v) => setD({ ...d, items: updateAt(d.items, index, { ...item, answer: v }) })} multiline /></div>
+      )} />
+      <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+    </div>
+  );
+}
+
+function ContactEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({ headline: (data.headline as string) || '', subline: (data.subline as string) || '', badgeText: (data.badgeText as string) || '', introText: (data.introText as string) || '', namePlaceholder: (data.namePlaceholder as string) || '', emailPlaceholder: (data.emailPlaceholder as string) || '', messagePlaceholder: (data.messagePlaceholder as string) || '', submitLabel: (data.submitLabel as string) || '', formEnabled: (data.formEnabled as boolean) ?? true, infoCards: ((data.infoCards as Record<string, unknown>[]) || []).map(infoCardFromData), contactCta: (data.contactCta as ButtonValue) || { label: '', href: '' }, routeCta: (data.routeCta as ButtonValue) || { label: '', href: '' }, image: (data.image as string) || '' });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return <ContactLikeEditor d={d} setD={setD} />;
+}
+
+const HOTEL_EDITORS: Record<string, React.FC<EditorProps>> = {
+  hero: HotelHeroEditor,
+  bookingStrip: BookingStripEditor,
+  roomShowcase: RoomShowcaseEditor,
+  offers: OffersEditor,
+  amenities: AmenitiesEditor,
+  wellness: WellnessEditor,
+  location: LocationEditor,
+  hotelDining: HotelDiningEditor,
+  eventSpaces: EventSpacesEditor,
+  gallery: GalleryEditor,
+  testimonials: TestimonialsEditor,
+  faq: FaqEditor,
+  contact: ContactEditor,
+};
+
+function Basics({ d, setD }: { d: { headline: string; subline: string; badgeText: string }; setD: Dispatch<SetStateAction<any>> }) {
+  return <><Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} /><Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} /><Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline /></>;
+}
+
+function Field({ label, value, onChange, multiline }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean }) {
+  return <label className="block text-sm"><span className="text-gray-600 text-xs">{label}</span>{multiline ? <textarea className="admin-input mt-1 w-full" rows={3} value={value} onChange={(e) => onChange(e.target.value)} /> : <input className="admin-input mt-1 w-full" value={value} onChange={(e) => onChange(e.target.value)} />}</label>;
+}
+
+function Checkbox({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return <label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} />{label}</label>;
+}
+
+function Repeater({ items, addLabel, onAdd, render }: { items: any[]; addLabel: string; onAdd: () => void; render: (item: any, index: number) => React.ReactNode }) {
+  return <div className="space-y-3">{items.map((item, index) => <div key={index} className="border rounded p-3">{render(item, index)}</div>)}<button className="text-sm text-blue-600" onClick={onAdd}>{addLabel}</button></div>;
+}
+
+function ListWithCtaEditor({ data, onChange, itemKey, addLabel, itemFactory, renderItem }: { data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void; itemKey: string; addLabel: string; itemFactory: (r: Record<string, unknown>) => any; renderItem: (args: { item: any; index: number; d: any; setD: Dispatch<SetStateAction<any>> }) => React.ReactNode }) {
+  const [d, setD] = useState<any>({ headline: (data.headline as string) || '', subline: (data.subline as string) || '', badgeText: (data.badgeText as string) || '', [itemKey]: ((data[itemKey] as Record<string, unknown>[]) || []).map(itemFactory), ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' } });
+  useReport(d as Record<string, unknown>, onChange);
+  return <div className="space-y-3"><Basics d={d} setD={setD} /><Repeater items={d[itemKey]} addLabel={addLabel} onAdd={() => setD({ ...d, [itemKey]: [...d[itemKey], itemFactory({})] })} render={(item, index) => renderItem({ item, index, d, setD })} /><ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} /></div>;
+}
+
+function TreatmentRepeater({ d, setD }: { d: any; setD: Dispatch<SetStateAction<any>> }) {
+  return <Repeater items={d.treatments} addLabel="+ Treatment" onAdd={() => setD({ ...d, treatments: [...d.treatments, treatmentFromData({})] })} render={(item, index) => <div className="space-y-3"><Field label="Titel" value={item.title} onChange={(v) => setD({ ...d, treatments: updateAt(d.treatments, index, { ...item, title: v }) })} /><Field label="Text" value={item.text} onChange={(v) => setD({ ...d, treatments: updateAt(d.treatments, index, { ...item, text: v }) })} multiline /><div className="grid grid-cols-2 gap-3"><Field label="Dauer" value={item.durationLabel} onChange={(v) => setD({ ...d, treatments: updateAt(d.treatments, index, { ...item, durationLabel: v }) })} /><Field label="Preis" value={item.priceLabel} onChange={(v) => setD({ ...d, treatments: updateAt(d.treatments, index, { ...item, priceLabel: v }) })} /></div><ImageUploadField label="Bild" value={item.image} onChange={(v) => setD({ ...d, treatments: updateAt(d.treatments, index, { ...item, image: v }) })} /><ButtonField label="CTA" value={item.cta} onChange={(v) => setD({ ...d, treatments: updateAt(d.treatments, index, { ...item, cta: v }) })} /></div>} />;
+}
+
+function FeatureRepeater({ d, setD, keyName = 'features' }: { d: any; setD: Dispatch<SetStateAction<any>>; keyName?: string }) {
+  return <Repeater items={d[keyName]} addLabel="+ Feature" onAdd={() => setD({ ...d, [keyName]: [...d[keyName], featureFromData({})] })} render={(item, index) => <div className="space-y-3"><div className="grid grid-cols-2 gap-3"><Field label="Titel" value={item.title} onChange={(v) => setD({ ...d, [keyName]: updateAt(d[keyName], index, { ...item, title: v }) })} /><IconPickerField label="Icon" value={item.icon} onChange={(v) => setD({ ...d, [keyName]: updateAt(d[keyName], index, { ...item, icon: v }) })} /></div><Field label="Text" value={item.text} onChange={(v) => setD({ ...d, [keyName]: updateAt(d[keyName], index, { ...item, text: v }) })} multiline /></div>} />;
+}
+
+function TransportRepeater({ d, setD }: { d: any; setD: Dispatch<SetStateAction<any>> }) {
+  return <Repeater items={d.transportItems} addLabel="+ Anreise" onAdd={() => setD({ ...d, transportItems: [...d.transportItems, transportFromData({})] })} render={(item, index) => <div className="space-y-3"><IconPickerField label="Icon" value={item.icon} onChange={(v) => setD({ ...d, transportItems: updateAt(d.transportItems, index, { ...item, icon: v }) })} /><div className="grid grid-cols-2 gap-3"><Field label="Label" value={item.label} onChange={(v) => setD({ ...d, transportItems: updateAt(d.transportItems, index, { ...item, label: v }) })} /><Field label="Wert" value={item.value} onChange={(v) => setD({ ...d, transportItems: updateAt(d.transportItems, index, { ...item, value: v }) })} /></div><Field label="Text" value={item.text} onChange={(v) => setD({ ...d, transportItems: updateAt(d.transportItems, index, { ...item, text: v }) })} multiline /></div>} />;
+}
+
+function NearbyRepeater({ d, setD }: { d: any; setD: Dispatch<SetStateAction<any>> }) {
+  return <Repeater items={d.nearbyItems} addLabel="+ Umgebung" onAdd={() => setD({ ...d, nearbyItems: [...d.nearbyItems, nearbyFromData({})] })} render={(item, index) => <div className="space-y-3"><Field label="Titel" value={item.title} onChange={(v) => setD({ ...d, nearbyItems: updateAt(d.nearbyItems, index, { ...item, title: v }) })} /><Field label="Distanz" value={item.distanceLabel} onChange={(v) => setD({ ...d, nearbyItems: updateAt(d.nearbyItems, index, { ...item, distanceLabel: v }) })} /><Field label="Text" value={item.text} onChange={(v) => setD({ ...d, nearbyItems: updateAt(d.nearbyItems, index, { ...item, text: v }) })} multiline /><ImageUploadField label="Bild" value={item.image} onChange={(v) => setD({ ...d, nearbyItems: updateAt(d.nearbyItems, index, { ...item, image: v }) })} /></div>} />;
+}
+
+function DiningLikeEditor({ d, setD }: { d: any; setD: Dispatch<SetStateAction<any>> }) {
+  return <div className="space-y-3"><Basics d={d} setD={setD} /><Field label="Intro-Text" value={d.introText} onChange={(v) => setD({ ...d, introText: v })} multiline /><ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} /><Field label="Oeffnungszeiten Text" value={d.openingText} onChange={(v) => setD({ ...d, openingText: v })} /><Repeater items={d.menus} addLabel="+ Menue" onAdd={() => setD({ ...d, menus: [...d.menus, menuFromData({})] })} render={(item, index) => <div className="space-y-3"><Field label="Titel" value={item.title} onChange={(v) => setD({ ...d, menus: updateAt(d.menus, index, { ...item, title: v }) })} /><Field label="Beschreibung" value={item.description} onChange={(v) => setD({ ...d, menus: updateAt(d.menus, index, { ...item, description: v }) })} multiline /><div className="grid grid-cols-2 gap-3"><Field label="Zeit" value={item.timeLabel} onChange={(v) => setD({ ...d, menus: updateAt(d.menus, index, { ...item, timeLabel: v }) })} /><Field label="Preis" value={item.priceLabel} onChange={(v) => setD({ ...d, menus: updateAt(d.menus, index, { ...item, priceLabel: v }) })} /></div><ButtonField label="CTA" value={item.cta} onChange={(v) => setD({ ...d, menus: updateAt(d.menus, index, { ...item, cta: v }) })} /></div>} /><Repeater items={d.highlights} addLabel="+ Highlight" onAdd={() => setD({ ...d, highlights: [...d.highlights, highlightImageFromData({})] })} render={(item, index) => <div className="space-y-3"><Field label="Titel" value={item.title} onChange={(v) => setD({ ...d, highlights: updateAt(d.highlights, index, { ...item, title: v }) })} /><Field label="Text" value={item.text} onChange={(v) => setD({ ...d, highlights: updateAt(d.highlights, index, { ...item, text: v }) })} multiline /><ImageUploadField label="Bild" value={item.image} onChange={(v) => setD({ ...d, highlights: updateAt(d.highlights, index, { ...item, image: v }) })} /></div>} /><ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} /></div>;
+}
+
+function TestimonialsLikeEditor({ d, setD }: { d: any; setD: Dispatch<SetStateAction<any>> }) {
+  return <div className="space-y-3"><Basics d={d} setD={setD} /><div className="grid grid-cols-3 gap-3"><Field label="Rating" value={d.ratingValue} onChange={(v) => setD({ ...d, ratingValue: v })} /><Field label="Anzahl" value={d.ratingCount} onChange={(v) => setD({ ...d, ratingCount: v })} /><Field label="Quelle" value={d.sourceLabel} onChange={(v) => setD({ ...d, sourceLabel: v })} /></div><Repeater items={d.items} addLabel="+ Bewertung" onAdd={() => setD({ ...d, items: [...d.items, testimonialFromData({})] })} render={(item, index) => <div className="space-y-3"><Field label="Zitat" value={item.quote} onChange={(v) => setD({ ...d, items: updateAt(d.items, index, { ...item, quote: v }) })} multiline /><div className="grid grid-cols-2 gap-3"><Field label="Name" value={item.name} onChange={(v) => setD({ ...d, items: updateAt(d.items, index, { ...item, name: v }) })} /><Field label="Kontext" value={item.context} onChange={(v) => setD({ ...d, items: updateAt(d.items, index, { ...item, context: v }) })} /></div><div className="grid grid-cols-2 gap-3"><Field label="Rating" value={String(item.rating)} onChange={(v) => setD({ ...d, items: updateAt(d.items, index, { ...item, rating: Number(v) || 5 }) })} /><Field label="Aufenthalt" value={item.stayLabel} onChange={(v) => setD({ ...d, items: updateAt(d.items, index, { ...item, stayLabel: v }) })} /></div></div>} /><ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} /></div>;
+}
+
+function ContactLikeEditor({ d, setD }: { d: any; setD: Dispatch<SetStateAction<any>> }) {
+  return <div className="space-y-3"><Basics d={d} setD={setD} /><Field label="Intro-Text" value={d.introText} onChange={(v) => setD({ ...d, introText: v })} multiline /><div className="grid grid-cols-3 gap-3"><Field label="Name Placeholder" value={d.namePlaceholder} onChange={(v) => setD({ ...d, namePlaceholder: v })} /><Field label="E-Mail Placeholder" value={d.emailPlaceholder} onChange={(v) => setD({ ...d, emailPlaceholder: v })} /><Field label="Nachricht Placeholder" value={d.messagePlaceholder} onChange={(v) => setD({ ...d, messagePlaceholder: v })} /></div><Field label="Submit-Label" value={d.submitLabel} onChange={(v) => setD({ ...d, submitLabel: v })} /><Checkbox label="Formular anzeigen" checked={d.formEnabled} onChange={(v) => setD({ ...d, formEnabled: v })} /><Repeater items={d.infoCards} addLabel="+ Info" onAdd={() => setD({ ...d, infoCards: [...d.infoCards, infoCardFromData({})] })} render={(item, index) => <div className="space-y-3"><IconPickerField label="Icon" value={item.icon} onChange={(v) => setD({ ...d, infoCards: updateAt(d.infoCards, index, { ...item, icon: v }) })} /><Field label="Label" value={item.label} onChange={(v) => setD({ ...d, infoCards: updateAt(d.infoCards, index, { ...item, label: v }) })} /><Field label="Wert" value={item.value} onChange={(v) => setD({ ...d, infoCards: updateAt(d.infoCards, index, { ...item, value: v }) })} /></div>} /><ButtonField label="Kontakt CTA" value={d.contactCta} onChange={(v) => setD({ ...d, contactCta: v })} /><ButtonField label="Route CTA" value={d.routeCta} onChange={(v) => setD({ ...d, routeCta: v })} /><ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} /></div>;
+}
+
+function lines(value: string): string[] { return value.split('\n').map((item) => item.trim()).filter(Boolean); }
+function updateAt<T>(items: T[], index: number, value: T): T[] { return items.map((item, i) => i === index ? value : item); }
+function fieldFromData(r: Record<string, unknown>) { return { label: (r.label as string) || '', value: (r.value as string) || '', type: (r.type as string) || '' }; }
+function roomFromData(r: Record<string, unknown>) { return { name: (r.name as string) || '', description: (r.description as string) || '', image: (r.image as string) || '', galleryImages: ((r.galleryImages as string[]) || []).join('\n'), priceLabel: (r.priceLabel as string) || '', sizeLabel: (r.sizeLabel as string) || '', occupancyLabel: (r.occupancyLabel as string) || '', bedLabel: (r.bedLabel as string) || '', features: ((r.features as string[]) || []).join('\n'), detailCta: (r.detailCta as ButtonValue) || { label: '', href: '' }, bookingCta: (r.bookingCta as ButtonValue) || { label: '', href: '' }, highlighted: Boolean(r.highlighted) }; }
+function offerFromData(r: Record<string, unknown>) { return { title: (r.title as string) || '', description: (r.description as string) || '', image: (r.image as string) || '', priceLabel: (r.priceLabel as string) || '', durationLabel: (r.durationLabel as string) || '', includes: ((r.includes as string[]) || []).join('\n'), validUntilLabel: (r.validUntilLabel as string) || '', cta: (r.cta as ButtonValue) || { label: '', href: '' }, detailHref: (r.detailHref as string) || '', detailLabel: (r.detailLabel as string) || '', highlighted: Boolean(r.highlighted) }; }
+function amenityFromData(r: Record<string, unknown>) { return { icon: (r.icon as string) || '', title: (r.title as string) || '', text: (r.text as string) || '', image: (r.image as string) || '', mediaType: (r.mediaType as string) || 'icon' }; }
+function treatmentFromData(r: Record<string, unknown>) { return { title: (r.title as string) || '', text: (r.text as string) || '', durationLabel: (r.durationLabel as string) || '', priceLabel: (r.priceLabel as string) || '', image: (r.image as string) || '', cta: (r.cta as ButtonValue) || { label: '', href: '' } }; }
+function featureFromData(r: Record<string, unknown>) { return { icon: (r.icon as string) || '', title: (r.title as string) || '', text: (r.text as string) || '' }; }
+function transportFromData(r: Record<string, unknown>) { return { icon: (r.icon as string) || '', label: (r.label as string) || '', value: (r.value as string) || '', text: (r.text as string) || '' }; }
+function nearbyFromData(r: Record<string, unknown>) { return { title: (r.title as string) || '', distanceLabel: (r.distanceLabel as string) || '', text: (r.text as string) || '', image: (r.image as string) || '' }; }
+function menuFromData(r: Record<string, unknown>) { return { title: (r.title as string) || '', description: (r.description as string) || '', timeLabel: (r.timeLabel as string) || '', priceLabel: (r.priceLabel as string) || '', cta: (r.cta as ButtonValue) || { label: '', href: '' } }; }
+function highlightImageFromData(r: Record<string, unknown>) { return { title: (r.title as string) || '', text: (r.text as string) || '', image: (r.image as string) || '' }; }
+function spaceFromData(r: Record<string, unknown>) { return { name: (r.name as string) || '', description: (r.description as string) || '', image: (r.image as string) || '', capacityLabel: (r.capacityLabel as string) || '', sizeLabel: (r.sizeLabel as string) || '', seatingOptions: ((r.seatingOptions as string[]) || []).join('\n'), features: ((r.features as string[]) || []).join('\n'), inquiryCta: (r.inquiryCta as ButtonValue) || { label: '', href: '' } }; }
+function galleryFromData(r: Record<string, unknown>) { return { src: (r.src as string) || '', alt: (r.alt as string) || '', caption: (r.caption as string) || '', category: (r.category as string) || '' }; }
+function testimonialFromData(r: Record<string, unknown>) { return { quote: (r.quote as string) || '', name: (r.name as string) || '', context: (r.context as string) || '', rating: (r.rating as number) || 5, stayLabel: (r.stayLabel as string) || '' }; }
+function faqFromData(r: Record<string, unknown>) { return { question: (r.question as string) || '', answer: (r.answer as string) || '' }; }
+function infoCardFromData(r: Record<string, unknown>) { return { icon: (r.icon as string) || '', label: (r.label as string) || '', value: (r.value as string) || '' }; }
