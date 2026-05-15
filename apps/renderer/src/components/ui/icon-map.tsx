@@ -3,6 +3,9 @@ import {
   Siren, BarChart3, ClipboardList, Ruler, HardHat, CheckCircle2, Handshake,
   Phone, Mail, MapPin, Clock, HelpCircle, Shield, Star, ArrowRight,
   Users, Building2, Award, Heart, Target, Lightbulb, TrendingUp,
+  Activity, Brain, Car, Cloud, Dumbbell, FileText, FlaskConical, Globe,
+  HeartPulse, Mountain, Plane, ScanLine, Sparkles, Stethoscope, Sun,
+  Ticket, Train, Truck, Utensils, Waves, Wind, Wine,
   type LucideIcon,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -39,6 +42,28 @@ const ICON_MAP: Record<string, LucideIcon> = {
   target: Target,
   lightbulb: Lightbulb,
   'trending-up': TrendingUp,
+  activity: Activity,
+  brain: Brain,
+  car: Car,
+  cloud: Cloud,
+  dumbbell: Dumbbell,
+  'file-text': FileText,
+  flask: FlaskConical,
+  globe: Globe,
+  'heart-pulse': HeartPulse,
+  mountain: Mountain,
+  plane: Plane,
+  scan: ScanLine,
+  sparkles: Sparkles,
+  stethoscope: Stethoscope,
+  sun: Sun,
+  ticket: Ticket,
+  train: Train,
+  truck: Truck,
+  utensils: Utensils,
+  waves: Waves,
+  wind: Wind,
+  wine: Wine,
 };
 
 export function DynamicIcon({ name, size = 24, className }: { name: string; size?: number; className?: string }) {
