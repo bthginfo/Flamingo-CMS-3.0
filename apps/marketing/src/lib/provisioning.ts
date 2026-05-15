@@ -32,6 +32,7 @@ export type ProvisionResult = {
   domainConfigured?: boolean;
   adminUrl: string;
   rendererUrl: string;
+  warning?: string;
 };
 
 type DefaultPage = {
@@ -171,10 +172,16 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
 
   if (deploymentMode === 'standalone') {
     // Create a dedicated Vercel project for this tenant
-    const standaloneResult = await createStandaloneProject(input.slug, tenantId);
-    vercelProjectId = standaloneResult.projectId;
+    try {
+      const standaloneResult = await createStandaloneProject(input.slug, tenantId);
+      vercelProjectId = standaloneResult.projectId;
+    } catch (err) {
+      console.error('Standalone project creation failed:', err);
+      // Continue provisioning — tenant is usable via shared renderer
+      // The vercelProjectId remains undefined, flagging incomplete standalone setup
+    }
 
-    // Add preview domain to the standalone project
+    // Add preview domain to the standalone project (or shared renderer as fallback)
     await db.insert(tenantDomains).values({
       tenantId,
       domain: previewDomain,
@@ -182,37 +189,60 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       verified: false,
     });
 
-    try {
-      const domainResult = await addDomainToProject(vercelProjectId, previewDomain);
-      if (domainResult.configured || domainResult.verified) {
-        await db.update(tenantDomains)
-          .set({ verified: true })
-          .where(eq(tenantDomains.domain, previewDomain));
-      }
-      domainConfigured = domainResult.configured;
-    } catch (err) {
-      console.error('Standalone domain provisioning failed:', err);
-    }
-
-    // Custom domain on standalone project
-    if (input.domain && input.domain !== previewDomain) {
-      await db.insert(tenantDomains).values({
-        tenantId,
-        domain: input.domain,
-        type: 'primary',
-        verified: false,
-        });
-        const customResult = await addDomainToProject(vercelProjectId, input.domain);
-        if (customResult.verified) {
+    if (vercelProjectId) {
+      try {
+        const domainResult = await addDomainToProject(vercelProjectId, previewDomain);
+        if (domainResult.configured || domainResult.verified) {
           await db.update(tenantDomains)
             .set({ verified: true })
-            .where(eq(tenantDomains.domain, input.domain));
+            .where(eq(tenantDomains.domain, previewDomain));
+        }
+        domainConfigured = domainResult.configured;
+      } catch (err) {
+        console.error('Standalone domain provisioning failed:', err);
+      }
+
+      // Custom domain on standalone project
+      if (input.domain && input.domain !== previewDomain) {
+        await db.insert(tenantDomains).values({
+          tenantId,
+          domain: input.domain,
+          type: 'primary',
+          verified: false,
+        });
+        try {
+          const customResult = await addDomainToProject(vercelProjectId, input.domain);
+          if (customResult.verified) {
+            await db.update(tenantDomains)
+              .set({ verified: true })
+              .where(eq(tenantDomains.domain, input.domain));
+          }
+        } catch (err) {
+          console.error('Custom domain provisioning failed:', err);
         }
       }
 
       // Trigger initial deployment
-      await triggerProjectDeployment(`flamingo-${input.slug}`);
-      console.log(`  ✅ Standalone project: flamingo-${input.slug}`);
+      try {
+        await triggerProjectDeployment(`flamingo-${input.slug}`);
+        console.log(`  ✅ Standalone project: flamingo-${input.slug}`);
+      } catch (err) {
+        console.error('Standalone deployment trigger failed:', err);
+      }
+    } else {
+      // Fallback: add subdomain to shared renderer
+      try {
+        const previewResult = await addDomainToRenderer(previewDomain);
+        if (previewResult.configured || previewResult.verified) {
+          await db.update(tenantDomains)
+            .set({ verified: true })
+            .where(eq(tenantDomains.domain, previewDomain));
+        }
+        domainConfigured = previewResult.configured;
+      } catch (err) {
+        console.error('Shared fallback domain failed:', err);
+      }
+    }
   } else {
     // Shared mode: add domains to the shared renderer project
     await db.insert(tenantDomains).values({
@@ -265,6 +295,9 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     .where(eq(tenants.id, tenantId));
 
   const standaloneUrl = vercelProjectId ? `https://flamingo-${input.slug}.vercel.app` : undefined;
+  const standaloneWarning = deploymentMode === 'standalone' && !vercelProjectId
+    ? 'Standalone-Projekt konnte nicht erstellt werden. Tenant läuft vorerst über den Shared Renderer.'
+    : undefined;
 
   return {
     tenantId,
@@ -273,6 +306,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     domainConfigured,
     adminUrl: `https://${previewDomain}/admin`,
     rendererUrl: standaloneUrl || (input.domain ? `https://${input.domain}` : `https://${previewDomain}`),
+    warning: standaloneWarning,
   };
 }
 

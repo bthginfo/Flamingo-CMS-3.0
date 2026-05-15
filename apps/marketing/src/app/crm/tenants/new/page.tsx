@@ -65,6 +65,7 @@ export default function NewTenantPage() {
           domain: form.domain || undefined,
           deploymentMode: form.deploymentMode,
         });
+        if (result.warning) toast.warning(result.warning);
         toast.success(`Tenant "${form.name}" wurde erstellt! Erreichbar unter: ${result.rendererUrl}`);
         router.push(`/crm/tenants/${result.tenantId}`);
       } catch (err) {

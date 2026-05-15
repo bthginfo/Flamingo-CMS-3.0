@@ -8,10 +8,16 @@ import { revalidatePath } from 'next/cache';
 import { addDomainToRenderer, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject } from '@/lib/vercel';
 
 export async function createTenantAction(input: ProvisionInput) {
-  const result = await provisionTenant(input);
-  revalidatePath('/crm');
-  revalidatePath('/crm/tenants');
-  return result;
+  try {
+    const result = await provisionTenant(input);
+    revalidatePath('/crm');
+    revalidatePath('/crm/tenants');
+    return result;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Provisioning failed';
+    console.error('Provisioning error:', message);
+    throw new Error(message);
+  }
 }
 
 export async function updateTenantAction(tenantId: string, data: { name?: string; status?: 'active' | 'suspended'; activeStyle?: string }) {
