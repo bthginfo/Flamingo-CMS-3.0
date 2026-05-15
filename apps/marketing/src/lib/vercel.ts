@@ -112,10 +112,27 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
   ];
 
   // Forward optional env vars if available
-  const optionalVars = ['BLOB_READ_WRITE_TOKEN', 'ADMIN_JWT_SECRET'];
+  const optionalVars = ['ADMIN_JWT_SECRET'];
   for (const key of optionalVars) {
     const val = process.env[key];
     if (val) envVars.push({ key, value: val, target: ['production', 'preview'], type: 'encrypted' });
+  }
+
+  // Copy BLOB_READ_WRITE_TOKEN from the renderer project (shared blob store)
+  const rendererProjectName = process.env.VERCEL_RENDERER_PROJECT || 'flamingo-renderer';
+  try {
+    const rendererEnvs = await vercelFetch(`/v9/projects/${rendererProjectName}/env`);
+    const blobEnv = rendererEnvs.envs?.find((e: { key: string }) => e.key === 'BLOB_READ_WRITE_TOKEN');
+    if (blobEnv) {
+      const decrypted = await vercelFetch(`/v9/projects/${rendererProjectName}/env/${blobEnv.id}?decrypt=true`);
+      if (decrypted.value) {
+        envVars.push({ key: 'BLOB_READ_WRITE_TOKEN', value: decrypted.value, target: ['production', 'preview'], type: 'encrypted' });
+      }
+    }
+  } catch {
+    // Fall back to local env if API lookup fails
+    const localBlob = process.env.BLOB_READ_WRITE_TOKEN;
+    if (localBlob) envVars.push({ key: 'BLOB_READ_WRITE_TOKEN', value: localBlob, target: ['production', 'preview'], type: 'encrypted' });
   }
 
   await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', envVars);
