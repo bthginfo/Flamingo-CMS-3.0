@@ -23,6 +23,7 @@ import {
   EventsSection,
   MenuSection,
   OpeningHoursSection,
+  RestaurantContactSection,
   RestaurantHeroSection,
   ReservationSection,
   SignatureDishesSection,
@@ -128,6 +129,7 @@ export const RESTAURANT_TEMPLATES: Record<string, TemplateComponent> = {
   signatureDishes: SignatureDishesSection,
   events: EventsSection,
   ambience: AmbienceSection,
+  contact: RestaurantContactSection,
   richText: RichTextSection,
 };
 

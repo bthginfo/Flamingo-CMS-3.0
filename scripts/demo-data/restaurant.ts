@@ -28,6 +28,7 @@ export const RESTAURANT_CONFIG = {
     { label: 'Über uns', href: '/ueber-uns', type: 'link' },
     { label: 'Events', href: '/events', type: 'link' },
     { label: 'Reservierung', href: '/reservierung', type: 'link' },
+    { label: 'Kontakt', href: '/kontakt', type: 'link' },
   ],
   navCta: { label: 'Tisch reservieren', href: '/reservierung' },
   footerColumns: [
@@ -237,6 +238,32 @@ export const RESTAURANT_CONFIG = {
             { label: 'Sonntag', hours: '11:30–22:00' },
           ],
           ctaPrimary: { label: 'Jetzt reservieren', href: '/reservierung' },
+        }},
+      ],
+    },
+    /* ─── Kontakt ─── */
+    {
+      slug: 'kontakt', title: 'Kontakt & Anfahrt', sections: [
+        { type: 'hero', sortOrder: 0, data: {
+          headline: 'Kontakt & Anfahrt',
+          subline: 'So finden Sie die Trattoria Dal Maestro in München',
+          bgImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1800&q=85',
+        }},
+        { type: 'contact', sortOrder: 1, data: {
+          headline: 'Besuchen Sie uns',
+          subline: 'Im Herzen der Maximilianstraße',
+          introText: 'Reservieren Sie telefonisch, per E-Mail oder kommen Sie einfach vorbei — wir freuen uns auf Sie.',
+          image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=900&q=80',
+          mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2662.0!2d11.58!3d48.14!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDjCsDA4JzI0LjAiTiAxMcKwMzQnNDguMCJF!5e0!3m2!1sde!2sde!4v1700000000000',
+          formEnabled: true,
+          infoCards: [
+            { icon: 'phone', label: 'Telefon', value: '+49 89 123 456 78' },
+            { icon: 'mail', label: 'E-Mail', value: 'info@dal-maestro.de' },
+            { icon: 'map-pin', label: 'Adresse', value: 'Maximilianstraße 12, 80539 München' },
+            { icon: 'clock', label: 'Öffnungszeiten', value: 'Di–So (Mo Ruhetag)' },
+          ],
+          primaryCta: { label: 'Tisch reservieren', href: '/reservierung' },
+          secondaryCta: { label: 'Anrufen', href: 'tel:+498912345678' },
         }},
       ],
     },
