@@ -51,19 +51,19 @@ function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primar
       )}
       {/* grain texture */}
       <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE0VjZoLTJWMGgtNHY2aC0ydjhoLTJ2LThoLTJWMGgtNHY2aC0ydjhoNFYyaDRWNmgydi04aDJ6Ii8+PC9nPjwvZz48L3N2Zz4=')]" />
-      {/* scattered gold stars */}
-      <div className="absolute top-1/4 left-[15%] text-amber-400/20"><Star size={24} /></div>
-      <div className="absolute top-[60%] right-[20%] text-amber-400/15"><Star size={18} /></div>
-      <div className="absolute top-[35%] right-[10%] text-amber-400/10"><Star size={32} /></div>
-      {/* gold border lines */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-400/30 to-transparent" />
+      {/* scattered stars */}
+      <div className="absolute top-1/4 left-[15%] text-white/15"><Star size={24} /></div>
+      <div className="absolute top-[60%] right-[20%] text-white/10"><Star size={18} /></div>
+      <div className="absolute top-[35%] right-[10%] text-white/8"><Star size={32} /></div>
+      {/* border lines */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
       <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20 text-center">
         {badgeText && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
-            className="inline-flex items-center gap-2.5 bg-amber-400/10 backdrop-blur-md border border-amber-400/30 rounded-full px-5 py-2.5 text-sm text-amber-200 mb-6">
-            <Star size={14} className="fill-amber-400 text-amber-400" />
+            className="inline-flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2.5 text-sm text-white/80 mb-6">
+            <Star size={14} className="fill-white text-white" />
             <span className="font-medium">{badgeText}</span>
           </motion.div>
         )}
@@ -82,23 +82,23 @@ function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primar
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.9 }}
           className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
           {primaryCta.label && (
-              <a href={primaryCta.href || '#'} className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-amber-400 px-8 py-4 font-semibold text-[#0f1d2e] transition-all hover:shadow-lg hover:-translate-y-0.5">
+              <a href={primaryCta.href || '#'} className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-white px-8 py-4 font-semibold text-[#0f1d2e] transition-all hover:shadow-lg hover:-translate-y-0.5">
               <span className="relative z-10 flex items-center gap-2.5">{primaryCta.label}<ArrowRight size={17} className="transition-transform group-hover:translate-x-1" /></span>
               <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.3),transparent)] bg-[length:200%_100%]" />
             </a>
           )}
           {secondaryCta.label && (
-            <a href={secondaryCta.href || '#'} className="inline-flex items-center justify-center rounded-full border border-amber-400/30 px-7 py-4 font-semibold text-white hover:border-amber-400/60 transition-colors">
+            <a href={secondaryCta.href || '#'} className="inline-flex items-center justify-center rounded-full border border-white/30 px-7 py-4 font-semibold text-white hover:border-white/60 transition-colors">
               {secondaryCta.label}
             </a>
           )}
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1.2 }}
           className="mt-10 flex flex-wrap items-center justify-center gap-4 text-sm text-white/50">
-          {ratingText && <span className="inline-flex items-center gap-2"><Star size={14} className="text-amber-400" />{ratingText}</span>}
+          {ratingText && <span className="inline-flex items-center gap-2"><Star size={14} className="text-white/70" />{ratingText}</span>}
           {availabilityHint && <span className="border border-white/15 px-3 py-1 rounded-full">{availabilityHint}</span>}
           {trustItems.map((item) => (
-            <span key={item} className="flex items-center gap-2"><CheckCircle size={14} className="text-amber-400/70" />{item}</span>
+            <span key={item} className="flex items-center gap-2"><CheckCircle size={14} className="text-white/60" />{item}</span>
           ))}
         </motion.div>
       </motion.div>
@@ -163,17 +163,17 @@ function HeroBold({ headline, subline, badgeText, trustItems, bgImage, primaryCt
           <div className="absolute inset-0 bg-gray-950/80" />
         </>
       )}
-      {/* diagonal gold accent stripe */}
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-amber-400/10 skew-x-[-12deg] translate-x-20" />
+      {/* diagonal accent stripe */}
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-white/5 skew-x-[-12deg] translate-x-20" />
       {/* thick accent lines */}
-      <div className="absolute top-0 left-0 w-full h-1.5 bg-amber-400" />
-      <div className="absolute bottom-0 left-0 w-full h-1.5 bg-amber-400" />
+      <div className="absolute top-0 left-0 w-full h-1.5 bg-white" />
+      <div className="absolute bottom-0 left-0 w-full h-1.5 bg-white" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
         <div className="max-w-5xl">
           {badgeText && (
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
-              className="inline-block bg-amber-400 text-gray-950 font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8">
+              className="inline-block bg-white text-gray-950 font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8">
               {badgeText}
             </motion.div>
           )}
@@ -188,7 +188,7 @@ function HeroBold({ headline, subline, badgeText, trustItems, bgImage, primaryCt
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta.label && (
-              <a href={primaryCta.href || '#'} className="inline-flex items-center gap-3 bg-amber-400 text-gray-950 font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
+              <a href={primaryCta.href || '#'} className="inline-flex items-center gap-3 bg-white text-gray-950 font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
                 {primaryCta.label}<ArrowRight size={18} />
               </a>
             )}
@@ -200,10 +200,10 @@ function HeroBold({ headline, subline, badgeText, trustItems, bgImage, primaryCt
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
             className="flex flex-wrap gap-6 mt-16 text-sm text-white/40 font-bold uppercase tracking-wider">
-            {ratingText && <span className="flex items-center gap-2"><Star size={14} className="text-amber-400" />{ratingText}</span>}
-            {availabilityHint && <span className="flex items-center gap-2"><span className="w-2 h-2 bg-amber-400" />{availabilityHint}</span>}
+            {ratingText && <span className="flex items-center gap-2"><Star size={14} className="text-white/70" />{ratingText}</span>}
+            {availabilityHint && <span className="flex items-center gap-2"><span className="w-2 h-2 bg-white" />{availabilityHint}</span>}
             {trustItems.map((item, i) => (
-              <span key={i} className="flex items-center gap-2"><span className="w-2 h-2 bg-amber-400" />{item}</span>
+              <span key={i} className="flex items-center gap-2"><span className="w-2 h-2 bg-white" />{item}</span>
             ))}
           </motion.div>
         </div>
