@@ -1,6 +1,9 @@
 import { SectionRenderer } from '@/components/section-renderer';
+import { SiteHeader } from '@/components/site-header';
+import { SiteFooter } from '@/components/site-footer';
 import { getStyleCssVars } from '@/lib/styles';
 import type { SnapshotSection } from '@/lib/snapshot';
+import { getDemoSiteData } from '../demo-data';
 
 export const dynamic = 'force-static';
 
@@ -152,9 +155,12 @@ const sections: SnapshotSection[] = [
 
 export default function HandwerkDemoPage() {
   const styleCssVars = getStyleCssVars('tradesman', 'classic');
+  const { navItems, cta, brand, contact, socialLinks, footer } = getDemoSiteData('handwerk');
   return (
     <div data-style="classic" style={styleCssVars as React.CSSProperties}>
+      <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={true} cta={cta} />
       <main>{sections.map((section) => <SectionRenderer key={section.id} section={section} styleVariant="classic" industry="tradesman" />)}</main>
+      <SiteFooter footer={footer} brand={brand} contact={contact} socialLinks={socialLinks} />
     </div>
   );
 }
