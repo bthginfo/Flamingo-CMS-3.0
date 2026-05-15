@@ -4,8 +4,18 @@ import { SectionDataEditor } from './section-data-editor';
 import { hasHotelEditor, HotelSectionDataEditor } from './hotel-section-data-editor';
 import { hasRestaurantEditor, RestaurantSectionDataEditor } from './restaurant-section-data-editor';
 import { hasTourismEditor, TourismSectionDataEditor } from './tourism-section-data-editor';
+import { hasSalonEditor, SalonSectionDataEditor } from './salon-section-data-editor';
+import { hasMedicalEditor, MedicalSectionDataEditor } from './medical-section-data-editor';
 
 export function IndustrySectionDataEditor({ industry, type, data, onChange }: { industry: string; type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void }) {
+  if (industry === 'medical' && hasMedicalEditor(type)) {
+    return <MedicalSectionDataEditor type={type} data={data} onChange={onChange} />;
+  }
+
+  if (industry === 'salon' && hasSalonEditor(type)) {
+    return <SalonSectionDataEditor type={type} data={data} onChange={onChange} />;
+  }
+
   if (industry === 'tourism' && hasTourismEditor(type)) {
     return <TourismSectionDataEditor type={type} data={data} onChange={onChange} />;
   }
