@@ -16,9 +16,10 @@ interface DemoPageShellProps {
   defaultStyle: string;
   siteData: DemoSiteData;
   darkBg?: boolean;
+  children?: React.ReactNode;
 }
 
-export function DemoPageShell({ sections, industry, industryKey, defaultStyle, siteData, darkBg = true }: DemoPageShellProps) {
+export function DemoPageShell({ sections, industry, industryKey, defaultStyle, siteData, darkBg = true, children }: DemoPageShellProps) {
   const [style, setStyle] = useState(defaultStyle);
   const styleCssVars = getStyleCssVars(industry, style);
   const { navItems, cta, brand, contact, socialLinks, footer } = siteData;
@@ -30,6 +31,7 @@ export function DemoPageShell({ sections, industry, industryKey, defaultStyle, s
         {sections.map((section) => (
           <SectionRenderer key={section.id} section={section} styleVariant={style} industry={industry} />
         ))}
+        {children}
       </main>
       <SiteFooter footer={footer} brand={brand} contact={contact} socialLinks={socialLinks} />
       <DemoFab currentIndustry={industryKey} currentStyle={style} onStyleChange={setStyle} />

@@ -9,9 +9,10 @@ import type { SnapshotCollectionItem, SnapshotCollection } from '@/lib/snapshot'
 type Props = {
   item: SnapshotCollectionItem;
   collection: SnapshotCollection;
+  backHrefPrefix?: string;
 };
 
-export function CollectionDetail({ item, collection }: Props) {
+export function CollectionDetail({ item, collection, backHrefPrefix = '' }: Props) {
   const data = item.data;
   const image = data.image as string | undefined;
   const description = data.description as string | undefined;
@@ -24,7 +25,7 @@ export function CollectionDetail({ item, collection }: Props) {
       <div className="max-w-4xl mx-auto px-6">
         {/* Back link */}
         <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
-          <Link href={`/${collection.key}`} className="inline-flex items-center gap-2 text-sm text-brand-primary hover:underline mb-8">
+          <Link href={`${backHrefPrefix}/${collection.key}`} className="inline-flex items-center gap-2 text-sm text-brand-primary hover:underline mb-8">
             <ArrowLeft size={16} />
             Zurück zu {collection.label}
           </Link>
