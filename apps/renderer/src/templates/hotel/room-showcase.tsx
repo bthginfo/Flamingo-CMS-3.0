@@ -42,7 +42,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="text-xl font-bold text-[var(--style-text-primary)]">{room.name || ''}</h3>
-                {room.priceLabel && <p className="text-sm font-semibold text-[var(--style-badge-bg)]">{room.priceLabel}</p>}
+                {room.priceLabel && <p className="text-sm font-semibold text-[var(--style-text-primary)]">{room.priceLabel}</p>}
               </div>
               {room.description && <p className="mt-3 text-sm leading-6 text-[var(--style-text-secondary)]">{room.description}</p>}
               <div className="mt-4 grid gap-2 text-xs text-[var(--style-text-secondary)]">
@@ -53,7 +53,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
               {asList<string>(room.features).length > 0 && <p className="mt-4 text-xs text-[var(--style-text-secondary)]">{asList<string>(room.features).join(' / ')}</p>}
               {asList<string>(room.galleryImages).length > 0 && <p className="mt-2 text-xs text-[var(--style-text-secondary)]">{asList<string>(room.galleryImages).length} Bilder</p>}
               <div className="mt-5 flex flex-wrap gap-3">
-                {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-semibold text-[var(--style-badge-bg)]">{room.detailCta.label}<ArrowRight size={15} /></a>}
+                {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-semibold text-[var(--style-accent)]">{room.detailCta.label}<ArrowRight size={15} /></a>}
                 {room.bookingCta?.label && <a href={room.bookingCta.href || '#'} className="font-semibold text-[var(--style-text-secondary)]">{room.bookingCta.label}</a>}
               </div>
             </div>
@@ -120,7 +120,7 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="text-xl font-black uppercase text-[var(--style-text-primary)]">{room.name || ''}</h3>
-                {room.priceLabel && <p className="text-sm font-black text-[var(--style-badge-bg)]">{room.priceLabel}</p>}
+                {room.priceLabel && <p className="text-sm font-black text-[var(--style-text-primary)]">{room.priceLabel}</p>}
               </div>
               {room.description && <p className="mt-3 text-sm leading-6 text-[var(--style-text-secondary)]">{room.description}</p>}
               <div className="mt-4 grid gap-2 text-xs font-bold text-[var(--style-text-secondary)]">
@@ -131,7 +131,7 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
               {asList<string>(room.features).length > 0 && <p className="mt-4 text-xs text-[var(--style-text-secondary)]">{asList<string>(room.features).join(' / ')}</p>}
               {asList<string>(room.galleryImages).length > 0 && <p className="mt-2 text-xs text-[var(--style-text-secondary)]">{asList<string>(room.galleryImages).length} Bilder</p>}
               <div className="mt-5 flex flex-wrap gap-3">
-                {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-black uppercase text-[var(--style-badge-bg)]">{room.detailCta.label}<ArrowRight size={15} /></a>}
+                {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-black uppercase text-[var(--style-accent)]">{room.detailCta.label}<ArrowRight size={15} /></a>}
                 {room.bookingCta?.label && <a href={room.bookingCta.href || '#'} className="font-bold uppercase text-[var(--style-text-secondary)]">{room.bookingCta.label}</a>}
               </div>
             </div>

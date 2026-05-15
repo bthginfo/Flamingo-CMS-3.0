@@ -44,10 +44,10 @@ function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primar
       {bgImage ? (
         <>
           <Image src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#1a3c2a]/90 via-[#1a3c2a]/70 to-[#2d5a3f]/60" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0f1d2e]/90 via-[#0f1d2e]/70 to-[#1a3550]/60" />
         </>
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a3c2a] via-[#2d5a3f] to-[#1a3c2a]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0f1d2e] via-[#1a3550] to-[#0f1d2e]" />
       )}
       {/* grain texture */}
       <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE0VjZoLTJWMGgtNHY2aC0ydjhoLTJ2LThoLTJWMGgtNHY2aC0ydjhoNFYyaDRWNmgydi04aDJ6Ii8+PC9nPjwvZz48L3N2Zz4=')]" />
@@ -82,7 +82,7 @@ function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primar
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.9 }}
           className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
           {primaryCta.label && (
-            <a href={primaryCta.href || '#'} className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-amber-400 px-8 py-4 font-semibold text-[#1a3c2a] transition-all hover:shadow-lg hover:-translate-y-0.5">
+              <a href={primaryCta.href || '#'} className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-amber-400 px-8 py-4 font-semibold text-[#0f1d2e] transition-all hover:shadow-lg hover:-translate-y-0.5">
               <span className="relative z-10 flex items-center gap-2.5">{primaryCta.label}<ArrowRight size={17} className="transition-transform group-hover:translate-x-1" /></span>
               <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.3),transparent)] bg-[length:200%_100%]" />
             </a>

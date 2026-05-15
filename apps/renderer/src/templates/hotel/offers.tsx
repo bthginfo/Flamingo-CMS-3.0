@@ -50,7 +50,7 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
               {offer.description && <p className="mt-3 text-sm leading-6 text-[var(--style-text-secondary)]">{offer.description}</p>}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs text-[var(--style-text-secondary)]">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">
-                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-semibold text-[var(--style-badge-bg)]">{offer.cta.label}</a>}
+                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-semibold text-[var(--style-accent)]">{offer.cta.label}</a>}
                 {offer.detailHref && offer.detailLabel && <a href={offer.detailHref} className="inline-flex items-center gap-1 text-sm text-[var(--style-text-secondary)]">{offer.detailLabel}<ArrowRight size={14} /></a>}
               </div>
             </div>
@@ -120,7 +120,7 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
               {offer.description && <p className="mt-3 text-sm leading-6 text-[var(--style-text-secondary)]">{offer.description}</p>}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs text-[var(--style-text-secondary)]">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">
-                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-black uppercase text-[var(--style-badge-bg)]">{offer.cta.label}</a>}
+                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-black uppercase text-[var(--style-accent)]">{offer.cta.label}</a>}
                 {offer.detailHref && offer.detailLabel && <a href={offer.detailHref} className="inline-flex items-center gap-1 text-sm font-bold text-[var(--style-text-secondary)]">{offer.detailLabel}<ArrowRight size={14} /></a>}
               </div>
             </div>
