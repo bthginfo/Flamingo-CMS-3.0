@@ -25,7 +25,7 @@ interface DemoFabProps {
 }
 
 export function DemoFab({ currentIndustry, currentStyle, onStyleChange }: DemoFabProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -111,6 +111,13 @@ export function DemoFab({ currentIndustry, currentStyle, onStyleChange }: DemoFa
               <ExternalLink size={14} />
               Zurück zu Flamingo
             </a>
+          </div>
+
+          {/* Disclaimer */}
+          <div className="border-t border-white/10 px-5 py-3">
+            <p className="text-[10px] leading-relaxed text-white/35">
+              Dies ist eine Demo. Farben, Schriften, Inhalte und Layouts können im Admin individuell angepasst werden.
+            </p>
           </div>
         </div>
       )}
