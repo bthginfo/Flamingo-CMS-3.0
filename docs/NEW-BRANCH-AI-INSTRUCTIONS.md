@@ -126,6 +126,9 @@ grep -A 50 'onChange(' apps/renderer/src/app/admin/pages/[id]/section-data-edito
 4. **KEINE generischen 1:1 Kopien.** Jede Branche muss eigene Identität haben.
 5. **KEINE Seiteneffekte.** Nach deiner Arbeit muss Handwerk identisch funktionieren.
 6. **KEINEN hartcodierten Text** in Renderer-Templates (siehe Goldene Regel).
+7. **KEIN Hero ohne `styleVariant`-Support.** Jede Hero-Komponente MUSS `{ data, styleVariant }` destructuren und alle 3 Varianten rendern.
+8. **KEIN Fallback auf Tradesman-Editoren.** Jede Branche MUSS eigenständige Editoren für ALLE ihre Sections haben — inklusive Hero.
+9. **KEINE Section ohne `framer-motion` Animationen.** Mindestens `initial/animate` oder `whileInView` verwenden.
 
 ### PFLICHT — Immer tun:
 1. **Jeden Schritt begründen.** Vor jeder Aktion: erkläre in 1-2 Sätzen WARUM du das tust.
@@ -360,9 +363,17 @@ Für Section-Type "xxx":
 #### 2.3 Style-Varianten
 
 3 Stile in `styles.ts` hinzufügen — `classic`, `modern`, `bold`:
-- `classic` — Zeitlos, warm, abgerundete Ecken, weiche Schatten
-- `modern` — Minimalistisch, feine Borders, weight 500, tight tracking
-- `bold` — Dynamisch, eckig (0 Radius), Offset-Schatten, Uppercase, weight 900
+- `classic` — Zeitlos, warm, abgerundete Ecken, weiche Schatten, dunkler Hero-Overlay
+- `modern` — Split-Layout (Text links, Bild rechts), heller Hintergrund `bg-[var(--style-section-bg)]`, dunkler Text
+- `bold` — Uppercase Headings, dunkler Hintergrund, maximaler Kontrast, weight 900
+
+**PFLICHT FÜR JEDE SECTION-KOMPONENTE:**
+- Destructure `{ data, styleVariant }` (nicht nur `{ data }`)
+- Prüfe `const isModern = styleVariant === 'modern'` und `const isBold = styleVariant === 'bold'`
+- Classic ist der Fallback (wenn weder modern noch bold)
+- Modern MUSS ein deutlich anderes Layout haben (z.B. Split-Grid statt Overlay)
+- Bold MUSS visuell "lauter" sein (Uppercase, mehr Kontrast)
+- alle CSS-Variablen wie `var(--style-badge-bg)`, `var(--style-text-primary)`, etc. nutzen
 
 **WICHTIG: Style-Varianten sind NICHT nur CSS-Variablen!**
 Jede Section-Komponente hat **komplett unterschiedliches JSX/Layout** pro Variante:
@@ -436,16 +447,22 @@ In `apps/marketing/src/showcase/Templates.tsx`:
 ### Templates (Renderer)
 - [ ] Alle Standard-Sections implementiert (mindestens 19)
 - [ ] Alle branchen-spezifischen Sections implementiert
+- [ ] **JEDE Section** hat `styleVariant` Support (classic/modern/bold) — KEINE Ausnahmen
+- [ ] **JEDE Section** nutzt `framer-motion` für Animationen
+- [ ] Hero nutzt `min-h-screen`, `-mt-[112px] pt-[112px]` Pattern
 - [ ] **100% FELD-AUDIT:** Jede Section → Admin-Felder = Renderer-Felder
 - [ ] Keine hartcodierten Texte
 - [ ] Template Registry erweitert
 - [ ] Build erfolgreich: `pnpm build --filter @flamingo/renderer`
 
 ### Admin-Editoren
-- [ ] Editoren für branchen-spezifische Sections
-- [ ] Editor Registry erweitert
+- [ ] Editoren für **JEDE Section** inkl. Hero — kein Fallback auf Tradesman
+- [ ] Editor Registry erweitert — ALLE Section-Types im `EDITORS` Map
+- [ ] Hero-Editor hat: headline, subline, badgeText, bgImage (ImageUploadField), trustItems, primaryCta (ButtonField), secondaryCta (ButtonField), plus branchen-spezifische Felder
+- [ ] Alle CTA-Felder nutzen `ButtonField` (Label + Intern/Extern-Link)
+- [ ] Alle Bild-Felder nutzen `ImageUploadField`
 - [ ] **100% FELD-AUDIT:** Jeder Editor onChange() = Template data.xxx
-- [ ] Build erfolgreich: `pnpm build --filter @flamingo/admin`
+- [ ] Build erfolgreich: `pnpm build --filter @flamingo/renderer`
 
 ### Style-Varianten
 - [ ] `classic`, `modern`, `bold` in styles.ts

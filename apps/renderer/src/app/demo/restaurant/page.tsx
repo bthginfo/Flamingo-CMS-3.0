@@ -1,0 +1,242 @@
+import { SectionRenderer } from '@/components/section-renderer';
+import { getStyleCssVars } from '@/lib/styles';
+import type { SnapshotSection } from '@/lib/snapshot';
+
+export const dynamic = 'force-static';
+
+const sections: SnapshotSection[] = [
+  {
+    id: 'restaurant-hero',
+    type: 'hero',
+    variant: null,
+    visible: true,
+    container: 'full',
+    spacingTop: 'none',
+    spacingBottom: 'none',
+    anchorId: 'hero',
+    data: {
+      headline: 'Tisch & Feuer',
+      subline: 'Offene Kueche, saisonale Teller und ein Abend, der nach mehr schmeckt.',
+      badgeText: 'Restaurant Demo',
+      bgImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1800&q=85',
+      trustItems: ['Saisonale Karte', 'Offene Kueche', 'Terrasse im Innenhof'],
+      primaryCta: { label: 'Tisch reservieren', href: '#reservierung' },
+      secondaryCta: { label: 'Speisekarte ansehen', href: '#speisekarte' },
+    },
+  },
+  {
+    id: 'restaurant-menu',
+    type: 'menu',
+    variant: null,
+    visible: true,
+    container: 'default',
+    spacingTop: 'l',
+    spacingBottom: 'l',
+    anchorId: 'speisekarte',
+    data: {
+      headline: 'Saisonkarte',
+      subline: 'Reduziert, frisch und konsequent handwerklich gekocht.',
+      badgeText: 'Aus der Kueche',
+      introText: 'Unsere Karte wechselt mit Markt, Wetter und Saison. Preise und Hinweise sind vollstaendig im CMS editierbar.',
+      categories: [
+        {
+          title: 'Vorspeisen',
+          description: 'Kleine Teller zum Teilen oder Ankommen.',
+          items: [
+            {
+              name: 'Burrata mit Ofentomate',
+              description: 'Cremige Burrata, geschmorte Tomaten, Basilikum-Oel und geröstetes Sauerteigbrot.',
+              price: '13',
+              image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80',
+              tags: ['Vegetarisch', 'Hausgemacht', 'Empfehlung', 'Details'],
+              allergens: ['Gluten', 'Milch'],
+              highlighted: true,
+              vegetarian: true,
+              vegan: false,
+              spicy: false,
+              detailHref: '#reservierung',
+              detailLabel: 'Details',
+            },
+            {
+              name: 'Rindertatar',
+              description: 'Handgeschnitten, Kapern, Schalotten, Eigelbcreme und Kartoffelchips.',
+              price: '16',
+              tags: ['Signature'],
+              allergens: ['Ei'],
+              highlighted: false,
+              vegetarian: false,
+              vegan: false,
+              spicy: false,
+            },
+          ],
+        },
+        {
+          title: 'Hauptgerichte',
+          description: 'Saisonale Klassiker mit Feuer und Tiefe.',
+          items: [
+            {
+              name: 'Geschmorte Rinderbacke',
+              description: 'Selleriepueree, Rotwein-Jus und wildem Brokkoli.',
+              price: '28',
+              image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=500&q=80',
+              tags: ['Langsam gegart'],
+              allergens: ['Sellerie'],
+              highlighted: true,
+              vegetarian: false,
+              vegan: false,
+              spicy: false,
+            },
+            {
+              name: 'Gerösteter Blumenkohl',
+              description: 'Tahini, Kräuter, Granatapfel und geräucherte Mandeln.',
+              price: '21',
+              tags: ['Vegan'],
+              allergens: ['Sesam', 'Mandeln'],
+              highlighted: false,
+              vegetarian: true,
+              vegan: true,
+              spicy: true,
+            },
+          ],
+        },
+      ],
+      footnote: 'Alle Preise in Euro. Allergene und Labels sind pro Gericht editierbar.',
+      ctaPrimary: { label: 'Jetzt reservieren', href: '#reservierung' },
+    },
+  },
+  {
+    id: 'restaurant-signature',
+    type: 'signatureDishes',
+    variant: null,
+    visible: true,
+    container: 'default',
+    spacingTop: 'm',
+    spacingBottom: 'l',
+    anchorId: 'empfehlungen',
+    data: {
+      headline: 'Empfehlungen des Hauses',
+      subline: 'Gerichte, die den Stil der Kueche auf den Punkt bringen.',
+      badgeText: 'Signature',
+      dishes: [
+        {
+          name: 'Dry-Aged Entrecote',
+          description: 'Vom Grill, mit Schalottenjus und knusprigen Kartoffeln.',
+          price: '34',
+          image: 'https://images.unsplash.com/photo-1558030006-450675393462?w=700&q=80',
+          label: 'Vom Feuer',
+          ingredients: ['Dry Aged Beef', 'Jus', 'Kartoffel'],
+          cta: { label: 'Tisch sichern', href: '#reservierung' },
+        },
+        {
+          name: 'Hausgemachte Tagliatelle',
+          description: 'Pilze, Parmesan und Thymianbutter.',
+          price: '22',
+          image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=700&q=80',
+          label: 'Pasta',
+          ingredients: ['Pasta', 'Pilze', 'Parmesan'],
+          cta: { label: 'Karte ansehen', href: '#speisekarte' },
+        },
+        {
+          name: 'Zitronentarte',
+          description: 'Baiser, Olivenoel und Meersalz.',
+          price: '9',
+          image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=700&q=80',
+          label: 'Dessert',
+          ingredients: ['Zitrone', 'Baiser', 'Olivenoel'],
+          cta: { label: 'Reservieren', href: '#reservierung' },
+        },
+      ],
+    },
+  },
+  {
+    id: 'restaurant-ambience',
+    type: 'ambience',
+    variant: null,
+    visible: true,
+    container: 'default',
+    spacingTop: 'l',
+    spacingBottom: 'l',
+    anchorId: 'ambiente',
+    data: {
+      headline: 'Ein Raum fuer lange Abende',
+      subline: 'Warm, nahbar und mit Blick in die offene Kueche.',
+      badgeText: 'Ambiente',
+      imagePrimary: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&q=85',
+      imageSecondary: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800&q=80',
+      imageTertiary: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80',
+      highlights: [
+        { title: 'Offene Kueche', text: 'Der Pass ist sichtbar, das Handwerk bleibt nah am Gast.', icon: 'flame' },
+        { title: 'Terrasse', text: 'Ruhiger Innenhof fuer Sommerabende und Aperitif.', icon: 'leaf' },
+        { title: 'Private Dining', text: 'Ein separater Tisch fuer Feiern, Teams und besondere Abende.', icon: 'users' },
+      ],
+      ctaPrimary: { label: 'Events anfragen', href: '#events' },
+    },
+  },
+  {
+    id: 'restaurant-events',
+    type: 'events',
+    variant: null,
+    visible: true,
+    container: 'default',
+    spacingTop: 'l',
+    spacingBottom: 'l',
+    anchorId: 'events',
+    data: {
+      headline: 'Events & Feiern',
+      subline: 'Weinabende, Private Dining und saisonale Menues.',
+      badgeText: 'Kalender',
+      events: [
+        {
+          title: 'Winzerabend im Juni',
+          dateLabel: '21. Juni',
+          timeLabel: '19:00 Uhr',
+          description: 'Vier Gaenge, korrespondierende Weine und Geschichten vom Weingut.',
+          image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=700&q=80',
+          priceLabel: '89 pro Person',
+          cta: { label: 'Plaetze anfragen', href: '#reservierung' },
+          detailHref: '#reservierung',
+          detailLabel: 'Mehr erfahren',
+        },
+      ],
+      fallbackText: 'Neue Termine folgen in Kuerze.',
+    },
+  },
+  {
+    id: 'restaurant-reservation',
+    type: 'reservation',
+    variant: null,
+    visible: true,
+    container: 'default',
+    spacingTop: 'l',
+    spacingBottom: 'xl',
+    anchorId: 'reservierung',
+    data: {
+      headline: 'Reservieren Sie Ihren Tisch',
+      subline: 'Fuer spontane Besuche, Gruppen und besondere Abende.',
+      badgeText: 'Reservierung',
+      introText: 'Nutzen Sie den Buchungslink oder rufen Sie direkt an. Das Formular zeigt die spaeteren CMS-Felder fuer Anfrage-Workflows.',
+      formEnabled: true,
+      submitLabel: 'Anfrage senden',
+      phoneCta: { label: 'Anrufen', href: 'tel:+49221123456' },
+      externalBookingCta: { label: 'Online reservieren', href: 'https://example.com/reservierung' },
+      partySizeOptions: ['Name', 'Personen', 'Datum und Uhrzeit'],
+      timeHint: 'Reservierungen ab 8 Personen bitte telefonisch anfragen.',
+      policyText: 'Antworten erfolgen waehrend der Oeffnungszeiten.',
+      image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80',
+    },
+  },
+];
+
+export default function RestaurantDemoPage() {
+  const styleCssVars = getStyleCssVars('restaurant', 'classic');
+
+  return (
+    <div data-style="classic" style={styleCssVars as React.CSSProperties}>
+      <main>
+        {sections.map((section) => (
+          <SectionRenderer key={section.id} section={section} styleVariant="classic" industry="restaurant" />
+        ))}
+      </main>
+    </div>
+  );
+}
