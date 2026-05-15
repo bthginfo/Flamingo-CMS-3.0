@@ -171,18 +171,18 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
 
   if (deploymentMode === 'standalone') {
     // Create a dedicated Vercel project for this tenant
+    const standaloneResult = await createStandaloneProject(input.slug, tenantId);
+    vercelProjectId = standaloneResult.projectId;
+
+    // Add preview domain to the standalone project
+    await db.insert(tenantDomains).values({
+      tenantId,
+      domain: previewDomain,
+      type: 'preview',
+      verified: false,
+    });
+
     try {
-      const standaloneResult = await createStandaloneProject(input.slug, tenantId);
-      vercelProjectId = standaloneResult.projectId;
-
-      // Add preview domain to the standalone project
-      await db.insert(tenantDomains).values({
-        tenantId,
-        domain: previewDomain,
-        type: 'preview',
-        verified: false,
-      });
-
       const domainResult = await addDomainToProject(vercelProjectId, previewDomain);
       if (domainResult.configured || domainResult.verified) {
         await db.update(tenantDomains)
@@ -190,14 +190,17 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
           .where(eq(tenantDomains.domain, previewDomain));
       }
       domainConfigured = domainResult.configured;
+    } catch (err) {
+      console.error('Standalone domain provisioning failed:', err);
+    }
 
-      // Custom domain on standalone project
-      if (input.domain && input.domain !== previewDomain) {
-        await db.insert(tenantDomains).values({
-          tenantId,
-          domain: input.domain,
-          type: 'primary',
-          verified: false,
+    // Custom domain on standalone project
+    if (input.domain && input.domain !== previewDomain) {
+      await db.insert(tenantDomains).values({
+        tenantId,
+        domain: input.domain,
+        type: 'primary',
+        verified: false,
         });
         const customResult = await addDomainToProject(vercelProjectId, input.domain);
         if (customResult.verified) {
@@ -210,9 +213,6 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       // Trigger initial deployment
       await triggerProjectDeployment(`flamingo-${input.slug}`);
       console.log(`  ✅ Standalone project: flamingo-${input.slug}`);
-    } catch (err) {
-      console.error('Standalone project creation failed:', err);
-    }
   } else {
     // Shared mode: add domains to the shared renderer project
     await db.insert(tenantDomains).values({
