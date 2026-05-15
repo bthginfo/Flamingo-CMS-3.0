@@ -274,6 +274,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         toast.error(result.error);
       } else {
         toast.success('Änderungen veröffentlicht');
+        setSaved(false);
       }
     } finally {
       setPublishing(false);
