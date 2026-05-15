@@ -12,9 +12,11 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
 
   const db = getDb();
 
-  // For MVP: find first tenant + admin secret (single-tenant mode)
-  // Later: resolve tenant by domain or explicit selection
-  const [tenant] = await db.select().from(tenants).limit(1);
+  // Resolve tenant: use FIXED_TENANT_ID for standalone, otherwise first tenant
+  const fixedId = process.env.FIXED_TENANT_ID;
+  const [tenant] = fixedId
+    ? await db.select().from(tenants).where(eq(tenants.id, fixedId)).limit(1)
+    : await db.select().from(tenants).limit(1);
   if (!tenant) return { error: 'Kein Tenant konfiguriert' };
 
   const [secret] = await db.select().from(adminSecrets).where(eq(adminSecrets.tenantId, tenant.id));
