@@ -1,14 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { FileText, GripVertical, Eye, MoreHorizontal } from 'lucide-react';
+import { FileText, Eye, EyeOff, Pencil, ChevronRight, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const PAGES = [
-  { id: '1', title: 'Startseite', slug: '/', sections: 12, updatedAt: 'Heute, 14:32' },
-  { id: '2', title: 'Leistungen', slug: '/leistungen', sections: 6, updatedAt: 'Gestern, 09:15' },
-  { id: '3', title: 'Über uns', slug: '/ueber-uns', sections: 5, updatedAt: '12.05.2026' },
-  { id: '4', title: 'Projekte', slug: '/projekte', sections: 3, updatedAt: '10.05.2026' },
-  { id: '5', title: 'Kontakt', slug: '/kontakt', sections: 2, updatedAt: '08.05.2026' },
+  { id: 'startseite', title: 'Startseite', slug: 'startseite', status: 'published', visible: true },
+  { id: 'leistungen', title: 'Leistungen', slug: 'leistungen', status: 'published', visible: true },
+  { id: 'ueber-uns', title: 'Über uns', slug: 'ueber-uns', status: 'published', visible: true },
+  { id: 'projekte', title: 'Projekte', slug: 'projekte', status: 'published', visible: true },
+  { id: 'kontakt', title: 'Kontakt', slug: 'kontakt', status: 'published', visible: true },
 ];
 
 export default function DemoPagesPage() {
@@ -16,25 +17,45 @@ export default function DemoPagesPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Seiten</h1>
-        <div className="flex gap-2">
-          <input placeholder="Neue Seite…" className="admin-input w-56" readOnly />
-          <button className="admin-btn-primary opacity-60 cursor-not-allowed">+ Erstellen</button>
-        </div>
+        <form onSubmit={(e) => { e.preventDefault(); toast.info('Demo-Modus — Seiten können nicht erstellt werden'); }}>
+          <input name="title" placeholder="Neue Seite…" className="admin-input mr-2 w-56" />
+          <button type="submit" className="admin-btn-primary">+ Erstellen</button>
+        </form>
       </div>
-      <div className="admin-card divide-y divide-zinc-100">
+      <div className="space-y-3">
         {PAGES.map((page) => (
-          <Link key={page.id} href={`/demo/admin/pages/${page.id}`}
-            className="flex items-center gap-4 px-5 py-4 hover:bg-zinc-50 transition-colors group">
-            <GripVertical size={16} className="text-zinc-300" />
-            <FileText size={18} className="text-zinc-400 group-hover:text-admin-accent transition-colors" />
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-zinc-900">{page.title}</p>
-              <p className="text-xs text-zinc-400 mt-0.5">{page.slug} · {page.sections} Sections</p>
+          <div key={page.id} className="admin-card p-0 overflow-hidden hover:border-blue-300 hover:shadow-md transition-all group">
+            <div className="flex items-center">
+              <Link href={`/demo/admin/pages/${page.id}`} className="flex-1 flex items-center gap-4 px-5 py-4">
+                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0 group-hover:bg-blue-100 transition-colors">
+                  <FileText size={18} className="text-blue-500" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-zinc-900 group-hover:text-blue-600 transition-colors">{page.title}</p>
+                  <p className="text-xs text-zinc-400 mt-0.5">/{page.slug}</p>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className={`inline-block px-2.5 py-1 rounded-full text-[11px] font-medium ${page.status === 'published' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+                    {page.status === 'published' ? 'Live' : 'Entwurf'}
+                  </span>
+                  {page.visible ? <Eye size={14} className="text-emerald-500" /> : <EyeOff size={14} className="text-zinc-300" />}
+                  <div className="flex items-center gap-1 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Pencil size={14} />
+                    <span className="text-xs font-medium">Bearbeiten</span>
+                    <ChevronRight size={14} />
+                  </div>
+                </div>
+              </Link>
+              <div className="px-3 border-l">
+                <button
+                  onClick={() => toast.info('Demo-Modus — Seiten können nicht gelöscht werden')}
+                  className="text-zinc-300 hover:text-red-500 p-2 transition-colors"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
-            <span className="text-xs text-zinc-400">{page.updatedAt}</span>
-            <Eye size={16} className="text-zinc-300" />
-            <MoreHorizontal size={16} className="text-zinc-300" />
-          </Link>
+          </div>
         ))}
       </div>
     </div>

@@ -227,6 +227,8 @@ export default function DemoPageEditorPage() {
     setHasDirty(true);
   }, []);
 
+  const [saved, setSaved] = useState(false);
+
   function handleSaveAll() {
     setSections(s => s.map(sec => {
       const newData = pendingChanges.current.get(sec.id);
@@ -234,59 +236,26 @@ export default function DemoPageEditorPage() {
     }));
     pendingChanges.current.clear();
     setHasDirty(false);
-    toast.success('Demo-Modus — Änderungen lokal übernommen (nicht gespeichert)');
+    setSaved(true);
+    toast.success('Gespeichert');
   }
 
   return (
     <div>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Link href="/demo/admin/pages" className="text-zinc-400 hover:text-zinc-600">
-            <ArrowLeft size={20} />
-          </Link>
-          <div>
-            <input
-              value={page.title}
-              onChange={(e) => { setPage({ ...page, title: e.target.value }); setHasDirty(true); }}
-              className="text-2xl font-bold bg-transparent border-none outline-none focus:ring-0 p-0"
-            />
-            <p className="text-sm text-zinc-400 mt-0.5">/{page.slug} · {sections.length} Section{sections.length !== 1 ? 's' : ''}</p>
+      {/* Header — matches real admin */}
+      <div className="flex items-center gap-4 mb-6">
+        <Link href="/demo/admin/pages" className="text-gray-500 hover:text-gray-800"><ArrowLeft size={20} /></Link>
+        <div className="flex-1">
+          <input className="text-2xl font-bold bg-transparent border-none outline-none w-full" value={page.title} onChange={(e) => { setPage({ ...page, title: e.target.value }); setHasDirty(true); setSaved(false); }} />
+          <div className="flex items-center gap-3 mt-1">
+            <span className="text-sm text-gray-500">/</span>
+            <input className="text-sm text-gray-500 bg-transparent border-none outline-none" value={page.slug} onChange={(e) => { setPage({ ...page, slug: e.target.value }); setHasDirty(true); setSaved(false); }} />
           </div>
         </div>
-        <div className="flex gap-2">
-          <a href="/demo/handwerk" target="_blank" rel="noopener noreferrer" className="admin-btn-secondary flex items-center gap-1.5">
-            <ExternalLink size={14} /> Vorschau
-          </a>
-          <button
-            className={`admin-btn-primary flex items-center gap-1.5 ${!hasDirty ? 'opacity-50' : ''}`}
-            onClick={handleSaveAll}
-            disabled={!hasDirty}
-          >
-            <Save size={14} /> Speichern
-          </button>
-          <button className="admin-btn-secondary flex items-center gap-1.5" onClick={() => toast.info('Demo-Modus — Veröffentlichung ist deaktiviert')}>
-            <Rocket size={14} /> Veröffentlichen
-          </button>
-        </div>
-      </div>
-
-      {/* Page settings */}
-      <div className="admin-card p-4 mb-6">
-        <div className="grid grid-cols-3 gap-4 text-sm">
-          <label className="block">
-            <span className="text-zinc-500 text-xs font-medium">Seitentitel</span>
-            <input className="admin-input mt-1" value={page.title} onChange={(e) => { setPage({ ...page, title: e.target.value }); setHasDirty(true); }} />
-          </label>
-          <label className="block">
-            <span className="text-zinc-500 text-xs font-medium">URL-Slug</span>
-            <input className="admin-input mt-1" value={page.slug} onChange={(e) => { setPage({ ...page, slug: e.target.value }); setHasDirty(true); }} />
-          </label>
-          <label className="flex items-center gap-2 self-end">
-            <input type="checkbox" checked={page.visible} onChange={(e) => { setPage({ ...page, visible: e.target.checked }); setHasDirty(true); }} className="rounded" />
-            <span className="text-zinc-600 text-sm">Sichtbar</span>
-          </label>
-        </div>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={page.visible} onChange={() => { setPage({ ...page, visible: !page.visible }); setHasDirty(true); setSaved(false); }} />
+          Sichtbar
+        </label>
       </div>
 
       {/* Sections list with DnD */}
@@ -305,29 +274,56 @@ export default function DemoPageEditorPage() {
         </SortableContext>
       </DndContext>
 
-      {/* Add section */}
-      <div className="relative mt-4">
-        <button
-          className="w-full admin-card p-3 text-sm text-zinc-400 hover:text-zinc-600 hover:bg-zinc-50 transition-colors flex items-center justify-center gap-2"
-          onClick={() => setShowAddMenu(!showAddMenu)}
-        >
-          <Plus size={16} /> Section hinzufügen
+      {sections.length === 0 && (
+        <div className="admin-card text-center py-12 text-gray-400">
+          Noch keine Sektionen. Füge unten eine hinzu.
+        </div>
+      )}
+
+      {/* Add Section — matches real admin */}
+      <div className="mt-4 relative">
+        <button onClick={() => setShowAddMenu(!showAddMenu)} className="admin-btn-primary w-full flex items-center justify-center gap-2">
+          <Plus size={18} /> Sektion hinzufügen
         </button>
         {showAddMenu && (
-          <div className="absolute left-0 right-0 top-full mt-2 bg-white rounded-xl border shadow-xl z-50 max-h-80 overflow-y-auto p-2">
-            <div className="grid grid-cols-2 gap-1">
-              {sectionTypes.map(st => (
-                <button
-                  key={st.type}
-                  onClick={() => handleAddSection(st.type)}
-                  className="text-left p-2.5 rounded-lg hover:bg-blue-50 transition-colors"
-                >
-                  <span className="text-sm font-medium text-zinc-800">{st.label}</span>
-                  {st.description && <p className="text-xs text-zinc-400 mt-0.5">{st.description}</p>}
-                </button>
-              ))}
-            </div>
+          <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border rounded-lg shadow-lg max-h-80 overflow-auto z-10">
+            {sectionTypes.map((st) => (
+              <button key={st.type} onClick={() => handleAddSection(st.type)} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b last:border-b-0">
+                <span className="font-medium text-sm">{st.label}</span>
+                <span className="text-xs text-gray-500 ml-2">{st.description}</span>
+              </button>
+            ))}
           </div>
+        )}
+      </div>
+
+      {/* FAB Bar — matches real admin */}
+      <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
+        {!saved ? (
+          <button
+            onClick={handleSaveAll}
+            disabled={!hasDirty}
+            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <Save size={16} /> Speichern
+          </button>
+        ) : (
+          <>
+            <a
+              href="/demo/handwerk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-full shadow-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              <ExternalLink size={16} /> Vorschau
+            </a>
+            <button
+              onClick={() => toast.info('Demo-Modus — Veröffentlichung ist deaktiviert')}
+              className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-green-700 transition-colors"
+            >
+              <Rocket size={16} /> Veröffentlichen
+            </button>
+          </>
         )}
       </div>
     </div>

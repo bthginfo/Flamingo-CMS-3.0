@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Monitor, Tablet, Smartphone, ExternalLink } from 'lucide-react';
 
-const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || 'http://localhost:3002';
+const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://flamingo-renderer.vercel.app';
 
 export default function DemoPlayground() {
   const [viewport, setViewport] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
@@ -18,7 +18,7 @@ export default function DemoPlayground() {
       <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-gray-900/80 backdrop-blur shrink-0">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition">
-            <ArrowLeft size={16} /> Zurueck
+            <ArrowLeft size={16} /> Zurück
           </Link>
           <div className="h-5 w-px bg-white/10" />
           <span className="text-sm font-medium">Flamingo CMS &mdash; Live Demo</span>
@@ -50,7 +50,7 @@ export default function DemoPlayground() {
 
       {/* Info banner */}
       <div className="text-center py-2 bg-amber-500/10 border-b border-amber-500/20 text-amber-300 text-xs shrink-0">
-        Demo-Modus: Alle Editier-Funktionen sind aktiv. Aenderungen werden in deiner Session gespeichert, aber nie veroeffentlicht.
+        Demo-Modus: Alle Editier-Funktionen sind aktiv. Änderungen werden in deiner Session gespeichert, aber nie veröffentlicht.
       </div>
 
       {/* Iframe */}
