@@ -34,13 +34,15 @@ export const hotelSite: DemoSite = {
         {
           ...B, type: 'bookingStrip', id: 'ht-home-booking',
           data: {
-            fields: [
-              { name: 'arrival', label: 'Anreise', type: 'date' },
-              { name: 'departure', label: 'Abreise', type: 'date' },
-              { name: 'guests', label: 'Gaeste', type: 'select', options: ['1', '2', '3', '4', '5+'] },
-              { name: 'room', label: 'Zimmertyp', type: 'select', options: ['Alle Zimmer', 'Doppelzimmer', 'Suite', 'Familienzimmer', 'Chalet'] },
-            ],
-            ctaLabel: 'Verfuegbarkeit pruefen',
+            headline: 'Verfuegbarkeit pruefen',
+            badgeText: 'Direkt buchen',
+            arrivalLabel: 'Anreise',
+            departureLabel: 'Abreise',
+            guestsLabel: 'Gaeste',
+            roomLabel: 'Zimmertyp',
+            submitCta: { label: 'Verfuegbarkeit pruefen', href: '/demo/hotel/zimmer' },
+            secondaryCta: { label: 'Oder telefonisch: +43 5356 123 456', href: 'tel:+4353561234560' },
+            bookingNote: 'Bestpreis-Garantie bei Direktbuchung',
           },
         },
         {
@@ -278,7 +280,7 @@ export const hotelSite: DemoSite = {
           data: {
             headline: 'Unsere Packages & Angebote',
             subline: 'Mehr erleben, clever sparen – unsere saisonalen Arrangements',
-            items: [
+            offers: [
               {
                 title: 'Romantik-Wochenende',
                 description:

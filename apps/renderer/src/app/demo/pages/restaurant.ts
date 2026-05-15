@@ -17,11 +17,11 @@ export const restaurantSite: DemoSite = {
           data: {
             headline: 'Trattoria Dal Maestro',
             subline: 'Authentische italienische Kueche seit 1998 — mitten in der Innsbrucker Altstadt',
-            text: 'Unsere Familie bringt seit ueber 25 Jahren die Aromen der Toskana, Emilia-Romagna und Siziliens nach Tirol. Jedes Gericht erzaehlt eine Geschichte — von handgemachter Pasta bis zum perfekt geschmorten Osso Buco.',
-            image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1800&q=85',
-            imageAlt: 'Elegantes italienisches Restaurant mit warmem Licht und gedeckten Tischen',
-            cta: { label: 'Tisch reservieren', href: '/demo/restaurant/reservierung' },
-            ctaSecondary: { label: 'Speisekarte entdecken', href: '/demo/restaurant/speisekarte' },
+            badgeText: 'Seit 1998',
+            bgImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1800&q=85',
+            trustItems: ['Authentische italienische Kueche', 'Seit 25 Jahren', 'Familiengefuehrt'],
+            primaryCta: { label: 'Tisch reservieren', href: '/demo/restaurant/reservierung' },
+            secondaryCta: { label: 'Speisekarte entdecken', href: '/demo/restaurant/speisekarte' },
           },
         },
         {
@@ -72,8 +72,8 @@ export const restaurantSite: DemoSite = {
           data: {
             headline: 'Reservieren Sie Ihren Tisch',
             subline: 'Geniessen Sie einen unvergesslichen Abend in der Trattoria Dal Maestro',
-            intro: 'Ob romantisches Dinner zu zweit oder gesellige Runde mit Freunden — wir freuen uns auf Ihren Besuch. Reservieren Sie bequem online oder rufen Sie uns an.',
-            cta: { label: 'Jetzt reservieren', href: '/demo/restaurant/reservierung' },
+            introText: 'Ob romantisches Dinner zu zweit oder gesellige Runde mit Freunden — wir freuen uns auf Ihren Besuch. Reservieren Sie bequem online oder rufen Sie uns an.',
+            externalBookingCta: { label: 'Jetzt reservieren', href: '/demo/restaurant/reservierung' },
             phoneCta: { label: '+43 512 123 456', href: 'tel:+43512123456' },
             timeHint: 'Wir empfehlen eine Reservierung mindestens 2 Tage im Voraus, besonders fuer Freitag und Samstag.',
           },
@@ -91,9 +91,8 @@ export const restaurantSite: DemoSite = {
           data: {
             headline: 'Unsere Speisekarte',
             subline: 'Frische Zutaten, traditionelle Rezepte, leidenschaftlich zubereitet',
-            text: 'Unsere Karte wechselt saisonal und wird ergaenzt durch taegliche Empfehlungen unseres Kuechenchefs Marco. Alle Pasta wird taeglich frisch in unserer offenen Kueche zubereitet.',
-            image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=85',
-            imageAlt: 'Frische italienische Gerichte auf einem gedeckten Tisch',
+            bgImage: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=85',
+            primaryCta: { label: 'Tisch reservieren', href: '/demo/restaurant/reservierung' },
           },
         },
         {
@@ -105,7 +104,7 @@ export const restaurantSite: DemoSite = {
             footnote: 'Alle Gerichte werden mit frischen, saisonalen Zutaten zubereitet. Aenderungen vorbehalten. Bitte informieren Sie uns ueber Allergien und Unvertraeglichkeiten.',
             categories: [
             {
-              name: 'Antipasti',
+              title: 'Antipasti',
               description: 'Kleine Kostbarkeiten zum Einstimmen',
               items: [
                 {
@@ -152,7 +151,7 @@ export const restaurantSite: DemoSite = {
               ],
             },
             {
-              name: 'Primi Piatti — Pasta & Risotto',
+              title: 'Primi Piatti — Pasta & Risotto',
               description: 'Taeglich frisch in unserer offenen Kueche zubereitet',
               items: [
                 {
@@ -201,7 +200,7 @@ export const restaurantSite: DemoSite = {
               ],
             },
             {
-              name: 'Secondi — Hauptgerichte',
+              title: 'Secondi — Hauptgerichte',
               description: 'Fleisch & Fisch aus nachhaltiger Herkunft',
               items: [
                 {
@@ -239,7 +238,7 @@ export const restaurantSite: DemoSite = {
               ],
             },
             {
-              name: 'Dolci',
+              title: 'Dolci',
               description: 'Suesse Verfuehrungen zum perfekten Abschluss',
               items: [
                 {
@@ -288,9 +287,7 @@ export const restaurantSite: DemoSite = {
           data: {
             headline: 'Ambiente & Raeume',
             subline: 'Wo Geschichte auf Genuss trifft — unser Restaurant in der Innsbrucker Altstadt',
-            text: 'Im historischen Gewoelbekeller aus dem 15. Jahrhundert verbinden sich rustikaler Charme und italienische Eleganz. Ob im stimmungsvollen Hauptraum, auf der sonnigen Terrasse oder im privaten Weinkeller — bei uns finden Sie den perfekten Rahmen fuer jeden Anlass.',
-            image: 'https://images.unsplash.com/photo-1550966871-3ed3cdb51f3a?w=1800&q=85',
-            imageAlt: 'Stilvolles Restaurant-Interieur mit Steingewoelbe und warmem Kerzenlicht',
+            bgImage: 'https://images.unsplash.com/photo-1550966871-3ed3cdb51f3a?w=1800&q=85',
           },
         },
         {
@@ -300,37 +297,27 @@ export const restaurantSite: DemoSite = {
           data: {
             headline: 'Unsere Raeumlichkeiten',
             subline: 'Drei einzigartige Bereiche fuer unvergessliche Momente',
-            images: [
-            {
-              src: 'https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=900&q=80',
-              alt: 'Hauptsaal mit Steingewoelbe, gedeckten Tischen und Kerzenlicht',
-              caption: 'Il Salone — Unser Hauptsaal im historischen Gewoelbe bietet Platz fuer 60 Gaeste und besticht durch originale Steinboegen aus dem 15. Jahrhundert.',
-            },
-            {
-              src: 'https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=900&q=80',
-              alt: 'Sonnige Terrasse mit Blick auf die Alpen',
-              caption: 'La Terrazza — Von Mai bis September geniessen Sie auf unserer Terrasse italienische Kueche mit Blick auf die Nordkette. 30 Plaetze im Freien.',
-            },
-            {
-              src: 'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=900&q=80',
-              alt: 'Privater Weinkeller mit langem Holztisch',
-              caption: 'La Cantina — Unser privater Weinkeller mit ueber 200 erlesenen italienischen Weinen ist der perfekte Ort fuer exklusive Dinner und Weinproben.',
-            },
-          ],
-          highlights: [
-            {
-              title: 'Gewoelbekeller aus dem 15. Jahrhundert',
-              description: 'Originale Steinboegen und historisches Ambiente verleihen jedem Besuch einen besonderen Rahmen.',
-            },
-            {
-              title: 'Sonnenterrasse mit Alpenblick',
-              description: 'Geniessen Sie von Mai bis September die warme Jahreszeit mit Blick auf die Innsbrucker Nordkette.',
-            },
-            {
-              title: 'Private Dining fuer bis zu 12 Personen',
-              description: 'Unser Weinkeller bietet den perfekten Rahmen fuer Geburtstage, Jubilaeen oder Geschaeftsessen in exklusiver Atmosphaere.',
-            },
-          ],
+            imagePrimary: 'https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=900&q=80',
+            imageSecondary: 'https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=900&q=80',
+            imageTertiary: 'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=900&q=80',
+            highlights: [
+              {
+                title: 'Gewoelbekeller aus dem 15. Jahrhundert',
+                text: 'Originale Steinboegen und historisches Ambiente verleihen jedem Besuch einen besonderen Rahmen.',
+                icon: 'castle',
+              },
+              {
+                title: 'Sonnenterrasse mit Alpenblick',
+                text: 'Geniessen Sie von Mai bis September die warme Jahreszeit mit Blick auf die Innsbrucker Nordkette.',
+                icon: 'sun',
+              },
+              {
+                title: 'Private Dining fuer bis zu 12 Personen',
+                text: 'Unser Weinkeller bietet den perfekten Rahmen fuer Geburtstage, Jubilaeen oder Geschaeftsessen in exklusiver Atmosphaere.',
+                icon: 'wine',
+              },
+            ],
+            ctaPrimary: { label: 'Tisch reservieren', href: '/demo/restaurant/reservierung' },
           },
         },
       ],
@@ -346,9 +333,7 @@ export const restaurantSite: DemoSite = {
           data: {
             headline: 'Events & Catering',
             subline: 'Gemeinsam feiern, geniessen und die italienische Kueche erleben',
-            text: 'Ob Weinabend, Kochkurs oder private Feier — in der Trattoria Dal Maestro wird jedes Event zu einem besonderen Erlebnis. Lassen Sie sich von unserer Leidenschaft fuer gutes Essen anstecken.',
-            image: 'https://images.unsplash.com/photo-1530062845289-9109b2c9c868?w=1800&q=85',
-            imageAlt: 'Gesellige Runde bei einem Weinabend mit italienischen Gerichten',
+            bgImage: 'https://images.unsplash.com/photo-1530062845289-9109b2c9c868?w=1800&q=85',
           },
         },
         {
@@ -405,9 +390,8 @@ export const restaurantSite: DemoSite = {
           data: {
             headline: 'Reservierung',
             subline: 'Sichern Sie sich Ihren Lieblingstisch in der Trattoria Dal Maestro',
-            text: 'Ob spontaner Besuch oder geplanter Abend — wir freuen uns, Sie bei uns willkommen zu heissen. Reservieren Sie bequem online oder telefonisch.',
-            image: 'https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=1800&q=85',
-            imageAlt: 'Festlich gedeckter Tisch mit Weinglaesern und Kerzen',
+            bgImage: 'https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=1800&q=85',
+            primaryCta: { label: 'Jetzt reservieren', href: '#reservation-form' },
           },
         },
         {
@@ -416,12 +400,15 @@ export const restaurantSite: DemoSite = {
           type: 'openingHours',
           data: {
             headline: 'Unsere Oeffnungszeiten',
-            hours: [
-              { days: 'Dienstag — Samstag', time: '11:30 — 14:30 Uhr & 17:30 — 23:00 Uhr' },
-              { days: 'Sonntag', time: '11:30 — 22:00 Uhr' },
-              { days: 'Montag', time: 'Ruhetag' },
+            days: [
+              { label: 'Dienstag — Samstag', hours: '11:30 — 14:30 Uhr & 17:30 — 23:00 Uhr' },
+              { label: 'Sonntag', hours: '11:30 — 22:00 Uhr' },
+              { label: 'Montag', hours: '', closed: true, note: 'Ruhetag' },
             ],
-            note: 'An Feiertagen nach gesonderter Ankuendigung. Kueche schliesst 30 Minuten vor Restaurantschluss.',
+            kitchenHoursHeadline: 'Kuechenzeiten',
+            kitchenHoursText: 'Warme Kueche bis 30 Minuten vor Restaurantschluss.',
+            holidayNote: 'An Feiertagen nach gesonderter Ankuendigung.',
+            ctaPrimary: { label: 'Tisch reservieren', href: '/demo/restaurant/reservierung' },
           },
         },
         {
@@ -430,19 +417,19 @@ export const restaurantSite: DemoSite = {
           type: 'reservation',
           data: {
             headline: 'Tisch reservieren',
-            intro: 'Fuellen Sie einfach das Formular aus und wir bestaetigen Ihre Reservierung innerhalb von 2 Stunden per E-Mail. Fuer kurzfristige Anfragen empfehlen wir einen Anruf.',
+            introText: 'Fuellen Sie einfach das Formular aus und wir bestaetigen Ihre Reservierung innerhalb von 2 Stunden per E-Mail. Fuer kurzfristige Anfragen empfehlen wir einen Anruf.',
             partySizeOptions: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
             phoneCta: {
               label: 'Telefonisch: +43 512 123 456',
               href: 'tel:+43512123456',
             },
             timeHint: 'Bitte beachten Sie: Reservierungen fuer Freitag und Samstag ab 19 Uhr sind besonders beliebt. Wir empfehlen eine Buchung mindestens 3 Tage im Voraus.',
-            policy: 'Bitte informieren Sie uns mindestens 24 Stunden im Voraus, falls Sie Ihre Reservierung stornieren oder aendern moechten. Bei Nichterscheinen kann eine Gebuehr von 25,00 € pro Person anfallen. Gruppen ab 8 Personen bitten wir um eine Anzahlung.',
-            externalBooking: {
+            policyText: 'Bitte informieren Sie uns mindestens 24 Stunden im Voraus, falls Sie Ihre Reservierung stornieren oder aendern moechten. Bei Nichterscheinen kann eine Gebuehr von 25,00 € pro Person anfallen. Gruppen ab 8 Personen bitten wir um eine Anzahlung.',
+            externalBookingCta: {
               label: 'Oder buchen Sie ueber OpenTable',
               href: '/demo/restaurant/reservierung',
             },
-            cta: { label: 'Reservierung absenden', href: '/demo/restaurant/reservierung' },
+            submitLabel: 'Reservierung absenden',
           },
         },
       ],

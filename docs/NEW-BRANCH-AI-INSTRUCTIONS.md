@@ -645,6 +645,270 @@ Bei jeder Interaktion:
 
 ---
 
+## 🎯 DEMO-DATEN FÜR `/demo/*` SEITEN — KORREKTE STRUKTUR
+
+> Dieser Abschnitt beschreibt exakt, wie Demo-Seiten-Daten in `apps/renderer/src/app/demo/pages/<branche>.ts` aufgebaut sein müssen. **Jeder Fehler hier führt zu leeren oder kaputten Sections im Frontend.**
+
+### Architektur der Demo-Seiten
+
+```
+apps/renderer/src/app/demo/
+├── [industry]/[[...slug]]/page.tsx   ← Catch-all Route (Next.js 15, async params)
+├── demo-data.ts                      ← Nav, Brand, Contact, Footer pro Branche
+├── demo-fab.tsx                      ← FAB: Branchen-/Style-Switcher
+├── demo-page-shell.tsx               ← Client-Wrapper mit Live-Style-Switching
+└── pages/
+    ├── types.ts                      ← DemoSite, DemoPage, B, HERO Basis-Objekte
+    ├── index.ts                      ← Registry aller Sites
+    ├── handwerk.ts                   ← Demo-Daten Handwerk
+    ├── hotel.ts                      ← Demo-Daten Hotel
+    └── ...                           ← Weitere Branchen
+```
+
+### SnapshotSection-Typ (PFLICHT-Struktur)
+
+```typescript
+interface SnapshotSection {
+  id: string;           // Eindeutige ID, z.B. 'ht-home-hero'
+  type: string;         // Section-Typ, z.B. 'hero', 'roomShowcase'
+  variant: string | null;
+  visible: boolean;
+  container: 'default' | 'full';
+  spacingTop: 'none' | 's' | 'm' | 'l' | 'xl';
+  spacingBottom: 'none' | 's' | 'm' | 'l' | 'xl';
+  anchorId: string | null;
+  data: Record<string, unknown>;  // ← HIER kommen die Content-Felder rein
+}
+```
+
+### Basis-Objekte B und HERO
+
+```typescript
+// Normale Section:
+const B = { variant: null, visible: true, container: 'default', spacingTop: 'l', spacingBottom: 'l', anchorId: null };
+
+// Hero-Section (full-width, kein Spacing):
+const HERO = { ...B, container: 'full', spacingTop: 'none', spacingBottom: 'none' };
+```
+
+### 🚨 KRITISCHE REGELN FÜR DEMO-DATEN
+
+#### Regel 1: `...HERO` / `...B` IMMER auf Section-Ebene spreaden
+
+```typescript
+// ✅ RICHTIG:
+{
+  ...HERO,              // ← Section-Ebene
+  id: 'ht-home-hero',
+  type: 'hero',
+  data: {
+    headline: 'Willkommen',
+    bgImage: '...',
+  },
+},
+
+// ❌ FALSCH — Spread INNERHALB von data:
+{
+  id: 'ht-home-hero',
+  type: 'hero',
+  data: {
+    ...HERO,            // ← FALSCH! HERO gehört NICHT in data
+    headline: 'Willkommen',
+  },
+},
+```
+
+#### Regel 2: Content-Felder IMMER in `data: { }` wrappen
+
+```typescript
+// ✅ RICHTIG:
+{
+  ...B,
+  id: 'ht-home-rooms',
+  type: 'roomShowcase',
+  data: {               // ← data-Wrapper
+    headline: '...',
+    rooms: [...],
+  },
+},
+
+// ❌ FALSCH — Felder direkt auf Section-Ebene:
+{
+  ...B,
+  id: 'ht-home-rooms',
+  type: 'roomShowcase',
+  headline: '...',      // ← FALSCH! Muss in data: {} sein
+  rooms: [...],         // ← FALSCH!
+},
+```
+
+#### Regel 3: Feldnamen MÜSSEN exakt mit Template übereinstimmen
+
+Die Templates lesen Felder via `data.feldName`. Wenn der Name nicht übereinstimmt, wird der Fallback angezeigt oder die Section ist leer.
+
+**Häufige Fehler die NIEMALS passieren dürfen:**
+
+| ❌ Falsch | ✅ Richtig | Template erwartet |
+|-----------|-----------|-------------------|
+| `image` | `bgImage` | Hero: `data.bgImage` |
+| `title` | `headline` | Hero: `data.headline` |
+| `subtitle` | `subline` | Hero: `data.subline` |
+| `cta` | `primaryCta` | Hero: `data.primaryCta` |
+| `ctaSecondary` | `secondaryCta` | Hero: `data.secondaryCta` |
+| `intro` | `introText` | Reservation: `data.introText` |
+| `policy` | `policyText` | Reservation: `data.policyText` |
+| `externalBooking` | `externalBookingCta` | Reservation: `data.externalBookingCta` |
+| `name` (auf Category) | `title` | Menu: `MenuCategory.title` |
+| `items` | `offers` | Offers: `data.offers` |
+| `experiences` | `items` | ExperienceGrid: `data.items` |
+| `hours` mit `{days, time}` | `days` mit `{label, hours}` | OpeningHours: `data.days[].label`, `data.days[].hours` |
+| `images` Array | `imagePrimary`/`imageSecondary`/`imageTertiary` | Ambience: 3 separate Felder |
+| `description` in highlights | `text` | Ambience highlights: `highlight.text` |
+
+#### Regel 4: Button-Objekte haben IMMER `{ label, href }`
+
+```typescript
+// ✅ RICHTIG:
+primaryCta: { label: 'Jetzt buchen', href: '/demo/hotel/zimmer' },
+
+// ❌ FALSCH:
+cta: { text: 'Jetzt buchen', url: '/demo/hotel/zimmer' },  // text→label, url→href
+```
+
+#### Regel 5: Array-Feldnamen exakt wie im Template-Typ
+
+Vor dem Erstellen einer Section: **IMMER** das Template lesen und prüfen welchen Feldnamen das Array hat.
+
+```typescript
+// Template: const offers = asList<Offer>(data.offers);
+// → Array-Feld heißt "offers", NICHT "items"
+
+// Template: const items = asList<Experience>(data.items);
+// → Array-Feld heißt "items", NICHT "experiences"
+
+// Template: const days = asList<Day>(data.days);
+// → Array-Feld heißt "days", NICHT "hours"
+```
+
+### VOLLSTÄNDIGE FELD-REFERENZ PRO SECTION-TYP
+
+> **PFLICHT:** Vor dem Erstellen von Demo-Daten für eine Section: prüfe die exakten Feldnamen in der Template-Datei unter `apps/renderer/src/templates/<branche>/<section>.tsx`.
+
+#### Gemeinsame Hero-Felder (alle Branchen)
+
+Jede Branche hat eine eigene Hero-Komponente, aber alle teilen diese Basis-Felder:
+```
+headline (string), subline (string), badgeText (string), bgImage (string),
+trustItems (string[]), primaryCta (Button), secondaryCta (Button)
+```
+
+Zusätzliche Hero-Felder je Branche:
+- **Hotel:** `availabilityHint`, `ratingText`
+- **Medical:** `specialtyLabel`, `emergencyHint`, `emergencyCta` (Button)
+- **Salon:** `bookingHint`, `ratingText`
+- **Tourism:** `locationLabel`, `seasonLabel`
+
+#### Hotel Sections
+| Section Type | Feld → Typ |
+|---|---|
+| `bookingStrip` | `headline`, `subline`, `badgeText`, `arrivalLabel`, `departureLabel`, `guestsLabel`, `roomLabel`, `submitCta` (Button), `secondaryCta` (Button), `bookingNote`, `fields` (BookingField[]) |
+| `roomShowcase` | `headline`, `subline`, `badgeText`, `rooms[]` {name, description, image, galleryImages[], priceLabel, sizeLabel, occupancyLabel, bedLabel, features[], detailCta, bookingCta, highlighted}, `footerText` |
+| `offers` | `headline`, `subline`, `badgeText`, `offers[]` {title, description, image, priceLabel, durationLabel, includes[], validUntilLabel, cta, highlighted}, `fallbackText` |
+| `amenities` | `headline`, `subline`, `badgeText`, `items[]` {icon, title, text, image, mediaType}, `ctaPrimary` (Button) |
+| `wellness` | `headline`, `subline`, `badgeText`, `introText`, `imagePrimary`, `imageSecondary`, `treatments[]` {title, text, durationLabel, priceLabel, image, cta}, `features[]` {icon, title, text}, `ctaPrimary` (Button) |
+| `hotelDining` | `headline`, `subline`, `badgeText`, `introText`, `image`, `openingText`, `menus[]` {title, description, timeLabel, priceLabel, cta}, `highlights[]` {title, text, image}, `ctaPrimary` (Button) |
+| `eventSpaces` | `headline`, `subline`, `badgeText`, `spaces[]` {name, description, image, capacityLabel, sizeLabel, seatingOptions[], features[], inquiryCta}, `processHeadline`, `processSteps[]` {title, text, icon}, `ctaPrimary` (Button) |
+| `gallery` | `headline`, `subline`, `badgeText`, `images[]` {src, alt, caption, category}, `ctaPrimary` (Button) |
+| `testimonials` | `headline`, `subline`, `badgeText`, `ratingValue`, `ratingCount`, `sourceLabel`, `items[]` {quote, name, context, rating, stayLabel}, `ctaPrimary` (Button) |
+| `faq` | `headline`, `subline`, `badgeText`, `items[]` {question, answer}, `ctaPrimary` (Button) |
+| `contact` | `headline`, `subline`, `badgeText`, `introText`, `formEnabled`, `submitLabel`, `infoCards[]` {icon, label, value}, `contactCta` (Button), `routeCta` (Button), `image` |
+| `location` | `headline`, `subline`, `badgeText`, `addressText`, `mapEmbedUrl`, `image`, `transportItems[]` {icon, label, value, text}, `nearbyItems[]` {title, distanceLabel, text, image}, `routeCta` (Button) |
+
+#### Restaurant Sections
+| Section Type | Feld → Typ |
+|---|---|
+| `signatureDishes` | `headline`, `subline`, `badgeText`, `dishes[]` {name, description, price, image, label, ingredients[], cta} |
+| `menu` | `headline`, `subline`, `badgeText`, `introText`, `categories[]` {**title**, description, items[]}, `footnote`, `ctaPrimary` (Button). ⚠️ Category hat `title` NICHT `name`! MenuItem hat `name`. |
+| `ambience` | `headline`, `subline`, `badgeText`, `imagePrimary`, `imageSecondary`, `imageTertiary`, `highlights[]` {title, **text**, icon}, `ctaPrimary` (Button). ⚠️ 3 separate Image-Felder, KEIN images-Array! Highlights nutzen `text` NICHT `description`! |
+| `events` | `headline`, `subline`, `badgeText`, `events[]` {title, dateLabel, timeLabel, description, image, priceLabel, cta}, `fallbackText` |
+| `openingHours` | `headline`, `subline`, `badgeText`, `days[]` {**label**, **hours**, note, closed}, `kitchenHoursHeadline`, `kitchenHoursText`, `holidayNote`, `ctaPrimary` (Button). ⚠️ Array heißt `days` NICHT `hours`! Objekte haben `label`+`hours` NICHT `days`+`time`! |
+| `reservation` | `headline`, `subline`, `badgeText`, `introText`, `formEnabled`, `submitLabel`, `phoneCta` (Button), `externalBookingCta` (Button), `partySizeOptions` (string[]), `timeHint`, `policyText`, `image`. ⚠️ `introText` NICHT `intro`! `policyText` NICHT `policy`! `externalBookingCta` NICHT `externalBooking`! |
+
+#### Medical Sections
+| Section Type | Feld → Typ |
+|---|---|
+| `serviceOverview` | `headline`, `subline`, `badgeText`, `items[]` {title, text, image, icon, category, cta}, `ctaPrimary` (Button) |
+| `doctorTeam` | `headline`, `subline`, `badgeText`, `doctors[]` {name, title, specialty, bio, image, languages[], appointmentCta} |
+| `patientInfo` | `headline`, `subline`, `badgeText`, `introText`, `cards[]` {icon, title, text, items[]} |
+| `emergencyInfo` | `headline`, `subline`, `badgeText`, `introText`, `items[]` {title, text, phoneLabel, phoneHref}, `ctaPrimary` (Button) |
+| `practiceGallery` | `headline`, `subline`, `badgeText`, `images[]` {src, alt, caption, category} |
+| `appointmentCta` | `headline`, `subline`, `badgeText`, `introText`, `onlineCta` (Button), `phoneCta` (Button), `callbackCta` (Button), `externalCta` (Button), `notes` (string[]) |
+| `diagnostics` | `headline`, `subline`, `badgeText`, `items[]` {title, text, image, benefitLabel, methodLabel, cta} |
+| `certifications` | `headline`, `subline`, `badgeText`, `items[]` {icon, title, text, metaLabel} |
+| `insuranceInfo` | `headline`, `subline`, `badgeText`, `items[]` {title, text, image, typeLabel, notice, cta} |
+| `downloadForms` | `headline`, `subline`, `badgeText`, `items[]` {title, text, fileLabel, fileHref, metaLabel} |
+| `openingHours` | `headline`, `subline`, `badgeText`, `days[]` {label, hours, note, closed}, `acuteCareText`, `holidayNote`, `ctaPrimary` (Button) |
+| `locationContact` | `headline`, `subline`, `badgeText`, `introText`, `image`, `mapEmbedUrl`, `formEnabled`, `submitLabel`, `infoCards[]` {icon, label, value}, `primaryCta` (Button), `secondaryCta` (Button) |
+| `equipmentHighlights` | `headline`, `subline`, `badgeText`, `items[]` {title, text, image, category, benefitLabel, cta} |
+| `faq` | `headline`, `subline`, `badgeText`, `items[]` {question, answer}, `ctaPrimary` (Button) |
+
+#### Salon Sections
+| Section Type | Feld → Typ |
+|---|---|
+| `serviceMenu` | `headline`, `subline`, `badgeText`, `categories[]` {title, items[]} — Items via `asList` |
+| `teamShowcase` | `headline`, `subline`, `badgeText`, `members[]` {name, role, bio, image, specialties[], bookingCta} |
+| `beforeAfter` | `headline`, `subline`, `badgeText`, `items[]` {title, text, beforeImage, afterImage, category, caption, cta} |
+| `gallery` | `headline`, `subline`, `badgeText`, `images[]` {src, alt, caption, category} |
+| `packages` | `headline`, `subline`, `badgeText`, `packages[]` {title, text, image, priceLabel, validUntilLabel, includes[], cta}, `ctaPrimary` (Button) |
+| `expertiseGrid` | `headline`, `subline`, `badgeText`, `items[]` {icon, title, text, metaLabel} |
+| `testimonials` | `headline`, `subline`, `badgeText`, `ratingValue`, `ratingCount`, `items[]` {quote, name, context, rating, sourceLabel}, `ctaPrimary` (Button) |
+| `bookingCta` | `headline`, `subline`, `badgeText`, `introText`, `onlineCta` (Button), `phoneCta` (Button), `whatsappCta` (Button), `notes` (string[]) |
+| `openingHours` | `headline`, `subline`, `badgeText`, `days[]` {label, hours, note, closed}, `bookingNote`, `ctaPrimary` (Button) |
+| `locationContact` | `headline`, `subline`, `badgeText`, `introText`, `image`, `mapEmbedUrl`, `formEnabled`, `submitLabel`, `infoCards[]` {icon, label, value}, `primaryCta` (Button), `secondaryCta` (Button) |
+| `faq` | `headline`, `subline`, `badgeText`, `items[]` {question, answer}, `ctaPrimary` (Button) |
+
+#### Tourism Sections
+| Section Type | Feld → Typ |
+|---|---|
+| `destinationHighlights` | `headline`, `subline`, `badgeText`, `items[]` {title, text, image, category, cta}, `ctaPrimary` (Button) |
+| `experienceGrid` | `headline`, `subline`, `badgeText`, `items[]` {title, text, image, category, durationLabel, audienceLabel, difficultyLabel, priceLabel, cta}, `ctaPrimary` (Button). ⚠️ Array heißt `items` NICHT `experiences`! |
+| `seasonTeaser` | `headline`, `subline`, `badgeText` + saisonale Felder |
+| `eventsCalendar` | `headline`, `subline`, `badgeText`, `events[]` {title, text, image, dateLabel, timeLabel, locationLabel, category, priceLabel, cta}, `fallbackText` |
+| `placesMap` | Kartenansicht mit Orten |
+| `sightseeingList` | `headline`, `subline`, `badgeText`, `items[]` {title, text, image, openingText, category, cta} |
+| `tourRoutes` | `headline`, `subline`, `badgeText`, `routes[]` {title, text, image, category, lengthLabel, durationLabel, difficultyLabel, startLabel, highlights[], cta}, `ctaPrimary` (Button) |
+| `accommodationGrid` | `headline`, `subline`, `badgeText`, `items[]` {title, text, image, category, typeLabel, priceLabel, amenities[], cta} |
+| `visitorInfo` | `headline`, `subline`, `badgeText`, `introText`, `blocks[]` {title, text, icon, items[]} |
+| `gallery` | `headline`, `subline`, `badgeText`, `images[]` {src, alt, caption, category} |
+| `tourismContact` | Kontakt-Section für Tourismus |
+| `downloadGuides` | Download-Bereich für Reiseführer/PDFs |
+| `faq` | `headline`, `subline`, `badgeText`, `items[]` {question, answer}, `ctaPrimary` (Button) |
+
+### DEMO-DATEN QUALITÄTSSTANDARDS
+
+1. **Professioneller, realistischer Content** — Jede Demo soll wie eine echte Kundenwebsite aussehen
+2. **Deutsche Texte** — Umlaute als ae/oe/ue/ss schreiben (für sichere ASCII-Kompatibilität)
+3. **Unsplash-Bilder** — Hochwertige, thematisch passende Bilder mit `?w=1800&q=85` für Heros, `?w=900&q=80` für Cards
+4. **Realistische Preise und Details** — Keine Platzhalter wie "ab XX €"
+5. **Interne Links** — Format: `/demo/<branche>/<subpage>`, z.B. `/demo/hotel/zimmer`
+6. **Mindestens 5 Seiten pro Branche** — Home + 4-6 Subpages mit echtem Content
+7. **Alle Section-Typen nutzen** die für die Branche verfügbar sind
+
+### VERIFIKATIONS-CHECKLISTE VOR COMMIT
+
+```
+□ Jede Section hat ...HERO oder ...B auf Section-Ebene (nicht in data)
+□ Jede Section hat data: { } Wrapper
+□ Alle Feldnamen matchen exakt die Template-Erwartungen (NICHT raten!)
+□ Button-Objekte haben { label, href }
+□ Array-Feldnamen stimmen mit Template überein (offers NICHT items, days NICHT hours, etc.)
+□ Hero-Sections nutzen bgImage (nicht image), primaryCta (nicht cta), secondaryCta (nicht ctaSecondary)
+□ Build läuft durch: pnpm --filter renderer build
+□ Keine TypeScript-Errors
+```
+
+---
+
 ## 📝 ZUSAMMENFASSUNG
 
 Du erstellst eine **vollständig eigenständige Branchen-Implementierung**, die:

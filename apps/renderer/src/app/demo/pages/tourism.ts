@@ -155,7 +155,7 @@ export const tourismSite: DemoSite = {
           data: {
             title: 'Unsere Top-Erlebnisse',
             text: 'Handverlesene Aktivitaeten fuer unvergessliche Momente in der Tiroler Bergwelt.',
-            experiences: [
+            items: [
               {
                 title: 'Sonnenaufgangs-Wanderung',
                 text: 'Erleben Sie den magischen Sonnenaufgang am Kitzbueheler Horn. Fruehmorgens starten, oben ankommen und den Moment geniessen, wenn die ersten Strahlen die Gipfel beruehren.',
