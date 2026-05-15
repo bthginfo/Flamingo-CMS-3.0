@@ -26,12 +26,20 @@ const EXTENDED_COLORS = [
   { key: 'dividerColor', label: 'Divider', desc: 'Trennlinien', cssVar: '--style-divider-color' },
 ] as const;
 
+function normalizeHex(v: string): string {
+  if (!v || !v.startsWith('#')) return '#000000';
+  const hex = v.replace('#', '');
+  if (hex.length === 3) return `#${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
+  if (hex.length === 6) return v;
+  return '#000000';
+}
+
 function ColorField({ label, desc, value, onChange }: { label: string; desc: string; value: string; onChange: (v: string) => void }) {
   return (
     <div className="flex items-center gap-3">
       <input
         type="color"
-        value={value || '#000000'}
+        value={normalizeHex(value)}
         onChange={e => onChange(e.target.value)}
         className="w-10 h-10 rounded-lg border border-slate-200 cursor-pointer p-0.5"
       />

@@ -84,21 +84,21 @@ export async function checkDomainStatus(domain: string): Promise<{ configured: b
 /** Create a standalone Vercel project for a tenant. */
 export async function createStandaloneProject(slug: string, tenantId: string): Promise<{ projectId: string; projectUrl: string }> {
   const projectName = `flamingo-${slug}`;
-  const repoId = process.env.GITHUB_REPO_ID;
-  if (!repoId) throw new Error('GITHUB_REPO_ID not set');
 
   // Create project linked to the monorepo
-  const project = await vercelFetch('/v9/projects', 'POST', {
+  const repoId = process.env.GITHUB_REPO_ID;
+  const projectBody: Record<string, unknown> = {
     name: projectName,
     framework: 'nextjs',
-    gitRepository: {
-      type: 'github',
-      repo: repoId,
-    },
     rootDirectory: 'apps/renderer',
-    buildCommand: 'pnpm turbo build --filter=renderer',
+    buildCommand: 'pnpm turbo build --filter=@flamingo/renderer',
     installCommand: 'pnpm install',
-  });
+  };
+  if (repoId) {
+    projectBody.gitRepository = { type: 'github', repo: repoId };
+  }
+
+  const project = await vercelFetch('/v9/projects', 'POST', projectBody);
 
   const projectId = project.id;
 
