@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
+const rendererUrl = process.env.RENDERER_URL || '';
 const nextConfig = {
   reactStrictMode: true,
+  // Absolute asset prefix so assets load correctly when HTML is served
+  // through the marketing site's /demo/* rewrite proxy.
+  ...(rendererUrl ? { assetPrefix: rendererUrl } : {}),
   transpilePackages: ['@flamingo/db', '@flamingo/schemas', '@flamingo/auth'],
   images: {
     remotePatterns: [
