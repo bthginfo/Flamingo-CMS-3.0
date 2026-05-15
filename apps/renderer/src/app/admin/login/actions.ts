@@ -28,7 +28,7 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
 
   const cookieStore = await cookies();
   cookieStore.set('flamingo_admin_session', token, {
-    path: '/admin',
+    path: '/',
     httpOnly: true,
     sameSite: 'lax',
     secure: isProduction,

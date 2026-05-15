@@ -52,7 +52,7 @@ export function buildSessionCookie(token: string, isProduction: boolean): string
   const maxAge = 7 * 24 * 60 * 60; // 7 days
   const parts = [
     `${COOKIE_NAME}=${token}`,
-    `Path=/admin`,
+    `Path=/`,
     `HttpOnly`,
     `SameSite=Lax`,
     `Max-Age=${maxAge}`,
@@ -62,5 +62,5 @@ export function buildSessionCookie(token: string, isProduction: boolean): string
 }
 
 export function buildLogoutCookie(): string {
-  return `${COOKIE_NAME}=; Path=/admin; HttpOnly; SameSite=Lax; Max-Age=0`;
+  return `${COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`;
 }

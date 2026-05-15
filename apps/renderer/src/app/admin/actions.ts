@@ -6,7 +6,7 @@ import { buildLogoutCookie } from '@flamingo/auth';
 export async function logoutAction() {
   const cookieStore = await cookies();
   cookieStore.set('flamingo_admin_session', '', {
-    path: '/admin',
+    path: '/',
     httpOnly: true,
     sameSite: 'lax',
     maxAge: 0,
