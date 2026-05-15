@@ -879,7 +879,7 @@ const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://flaming
 const DEVICE_ITEMS: DeviceItem[] = [
   {
     kind: 'laptop',
-    src: `${RENDERER_URL}/`,
+    src: `${RENDERER_URL}/demo/tradesman`,
     label: 'Handwerk · Home',
     caption: 'Handwerk-Template auf dem Desktop',
   },
@@ -891,7 +891,7 @@ const DEVICE_ITEMS: DeviceItem[] = [
   },
   {
     kind: 'phone',
-    src: `${RENDERER_URL}/leistungen`,
+    src: `${RENDERER_URL}/demo/tradesman/leistungen`,
     label: 'Handwerk · Leistungen',
     caption: 'Mobile zuerst gedacht',
   },
