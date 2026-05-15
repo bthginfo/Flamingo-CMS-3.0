@@ -44,11 +44,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
               <span>·</span>
               <span className="capitalize">{tenant.industry}</span>
               <span>·</span>
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                tenant.status === 'active' ? 'bg-green-100 text-green-700' :
-                tenant.status === 'provisioning' ? 'bg-amber-100 text-amber-700' :
-                'bg-red-100 text-red-700'
-              }`}>{tenant.status}</span>
+              <span className={tenant.status === 'active' ? 'crm-badge-green' : tenant.status === 'provisioning' ? 'crm-badge-amber' : 'crm-badge-red'}>{tenant.status}</span>
             </div>
           </div>
         </div>
@@ -94,9 +90,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
                       <span className="font-medium text-slate-900">{p.title}</span>
                       <span className="text-slate-400 ml-2 font-mono text-xs">/{p.slug}</span>
                     </div>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      p.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'
-                    }`}>{p.status}</span>
+                    <span className={p.status === 'published' ? 'crm-badge-green' : 'crm-badge-slate'}>{p.status}</span>
                   </div>
                 ))}
               </div>
@@ -136,14 +130,16 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
           {/* Quick links */}
           <div className="crm-card p-5 space-y-3">
             <h3 className="font-semibold text-slate-900 text-sm">Quick Links</h3>
+            {domains.map(d => (
+              <a key={d.id} href={`https://${d.domain}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 truncate">
+                <ExternalLink size={14} className="shrink-0" /> {d.domain}
+              </a>
+            ))}
             {domains[0] && (
-              <a href={`https://${domains[0].domain}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800">
-                <ExternalLink size={14} /> Renderer öffnen
+              <a href={`https://${domains[0].domain}/admin`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800">
+                <Shield size={14} className="shrink-0" /> Admin öffnen
               </a>
             )}
-            <a href={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://admin.flamingomedia.online'}/admin`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800">
-              <Shield size={14} /> Admin öffnen
-            </a>
           </div>
         </div>
       </div>

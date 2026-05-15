@@ -25,7 +25,7 @@ export default async function TenantsPage() {
           <h1 className="text-2xl font-bold text-slate-900">Tenants</h1>
           <p className="text-sm text-slate-500 mt-1">{tenantList.length} Tenant{tenantList.length !== 1 ? 's' : ''} registriert</p>
         </div>
-        <Link href="/crm/tenants/new" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors text-sm">
+        <Link href="/crm/tenants/new" className="crm-btn-primary">
           <Plus size={16} /> Neuer Tenant
         </Link>
       </div>
@@ -34,7 +34,7 @@ export default async function TenantsPage() {
         <div className="crm-card p-16 text-center">
           <Building2 size={48} className="mx-auto mb-4 text-slate-300" />
           <p className="text-slate-500 mb-4">Noch keine Tenants vorhanden.</p>
-          <Link href="/crm/tenants/new" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors text-sm">
+          <Link href="/crm/tenants/new" className="crm-btn-primary">
             <Plus size={16} /> Ersten Tenant anlegen
           </Link>
         </div>
@@ -67,11 +67,7 @@ export default async function TenantsPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                      t.status === 'active' ? 'bg-green-100 text-green-700' :
-                      t.status === 'provisioning' ? 'bg-amber-100 text-amber-700' :
-                      'bg-red-100 text-red-700'
-                    }`}>{t.status}</span>
+                    <span className={t.status === 'active' ? 'crm-badge-green' : t.status === 'provisioning' ? 'crm-badge-amber' : 'crm-badge-red'}>{t.status}</span>
                     <ArrowRight size={16} className="text-slate-300 group-hover:text-indigo-400 transition-colors" />
                   </div>
                 </div>

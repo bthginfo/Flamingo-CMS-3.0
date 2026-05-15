@@ -406,6 +406,66 @@
     backdrop-filter: blur(18px) saturate(140%);
     border: 1px solid rgba(255,255,255,0.08);
   }
+
+  /* ─── CRM component styles ─────────────────────────────────────────── */
+  .crm-card {
+    @apply bg-white rounded-2xl border border-slate-200/80 shadow-sm;
+  }
+
+  .crm-label {
+    @apply block text-sm font-medium text-slate-700 mb-1.5;
+  }
+
+  .crm-input {
+    @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900
+           placeholder:text-slate-400
+           transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400
+           hover:border-slate-300;
+  }
+
+  .crm-select {
+    @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900
+           appearance-none
+           bg-[url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='20'%20height='20'%20fill='none'%20stroke='%2394a3b8'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='m6%208%204%204%204-4'/%3E%3C/svg%3E")]
+           bg-[length:20px] bg-[right_10px_center] bg-no-repeat pr-10
+           transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400
+           hover:border-slate-300;
+  }
+
+  .crm-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium
+           transition-all duration-150;
+  }
+
+  .crm-btn-primary {
+    @apply crm-btn bg-indigo-600 text-white shadow-sm shadow-indigo-200
+           hover:bg-indigo-700 hover:shadow-md hover:shadow-indigo-200
+           active:bg-indigo-800
+           disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .crm-btn-secondary {
+    @apply crm-btn bg-slate-100 text-slate-700
+           hover:bg-slate-200
+           active:bg-slate-300;
+  }
+
+  .crm-btn-danger {
+    @apply crm-btn bg-red-50 text-red-600
+           hover:bg-red-100
+           active:bg-red-200;
+  }
+
+  .crm-badge {
+    @apply inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium;
+  }
+
+  .crm-badge-green { @apply crm-badge bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200; }
+  .crm-badge-amber { @apply crm-badge bg-amber-50 text-amber-700 ring-1 ring-amber-200; }
+  .crm-badge-red { @apply crm-badge bg-red-50 text-red-700 ring-1 ring-red-200; }
+  .crm-badge-slate { @apply crm-badge bg-slate-100 text-slate-600 ring-1 ring-slate-200; }
 }
 
 @layer utilities {

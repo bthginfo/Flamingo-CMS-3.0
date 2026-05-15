@@ -86,7 +86,7 @@ export function DomainManager({ tenantId, domains }: { tenantId: string; domains
           placeholder="www.neue-domain.de"
           onKeyDown={e => e.key === 'Enter' && handleAdd()}
         />
-        <button onClick={handleAdd} disabled={pending || !newDomain.trim()} className="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50">
+        <button onClick={handleAdd} disabled={pending || !newDomain.trim()} className="crm-btn-primary">
           <Plus size={14} /> Hinzufügen
         </button>
       </div>

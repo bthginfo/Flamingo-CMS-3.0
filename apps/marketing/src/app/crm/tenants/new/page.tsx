@@ -63,7 +63,7 @@ export default function NewTenantPage() {
           industry: form.industry as any,
           domain: form.domain || undefined,
         });
-        toast.success(`Tenant "${form.name}" wurde erstellt!`);
+        toast.success(`Tenant "${form.name}" wurde erstellt! Erreichbar unter: ${result.rendererUrl}`);
         router.push(`/crm/tenants/${result.tenantId}`);
       } catch (err) {
         toast.error((err as Error).message);
@@ -184,7 +184,7 @@ export default function NewTenantPage() {
         <button
           onClick={handleSubmit}
           disabled={pending}
-          className="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors disabled:opacity-50 text-base"
+          className="w-full crm-btn-primary py-3 text-base"
         >
           <Rocket size={18} />
           {pending ? 'Wird erstellt…' : 'Tenant erstellen & provisionieren'}

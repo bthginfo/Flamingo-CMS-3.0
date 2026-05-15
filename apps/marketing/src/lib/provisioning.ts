@@ -160,9 +160,34 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     createdBy: 'provisioning',
   });
 
-  // 8. Domain provisioning (if provided)
+  // 8. Domain provisioning
+  const baseRendererDomain = process.env.RENDERER_BASE_DOMAIN || 'flamingomedia.online';
+  const previewDomain = `${input.slug}.${baseRendererDomain}`;
   let domainConfigured = false;
-  if (input.domain) {
+
+  // Always create a preview subdomain ({slug}.flamingomedia.online)
+  await db.insert(tenantDomains).values({
+    tenantId,
+    domain: previewDomain,
+    type: 'preview',
+    verified: false,
+  });
+
+  try {
+    const previewResult = await addDomainToRenderer(previewDomain);
+    if (previewResult.configured || previewResult.verified) {
+      await db.update(tenantDomains)
+        .set({ verified: true })
+        .where(eq(tenantDomains.domain, previewDomain));
+    }
+    domainConfigured = previewResult.configured;
+    console.log(`  ✅ Preview domain: ${previewDomain}`);
+  } catch (err) {
+    console.error('Preview domain provisioning failed:', err);
+  }
+
+  // If custom domain also provided, add that too
+  if (input.domain && input.domain !== previewDomain) {
     await db.insert(tenantDomains).values({
       tenantId,
       domain: input.domain,
@@ -172,14 +197,13 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
 
     try {
       const result = await addDomainToRenderer(input.domain);
-      domainConfigured = result.configured;
       if (result.verified) {
         await db.update(tenantDomains)
           .set({ verified: true })
-          .where(eq(tenantDomains.tenantId, tenantId));
+          .where(eq(tenantDomains.domain, input.domain));
       }
     } catch (err) {
-      console.error('Domain provisioning failed:', err);
+      console.error('Custom domain provisioning failed:', err);
     }
   }
 
@@ -188,15 +212,13 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     .set({ status: 'active', updatedAt: new Date() })
     .where(eq(tenants.id, tenantId));
 
-  const baseRendererDomain = process.env.RENDERER_BASE_DOMAIN || 'flamingomedia.online';
-
   return {
     tenantId,
     slug: input.slug,
-    domain: input.domain,
+    domain: input.domain || previewDomain,
     domainConfigured,
-    adminUrl: `${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://admin.flamingomedia.online'}/admin`,
-    rendererUrl: input.domain ? `https://${input.domain}` : `https://${input.slug}.${baseRendererDomain}`,
+    adminUrl: `https://${previewDomain}/admin`,
+    rendererUrl: input.domain ? `https://${input.domain}` : `https://${previewDomain}`,
   };
 }
 

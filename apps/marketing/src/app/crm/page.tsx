@@ -24,7 +24,7 @@ export default async function CrmDashboard() {
           <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
           <p className="text-sm text-slate-500 mt-1">Übersicht aller Tenants und Systeme</p>
         </div>
-        <Link href="/crm/tenants/new" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors text-sm">
+        <Link href="/crm/tenants/new" className="crm-btn-primary">
           <Plus size={16} /> Neuer Tenant
         </Link>
       </div>
@@ -93,11 +93,7 @@ export default async function CrmDashboard() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                    t.status === 'active' ? 'bg-green-100 text-green-700' :
-                    t.status === 'provisioning' ? 'bg-amber-100 text-amber-700' :
-                    'bg-red-100 text-red-700'
-                  }`}>{t.status}</span>
+                  <span className={t.status === 'active' ? 'crm-badge-green' : t.status === 'provisioning' ? 'crm-badge-amber' : 'crm-badge-red'}>{t.status}</span>
                   <ArrowRight size={14} className="text-slate-300" />
                 </div>
               </Link>
