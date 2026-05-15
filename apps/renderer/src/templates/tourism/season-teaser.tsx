@@ -1,17 +1,87 @@
 'use client';
 
-import { baseHeader, ImageCard, SectionHeader, asList } from './shared';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { ArrowRight } from 'lucide-react';
+import { baseHeader, SectionHeader, asList } from './shared';
 import type { SectionProps } from './types';
 
 type Season = { title?: string; text?: string; image?: string; category?: string; periodLabel?: string; cta?: { label?: string; href?: string } };
 
-export function SeasonTeaserSection({ data }: SectionProps) {
+export function SeasonTeaserSection({ data, styleVariant }: SectionProps) {
   const header = baseHeader(data, 'Die beste Zeit fuer Ihren Besuch', 'Saison');
   const seasons = asList<Season>(data.seasons);
+
+  if (styleVariant === 'modern') return <Modern header={header} seasons={seasons} />;
+  if (styleVariant === 'bold') return <Bold header={header} seasons={seasons} />;
+  return <Classic header={header} seasons={seasons} />;
+}
+
+type Props = { header: { headline: string; subline: string; badgeText: string }; seasons: Season[] };
+
+function Classic({ header, seasons }: Props) {
   return (
     <div>
       <SectionHeader {...header} />
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{seasons.map((season, index) => <ImageCard key={`${season.title}-${index}`} image={season.image} title={season.title} text={season.text} meta={[season.category, season.periodLabel].filter(Boolean).join(' / ')} cta={season.cta} />)}</div>
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {seasons.map((season, index) => (
+          <motion.article key={`${season.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="group overflow-hidden rounded-2xl bg-[var(--style-card-bg)] shadow-lg">
+            {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={season.image} alt={season.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="25vw" /></div>}
+            <div className="p-5">
+              <p className="text-xs font-bold uppercase tracking-widest text-green-700">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
+              <h3 className="mt-2 text-xl font-bold text-[var(--style-text-primary)]">{season.title || ''}</h3>
+              {season.text && <p className="mt-3 text-sm leading-6 text-[var(--style-text-secondary)]">{season.text}</p>}
+              {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-green-700">{season.cta.label}<ArrowRight size={14} /></a>}
+            </div>
+          </motion.article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Modern({ header, seasons }: Props) {
+  return (
+    <div>
+      <SectionHeader {...header} />
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {seasons.map((season, index) => (
+          <article key={`${season.title}-${index}`} className="group overflow-hidden border border-black/10 bg-[var(--style-card-bg)]">
+            {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={season.image} alt={season.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+            <div className="p-5">
+              <p className="text-xs font-light uppercase tracking-widest text-teal-600">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
+              <h3 className="mt-2 text-xl font-light text-[var(--style-text-primary)]">{season.title || ''}</h3>
+              {season.text && <p className="mt-3 text-sm font-light leading-6 text-[var(--style-text-secondary)]">{season.text}</p>}
+              {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-teal-600">{season.cta.label}<ArrowRight size={14} /></a>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Bold({ header, seasons }: Props) {
+  return (
+    <div>
+      <div className="mb-10 max-w-3xl">
+        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-orange-500">{header.badgeText}</p>}
+        <h2 className="mt-3 text-3xl font-black uppercase text-[var(--style-text-primary)] sm:text-5xl">{header.headline}</h2>
+        {header.subline && <p className="mt-4 text-[var(--style-text-secondary)]">{header.subline}</p>}
+      </div>
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {seasons.map((season, index) => (
+          <article key={`${season.title}-${index}`} className="group overflow-hidden border-2 border-[var(--style-text-primary)] bg-[var(--style-card-bg)] shadow-[4px_4px_0_var(--style-text-primary)]">
+            {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={season.image} alt={season.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+            <div className="p-5">
+              <p className="text-xs font-black uppercase tracking-widest text-orange-500">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
+              <h3 className="mt-2 text-xl font-black uppercase text-[var(--style-text-primary)]">{season.title || ''}</h3>
+              {season.text && <p className="mt-3 text-sm leading-6 text-[var(--style-text-secondary)]">{season.text}</p>}
+              {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-black uppercase text-orange-500">{season.cta.label}<ArrowRight size={14} /></a>}
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   );
 }

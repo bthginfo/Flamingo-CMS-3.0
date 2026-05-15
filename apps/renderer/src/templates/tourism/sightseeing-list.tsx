@@ -1,17 +1,87 @@
 'use client';
 
-import { baseHeader, ImageCard, SectionHeader, asList } from './shared';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { ArrowRight } from 'lucide-react';
+import { baseHeader, SectionHeader, asList } from './shared';
 import type { SectionProps } from './types';
 
 type Sight = { title?: string; text?: string; image?: string; openingText?: string; category?: string; cta?: { label?: string; href?: string } };
 
-export function SightseeingListSection({ data }: SectionProps) {
+export function SightseeingListSection({ data, styleVariant }: SectionProps) {
   const header = baseHeader(data, 'Sehenswuerdigkeiten', 'Orte');
   const items = asList<Sight>(data.items);
+
+  if (styleVariant === 'modern') return <Modern header={header} items={items} />;
+  if (styleVariant === 'bold') return <Bold header={header} items={items} />;
+  return <Classic header={header} items={items} />;
+}
+
+type Props = { header: { headline: string; subline: string; badgeText: string }; items: Sight[] };
+
+function Classic({ header, items }: Props) {
   return (
     <div>
       <SectionHeader {...header} />
-      <div className="grid gap-6 md:grid-cols-3">{items.map((item, index) => <ImageCard key={`${item.title}-${index}`} image={item.image} title={item.title} text={item.text} meta={[item.category, item.openingText].filter(Boolean).join(' / ')} cta={item.cta} />)}</div>
+      <div className="grid gap-6 md:grid-cols-3">
+        {items.map((item, index) => (
+          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="group overflow-hidden rounded-2xl bg-[var(--style-card-bg)] shadow-lg">
+            {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
+            <div className="p-5">
+              <p className="text-xs font-bold uppercase tracking-widest text-green-700">{[item.category, item.openingText].filter(Boolean).join(' / ')}</p>
+              <h3 className="mt-2 text-xl font-bold text-[var(--style-text-primary)]">{item.title || ''}</h3>
+              {item.text && <p className="mt-3 text-sm leading-6 text-[var(--style-text-secondary)]">{item.text}</p>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-green-700">{item.cta.label}<ArrowRight size={14} /></a>}
+            </div>
+          </motion.article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Modern({ header, items }: Props) {
+  return (
+    <div>
+      <SectionHeader {...header} />
+      <div className="grid gap-6 md:grid-cols-3">
+        {items.map((item, index) => (
+          <article key={`${item.title}-${index}`} className="group overflow-hidden border border-black/10 bg-[var(--style-card-bg)]">
+            {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>}
+            <div className="p-5">
+              <p className="text-xs font-light uppercase tracking-widest text-teal-600">{[item.category, item.openingText].filter(Boolean).join(' / ')}</p>
+              <h3 className="mt-2 text-xl font-light text-[var(--style-text-primary)]">{item.title || ''}</h3>
+              {item.text && <p className="mt-3 text-sm font-light leading-6 text-[var(--style-text-secondary)]">{item.text}</p>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-teal-600">{item.cta.label}<ArrowRight size={14} /></a>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Bold({ header, items }: Props) {
+  return (
+    <div>
+      <div className="mb-10 max-w-3xl">
+        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-orange-500">{header.badgeText}</p>}
+        <h2 className="mt-3 text-3xl font-black uppercase text-[var(--style-text-primary)] sm:text-5xl">{header.headline}</h2>
+        {header.subline && <p className="mt-4 text-[var(--style-text-secondary)]">{header.subline}</p>}
+      </div>
+      <div className="grid gap-6 md:grid-cols-3">
+        {items.map((item, index) => (
+          <article key={`${item.title}-${index}`} className="group overflow-hidden border-2 border-[var(--style-text-primary)] bg-[var(--style-card-bg)] shadow-[4px_4px_0_var(--style-text-primary)]">
+            {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>}
+            <div className="p-5">
+              <p className="text-xs font-black uppercase tracking-widest text-orange-500">{[item.category, item.openingText].filter(Boolean).join(' / ')}</p>
+              <h3 className="mt-2 text-xl font-black uppercase text-[var(--style-text-primary)]">{item.title || ''}</h3>
+              {item.text && <p className="mt-3 text-sm leading-6 text-[var(--style-text-secondary)]">{item.text}</p>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-black uppercase text-orange-500">{item.cta.label}<ArrowRight size={14} /></a>}
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   );
 }
