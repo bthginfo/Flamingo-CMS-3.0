@@ -8,6 +8,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, v
 import { CSS } from '@dnd-kit/utilities';
 import { updatePageAction, addSectionAction, deleteSectionAction, updateSectionAction, updateSectionMetaAction, reorderSectionsAction } from '../actions';
 import { publishAction } from '../../actions/publish';
+import { PageSectionsProvider } from '@/components/button-field';
 import { toast } from 'sonner';
 import { IndustrySectionDataEditor } from './industry-section-editor';
 import { PageSeoPanel } from './page-seo-panel';
@@ -158,10 +159,9 @@ function SectionMetaEditor({ section, onSave }: { section: Section; onSave: (met
         <button className="admin-btn-primary text-xs" onClick={() => onSave(meta)}>Meta speichern</button>
       </div>
     </div>
+    </PageSectionsProvider>
   );
-}
-
-export function PageEditor({ page: initialPage, sections: initialSections, industry }: { page: Page; sections: Section[]; industry: string }) {
+}export function PageEditor({ page: initialPage, sections: initialSections, industry }: { page: Page; sections: Section[]; industry: string }) {
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
   const sectionTypes = getSectionTypesForIndustry(industry);
@@ -281,7 +281,10 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
 
   const rendererUrl = '';
 
+  const sectionAnchors = sections.map(s => ({ id: s.id, type: s.type, anchorId: s.anchorId || null }));
+
   return (
+    <PageSectionsProvider sections={sectionAnchors}>
     <div>
       {/* SEO Panel */}
       <PageSeoPanel pageId={page.id} />

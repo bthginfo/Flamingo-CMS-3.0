@@ -1,12 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
 import { ExternalLink, FileText } from 'lucide-react';
 import { getPagesAction } from '@/app/admin/pages/actions';
 import { getCollectionLinksAction } from '@/app/admin/collections/actions';
 
 type ButtonValue = { label: string; href: string };
 type CollectionGroup = { key: string; label: string; items: { title: string; slug: string }[] };
+type SectionAnchor = { id: string; type: string; anchorId: string | null };
+
+const PageSectionsContext = createContext<SectionAnchor[]>([]);
+export function PageSectionsProvider({ sections, children }: { sections: SectionAnchor[]; children: React.ReactNode }) {
+  return <PageSectionsContext.Provider value={sections}>{children}</PageSectionsContext.Provider>;
+}
 
 function useInternalLinks(mode: string) {
   const [pages, setPages] = useState<{ id: string; title: string; slug: string }[]>([]);
@@ -21,6 +27,9 @@ function useInternalLinks(mode: string) {
 }
 
 function InternalSelect({ value, onChange, pages, cols }: { value: string; onChange: (v: string) => void; pages: { id: string; title: string; slug: string }[]; cols: CollectionGroup[] }) {
+  const sections = useContext(PageSectionsContext);
+  const anchors = sections.filter(s => s.anchorId).map(s => ({ anchor: s.anchorId!, type: s.type }));
+
   return (
     <select className="admin-input w-full mt-0.5" value={value} onChange={(e) => onChange(e.target.value)}>
       <option value="">-- Ziel --</option>
@@ -32,15 +41,11 @@ function InternalSelect({ value, onChange, pages, cols }: { value: string; onCha
           {c.items.map(item => <option key={item.slug} value={`/c/${c.key}/${item.slug}`}>{item.title}</option>)}
         </optgroup>
       ))}
-      <optgroup label="Sektionen (Anker)">
-        <option value="#hero">Hero</option>
-        <option value="#leistungen">Leistungen</option>
-        <option value="#kontakt">Kontakt</option>
-        <option value="#faq">FAQ</option>
-        <option value="#team">Team</option>
-        <option value="#portfolio">Portfolio</option>
-        <option value="#bewertungen">Bewertungen</option>
-      </optgroup>
+      {anchors.length > 0 && (
+        <optgroup label="Sektionen (Anker)">
+          {anchors.map(a => <option key={a.anchor} value={`#${a.anchor}`}>{a.type} (#{a.anchor})</option>)}
+        </optgroup>
+      )}
     </select>
   );
 }
