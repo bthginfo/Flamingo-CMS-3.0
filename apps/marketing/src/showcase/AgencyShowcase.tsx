@@ -90,7 +90,7 @@ function applyShowcasePalette() {
 }
 
 /* ─── Template metadata ────────────────────────────────────────────── */
-const TEMPLATE_META: Record<'restaurant' | 'hotel' | 'tourism', {
+const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical', {
   label: string;
   tagline: string;
   description: string;
@@ -98,6 +98,14 @@ const TEMPLATE_META: Record<'restaurant' | 'hotel' | 'tourism', {
   accent: string;
   bullets: string[];
 }> = {
+  handwerk: {
+    label: 'Handwerk',
+    tagline: 'Installateur · Bau · Service',
+    description: 'Lead-Generierung, Notdienst-Banner, Referenzen und Vertrauen auf den ersten Blick.',
+    image: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1400&q=80',
+    accent: '#1d4ed8',
+    bullets: ['Notdienst-Sticky-Banner', 'Anfrage-Formular mit Versand', 'Referenz-Galerie', 'Förder-Übersicht mit Quote'],
+  },
   restaurant: {
     label: 'Restaurant',
     tagline: 'Gastronomie · Trattoria · Café',
@@ -105,6 +113,14 @@ const TEMPLATE_META: Record<'restaurant' | 'hotel' | 'tourism', {
     image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=80',
     accent: '#9a3412',
     bullets: ['Mehrseitige Speisekarte', 'Online-Reservierungs-Anbindung', 'Foto-Galerie & Stimmungs-Mood', 'Mehrsprachig auf Wunsch'],
+  },
+  salon: {
+    label: 'Salon & Beauty',
+    tagline: 'Friseur · Spa · Kosmetik',
+    description: 'Editorial-Stil, Online-Booking-Anbindung und eine Galerie, die Looks verkauft.',
+    image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1400&q=80',
+    accent: '#be185d',
+    bullets: ['Treatment-Liste mit Preisen', 'Booking-Tool-Integration', 'Look-Galerie mit Lightbox', 'Team-Vorstellung mit Bios'],
   },
   hotel: {
     label: 'Hotels',
@@ -122,13 +138,31 @@ const TEMPLATE_META: Record<'restaurant' | 'hotel' | 'tourism', {
     accent: '#0e7490',
     bullets: ['Touren-Katalog mit Schwierigkeitsgrad', 'Guide-Profile mit Sprachen', 'Direkter Buchungs-Funnel', 'Galerie mit Region & Erlebnis'],
   },
+  medical: {
+    label: 'Praxen & Ärzte',
+    tagline: 'Arzt · Therapie · Praxis',
+    description: 'Ruhige, vertrauenswürdige Ästhetik mit Online-Termin-Anbindung und barrierearmer Navigation.',
+    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1400&q=80',
+    accent: '#0e7490',
+    bullets: ['Leistungs- & Therapie-Übersicht', 'Online-Termin (Doctolib / jameda)', 'Notfall-Hinweise & Sprechzeiten', 'Praxis-Galerie & Eindrücke'],
+  },
 };
 
-const STYLE_PREVIEW: Record<'restaurant' | 'hotel' | 'tourism', { classic: string; modern: string; bold: string }> = {
+const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical', { classic: string; modern: string; bold: string }> = {
+  handwerk: {
+    classic: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1400&q=80',
+  },
   restaurant: {
     classic: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1400&q=80',
+  },
+  salon: {
+    classic: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=1400&q=80',
   },
   hotel: {
     classic: 'https://images.unsplash.com/photo-1455587734955-081b22074882?auto=format&fit=crop&w=1400&q=80',
@@ -140,12 +174,17 @@ const STYLE_PREVIEW: Record<'restaurant' | 'hotel' | 'tourism', { classic: strin
     modern: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1400&q=80',
   },
+  medical: {
+    classic: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&w=1400&q=80',
+  },
 };
 
-/* ─── Extra branches (showcase-only — single-page preview) ───────── */
-type ExtraBranchKey = 'salon' | 'tradesman' | 'consulting' | 'medical' | 'fitness' | 'wedding';
+/* ─── Coming-soon branches ───────────────────────────────────────── */
+type ExtraBranchKey = 'consulting' | 'fitness' | 'wedding';
 type BranchKey = TemplateKey | ExtraBranchKey;
-const EXTRA_KEYS: ExtraBranchKey[] = ['salon', 'tradesman', 'consulting', 'medical', 'fitness', 'wedding'];
+const EXTRA_KEYS: ExtraBranchKey[] = ['consulting', 'fitness', 'wedding'];
 const isExtraKey = (k: string | undefined): k is ExtraBranchKey =>
   !!k && (EXTRA_KEYS as string[]).includes(k);
 
@@ -159,22 +198,6 @@ const EXTRA_BRANCHES: Record<ExtraBranchKey, {
   accent: string;
   bullets: string[];
 }> = {
-  salon: {
-    label: 'Salon & Beauty',
-    tagline: 'Friseur · Spa · Kosmetik',
-    description: 'Editorial-Stil, Online-Booking-Anbindung und eine Galerie, die Looks verkauft.',
-    image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1400&q=80',
-    accent: '#be185d',
-    bullets: ['Treatment-Liste mit Preisen', 'Booking-Tool-Integration', 'Look-Galerie mit Lightbox', 'Team-Vorstellung mit Bios'],
-  },
-  tradesman: {
-    label: 'Handwerk',
-    tagline: 'Installateur · Bau · Service',
-    description: 'Lead-Generierung, Notdienst-Banner, Referenzen und Vertrauen auf den ersten Blick.',
-    image: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1400&q=80',
-    accent: '#1d4ed8',
-    bullets: ['Notdienst-Sticky-Banner', 'Anfrage-Formular mit Versand', 'Referenz-Galerie', 'Förder-Übersicht mit Quote'],
-  },
   consulting: {
     label: 'Beratung & Kanzlei',
     tagline: 'Consulting · Steuer · Recht',
@@ -182,14 +205,6 @@ const EXTRA_BRANCHES: Record<ExtraBranchKey, {
     image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80',
     accent: '#1e3a8a',
     bullets: ['Team- & Expertise-Profile', 'Beratungs-Prozess in Schritten', 'Termin-Anfrage mit Vorab-Briefing', 'Stimmen, Referenzen & Vertrauen'],
-  },
-  medical: {
-    label: 'Praxen & Ärzte',
-    tagline: 'Arzt · Therapie · Praxis',
-    description: 'Ruhige, vertrauenswürdige Ästhetik mit Online-Termin-Anbindung und barrierearmer Navigation.',
-    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1400&q=80',
-    accent: '#0e7490',
-    bullets: ['Leistungs- & Therapie-Übersicht', 'Online-Termin (Doctolib / jameda)', 'Notfall-Hinweise & Sprechzeiten', 'Praxis-Galerie & Eindrücke'],
   },
   fitness: {
     label: 'Studios & Coaching',
