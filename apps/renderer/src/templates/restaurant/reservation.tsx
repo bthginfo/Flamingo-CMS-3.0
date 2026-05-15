@@ -56,7 +56,7 @@ function ReservationClassic(props: ReservationViewProps) {
         {props.timeHint && <p className="text-sm text-[var(--style-text-muted)]">{props.timeHint}</p>}
         {props.policyText && <p className="text-xs text-[var(--style-text-muted)] opacity-70">{props.policyText}</p>}
       </div>
-      <div className="overflow-hidden rounded-2xl border border-black/10 bg-[var(--style-card-bg)] p-5 shadow-lg">
+      <div className="overflow-hidden rounded-xl border border-black/10 bg-[var(--style-card-bg)] p-5 shadow-lg">
         {props.image && <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-xl"><Image src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {props.formEnabled && (
           <form className="grid gap-3">

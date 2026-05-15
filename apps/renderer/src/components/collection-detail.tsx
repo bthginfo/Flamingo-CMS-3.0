@@ -36,7 +36,7 @@ export function CollectionDetail({ item, collection }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden mb-10"
+            className="relative w-full aspect-[21/9] rounded-xl overflow-hidden mb-10"
           >
             <Image src={image} alt={item.title} fill className="object-cover" />
           </motion.div>
@@ -78,7 +78,7 @@ export function CollectionDetail({ item, collection }: Props) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-gray-50 rounded-2xl p-6 mb-8"
+            className="bg-gray-50 rounded-xl p-6 mb-8"
           >
             <h3 className="font-semibold text-lg mb-3">Leistungen im Detail</h3>
             <ul className="space-y-2">

@@ -767,12 +767,12 @@ function TemplatesPreviewSection() {
             <p className="eyebrow mb-5">Templates</p>
             <h2 className="headline-lg">
               Sechs Branchen.<br />
-              <em className="italic-pop">Und es werden mehr.</em>
+              <em className="italic-pop">Sechs Live-Demos.</em>
             </h2>
           </div>
           <p className="md:col-span-5 text-lg text-muted reveal">
             Jede Branche hat ein eigenes Template mit branchenspezifischen Sections, drei Stilrichtungen
-            und einem Admin, der genau die Felder zeigt, die Du brauchst. Weitere Branchen folgen laufend.
+            und einem Admin, der genau die Felder zeigt, die Du brauchst.
           </p>
         </div>
 
@@ -809,38 +809,7 @@ function TemplatesPreviewSection() {
               </Tilt3DCard>
             );
           })}
-          {(Object.keys(EXTRA_BRANCHES) as ExtraBranchKey[]).map((k) => {
-            const m = EXTRA_BRANCHES[k];
-            return (
-              <Tilt3DCard key={k} max={8} className="rounded-3xl">
-              <a
-                href={`${DEMO_BASE}/demo/${k}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative rounded-3xl overflow-hidden aspect-[4/5] hover-lift block"
-              >
-                <img src={m.image} alt={m.label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                <div className="absolute top-5 left-5 right-5 flex justify-between items-start">
-                  <span className="text-xs font-mono text-white/80 uppercase tracking-widest">/ {k}</span>
-                  <span
-                    className="h-3 w-3 rounded-full"
-                    style={{ background: m.accent, boxShadow: `0 0 20px ${m.accent}` }}
-                  />
-                </div>
-                <div className="relative p-8 h-full flex flex-col justify-end text-white">
-                  <p className="text-xs uppercase tracking-widest text-white/90 mb-2">{m.tagline}</p>
-                  <h3 className="font-display text-4xl md:text-5xl">{m.label}</h3>
-                  <p className="mt-3 text-sm text-white/80 leading-relaxed max-w-xs">{m.description}</p>
-                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium border-t border-white/20 pt-4">
-                    Live-Demo ansehen
-                    <span aria-hidden className="transition-transform group-hover:translate-x-2">→</span>
-                  </div>
-                </div>
-              </a>
-              </Tilt3DCard>
-            );
-          })}
+
         </div>
 
         <div className="mt-14 text-center reveal">

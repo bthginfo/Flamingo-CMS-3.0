@@ -86,7 +86,7 @@ function HeroModern({ headline, subline, badgeText, bgImage, specialtyLabel, eme
             {trustItems.map((item) => <span key={item} className="rounded-full border border-black/10 px-4 py-2">{item}</span>)}
           </div>
         </div>
-        <div className="relative min-h-[500px] overflow-hidden rounded-2xl border border-black/10">
+        <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-black/10">
           {bgImage && <Image src={bgImage} alt="" fill priority className="object-cover" sizes="50vw" />}
         </div>
       </div>

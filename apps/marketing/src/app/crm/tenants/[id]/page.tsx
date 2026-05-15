@@ -3,7 +3,7 @@ import { tenants, tenantDomains, pages, publishedSnapshots, globalSettings } fro
 import { eq, and, count } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Globe, FileText, Layers, ExternalLink, Shield } from 'lucide-react';
+import { ArrowLeft, Globe, FileText, Layers, ExternalLink, Shield, Server, Cloud } from 'lucide-react';
 import { TenantActions } from './tenant-actions';
 import { DomainManager } from './domain-manager';
 
@@ -45,6 +45,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
               <span className="capitalize">{tenant.industry}</span>
               <span>·</span>
               <span className={tenant.status === 'active' ? 'crm-badge-green' : tenant.status === 'provisioning' ? 'crm-badge-amber' : 'crm-badge-red'}>{tenant.status}</span>
+              {tenant.deploymentMode === 'standalone' && <span className="crm-badge-amber">Standalone</span>}
             </div>
           </div>
         </div>
@@ -114,6 +115,18 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
                 <span>Stil</span>
                 <span className="text-slate-900 capitalize">{tenant.activeStyle}</span>
               </div>
+              <div className="flex justify-between">
+                <span>Deployment</span>
+                <span className="inline-flex items-center gap-1 text-slate-900">
+                  {tenant.deploymentMode === 'standalone' ? <><Cloud size={12} /> Standalone</> : <><Server size={12} /> Shared</>}
+                </span>
+              </div>
+              {tenant.vercelProjectId && (
+                <div className="flex justify-between">
+                  <span>Vercel Project</span>
+                  <span className="text-slate-900 font-mono text-xs">{tenant.vercelProjectId.slice(0, 12)}…</span>
+                </div>
+              )}
               {brand?.companyName && (
                 <div className="flex justify-between">
                   <span>Anzeigename</span>

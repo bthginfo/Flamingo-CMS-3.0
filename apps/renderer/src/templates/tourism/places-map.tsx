@@ -39,7 +39,7 @@ function Classic({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: P
         <div className="grid gap-4">
           {places.map((place, index) => (
             <motion.article key={`${place.title}-${index}`} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: index * 0.1 }} className="grid gap-4 border-t border-black/10 pt-4 sm:grid-cols-[120px_1fr]">
-              {place.image && <div className="relative aspect-[4/3] overflow-hidden rounded-2xl"><Image src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
+              {place.image && <div className="relative aspect-[4/3] overflow-hidden rounded-xl"><Image src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-green-700">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-bold text-[var(--style-text-primary)]">{place.title || ''}</h3>
@@ -52,7 +52,7 @@ function Classic({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: P
         </div>
         {ctaPrimary.label && <div className="mt-8"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-green-700 px-5 py-3 font-semibold text-white">{ctaPrimary.label}<ArrowRight size={16} /></a></div>}
       </div>
-      <MapEmbed mapEmbedUrl={mapEmbedUrl} mapFallbackText={mapFallbackText} className="min-h-[420px] overflow-hidden rounded-2xl bg-[var(--style-section-bg-alt)] shadow-lg" />
+      <MapEmbed mapEmbedUrl={mapEmbedUrl} mapFallbackText={mapFallbackText} className="min-h-[420px] overflow-hidden rounded-xl bg-[var(--style-section-bg-alt)] shadow-lg" />
     </div>
   );
 }

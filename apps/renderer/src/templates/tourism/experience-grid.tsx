@@ -38,7 +38,7 @@ function Classic({ header, items, ctaPrimary }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-5 lg:grid-cols-2">
         {items.map((item, index) => (
-          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-2xl bg-[var(--style-card-bg)] shadow-lg sm:grid-cols-[220px_1fr]">
+          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-xl bg-[var(--style-card-bg)] shadow-lg sm:grid-cols-[220px_1fr]">
             {item.image && <div className="relative min-h-56"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
             <div className="p-5">
               <ExperienceMeta item={item} className="text-green-700" />

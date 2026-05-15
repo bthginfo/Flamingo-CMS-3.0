@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import { baseHeader, IconRows, SectionHeader, asList } from './shared';
@@ -28,7 +28,7 @@ function Classic({ header, introText, cards }: Props) {
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {cards.map((card, index) => (
-          <article key={`${card.title}-${index}`} className="rounded-2xl bg-[var(--style-card-bg)] p-5 shadow-lg">
+          <article key={`${card.title}-${index}`} className="rounded-xl bg-[var(--style-card-bg)] p-5 shadow-lg">
             <IconRows items={[card]} />
             <div className="mt-4 flex flex-wrap gap-2">{asList<string>(card.items).map((item) => <span key={item} className="rounded-full bg-teal-50 px-3 py-1 text-xs text-teal-800">{item}</span>)}</div>
           </article>

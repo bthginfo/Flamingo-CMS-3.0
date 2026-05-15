@@ -53,8 +53,8 @@ function Classic({ header, introText, image, formEnabled, namePlaceholder, email
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-black/15 px-5 py-3 font-semibold text-[var(--style-text-primary)]">{secondaryCta.label}</a>}
         </div>
       </motion.div>
-      <div className="rounded-2xl bg-[var(--style-card-bg)] p-5 shadow-lg">
-        {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-2xl"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+      <div className="rounded-xl bg-[var(--style-card-bg)] p-5 shadow-lg">
+        {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="rounded-full bg-green-700 px-5 py-3 font-semibold text-white">{submitLabel}</button></form>}
       </div>
     </div>

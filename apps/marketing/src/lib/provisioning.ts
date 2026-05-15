@@ -6,7 +6,7 @@ import { tenants, tenantDomains, adminSecrets, globalSettings, navigation, foote
 import { hashPassword } from '@flamingo/auth';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
-import { addDomainToRenderer } from './vercel';
+import { addDomainToRenderer, createStandaloneProject, addDomainToProject, triggerProjectDeployment } from './vercel';
 
 export type ProvisionInput = {
   name: string;
@@ -22,6 +22,7 @@ export type ProvisionInput = {
   phone?: string;
   email?: string;
   address?: string;
+  deploymentMode?: 'shared' | 'standalone';
 };
 
 export type ProvisionResult = {
@@ -62,12 +63,14 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   const defaults = getProvisioningDefaults(input);
 
   // 1. Create tenant
+  const deploymentMode = input.deploymentMode || 'shared';
   const [tenant] = await db.insert(tenants).values({
     name: input.name,
     slug: input.slug,
     industry: input.industry,
     activeStyle: 'classic',
     status: 'provisioning',
+    deploymentMode,
   }).returning();
 
   const tenantId = tenant.id;
@@ -164,53 +167,104 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   const baseRendererDomain = process.env.RENDERER_BASE_DOMAIN || 'flamingomedia.online';
   const previewDomain = `${input.slug}.${baseRendererDomain}`;
   let domainConfigured = false;
+  let vercelProjectId: string | undefined;
 
-  // Always create a preview subdomain ({slug}.flamingomedia.online)
-  await db.insert(tenantDomains).values({
-    tenantId,
-    domain: previewDomain,
-    type: 'preview',
-    verified: false,
-  });
+  if (deploymentMode === 'standalone') {
+    // Create a dedicated Vercel project for this tenant
+    try {
+      const standaloneResult = await createStandaloneProject(input.slug, tenantId);
+      vercelProjectId = standaloneResult.projectId;
 
-  try {
-    const previewResult = await addDomainToRenderer(previewDomain);
-    if (previewResult.configured || previewResult.verified) {
-      await db.update(tenantDomains)
-        .set({ verified: true })
-        .where(eq(tenantDomains.domain, previewDomain));
+      // Add preview domain to the standalone project
+      await db.insert(tenantDomains).values({
+        tenantId,
+        domain: previewDomain,
+        type: 'preview',
+        verified: false,
+      });
+
+      const domainResult = await addDomainToProject(vercelProjectId, previewDomain);
+      if (domainResult.configured || domainResult.verified) {
+        await db.update(tenantDomains)
+          .set({ verified: true })
+          .where(eq(tenantDomains.domain, previewDomain));
+      }
+      domainConfigured = domainResult.configured;
+
+      // Custom domain on standalone project
+      if (input.domain && input.domain !== previewDomain) {
+        await db.insert(tenantDomains).values({
+          tenantId,
+          domain: input.domain,
+          type: 'primary',
+          verified: false,
+        });
+        const customResult = await addDomainToProject(vercelProjectId, input.domain);
+        if (customResult.verified) {
+          await db.update(tenantDomains)
+            .set({ verified: true })
+            .where(eq(tenantDomains.domain, input.domain));
+        }
+      }
+
+      // Trigger initial deployment
+      await triggerProjectDeployment(`flamingo-${input.slug}`);
+      console.log(`  ✅ Standalone project: flamingo-${input.slug}`);
+    } catch (err) {
+      console.error('Standalone project creation failed:', err);
     }
-    domainConfigured = previewResult.configured;
-    console.log(`  ✅ Preview domain: ${previewDomain}`);
-  } catch (err) {
-    console.error('Preview domain provisioning failed:', err);
-  }
-
-  // If custom domain also provided, add that too
-  if (input.domain && input.domain !== previewDomain) {
+  } else {
+    // Shared mode: add domains to the shared renderer project
     await db.insert(tenantDomains).values({
       tenantId,
-      domain: input.domain,
-      type: 'primary',
+      domain: previewDomain,
+      type: 'preview',
       verified: false,
     });
 
     try {
-      const result = await addDomainToRenderer(input.domain);
-      if (result.verified) {
+      const previewResult = await addDomainToRenderer(previewDomain);
+      if (previewResult.configured || previewResult.verified) {
         await db.update(tenantDomains)
           .set({ verified: true })
-          .where(eq(tenantDomains.domain, input.domain));
+          .where(eq(tenantDomains.domain, previewDomain));
       }
+      domainConfigured = previewResult.configured;
+      console.log(`  ✅ Preview domain: ${previewDomain}`);
     } catch (err) {
-      console.error('Custom domain provisioning failed:', err);
+      console.error('Preview domain provisioning failed:', err);
+    }
+
+    if (input.domain && input.domain !== previewDomain) {
+      await db.insert(tenantDomains).values({
+        tenantId,
+        domain: input.domain,
+        type: 'primary',
+        verified: false,
+      });
+
+      try {
+        const result = await addDomainToRenderer(input.domain);
+        if (result.verified) {
+          await db.update(tenantDomains)
+            .set({ verified: true })
+            .where(eq(tenantDomains.domain, input.domain));
+        }
+      } catch (err) {
+        console.error('Custom domain provisioning failed:', err);
+      }
     }
   }
 
   // 9. Activate tenant
+  const updateData: Record<string, unknown> = { status: 'active', updatedAt: new Date() };
+  if (vercelProjectId) updateData.vercelProjectId = vercelProjectId;
+
   await db.update(tenants)
-    .set({ status: 'active', updatedAt: new Date() })
+    .set(updateData as any)
     .where(eq(tenants.id, tenantId));
+
+  const standaloneUrl = vercelProjectId ? `https://flamingo-${input.slug}.vercel.app` : undefined;
 
   return {
     tenantId,
@@ -218,7 +272,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     domain: input.domain || previewDomain,
     domainConfigured,
     adminUrl: `https://${previewDomain}/admin`,
-    rendererUrl: input.domain ? `https://${input.domain}` : `https://${previewDomain}`,
+    rendererUrl: standaloneUrl || (input.domain ? `https://${input.domain}` : `https://${previewDomain}`),
   };
 }
 

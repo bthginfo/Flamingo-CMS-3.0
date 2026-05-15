@@ -57,7 +57,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-4 text-3xl sm:text-5xl font-[var(--style-heading-weight)] text-[var(--style-text-primary)]">{headline}</motion.h2>
         {subline && <p className="mt-4 text-[var(--style-text-muted)]">{subline}</p>}
       </div>
-      <div className="rounded-2xl border border-black/10 bg-[var(--style-card-bg)] px-6 shadow-md">
+      <div className="rounded-xl border border-black/10 bg-[var(--style-card-bg)] px-6 shadow-md">
         <Accordion items={items} variant="classic" />
       </div>
       {ctaPrimary.label && <div className="mt-8 text-center"><a href={ctaPrimary.href || '#'} className="inline-flex rounded-full bg-[var(--style-brand)] px-6 py-3 font-semibold text-white shadow-md">{ctaPrimary.label}</a></div>}

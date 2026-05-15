@@ -7,6 +7,7 @@ export const industryEnum = pgEnum('industry', [
 ]);
 
 export const tenantStatusEnum = pgEnum('tenant_status', ['active', 'suspended', 'provisioning']);
+export const deploymentModeEnum = pgEnum('deployment_mode', ['shared', 'standalone']);
 export const domainTypeEnum = pgEnum('domain_type', ['primary', 'alias', 'preview']);
 export const pageTypeEnum = pgEnum('page_type', ['free', 'collection_overview', 'legal', 'system']);
 export const pageStatusEnum = pgEnum('page_status', ['draft', 'published', 'archived']);
@@ -27,6 +28,8 @@ export const tenants = pgTable('tenants', {
   activeStyle: varchar('active_style', { length: 50 }).notNull().default('classic'),
   status: tenantStatusEnum('status').notNull().default('active'),
   isDemo: boolean('is_demo').notNull().default(false),
+  deploymentMode: deploymentModeEnum('deployment_mode').notNull().default('shared'),
+  vercelProjectId: varchar('vercel_project_id', { length: 255 }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

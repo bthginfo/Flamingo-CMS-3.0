@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import { CalendarDays, Phone, ArrowRight } from 'lucide-react';
@@ -24,7 +24,7 @@ type Props = { header: { headline: string; subline: string; badgeText: string };
 
 function Classic({ header, introText, onlineCta, phoneCta, callbackCta, externalCta, notes }: Props) {
   return (
-    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-2xl bg-[var(--style-card-bg)] p-6 shadow-lg sm:p-10">
+    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl bg-[var(--style-card-bg)] p-6 shadow-lg sm:p-10">
       <SectionHeader {...header} />
       {introText && <p className="max-w-2xl text-[var(--style-text-secondary)]">{introText}</p>}
       <div className="mt-8 flex flex-wrap gap-3">

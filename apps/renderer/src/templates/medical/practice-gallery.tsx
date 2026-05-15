@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -24,7 +24,7 @@ function Classic({ header, images }: Props) {
       <SectionHeader {...header} />
       <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((img, index) => (
-          <article key={`${img.src}-${index}`} className="group overflow-hidden rounded-2xl bg-[var(--style-card-bg)] shadow-lg">
+          <article key={`${img.src}-${index}`} className="group overflow-hidden rounded-xl bg-[var(--style-card-bg)] shadow-lg">
             {img.src && <div className="relative aspect-[4/3] overflow-hidden"><Image src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-4">
               {img.category && <p className="text-xs font-bold uppercase tracking-widest text-teal-700">{img.category}</p>}

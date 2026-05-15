@@ -39,7 +39,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
-          <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-2xl border border-black/10 bg-[var(--style-card-bg)] p-6 shadow-md">
+          <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-black/10 bg-[var(--style-card-bg)] p-6 shadow-md">
             <div className="text-[var(--style-accent)]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm leading-6 text-[var(--style-text-primary)]">&ldquo;{item.quote}&rdquo;</p>}
             <div className="mt-4 border-t border-black/10 pt-4">

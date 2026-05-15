@@ -46,7 +46,7 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
         {holidayNote && <p className="mt-4 text-xs text-[var(--style-text-muted)]">{holidayNote}</p>}
         {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-[var(--style-brand)] px-6 py-3 font-semibold text-white shadow-md">{ctaPrimary.label}</a>}
       </div>
-      <div className="overflow-hidden rounded-2xl border border-black/10 bg-[var(--style-card-bg)] shadow-lg">
+      <div className="overflow-hidden rounded-xl border border-black/10 bg-[var(--style-card-bg)] shadow-lg">
         {days.map((day, index) => (
           <motion.div key={`${day.label}-${index}`} initial={{ opacity: 0, x: 12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="flex items-center justify-between gap-4 border-b border-black/10 px-6 py-4 last:border-b-0">
             <div className="flex items-center gap-3">

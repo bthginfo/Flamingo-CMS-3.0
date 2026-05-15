@@ -28,7 +28,7 @@ function Classic({ header, introText, blocks }: Props) {
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {blocks.map((block, index) => (
-          <motion.article key={`${block.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="rounded-2xl bg-[var(--style-card-bg)] p-5 shadow-lg">
+          <motion.article key={`${block.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="rounded-xl bg-[var(--style-card-bg)] p-5 shadow-lg">
             <div className="flex gap-4">
               <DynamicIcon name={block.icon || 'map-pin'} size={20} className="text-green-700" />
               <div>

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import { baseHeader, IconRows, SectionHeader, asList } from './shared';
@@ -23,7 +23,7 @@ function Classic({ header, items }: Props) {
       <SectionHeader {...header} />
       <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="grid gap-6 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="rounded-2xl bg-[var(--style-card-bg)] p-5 shadow-lg">
+          <article key={`${item.title}-${index}`} className="rounded-xl bg-[var(--style-card-bg)] p-5 shadow-lg">
             <IconRows items={[item]} />
           </article>
         ))}

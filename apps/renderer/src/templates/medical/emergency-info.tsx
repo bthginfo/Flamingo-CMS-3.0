@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import { AlertCircle, ArrowRight } from 'lucide-react';
@@ -23,7 +23,7 @@ type Props = { header: { headline: string; subline: string; badgeText: string };
 
 function Classic({ header, introText, items, ctaPrimary }: Props) {
   return (
-    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-2xl border border-red-200 bg-red-50 p-6 shadow-lg sm:p-8">
+    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl border border-red-200 bg-red-50 p-6 shadow-lg sm:p-8">
       <SectionHeader {...header} />
       {introText && <p className="max-w-3xl text-sm leading-6 text-red-900/80">{introText}</p>}
       <div className="mt-6 grid gap-4 md:grid-cols-3">

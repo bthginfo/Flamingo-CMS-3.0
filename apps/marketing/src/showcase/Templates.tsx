@@ -73,20 +73,10 @@ const TEMPLATES = [
     features: ['Leistungen & Diagnostik', 'Ärzte- & Praxisteam', 'Patienteninfo & Downloads', 'Terminbuchung', 'Sprechzeiten', 'Kontakt mit Karte'],
     status: 'live' as const,
   },
-  {
-    key: 'consulting',
-    name: 'Beratung & Agentur',
-    tagline: 'Kanzleien, Berater & Freelancer',
-    description: 'Minimalistisches, professionelles Design mit Case Studies, Expertise-Darstellung und Kontakt.',
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
-    color: '#263238',
-    features: ['Case Studies', 'Expertise-Grid', 'Team-Seite', 'Blog/Insights', 'Kontaktformular', 'Testimonials'],
-    status: 'coming' as const,
-  },
 ];
 
 export function TemplateGallery() {
-  const [filter, setFilter] = useState<'all' | 'live' | 'coming'>('all');
+  const [filter] = useState<'all'>('all');
   const ref = useRef<HTMLElement>(null);
   const [revealed, setRevealed] = useState(false);
 
@@ -98,7 +88,7 @@ export function TemplateGallery() {
     return () => io.disconnect();
   }, []);
 
-  const filtered = filter === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.status === filter);
+  const filtered = TEMPLATES;
 
   return (
     <main id="main" className="min-h-screen">
@@ -121,29 +111,6 @@ export function TemplateGallery() {
         </div>
       </section>
 
-      {/* Filter */}
-      <section className="container-x pb-8">
-        <div className="flex items-center justify-center gap-2">
-          {[
-            { key: 'all', label: 'Alle' },
-            { key: 'live', label: 'Verfügbar' },
-            { key: 'coming', label: 'Bald verfügbar' },
-          ].map(f => (
-            <button
-              key={f.key}
-              onClick={() => setFilter(f.key as typeof filter)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                filter === f.key
-                  ? 'bg-[var(--accent-color)] text-white shadow-md'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      </section>
-
       {/* Grid */}
       <section ref={ref} className="container-x pb-24">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -162,20 +129,6 @@ export function TemplateGallery() {
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                
-                {/* Status badge */}
-                <div className="absolute top-4 right-4">
-                  {template.status === 'live' ? (
-                    <span className="inline-flex items-center gap-1.5 bg-emerald-500 text-white text-xs font-medium px-2.5 py-1 rounded-full">
-                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                      Live
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center bg-slate-800/70 backdrop-blur-sm text-white text-xs font-medium px-2.5 py-1 rounded-full">
-                      Bald
-                    </span>
-                  )}
-                </div>
 
                 {/* Color indicator */}
                 <div className="absolute bottom-4 left-4 flex items-center gap-2">
@@ -204,18 +157,14 @@ export function TemplateGallery() {
                 </div>
 
                 {/* CTA */}
-                {template.status === 'live' ? (
-                  <a
-                    href={DEMO_LINKS[template.key] || `/demo/${template.key}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent-color)] hover:underline"
-                  >
-                    Live-Demo ansehen →
-                  </a>
-                ) : (
-                  <span className="text-sm text-slate-400">Verfügbar ab Q3 2026</span>
-                )}
+                <a
+                  href={DEMO_LINKS[template.key] || `/demo/${template.key}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent-color)] hover:underline"
+                >
+                  Live-Demo ansehen →
+                </a>
               </div>
             </article>
           ))}

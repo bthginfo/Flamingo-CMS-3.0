@@ -47,12 +47,12 @@ html {
   }
 
   [data-style] .rounded-full {
-    border-radius: var(--style-radius-full, 9999px);
+    border-radius: var(--style-radius-full, 2rem);
   }
 
   [data-style] a[class*="rounded-full"],
   [data-style] button[class*="rounded-full"] {
-    border-radius: var(--style-button-radius, 9999px);
+    border-radius: var(--style-button-radius, 0.75rem);
   }
 
   [data-style] .shadow-lg,
@@ -84,7 +84,7 @@ html {
 
   .section-badge {
     @apply inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium mb-6;
-    border-radius: var(--style-radius-full, 9999px);
+    border-radius: var(--style-radius-full, 2rem);
     background: var(--style-badge-bg, rgba(26, 82, 118, 0.05));
     border: 1px solid var(--style-badge-border, rgba(26, 82, 118, 0.1));
     color: var(--style-badge-text, var(--brand-primary));
@@ -92,19 +92,19 @@ html {
 
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 text-base;
-    border-radius: var(--style-button-radius, 9999px);
+    border-radius: var(--style-button-radius, 0.75rem);
     background: var(--brand-accent);
     color: #1a1a1a;
   }
 
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 border-2 border-white/20 text-white transition-all duration-300 hover:bg-white/10 hover:border-white/40 text-base backdrop-blur-sm;
-    border-radius: var(--style-button-radius, 9999px);
+    border-radius: var(--style-button-radius, 0.75rem);
   }
 
   .btn-outline {
     @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 border-2 border-gray-200 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:border-gray-300 text-base;
-    border-radius: var(--style-button-radius, 9999px);
+    border-radius: var(--style-button-radius, 0.75rem);
   }
 
   .card-hover {
@@ -219,7 +219,7 @@ html {
 [data-style] .rounded-xl { border-radius: var(--style-radius-md, 0.75rem); }
 [data-style] .rounded-2xl { border-radius: var(--style-radius-lg, 1rem); }
 [data-style] .rounded-3xl { border-radius: var(--style-radius-lg, 1.5rem); }
-[data-style] .rounded-full { border-radius: var(--style-radius-full, 9999px); }
+[data-style] .rounded-full { border-radius: var(--style-radius-full, 2rem); }
 
 /* Button radius */
 [data-style] button,
@@ -277,7 +277,7 @@ html {
 [data-style] [class*="Badge"] {
   background: var(--style-badge-bg, rgba(26,82,118,0.05));
   border: 1px solid var(--style-badge-border, rgba(26,82,118,0.1));
-  border-radius: var(--style-radius-full, 9999px);
+  border-radius: var(--style-radius-full, 2rem);
 }
 
 /* Dividers */

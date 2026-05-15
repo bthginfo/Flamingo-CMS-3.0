@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import { Clock, ArrowRight } from 'lucide-react';
@@ -31,7 +31,7 @@ function Classic({ header, days, acuteCareText, holidayNote, ctaPrimary }: Props
         {holidayNote && <p className="mt-3 text-xs text-[var(--style-text-secondary)]">{holidayNote}</p>}
         <div className="mt-6"><CtaButton cta={ctaPrimary} /></div>
       </div>
-      <div className="rounded-2xl bg-[var(--style-card-bg)] shadow-lg">
+      <div className="rounded-xl bg-[var(--style-card-bg)] shadow-lg">
         {days.map((day, index) => (
           <div key={`${day.label}-${index}`} className="flex items-center justify-between gap-4 border-b border-black/10 px-5 py-4 last:border-b-0">
             <div className="flex items-center gap-3">

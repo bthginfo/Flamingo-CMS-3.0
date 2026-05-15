@@ -81,6 +81,69 @@ export async function checkDomainStatus(domain: string): Promise<{ configured: b
   }
 }
 
+/** Create a standalone Vercel project for a tenant. */
+export async function createStandaloneProject(slug: string, tenantId: string): Promise<{ projectId: string; projectUrl: string }> {
+  const projectName = `flamingo-${slug}`;
+  const repoId = process.env.GITHUB_REPO_ID;
+  if (!repoId) throw new Error('GITHUB_REPO_ID not set');
+
+  // Create project linked to the monorepo
+  const project = await vercelFetch('/v9/projects', 'POST', {
+    name: projectName,
+    framework: 'nextjs',
+    gitRepository: {
+      type: 'github',
+      repo: repoId,
+    },
+    rootDirectory: 'apps/renderer',
+    buildCommand: 'pnpm turbo build --filter=renderer',
+    installCommand: 'pnpm install',
+  });
+
+  const projectId = project.id;
+
+  // Set environment variables
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl) throw new Error('DATABASE_URL not set for standalone project');
+
+  const envVars = [
+    { key: 'DATABASE_URL', value: dbUrl, target: ['production', 'preview'], type: 'encrypted' },
+    { key: 'FIXED_TENANT_ID', value: tenantId, target: ['production', 'preview'], type: 'plain' },
+  ];
+
+  await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', envVars);
+
+  return { projectId, projectUrl: `https://${projectName}.vercel.app` };
+}
+
+/** Add a domain to a specific Vercel project. */
+export async function addDomainToProject(projectId: string, domain: string): Promise<{ configured: boolean; verified: boolean }> {
+  try {
+    const data = await vercelFetch(`/v10/projects/${projectId}/domains`, 'POST', { name: domain });
+    return { configured: true, verified: data.verified ?? false };
+  } catch (err: unknown) {
+    const msg = (err as Error).message || '';
+    if (msg.includes('already exists') || msg.includes('DOMAIN_ALREADY_IN_USE')) {
+      return { configured: true, verified: true };
+    }
+    throw err;
+  }
+}
+
+/** Trigger a deployment for a specific Vercel project. */
+export async function triggerProjectDeployment(projectName: string): Promise<{ id: string; url: string }> {
+  const data = await vercelFetch('/v13/deployments', 'POST', {
+    name: projectName,
+    target: 'production',
+    gitSource: {
+      type: 'github',
+      repoId: process.env.GITHUB_REPO_ID,
+      ref: 'main',
+    },
+  });
+  return { id: data.id, url: data.url };
+}
+
 /** Trigger a new deployment for the renderer project. */
 export async function triggerRendererDeployment(): Promise<{ id: string; url: string }> {
   const projectName = process.env.VERCEL_RENDERER_PROJECT || 'flamingo-renderer';

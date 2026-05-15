@@ -76,7 +76,7 @@ function Classic(p: Props) {
           {p.secondaryCta.label && <a href={p.secondaryCta.href || '#'} className="inline-flex rounded-full border border-[var(--style-badge-bg)]/30 px-5 py-3 font-semibold text-[var(--style-text-primary)]">{p.secondaryCta.label}</a>}
         </div>
       </div>
-      <div className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-md">
+      <div className="rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-md">
         {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {p.mapEmbedUrl && <iframe src={p.mapEmbedUrl} title="Standort" className="mb-5 h-56 w-full rounded-xl" loading="lazy" />}
         <FormBlock formEnabled={p.formEnabled} namePlaceholder={p.namePlaceholder} emailPlaceholder={p.emailPlaceholder} messagePlaceholder={p.messagePlaceholder} submitLabel={p.submitLabel} />

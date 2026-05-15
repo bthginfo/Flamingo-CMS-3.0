@@ -51,6 +51,10 @@ export type Snapshot = {
 
 /** Resolve tenant from the request hostname. Falls back to first tenant for dev. */
 export async function resolveTenant(): Promise<string | null> {
+  // Standalone mode: fixed tenant via env var (dedicated Vercel project)
+  const fixedTenantId = process.env.FIXED_TENANT_ID;
+  if (fixedTenantId) return fixedTenantId;
+
   const db = getDb();
   const headersList = await headers();
   const host = headersList.get('host') ?? 'localhost';

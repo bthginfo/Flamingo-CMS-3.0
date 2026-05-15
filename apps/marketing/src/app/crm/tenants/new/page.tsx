@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createTenantAction } from '../actions';
 import { toast } from 'sonner';
-import { ArrowLeft, Rocket } from 'lucide-react';
+import { ArrowLeft, Rocket, Server, Cloud } from 'lucide-react';
 import Link from 'next/link';
 
 const INDUSTRIES = [
@@ -38,6 +38,7 @@ export default function NewTenantPage() {
     phone: '',
     email: '',
     address: '',
+    deploymentMode: 'shared' as 'shared' | 'standalone',
   });
 
   function autoSlug(name: string) {
@@ -62,6 +63,7 @@ export default function NewTenantPage() {
           ...form,
           industry: form.industry as any,
           domain: form.domain || undefined,
+          deploymentMode: form.deploymentMode,
         });
         toast.success(`Tenant "${form.name}" wurde erstellt! Erreichbar unter: ${result.rendererUrl}`);
         router.push(`/crm/tenants/${result.tenantId}`);
@@ -176,7 +178,40 @@ export default function NewTenantPage() {
           <div>
             <label className="crm-label">Custom Domain</label>
             <input className="crm-input" value={form.domain} onChange={e => setForm(f => ({ ...f, domain: e.target.value }))} placeholder="www.firma.de" />
-            <p className="text-xs text-slate-400 mt-1">Wird automatisch zum Renderer-Projekt auf Vercel hinzugefügt. DNS-Eintrag muss manuell gesetzt werden.</p>
+            <p className="text-xs text-slate-400 mt-1">Wird automatisch zum Vercel-Projekt hinzugefügt. DNS-Eintrag muss manuell gesetzt werden.</p>
+          </div>
+        </div>
+
+        {/* Deployment Mode */}
+        <div className="crm-card p-5 space-y-4">
+          <h2 className="font-semibold text-sm uppercase tracking-wide text-slate-500">Deployment</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              onClick={() => setForm(f => ({ ...f, deploymentMode: 'shared' }))}
+              className={`p-4 rounded-xl border-2 text-left transition-all ${
+                form.deploymentMode === 'shared'
+                  ? 'border-indigo-500 bg-indigo-50'
+                  : 'border-slate-200 hover:border-slate-300'
+              }`}
+            >
+              <Server size={20} className={form.deploymentMode === 'shared' ? 'text-indigo-600' : 'text-slate-400'} />
+              <p className="font-semibold mt-2 text-sm">Shared Renderer</p>
+              <p className="text-xs text-slate-500 mt-1">Läuft auf dem gemeinsamen Renderer-Projekt. Ideal für Demos und kleine Kunden.</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => setForm(f => ({ ...f, deploymentMode: 'standalone' }))}
+              className={`p-4 rounded-xl border-2 text-left transition-all ${
+                form.deploymentMode === 'standalone'
+                  ? 'border-indigo-500 bg-indigo-50'
+                  : 'border-slate-200 hover:border-slate-300'
+              }`}
+            >
+              <Cloud size={20} className={form.deploymentMode === 'standalone' ? 'text-indigo-600' : 'text-slate-400'} />
+              <p className="font-semibold mt-2 text-sm">Standalone Projekt</p>
+              <p className="text-xs text-slate-500 mt-1">Eigenes Vercel-Projekt mit dedizierter Infrastruktur. Für produktive Kunden.</p>
+            </button>
           </div>
         </div>
 

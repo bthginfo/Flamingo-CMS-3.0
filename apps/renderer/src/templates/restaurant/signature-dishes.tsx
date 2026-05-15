@@ -37,7 +37,7 @@ function SignatureDishesClassic({ headline, subline, badgeText, dishes }: Signat
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {dishes.map((dish, index) => (
-          <motion.article key={`${dish.name}-${index}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="group overflow-hidden rounded-2xl border border-black/10 bg-[var(--style-card-bg)] shadow-md">
+          <motion.article key={`${dish.name}-${index}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="group overflow-hidden rounded-xl border border-black/10 bg-[var(--style-card-bg)] shadow-md">
             {dish.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={dish.image} alt={dish.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {dish.label && <p className="inline-block rounded-full bg-[var(--style-accent)]/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[var(--style-accent)]">{dish.label}</p>}

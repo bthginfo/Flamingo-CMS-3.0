@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import { Download } from 'lucide-react';
@@ -24,7 +24,7 @@ function Classic({ header, items }: Props) {
       <SectionHeader {...header} />
       <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="rounded-2xl bg-[var(--style-card-bg)] p-5 shadow-lg">
+          <article key={`${item.title}-${index}`} className="rounded-xl bg-[var(--style-card-bg)] p-5 shadow-lg">
             <Download size={22} className="text-teal-700" />
             {item.metaLabel && <p className="mt-4 text-xs font-bold uppercase tracking-widest text-teal-700">{item.metaLabel}</p>}
             <h3 className="mt-2 text-xl font-bold text-[var(--style-text-primary)]">{item.title || ''}</h3>

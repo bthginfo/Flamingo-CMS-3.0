@@ -43,10 +43,10 @@ function StoryClassic({ headline, subline, badgeText, storyText, imagePrimary, i
           {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-full bg-[var(--style-brand)] px-6 py-3 font-semibold text-white shadow-md">{ctaPrimary.label}</a>}
         </motion.div>
         <div className="grid grid-cols-2 gap-4">
-          {imagePrimary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-2xl shadow-lg"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></motion.div>}
-          {imageSecondary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="relative aspect-square overflow-hidden rounded-2xl shadow-md"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></motion.div>}
+          {imagePrimary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-lg"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></motion.div>}
+          {imageSecondary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></motion.div>}
           {founderQuote && (
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="flex flex-col justify-center rounded-2xl bg-[var(--style-accent)]/10 p-5">
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="flex flex-col justify-center rounded-xl bg-[var(--style-accent)]/10 p-5">
               <p className="text-sm italic leading-6 text-[var(--style-text-primary)]">&ldquo;{founderQuote}&rdquo;</p>
               {founderName && <p className="mt-3 font-semibold text-[var(--style-text-primary)]">{founderName}</p>}
               {founderRole && <p className="text-xs text-[var(--style-text-muted)]">{founderRole}</p>}
@@ -57,7 +57,7 @@ function StoryClassic({ headline, subline, badgeText, storyText, imagePrimary, i
       {values.length > 0 && (
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {values.map((v, i) => (
-            <motion.div key={`${v.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-2xl bg-[var(--style-card-bg)] p-5 shadow-sm">
+            <motion.div key={`${v.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl bg-[var(--style-card-bg)] p-5 shadow-sm">
               <div className="shrink-0 rounded-full bg-[var(--style-accent)]/10 p-2.5 text-[var(--style-accent)]"><DynamicIcon name={v.icon || 'heart'} size={20} /></div>
               <div>
                 <h3 className="font-semibold text-[var(--style-text-primary)]">{v.title || ''}</h3>

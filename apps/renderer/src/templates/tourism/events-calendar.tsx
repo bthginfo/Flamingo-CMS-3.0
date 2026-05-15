@@ -39,7 +39,7 @@ function Classic({ header, events, fallbackText }: Props) {
       {events.length === 0 && fallbackText ? <p className="text-[var(--style-text-secondary)]">{fallbackText}</p> : null}
       <div className="grid gap-6 lg:grid-cols-2">
         {events.map((event, index) => (
-          <motion.article key={`${event.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-2xl bg-[var(--style-card-bg)] shadow-lg sm:grid-cols-[180px_1fr]">
+          <motion.article key={`${event.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-xl bg-[var(--style-card-bg)] shadow-lg sm:grid-cols-[180px_1fr]">
             {event.image && <div className="relative min-h-48"><Image src={event.image} alt={event.title || ''} fill className="object-cover" sizes="220px" /></div>}
             <div className="p-5">
               <EventMeta event={event} />

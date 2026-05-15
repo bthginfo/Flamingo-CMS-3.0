@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
@@ -23,7 +23,7 @@ function Classic({ header, items, ctaPrimary }: Props) {
   return (
     <div>
       <SectionHeader {...header} />
-      <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="divide-y divide-black/10 rounded-2xl bg-[var(--style-card-bg)] shadow-lg">
+      <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="divide-y divide-black/10 rounded-xl bg-[var(--style-card-bg)] shadow-lg">
         {items.map((item, index) => (
           <details key={`${item.question}-${index}`} className="p-5">
             <summary className="cursor-pointer font-semibold text-[var(--style-text-primary)]">{item.question || ''}</summary>

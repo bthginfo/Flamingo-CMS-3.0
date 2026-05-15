@@ -40,9 +40,9 @@ function AmbienceClassic({ headline, subline, badgeText, imagePrimary, imageSeco
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="grid gap-10 lg:grid-cols-2 lg:items-center">
       <div className="grid grid-cols-2 gap-4">
-        {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-2xl shadow-lg"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-2xl shadow-md"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
-        {imageTertiary && <div className="relative aspect-square overflow-hidden rounded-2xl shadow-md"><Image src={imageTertiary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+        {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-lg"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+        {imageTertiary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image src={imageTertiary} alt="" fill className="object-cover" sizes="25vw" /></div>}
       </div>
       <div>
         {badgeText && <p className="inline-block rounded-full bg-[var(--style-accent)]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--style-accent)]">{badgeText}</p>}
@@ -50,7 +50,7 @@ function AmbienceClassic({ headline, subline, badgeText, imagePrimary, imageSeco
         {subline && <p className="mt-4 text-lg text-[var(--style-text-muted)]">{subline}</p>}
         <div className="mt-8 grid gap-5">
           {highlights.map((highlight, index) => (
-            <motion.div key={`${highlight.title}-${index}`} initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 rounded-2xl bg-[var(--style-card-bg)] p-4 shadow-sm">
+            <motion.div key={`${highlight.title}-${index}`} initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 rounded-xl bg-[var(--style-card-bg)] p-4 shadow-sm">
               <div className="mt-0.5 shrink-0 rounded-full bg-[var(--style-accent)]/10 p-2 text-[var(--style-accent)]"><DynamicIcon name={highlight.icon || 'star'} size={20} /></div>
               <div>
                 <h3 className="font-semibold text-[var(--style-text-primary)]">{highlight.title || ''}</h3>

@@ -24,7 +24,7 @@ function Classic({ header, items }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
-          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="rounded-2xl bg-[var(--style-card-bg)] p-5 shadow-lg">
+          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="rounded-xl bg-[var(--style-card-bg)] p-5 shadow-lg">
             <Download size={22} className="text-green-700" />
             {item.metaLabel && <p className="mt-4 text-xs font-bold uppercase tracking-widest text-green-700">{item.metaLabel}</p>}
             <h3 className="mt-2 text-xl font-bold text-[var(--style-text-primary)]">{item.title || ''}</h3>
