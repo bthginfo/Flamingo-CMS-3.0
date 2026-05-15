@@ -443,11 +443,12 @@ function ShowcaseFooter() {
           <div>
             <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Branchen</p>
             <ul className="space-y-2">
-              <li><Link to="/templates" className="hover:text-accent">Restaurant</Link></li>
-              <li><Link to="/templates" className="hover:text-accent">Salon &amp; Beauty</Link></li>
-              <li><Link to="/templates" className="hover:text-accent">Handwerk</Link></li>
-              <li><Link to="/templates" className="hover:text-accent">Hotel &amp; Tourismus</Link></li>
-              <li><Link to="/templates" className="hover:text-accent">Praxis &amp; Beratung</Link></li>
+              <li><a href={`${DEMO_BASE}/demo/handwerk`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Handwerk</a></li>
+              <li><a href={`${DEMO_BASE}/demo/restaurant`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Restaurant</a></li>
+              <li><a href={`${DEMO_BASE}/demo/hotel`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Hotel</a></li>
+              <li><a href={`${DEMO_BASE}/demo/salon`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Salon &amp; Beauty</a></li>
+              <li><a href={`${DEMO_BASE}/demo/medical`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Arztpraxis</a></li>
+              <li><a href={`${DEMO_BASE}/demo/tourism`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Tourismus</a></li>
             </ul>
           </div>
           <div>
@@ -740,6 +741,8 @@ function ServicesSection() {
   );
 }
 
+const DEMO_BASE = 'https://flamingo-renderer.vercel.app';
+
 function TemplatesPreviewSection() {
   return (
     <section className="py-24 md:py-32 surface">
@@ -749,12 +752,12 @@ function TemplatesPreviewSection() {
             <p className="eyebrow mb-5">Templates</p>
             <h2 className="headline-lg">
               Sechs Branchen.<br />
-              <em className="italic-pop">Endlos viele Welten.</em>
+              <em className="italic-pop">Ein System.</em>
             </h2>
           </div>
           <p className="md:col-span-5 text-lg text-muted reveal">
-            Drei Templates sind sofort live klickbar, drei weitere Branchen zeigen, wie sich der Studio-Stil
-            anpassen lässt. Mehr Branchen jederzeit auf Anfrage.
+            Jede Branche hat ein eigenes Template mit branchenspezifischen Sections, drei Stilrichtungen
+            und einem Admin, der genau die Felder zeigt, die Du brauchst. Alle sechs live klickbar.
           </p>
         </div>
 
@@ -763,8 +766,10 @@ function TemplatesPreviewSection() {
             const m = TEMPLATE_META[k];
             return (
               <Tilt3DCard key={k} max={8} className="rounded-3xl">
-              <Link
-                to={`/preview/${k}`}
+              <a
+                href={`${DEMO_BASE}/demo/${k}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group relative rounded-3xl overflow-hidden aspect-[4/5] hover-lift block"
               >
                 <img src={m.image} alt={m.label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" loading="lazy" />
@@ -781,11 +786,11 @@ function TemplatesPreviewSection() {
                   <h3 className="font-display text-4xl md:text-5xl">{m.label}</h3>
                   <p className="mt-3 text-sm text-white/80 leading-relaxed max-w-xs">{m.description}</p>
                   <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium border-t border-white/20 pt-4">
-                    Live-Vorschau ansehen
+                    Live-Demo ansehen
                     <span aria-hidden className="transition-transform group-hover:translate-x-2">→</span>
                   </div>
                 </div>
-              </Link>
+              </a>
               </Tilt3DCard>
             );
           })}
@@ -793,28 +798,31 @@ function TemplatesPreviewSection() {
             const m = EXTRA_BRANCHES[k];
             return (
               <Tilt3DCard key={k} max={8} className="rounded-3xl">
-              <Link
-                to={`/preview/${k}`}
+              <a
+                href={`${DEMO_BASE}/demo/${k}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group relative rounded-3xl overflow-hidden aspect-[4/5] hover-lift block"
               >
                 <img src={m.image} alt={m.label} className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                 <div className="absolute top-5 left-5 right-5 flex justify-between items-start">
                   <span className="text-xs font-mono text-white/80 uppercase tracking-widest">/ {k}</span>
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-white/90 bg-white/10 backdrop-blur px-2.5 py-1 rounded-full border border-white/20">
-                    Showcase
-                  </span>
+                  <span
+                    className="h-3 w-3 rounded-full"
+                    style={{ background: m.accent, boxShadow: `0 0 20px ${m.accent}` }}
+                  />
                 </div>
                 <div className="relative p-8 h-full flex flex-col justify-end text-white">
                   <p className="text-xs uppercase tracking-widest text-white/90 mb-2">{m.tagline}</p>
                   <h3 className="font-display text-4xl md:text-5xl">{m.label}</h3>
                   <p className="mt-3 text-sm text-white/80 leading-relaxed max-w-xs">{m.description}</p>
                   <div className="mt-6 inline-flex items-center gap-2 text-sm font-medium border-t border-white/20 pt-4">
-                    Showcase ansehen
+                    Live-Demo ansehen
                     <span aria-hidden className="transition-transform group-hover:translate-x-2">→</span>
                   </div>
                 </div>
-              </Link>
+              </a>
               </Tilt3DCard>
             );
           })}
@@ -1191,24 +1199,69 @@ function DeviceCaption({ label, caption, dark }: { label: string; caption: strin
 }
 
 function AdminPreviewSection() {
+  const [activeTab, setActiveTab] = useState(0);
+  const tabs = [
+    { label: 'Seiten', content: (
+      <div className="space-y-3">
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 border border-slate-100">
+          <span className="text-xs bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5 font-medium">Live</span>
+          <span className="font-medium text-sm">Startseite</span>
+          <span className="ml-auto text-xs text-slate-400">12 Sections</span>
+        </div>
+        {['Leistungen', 'Über uns', 'Projekte', 'Kontakt'].map(p => (
+          <div key={p} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-slate-100 text-sm">
+            <span className="text-xs bg-slate-100 text-slate-500 rounded-full px-2 py-0.5 font-medium">Draft</span>
+            <span className="font-medium">{p}</span>
+            <span className="ml-auto text-xs text-slate-400">→</span>
+          </div>
+        ))}
+      </div>
+    )},
+    { label: 'Hero-Editor', content: (
+      <div className="space-y-3">
+        <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Headline</p><div className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium">Müller & Söhne Meisterbetrieb</div></div>
+        <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Subline</p><div className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm">Ihr Partner für Sanitär, Heizung und Bäder seit 1987.</div></div>
+        <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Hintergrundbild</p><div className="border border-dashed border-slate-200 rounded-xl p-4 text-center text-xs text-slate-400"><div className="w-full h-16 bg-slate-100 rounded-lg mb-2 flex items-center justify-center">📷</div>Bild hochladen</div></div>
+        <div className="grid grid-cols-2 gap-3">
+          <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Primärer CTA</p><div className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm">Anfrage senden</div></div>
+          <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Link</p><div className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-400">/kontakt</div></div>
+        </div>
+      </div>
+    )},
+    { label: 'Design', content: (
+      <div className="space-y-4">
+        <p className="text-[11px] uppercase tracking-widest text-slate-400">Stil wählen</p>
+        <div className="grid grid-cols-3 gap-2">
+          {['Classic', 'Modern', 'Bold'].map((s, i) => (
+            <div key={s} className={`p-3 rounded-xl border-2 text-center text-xs font-semibold cursor-pointer transition-all ${i === 0 ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}>{s}</div>
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Primärfarbe</p><div className="flex gap-2 items-center"><span className="w-8 h-8 rounded-lg bg-blue-600" /><span className="text-xs font-mono text-slate-500">#2563EB</span></div></div>
+          <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Akzentfarbe</p><div className="flex gap-2 items-center"><span className="w-8 h-8 rounded-lg bg-amber-500" /><span className="text-xs font-mono text-slate-500">#F59E0B</span></div></div>
+        </div>
+      </div>
+    )},
+  ];
+
   return (
     <section className="py-24 md:py-32">
       <div className="container-x grid lg:grid-cols-12 gap-12 items-center">
         <div className="lg:col-span-5 reveal">
           <p className="eyebrow mb-5">Admin-Bereich</p>
-          <h2 className="headline-md">Inhalte pflegen<br /><em className="italic-pop">in einer Minute.</em></h2>
+          <h2 className="headline-md">Dein Inhalt.<br /><em className="italic-pop">Deine Kontrolle.</em></h2>
           <p className="mt-6 text-lg text-muted leading-relaxed">
-            Du loggst Dich ein, änderst Texte, Bilder, Speisekarte oder Öffnungszeiten – und drückst Speichern.
-            Keine Plugins, keine Cloud-Dashboards mit 200 Menüs. Nur das, was Du brauchst.
+            Ein Admin, der sich anfühlt wie eine App — nicht wie ein Baukasten aus 2012.
+            Texte, Bilder, Design und SEO an einem Ort. Speichern, fertig.
           </p>
           <ul className="mt-10 space-y-4">
             {[
-              'Einfacher Admin-Zugang. Direkt im Browser.',
-              'Bilder direkt hochladen – mit Live-Vorschau.',
-              'Änderungen erscheinen direkt auf der Seite.',
-              'Sektionen pro Seite ein-/ausblenden und neu sortieren.',
-              'News & Blog-Beiträge mit eigenem Editor pflegen.',
-              'Ohne extra App, ohne Plugin-Wirrwarr.',
+              'Sections per Drag & Drop sortieren und ein-/ausblenden.',
+              'Bilder direkt hochladen — mit Vorschau im Editor.',
+              'Drei Stilrichtungen pro Branche — live umschaltbar.',
+              'SEO, Open Graph und Meta-Tags in eigenem Panel.',
+              'Navigation, Footer, Kontakt und Social Media zentral verwalten.',
+              'Kein Plugin-Wirrwarr. Kein WordPress.',
             ].map((t, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="mt-1 inline-flex h-6 w-6 rounded-full bg-[var(--accent-color)] items-center justify-center">
@@ -1220,55 +1273,44 @@ function AdminPreviewSection() {
               </li>
             ))}
           </ul>
+          <a href={`${DEMO_BASE}/demo/admin`} target="_blank" rel="noopener noreferrer" className="btn-primary mt-8 inline-flex">
+            Admin-Demo ausprobieren →
+          </a>
         </div>
 
         <div className="lg:col-span-7 relative reveal">
           <div className="rounded-3xl overflow-hidden border border-line shadow-2xl bg-white">
-            <div className="bg-[var(--surface-color)] px-5 py-3 flex items-center gap-2 border-b border-line">
+            <div className="bg-slate-900 px-5 py-3 flex items-center gap-2 border-b border-slate-700">
               <span className="h-3 w-3 rounded-full bg-rose-400" />
-              <span className="h-3 w-3 rounded-full bg-accent" />
+              <span className="h-3 w-3 rounded-full bg-amber-400" />
               <span className="h-3 w-3 rounded-full bg-emerald-400" />
-              <span className="ml-3 text-xs text-muted font-mono">trattoria-innsbruck.at/admin</span>
+              <span className="ml-3 text-xs text-slate-400 font-mono">flamingo-cms.de/demo/admin</span>
             </div>
-            <div className="p-8 grid md:grid-cols-12 gap-6">
-              <aside className="md:col-span-4">
-                <p className="text-xs uppercase tracking-widest text-muted">Bereiche</p>
-                <ul className="mt-3 space-y-1 text-sm">
-                  {['Marke', 'Hero', 'Speisekarte', 'Galerie', 'Bewertungen', 'Kontakt'].map((s, i) => (
-                    <li key={s} className={`px-3 py-2 rounded-lg ${i === 2 ? 'bg-[var(--accent-color)] font-semibold' : 'hover:bg-[var(--surface-color)]'}`}>
-                      {s}
-                    </li>
-                  ))}
-                </ul>
+            <div className="flex">
+              <aside className="w-48 bg-slate-900 p-3 border-r border-slate-800 shrink-0">
+                <div className="flex items-center gap-2 px-2 py-2 mb-3">
+                  <span className="w-6 h-6 rounded-md bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">F</span>
+                  <span className="text-xs text-white font-semibold">Flamingo CMS</span>
+                </div>
+                {['Dashboard', 'Seiten', 'Collections', 'Marke & Design', 'Navigation', 'SEO', 'Kontakt'].map((s, i) => (
+                  <div key={s} className={`px-3 py-1.5 rounded-md text-xs mb-0.5 ${i === 1 ? 'bg-white/10 text-white font-medium' : 'text-slate-500 hover:text-slate-300'}`}>{s}</div>
+                ))}
               </aside>
-              <main className="md:col-span-8 space-y-4">
-                <div>
-                  <p className="text-xs uppercase tracking-widest text-muted mb-1">Gericht</p>
-                  <div className="border border-line rounded-xl px-4 py-3 font-medium">Tagliatelle al Tartufo</div>
+              <div className="flex-1 p-5">
+                <div className="flex gap-1 mb-4 border-b border-slate-100 pb-3">
+                  {tabs.map((tab, i) => (
+                    <button key={tab.label} onClick={() => setActiveTab(i)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${i === activeTab ? 'bg-slate-900 text-white' : 'text-slate-400 hover:text-slate-600'}`}>
+                      {tab.label}
+                    </button>
+                  ))}
                 </div>
-                <div>
-                  <p className="text-xs uppercase tracking-widest text-muted mb-1">Beschreibung</p>
-                  <div className="border border-line rounded-xl px-4 py-3 text-sm leading-relaxed">
-                    Hausgemachte Tagliatelle, schwarzer Sommertrüffel aus Umbrien, gehobelter Parmigiano…
-                  </div>
+                {tabs[activeTab].content}
+                <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-slate-100">
+                  <button className="px-4 py-2 rounded-xl text-xs text-slate-400 border border-slate-200">Abbrechen</button>
+                  <button className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white">Speichern</button>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-muted mb-1">Preis</p>
-                    <div className="border border-line rounded-xl px-4 py-3 font-mono">24,90 €</div>
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-muted mb-1">Bild</p>
-                    <div className="border border-line border-dashed rounded-xl px-4 py-3 text-sm text-muted text-center">
-                      Bild hochladen ↑
-                    </div>
-                  </div>
-                </div>
-                <div className="flex justify-end gap-3 pt-2">
-                  <button className="btn-ghost">Abbrechen</button>
-                  <button className="btn-primary !py-2.5 !px-5 text-sm">Speichern</button>
-                </div>
-              </main>
+              </div>
             </div>
           </div>
           <div className="absolute -inset-4 -z-10 bg-[var(--accent-color)]/30 blur-3xl rounded-full" />
@@ -1424,16 +1466,16 @@ function NumbersSection() {
             In <em className="italic-pop">Zahlen.</em>
           </h2>
           <p className="md:col-span-5 text-lg text-muted reveal">
-            Acht Branchen, jeweils drei Stilrichtungen, ein Admin, mit dem Du Inhalte selbst pflegst – ohne Agentur-Ticket. Jede Seite ist individuell anpassbar, von der Marke bis zum Modul.
+            Sechs Branchen, drei Stilrichtungen, über 80 branchenspezifische Sections — ein Admin, mit dem Du alles selbst pflegst. Kein Agentur-Ticket nötig.
           </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 md:gap-y-0 reveal-stagger">
           {[
-            { v: 8, s: '', l: 'Branchen-Templates' },
+            { v: 6, s: '', l: 'Branchen-Templates' },
             { v: 3, s: '', l: 'Stilrichtungen je Branche' },
-            { v: 24, s: '+', l: 'Bausteine kombinierbar' },
-            { v: 7, s: ' Tage', l: 'Bis online (Ø)' },
+            { v: 80, s: '+', l: 'Sections kombinierbar' },
+            { v: 15, s: '', l: 'Admin-Bereiche' },
           ].map((m, i) => (
             <div key={i} className="md:border-l border-line md:pl-8">
               <p className="num-display text-6xl md:text-8xl leading-none">
