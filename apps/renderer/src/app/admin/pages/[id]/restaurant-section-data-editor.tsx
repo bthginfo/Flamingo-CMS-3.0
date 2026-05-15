@@ -271,7 +271,32 @@ function AmbienceEditor({ data, onChange }: EditorProps) {
   );
 }
 
+function HeroEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    badgeText: (data.badgeText as string) || '',
+    bgImage: (data.bgImage as string) || '',
+    trustItems: ((data.trustItems as string[]) || []).join('\n'),
+    primaryCta: (data.primaryCta as ButtonValue) || { label: '', href: '' },
+    secondaryCta: (data.secondaryCta as ButtonValue) || { label: '', href: '' },
+  });
+  useReport({ ...d, trustItems: lines(d.trustItems) }, onChange);
+  return (
+    <div className="space-y-3">
+      <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
+      <Field label="Trust-Items (je Zeile)" value={d.trustItems} onChange={(v) => setD({ ...d, trustItems: v })} multiline />
+      <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
+      <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
+    </div>
+  );
+}
+
 const RESTAURANT_EDITORS: Record<string, React.FC<EditorProps>> = {
+  hero: HeroEditor,
   menu: MenuEditor,
   reservation: ReservationEditor,
   openingHours: OpeningHoursEditor,
