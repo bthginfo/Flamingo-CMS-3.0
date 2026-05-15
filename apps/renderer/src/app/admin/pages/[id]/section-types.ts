@@ -73,7 +73,49 @@ export const TOURISM_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
 ];
 
+export const SALON_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Salon-Hero', description: 'Positionierung, Mood-Bild und Buchungs-CTA' },
+  { type: 'serviceMenu', label: 'Service-Menue', description: 'Service-Kategorien und Behandlungen' },
+  { type: 'priceList', label: 'Preisliste', description: 'Kategorien, Preise, Dauer und Hinweise' },
+  { type: 'treatmentDetail', label: 'Behandlungsdetails', description: 'Ablauf, Ergebnis und Pflegehinweise' },
+  { type: 'packages', label: 'Pakete & Specials', description: 'Pakete, Gutscheine und saisonale Angebote' },
+  { type: 'teamShowcase', label: 'Team', description: 'Teammitglieder, Rollen und Spezialgebiete' },
+  { type: 'expertiseGrid', label: 'Expertise', description: 'Skills, Zertifikate und Marken' },
+  { type: 'beforeAfter', label: 'Vorher/Nachher', description: 'Transformationen mit Bildpaaren' },
+  { type: 'gallery', label: 'Galerie', description: 'Salon- und Arbeitsbilder' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen und Ratings' },
+  { type: 'openingHours', label: 'Oeffnungszeiten', description: 'Tage, Zeiten und Buchungshinweise' },
+  { type: 'bookingCta', label: 'Buchungs-CTA', description: 'Onlinebuchung, Telefon, WhatsApp und Hinweise' },
+  { type: 'locationContact', label: 'Kontakt & Standort', description: 'Adresse, Karte, Formular und CTAs' },
+  { type: 'faq', label: 'FAQ', description: 'Haeufige Fragen' },
+  { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
+];
+
+export const MEDICAL_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Praxis-Hero', description: 'Fachrichtung, Vertrauen, Termin-CTA und Akuthinweis' },
+  { type: 'serviceOverview', label: 'Leistungen', description: 'Behandlungen, Sprechstunden und Schwerpunkte' },
+  { type: 'treatmentDetail', label: 'Behandlungsdetails', description: 'Ablauf, Voraussetzungen und Hinweise je Behandlung' },
+  { type: 'diagnostics', label: 'Diagnostik', description: 'Untersuchungen, Methoden und Patientennutzen' },
+  { type: 'doctorTeam', label: 'Aerzteteam', description: 'Aerztinnen, Aerzte, Fachgebiete und Sprachen' },
+  { type: 'practiceTeam', label: 'Praxisteam', description: 'MFA, Assistenz, Empfang und Rollen' },
+  { type: 'certifications', label: 'Zertifikate', description: 'Qualifikationen, Mitgliedschaften und Standards' },
+  { type: 'patientInfo', label: 'Patienteninfo', description: 'Vorbereitung, Ablauf, Mitbringen und Hinweise' },
+  { type: 'insuranceInfo', label: 'Kassen & Privat', description: 'Versicherungsarten, Leistungen und Abrechnungshinweise' },
+  { type: 'downloadForms', label: 'Downloads', description: 'Formulare, Anamneseboegen und Dateien' },
+  { type: 'appointmentCta', label: 'Termin-CTA', description: 'Online-Termin, Telefon, Rueckruf und Hinweise' },
+  { type: 'openingHours', label: 'Sprechzeiten', description: 'Oeffnungszeiten, Akutsprechstunde und Urlaubsnotiz' },
+  { type: 'emergencyInfo', label: 'Notfallhinweise', description: 'Akutfall, Bereitschaftsdienst und Telefonnummern' },
+  { type: 'practiceGallery', label: 'Praxis-Galerie', description: 'Raeume, Empfang, Behandlung und Diagnostik' },
+  { type: 'equipmentHighlights', label: 'Ausstattung', description: 'Geraete, Technik und medizinische Vorteile' },
+  { type: 'valuesGrid', label: 'Praxiswerte', description: 'Haltung, Betreuung und Versorgungsanspruch' },
+  { type: 'locationContact', label: 'Kontakt & Anfahrt', description: 'Adresse, Karte, Formular und Kontaktkarten' },
+  { type: 'faq', label: 'FAQ', description: 'Haeufige Patientenfragen' },
+  { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
+];
+
 export function getSectionTypesForIndustry(industry: string): SectionTypeDefinition[] {
+  if (industry === 'medical') return MEDICAL_SECTION_TYPES;
+  if (industry === 'salon') return SALON_SECTION_TYPES;
   if (industry === 'tourism') return TOURISM_SECTION_TYPES;
   if (industry === 'hotel') return HOTEL_SECTION_TYPES;
   if (industry === 'restaurant') return RESTAURANT_SECTION_TYPES;

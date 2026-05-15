@@ -1,0 +1,15 @@
+export { SalonHeroSection } from './hero';
+export { ServiceMenuSection } from './service-menu';
+export { PriceListSection } from './price-list';
+export { TreatmentDetailSection } from './treatment-detail';
+export { PackagesSection } from './packages';
+export { TeamShowcaseSection } from './team-showcase';
+export { ExpertiseGridSection } from './expertise-grid';
+export { BeforeAfterSection } from './before-after';
+export { SalonGallerySection } from './gallery';
+export { SalonTestimonialsSection } from './testimonials';
+export { SalonOpeningHoursSection } from './opening-hours';
+export { BookingCtaSection } from './booking-cta';
+export { LocationContactSection } from './location-contact';
+export { SalonFaqSection } from './faq';
+export type { SectionProps } from './types';
