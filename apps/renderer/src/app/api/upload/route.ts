@@ -3,13 +3,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-  // Clone before reading so handleUpload can also read the body
-  const body = (await request.clone().json()) as HandleUploadBody;
+  const body = (await request.json()) as HandleUploadBody;
 
   try {
     const jsonResponse = await handleUpload({
       body,
       request,
+      token: process.env.BLOB_READ_WRITE_TOKEN,
       onBeforeGenerateToken: async (pathname) => {
         const session = await getSession();
         if (!session) throw new Error('Unauthorized');
