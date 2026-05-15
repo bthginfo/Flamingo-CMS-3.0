@@ -56,6 +56,8 @@ function HeroEditor({ data, onChange }: EditorProps) {
     subline: (data.subline as string) || '',
     badgeText: (data.badgeText as string) || '',
     bgImage: (data.bgImage as string) || '',
+    overlayColor: (data.overlayColor as string) || '#000000',
+    overlayOpacity: (data.overlayOpacity as number) ?? 0,
     trustItems: (data.trustItems as string[]) || [],
     primaryCta: (data.primaryCta as { label: string; href: string }) || { label: '', href: '' },
     secondaryCta: (data.secondaryCta as { label: string; href: string }) || { label: '', href: '' },
@@ -68,6 +70,18 @@ function HeroEditor({ data, onChange }: EditorProps) {
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
       <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
+      {d.bgImage && (
+        <div className="grid grid-cols-2 gap-3">
+          <label className="block">
+            <span className="text-xs font-medium text-zinc-600">Overlay-Farbe</span>
+            <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} />
+          </label>
+          <label className="block">
+            <span className="text-xs font-medium text-zinc-600">Overlay-Deckkraft ({Math.round(d.overlayOpacity * 100)}%)</span>
+            <input type="range" min="0" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} />
+          </label>
+        </div>
+      )}
       <div className="space-y-2">
         <label className="text-xs font-medium text-zinc-600">Trust-Elemente</label>
         {d.trustItems.map((item, i) => (
