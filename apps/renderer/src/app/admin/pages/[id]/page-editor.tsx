@@ -357,7 +357,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         >
           <ExternalLink size={16} /> Vorschau
         </a>
-        {hasDirty && !saved ? (
+        {!saved ? (
           <button
             onClick={handleSaveAll}
             disabled={saving}
