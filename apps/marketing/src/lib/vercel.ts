@@ -132,12 +132,14 @@ export async function addDomainToProject(projectId: string, domain: string): Pro
 
 /** Trigger a deployment for a specific Vercel project. */
 export async function triggerProjectDeployment(projectName: string): Promise<{ id: string; url: string }> {
+  const numericRepoId = process.env.GITHUB_REPO_NUMERIC_ID;
+  if (!numericRepoId) throw new Error('GITHUB_REPO_NUMERIC_ID not set');
   const data = await vercelFetch('/v13/deployments', 'POST', {
     name: projectName,
     target: 'production',
     gitSource: {
       type: 'github',
-      repoId: process.env.GITHUB_REPO_ID,
+      repoId: numericRepoId,
       ref: 'main',
     },
   });
