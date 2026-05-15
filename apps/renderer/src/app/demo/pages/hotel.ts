@@ -6,357 +6,726 @@ export const hotelSite: DemoSite = {
   industryKey: 'hotel',
   defaultStyle: 'classic',
   pages: [
+    // ─── 1. HOME ───────────────────────────────────────────────
     {
       slug: '',
       title: 'Startseite',
       sections: [
         {
-          ...HERO, id: 'ht-home-hero', type: 'hero',
+          ...HERO, type: 'hero', id: 'ht-home-hero',
           data: {
-            headline: 'Hotel Lindenhof',
-            subline: 'Boutique-Hotel mit Spa, Restaurant und Blick ins Gruene.',
-            badgeText: 'Hotel Demo',
-            bgImage: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1800&q=85',
-            trustItems: ['Spa inklusive', 'Direktbucher-Vorteile', 'Kostenfreies Fruehstueck'],
-            primaryCta: { label: 'Verfuegbarkeit pruefen', href: '/demo/hotel/zimmer' },
-            secondaryCta: { label: 'Zimmer ansehen', href: '/demo/hotel/zimmer' },
-            availabilityHint: 'Heute noch 3 Zimmer frei',
-            ratingText: '4.8 / 5 Gaestebewertung',
-          },
-        },
-        {
-          ...B, id: 'ht-home-booking', type: 'bookingStrip',
-          data: {
-            headline: 'Direkt buchen',
-            subline: 'Beste Rate, flexible Optionen und persoenlicher Service.',
-            badgeText: 'Verfuegbarkeit',
-            arrivalLabel: 'Anreise',
-            departureLabel: 'Abreise',
-            guestsLabel: 'Gaeste',
-            roomLabel: 'Zimmer',
-            submitCta: { label: 'Jetzt pruefen', href: '/demo/hotel/zimmer' },
-            secondaryCta: { label: 'Anrufen', href: 'tel:+49221123456' },
-            bookingNote: 'Direktbucher erhalten Fruehstueck inklusive.',
-            fields: [
-              { label: 'Anreise', value: 'Heute', type: 'date' },
-              { label: 'Abreise', value: 'Morgen', type: 'date' },
-              { label: 'Gaeste', value: '2 Erwachsene', type: 'select' },
-              { label: 'Zimmer', value: 'Superior', type: 'select' },
+            headline: 'Hotel Alpenblick – Ihr Rueckzugsort in den Tiroler Alpen',
+            subline:
+              'Erleben Sie alpinen Luxus auf 1.200 Metern Hoehe. Unser 4-Sterne-Boutique-Hotel in Kitzbuehel vereint traditionelle Gastfreundschaft mit modernem Komfort – umgeben von der atemberaubenden Kulisse der Kitzbueheler Alpen.',
+            badgeText: '4-Sterne Superior',
+            bgImage:
+              'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1800&q=85',
+            ratingText: '4.9 / 5 – ueber 1.200 Gaestebewertungen',
+            availabilityHint: 'Noch wenige Zimmer frei fuer die Wintersaison',
+            trustItems: [
+              'Gratis Stornierung bis 48h vorher',
+              'Bester-Preis-Garantie',
+              'Direkt buchen & sparen',
             ],
+            primaryCta: { label: 'Zimmer entdecken', href: '/demo/hotel/zimmer' },
+            secondaryCta: { label: 'Verfuegbarkeit pruefen', href: '#booking' },
           },
         },
         {
-          ...B, id: 'ht-home-rooms', type: 'roomShowcase',
+          ...B, type: 'bookingStrip', id: 'ht-home-booking',
           data: {
-            headline: 'Zimmer & Suiten',
-            subline: 'Ruhige Raeume, hochwertige Betten und Details, die den Aufenthalt leichter machen.',
-            badgeText: 'Aufenthalt',
+            fields: [
+              { name: 'arrival', label: 'Anreise', type: 'date' },
+              { name: 'departure', label: 'Abreise', type: 'date' },
+              { name: 'guests', label: 'Gaeste', type: 'select', options: ['1', '2', '3', '4', '5+'] },
+              { name: 'room', label: 'Zimmertyp', type: 'select', options: ['Alle Zimmer', 'Doppelzimmer', 'Suite', 'Familienzimmer', 'Chalet'] },
+            ],
+            ctaLabel: 'Verfuegbarkeit pruefen',
+          },
+        },
+        {
+          ...B, type: 'roomShowcase', id: 'ht-home-rooms',
+          data: {
+            headline: 'Unsere beliebtesten Zimmer',
+            subline: 'Waehlen Sie Ihren persoenlichen Rueckzugsort',
             rooms: [
               {
                 name: 'Superior Doppelzimmer',
-                description: 'Grosses Bett, Sitzecke, Walk-in-Dusche und Blick in den Innenhof.',
-                image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80',
-                galleryImages: ['https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=900&q=80'],
-                priceLabel: 'ab 159 / Nacht',
-                sizeLabel: '28 qm',
-                occupancyLabel: '2 Gaeste',
-                bedLabel: 'King Bed',
-                features: ['Fruehstueck', 'WLAN', 'Spa-Zugang'],
-                detailCta: { label: 'Details', href: '/demo/hotel/zimmer' },
-                bookingCta: { label: 'Buchen', href: '/demo/hotel/zimmer' },
-                highlighted: true,
+                description:
+                  'Gemuetliches Ambiente mit Blick auf die Kitzbueheler Bergwelt. Hochwertige Materialien und alpiner Stil schaffen eine Atmosphaere zum Wohlfuehlen.',
+                image:
+                  'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80',
+                priceLabel: 'ab 189 € / Nacht',
+                sizeLabel: '32 m²',
+                detailCta: { label: 'Details ansehen', href: '/demo/hotel/zimmer#superior' },
+              },
+              {
+                name: 'Junior Suite Alpenblick',
+                description:
+                  'Grosszuegige Suite mit separatem Wohnbereich und Panoramabalkon. Der perfekte Ort fuer unvergessliche Augenblicke zu zweit.',
+                image:
+                  'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=900&q=80',
+                priceLabel: 'ab 289 € / Nacht',
+                sizeLabel: '48 m²',
+                detailCta: { label: 'Details ansehen', href: '/demo/hotel/zimmer#junior-suite' },
+              },
+              {
+                name: 'Panorama Suite',
+                description:
+                  'Unser Flaggschiff mit freistehender Badewanne, Kamin und 270-Grad-Bergpanorama. Purer Luxus auf hoechstem Niveau.',
+                image:
+                  'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80',
+                priceLabel: 'ab 429 € / Nacht',
+                sizeLabel: '72 m²',
+                detailCta: { label: 'Details ansehen', href: '/demo/hotel/zimmer#panorama-suite' },
               },
             ],
-            footerText: 'Alle Zimmerpreise sind editierbare CMS-Inhalte.',
+            cta: { label: 'Alle Zimmer & Suiten ansehen', href: '/demo/hotel/zimmer' },
           },
         },
         {
-          ...B, id: 'ht-home-amenities', type: 'amenities',
+          ...B, type: 'amenities', id: 'ht-home-amenities',
           data: {
-            headline: 'Alles fuer einen leichten Aufenthalt',
-            subline: 'Services, die Gaeste wirklich nutzen.',
-            badgeText: 'Ausstattung',
+            headline: 'Was uns auszeichnet',
+            subline: 'Durchdachter Komfort fuer Ihren perfekten Aufenthalt',
             items: [
-              { icon: 'star', title: 'Highspeed WLAN', text: 'Im gesamten Haus inklusive.', image: '', mediaType: 'icon' },
-              { icon: 'clock', title: 'Late Check-out', text: 'Nach Verfuegbarkeit flexibel moeglich.', image: '', mediaType: 'icon' },
-              { icon: 'leaf', title: 'Spa & Sauna', text: 'Taeglich fuer Hotelgaeste geoeffnet.', image: '', mediaType: 'icon' },
+              {
+                icon: 'wifi',
+                title: 'Highspeed-WLAN',
+                description: 'Kostenloses WLAN im gesamten Hotel – auch auf der Terrasse und im Spa-Bereich.',
+              },
+              {
+                icon: 'spa',
+                title: '800 m² Wellness & Spa',
+                description: 'Infinity Pool, Saunalandschaft, Dampfbad und ein breites Angebot an Treatments.',
+              },
+              {
+                icon: 'restaurant',
+                title: 'Hauben-Restaurant',
+                description: 'Regionale Kueche mit alpinem Flair – ausgezeichnet mit 2 Gault-Millau-Hauben.',
+              },
+              {
+                icon: 'shuttle',
+                title: 'Gratis Ski-Shuttle',
+                description: 'Direkter Shuttle zur Hahnenkamm-Gondel in nur 3 Minuten – taeglich von 8 bis 17 Uhr.',
+              },
+              {
+                icon: 'charging',
+                title: 'E-Ladestationen',
+                description: '4 Tesla Supercharger und 6 Typ-2-Ladepunkte in unserer Tiefgarage.',
+              },
+              {
+                icon: 'clock',
+                title: 'Late Checkout',
+                description: 'Geniessen Sie Ihren Aufenthalt bis 14 Uhr – kostenlos fuer Direktbucher.',
+              },
             ],
-            ctaPrimary: { label: 'Alle Services ansehen', href: '/demo/hotel/zimmer' },
           },
         },
         {
-          ...B, id: 'ht-home-testimonials', type: 'testimonials',
+          ...B, type: 'testimonials', id: 'ht-home-testimonials',
           data: {
-            headline: 'Was Gaeste sagen',
-            subline: 'Bewertungen und Stimmen aus aktuellen Aufenthalten.',
-            badgeText: 'Bewertungen',
-            ratingValue: '4.8 von 5',
-            ratingCount: '312 Bewertungen',
-            sourceLabel: 'Direktbuchung & Portale',
+            headline: 'Das sagen unsere Gaeste',
+            subline: 'Ueber 1.200 verifizierte Bewertungen mit 4.9 / 5 Sternen',
             items: [
-              { quote: 'Sehr ruhig, tolles Fruehstueck und ein Team, das wirklich mitdenkt.', name: 'M. Schneider', context: 'Privatreise', rating: 5, stayLabel: 'April 2026' },
-              { quote: 'Perfekt fuer unser Offsite. Raum, Technik und Abendessen waren stark organisiert.', name: 'Lea K.', context: 'Business', rating: 5, stayLabel: 'Maerz 2026' },
-              { quote: 'Der Spa-Bereich war der Grund zu buchen und am Ende auch das Highlight.', name: 'Jonas R.', context: 'Wellness', rating: 5, stayLabel: 'Februar 2026' },
+              {
+                name: 'Dr. Markus & Petra Lechner',
+                context: 'Romantik-Wochenende im Januar 2026',
+                rating: 5,
+                text: 'Ein absoluter Traumaufenthalt! Die Panorama Suite hat unsere Erwartungen uebertroffen – der Blick auf die verschneiten Gipfel beim Fruehstueck im Bett war unvergesslich. Das Spa ist hervorragend, besonders die Hot-Stone-Massage. Wir kommen definitiv wieder.',
+              },
+              {
+                name: 'Familie Hofstetter',
+                context: 'Familienurlaub im August 2025',
+                rating: 5,
+                text: 'Endlich ein Berghotel, das Familien wirklich willkommen heisst! Die Kinder waren vom Spielraum und dem Abenteuerprogramm begeistert, waehrend wir die Ruhe am Pool geniessen konnten. Das Familienzimmer ist perfekt durchdacht. Top Service vom gesamten Team!',
+              },
+              {
+                name: 'Christina Bauer',
+                context: 'Geschaeftsreise im Maerz 2026',
+                rating: 5,
+                text: 'Ideal fuer unsere Firmenklausur. Der Boardroom Hahnenkamm war bestens ausgestattet, das Catering erstklassig. Nach dem Workshop konnten wir im Spa perfekt entspannen. Auch die Technik hat einwandfrei funktioniert. Absolut empfehlenswert fuer Business-Events.',
+              },
             ],
-            ctaPrimary: { label: 'Jetzt anfragen', href: '/demo/hotel/kontakt' },
-          },
-        },
-        {
-          ...B, id: 'ht-home-cta', type: 'ctaBand',
-          data: {
-            headline: 'Aufenthalt planen?',
-            subline: 'Persoenliche Beratung und beste Konditionen bei Direktbuchung.',
-            badgeText: 'Jetzt buchen',
-            ctaPrimary: { label: 'Kontakt aufnehmen', href: '/demo/hotel/kontakt' },
           },
         },
       ],
     },
+
+    // ─── 2. ZIMMER & SUITEN ────────────────────────────────────
     {
       slug: 'zimmer',
       title: 'Zimmer & Suiten',
       sections: [
         {
-          ...HERO, id: 'ht-rooms-hero', type: 'hero',
+          ...HERO, type: 'hero', id: 'ht-rooms-hero',
           data: {
-            headline: 'Zimmer & Suiten',
-            subline: 'Ruhige Raeume mit hochwertiger Ausstattung fuer einen erholsamen Aufenthalt.',
-            badgeText: 'Zimmer',
-            bgImage: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1800&q=85',
-            primaryCta: { label: 'Verfuegbarkeit pruefen', href: '/demo/hotel/kontakt' },
+            headline: 'Zimmer & Suiten – Alpiner Luxus zum Wohlfuehlen',
+            subline:
+              'Von der gemuetlichen Doppelstube bis zur exklusiven Chalet Suite – jedes unserer 42 Zimmer verbindet Tiroler Handwerkskunst mit modernem Design. Waehlen Sie Ihren persoenlichen Lieblingsplatz.',
+            badgeText: '42 Zimmer & Suiten',
+            bgImage:
+              'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=1800&q=85',
+            primaryCta: { label: 'Direkt buchen', href: '#booking' },
           },
         },
         {
-          ...B, id: 'ht-rooms-showcase', type: 'roomShowcase',
+          ...B, type: 'roomShowcase', id: 'ht-rooms-showcase',
           data: {
-            headline: 'Zimmer & Suiten',
-            subline: 'Ruhige Raeume, hochwertige Betten und Details, die den Aufenthalt leichter machen.',
-            badgeText: 'Aufenthalt',
+            headline: 'Alle Zimmer & Suiten im Ueberblick',
+            subline: 'Finden Sie den perfekten Raum fuer Ihren Aufenthalt',
             rooms: [
               {
                 name: 'Superior Doppelzimmer',
-                description: 'Grosses Bett, Sitzecke, Walk-in-Dusche und Blick in den Innenhof.',
-                image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80',
-                galleryImages: ['https://images.unsplash.com/photo-1590490359683-658d3d23f972?w=900&q=80'],
-                priceLabel: 'ab 159 / Nacht',
-                sizeLabel: '28 qm',
-                occupancyLabel: '2 Gaeste',
-                bedLabel: 'King Bed',
-                features: ['Fruehstueck', 'WLAN', 'Spa-Zugang'],
-                detailCta: { label: 'Details', href: '/demo/hotel/kontakt' },
-                bookingCta: { label: 'Buchen', href: '/demo/hotel/kontakt' },
+                description:
+                  'Unser Klassiker fuer Paare und Alleinreisende. Warme Holztoene, ein grosszuegiges Boxspringbett und ein modernes Bad mit Regendusche laden zum Verweilen ein. Der Balkon bietet freien Blick auf die Kitzbueheler Bergwelt.',
+                image:
+                  'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80',
+                galleryImages: [
+                  'https://images.unsplash.com/photo-1591088398332-8a7791972843?w=900&q=80',
+                  'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=900&q=80',
+                ],
+                priceLabel: 'ab 189 € / Nacht',
+                sizeLabel: '32 m²',
+                occupancyLabel: 'max. 2 Personen',
+                bedLabel: '1 King-Size Boxspringbett (180x200)',
+                features: ['Balkon mit Bergblick', 'Regendusche', 'Nespresso-Maschine', 'Smart TV 55"', 'Minibar (gefuellt)'],
+                detailCta: { label: 'Zimmerdetails', href: '/demo/hotel/zimmer#superior' },
+                bookingCta: { label: 'Jetzt buchen', href: '#booking' },
+                highlighted: false,
+              },
+              {
+                name: 'Familienzimmer Bergblick',
+                description:
+                  'Ideal fuer Familien mit bis zu zwei Kindern. Der separate Schlafbereich mit Stockbett sorgt fuer Abenteuerfeeling, waehrend die Eltern im grosszuegigen Hauptraum entspannen. Inklusive Spielekiste und Kinderausstattung.',
+                image:
+                  'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=900&q=80',
+                galleryImages: [
+                  'https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=900&q=80',
+                  'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=900&q=80',
+                ],
+                priceLabel: 'ab 249 € / Nacht',
+                sizeLabel: '45 m²',
+                occupancyLabel: 'max. 4 Personen (2 Erw. + 2 Kinder)',
+                bedLabel: '1 Doppelbett (180x200) + 1 Stockbett',
+                features: ['Separater Kinderbereich', 'Spielekiste & Malbuecher', 'Balkon mit Bergblick', 'Babybett auf Anfrage', 'Verdunkelungsvorhaenge'],
+                detailCta: { label: 'Zimmerdetails', href: '/demo/hotel/zimmer#familienzimmer' },
+                bookingCta: { label: 'Jetzt buchen', href: '#booking' },
+                highlighted: false,
+              },
+              {
+                name: 'Junior Suite Alpenblick',
+                description:
+                  'Grosszuegig geschnittene Suite mit separatem Wohn- und Schlafbereich. Der offene Kamin und der Panoramabalkon machen die Junior Suite zum Lieblingsplatz fuer romantische Auszeiten. Handgefertigte Moebel aus heimischem Zirbenholz schaffen eine besondere Atmosphaere.',
+                image:
+                  'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=900&q=80',
+                galleryImages: [
+                  'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=900&q=80',
+                  'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=900&q=80',
+                ],
+                priceLabel: 'ab 289 € / Nacht',
+                sizeLabel: '48 m²',
+                occupancyLabel: 'max. 2 Personen',
+                bedLabel: '1 King-Size Zirbenholzbett (200x200)',
+                features: ['Separater Wohnbereich', 'Offener Kamin', 'Panoramabalkon', 'Freistehende Badewanne', 'Bose Soundbar'],
+                detailCta: { label: 'Zimmerdetails', href: '/demo/hotel/zimmer#junior-suite' },
+                bookingCta: { label: 'Jetzt buchen', href: '#booking' },
                 highlighted: true,
               },
+              {
+                name: 'Panorama Suite',
+                description:
+                  'Unser Flaggschiff mit atemberaubendem 270-Grad-Bergpanorama. Die freistehende Kupferbadewanne vor dem Fenster, der private Kamin und die handverlesene Kunstsammlung machen jeden Aufenthalt zu etwas Besonderem. Inklusive persoenlichem Butler-Service.',
+                image:
+                  'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80',
+                galleryImages: [
+                  'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=900&q=80',
+                  'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?w=900&q=80',
+                ],
+                priceLabel: 'ab 429 € / Nacht',
+                sizeLabel: '72 m²',
+                occupancyLabel: 'max. 2 Personen',
+                bedLabel: '1 Emperor-Bett (220x220)',
+                features: ['270-Grad-Panorama', 'Freistehende Kupferbadewanne', 'Privater Butler-Service', 'Begehbarer Kleiderschrank', 'Dyson Airwrap & Supersonic'],
+                detailCta: { label: 'Zimmerdetails', href: '/demo/hotel/zimmer#panorama-suite' },
+                bookingCta: { label: 'Jetzt buchen', href: '#booking' },
+                highlighted: false,
+              },
+              {
+                name: 'Chalet Suite Deluxe',
+                description:
+                  'Das ultimative Alpen-Erlebnis auf 95 Quadratmetern. Ihre private Suite ueber zwei Ebenen mit eigener Sauna, Whirlpool auf der Dachterrasse und voll ausgestatteter Kueche. Perfekt fuer Gaeste, die hoechsten Anspruch mit alpiner Geborgenheit verbinden moechten.',
+                image:
+                  'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?w=900&q=80',
+                galleryImages: [
+                  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&q=80',
+                  'https://images.unsplash.com/photo-1615571022219-eb45cf7faa36?w=900&q=80',
+                ],
+                priceLabel: 'ab 599 € / Nacht',
+                sizeLabel: '95 m²',
+                occupancyLabel: 'max. 4 Personen',
+                bedLabel: '1 King-Size Bett + ausziehbare Schlafcouch',
+                features: ['Private Sauna', 'Whirlpool auf Dachterrasse', 'Voll ausgestattete Kueche', 'Zwei Ebenen', 'Concierge 24/7'],
+                detailCta: { label: 'Zimmerdetails', href: '/demo/hotel/zimmer#chalet-suite' },
+                bookingCta: { label: 'Jetzt buchen', href: '#booking' },
+                highlighted: false,
+              },
             ],
-            footerText: 'Alle Zimmerpreise sind editierbare CMS-Inhalte.',
           },
         },
         {
-          ...B, id: 'ht-rooms-offers', type: 'offers',
+          ...B, type: 'offers', id: 'ht-rooms-offers',
           data: {
-            headline: 'Angebote & Arrangements',
-            subline: 'Kurzurlaub, Wellness und Business-Aufenthalte.',
-            badgeText: 'Specials',
-            offers: [
+            headline: 'Unsere Packages & Angebote',
+            subline: 'Mehr erleben, clever sparen – unsere saisonalen Arrangements',
+            items: [
               {
-                title: 'Wellness Wochenende',
-                description: 'Zwei Naechte, Spa-Zugang, Massage und Dinner.',
-                image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=900&q=80',
-                priceLabel: 'ab 349',
-                durationLabel: '2 Naechte',
-                includes: ['Spa', 'Dinner', 'Massage'],
-                validUntilLabel: 'bis September',
-                cta: { label: 'Anfragen', href: '/demo/hotel/kontakt' },
-                detailHref: '/demo/hotel/kontakt',
-                detailLabel: 'Details',
-                highlighted: true,
+                title: 'Romantik-Wochenende',
+                description:
+                  'Zwei Naechte in der Junior Suite Alpenblick, Candle-Light-Dinner im Restaurant, Paarmassage im Spa und eine Flasche Tiroler Sekt bei Ankunft. Der perfekte Rahmen fuer unvergessliche Stunden zu zweit.',
+                image:
+                  'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=900&q=80',
+                priceLabel: 'ab 749 € fuer 2 Naechte',
+                durationLabel: '2 Naechte / 3 Tage',
+                includes: [
+                  '2 Naechte in der Junior Suite Alpenblick',
+                  'Candle-Light-Dinner (4-Gaenge-Menue)',
+                  'Paarmassage "Alpine Romance" (60 Min.)',
+                  '1 Flasche Tiroler Sekt & Pralinenschachtel',
+                  'Spaeter Checkout bis 14 Uhr',
+                ],
+                validUntilLabel: 'Gueltig bis 30. Juni 2026',
+                cta: { label: 'Romantik-Wochenende buchen', href: '#booking' },
+              },
+              {
+                title: 'Ski & Relax',
+                description:
+                  'Drei Naechte inklusive 2-Tages-Skipass fuer die SkiWelt, taeglichem Apres-Ski-Snack an der Hotelbar und einer wohltuenden Sportmassage nach einem Tag auf der Piste. Skiraum und Shuttle inklusive.',
+                image:
+                  'https://images.unsplash.com/photo-1551524559-8af4e6624178?w=900&q=80',
+                priceLabel: 'ab 659 € fuer 3 Naechte',
+                durationLabel: '3 Naechte / 4 Tage',
+                includes: [
+                  '3 Naechte im Superior Doppelzimmer',
+                  '2-Tages-Skipass SkiWelt Wilder Kaiser',
+                  'Sportmassage (45 Min.)',
+                  'Taeglicher Apres-Ski-Snack & Getraenk',
+                  'Gratis Ski-Shuttle & Skiraum',
+                ],
+                validUntilLabel: 'Gueltig bis 15. April 2026',
+                cta: { label: 'Ski & Relax buchen', href: '#booking' },
+              },
+              {
+                title: 'Langzeit-Vorteil',
+                description:
+                  'Bleiben Sie laenger und sparen Sie: Ab 5 Naechten erhalten Sie 15 % Rabatt auf den Zimmerpreis, kostenlosen Upgrade (nach Verfuegbarkeit) und eine Wellness-Behandlung Ihrer Wahl.',
+                image:
+                  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80',
+                priceLabel: '15 % Rabatt ab 5 Naechten',
+                durationLabel: 'ab 5 Naechte',
+                includes: [
+                  '15 % Rabatt auf den Zimmerpreis',
+                  'Zimmer-Upgrade nach Verfuegbarkeit',
+                  '1 Wellness-Behandlung nach Wahl',
+                  'Taegliches Fruehstuecksbuffet inklusive',
+                  'Kostenloser Parkplatz',
+                ],
+                validUntilLabel: 'Ganzjaehrig gueltig',
+                cta: { label: 'Langzeitaufenthalt anfragen', href: '/demo/hotel/kontakt' },
               },
             ],
-            fallbackText: 'Neue Angebote folgen in Kuerze.',
           },
         },
       ],
     },
+
+    // ─── 3. WELLNESS & SPA ─────────────────────────────────────
     {
       slug: 'wellness',
       title: 'Wellness & Spa',
       sections: [
         {
-          ...HERO, id: 'ht-wellness-hero', type: 'hero',
+          ...HERO, type: 'hero', id: 'ht-well-hero',
           data: {
-            headline: 'Spa & Wellness',
-            subline: 'Sauna, Ruhebereiche und Treatments fuer Koerper und Geist.',
-            badgeText: 'Wellness',
-            bgImage: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1800&q=85',
-            primaryCta: { label: 'Spa anfragen', href: '/demo/hotel/kontakt' },
+            headline: 'Wellness & Spa – 800 m² Alpine Erholung',
+            subline:
+              'Tauchen Sie ein in unsere Wohlfuehloase mit Infinity Pool, Saunalandschaft und handverlesenen Treatments. Lassen Sie die Seele schweben – mit Blick auf die Kitzbueheler Alpen.',
+            badgeText: '800 m² Spa-Bereich',
+            bgImage:
+              'https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=1800&q=85',
+            primaryCta: { label: 'Treatment buchen', href: '/demo/hotel/kontakt' },
           },
         },
         {
-          ...B, id: 'ht-wellness-main', type: 'wellness',
+          ...B, type: 'wellness', id: 'ht-well-details',
           data: {
-            headline: 'Spa & Wellness',
-            subline: 'Sauna, Ruhebereiche und Treatments.',
-            badgeText: 'Wellness',
-            introText: 'Der Spa-Bereich ist fuer Hotelgaeste taeglich geoeffnet.',
-            imagePrimary: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&q=85',
-            imageSecondary: 'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=800&q=80',
-            treatments: [{ title: 'Aroma Massage', text: 'Ruhige Anwendung mit warmen Oelen.', durationLabel: '50 Minuten', priceLabel: '89', image: 'https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=800&q=80', cta: { label: 'Termin anfragen', href: '/demo/hotel/kontakt' } }],
-            features: [{ icon: 'heart', title: 'Ruheraum', text: 'Leise Zonen mit Blick ins Gruene.' }],
-            ctaPrimary: { label: 'Spa anfragen', href: '/demo/hotel/kontakt' },
+            headline: 'Unser Spa-Bereich',
+            introText:
+              'Auf 800 Quadratmetern erwartet Sie eine Welt der Entspannung: Vom beheizten Infinity Outdoor Pool mit Bergpanorama ueber die finnische Sauna bis hin zum Kneipp-Parcours im Hotelgarten. Unsere zertifizierten Therapeuten verwenden ausschliesslich hochwertige Naturprodukte aus der Region.',
+            images: [
+              'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=900&q=80',
+              'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=900&q=80',
+            ],
+            treatments: [
+              {
+                name: 'Alpine Kraeuterbad',
+                description: 'Entspannendes Vollbad mit heimischen Bergkraeutern – beruhigt Koerper und Geist. Ideal nach einem aktiven Tag in den Bergen.',
+                duration: '45 Minuten',
+                priceLabel: '79 €',
+              },
+              {
+                name: 'Hot-Stone Massage',
+                description: 'Warme Basaltsteine loesen tiefe Verspannungen und foerdern die Durchblutung. Kombiniert mit aromatischem Zirbenoel aus den Tiroler Alpen.',
+                duration: '60 Minuten',
+                priceLabel: '119 €',
+              },
+              {
+                name: 'Panorama-Sauna Zeremonie',
+                description: 'Exklusiver Aufguss in unserer Panorama-Sauna mit Blick auf den Hahnenkamm. Taeglich um 16 Uhr mit wechselnden Dueften – von Latschenkiefer bis Bergminze.',
+                duration: '30 Minuten',
+                priceLabel: 'inklusive',
+              },
+              {
+                name: 'Yoga am Berg',
+                description: 'Morgendliche Yoga-Session auf unserer Sonnenterrasse (bei Schlechtwetter im Fitnessraum). Fuer alle Level geeignet – Matten und Zubehoer stellen wir.',
+                duration: '60 Minuten',
+                priceLabel: 'inklusive',
+              },
+            ],
+            features: [
+              {
+                name: 'Infinity Outdoor Pool',
+                description: 'Beheizter Pool (32 °C) mit 15-Meter-Schwimmbahn und direktem Bergpanorama – ganzjaehrig geoeffnet.',
+              },
+              {
+                name: 'Dampfbad & Bio-Sauna',
+                description: 'Sanfte Waerme bei 55 °C mit aetherischen Oelen – ideal fuer empfindliche Kreislaeufe und Atemwege.',
+              },
+              {
+                name: 'Ruheraum "Stille Alm"',
+                description: 'Beheizte Wasserbetten, gedaempftes Licht und leise Naturklaenge – Ihr persoenlicher Ruhepol nach jedem Treatment.',
+              },
+              {
+                name: 'Kneipp-Anlage',
+                description: 'Wechselwarmer Kneipp-Parcours im Hotelgarten mit Armbecken, Tretbecken und Barfusspfad ueber Natursteine.',
+              },
+            ],
           },
         },
       ],
     },
+
+    // ─── 4. RESTAURANT & KULINARIK ─────────────────────────────
     {
       slug: 'restaurant',
-      title: 'Restaurant',
+      title: 'Restaurant & Kulinarik',
       sections: [
         {
-          ...HERO, id: 'ht-restaurant-hero', type: 'hero',
+          ...HERO, type: 'hero', id: 'ht-rest-hero',
           data: {
-            headline: 'Restaurant & Bar',
-            subline: 'Saisonale Kueche, Fruehstuecksbuffet und Drinks am Kamin.',
-            badgeText: 'Genuss',
-            bgImage: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1800&q=85',
-            primaryCta: { label: 'Tisch anfragen', href: '/demo/hotel/kontakt' },
+            headline: 'Restaurant Alpenblick – Genuss mit Weitblick',
+            subline:
+              'Unser Kuechenchef Thomas Rainer verbindet regionale Tiroler Tradition mit moderner Leichtigkeit. Geniessen Sie 2-Hauben-Kueche mit Blick auf die Kitzbueheler Alpen – vom reichhaltigen Fruehstueck bis zum Gourmet-Abendmenue.',
+            badgeText: '2 Gault-Millau-Hauben',
+            bgImage:
+              'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=85',
+            primaryCta: { label: 'Tisch reservieren', href: '/demo/hotel/kontakt' },
           },
         },
         {
-          ...B, id: 'ht-restaurant-dining', type: 'hotelDining',
+          ...B, type: 'hotelDining', id: 'ht-rest-dining',
           data: {
-            headline: 'Restaurant & Bar',
-            subline: 'Fruehstueck, Abendkarte und Drinks am Kamin.',
-            badgeText: 'Genuss',
-            introText: 'Die Kueche arbeitet saisonal und regional.',
-            image: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1200&q=85',
-            openingText: 'Fruehstueck 7-11 Uhr, Bar ab 17 Uhr',
-            menus: [{ title: 'Fruehstueck', description: 'Buffet, Eierspeisen und Kaffee.', timeLabel: '7-11 Uhr', priceLabel: 'inklusive', cta: { label: 'Mehr erfahren', href: '/demo/hotel/kontakt' } }],
-            highlights: [{ title: 'Kaminbar', text: 'Drinks und kleine Teller.', image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&q=80' }],
-            ctaPrimary: { label: 'Tisch anfragen', href: '/demo/hotel/kontakt' },
+            headline: 'Kulinarik im Hotel Alpenblick',
+            introText:
+              'Von der hauseigenen Patisserie ueber den 200 Positionen umfassenden Weinkeller bis zum Kraeutergarten auf der Dachterrasse – bei uns ist Genuss ein ganzheitliches Erlebnis. Wir beziehen 85 % unserer Zutaten von lokalen Bauern und Produzenten aus dem Umkreis von 50 Kilometern.',
+            image:
+              'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=900&q=80',
+            openingTimes: [
+              { label: 'Fruehstueck', time: '07:00 – 10:30 Uhr (taeglich)' },
+              { label: 'Mittagskarte', time: '12:00 – 14:00 Uhr (taeglich)' },
+              { label: 'Abendmenue', time: '18:30 – 21:30 Uhr (taeglich)' },
+              { label: 'Bar & Lounge', time: '16:00 – 00:00 Uhr' },
+            ],
+            menus: [
+              {
+                name: 'Fruehstueck',
+                description:
+                  'Reichhaltiges Buffet mit regionalen Spezialitaeten: hausgemachte Marmeladen, Tiroler Bauernbrot, frische Eierspeisen aus dem Live-Cooking, Kaeseplatte von der Alm und frisch gepresste Saefte. Fuer Hausgaeste inklusive.',
+              },
+              {
+                name: 'Mittagskarte',
+                description:
+                  'Leichte Gerichte fuer die Mittagspause: Tiroler Klassiker wie Kaspressknodel und Schlutzkrapfen neben saisonalen Salaten und einer taeglichen Suppe. Auch als Lunchbox fuer Wanderungen erhaeltlich.',
+              },
+              {
+                name: 'Abendmenue',
+                description:
+                  'Unser 5-Gaenge-Gourmet-Menue wechselt woechentlich und spiegelt die Saison wider. Von der Forellenkreation aus dem Schwarzsee ueber zartes Tiroler Almrind bis zum Topfensoufflé mit Marillensauce – jeder Gang ein Erlebnis.',
+              },
+            ],
+            highlights: [
+              {
+                title: 'Hauseigene Patisserie',
+                description: 'Taeglich frische Torten, Strudel und Pralines – handgefertigt von unserer Patissière Lisa Winkler.',
+              },
+              {
+                title: 'Weinkeller mit 200+ Positionen',
+                description: 'Von Gruener Veltliner bis Suedtiroler Lagrein – unser Sommelier beraet Sie gerne zu jedem Gang.',
+              },
+              {
+                title: 'Alpenkraeuter-Garten',
+                description: 'Auf unserer Dachterrasse wachsen ueber 30 Kraeutersorten, die direkt in der Kueche Verwendung finden.',
+              },
+            ],
           },
         },
       ],
     },
+
+    // ─── 5. MEETINGS & EVENTS ──────────────────────────────────
     {
       slug: 'veranstaltungen',
-      title: 'Veranstaltungen',
+      title: 'Meetings & Events',
       sections: [
         {
-          ...HERO, id: 'ht-events-hero', type: 'hero',
+          ...HERO, type: 'hero', id: 'ht-event-hero',
           data: {
-            headline: 'Events & Tagungen',
-            subline: 'Flexible Raeume fuer Meetings, Feiern und Konferenzen.',
-            badgeText: 'Veranstaltungen',
-            bgImage: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1800&q=85',
-            primaryCta: { label: 'Event anfragen', href: '/demo/hotel/kontakt' },
+            headline: 'Meetings & Events – Tagen mit Bergblick',
+            subline:
+              'Ob Firmenseminar, Hochzeitsfeier oder Teambuilding – unsere drei flexiblen Veranstaltungsraeume bieten den perfekten Rahmen. Modernste Technik trifft auf alpines Ambiente und erstklassiges Catering.',
+            badgeText: 'Bis 150 Personen',
+            bgImage:
+              'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1800&q=85',
+            primaryCta: { label: 'Anfrage senden', href: '/demo/hotel/kontakt' },
           },
         },
         {
-          ...B, id: 'ht-events-spaces', type: 'eventSpaces',
+          ...B, type: 'eventSpaces', id: 'ht-event-spaces',
           data: {
-            headline: 'Events & Tagungen',
-            subline: 'Flexible Raeume fuer Meetings und Feiern.',
-            badgeText: 'Raeume',
-            spaces: [{ name: 'Salon Linden', description: 'Heller Raum mit Zugang zur Terrasse.', image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=900&q=80', capacityLabel: 'bis 60 Personen', sizeLabel: '90 qm', seatingOptions: ['U-Form', 'Dinner', 'Theater'], features: ['Beamer', 'Terrasse', 'Bar'], inquiryCta: { label: 'Anfragen', href: '/demo/hotel/kontakt' } }],
-            processHeadline: 'So planen wir gemeinsam',
-            processSteps: [{ icon: 'clipboard', title: 'Anfrage', text: 'Rahmen und Ziel klaeren.' }],
-            ctaPrimary: { label: 'Event anfragen', href: '/demo/hotel/kontakt' },
+            headline: 'Unsere Veranstaltungsraeume',
+            subline: 'Flexibel, modern und mit alpinem Charme',
+            processSteps: [
+              { label: 'Anfrage', description: 'Senden Sie uns Ihre Wuensche – wir melden uns innerhalb von 24 Stunden.' },
+              { label: 'Planung', description: 'Ihr persoenlicher Event-Manager erstellt ein massgeschneidertes Konzept.' },
+              { label: 'Durchfuehrung', description: 'Wir kuemmern uns um jedes Detail – Sie geniessen Ihr Event.' },
+            ],
+            spaces: [
+              {
+                name: 'Salon Kitzbuehel',
+                description:
+                  'Unser vielseitigster Raum fuer Seminare, Bankette und Feiern. Tageslicht von zwei Seiten, modulares Mobiliar und direkter Terrassenzugang machen ihn zum Allrounder.',
+                image:
+                  'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=900&q=80',
+                capacityLabel: 'bis 80 Personen',
+                sizeLabel: '120 m²',
+                seatingOptions: ['Theater (80)', 'Bankett (60)', 'U-Form (35)', 'Classroom (40)'],
+                features: ['4K-Beamer & Leinwand', 'Raumteilbare Waende', 'Klimaanlage', 'Terrassenzugang', 'Integriertes Soundsystem'],
+                inquiryCta: { label: 'Salon anfragen', href: '/demo/hotel/kontakt' },
+              },
+              {
+                name: 'Panorama-Terrasse',
+                description:
+                  'Die Outdoor-Location fuer besondere Anlaesse: Hochzeiten, Sommerfeste und Empfaenge unter freiem Himmel mit spektakulaerem Bergpanorama. Bei Bedarf mit Zelt oder Pagode erweiterbar.',
+                image:
+                  'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=900&q=80',
+                capacityLabel: 'bis 150 Personen',
+                sizeLabel: 'Outdoor, ca. 250 m²',
+                seatingOptions: ['Stehempfang (150)', 'Bankett (100)', 'Zeremonie (120 Sitzplaetze)'],
+                features: ['Bergpanorama', 'Beheizbar mit Infrarot-Strahlern', 'Erweiterbar mit Zelt/Pagode', 'Live-Cooking-Station', 'Lichtinstallation'],
+                inquiryCta: { label: 'Terrasse anfragen', href: '/demo/hotel/kontakt' },
+              },
+              {
+                name: 'Boardroom Hahnenkamm',
+                description:
+                  'Exklusiver Meetingraum fuer Vorstandssitzungen, Workshops und vertrauliche Gespraeche. Edles Zirbenholz, ein grosser Konferenztisch und modernste Videokonferenztechnik garantieren produktive Meetings.',
+                image:
+                  'https://images.unsplash.com/photo-1431540015159-0f9673a4716d?w=900&q=80',
+                capacityLabel: 'bis 16 Personen',
+                sizeLabel: '45 m²',
+                seatingOptions: ['Boardroom (16)', 'Workshop (12)'],
+                features: ['75" 4K-Display', 'Videokonferenzsystem (Poly)', 'Akustikdecke', 'Nespresso & Minibar', 'Flipchart & Whiteboard'],
+                inquiryCta: { label: 'Boardroom anfragen', href: '/demo/hotel/kontakt' },
+              },
+            ],
+          },
+        },
+        {
+          ...B, type: 'faq', id: 'ht-event-faq',
+          data: {
+            headline: 'Haeufige Fragen zu Events',
+            items: [
+              {
+                question: 'Wie frueh sollte ich meinen Veranstaltungsraum reservieren?',
+                answer: 'Wir empfehlen eine Buchung mindestens 3 Monate im Voraus, fuer Hochzeiten und grosse Events 6–12 Monate. Kurzfristige Anfragen bearbeiten wir natuerlich ebenfalls gerne.',
+              },
+              {
+                question: 'Bieten Sie Catering fuer Events an?',
+                answer: 'Ja, unser Kuechenteam erstellt massgeschneiderte Menues – vom Kaffeepausen-Paket ueber Flying Buffets bis zum mehrgaengigen Gala-Dinner. Alle Menues sind individuell anpassbar.',
+              },
+              {
+                question: 'Gibt es Sonderkonditionen fuer Zimmerkontingente?',
+                answer: 'Ab 10 Zimmern pro Nacht bieten wir attraktive Gruppentarife. Sprechen Sie uns gerne an – wir erstellen Ihnen ein individuelles Angebot inklusive Rahmenvertrag.',
+              },
+              {
+                question: 'Welche Technik ist in den Raeumen vorhanden?',
+                answer: 'Alle Raeume sind mit WLAN, Beamer/Display, Soundsystem und Flipcharts ausgestattet. Zusaetzliches Equipment wie Simultandolmetsch-Anlagen oder Buehnenbeleuchtung organisieren wir gerne ueber unsere Partner.',
+              },
+            ],
           },
         },
       ],
     },
+
+    // ─── 6. GALERIE ────────────────────────────────────────────
     {
       slug: 'galerie',
       title: 'Galerie',
       sections: [
         {
-          ...HERO, id: 'ht-gallery-hero', type: 'hero',
+          ...HERO, type: 'hero', id: 'ht-gal-hero',
           data: {
-            headline: 'Einblicke ins Haus',
-            subline: 'Zimmer, Spa, Restaurant und ruhige Ecken im Ueberblick.',
-            badgeText: 'Galerie',
-            bgImage: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=1800&q=85',
-            primaryCta: { label: 'Aufenthalt planen', href: '/demo/hotel/kontakt' },
+            headline: 'Galerie – Eindruecke aus dem Hotel Alpenblick',
+            subline:
+              'Lassen Sie sich inspirieren: Entdecken Sie unsere Zimmer, den Spa-Bereich, das Restaurant und die einzigartige Berglandschaft rund um Kitzbuehel.',
+            badgeText: 'Bildergalerie',
+            bgImage:
+              'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=85',
+            primaryCta: { label: 'Zimmer ansehen', href: '/demo/hotel/zimmer' },
           },
         },
         {
-          ...B, id: 'ht-gallery-main', type: 'gallery',
+          ...B, type: 'gallery', id: 'ht-gal-gallery',
           data: {
-            headline: 'Einblicke ins Haus',
-            subline: 'Zimmer, Spa, Restaurant und ruhige Ecken im Ueberblick.',
-            badgeText: 'Galerie',
+            headline: 'Unsere schoensten Eindruecke',
+            categories: ['Zimmer', 'Wellness', 'Restaurant', 'Natur'],
             images: [
-              { src: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=900&q=80', alt: 'Hotellobby', caption: 'Warme Lobby mit Lounge', category: 'Ankommen' },
-              { src: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=900&q=80', alt: 'Hotelzimmer', caption: 'Ruhige Zimmer mit klaren Linien', category: 'Zimmer' },
-              { src: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900&q=80', alt: 'Hotelpool', caption: 'Spa-Bereich fuer Hotelgaeste', category: 'Wellness' },
+              { src: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80', alt: 'Superior Doppelzimmer mit Bergblick', category: 'Zimmer' },
+              { src: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=900&q=80', alt: 'Junior Suite Alpenblick Wohnbereich', category: 'Zimmer' },
+              { src: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80', alt: 'Panorama Suite mit Kupferbadewanne', category: 'Zimmer' },
+              { src: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=900&q=80', alt: 'Infinity Pool mit Bergpanorama', category: 'Wellness' },
+              { src: 'https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=900&q=80', alt: 'Saunalandschaft im Spa-Bereich', category: 'Wellness' },
+              { src: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=900&q=80', alt: 'Massage-Treatment im Alpenblick Spa', category: 'Wellness' },
+              { src: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=900&q=80', alt: 'Restaurant mit Panoramafenstern', category: 'Restaurant' },
+              { src: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80', alt: 'Gourmet-Gericht aus der Hauben-Kueche', category: 'Restaurant' },
+              { src: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=900&q=80', alt: 'Bar & Lounge am Abend', category: 'Restaurant' },
+              { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80', alt: 'Kitzbueheler Alpen im Winter', category: 'Natur' },
+              { src: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=900&q=80', alt: 'Wanderwege im Sommer', category: 'Natur' },
+              { src: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&q=80', alt: 'Sonnenuntergang ueber den Gipfeln', category: 'Natur' },
             ],
-            ctaPrimary: { label: 'Aufenthalt planen', href: '/demo/hotel/kontakt' },
           },
         },
       ],
     },
+
+    // ─── 7. KONTAKT & ANREISE ──────────────────────────────────
     {
       slug: 'kontakt',
-      title: 'Kontakt',
+      title: 'Kontakt & Anreise',
       sections: [
         {
-          ...HERO, id: 'ht-kontakt-hero', type: 'hero',
+          ...HERO, type: 'hero', id: 'ht-contact-hero',
           data: {
-            headline: 'Kontakt aufnehmen',
-            subline: 'Fuer Buchungen, Events und individuelle Aufenthalte.',
-            badgeText: 'Kontakt',
-            bgImage: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200&q=85',
-            primaryCta: { label: 'Jetzt anrufen', href: 'tel:+49221123456' },
+            headline: 'Kontakt & Anreise – Wir freuen uns auf Sie',
+            subline:
+              'Haben Sie Fragen zu Ihrem Aufenthalt, moechten ein Zimmer buchen oder ein Event planen? Unser Rezeptionsteam ist taeglich von 7 bis 23 Uhr fuer Sie da.',
+            badgeText: '24/7 erreichbar',
+            bgImage:
+              'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1800&q=85',
+            primaryCta: { label: 'Jetzt anrufen', href: 'tel:+4353561234567' },
+            secondaryCta: { label: 'E-Mail senden', href: 'mailto:info@hotel-alpenblick.at' },
           },
         },
         {
-          ...B, id: 'ht-kontakt-location', type: 'location',
+          ...B, type: 'location', id: 'ht-contact-location',
           data: {
-            headline: 'Zentral und ruhig gelegen',
-            subline: 'Altstadt, Bahnhof und Natur sind schnell erreichbar.',
-            badgeText: 'Lage',
-            addressText: 'Lindenallee 7, 50667 Koeln',
-            mapEmbedUrl: '',
-            image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1200&q=85',
-            transportItems: [{ icon: 'map-pin', label: 'Bahnhof', value: '8 Minuten', text: 'Direkte Verbindung mit Tram und Taxi.' }],
-            nearbyItems: [{ title: 'Altstadt', distanceLabel: '1.2 km', text: 'Restaurants, Museen und Rheinpromenade.', image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800&q=80' }],
-            routeCta: { label: 'Route planen', href: 'https://maps.google.com' },
-          },
-        },
-        {
-          ...B, id: 'ht-kontakt-faq', type: 'faq',
-          data: {
-            headline: 'Haeufige Fragen',
-            subline: 'Antworten zu Check-in, Spa, Parkplatz und Direktbuchung.',
-            badgeText: 'FAQ',
-            items: [
-              { question: 'Ab wann ist der Check-in moeglich?', answer: 'Der Check-in ist ab 15 Uhr moeglich. Fruehere Anreise pruefen wir nach Verfuegbarkeit.' },
-              { question: 'Ist Spa-Zugang inklusive?', answer: 'Ja, fuer Hotelgaeste ist der Zugang zu Sauna und Ruhebereich inklusive.' },
-              { question: 'Gibt es Parkplaetze?', answer: 'Parkplaetze koennen je nach Verfuegbarkeit direkt mit der Buchung reserviert werden.' },
+            headline: 'So finden Sie uns',
+            address: 'Hotel Alpenblick\nBergstrasse 12\n6370 Kitzbuehel\nOesterreich',
+            mapEmbed: 'https://maps.google.com/maps?q=47.4464,12.3922&z=14&output=embed',
+            transport: [
+              {
+                mode: 'Auto',
+                description: 'Ueber die A12 Inntalautobahn, Ausfahrt Woergl-Ost, dann B170 Richtung Kitzbuehel. Kostenlose Tiefgarage mit 30 Stellplaetzen.',
+              },
+              {
+                mode: 'Bahn',
+                description: 'Bahnhof Kitzbuehel (OeBB) ist 1,5 km entfernt. Wir holen Sie gerne kostenlos ab – bitte melden Sie Ihre Ankunft vorab.',
+              },
+              {
+                mode: 'Flughafen',
+                description: 'Flughafen Innsbruck (INN): 95 km / ca. 75 Min. Flughafen Salzburg (SZG): 80 km / ca. 70 Min. Flughafen Muenchen (MUC): 165 km / ca. 2 Std.',
+              },
+              {
+                mode: 'Shuttle',
+                description: 'Privater Flughafentransfer auf Anfrage (Innsbruck ab 120 €, Salzburg ab 110 €, Muenchen ab 280 €). Buchung ueber die Rezeption.',
+              },
             ],
-            ctaPrimary: { label: 'Weitere Frage stellen', href: '/demo/hotel/kontakt' },
+            nearby: [
+              { name: 'Hahnenkamm-Gondel', distance: '2 km', description: 'Direkte Anbindung an die SkiWelt – erreichbar mit unserem Gratis-Shuttle in 3 Min.' },
+              { name: 'Schwarzsee', distance: '1,5 km', description: 'Einer der waermsten Badeseen Tirols. Im Sommer perfekt zum Schwimmen und Entspannen.' },
+              { name: 'Altstadt Kitzbuehel', distance: '500 m', description: 'Boutiquen, Cafés und die beruehmte Vorderstadt – bequem zu Fuss erreichbar.' },
+            ],
           },
         },
         {
-          ...B, id: 'ht-kontakt-contact', type: 'contact',
+          ...B, type: 'contact', id: 'ht-contact-form',
           data: {
-            headline: 'Direkt Kontakt aufnehmen',
-            subline: 'Fuer Buchungen, Events und individuelle Aufenthalte.',
-            badgeText: 'Kontakt',
-            introText: 'Das Team antwortet persoenlich und klaert Verfuegbarkeit, Zimmerwunsch oder Eventbedarf.',
-            image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200&q=85',
+            headline: 'Schreiben Sie uns',
+            subline: 'Wir antworten in der Regel innerhalb von 2 Stunden',
+            formFields: [
+              { name: 'name', label: 'Ihr Name', type: 'text', required: true },
+              { name: 'email', label: 'E-Mail-Adresse', type: 'email', required: true },
+              { name: 'phone', label: 'Telefonnummer', type: 'tel', required: false },
+              { name: 'subject', label: 'Betreff', type: 'select', options: ['Zimmer-Anfrage', 'Event-Anfrage', 'Wellness-Buchung', 'Tischreservierung', 'Sonstiges'], required: true },
+              { name: 'arrival', label: 'Gewuenschte Anreise', type: 'date', required: false },
+              { name: 'departure', label: 'Gewuenschte Abreise', type: 'date', required: false },
+              { name: 'message', label: 'Ihre Nachricht', type: 'textarea', required: true },
+            ],
+            submitLabel: 'Nachricht senden',
             infoCards: [
-              { icon: 'phone', label: 'Telefon', value: '+49 221 123456' },
-              { icon: 'mail', label: 'E-Mail', value: 'hello@hotel-lindenhof.de' },
-              { icon: 'map-pin', label: 'Adresse', value: 'Lindenallee 7, 50667 Koeln' },
+              {
+                icon: 'phone',
+                title: 'Telefon',
+                lines: ['+43 5356 123 456 7', 'Taeglich 07:00 – 23:00 Uhr'],
+              },
+              {
+                icon: 'email',
+                title: 'E-Mail',
+                lines: ['info@hotel-alpenblick.at', 'Antwort innerhalb von 2 Stunden'],
+              },
+              {
+                icon: 'location',
+                title: 'Adresse',
+                lines: ['Bergstrasse 12', '6370 Kitzbuehel, Oesterreich'],
+              },
             ],
-            contactCta: { label: 'Anrufen', href: 'tel:+49221123456' },
-            routeCta: { label: 'Route planen', href: 'https://maps.google.com' },
-            formEnabled: true,
-            namePlaceholder: 'Name',
-            emailPlaceholder: 'E-Mail',
-            messagePlaceholder: 'Nachricht',
-            submitLabel: 'Anfrage senden',
+          },
+        },
+        {
+          ...B, type: 'faq', id: 'ht-contact-faq',
+          data: {
+            headline: 'Haeufig gestellte Fragen',
+            items: [
+              {
+                question: 'Wann ist Check-in und Check-out?',
+                answer: 'Check-in ist ab 15:00 Uhr, Check-out bis 11:00 Uhr. Frueherer Check-in oder spaeterer Check-out ist je nach Verfuegbarkeit moeglich – fuer Direktbucher ist Late Checkout bis 14:00 Uhr kostenlos.',
+              },
+              {
+                question: 'Gibt es Parkmoeglichkeiten?',
+                answer: 'Ja, wir verfuegen ueber eine hauseigene Tiefgarage mit 30 Stellplaetzen (kostenlos fuer Hausgaeste) sowie 4 Tesla Supercharger und 6 Typ-2-Ladepunkte fuer Elektrofahrzeuge.',
+              },
+              {
+                question: 'Sind Haustiere erlaubt?',
+                answer: 'Hunde sind in ausgewaehlten Zimmern herzlich willkommen (Aufpreis 25 € / Nacht). Wir stellen Hundebett, Napf und eine Liste tierfreundlicher Wanderrouten bereit. Bitte geben Sie bei der Buchung an, dass Sie mit Hund reisen.',
+              },
+              {
+                question: 'Wie sind die Stornierungsbedingungen?',
+                answer: 'Kostenlose Stornierung bis 48 Stunden vor Anreise. Bei spaeterer Stornierung oder Nichtanreise berechnen wir die erste Nacht. Fuer Packages und Sondertarife koennen abweichende Bedingungen gelten.',
+              },
+              {
+                question: 'Ist das Fruehstueck im Zimmerpreis enthalten?',
+                answer: 'Ja, unser reichhaltiges Fruehstuecksbuffet mit Live-Cooking-Station, regionalen Spezialitaeten und frisch gepressten Saeften ist fuer alle Hausgaeste inklusive (taeglich 07:00 – 10:30 Uhr).',
+              },
+            ],
           },
         },
       ],
