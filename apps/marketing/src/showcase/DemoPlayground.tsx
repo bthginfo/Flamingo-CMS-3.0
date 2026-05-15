@@ -38,7 +38,7 @@ export default function DemoPlayground() {
           </div>
 
           <a
-            href={`${ADMIN_URL}/admin/demo-login`}
+            href={`${ADMIN_URL}/demo/admin`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 text-xs bg-white/10 hover:bg-white/15 px-3 py-1.5 rounded-full transition"
@@ -65,7 +65,7 @@ export default function DemoPlayground() {
             </div>
           )}
           <iframe
-            src={`${ADMIN_URL}/admin/demo-login`}
+            src={`${ADMIN_URL}/demo/admin`}
             className="w-full h-full border-0"
             onLoad={() => setLoaded(true)}
             allow="clipboard-write"

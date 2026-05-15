@@ -897,7 +897,7 @@ const DEVICE_ITEMS: DeviceItem[] = [
   },
   {
     kind: 'tablet',
-    src: `${ADMIN_URL_SHOWCASE}/admin/demo-login`,
+    src: `${ADMIN_URL_SHOWCASE}/demo/admin`,
     label: 'Admin-Bereich',
     caption: 'Inhalte pflegen, ohne Code',
   },
