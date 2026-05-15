@@ -3,7 +3,7 @@
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { validateSectionData } from '@/lib/validate-section';
-import { pages, pageSections } from '@flamingo/db';
+import { pages, pageSections, tenants } from '@flamingo/db';
 import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -58,7 +58,8 @@ export async function getPageWithSectionsAction(pageId: string) {
   const [page] = await db.select().from(pages).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId)));
   if (!page) return null;
   const sections = await db.select().from(pageSections).where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).orderBy(asc(pageSections.sortOrder));
-  return { page, sections };
+  const [tenant] = await db.select({ industry: tenants.industry }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1);
+  return { page, sections, industry: tenant?.industry ?? 'tradesman' };
 }
 
 export async function addSectionAction(pageId: string, type: string) {

@@ -13,7 +13,7 @@ export type ContactData = { phone?: string; email?: string; address?: string };
 export async function getTenantStyle(tenantId: string): Promise<{ industry: string; activeStyle: string }> {
   const db = getDb();
   const [t] = await db.select({ industry: tenants.industry, activeStyle: tenants.activeStyle }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
-  return { industry: t?.industry ?? 'handwerk', activeStyle: t?.activeStyle ?? 'classic' };
+  return { industry: t?.industry ?? 'tradesman', activeStyle: t?.activeStyle ?? 'classic' };
 }
 
 export async function getTenantNav(tenantId: string): Promise<{ items: NavItem[]; cta: NavCta | null }> {
