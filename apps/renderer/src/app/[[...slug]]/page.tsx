@@ -74,7 +74,7 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   if (!result) notFound();
 
   const { tenantId, snapshot, page } = result;
-  const [navData, footerData, { brand, contact, socialLinks }, tenantStyle] = await Promise.all([
+  const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle] = await Promise.all([
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
@@ -82,6 +82,27 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   ]);
 
   const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
+
+  // Merge custom design overrides from DB into CSS variables
+  const designOverrides: Record<string, string> = {};
+  const designToCssVar: Record<string, string> = {
+    textPrimary: '--style-text-primary',
+    textSecondary: '--style-text-secondary',
+    sectionBg: '--style-section-bg',
+    sectionBgAlt: '--style-section-bg-alt',
+    cardBg: '--style-card-bg',
+    badgeBg: '--style-badge-bg',
+    badgeText: '--style-badge-text',
+    brand: '--style-brand',
+    dividerColor: '--style-divider-color',
+  };
+  // Map brand colors to accent/brand vars
+  if (brand.primaryColor) designOverrides['--style-brand'] = brand.primaryColor;
+  if (brand.accentColor) designOverrides['--style-accent'] = brand.accentColor;
+  // Map extended design fields
+  for (const [key, cssVar] of Object.entries(designToCssVar)) {
+    if (design[key]) designOverrides[cssVar] = design[key];
+  }
   const visibleSections = page.sections.filter(s => s.visible);
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
 
@@ -112,7 +133,7 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   };
 
   return (
-    <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...fontCssVars } as React.CSSProperties}>
+    <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
       {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
       {brand.bodyFont && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />

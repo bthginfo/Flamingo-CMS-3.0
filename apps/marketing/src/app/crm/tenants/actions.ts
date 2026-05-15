@@ -2,7 +2,7 @@
 
 import { provisionTenant, type ProvisionInput } from '@/lib/provisioning';
 import { getDb } from '@/lib/db';
-import { tenants, tenantDomains } from '@flamingo/db';
+import { tenants, tenantDomains, globalSettings } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { addDomainToRenderer, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject } from '@/lib/vercel';
@@ -65,6 +65,16 @@ export async function removeDomainAction(tenantId: string, domain: string) {
 
 export async function checkDomainAction(domain: string) {
   return checkDomainStatus(domain);
+}
+
+export async function updateDesignAction(tenantId: string, data: { brand?: Record<string, unknown>; design?: Record<string, unknown> }) {
+  const db = getDb();
+  const updates: Record<string, unknown> = { updatedAt: new Date() };
+  if (data.brand) updates.brand = data.brand;
+  if (data.design) updates.design = data.design;
+  await db.update(globalSettings).set(updates).where(eq(globalSettings.tenantId, tenantId));
+  revalidatePath(`/crm/tenants/${tenantId}`);
+  return { success: true };
 }
 
 export async function deleteTenantAction(tenantId: string) {

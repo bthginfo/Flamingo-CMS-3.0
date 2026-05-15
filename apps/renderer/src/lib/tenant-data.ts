@@ -33,10 +33,10 @@ export async function getTenantFooter(tenantId: string): Promise<FooterData | nu
   return { columns: f.columns as FooterColumn[], legalLinks: f.legalLinks as { label: string; href: string }[] };
 }
 
-export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandData; contact: ContactData; socialLinks: SocialLinks }> {
+export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandData; contact: ContactData; socialLinks: SocialLinks; design: Record<string, string> }> {
   const db = getDb();
   const [s] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
-  return { brand: (s?.brand as BrandData) || {}, contact: (s?.contact as ContactData) || {}, socialLinks: (s?.socialLinks as SocialLinks) || {} };
+  return { brand: (s?.brand as BrandData) || {}, contact: (s?.contact as ContactData) || {}, socialLinks: (s?.socialLinks as SocialLinks) || {}, design: (s?.design as Record<string, string>) || {} };
 }
 
 export type SeoGlobalData = {

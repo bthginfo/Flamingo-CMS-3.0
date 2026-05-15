@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, Globe, FileText, Layers, ExternalLink, Shield, Server, Cloud } from 'lucide-react';
 import { TenantActions } from './tenant-actions';
 import { DomainManager } from './domain-manager';
+import { DesignEditor } from './design-editor';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,7 +24,8 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
     db.select().from(globalSettings).where(eq(globalSettings.tenantId, id)),
   ]);
 
-  const brand = settings[0]?.brand as Record<string, string> | undefined;
+  const brand = settings[0]?.brand as Record<string, unknown> | undefined;
+  const design = settings[0]?.design as Record<string, unknown> | undefined;
 
   return (
     <div>
@@ -76,6 +78,9 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
           {/* Domains */}
           <DomainManager tenantId={id} domains={domains.map(d => ({ id: d.id, domain: d.domain, type: d.type, verified: d.verified }))} />
 
+          {/* Design Editor */}
+          <DesignEditor tenantId={id} initialBrand={brand || {}} initialDesign={design || {}} />
+
           {/* Pages */}
           <div className="crm-card">
             <div className="px-5 py-4 border-b border-slate-100">
@@ -127,7 +132,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
                   <span className="text-slate-900 font-mono text-xs">{tenant.vercelProjectId.slice(0, 12)}…</span>
                 </div>
               )}
-              {brand?.companyName && (
+              {typeof brand?.companyName === 'string' && brand.companyName && (
                 <div className="flex justify-between">
                   <span>Anzeigename</span>
                   <span className="text-slate-900">{brand.companyName}</span>
