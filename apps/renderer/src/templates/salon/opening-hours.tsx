@@ -35,7 +35,7 @@ function HoursClassic({ headline, subline, badgeText, days, bookingNote, ctaPrim
         {bookingNote && <p className="text-sm leading-6 text-[var(--style-text-secondary)]">{bookingNote}</p>}
         {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{ctaPrimary.label}</a>}
       </div>
-      <div className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
+      <div className="rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
         {days.map((day, i) => (
           <motion.div key={`${day.label}-${i}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="flex items-center justify-between gap-4 border-b border-[var(--style-badge-bg)]/20 px-5 py-4 last:border-b-0">
             <div className="flex items-center gap-3"><Clock size={17} className="text-[var(--style-accent)]" /><div><p className="font-semibold text-[var(--style-text-primary)]">{day.label || ''}</p>{day.note && <p className="text-xs text-[var(--style-text-secondary)]">{day.note}</p>}</div></div>

@@ -48,7 +48,7 @@ function ContactClassic({ headline, subline, badgeText, introText, image, mapEmb
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex rounded-full border border-[var(--style-badge-bg)]/30 px-5 py-3 font-semibold text-[var(--style-text-primary)]">{secondaryCta.label}</a>}
         </div>
       </div>
-      <div className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-md">
+      <div className="rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-md">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {mapEmbedUrl && <iframe src={mapEmbedUrl} className="mb-5 h-56 w-full rounded-xl" loading="lazy" />}
         {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="rounded-full bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{submitLabel}</button></form>}

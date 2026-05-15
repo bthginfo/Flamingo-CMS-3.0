@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -57,13 +57,13 @@ function ContactClassic({ headline, subline, badgeText, introText, namePlacehold
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {contactCta.label && <a href={contactCta.href || '#'} className="rounded-2xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{contactCta.label}</a>}
-          {routeCta.label && <a href={routeCta.href || '#'} className="rounded-2xl border border-black/15 px-5 py-3 font-semibold text-[var(--style-text-primary)]">{routeCta.label}</a>}
+          {contactCta.label && <a href={contactCta.href || '#'} className="rounded-xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{contactCta.label}</a>}
+          {routeCta.label && <a href={routeCta.href || '#'} className="rounded-xl border border-black/15 px-5 py-3 font-semibold text-[var(--style-text-primary)]">{routeCta.label}</a>}
         </div>
       </div>
-      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-lg">
+      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-lg">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="rounded-2xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{submitLabel}</button></form>}
+        {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="rounded-xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{submitLabel}</button></form>}
       </motion.div>
     </div>
   );

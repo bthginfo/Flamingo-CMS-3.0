@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -54,13 +54,13 @@ function DiningClassic({ headline, subline, badgeText, introText, image, opening
             </motion.article>
           ))}
         </div>
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
+        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
       </div>
       <div className="space-y-4">
-        {image && <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-md"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {image && <div className="relative aspect-[4/3] overflow-hidden rounded-xl shadow-md"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         <div className="grid gap-4 sm:grid-cols-2">
           {highlights.map((item, index) => (
-            <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-4 shadow-md">
+            <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-4 shadow-md">
               {item.image && <div className="relative mb-3 aspect-[16/10] overflow-hidden rounded-xl"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               <h3 className="font-semibold text-[var(--style-text-primary)]">{item.title || ''}</h3>
               {item.text && <p className="mt-2 text-sm text-[var(--style-text-secondary)]">{item.text}</p>}

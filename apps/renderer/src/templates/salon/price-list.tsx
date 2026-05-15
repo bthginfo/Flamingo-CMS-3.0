@@ -33,7 +33,7 @@ function PriceClassic({ headline, subline, badgeText, categories, footnote, ctaP
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         {categories.map((cat, ci) => (
-          <motion.article key={`${cat.title}-${ci}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: ci * 0.1 }} className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-6 shadow-md">
+          <motion.article key={`${cat.title}-${ci}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: ci * 0.1 }} className="rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-6 shadow-md">
             <h3 className="text-2xl font-bold text-[var(--style-text-primary)]">{cat.title || ''}</h3>
             {cat.text && <p className="mt-2 text-sm text-[var(--style-text-secondary)]">{cat.text}</p>}
             <div className="mt-5 divide-y divide-[var(--style-badge-bg)]/20">

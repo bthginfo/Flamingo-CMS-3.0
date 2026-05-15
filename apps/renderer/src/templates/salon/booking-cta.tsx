@@ -25,7 +25,7 @@ type Props = { headline: string; subline: string; badgeText: string; introText: 
 
 function BookingClassic({ headline, subline, badgeText, introText, onlineCta, phoneCta, whatsappCta, notes }: Props) {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-6 shadow-md sm:p-10">
+    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-6 shadow-md sm:p-10">
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[var(--style-text-secondary)]">{badgeText}</p>}
         <h2 className="mt-3 text-3xl sm:text-5xl font-[var(--style-heading-weight)] text-[var(--style-text-primary)]">{headline}</h2>

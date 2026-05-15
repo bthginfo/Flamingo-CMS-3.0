@@ -31,7 +31,7 @@ function BeforeAfterClassic({ headline, subline, badgeText, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {items.map((item, i) => (
-          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
+          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
             <div className="grid grid-cols-2">
               {item.beforeImage && <div className="relative aspect-square"><Image src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               {item.afterImage && <div className="relative aspect-square"><Image src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}

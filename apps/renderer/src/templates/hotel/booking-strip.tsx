@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import { CalendarDays, Star } from 'lucide-react';
@@ -42,7 +42,7 @@ type Props = {
 /* --- CLASSIC --- */
 function BookingClassic({ headline, subline, badgeText, submitCta, secondaryCta, bookingNote, fields }: Props) {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-6 shadow-lg">
+    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-6 shadow-lg">
       <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
           {badgeText && <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[var(--style-text-secondary)]"><Star size={12} className="text-[var(--style-badge-bg)]" />{badgeText}</p>}
@@ -60,8 +60,8 @@ function BookingClassic({ headline, subline, badgeText, submitCta, secondaryCta,
         ))}
       </div>
       <div className="mt-5 flex flex-wrap gap-3">
-        {submitCta.label && <a href={submitCta.href || '#'} className="rounded-2xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{submitCta.label}</a>}
-        {secondaryCta.label && <a href={secondaryCta.href || '#'} className="rounded-2xl border border-black/15 px-5 py-3 font-semibold text-[var(--style-text-primary)]">{secondaryCta.label}</a>}
+        {submitCta.label && <a href={submitCta.href || '#'} className="rounded-xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{submitCta.label}</a>}
+        {secondaryCta.label && <a href={secondaryCta.href || '#'} className="rounded-xl border border-black/15 px-5 py-3 font-semibold text-[var(--style-text-primary)]">{secondaryCta.label}</a>}
       </div>
     </motion.div>
   );

@@ -31,7 +31,7 @@ function ExpertiseClassic({ headline, subline, badgeText, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
-          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-6 shadow-md">
+          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-6 shadow-md">
             {item.metaLabel && <span className="inline-block rounded-full bg-[var(--style-badge-bg)] px-3 py-1 text-xs font-bold uppercase text-[var(--style-badge-text,#c0528a)]">{item.metaLabel}</span>}
             <div className="mt-4 flex gap-4">
               <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-[var(--style-accent)]" />

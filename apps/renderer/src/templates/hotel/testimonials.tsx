@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
@@ -45,7 +45,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
       </div>
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, index) => (
-          <motion.article key={`${item.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-md">
+          <motion.article key={`${item.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-md">
             <div className="flex gap-1 text-[var(--style-badge-bg)]">{Array.from({ length: item.rating || 5 }).map((_, i) => <Star key={i} size={14} fill="currentColor" />)}</div>
             {item.quote && <p className="mt-4 text-sm leading-6 text-[var(--style-text-primary)]">{item.quote}</p>}
             <p className="mt-4 font-semibold text-[var(--style-text-primary)]">{item.name || ''}</p>
@@ -53,7 +53,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
           </motion.article>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-2xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{ctaPrimary.label}</a>}
     </div>
   );
 }

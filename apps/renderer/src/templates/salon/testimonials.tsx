@@ -35,7 +35,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
       <div className="mb-6 flex flex-wrap gap-3 text-sm text-[var(--style-text-secondary)]">{ratingValue && <span>{ratingValue}</span>}{ratingCount && <span>{ratingCount}</span>}</div>
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
-          <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-md">
+          <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-md">
             <div className="flex gap-1 text-[var(--style-badge-text,#c0528a)]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={14} />)}</div>
             {item.quote && <p className="mt-4 text-sm leading-6 text-[var(--style-text-primary)]">{item.quote}</p>}
             <p className="mt-4 font-semibold text-[var(--style-text-primary)]">{item.name || ''}</p>

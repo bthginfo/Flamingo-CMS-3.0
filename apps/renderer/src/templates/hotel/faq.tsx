@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
@@ -34,7 +34,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-5xl font-[var(--style-heading-weight)] text-[var(--style-text-primary)]">{headline}</motion.h2>
         {subline && <p className="mt-4 text-[var(--style-text-secondary)]">{subline}</p>}
       </div>
-      <div className="divide-y divide-[var(--style-badge-bg)]/20 rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
+      <div className="divide-y divide-[var(--style-badge-bg)]/20 rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
         {items.map((item, index) => (
           <motion.details key={`${item.question}-${index}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="group p-5">
             <summary className="cursor-pointer font-semibold text-[var(--style-text-primary)]">{item.question || ''}</summary>
@@ -42,7 +42,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
           </motion.details>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-2xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-md">{ctaPrimary.label}</a>}
     </div>
   );
 }

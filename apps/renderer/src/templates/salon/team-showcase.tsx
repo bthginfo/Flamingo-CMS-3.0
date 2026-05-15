@@ -31,7 +31,7 @@ function TeamClassic({ headline, subline, badgeText, members }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {members.map((m, i) => (
-          <motion.article key={`${m.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
+          <motion.article key={`${m.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
             {m.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={m.image} alt={m.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {m.role && <span className="inline-block rounded-full bg-[var(--style-badge-bg)] px-3 py-1 text-xs font-bold uppercase text-[var(--style-badge-text,#c0528a)]">{m.role}</span>}

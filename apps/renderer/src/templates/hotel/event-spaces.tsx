@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -42,7 +42,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         {spaces.map((space, index) => (
-          <motion.article key={`${space.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
+          <motion.article key={`${space.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
             {space.image && <div className="relative aspect-[4/3]"><Image src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <h3 className="text-xl font-bold text-[var(--style-text-primary)]">{space.name || ''}</h3>
@@ -58,14 +58,14 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
       {processHeadline && <h3 className="mt-10 text-2xl font-bold text-[var(--style-text-primary)]">{processHeadline}</h3>}
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {processSteps.map((step, index) => (
-          <motion.div key={`${step.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-2xl border border-[var(--style-badge-bg)]/20 p-5">
+          <motion.div key={`${step.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--style-badge-bg)]/20 p-5">
             <div className="text-[var(--style-badge-bg)]"><DynamicIcon name={step.icon || 'clipboard'} size={22} /></div>
             <h4 className="mt-3 font-semibold text-[var(--style-text-primary)]">{step.title || ''}</h4>
             {step.text && <p className="mt-2 text-sm text-[var(--style-text-secondary)]">{step.text}</p>}
           </motion.div>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
     </div>
   );
 }

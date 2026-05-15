@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -52,15 +52,15 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
             </motion.div>
           ))}
         </div>
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
+        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white shadow-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
       </div>
       <div className="space-y-5">
         <div className="grid grid-cols-2 gap-4">
-          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-2xl shadow-md"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-          {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-2xl shadow-md"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-md"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
         {treatments.map((treatment, index) => (
-          <motion.article key={`${treatment.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-md">
+          <motion.article key={`${treatment.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] p-5 shadow-md">
             {treatment.image && <div className="relative mb-4 aspect-[16/9] overflow-hidden rounded-xl"><Image src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="flex justify-between gap-4"><h3 className="font-bold text-[var(--style-text-primary)]">{treatment.title || ''}</h3><span className="text-sm text-[var(--style-text-secondary)]">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <p className="mt-2 text-sm text-[var(--style-text-secondary)]">{treatment.text}</p>}

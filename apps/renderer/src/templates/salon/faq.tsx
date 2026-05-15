@@ -29,7 +29,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-5xl font-[var(--style-heading-weight)] text-[var(--style-text-primary)]">{headline}</motion.h2>
         {subline && <p className="mt-4 text-[var(--style-text-secondary)]">{subline}</p>}
       </div>
-      <div className="divide-y divide-[var(--style-badge-bg)]/20 rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
+      <div className="divide-y divide-[var(--style-badge-bg)]/20 rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md">
         {items.map((item, i) => (
           <motion.details key={`${item.question}-${i}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="group p-5">
             <summary className="cursor-pointer font-semibold text-[var(--style-text-primary)]">{item.question || ''}</summary>

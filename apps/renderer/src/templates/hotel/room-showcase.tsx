@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -37,7 +37,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         {rooms.map((room, index) => (
-          <motion.article key={`${room.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`overflow-hidden rounded-2xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md ${room.highlighted ? 'ring-2 ring-[var(--style-badge-bg)]' : ''}`}>
+          <motion.article key={`${room.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`overflow-hidden rounded-xl border border-[var(--style-badge-bg)]/20 bg-[var(--style-card-bg)] shadow-md ${room.highlighted ? 'ring-2 ring-[var(--style-badge-bg)]' : ''}`}>
             {room.image && <div className="relative aspect-[4/3]"><Image src={room.image} alt={room.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
