@@ -332,7 +332,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
           <Plus size={18} /> Sektion hinzufügen
         </button>
         {showAddMenu && (
-          <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border rounded-lg shadow-lg max-h-80 overflow-auto z-10">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white border rounded-lg shadow-lg max-h-80 overflow-auto z-10">
             {sectionTypes.map((st) => (
               <button key={st.type} onClick={() => handleAddSection(st.type)} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b last:border-b-0">
                 <span className="font-medium text-sm">{st.label}</span>
