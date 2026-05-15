@@ -54,6 +54,8 @@ async function seedTenant(config: typeof RESTAURANT_CONFIG) {
   await db.delete(schema.publishedSnapshots).where(eq(schema.publishedSnapshots.tenantId, tenantId));
   await db.delete(schema.pageSections).where(eq(schema.pageSections.tenantId, tenantId));
   await db.delete(schema.pages).where(eq(schema.pages.tenantId, tenantId));
+  await db.delete(schema.collectionItems).where(eq(schema.collectionItems.tenantId, tenantId));
+  await db.delete(schema.collections).where(eq(schema.collections.tenantId, tenantId));
   await db.delete(schema.navigation).where(eq(schema.navigation.tenantId, tenantId));
   await db.delete(schema.footer).where(eq(schema.footer.tenantId, tenantId));
   await db.delete(schema.globalSettings).where(eq(schema.globalSettings.tenantId, tenantId));
@@ -116,6 +118,34 @@ async function seedTenant(config: typeof RESTAURANT_CONFIG) {
     }
   }
   console.log(`  ✅ ${config.pages.length} pages, ${totalSections} sections`);
+
+  // Collections + Items
+  let totalItems = 0;
+  if (config.collections) {
+    for (const col of config.collections) {
+      const [dbCol] = await db.insert(schema.collections).values({
+        tenantId,
+        key: col.key,
+        label: col.label,
+        schema: {},
+        settings: {},
+      }).returning();
+
+      for (const item of col.items) {
+        await db.insert(schema.collectionItems).values({
+          tenantId,
+          collectionId: dbCol.id,
+          slug: item.slug,
+          title: item.title,
+          data: item.data as Record<string, unknown>,
+          published: true,
+          priority: item.priority ?? 0,
+        });
+        totalItems++;
+      }
+    }
+    console.log(`  ✅ ${config.collections.length} collections, ${totalItems} items`);
+  }
 
   // Publish snapshot
   const allPages = await db.select().from(schema.pages).where(eq(schema.pages.tenantId, tenantId));

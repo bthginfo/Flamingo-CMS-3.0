@@ -19,12 +19,12 @@ export async function getBrandSettings() {
   const db = getDb();
   const [row] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
   return {
-    brand: (row?.brand as { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string }) || {},
+    brand: (row?.brand as { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; headingFont?: string; bodyFont?: string }) || {},
     socialLinks: (row?.socialLinks as Record<string, string>) || {},
   };
 }
 
-export async function saveBrandSettings(data: { companyName: string; tagline: string; primaryColor: string; secondaryColor: string; accentColor: string; logoUrl?: string }) {
+export async function saveBrandSettings(data: { companyName: string; tagline: string; primaryColor: string; secondaryColor: string; accentColor: string; logoUrl?: string; headingFont?: string; bodyFont?: string }) {
   const tenantId = await requireTenant();
   const db = getDb();
   await db.update(globalSettings)

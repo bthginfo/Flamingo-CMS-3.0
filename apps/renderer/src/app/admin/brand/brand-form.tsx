@@ -1,12 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { saveBrandSettings } from '../settings-actions';
 import { toast } from 'sonner';
 import { useSaveState } from '@/components/save-context';
 import { ImageUploadField } from '@/components/image-upload-field';
 
-type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string };
+type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; headingFont?: string; bodyFont?: string };
+
+const GOOGLE_FONTS = [
+  { value: '', label: 'Standard (Outfit / Inter)' },
+  { value: 'Outfit', label: 'Outfit' },
+  { value: 'Inter', label: 'Inter' },
+  { value: 'Poppins', label: 'Poppins' },
+  { value: 'Montserrat', label: 'Montserrat' },
+  { value: 'Playfair Display', label: 'Playfair Display' },
+  { value: 'Lora', label: 'Lora' },
+  { value: 'Raleway', label: 'Raleway' },
+  { value: 'Open Sans', label: 'Open Sans' },
+  { value: 'Roboto', label: 'Roboto' },
+  { value: 'Roboto Slab', label: 'Roboto Slab' },
+  { value: 'Source Sans 3', label: 'Source Sans 3' },
+  { value: 'Nunito', label: 'Nunito' },
+  { value: 'DM Sans', label: 'DM Sans' },
+  { value: 'DM Serif Display', label: 'DM Serif Display' },
+  { value: 'Space Grotesk', label: 'Space Grotesk' },
+  { value: 'Plus Jakarta Sans', label: 'Plus Jakarta Sans' },
+  { value: 'Bricolage Grotesque', label: 'Bricolage Grotesque' },
+  { value: 'Cormorant Garamond', label: 'Cormorant Garamond' },
+  { value: 'Josefin Sans', label: 'Josefin Sans' },
+];
 
 export function BrandForm({ initial }: { initial: BrandData }) {
   const [form, setForm] = useState({
@@ -16,9 +39,27 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     secondaryColor: initial.secondaryColor || '#2e86c1',
     accentColor: initial.accentColor || '#f39c12',
     logoUrl: initial.logoUrl || '',
+    headingFont: initial.headingFont || '',
+    bodyFont: initial.bodyFont || '',
   });
   const [saving, setSaving] = useState(false);
   const { markSaved } = useSaveState();
+
+  // Load Google Fonts for preview
+  useEffect(() => {
+    const fonts = [form.headingFont, form.bodyFont].filter(Boolean);
+    if (fonts.length === 0) return;
+    const families = fonts.map(f => f.replace(/ /g, '+')).join('&family=');
+    const id = 'brand-font-preview';
+    let link = document.getElementById(id) as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    link.href = `https://fonts.googleapis.com/css2?family=${families}&display=swap`;
+  }, [form.headingFont, form.bodyFont]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,6 +127,35 @@ export function BrandForm({ initial }: { initial: BrandData }) {
             <div className="w-16 h-16 rounded-xl shadow-sm" style={{ background: form.primaryColor }} />
             <div className="w-16 h-16 rounded-xl shadow-sm" style={{ background: form.secondaryColor }} />
             <div className="w-16 h-16 rounded-xl shadow-sm" style={{ background: form.accentColor }} />
+          </div>
+        </div>
+      </div>
+
+      <div className="admin-card p-6 space-y-5">
+        <h2 className="font-semibold text-lg">Schriften</h2>
+        <p className="text-sm text-zinc-500">Wählen Sie Google Fonts für Überschriften und Fließtext. Leer = Standard-Schrift.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label className="admin-label">Überschriften-Schrift</label>
+            <select className="admin-input" value={form.headingFont} onChange={e => setForm(f => ({ ...f, headingFont: e.target.value }))}>
+              {GOOGLE_FONTS.map(f => <option key={f.value} value={f.value}>{f.label}</option>)}
+            </select>
+            {form.headingFont && (
+              <p className="mt-2 text-lg" style={{ fontFamily: `"${form.headingFont}", sans-serif` }}>
+                Vorschau: Überschrift
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="admin-label">Fließtext-Schrift</label>
+            <select className="admin-input" value={form.bodyFont} onChange={e => setForm(f => ({ ...f, bodyFont: e.target.value }))}>
+              {GOOGLE_FONTS.map(f => <option key={f.value} value={f.value}>{f.label}</option>)}
+            </select>
+            {form.bodyFont && (
+              <p className="mt-2 text-sm" style={{ fontFamily: `"${form.bodyFont}", sans-serif` }}>
+                Vorschau: Dies ist ein Beispieltext für die Fließtext-Schrift.
+              </p>
+            )}
           </div>
         </div>
       </div>

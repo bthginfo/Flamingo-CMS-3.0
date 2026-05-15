@@ -85,6 +85,15 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   const visibleSections = page.sections.filter(s => s.visible);
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
 
+  // Custom font loading
+  const customFonts = [brand.headingFont, brand.bodyFont].filter(Boolean) as string[];
+  const googleFontsUrl = customFonts.length > 0
+    ? `https://fonts.googleapis.com/css2?${customFonts.map(f => `family=${f.replace(/ /g, '+')}:wght@400;500;600;700;800`).join('&')}&display=swap`
+    : null;
+  const fontCssVars: Record<string, string> = {};
+  if (brand.headingFont) fontCssVars['--style-heading-font'] = `"${brand.headingFont}", var(--font-outfit), system-ui, sans-serif`;
+  if (brand.bodyFont) fontCssVars['--custom-body-font'] = `"${brand.bodyFont}", var(--font-inter), system-ui, sans-serif`;
+
   // JSON-LD structured data
   const isHome = !slug || slug.length === 0;
   const jsonLd = isHome ? {
@@ -103,7 +112,9 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   };
 
   return (
-    <div data-style={tenantStyle.activeStyle} style={styleCssVars as React.CSSProperties}>
+    <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...fontCssVars } as React.CSSProperties}>
+      {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
+      {brand.bodyFont && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} />
       <main>

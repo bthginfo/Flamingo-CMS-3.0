@@ -84,6 +84,13 @@ export const TOURISM_CONFIG = {
             { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80', alt: 'Herbst im Ötztal', category: 'Herbst' },
           ],
         }},
+        { type: 'newsPreview', sortOrder: 4, data: {
+          headline: 'Neuigkeiten',
+          subline: 'Aktuelles aus dem Ötztal',
+          collectionKey: 'news',
+          linkLabel: 'Alle Beiträge',
+          linkHref: '/neuigkeiten',
+        }},
       ],
     },
     /* ─── Highlights ─── */
@@ -300,6 +307,15 @@ export const TOURISM_CONFIG = {
           ],
           ctaPrimary: { label: 'Route planen', href: 'https://www.google.com/maps/dir//Sölden+Tirol' },
         }},
+      ],
+    },
+  ],
+  collections: [
+    {
+      key: 'news', label: 'Neuigkeiten', items: [
+        { slug: 'neue-wanderroute-2025', title: 'Neue Panorama-Höhenroute ab Sommer 2025', priority: 0, data: { excerpt: 'Die neue Ötztaler Panoramaroute verbindet 5 Almen auf 18 km — mit spektakulären Ausblicken auf über 50 Dreitausender.', content: '<p>Ab Juni 2025 steht Wanderern eine neue Panorama-Höhenroute zur Verfügung. Die Route führt von der Gaislachkogel-Bergstation über fünf bewirtschaftete Almen bis nach Vent und bietet unterwegs atemberaubende 360°-Bergpanoramen.</p><p>Schwierigkeitsgrad: mittel. Gehzeit: ca. 6 Stunden. Einkehrmöglichkeiten alle 2–3 km.</p>', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80', date: '2025-04-15' } },
+        { slug: 'bond-erlebniswelt-update', title: '007 Elements: Neue interaktive Ausstellung am Gaislachkogl', priority: 1, data: { excerpt: 'Die James-Bond-Erlebniswelt am Gipfel des Gaislachkogl bekommt ein umfangreiches Update mit neuen VR-Stationen.', content: '<p>Die spektakuläre 007-Erlebniswelt in 3.048 m Höhe wird erweitert. Neue Virtual-Reality-Stationen lassen Besucher ab Dezember 2025 in Szenen aus SPECTRE eintauchen.</p><p>Geöffnet täglich während der Seilbahnbetriebszeiten. Eintritt: 22 € (Erwachsene), 14 € (Kinder).</p>', image: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80', date: '2025-08-10' } },
+        { slug: 'oetztal-radmarathon', title: 'Ötztaler Radmarathon 2025: Anmeldung ab sofort', priority: 2, data: { excerpt: 'Der legendäre Ötztaler Radmarathon über 238 km und 5.500 Höhenmeter — Anmeldung für 2025 geöffnet.', content: '<p>Am 31. August 2025 startet der 42. Ötztaler Radmarathon. Die härteste Radveranstaltung der Alpen: 238 km, 5.500 Hm, 4 Alpenpässe (Kühtai, Brenner, Jaufen, Timmelsjoch).</p><p>Limitiert auf 4.000 Startplätze. Erfahrungsgemäß innerhalb weniger Stunden ausverkauft.</p>', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80', date: '2025-03-01' } },
       ],
     },
   ],

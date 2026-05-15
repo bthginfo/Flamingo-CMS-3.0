@@ -99,9 +99,15 @@ export const RESTAURANT_CONFIG = {
           ],
           ctaPrimary: { label: 'Tisch reservieren', href: '/reservierung' },
         }},
+        { type: 'newsPreview', sortOrder: 5, data: {
+          headline: 'Neuigkeiten',
+          subline: 'Aktuelles aus dem Dal Maestro',
+          collectionKey: 'news',
+          linkLabel: 'Alle Beiträge',
+          linkHref: '/neuigkeiten',
+        }},
       ],
     },
-    /* ─── Speisekarte ─── */
     {
       slug: 'speisekarte', title: 'Speisekarte', sections: [
         { type: 'hero', sortOrder: 0, data: {
@@ -321,6 +327,15 @@ export const RESTAURANT_CONFIG = {
           primaryCta: { label: 'Tisch reservieren', href: '/reservierung' },
           secondaryCta: { label: 'Anrufen', href: 'tel:+498912345678' },
         }},
+      ],
+    },
+  ],
+  collections: [
+    {
+      key: 'news', label: 'Neuigkeiten', items: [
+        { slug: 'trueffel-saison-2025', title: 'Trüffel-Saison 2025: Weiße Alba-Trüffel ab sofort auf der Karte', priority: 0, data: { excerpt: 'Die Trüffel-Saison hat begonnen! Ab sofort servieren wir frischen weißen Alba-Trüffel in drei exklusiven Gerichten.', content: '<p>Jedes Jahr ab Oktober beginnt für uns die schönste Zeit: Die weißen Trüffel aus dem Piemont sind da. Unser Küchenchef Giovanni hat drei neue Kreationen entwickelt — vom klassischen Tagliatelle al Tartufo bis zum Trüffel-Risotto mit Parmigiano 36 Monate.</p><p>Die Trüffel-Gerichte sind verfügbar, solange der Vorrat reicht. Reservieren Sie frühzeitig!</p>', image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800&q=80', date: '2025-10-15' } },
+        { slug: 'neue-sommerkarte', title: 'Neue Sommerkarte: Leichte Gerichte & Dachterrassen-Specials', priority: 1, data: { excerpt: 'Frische Insalate, gegrillter Fisch und hausgemachtes Limoncello-Sorbet — unsere Sommerkarte ist da.', content: '<p>Der Sommer im Dal Maestro schmeckt nach Meer und Sonne. Unsere neue Sommerkarte bringt die Aromen der Amalfiküste nach München. Highlights: Crudo di Tonno mit Zitrusfrüchten, gegrillter Branzino vom Josper-Grill und unser legendäres Limoncello-Sorbet.</p><p>Genießen Sie die neuen Gerichte auf unserer Dachterrasse mit Blick über die Altstadt.</p>', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80', date: '2025-06-01' } },
+        { slug: 'weinprobe-toskana-special', title: 'Weinprobe-Abend: Die besten Weine der Toskana', priority: 2, data: { excerpt: 'Sommelier Marco lädt zur exklusiven Toskana-Weinprobe ein — 6 Weine, 4 Gänge, ein Abend.', content: '<p>Am 20. November führt unser Sommelier Marco durch die Weinlandschaft der Toskana. Von Brunello di Montalcino über Chianti Classico Riserva bis zum Vin Santo — begleitet von passenden Antipasti und Dolci.</p><p>Limitiert auf 24 Plätze. Preis: 89 € pro Person inkl. aller Weine und Speisen.</p>', image: 'https://images.unsplash.com/photo-1528823872057-9c018a7a7553?w=800&q=80', date: '2025-11-01' } },
       ],
     },
   ],

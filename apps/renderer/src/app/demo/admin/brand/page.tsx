@@ -73,6 +73,15 @@ export default function DemoBrandPage() {
         </div>
       </div>
 
+      <div className="admin-card p-6 space-y-4 mt-6">
+        <h2 className="font-semibold mb-2">Schriften</h2>
+        <p className="text-xs text-zinc-500">Wählen Sie Google Fonts für Überschriften und Fließtext.</p>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Überschriften-Schrift" value="" />
+          <Field label="Fließtext-Schrift" value="" />
+        </div>
+      </div>
+
       <div className="mt-6 flex justify-end">
         <button className="admin-btn-primary" onClick={() => toast.success('Demo-Modus — Änderungen werden nicht gespeichert')}>Speichern</button>
       </div>

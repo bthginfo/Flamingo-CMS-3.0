@@ -85,6 +85,13 @@ export const SALON_CONFIG = {
           onlineCta: { label: 'Online buchen', href: '/kontakt' },
           phoneCta: { label: 'Anrufen: 040 987 654 32', href: 'tel:+494098765432' },
         }},
+        { type: 'newsPreview', sortOrder: 4, data: {
+          headline: 'Salon-News',
+          subline: 'Neues aus dem Salon Isabelle',
+          collectionKey: 'news',
+          linkLabel: 'Alle Beiträge',
+          linkHref: '/neuigkeiten',
+        }},
       ],
     },
     /* ─── Leistungen ─── */
@@ -288,6 +295,15 @@ export const SALON_CONFIG = {
           ],
           ctaPrimary: { label: 'Termin buchen', href: '/kontakt' },
         }},
+      ],
+    },
+  ],
+  collections: [
+    {
+      key: 'news', label: 'Salon-News', items: [
+        { slug: 'balayage-trends-2025', title: 'Balayage-Trends 2025: Natürliche Farbverläufe dominieren', priority: 0, data: { excerpt: 'Von Honey Blonde bis Mushroom Brown — diese Balayage-Trends setzen wir diesen Herbst am häufigsten um.', content: '<p>Balayage bleibt auch 2025 die beliebteste Färbetechnik. Der Trend geht zu noch natürlicheren Verläufen mit subtilen Lichtreflexen. Unsere Top 3 Farben: Honey Blonde, Caramel Bronde und Mushroom Brown.</p><p>Unsere Coloristin Isabelle berät Sie gerne bei einem kostenlosen Erstgespräch.</p>', image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80', date: '2025-09-15' } },
+        { slug: 'neue-pflegeserie', title: 'Neu im Salon: Olaplex Professional Pflegeserie', priority: 1, data: { excerpt: 'Ab sofort verwenden wir die komplette Olaplex Professional Linie — für gesünderes Haar nach jeder Behandlung.', content: '<p>Wir haben unser Pflegesortiment erweitert und setzen ab sofort auf Olaplex Professional. Die patentierte Bond-Building-Technologie repariert geschädigtes Haar von innen und schützt bei Färbe- und Blondierbehandlungen.</p><p>Alle Olaplex-Produkte sind auch im Salon zum Mitnehmen erhältlich.</p>', image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&q=80', date: '2025-07-01' } },
+        { slug: 'brautstyling-special', title: 'Brautstyling 2025: Jetzt Beratungstermin sichern', priority: 2, data: { excerpt: 'Planen Sie Ihre Hochzeit 2025? Sichern Sie sich jetzt Ihren Brautstyling-Termin — inklusive Probe-Styling.', content: '<p>Die Hochzeitssaison 2025 ist fast ausgebucht! Sichern Sie sich rechtzeitig Ihren Termin für das perfekte Brautstyling. Unser Paket enthält: persönliches Beratungsgespräch, Probe-Styling, Make-up am Hochzeitstag und Styling für 2 Brautjungfern.</p><p>Paketpreis: ab 450 €. Inkl. Anfahrt im Großraum Hamburg.</p>', image: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=800&q=80', date: '2025-03-15' } },
       ],
     },
   ],

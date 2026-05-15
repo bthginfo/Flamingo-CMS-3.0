@@ -88,6 +88,13 @@ export const MEDICAL_CONFIG = {
           onlineCta: { label: 'Online buchen', href: '/kontakt' },
           phoneCta: { label: 'Anrufen: 030 234 567 89', href: 'tel:+493023456789' },
         }},
+        { type: 'newsPreview', sortOrder: 4, data: {
+          headline: 'Praxis-News',
+          subline: 'Aktuelles aus unserer Praxis',
+          collectionKey: 'news',
+          linkLabel: 'Alle Beiträge',
+          linkHref: '/neuigkeiten',
+        }},
       ],
     },
     /* ─── Leistungen ─── */
@@ -318,6 +325,22 @@ export const MEDICAL_CONFIG = {
           primaryCta: { label: 'Termin buchen', href: '/kontakt' },
           secondaryCta: { label: 'Anrufen', href: 'tel:+493023456789' },
         }},
+      ],
+    },
+  ],
+  collections: [
+    {
+      key: 'news', label: 'Praxis-News', items: [
+        { slug: 'neue-videosprechstunde', title: 'Neu: Videosprechstunde für alle Patienten verfügbar', priority: 0, data: { excerpt: 'Ab sofort bieten wir Videosprechstunden für Folgeberatungen, Befundbesprechungen und leichte Beschwerden an.', content: '<p>Die digitale Medizin hält Einzug in unsere Praxis. Ab sofort können Sie für bestimmte Anliegen eine Videosprechstunde buchen — bequem von zuhause.</p><p>Geeignet für: Befundbesprechungen, Folgerezepte, leichte Beschwerden, Ernährungsberatung. Buchbar über unser Online-Portal.</p>', image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&q=80', date: '2025-09-01' } },
+        { slug: 'grippeschutzimpfung-2025', title: 'Grippeschutzimpfung 2025: Jetzt Termin sichern', priority: 1, data: { excerpt: 'Die Grippesaison steht vor der Tür. Wir haben den neuen angepassten Impfstoff vorrätig.', content: '<p>Die STIKO empfiehlt die jährliche Grippeschutzimpfung besonders für Risikogruppen, medizinisches Personal und alle ab 60 Jahren. Der neue tetravalente Impfstoff für 2025/26 ist ab sofort in unserer Praxis verfügbar.</p><p>Impfung ohne Termin: Montag–Freitag während der Akutsprechstunde (8:00–9:00 Uhr).</p>', image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&q=80', date: '2025-10-01' } },
+        { slug: 'dr-weber-facharzt', title: 'Willkommen Dr. Weber: Neuer Facharzt für Kardiologie', priority: 2, data: { excerpt: 'Wir freuen uns, Dr. Maximilian Weber als neuen Kardiologen in unserem Team begrüßen zu dürfen.', content: '<p>Ab November verstärkt Dr. Maximilian Weber unser Team. Als Facharzt für Innere Medizin und Kardiologie bringt er 15 Jahre Erfahrung aus der Charité mit.</p><p>Schwerpunkte: Präventive Kardiologie, Echokardiografie, Belastungs-EKG, Herzrhythmusstörungen. Terminbuchung ab sofort möglich.</p>', image: 'https://images.unsplash.com/photo-1666214280557-f1b5022eb634?w=800&q=80', date: '2025-11-01' } },
+      ],
+    },
+    {
+      key: 'services', label: 'Leistungen', items: [
+        { slug: 'innere-medizin', title: 'Innere Medizin & Vorsorge', priority: 0, data: { excerpt: 'Ganzheitliche internistische Diagnostik und Vorsorge auf höchstem Niveau.', description: 'Unsere internistische Abteilung bietet umfassende Vorsorgeuntersuchungen, Check-ups und Diagnostik. Von der Blutuntersuchung über Ultraschall bis zur Lungenfunktion — alles unter einem Dach.', features: ['Gesundheits-Check-up', 'Labordiagnostik', 'Ultraschall (Abdomen, Schilddrüse)', 'Lungenfunktionstest', 'EKG & Belastungs-EKG', 'Ernährungsberatung'], image: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=900&q=80' } },
+        { slug: 'kardiologie', title: 'Kardiologie', priority: 1, data: { excerpt: 'Moderne Herzdiagnostik mit Echokardiografie und Langzeit-EKG.', description: 'Dr. Weber bietet das gesamte Spektrum der nicht-invasiven Kardiologie. Von der Vorsorge bis zur Nachsorge nach Herz-Kreislauf-Erkrankungen begleiten wir Sie kompetent.', features: ['Echokardiografie', 'Belastungs-EKG', 'Langzeit-EKG (24h)', 'Langzeit-Blutdruck', 'Herzrhythmus-Analyse', 'Kardiovaskuläre Prävention'], image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=900&q=80' } },
+        { slug: 'sportmedizin', title: 'Sportmedizin', priority: 2, data: { excerpt: 'Sportärztliche Untersuchung, Leistungsdiagnostik und Trainingsberatung.', description: 'Ob Leistungssportler oder Wiedereinsteiger: Unsere sportmedizinische Abteilung bietet professionelle Leistungsdiagnostik, Bewegungsanalyse und individuelle Trainingsempfehlungen.', features: ['Sportärztliche Vorsorge', 'Laktatstufentest', 'Spiroergometrie', 'Bewegungsanalyse', 'Trainingsberatung', 'Sportler-Check-up'], image: 'https://images.unsplash.com/photo-1666214280557-f1b5022eb634?w=900&q=80' } },
       ],
     },
   ],

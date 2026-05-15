@@ -100,6 +100,13 @@ export const HOTEL_CONFIG = {
             { src: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80', alt: 'Restaurant Gipfelblick', category: 'Kulinarik' },
           ],
         }},
+        { type: 'newsPreview', sortOrder: 6, data: {
+          headline: 'Neuigkeiten',
+          subline: 'Aktuelles vom Alpenglow',
+          collectionKey: 'news',
+          linkLabel: 'Alle Beiträge',
+          linkHref: '/neuigkeiten',
+        }},
       ],
     },
     /* ─── Zimmer ─── */
@@ -115,12 +122,12 @@ export const HOTEL_CONFIG = {
           headline: 'Wählen Sie Ihr Refugium',
           subline: 'Jedes Zimmer ist ein Unikat — gestaltet mit lokalen Materialien und modernem Luxus',
           rooms: [
-            { name: 'Komfort Doppelzimmer', description: 'Gemütlicher alpiner Charme: Massivholzmöbel, Tiroler Wolle, Talblick.', priceLabel: 'Ab 220 € / Nacht', image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=900&q=80', features: ['Talblick', 'Balkon', 'Dusche', 'WLAN'], sizeLabel: '28 m²', occupancyLabel: '2 Gäste', bookingCta: { label: 'Buchen', href: '/kontakt' } },
-            { name: 'Deluxe Doppelzimmer', description: 'Panoramabalkon, Regendusche, hochwertigste Naturmaterialien.', priceLabel: 'Ab 280 € / Nacht', image: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80', features: ['Bergpanorama', 'Balkon', 'Regendusche', 'Minibar'], sizeLabel: '35 m²', occupancyLabel: '2 Gäste', bookingCta: { label: 'Buchen', href: '/kontakt' } },
-            { name: 'Junior Suite', description: 'Großzügige Suite mit Sitzecke, Badewanne & Regendusche.', priceLabel: 'Ab 380 € / Nacht', image: 'https://images.unsplash.com/photo-1591088398332-8a7791972843?w=900&q=80', features: ['Bergpanorama', 'Sitzecke', 'Badewanne', 'Nespresso'], sizeLabel: '48 m²', occupancyLabel: '2–3 Gäste', bookingCta: { label: 'Buchen', href: '/kontakt' } },
-            { name: 'Panorama Suite', description: 'Separate Schlaf- und Wohnbereiche, freistehende Badewanne.', priceLabel: 'Ab 520 € / Nacht', image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=900&q=80', features: ['180° Panorama', 'Freistehende Badewanne', 'Wohnbereich'], sizeLabel: '65 m²', occupancyLabel: '2–3 Gäste', bookingCta: { label: 'Buchen', href: '/kontakt' } },
-            { name: 'Familien Suite', description: 'Zwei verbundene Zimmer, zwei Bäder — perfekt für die Familie.', priceLabel: 'Ab 450 € / Nacht', image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=900&q=80', features: ['2 Schlafzimmer', '2 Bäder', 'Kinderbetten', 'Spielecke'], sizeLabel: '72 m²', occupancyLabel: '2 Erw. + 2 Kinder', bookingCta: { label: 'Buchen', href: '/kontakt' } },
-            { name: 'Penthouse Suite', description: 'Privater Whirlpool auf der Dachterrasse, Kamin, Butler-Service.', priceLabel: 'Ab 1.200 € / Nacht', image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80', features: ['Privater Whirlpool', 'Dachterrasse', 'Kamin', 'Butler-Service'], sizeLabel: '120 m²', occupancyLabel: '2–4 Gäste', highlighted: true, bookingCta: { label: 'Buchen', href: '/kontakt' } },
+            { name: 'Komfort Doppelzimmer', description: 'Gemütlicher alpiner Charme: Massivholzmöbel, Tiroler Wolle, Talblick.', priceLabel: 'Ab 220 € / Nacht', image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=900&q=80', features: ['Talblick', 'Balkon', 'Dusche', 'WLAN'], sizeLabel: '28 m²', occupancyLabel: '2 Gäste', bookingCta: { label: 'Details', href: '/c/rooms/komfort-doppelzimmer' } },
+            { name: 'Deluxe Doppelzimmer', description: 'Panoramabalkon, Regendusche, hochwertigste Naturmaterialien.', priceLabel: 'Ab 280 € / Nacht', image: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80', features: ['Bergpanorama', 'Balkon', 'Regendusche', 'Minibar'], sizeLabel: '35 m²', occupancyLabel: '2 Gäste', bookingCta: { label: 'Details', href: '/c/rooms/deluxe-doppelzimmer' } },
+            { name: 'Junior Suite', description: 'Großzügige Suite mit Sitzecke, Badewanne & Regendusche.', priceLabel: 'Ab 380 € / Nacht', image: 'https://images.unsplash.com/photo-1591088398332-8a7791972843?w=900&q=80', features: ['Bergpanorama', 'Sitzecke', 'Badewanne', 'Nespresso'], sizeLabel: '48 m²', occupancyLabel: '2–3 Gäste', bookingCta: { label: 'Details', href: '/c/rooms/junior-suite' } },
+            { name: 'Panorama Suite', description: 'Separate Schlaf- und Wohnbereiche, freistehende Badewanne.', priceLabel: 'Ab 520 € / Nacht', image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=900&q=80', features: ['180° Panorama', 'Freistehende Badewanne', 'Wohnbereich'], sizeLabel: '65 m²', occupancyLabel: '2–3 Gäste', bookingCta: { label: 'Details', href: '/c/rooms/panorama-suite' } },
+            { name: 'Familien Suite', description: 'Zwei verbundene Zimmer, zwei Bäder — perfekt für die Familie.', priceLabel: 'Ab 450 € / Nacht', image: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=900&q=80', features: ['2 Schlafzimmer', '2 Bäder', 'Kinderbetten', 'Spielecke'], sizeLabel: '72 m²', occupancyLabel: '2 Erw. + 2 Kinder', bookingCta: { label: 'Details', href: '/c/rooms/familien-suite' } },
+            { name: 'Penthouse Suite', description: 'Privater Whirlpool auf der Dachterrasse, Kamin, Butler-Service.', priceLabel: 'Ab 1.200 € / Nacht', image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80', features: ['Privater Whirlpool', 'Dachterrasse', 'Kamin', 'Butler-Service'], sizeLabel: '120 m²', occupancyLabel: '2–4 Gäste', highlighted: true, bookingCta: { label: 'Details', href: '/c/rooms/penthouse-suite' } },
           ],
         }},
       ],
@@ -318,6 +325,23 @@ export const HOTEL_CONFIG = {
           ],
           routeCta: { label: 'Route planen', href: 'https://www.google.com/maps/dir//Sölden+Tirol' },
         }},
+      ],
+    },
+  ],
+  collections: [
+    {
+      key: 'news', label: 'Neuigkeiten', items: [
+        { slug: 'winteroeffnung-2025', title: 'Winterseason 2025/26: Ab 28. November geöffnet', priority: 0, data: { excerpt: 'Die Skisaison startet! Ab dem 28. November begrüßen wir Sie im Alpenglow mit neuen Angeboten.', content: '<p>Der erste Schnee ist gefallen und wir freuen uns auf die Wintersaison 2025/26. Neue Highlights: unser erweiterter Ski-in/Ski-out-Zugang und das neue Après-Ski-Konzept auf der Terrasse.</p><p>Frühbucher sparen 15% bei Buchung bis 31. Oktober.</p>', image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&q=80', date: '2025-10-01' } },
+        { slug: 'neuer-spa-bereich', title: 'Neuer Infinity-Pool mit Bergpanorama eröffnet', priority: 1, data: { excerpt: 'Unser neuer beheizter Infinity-Außenpool bietet 365 Tage im Jahr Bergpanorama pur.', content: '<p>Nach 6 Monaten Bauzeit ist es soweit: Der neue Infinity-Pool auf der Südterrasse ist eröffnet. 25 Meter Schwimmfläche, 34°C warmes Wasser und ein atemberaubender Blick auf die Ötztaler Alpen.</p><p>Für Hotelgäste kostenfrei. Geöffnet täglich 7:00–21:00 Uhr.</p>', image: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=800&q=80', date: '2025-07-15' } },
+        { slug: 'gourmet-woche-herbst', title: 'Gourmet-Woche im Oktober: Sterne-Köchin als Gastköchin', priority: 2, data: { excerpt: 'Vom 12.–18. Oktober kocht Sterne-Köchin Anna Hartmann in unserem Restaurant Gipfelblick.', content: '<p>Ein kulinarisches Highlight erwartet Sie: Anna Hartmann (2 Michelin-Sterne, Restaurant „Alpenrose" in Innsbruck) gestaltet eine Woche lang das Abendmenü im Gipfelblick.</p><p>5-Gänge-Menü mit Weinbegleitung: 148 € pro Person. Reservierung erforderlich.</p>', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80', date: '2025-09-20' } },
+      ],
+    },
+    {
+      key: 'rooms', label: 'Zimmer & Suiten', items: [
+        { slug: 'komfort-doppelzimmer', title: 'Komfort Doppelzimmer', priority: 0, data: { excerpt: 'Gemütlicher alpiner Charme mit Massivholzmöbeln und Talblick.', description: 'Unser Komfort Doppelzimmer verbindet traditionelle Tiroler Gemütlichkeit mit modernem Komfort. Massivholzmöbel aus heimischer Zirbe, kuschelige Tiroler Wolldecken und ein privater Balkon mit Talblick schaffen eine Atmosphäre zum Durchatmen.', features: ['Talblick', 'Balkon', 'Regendusche', 'WLAN', 'Zirbenholzmöbel', 'Safe', 'Flatscreen-TV'], image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=900&q=80', gallery: ['https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=900&q=80', 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80'] } },
+        { slug: 'deluxe-doppelzimmer', title: 'Deluxe Doppelzimmer', priority: 1, data: { excerpt: 'Panoramabalkon, Regendusche und hochwertigste Naturmaterialien.', description: 'Das Deluxe Doppelzimmer bietet großzügigen Raum mit Panoramabalkon und Blick auf die Bergkette. Hochwertige Naturmaterialien, eine XXL-Regendusche und eine liebevoll bestückte Minibar machen den Aufenthalt perfekt.', features: ['Bergpanorama', 'Panoramabalkon', 'Regendusche', 'Minibar', 'Bademantel & Slippers', 'Nespresso-Maschine'], image: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80', gallery: ['https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80'] } },
+        { slug: 'junior-suite', title: 'Junior Suite', priority: 2, data: { excerpt: 'Großzügige Suite mit Sitzecke, Badewanne & Regendusche.', description: 'Die Junior Suite bietet Ihnen ein großzügiges Raumkonzept mit separater Sitzecke, einer freistehenden Badewanne UND einer Regendusche. Perfekt für Paare, die etwas mehr Platz und Luxus wünschen.', features: ['Bergpanorama', 'Separate Sitzecke', 'Freistehende Badewanne', 'Regendusche', 'Nespresso', 'Bademäntel'], image: 'https://images.unsplash.com/photo-1591088398332-8a7791972843?w=900&q=80', gallery: ['https://images.unsplash.com/photo-1591088398332-8a7791972843?w=900&q=80'] } },
+        { slug: 'penthouse-suite', title: 'Penthouse Suite', priority: 3, data: { excerpt: 'Privater Whirlpool auf der Dachterrasse, Kamin und Butler-Service.', description: 'Unser Kronjuwel: Die Penthouse Suite erstreckt sich über 120 m² auf zwei Ebenen. Privater Whirlpool auf der Dachterrasse, offener Kamin, Butler-Service und ein Blick, der seinesgleichen sucht — das ultimative alpine Luxuserlebnis.', features: ['Privater Whirlpool', 'Dachterrasse', 'Offener Kamin', 'Butler-Service', '2 Ebenen', 'Begehbarer Kleiderschrank'], image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80', gallery: ['https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80', 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=900&q=80'] } },
       ],
     },
   ],

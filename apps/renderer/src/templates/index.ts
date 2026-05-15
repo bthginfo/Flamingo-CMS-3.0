@@ -143,6 +143,8 @@ export const RESTAURANT_TEMPLATES: Record<string, TemplateComponent> = {
   faq: RestaurantFaqSection,
   story: RestaurantStorySection,
   testimonials: RestaurantTestimonialsSection,
+  newsPreview: NewsPreviewSection,
+  newsGrid: NewsPreviewSection,
   richText: RichTextSection,
 };
 
@@ -164,6 +166,8 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     faq: HotelFaqSection,
     contact: HotelContactSection,
     story: HotelStorySection,
+    newsPreview: NewsPreviewSection,
+    newsGrid: NewsPreviewSection,
     richText: RichTextSection,
   },
   tourism: {
@@ -183,6 +187,8 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     tourismContact: TourismContactSection,
     testimonials: TourismTestimonialsSection,
     story: TourismStorySection,
+    newsPreview: NewsPreviewSection,
+    newsGrid: NewsPreviewSection,
     richText: RichTextSection,
   },
   salon: {
@@ -200,6 +206,8 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     bookingCta: BookingCtaSection,
     locationContact: LocationContactSection,
     faq: SalonFaqSection,
+    newsPreview: NewsPreviewSection,
+    newsGrid: NewsPreviewSection,
     richText: RichTextSection,
   },
   medical: {
@@ -223,6 +231,8 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     faq: MedicalFaqSection,
     testimonials: MedicalTestimonialsSection,
     story: MedicalStorySection,
+    newsPreview: NewsPreviewSection,
+    newsGrid: NewsPreviewSection,
     richText: RichTextSection,
   },
 };
