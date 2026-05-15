@@ -1,46 +1,5 @@
 import type { SnapshotSection, SnapshotCollection } from '@/lib/snapshot';
-import { HeroSection } from '@/templates/handwerk/hero';
-import { UspStripSection } from '@/templates/handwerk/usp-strip';
-import { ServicesGridSection } from '@/templates/handwerk/services-grid';
-import { ProcessStepsSection } from '@/templates/handwerk/process-steps';
-import { TestimonialsSection } from '@/templates/handwerk/testimonials';
-import { FaqSection } from '@/templates/handwerk/faq';
-import { CtaBandSection } from '@/templates/handwerk/cta-band';
-import { ContactSection } from '@/templates/handwerk/contact';
-import { MapSection } from '@/templates/handwerk/map';
-import { ServiceDetailSection } from '@/templates/handwerk/service-detail';
-import { PortfolioSection } from '@/templates/handwerk/portfolio';
-import { TeamSection } from '@/templates/handwerk/team';
-import { CtaLinksSection } from '@/templates/handwerk/cta-links';
-import { NewsPreviewSection } from '@/templates/handwerk/news-preview';
-import { StatsSection } from '@/templates/handwerk/stats';
-import { LogoCloudSection } from '@/templates/handwerk/logo-cloud';
-import { GalleryGridSection } from '@/templates/handwerk/gallery-grid';
-import { RichTextSection } from '@/templates/handwerk/rich-text';
-import { HeaderBannerSection } from '@/templates/handwerk/header-banner';
-
-const SECTION_COMPONENTS: Record<string, React.FC<{ data: Record<string, unknown>; variant?: string | null; styleVariant?: string }>> = {
-  hero: HeroSection,
-  uspStrip: UspStripSection,
-  servicesGrid: ServicesGridSection,
-  processSteps: ProcessStepsSection,
-  testimonials: TestimonialsSection,
-  faq: FaqSection,
-  ctaBand: CtaBandSection,
-  contact: ContactSection,
-  map: MapSection,
-  serviceDetail: ServiceDetailSection,
-  portfolio: PortfolioSection,
-  team: TeamSection,
-  ctaLinks: CtaLinksSection,
-  newsPreview: NewsPreviewSection,
-  newsGrid: NewsPreviewSection,
-  stats: StatsSection,
-  logoCloud: LogoCloudSection,
-  galleryGrid: GalleryGridSection,
-  richText: RichTextSection,
-  headerBanner: HeaderBannerSection,
-};
+import { getIndustryTemplates } from '@/templates';
 
 const SPACING: Record<string, string> = {
   none: 'py-0',
@@ -57,8 +16,8 @@ const CONTAINER: Record<string, string> = {
   full: 'w-full px-6',
 };
 
-export function SectionRenderer({ section, collections, styleVariant }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string }) {
-  const Component = SECTION_COMPONENTS[section.type];
+export function SectionRenderer({ section, collections, styleVariant, industry = 'tradesman' }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string; industry?: string }) {
+  const Component = getIndustryTemplates(industry)[section.type];
 
   // Inject collection items into newsPreview/newsGrid sections
   if ((section.type === 'newsPreview' || section.type === 'newsGrid') && collections) {
