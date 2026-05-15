@@ -4,6 +4,7 @@ import type { TemplateKey } from '@/lib/types';
 import { Imprint, Privacy } from './Legal';
 import { NotFound } from './Blog';
 import { TemplateGallery } from './Templates';
+import { FundingCalculatorPage } from './FundingCalculator';
 import Seo from '@/components/Seo';
 import {
   Marquee, AnimatedCounter, RotatingWord, ScrollProgress, Accordion, useReveal,
@@ -244,6 +245,7 @@ export default function AgencyShowcase() {
           <Route path="kontakt" element={<Contact />} />
           <Route path="impressum" element={<Imprint />} />
           <Route path="datenschutz" element={<Privacy />} />
+          <Route path="foerderrechner" element={<FundingCalculatorPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 
@@ -295,6 +297,7 @@ function ShowcaseShell() {
 
   const NAV = [
     { to: '/templates', label: 'Templates' },
+    { to: '/foerderrechner', label: 'Förderrechner' },
     { to: '/prozess', label: 'Ablauf' },
     { to: '/preise', label: 'Preise' },
     { to: '/ueber-uns', label: 'Über uns' },
@@ -766,13 +769,14 @@ function TemplatesPreviewSection() {
           <div className="md:col-span-7 reveal">
             <p className="eyebrow mb-5">Templates</p>
             <h2 className="headline-lg">
-              Sechs Branchen.<br />
-              <em className="italic-pop">Sechs Live-Demos.</em>
+              Unsere Templates.<br />
+              <em className="italic-pop">Dein Vorsprung.</em>
             </h2>
           </div>
           <p className="md:col-span-5 text-lg text-muted reveal">
-            Jede Branche hat ein eigenes Template mit branchenspezifischen Sections, drei Stilrichtungen
-            und einem Admin, der genau die Felder zeigt, die Du brauchst.
+            Branchenspezifische Templates mit passgenauen Sections, drei Stilrichtungen und einem Admin,
+            der genau die Felder zeigt, die Du brauchst. Du hast eine andere Branche? Kein Problem –
+            wir setzen jede Branche auf Anfrage gerne für Dich um.
           </p>
         </div>
 

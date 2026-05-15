@@ -5,7 +5,7 @@ import { getDb } from '@/lib/db';
 import { tenants, tenantDomains } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { addDomainToRenderer, removeDomainFromRenderer, checkDomainStatus } from '@/lib/vercel';
+import { addDomainToRenderer, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject } from '@/lib/vercel';
 
 export async function createTenantAction(input: ProvisionInput) {
   const result = await provisionTenant(input);
@@ -65,4 +65,30 @@ export async function removeDomainAction(tenantId: string, domain: string) {
 
 export async function checkDomainAction(domain: string) {
   return checkDomainStatus(domain);
+}
+
+export async function deleteTenantAction(tenantId: string) {
+  const db = getDb();
+
+  // Look up tenant to check for Vercel project
+  const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId));
+  if (!tenant) return { success: false, error: 'Tenant not found' };
+
+  // Remove all domains from Vercel
+  const domains = await db.select().from(tenantDomains).where(eq(tenantDomains.tenantId, tenantId));
+  for (const d of domains) {
+    try { await removeDomainFromRenderer(d.domain); } catch { /* ignore */ }
+  }
+
+  // Delete standalone Vercel project if present
+  if (tenant.vercelProjectId) {
+    await deleteVercelProject(tenant.vercelProjectId);
+  }
+
+  // Delete tenant (cascades to all related tables)
+  await db.delete(tenants).where(eq(tenants.id, tenantId));
+
+  revalidatePath('/crm');
+  revalidatePath('/crm/tenants');
+  return { success: true };
 }

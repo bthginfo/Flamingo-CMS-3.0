@@ -144,6 +144,15 @@ export async function triggerProjectDeployment(projectName: string): Promise<{ i
   return { id: data.id, url: data.url };
 }
 
+/** Delete a Vercel project by ID. */
+export async function deleteVercelProject(projectId: string): Promise<void> {
+  try {
+    await vercelFetch(`/v9/projects/${projectId}`, 'DELETE');
+  } catch {
+    // Ignore if project doesn't exist
+  }
+}
+
 /** Trigger a new deployment for the renderer project. */
 export async function triggerRendererDeployment(): Promise<{ id: string; url: string }> {
   const projectName = process.env.VERCEL_RENDERER_PROJECT || 'flamingo-renderer';
