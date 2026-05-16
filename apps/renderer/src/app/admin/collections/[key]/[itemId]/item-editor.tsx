@@ -12,6 +12,7 @@ import { PageSectionsProvider } from '@/components/button-field';
 import { IndustrySectionDataEditor } from '../../../pages/[id]/industry-section-editor';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from '../../../pages/[id]/section-types';
 import { ItemSeoPanel } from './item-seo-panel';
+import type { ItemSeoPanelHandle } from './item-seo-panel';
 import { toast } from 'sonner';
 
 type Section = {
@@ -146,6 +147,7 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
   const [hasDirty, setHasDirty] = useState(false);
   const [pending, startTransition] = useTransition();
   const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
+  const seoRef = useRef<ItemSeoPanelHandle>(null);
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
 
   function markDirty() { setHasDirty(true); setSaved(false); }
@@ -218,6 +220,7 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
         priority: item.priority,
         data: itemData,
       });
+      await seoRef.current?.save();
 
       setSections(finalSections);
       setItem(prev => ({ ...prev, data: itemData }));
@@ -264,7 +267,7 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
         </div>
 
         {/* SEO */}
-        <ItemSeoPanel itemId={item.id} />
+        <ItemSeoPanel ref={seoRef} itemId={item.id} onDirty={() => { setHasDirty(true); setSaved(false); }} />
 
         {/* Section List with DnD */}
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -339,7 +342,7 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
             </button>
           ) : (
             <button
-              onClick={async () => { setPublishing(true); try { await publishAction(); toast.success('Veröffentlicht!'); } catch { toast.error('Fehler'); } finally { setPublishing(false); } }}
+              onClick={async () => { setPublishing(true); try { await publishAction(); toast.success('Veröffentlicht!'); setSaved(false); } catch { toast.error('Fehler'); } finally { setPublishing(false); } }}
               disabled={publishing}
               className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >

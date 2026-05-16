@@ -12,6 +12,7 @@ import { PageSectionsProvider } from '@/components/button-field';
 import { toast } from 'sonner';
 import { IndustrySectionDataEditor } from './industry-section-editor';
 import { PageSeoPanel } from './page-seo-panel';
+import type { PageSeoPanelHandle } from './page-seo-panel';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from './section-types';
 
 const SECTION_TYPES: { type: string; label: string; description: string }[] = [
@@ -173,6 +174,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const [pending, startTransition] = useTransition();
   const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
   const [hasDirty, setHasDirty] = useState(false);
+  const seoRef = useRef<PageSeoPanelHandle>(null);
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
 
   // Sync props from server component on navigation/revalidation
@@ -233,9 +235,10 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       await updatePageAction(page.id, { title: page.title, slug: page.slug, visible: page.visible });
       // Save all dirty sections
       const entries = Array.from(pendingChanges.current.entries());
-      const results = await Promise.all(
-        entries.map(([sectionId, data]) => updateSectionAction(sectionId, data, page.id))
-      );
+      const results = await Promise.all([
+        ...entries.map(([sectionId, data]) => updateSectionAction(sectionId, data, page.id)),
+        seoRef.current?.save(),
+      ]);
       const errors = results.filter(r => r && 'error' in r);
       if (errors.length > 0) {
         toast.error(`${errors.length} Sektion(en) konnten nicht gespeichert werden`);
@@ -289,7 +292,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     <PageSectionsProvider sections={sectionAnchors}>
     <div>
       {/* SEO Panel */}
-      <PageSeoPanel pageId={page.id} />
+      <PageSeoPanel ref={seoRef} pageId={page.id} onDirty={() => { setHasDirty(true); setSaved(false); }} />
 
       {/* Header */}
       <div className="flex items-center gap-4 mb-6">

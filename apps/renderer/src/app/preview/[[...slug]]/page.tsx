@@ -1,6 +1,7 @@
 import { resolveTenant, getDraftSnapshot } from '@/lib/snapshot';
 import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle } from '@/lib/tenant-data';
 import { getStyleCssVars } from '@/lib/styles';
+import { getBrandCssVars } from '@/lib/brand-colors';
 import { notFound } from 'next/navigation';
 import { SectionRenderer } from '@/components/section-renderer';
 import { SiteHeader } from '@/components/site-header';
@@ -35,11 +36,15 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
   ]);
 
   const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
+  const brandCssVars = getBrandCssVars(brand);
+  const designOverrides: Record<string, string> = {};
+  if (brand.primaryColor) designOverrides['--style-brand'] = brand.primaryColor;
+  if (brand.accentColor) designOverrides['--style-accent'] = brand.accentColor;
   const visibleSections = page.sections.filter(s => s.visible);
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
 
   return (
-    <div data-style={tenantStyle.activeStyle} style={styleCssVars as React.CSSProperties}>
+    <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...brandCssVars, ...designOverrides } as React.CSSProperties}>
       {/* Preview banner */}
       <div className="fixed top-0 left-0 right-0 z-[9999] bg-amber-500 text-white text-center text-xs py-1 font-medium">
         Entwurfs-Vorschau — Nicht veröffentlicht

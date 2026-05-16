@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Search, X } from 'lucide-react';
 import * as icons from 'lucide-react';
 
@@ -12,17 +13,30 @@ const ALL_ICONS = Object.keys(icons).filter(
 
 /**
  * Lucide icon picker with live search and preview.
+ * Uses a portal so the dropdown escapes any stacking-context / overflow clipping.
  */
 export function IconPickerField({ label, value, onChange }: { label: string; value: string; onChange: (icon: string) => void }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const ref = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 });
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Position dropdown relative to trigger button
+  useEffect(() => {
+    if (!open || !triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    setPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+  }, [open]);
 
   // Close on click outside
   useEffect(() => {
     if (!open) return;
     function handler(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      const target = e.target as Node;
+      if (triggerRef.current?.contains(target)) return;
+      if (dropdownRef.current?.contains(target)) return;
+      setOpen(false);
     }
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
@@ -41,9 +55,10 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
   }
 
   return (
-    <div className="text-sm relative" ref={ref}>
+    <div className="text-sm">
       <span className="text-gray-600 text-xs block mb-1">{label}</span>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen(!open)}
         className="admin-input w-full flex items-center gap-2 text-left"
@@ -61,8 +76,12 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
         )}
       </button>
 
-      {open && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-xl max-h-[320px] flex flex-col">
+      {open && createPortal(
+        <div
+          ref={dropdownRef}
+          className="fixed bg-white border rounded-lg shadow-xl max-h-[320px] flex flex-col"
+          style={{ top: pos.top, left: pos.left, width: pos.width, zIndex: 9999 }}
+        >
           <div className="p-2 border-b flex items-center gap-2">
             <Search size={14} className="text-gray-400 shrink-0" />
             <input
@@ -90,7 +109,8 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
               <p className="col-span-6 text-center text-xs text-gray-400 py-4">Kein Icon gefunden</p>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

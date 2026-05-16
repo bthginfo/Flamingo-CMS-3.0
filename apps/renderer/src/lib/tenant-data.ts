@@ -1,5 +1,5 @@
 import { getDb } from '@/lib/db';
-import { navigation, footer, globalSettings, seoGlobal, seoPage, tenants } from '@flamingo/db';
+import { navigation, footer, globalSettings, seoGlobal, seoPage, seoItem, tenants } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 
 export type NavItem = { label: string; href: string; type?: string };
@@ -75,6 +75,19 @@ export async function getTenantSeoGlobal(tenantId: string): Promise<SeoGlobalDat
 export async function getTenantSeoPage(tenantId: string, pageId: string): Promise<SeoPageData | null> {
   const db = getDb();
   const [row] = await db.select().from(seoPage).where(and(eq(seoPage.tenantId, tenantId), eq(seoPage.pageId, pageId))).limit(1);
+  if (!row) return null;
+  return {
+    metaTitle: row.metaTitle,
+    metaDescription: row.metaDescription,
+    ogImage: row.ogImage,
+    canonical: row.canonical,
+    noindex: row.noindex,
+  };
+}
+
+export async function getTenantSeoItem(tenantId: string, itemId: string): Promise<SeoPageData | null> {
+  const db = getDb();
+  const [row] = await db.select().from(seoItem).where(and(eq(seoItem.tenantId, tenantId), eq(seoItem.collectionItemId, itemId))).limit(1);
   if (!row) return null;
   return {
     metaTitle: row.metaTitle,
