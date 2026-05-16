@@ -1,69 +1,55 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Gift, ExternalLink } from 'lucide-react';
 
-type Props = {
-  data: Record<string, unknown>;
-  variant?: string | null;
-  styleVariant?: string;
-};
+type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
-type Gift = { title: string; description?: string; link?: string; image?: string; price?: string; claimed?: boolean };
-
-export function GiftRegistrySection({ data }: Props) {
-  const headline = (data.headline as string) || 'Geschenkewünsche';
-  const subline = (data.subline as string) || 'Eure Anwesenheit ist uns das größte Geschenk. Wer uns dennoch eine Freude machen möchte:';
-  const gifts = (data.gifts as Gift[]) || [];
-  const bankInfo = data.bankInfo as { iban?: string; bic?: string; holder?: string; note?: string } | undefined;
-  const freeText = (data.freeText as string) || '';
+export function WeddingGiftRegistrySection({ data }: Props) {
+  const badge = (data.badge as string) || 'Geschenke';
+  const headline = (data.headline as string) || 'Geschenkideen';
+  const subline = (data.subline as string) || '';
+  const text = (data.text as string) || '';
+  const items = (data.items as Array<{ title: string; description?: string; link?: string; image?: string }>) || [];
+  const bankDetails = data.bankDetails as { holder?: string; iban?: string; bic?: string; note?: string } | undefined;
 
   return (
-    <div>
-      <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-serif">{headline}</h2>
-        {subline && <p className="text-gray-600 mt-3 max-w-xl mx-auto">{subline}</p>}
+    <section className="py-24 px-6 bg-brand-primary/[0.02]">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-16">
+          <span className="section-badge">{badge}</span>
+          <h2 className="section-headline">{headline}</h2>
+          {subline && <p className="section-subline">{subline}</p>}
+        </div>
+        {text && <p className="text-gray-600 text-lg text-center mb-12 max-w-2xl mx-auto">{text}</p>}
+        {items.length > 0 && (
+          <div className="grid sm:grid-cols-2 gap-6 mb-12">
+            {items.map((item, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center shrink-0">
+                  <Gift className="w-4 h-4 text-brand-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900">{item.title}</h3>
+                  {item.description && <p className="text-gray-600 text-sm mt-1">{item.description}</p>}
+                  {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand-primary text-sm font-medium mt-2 hover:underline"><ExternalLink className="w-3 h-3" />Ansehen</a>}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+        {bankDetails && (
+          <div className="p-8 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
+            <p className="text-gray-900 font-semibold mb-4">Bankverbindung</p>
+            <div className="text-gray-600 text-sm space-y-1">
+              {bankDetails.holder && <p>Kontoinhaber: {bankDetails.holder}</p>}
+              {bankDetails.iban && <p>IBAN: {bankDetails.iban}</p>}
+              {bankDetails.bic && <p>BIC: {bankDetails.bic}</p>}
+              {bankDetails.note && <p className="mt-3 text-gray-500 italic">{bankDetails.note}</p>}
+            </div>
+          </div>
+        )}
       </div>
-
-      {freeText && (
-        <div className="max-w-2xl mx-auto text-center mb-10 text-gray-600 leading-relaxed whitespace-pre-line">
-          {freeText}
-        </div>
-      )}
-
-      {gifts.length > 0 && (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-          {gifts.map((g, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className={`border rounded-xl p-6 ${g.claimed ? 'opacity-50' : ''}`}
-            >
-              <h3 className="font-semibold text-lg">{g.title}</h3>
-              {g.price && <p className="text-rose-500 text-sm mt-1">{g.price}</p>}
-              {g.description && <p className="text-gray-600 text-sm mt-2">{g.description}</p>}
-              {g.claimed && <span className="inline-block mt-3 text-xs bg-gray-100 px-2 py-1 rounded">Bereits reserviert</span>}
-              {g.link && !g.claimed && (
-                <a href={g.link} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-sm text-rose-500 hover:underline">
-                  Zum Geschenk →
-                </a>
-              )}
-            </motion.div>
-          ))}
-        </div>
-      )}
-
-      {bankInfo && (
-        <div className="max-w-md mx-auto bg-rose-50 rounded-xl p-6 text-center">
-          <h3 className="font-semibold mb-3">Bankverbindung</h3>
-          {bankInfo.holder && <p className="text-sm text-gray-700">{bankInfo.holder}</p>}
-          {bankInfo.iban && <p className="text-sm text-gray-700 font-mono mt-1">{bankInfo.iban}</p>}
-          {bankInfo.bic && <p className="text-sm text-gray-500">{bankInfo.bic}</p>}
-          {bankInfo.note && <p className="text-sm text-gray-600 mt-2 italic">{bankInfo.note}</p>}
-        </div>
-      )}
-    </div>
+    </section>
   );
 }

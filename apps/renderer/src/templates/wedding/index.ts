@@ -1,11 +1,10 @@
 export { WeddingHeroSection } from './hero';
-export { CoupleStorySection } from './couple-story';
-export { EventScheduleSection } from './event-schedule';
-export { VenueInfoSection } from './venue-info';
-export { TravelInfoSection } from './travel-info';
+export { WeddingCoupleStorySection as CoupleStorySection } from './couple-story';
+export { WeddingEventScheduleSection as EventScheduleSection } from './event-schedule';
+export { WeddingVenueInfoSection as VenueInfoSection, WeddingTravelInfoSection as TravelInfoSection } from './venue-info';
 export { WeddingPartySection } from './wedding-party';
-export { GiftRegistrySection } from './gift-registry';
-export { DresscodeSection } from './dresscode';
-export { RsvpSection } from './rsvp';
+export { WeddingGiftRegistrySection as GiftRegistrySection } from './gift-registry';
+export { WeddingDresscodeSection as DresscodeSection } from './dresscode';
+export { WeddingRsvpSection as RsvpSection } from './rsvp';
 export { WeddingMenuSection } from './wedding-menu';
 export { WeddingFaqSection, WeddingGallerySection } from './faq-gallery';
