@@ -2,8 +2,9 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { useState } from 'react';
-import { X } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { DynamicIcon } from '@/components/ui/icon-map';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -15,11 +16,28 @@ export function PortfolioGallerySection({ data }: Props) {
   const subline = (data.subline as string) || '';
   const images = (data.images as GalleryImage[]) || [];
   const categories = (data.categories as string[]) || [...new Set(images.map(i => i.category).filter(Boolean))];
+  const cta = data.cta as { label: string; href: string; icon?: string } | undefined;
 
   const [filter, setFilter] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   const filtered = filter ? images.filter(i => i.category === filter) : images;
+
+  const navigate = useCallback((dir: 1 | -1) => {
+    setLightbox(prev => prev !== null ? (prev + dir + filtered.length) % filtered.length : null);
+  }, [filtered.length]);
+
+  useEffect(() => {
+    if (lightbox === null) return;
+    document.body.style.overflow = 'hidden';
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(null);
+      if (e.key === 'ArrowRight') navigate(1);
+      if (e.key === 'ArrowLeft') navigate(-1);
+    };
+    window.addEventListener('keydown', handler);
+    return () => { window.removeEventListener('keydown', handler); document.body.style.overflow = ''; };
+  }, [lightbox, navigate]);
 
   return (
     <section className="py-12 md:py-24 px-4 md:px-6 bg-white">
@@ -60,19 +78,34 @@ export function PortfolioGallerySection({ data }: Props) {
             ))}
           </AnimatePresence>
         </div>
+
+        {cta?.label && (
+          <div className="text-center mt-12">
+            <a href={cta.href} className="inline-flex items-center gap-2 px-8 py-3.5 bg-brand-primary text-white font-semibold rounded-full hover:opacity-90 transition-opacity shadow-lg">
+              {cta.label}
+              {cta.icon && <DynamicIcon name={cta.icon} size={18} />}
+            </a>
+          </div>
+        )}
       </div>
 
-      {/* Lightbox */}
+      {/* Connected Lightbox */}
       <AnimatePresence>
         {lightbox !== null && filtered[lightbox] && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
             <button className="absolute top-6 right-6 text-white/80 hover:text-white z-10" onClick={() => setLightbox(null)}>
               <X className="w-8 h-8" />
             </button>
-            <motion.img initial={{ scale: 0.8 }} animate={{ scale: 1 }} exit={{ scale: 0.8 }} src={filtered[lightbox].src} alt={filtered[lightbox].alt || ''} className="max-w-full max-h-[90vh] object-contain rounded-lg" onClick={(e) => e.stopPropagation()} />
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-              <button onClick={(e) => { e.stopPropagation(); setLightbox(Math.max(0, lightbox - 1)); }} className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20">←</button>
-              <button onClick={(e) => { e.stopPropagation(); setLightbox(Math.min(filtered.length - 1, lightbox + 1)); }} className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20">→</button>
+            {filtered.length > 1 && (
+              <>
+                <button className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white z-10 p-2" onClick={(e) => { e.stopPropagation(); navigate(-1); }}><ChevronLeft size={36} /></button>
+                <button className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white z-10 p-2" onClick={(e) => { e.stopPropagation(); navigate(1); }}><ChevronRight size={36} /></button>
+              </>
+            )}
+            <motion.img key={lightbox} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ duration: 0.2 }} src={filtered[lightbox].src} alt={filtered[lightbox].alt || ''} className="max-w-full max-h-[85vh] object-contain rounded-lg" onClick={(e) => e.stopPropagation()} />
+            <div className="absolute bottom-6 left-0 right-0 text-center">
+              {filtered[lightbox].alt && <p className="text-white text-sm mb-2">{filtered[lightbox].alt}</p>}
+              <span className="text-white/50 text-xs">{lightbox + 1} / {filtered.length}</span>
             </div>
           </motion.div>
         )}

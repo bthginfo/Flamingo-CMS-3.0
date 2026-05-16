@@ -954,6 +954,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
   });
+  const [cta, setCta] = useState<{ label: string; href: string; icon?: string }>((data.cta as { label: string; href: string; icon?: string }) || { label: '', href: '' });
   const [catInput, setCatInput] = useState(((data.categories as string[]) || []).join(', '));
   const categories = catInput.split(',').map(s => s.trim()).filter(Boolean);
   const [images, setImages] = useState<{ src: string; alt: string; category: string; location: string }[]>(
@@ -962,7 +963,26 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
       return { src: i.src || '', alt: i.alt || '', category: i.category || '', location: i.location || '' };
     })
   );
-  useReport({ ...d, categories, images } as unknown as Record<string, unknown>, onChange);
+  const [bulkUploading, setBulkUploading] = useState(false);
+  const bulkInputRef = useRef<HTMLInputElement>(null);
+  useReport({ ...d, categories, images, cta: cta.label ? cta : undefined } as unknown as Record<string, unknown>, onChange);
+
+  async function handleBulkUpload(files: FileList) {
+    setBulkUploading(true);
+    const { upload } = await import('@vercel/blob/client');
+    const { resizeImage } = await import('@/components/image-upload-field');
+    const newImages: { src: string; alt: string; category: string; location: string }[] = [];
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith('image/')) continue;
+      try {
+        const optimized = await resizeImage(file, 1920, 0.85);
+        const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, { access: 'public', handleUploadUrl: '/api/upload' });
+        newImages.push({ src: blob.url, alt: file.name.replace(/\.[^.]+$/, ''), category: '', location: '' });
+      } catch (e) { console.error('Bulk upload failed for', file.name, e); }
+    }
+    setImages(prev => [...prev, ...newImages]);
+    setBulkUploading(false);
+  }
 
   return (
     <div className="space-y-3">
@@ -986,7 +1006,17 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
             </div>
           </div>
         ))}
-        <button onClick={() => setImages([...images, { src: '', alt: '', category: '', location: '' }])} className="text-xs text-blue-600 hover:underline">+ Bild hinzufügen</button>
+        <div className="flex items-center gap-3">
+          <button onClick={() => setImages([...images, { src: '', alt: '', category: '', location: '' }])} className="text-xs text-blue-600 hover:underline">+ Bild hinzufügen</button>
+          <button onClick={() => bulkInputRef.current?.click()} disabled={bulkUploading} className="text-xs text-blue-600 hover:underline disabled:opacity-50">
+            {bulkUploading ? '⏳ Wird hochgeladen...' : '+ Bulk Upload'}
+          </button>
+          <input ref={bulkInputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files)} />
+        </div>
+      </div>
+      <div className="pt-2 border-t border-zinc-200">
+        <p className="text-xs font-medium text-zinc-600 mb-2">Button unterhalb der Galerie (optional)</p>
+        <ButtonField label="CTA Button" value={cta} onChange={setCta} />
       </div>
     </div>
   );
