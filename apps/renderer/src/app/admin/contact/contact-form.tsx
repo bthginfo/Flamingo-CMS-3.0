@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { saveContactSettings, saveOpeningHours } from '../settings-actions';
 import { toast } from 'sonner';
 import { useSaveState } from '@/components/save-context';
@@ -17,7 +17,9 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
   });
   const [hours, setHours] = useState<HoursRow[]>(initialHours.length > 0 ? initialHours : [{ day: '', hours: '' }]);
   const [saving, setSaving] = useState(false);
-  const { markSaved } = useSaveState();
+  const { markDirty, markSaved } = useSaveState();
+  const mounted = useRef(false);
+  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [contact, hours]);
 
   const handleSaveContact = async (e: React.FormEvent) => {
     e.preventDefault();

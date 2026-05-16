@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 
 type SaveState = 'idle' | 'dirty' | 'saving' | 'saved';
 
@@ -22,6 +23,10 @@ const SaveContext = createContext<SaveContextType>({
 
 export function SaveProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<SaveState>('idle');
+  const pathname = usePathname();
+
+  // Reset save state on navigation
+  useEffect(() => { setState('idle'); }, [pathname]);
 
   const markDirty = useCallback(() => setState('dirty'), []);
   const markSaving = useCallback(() => setState('saving'), []);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { saveFooterSettings } from '../settings-actions';
 import { toast } from 'sonner';
 import { useSaveState } from '@/components/save-context';
@@ -16,7 +16,9 @@ export function FooterForm({ initial }: { initial: FooterData }) {
   const [columns, setColumns] = useState<FooterColumn[]>(initial.columns);
   const [legalLinks, setLegalLinks] = useState(initial.legalLinks);
   const [saving, setSaving] = useState(false);
-  const { markSaved } = useSaveState();
+  const { markDirty, markSaved } = useSaveState();
+  const mounted = useRef(false);
+  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [columns, legalLinks]);
 
   const handleSave = async () => {
     setSaving(true);

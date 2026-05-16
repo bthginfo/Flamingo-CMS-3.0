@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { useSaveState } from '@/components/save-context';
 import { getSeoGlobalAction, saveSeoGlobalAction } from './actions';
@@ -8,7 +8,8 @@ import { Save } from 'lucide-react';
 
 export function SeoForm() {
   const [pending, startTransition] = useTransition();
-  const { markSaved } = useSaveState();
+  const { markDirty, markSaved } = useSaveState();
+  const mounted = useRef(0);
   const [data, setData] = useState({
     defaultTitle: '',
     titleTemplate: '',
@@ -32,6 +33,8 @@ export function SeoForm() {
       });
     });
   }, []);
+
+  useEffect(() => { if (mounted.current >= 2) markDirty(); else mounted.current++; }, [data]);
 
   function handleSave() {
     startTransition(async () => {

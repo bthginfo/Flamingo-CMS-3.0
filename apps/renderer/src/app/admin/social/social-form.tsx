@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { saveSocialLinks } from '../settings-actions';
 import { toast } from 'sonner';
 import { useSaveState } from '@/components/save-context';
@@ -17,7 +17,9 @@ const PLATFORMS = [
 export function SocialForm({ initial }: { initial: Record<string, string> }) {
   const [links, setLinks] = useState<Record<string, string>>(initial);
   const [saving, setSaving] = useState(false);
-  const { markSaved } = useSaveState();
+  const { markDirty, markSaved } = useSaveState();
+  const mounted = useRef(false);
+  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [links]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();

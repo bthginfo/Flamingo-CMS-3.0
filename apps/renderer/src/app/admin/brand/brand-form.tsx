@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { saveBrandSettings } from '../settings-actions';
 import { toast } from 'sonner';
 import { useSaveState } from '@/components/save-context';
@@ -43,7 +43,9 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     bodyFont: initial.bodyFont || '',
   });
   const [saving, setSaving] = useState(false);
-  const { markSaved } = useSaveState();
+  const { markDirty, markSaved } = useSaveState();
+  const mounted = useRef(false);
+  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [form]);
 
   // Load Google Fonts for preview
   useEffect(() => {
