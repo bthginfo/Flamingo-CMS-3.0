@@ -74,7 +74,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
       <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-brand-accent/8 rounded-full blur-[120px] animate-pulse-slow" />
       <div className="absolute bottom-0 -left-20 w-[500px] h-[500px] bg-brand-secondary/15 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
 
-      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20 lg:py-0 lg:pt-12">
+      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20 lg:py-0 lg:pt-12 pb-40">
         <div className="max-w-4xl">
           <TextGenerateEffect words={headline} className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white !leading-[1.02]" duration={0.6} />
           {badgeText && (
