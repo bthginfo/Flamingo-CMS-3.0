@@ -2,8 +2,8 @@
 
 import { useState, useRef } from 'react';
 import { upload } from '@vercel/blob/client';
-import { ImageIcon, Upload, X, Link as LinkIcon } from 'lucide-react';
-import { saveMediaRecord } from '@/app/admin/media-actions';
+import { ImageIcon, Upload, X, Link as LinkIcon, FolderOpen } from 'lucide-react';
+import { saveMediaRecord, getMediaAssets, type MediaAsset } from '@/app/admin/media-actions';
 
 /** Resize image to maxWidth and convert to WebP. Returns original if SVG or already small. */
 async function resizeImage(file: File, maxWidth: number, quality: number): Promise<File> {
@@ -44,8 +44,22 @@ async function resizeImage(file: File, maxWidth: number, quality: number): Promi
  */
 export function ImageUploadField({ label, value, onChange }: { label: string; value: string; onChange: (url: string) => void }) {
   const [uploading, setUploading] = useState(false);
-  const [mode, setMode] = useState<'upload' | 'url'>(value && !value.startsWith('blob:') ? 'url' : 'upload');
+  const [mode, setMode] = useState<'upload' | 'url' | 'library'>(value && !value.startsWith('blob:') ? 'url' : 'upload');
+  const [libraryAssets, setLibraryAssets] = useState<MediaAsset[]>([]);
+  const [loadingLib, setLoadingLib] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  async function openLibrary() {
+    setMode('library');
+    if (libraryAssets.length === 0) {
+      setLoadingLib(true);
+      try {
+        const assets = await getMediaAssets();
+        setLibraryAssets(assets);
+      } catch { /* ignore */ }
+      finally { setLoadingLib(false); }
+    }
+  }
 
   async function handleUpload(file: File) {
     setUploading(true);
@@ -90,6 +104,13 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
             className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'url' ? 'bg-blue-100 text-blue-700' : 'text-gray-400 hover:text-gray-600'}`}
           >
             <LinkIcon size={10} className="inline mr-0.5" /> URL
+          </button>
+          <button
+            type="button"
+            onClick={openLibrary}
+            className={`text-[10px] px-1.5 py-0.5 rounded ${mode === 'library' ? 'bg-blue-100 text-blue-700' : 'text-gray-400 hover:text-gray-600'}`}
+          >
+            <FolderOpen size={10} className="inline mr-0.5" /> Mediathek
           </button>
         </div>
       </div>
@@ -136,7 +157,7 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
             )}
           </button>
         </div>
-      ) : (
+      ) : mode === 'url' ? (
         <input
           className="admin-input w-full"
           value={value}
@@ -156,6 +177,27 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
           }}
           placeholder="https://..."
         />
+      ) : (
+        <div className="border border-zinc-200 rounded-lg p-2 max-h-48 overflow-y-auto">
+          {loadingLib ? (
+            <p className="text-xs text-gray-400 text-center py-4">Laden...</p>
+          ) : libraryAssets.length === 0 ? (
+            <p className="text-xs text-gray-400 text-center py-4">Keine Bilder vorhanden</p>
+          ) : (
+            <div className="grid grid-cols-4 gap-1.5">
+              {libraryAssets.map((asset) => (
+                <button
+                  key={asset.id}
+                  type="button"
+                  onClick={() => { onChange(asset.blobUrl); setMode('upload'); }}
+                  className="relative aspect-square rounded overflow-hidden border border-zinc-200 hover:border-blue-400 transition"
+                >
+                  <img src={asset.blobUrl} alt={asset.filename} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
