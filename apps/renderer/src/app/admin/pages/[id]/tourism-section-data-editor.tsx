@@ -2,6 +2,7 @@
 
 import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react';
 import { ImageUploadField } from '@/components/image-upload-field';
+import { saveMediaRecord } from '@/app/admin/media-actions';
 import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { IconPickerField } from '@/components/icon-picker-field';
 import { MediaBulkPickerButton } from '@/components/media-bulk-picker';
@@ -104,7 +105,8 @@ function GalleryEditor({ data, onChange }: EditorProps) {
     const { upload } = await import('@vercel/blob/client');
     const { resizeImage } = await import('@/components/image-upload-field');
     const newImgs: { src: string; alt: string; caption: string; category: string }[] = [];
-    for (const file of Array.from(files)) { if (!file.type.startsWith('image/')) continue; try { const optimized = await resizeImage(file, 1920, 0.85); const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, { access: 'public', handleUploadUrl: '/api/upload' }); newImgs.push({ src: blob.url, alt: file.name.replace(/\.[^.]+$/, ''), caption: '', category }); } catch (e) { console.error(e); } }
+    for (const file of Array.from(files)) { if (!file.type.startsWith('image/')) continue; try { const optimized = await resizeImage(file, 1920, 0.85); const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, { access: 'public', handleUploadUrl: '/api/upload' }); newImgs.push({ src: blob.url, alt: file.name.replace(/\.[^.]+$/, ''), caption: '', category });
+        saveMediaRecord({ blobUrl: blob.url, pathname: blob.pathname, filename: optimized.name, mimeType: optimized.type || 'image/webp', size: optimized.size }).catch(() => {}); } catch (e) { console.error(e); } }
     setImages(prev => [...prev, ...newImgs]); setBulkUploading(null);
   }
 

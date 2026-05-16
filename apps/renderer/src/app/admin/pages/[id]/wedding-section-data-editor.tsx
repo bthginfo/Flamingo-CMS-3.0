@@ -2,6 +2,7 @@
 
 import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react';
 import { ImageUploadField } from '@/components/image-upload-field';
+import { saveMediaRecord } from '@/app/admin/media-actions';
 import { IconPickerField } from '@/components/icon-picker-field';
 import { DetailLinkField } from '@/components/button-field';
 
