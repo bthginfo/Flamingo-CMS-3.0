@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useTransition } from 'react';
 import { toast } from 'sonner';
-import { getSeoItemAction, saveSeoItemAction } from '../../seo/actions';
+import { getSeoItemAction, saveSeoItemAction } from '../../../seo/actions';
 import { Save, Search } from 'lucide-react';
 
 export function ItemSeoPanel({ itemId }: { itemId: string }) {
