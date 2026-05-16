@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
-import { pages } from '@flamingo/db';
-import { eq, and } from 'drizzle-orm';
+import { pages, pageSections } from '@flamingo/db';
+import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
 
 export async function POST(req: NextRequest) {
@@ -13,29 +13,36 @@ export async function POST(req: NextRequest) {
   if (!slug || !title) return NextResponse.json({ error: 'slug and title required' }, { status: 400 });
 
   const db = getDb();
-  const id = crypto.randomUUID();
-
-  const normalizedSections = (sections || []).map((s: any, i: number) => ({
-    id: s.id || crypto.randomUUID(),
-    type: s.type,
-    data: s.data || {},
-    variant: s.variant || null,
-    visible: s.visible !== false,
-    container: s.container || 'default',
-    spacingTop: s.spacingTop || 'md',
-    spacingBottom: s.spacingBottom || 'md',
-    anchorId: s.anchorId || null,
-  }));
+  const pageId = crypto.randomUUID();
+  const normalizedSlug = slug.startsWith('/') ? slug : `/${slug}`;
 
   await db.insert(pages).values({
-    id,
+    id: pageId,
     tenantId: auth.tenantId,
-    slug: slug.startsWith('/') ? slug : `/${slug}`,
+    slug: normalizedSlug,
     title,
-    sections: normalizedSections,
   });
 
-  return NextResponse.json({ success: true, id, slug });
+  if (sections && sections.length > 0) {
+    await db.insert(pageSections).values(
+      sections.map((s: any, i: number) => ({
+        id: s.id || crypto.randomUUID(),
+        tenantId: auth.tenantId,
+        pageId,
+        type: s.type,
+        data: s.data || {},
+        variant: s.variant || null,
+        visible: s.visible !== false,
+        container: s.container || 'default',
+        spacingTop: s.spacingTop || 'm',
+        spacingBottom: s.spacingBottom || 'm',
+        anchorId: s.anchorId || null,
+        sortOrder: i,
+      }))
+    );
+  }
+
+  return NextResponse.json({ success: true, id: pageId, slug: normalizedSlug });
 }
 
 export async function GET(req: NextRequest) {
@@ -45,5 +52,5 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   const allPages = await db.select().from(pages).where(eq(pages.tenantId, auth.tenantId));
 
-  return NextResponse.json({ pages: allPages.map(p => ({ id: p.id, slug: p.slug, title: p.title, sectionCount: (p.sections as any[])?.length || 0 })) });
+  return NextResponse.json({ pages: allPages.map(p => ({ id: p.id, slug: p.slug, title: p.title })) });
 }

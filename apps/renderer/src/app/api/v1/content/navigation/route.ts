@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
-import { tenants } from '@flamingo/db';
+import { navigation } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 
 export async function PUT(req: NextRequest) {
@@ -11,7 +11,12 @@ export async function PUT(req: NextRequest) {
   const { items, cta } = await req.json();
   const db = getDb();
 
-  await db.update(tenants).set({ navItems: items, navCta: cta || null }).where(eq(tenants.id, auth.tenantId));
+  const [existing] = await db.select().from(navigation).where(eq(navigation.tenantId, auth.tenantId));
+  if (existing) {
+    await db.update(navigation).set({ items: items || [], cta: cta || {} }).where(eq(navigation.tenantId, auth.tenantId));
+  } else {
+    await db.insert(navigation).values({ tenantId: auth.tenantId, items: items || [], cta: cta || {} });
+  }
 
   return NextResponse.json({ success: true });
 }

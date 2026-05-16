@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
-import { pages } from '@flamingo/db';
+import { pages, pageSections } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import crypto from 'crypto';
 
@@ -16,23 +16,31 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const updates: Record<string, unknown> = {};
   if (body.title) updates.title = body.title;
   if (body.slug) updates.slug = body.slug.startsWith('/') ? body.slug : `/${body.slug}`;
-  if (body.sections) {
-    updates.sections = body.sections.map((s: any) => ({
-      id: s.id || crypto.randomUUID(),
-      type: s.type,
-      data: s.data || {},
-      variant: s.variant || null,
-      visible: s.visible !== false,
-      container: s.container || 'default',
-      spacingTop: s.spacingTop || 'md',
-      spacingBottom: s.spacingBottom || 'md',
-      anchorId: s.anchorId || null,
-    }));
+
+  if (Object.keys(updates).length > 0) {
+    await db.update(pages).set(updates).where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId)));
   }
 
-  if (Object.keys(updates).length === 0) return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
-
-  await db.update(pages).set(updates).where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId)));
+  if (body.sections) {
+    // Delete existing sections and re-insert
+    await db.delete(pageSections).where(and(eq(pageSections.pageId, id), eq(pageSections.tenantId, auth.tenantId)));
+    await db.insert(pageSections).values(
+      body.sections.map((s: any, i: number) => ({
+        id: s.id || crypto.randomUUID(),
+        tenantId: auth.tenantId,
+        pageId: id,
+        type: s.type,
+        data: s.data || {},
+        variant: s.variant || null,
+        visible: s.visible !== false,
+        container: s.container || 'default',
+        spacingTop: s.spacingTop || 'm',
+        spacingBottom: s.spacingBottom || 'm',
+        anchorId: s.anchorId || null,
+        sortOrder: i,
+      }))
+    );
+  }
 
   return NextResponse.json({ success: true });
 }
