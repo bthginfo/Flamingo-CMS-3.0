@@ -88,6 +88,14 @@ export const PRESETS: Record<TemplateKey, ThemePreset[]> = {
     { id: 'mono',       label: 'Mono',           primary: '#111111', primaryFg: '#ffffff', accent: '#111111', surface: '#f5f5f5', bg: '#ffffff', text: '#0a0a0a' },
     { id: 'midnight',   label: 'Midnight Rose',  primary: '#e8b4c8', primaryFg: '#1c1520', accent: '#e8b4c8', surface: '#2c1f28', bg: '#1a1218', text: '#f5eff2' },
   ],
+  photography: [
+    { id: 'minimal',    label: 'Minimal',        primary: '#1c1917', primaryFg: '#fafaf9', accent: '#a8a29e', surface: '#f5f5f4', bg: '#ffffff', text: '#1c1917' },
+    { id: 'moody',      label: 'Moody',          primary: '#292524', primaryFg: '#fafaf9', accent: '#78716c', surface: '#f5f5f4', bg: '#ffffff', text: '#1c1917' },
+    { id: 'warm',       label: 'Warm Earth',     primary: '#78350f', primaryFg: '#fffbeb', accent: '#d97706', surface: '#fefce8', bg: '#ffffff', text: '#1c1917' },
+    { id: 'forest',     label: 'Forest',         primary: '#14532d', primaryFg: '#f0fdf4', accent: '#16a34a', surface: '#f0fdf4', bg: '#ffffff', text: '#1c1917' },
+    { id: 'mono',       label: 'Mono',           primary: '#111111', primaryFg: '#ffffff', accent: '#111111', surface: '#f5f5f5', bg: '#ffffff', text: '#0a0a0a' },
+    { id: 'dark',       label: 'Dark Studio',    primary: '#e7e5e4', primaryFg: '#1c1917', accent: '#a8a29e', surface: '#292524', bg: '#1c1917', text: '#f5f5f4' },
+  ],
 };
 
 export function applyTheme(p: ThemePreset) {
