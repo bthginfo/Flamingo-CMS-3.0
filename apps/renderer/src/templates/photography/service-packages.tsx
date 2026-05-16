@@ -29,7 +29,7 @@ export function ServicePackagesSection({ data }: Props) {
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
-          {subline && <p className="section-subline">{subline}</p>}
+          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
 
         <div className={`grid gap-8 ${packages.length === 2 ? 'md:grid-cols-2 max-w-4xl mx-auto' : packages.length >= 3 ? 'md:grid-cols-3' : 'max-w-lg mx-auto'}`}>
@@ -43,7 +43,7 @@ export function ServicePackagesSection({ data }: Props) {
                   {pkg.priceNote && <span className={`text-sm ml-1 ${pkg.highlighted ? 'text-white/70' : 'text-gray-500'}`}>{pkg.priceNote}</span>}
                 </div>
               )}
-              {pkg.description && <p className={`mt-3 text-sm ${pkg.highlighted ? 'text-white/80' : 'text-gray-600'}`}>{pkg.description}</p>}
+              {pkg.description && <div className={`mt-3 text-sm ${pkg.highlighted ? 'text-white/80' : 'text-gray-600'}`} dangerouslySetInnerHTML={{ __html: pkg.description }} />}
               <ul className="mt-6 space-y-3">
                 {pkg.features.map((f, j) => (
                   <li key={j} className="flex items-start gap-2 text-sm">

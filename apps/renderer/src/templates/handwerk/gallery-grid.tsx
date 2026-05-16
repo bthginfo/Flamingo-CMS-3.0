@@ -54,7 +54,7 @@ export function GalleryGridSection({ data }: Props) {
           className="text-center mb-10"
         >
           <h2 className="section-headline">{headline}</h2>
-          {subline && <p className="section-subline">{subline}</p>}
+          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </motion.div>
       )}
 

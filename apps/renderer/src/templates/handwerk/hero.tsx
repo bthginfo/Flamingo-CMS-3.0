@@ -90,8 +90,8 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
             </motion.div>
           )}
           {subline && (
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.8 }}
-              className="text-lg sm:text-xl text-white/60 leading-relaxed mb-12 max-w-2xl mt-8">{subline}</motion.p>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.8 }}
+              className="text-lg sm:text-xl text-white/60 leading-relaxed mb-12 max-w-2xl mt-8 [&_p]:m-0 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />
           )}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.0 }} className="flex flex-col sm:flex-row gap-4 mb-10 md:mb-16">
             {primaryCta?.label && (
@@ -132,7 +132,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-gray-900 !leading-[1.1] tracking-tight">
             {headline}
           </h1>
-          {subline && <p className="text-lg text-gray-400 leading-relaxed mt-8 max-w-lg">{subline}</p>}
+          {subline && <div className="text-lg text-gray-400 leading-relaxed mt-8 max-w-lg [&_p]:inline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta?.label && (
               <a href={primaryCta.href} className="group inline-flex items-center gap-3 text-gray-900 font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-brand-accent hover:text-brand-accent transition-colors">

@@ -32,7 +32,7 @@ export function NewsPreviewSection({ data }: Props) {
       >
         <div>
           <h2 className="section-headline">{headline}</h2>
-          {subline && <p className="section-subline">{subline}</p>}
+          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         <Link href={linkHref} className="hidden sm:flex items-center gap-1.5 text-sm font-medium text-brand-primary hover:underline">
           {linkLabel} {linkIcon && <DynamicIcon name={linkIcon} size={14} />}

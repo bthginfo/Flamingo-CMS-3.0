@@ -43,7 +43,7 @@ export function PortfolioSection({ data }: Props) {
           </div>
         )}
         {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{subline}</p>}
+        {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

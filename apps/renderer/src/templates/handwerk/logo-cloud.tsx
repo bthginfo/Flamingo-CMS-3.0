@@ -22,7 +22,7 @@ export function LogoCloudSection({ data }: Props) {
           className="text-center mb-10"
         >
           {headline && <h2 className="text-lg font-semibold text-gray-500 uppercase tracking-wider">{headline}</h2>}
-          {subline && <p className="text-sm text-gray-400 mt-1">{subline}</p>}
+          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </motion.div>
       )}
       <motion.div

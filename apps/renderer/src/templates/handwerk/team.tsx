@@ -46,7 +46,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-12 md:mb-20">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
         {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{subline}</p>}
+        {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       {(storyHeadline || storyText) && (
         <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} className="flex flex-col lg:flex-row gap-12 lg:gap-8 lg:gap-16 items-center mb-12 md:mb-24">
@@ -55,7 +55,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
           )}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'w-full max-w-3xl mx-auto'}>
             {storyHeadline && <h3 className="font-display font-bold text-2xl lg:text-3xl mb-4 text-gray-900">{storyHeadline}</h3>}
-            {storyText && <p className="text-gray-500 leading-relaxed text-lg whitespace-pre-line">{storyText}</p>}
+            {storyText && <div className="text-gray-500 leading-relaxed text-lg whitespace-pre-line rt-content" dangerouslySetInnerHTML={{ __html: storyText }} />}
           </div>
         </motion.div>
       )}
@@ -94,7 +94,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
                 </div>
                 <h4 className="font-semibold text-lg">{m.name}</h4>
                 <p className="text-sm text-brand-primary font-medium mb-2">{m.role}</p>
-                {m.bio && <p className="text-gray-500 text-sm max-w-xs mx-auto">{m.bio}</p>}
+                {m.bio && <div className="text-gray-500 text-sm max-w-xs mx-auto rt-content" dangerouslySetInnerHTML={{ __html: m.bio }} />}
               </div>
             ))}
           </div>
@@ -111,14 +111,14 @@ function TeamModern({ headline, subline, badgeText, storyHeadline, storyText, st
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
         {badgeText && <div className="flex items-center gap-3 text-sm text-gray-400 mb-4 tracking-wide uppercase"><span className="w-8 h-px bg-gray-300" />{badgeText}</div>}
         {headline && <h2 className="text-4xl lg:text-3xl md:text-5xl font-light text-gray-900 tracking-tight">{headline}</h2>}
-        {subline && <p className="text-lg text-gray-400 mt-4 max-w-2xl">{subline}</p>}
+        {subline && <div className="text-lg text-gray-400 mt-4 max-w-2xl rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       {(storyHeadline || storyText) && (
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center mb-12 md:mb-24">
           {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[3/2] rounded-lg overflow-hidden"><Image src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
             {storyHeadline && <h3 className="text-2xl font-light text-gray-900 mb-4">{storyHeadline}</h3>}
-            {storyText && <p className="text-gray-400 leading-loose whitespace-pre-line">{storyText}</p>}
+            {storyText && <div className="text-gray-400 leading-loose whitespace-pre-line rt-content" dangerouslySetInnerHTML={{ __html: storyText }} />}
           </div>
         </div>
       )}
@@ -154,14 +154,14 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12">
         {badgeText && <span className="inline-block bg-brand-accent text-brand-dark font-bold text-xs uppercase tracking-widest px-3 py-1.5 mb-4">{badgeText}</span>}
         {headline && <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-tight">{headline}</h2>}
-        {subline && <p className="text-gray-500 mt-3 font-medium">{subline}</p>}
+        {subline && <div className="text-gray-500 mt-3 font-medium rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       {(storyHeadline || storyText) && (
         <div className="flex flex-col lg:flex-row gap-8 items-start mb-10 md:mb-16">
           {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] overflow-hidden border-3 border-gray-900 shadow-[6px_6px_0_#0d2137]"><Image src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
             {storyHeadline && <h3 className="text-xl font-bold uppercase mb-3">{storyHeadline}</h3>}
-            {storyText && <p className="text-gray-600 leading-relaxed whitespace-pre-line">{storyText}</p>}
+            {storyText && <div className="text-gray-600 leading-relaxed whitespace-pre-line rt-content" dangerouslySetInnerHTML={{ __html: storyText }} />}
           </div>
         </div>
       )}
@@ -187,7 +187,7 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
                 <div>
                   <h4 className="font-bold uppercase text-sm">{m.name}</h4>
                   <p className="text-xs text-brand-accent font-bold uppercase">{m.role}</p>
-                  {m.bio && <p className="text-gray-500 text-xs mt-1">{m.bio}</p>}
+                  {m.bio && <div className="text-gray-500 text-xs mt-1 rt-content" dangerouslySetInnerHTML={{ __html: m.bio }} />}
                 </div>
               </div>
             ))}

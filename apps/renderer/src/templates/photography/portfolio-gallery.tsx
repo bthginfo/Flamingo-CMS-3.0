@@ -45,7 +45,7 @@ export function PortfolioGallerySection({ data }: Props) {
         <div className="text-center mb-12">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
-          {subline && <p className="section-subline">{subline}</p>}
+          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
 
         {categories.length > 1 && (

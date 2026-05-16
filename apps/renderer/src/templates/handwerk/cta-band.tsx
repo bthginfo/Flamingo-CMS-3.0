@@ -65,7 +65,7 @@ function CtaModern({ headline, subline, cta }: CProps) {
       <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light text-gray-900 tracking-tight !leading-[1.1] max-w-4xl mx-auto">
         {headline}
       </h2>
-      {subline && <p className="text-lg text-gray-400 mt-6 max-w-2xl mx-auto">{subline}</p>}
+      {subline && <div className="text-lg text-gray-400 mt-6 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       {cta?.label && (
         <a href={cta.href} className="group inline-flex items-center gap-3 text-gray-900 font-medium text-lg mt-10 border-b-2 border-gray-900 pb-1 hover:border-brand-accent hover:text-brand-accent transition-colors">
           {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
@@ -86,7 +86,7 @@ function CtaBold({ headline, subline, badgeText, cta }: CProps) {
       <div>
         {badgeText && <span className="inline-block bg-brand-accent text-brand-dark font-bold text-xs uppercase tracking-widest px-3 py-1.5 mb-4">{badgeText}</span>}
         <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tight">{headline}</h2>
-        {subline && <p className="text-white/50 mt-3 font-medium max-w-xl">{subline}</p>}
+        {subline && <div className="text-white/50 mt-3 font-medium max-w-xl rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {cta?.label && (
         <a href={cta.href} className="inline-flex items-center gap-3 bg-brand-accent text-brand-dark font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] shrink-0">

@@ -47,7 +47,7 @@ function ProcessClassic({ headline, badgeText, steps }: PProps) {
                 </div>
                 <div className="pt-3">
                   <h3 className="font-display font-bold text-xl mb-2">{step.title}</h3>
-                  <p className="text-gray-500 leading-relaxed">{step.text}</p>
+                  <div className="text-gray-500 leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />
                 </div>
               </motion.div>
             ))}
@@ -76,7 +76,7 @@ function ProcessModern({ headline, badgeText, steps }: PProps) {
             <div className="shrink-0 text-3xl md:text-5xl font-extralight text-gray-200">{String(i + 1).padStart(2, '0')}</div>
             <div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">{step.title}</h3>
-              <p className="text-gray-400 leading-relaxed">{step.text}</p>
+              <div className="text-gray-400 leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />
             </div>
           </motion.div>
         ))}
@@ -105,7 +105,7 @@ function ProcessBold({ headline, badgeText, steps }: PProps) {
             </div>
             <div className="pt-6">
               <h3 className="font-bold uppercase tracking-wide text-base mb-2">{step.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{step.text}</p>
+              <div className="text-gray-500 text-sm leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />
             </div>
           </motion.div>
         ))}

@@ -315,3 +315,10 @@ html {
   padding-top: 4rem;
   padding-bottom: 4rem;
 }
+
+/* Rich text inline content */
+@layer base {
+  .rt-content p + p { margin-top: 0.5em; }
+  .rt-content a { text-decoration: underline; text-underline-offset: 2px; }
+  .rt-content strong { font-weight: 600; }
+}

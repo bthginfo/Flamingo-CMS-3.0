@@ -110,7 +110,7 @@ function TestimonialsBold({ headline, badgeText, ratingValue, ratingCount, items
             className="snap-start shrink-0 w-[320px] p-6 border-3 border-gray-900 bg-white shadow-[4px_4px_0_#0d2137]"
           >
             <Quote size={24} className="text-brand-accent mb-3" />
-            <p className="text-gray-800 font-medium leading-relaxed">{item.quote}</p>
+            <div className="text-gray-800 font-medium leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />
             <div className="mt-4 pt-3 border-t-2 border-gray-900">
               <p className="font-bold text-sm uppercase tracking-wide">{item.name}</p>
               {item.context && <p className="text-xs text-gray-500 mt-0.5">{item.context}</p>}

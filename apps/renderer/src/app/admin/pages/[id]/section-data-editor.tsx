@@ -7,6 +7,7 @@ import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { IconPickerField } from '@/components/icon-picker-field';
 import { MediaBulkPickerButton } from '@/components/media-bulk-picker';
 import { RichTextEditorField } from '@/components/rich-text-editor';
+import { MiniRichTextField } from '@/components/mini-rich-text';
 import { saveMediaRecord } from '@/app/admin/media-actions';
 
 // Reports current editor data to parent on every change (skip initial render).
@@ -244,14 +245,13 @@ function MapEditor({ data, onChange }: EditorProps) {
 
 // ─── Shared field components ─────────────────────────────────────
 function Field({ label, value, onChange, multiline, placeholder }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean; placeholder?: string }) {
+  if (multiline) {
+    return <MiniRichTextField label={label} value={value} onChange={onChange} />;
+  }
   return (
     <label className="block text-sm">
       <span className="text-gray-600 text-xs">{label}</span>
-      {multiline ? (
-        <textarea className="admin-input mt-1 w-full" rows={3} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
-      ) : (
-        <input className="admin-input mt-1 w-full" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
-      )}
+      <input className="admin-input mt-1 w-full" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
     </label>
   );
 }

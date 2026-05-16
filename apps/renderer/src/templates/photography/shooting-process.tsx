@@ -24,7 +24,7 @@ export function ShootingProcessSection({ data }: Props) {
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
-          {subline && <p className="section-subline">{subline}</p>}
+          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
 
         <div className="relative">
@@ -49,7 +49,7 @@ export function ShootingProcessSection({ data }: Props) {
                       <span className="text-xs font-bold text-brand-primary uppercase tracking-wider">Schritt {i + 1}</span>
                     </div>
                     <h3 className="text-lg md:text-xl font-semibold text-gray-900">{step.title}</h3>
-                    <p className="text-gray-600 mt-1 md:mt-2 text-sm md:text-base">{step.text}</p>
+                    <div className="text-gray-600 mt-1 md:mt-2 text-sm md:text-base rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />
                   </div>
 
                   {/* Empty column for alternation */}

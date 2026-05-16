@@ -33,8 +33,8 @@ export function PhotographerAboutSection({ data }: Props) {
           <div className={image ? 'md:col-span-3' : 'md:col-span-5 max-w-3xl mx-auto'}>
             <span className="section-badge">{badge}</span>
             {headline && <h2 className="section-headline">{headline}</h2>}
-            {intro && <p className="text-gray-700 text-lg leading-relaxed mt-4">{intro}</p>}
-            {story && <p className="text-gray-600 leading-relaxed mt-4">{story}</p>}
+            {intro && <div className="text-gray-700 text-lg leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
+            {story && <div className="text-gray-600 leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
 
             {facts.length > 0 && (
               <ul className="mt-8 space-y-2">
@@ -52,7 +52,7 @@ export function PhotographerAboutSection({ data }: Props) {
                 {values.map((v, i) => (
                   <div key={i} className="p-4 rounded-xl bg-brand-primary/[0.03] border border-brand-primary/10">
                     <h4 className="font-semibold text-gray-900 text-sm">{v.title}</h4>
-                    <p className="text-gray-600 text-sm mt-1">{v.text}</p>
+                    <div className="text-gray-600 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                   </div>
                 ))}
               </div>

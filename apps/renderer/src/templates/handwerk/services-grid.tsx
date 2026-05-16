@@ -44,7 +44,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-10 md:mb-16">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
         {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{subline}</p>}
+        {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.2 }}>
         <HoverEffect items={hoverItems} />
@@ -74,7 +74,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
           </div>
         )}
         {headline && <h2 className="text-4xl lg:text-3xl md:text-5xl font-light text-gray-900 tracking-tight">{headline}</h2>}
-        {subline && <p className="text-lg text-gray-400 mt-4 max-w-2xl">{subline}</p>}
+        {subline && <div className="text-lg text-gray-400 mt-4 max-w-2xl rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
         {cards.map((card, i) => {
@@ -134,7 +134,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
           </span>
         )}
         {headline && <h2 className="text-3xl lg:text-4xl font-black text-gray-900 uppercase tracking-tight">{headline}</h2>}
-        {subline && <p className="text-gray-500 mt-3 font-medium">{subline}</p>}
+        {subline && <div className="text-gray-500 mt-3 font-medium rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {cards.map((card, i) => {
