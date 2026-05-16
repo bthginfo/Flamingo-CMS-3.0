@@ -5,6 +5,7 @@ import { Save } from 'lucide-react';
 import { ImageUploadField } from '@/components/image-upload-field';
 import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { IconPickerField } from '@/components/icon-picker-field';
+import { MediaBulkPickerButton } from '@/components/media-bulk-picker';
 import { RichTextEditorField } from '@/components/rich-text-editor';
 
 // Reports current editor data to parent on every change (skip initial render).
@@ -440,6 +441,7 @@ function GalleryGridEditor({ data, onChange }: EditorProps) {
           {bulkUploading ? '⏳ Wird hochgeladen...' : '+ Bulk Upload'}
         </button>
         <input ref={bulkInputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files)} />
+        <MediaBulkPickerButton onSelect={(imgs) => setImages(prev => [...prev, ...imgs.map(i => ({ ...i, caption: '' }))])} />
       </div>
     </div>
   );
@@ -1071,6 +1073,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
                     {bulkUploading === cat ? '⏳ Hochladen...' : '+ Bulk Upload'}
                   </button>
                   <input ref={(el) => { bulkRefs.current[cat] = el; }} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files, cat)} />
+                  <MediaBulkPickerButton onSelect={(imgs) => setImages(prev => [...prev, ...imgs.map(i => ({ src: i.src, alt: i.alt, category: cat, location: '' }))])} />
                 </div>
               </div>
             )}

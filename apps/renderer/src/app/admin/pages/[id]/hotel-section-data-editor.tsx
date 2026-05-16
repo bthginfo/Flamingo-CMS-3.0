@@ -4,6 +4,7 @@ import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 
 import { ImageUploadField } from '@/components/image-upload-field';
 import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { IconPickerField } from '@/components/icon-picker-field';
+import { MediaBulkPickerButton } from '@/components/media-bulk-picker';
 
 type ButtonValue = { label: string; href: string };
 type EditorProps = { data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void };
@@ -309,6 +310,8 @@ function GalleryEditor({ data, onChange }: EditorProps) {
                   <button onClick={() => setImages([...images, { src: '', alt: '', caption: '', category: cat }])} className="text-xs text-blue-600 hover:underline">+ Bild</button>
                   <button onClick={() => bulkRefs.current[cat]?.click()} disabled={bulkUploading === cat} className="text-xs text-blue-600 hover:underline disabled:opacity-50">{bulkUploading === cat ? '⏳ Hochladen...' : '+ Bulk Upload'}</button>
                   <input ref={(el) => { bulkRefs.current[cat] = el; }} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files, cat)} />
+                  <MediaBulkPickerButton onSelect={(imgs) => setImages(prev => [...prev, ...imgs.map(i => ({ src: i.src, alt: i.alt, caption: '', category: cat }))])} />
+                  <MediaBulkPickerButton onSelect={(imgs) => setImages(prev => [...prev, ...imgs.map(i => ({ src: i.src, alt: i.alt, caption: '', category: cat }))])} />
                 </div>
               </div>
             )}
