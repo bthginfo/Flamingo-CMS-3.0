@@ -2,7 +2,8 @@
 
 import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import { DynamicIcon } from '@/components/ui/icon-map';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -10,14 +11,14 @@ export function CtaBandSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
-  const cta = data.ctaPrimary as { label: string; href: string } | undefined;
+  const cta = data.ctaPrimary as { label: string; href: string; icon?: string } | undefined;
 
   if (styleVariant === 'modern') return <CtaModern headline={headline} subline={subline} badgeText={badgeText} cta={cta} />;
   if (styleVariant === 'bold') return <CtaBold headline={headline} subline={subline} badgeText={badgeText} cta={cta} />;
   return <CtaClassic headline={headline} subline={subline} badgeText={badgeText} cta={cta} />;
 }
 
-type CProps = { headline: string; subline: string; badgeText: string; cta?: { label: string; href: string } };
+type CProps = { headline: string; subline: string; badgeText: string; cta?: { label: string; href: string; icon?: string } };
 
 /* ─── CLASSIC: Gradient bg, centered, pill cta, floating orbs ─── */
 function CtaClassic({ headline, subline, badgeText, cta }: CProps) {
@@ -44,7 +45,7 @@ function CtaClassic({ headline, subline, badgeText, cta }: CProps) {
         {cta?.label && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }}>
             <a href={cta.href} className="group inline-flex items-center gap-2.5 bg-brand-accent px-8 py-4 rounded-full font-semibold text-gray-900 hover:shadow-glow-accent hover:-translate-y-0.5 transition-all">
-              {cta.label}<ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
             </a>
           </motion.div>
         )}
@@ -67,7 +68,7 @@ function CtaModern({ headline, subline, cta }: CProps) {
       {subline && <p className="text-lg text-gray-400 mt-6 max-w-2xl mx-auto">{subline}</p>}
       {cta?.label && (
         <a href={cta.href} className="group inline-flex items-center gap-3 text-gray-900 font-medium text-lg mt-10 border-b-2 border-gray-900 pb-1 hover:border-brand-accent hover:text-brand-accent transition-colors">
-          {cta.label}<ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
         </a>
       )}
     </motion.div>
@@ -89,7 +90,7 @@ function CtaBold({ headline, subline, badgeText, cta }: CProps) {
       </div>
       {cta?.label && (
         <a href={cta.href} className="inline-flex items-center gap-3 bg-brand-accent text-brand-dark font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] shrink-0">
-          {cta.label}<ArrowRight size={18} />
+          {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} />}
         </a>
       )}
     </motion.div>

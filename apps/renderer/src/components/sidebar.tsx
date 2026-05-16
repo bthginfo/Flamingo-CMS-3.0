@@ -17,7 +17,7 @@ const NAV = [
   { href: '/admin/news', label: 'News & Blog', icon: Newspaper },
   { href: '/admin/media', label: 'Mediathek', icon: ImageIcon },
   { href: '/admin/inbox', label: 'Posteingang', icon: Inbox },
-  { href: '/admin/rsvp', label: 'RSVP-Gäste', icon: Heart },
+  { href: '/admin/rsvp', label: 'RSVP-Gäste', icon: Heart, industry: 'wedding' },
   { href: '/admin/navigation', label: 'Navigation & Footer', icon: Navigation },
   { href: '/admin/brand', label: 'Marke & Design', icon: Palette },
   { href: '/admin/contact', label: 'Kontakt & Zeiten', icon: Phone },
@@ -32,7 +32,8 @@ const NAV = [
 
 const RENDERER_URL = '';
 
-export function Sidebar({ tenantId }: { tenantId: string }) {
+export function Sidebar({ tenantId, industry }: { tenantId: string; industry: string }) {
+  const filteredNav = NAV.filter(item => !item.industry || item.industry === industry);
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -57,7 +58,7 @@ export function Sidebar({ tenantId }: { tenantId: string }) {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
-        {NAV.map((item) => {
+        {filteredNav.map((item) => {
           const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
           return (
             <Link

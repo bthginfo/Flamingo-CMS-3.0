@@ -1,5 +1,7 @@
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
 import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle } from '@/lib/tenant-data';
+
+export const revalidate = 60;
 import { notFound } from 'next/navigation';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';

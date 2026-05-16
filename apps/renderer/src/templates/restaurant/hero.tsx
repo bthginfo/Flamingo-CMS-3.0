@@ -2,19 +2,24 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { ArrowRight, CheckCircle, Star, UtensilsCrossed } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
+import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 
 export function RestaurantHeroSection({ data, styleVariant }: SectionProps) {
   const headline = (data.headline as string) || 'Restaurant';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
+  const badgeIcon = (data.badgeIcon as string) || 'UtensilsCrossed';
+  const badgeStarsIcon = (data.badgeStarsIcon as string) || 'Star';
   const bgImage = (data.bgImage as string) || '';
+  const bgColor = (data.bgColor as string) || '';
+  const bgMode = (data.bgMode as string) || 'image';
   const trustItems = asList<string>(data.trustItems);
   const primaryCta = asButton(data.primaryCta);
   const secondaryCta = asButton(data.secondaryCta);
 
-  const props: HeroProps = { headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta };
+  const props: HeroProps = { headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta };
 
   if (styleVariant === 'modern') return <HeroModern {...props} />;
   if (styleVariant === 'bold') return <HeroBold {...props} />;
@@ -25,23 +30,29 @@ type HeroProps = {
   headline: string;
   subline: string;
   badgeText: string;
+  badgeIcon: string;
+  badgeStarsIcon: string;
   bgImage: string;
+  bgColor: string;
+  bgMode: string;
   trustItems: string[];
   primaryCta: ButtonValue;
   secondaryCta: ButtonValue;
 };
 
 /* ─── CLASSIC: Fullscreen bg, warm gradient overlay, grain texture, spotlight, staggered fade-in ─── */
-function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta }: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta }: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
       {/* Background image + overlays */}
-      {bgImage && (
+      {(bgMode === 'image' && bgImage) ? (
         <>
           <Image src={bgImage} alt="" fill priority className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-black/40" />
         </>
-      )}
+      ) : (bgMode === 'color' && bgColor) ? (
+        <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
+      ) : null}
       {/* Warm terra-cotta gradient overlay */}
       <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.5))' }} />
       {/* SVG grain texture */}
@@ -55,11 +66,13 @@ function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primar
           {badgeText && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
               className="inline-flex items-center gap-2.5 bg-white/[0.08] backdrop-blur-md border border-white/[0.12] rounded-full px-5 py-2.5 text-sm text-white/90 mb-8">
-              <UtensilsCrossed size={14} className="text-brand-accent" />
+              <DynamicIcon name={badgeIcon} size={14} className="text-brand-accent" />
               <span className="font-medium">{badgeText}</span>
-              <div className="flex -space-x-0.5 ml-1">
-                {[1, 2, 3, 4, 5].map(i => <Star key={i} size={11} className="fill-brand-accent text-brand-accent" />)}
-              </div>
+              {badgeStarsIcon && (
+                <div className="flex -space-x-0.5 ml-1">
+                  {[1, 2, 3, 4, 5].map(i => <DynamicIcon key={i} name={badgeStarsIcon} size={11} className="fill-brand-accent text-brand-accent" />)}
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -86,14 +99,14 @@ function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primar
               <a href={primaryCta.href || '#'}
                 className="group inline-flex items-center justify-center gap-2 rounded-full bg-brand-accent px-8 py-4 font-semibold text-gray-900 transition-all hover:shadow-lg hover:-translate-y-0.5">
                 {primaryCta.label}
-                <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" />
+                {primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} className="transition-transform group-hover:translate-x-1" />}
               </a>
             )}
             {secondaryCta.label && (
               <a href={secondaryCta.href || '#'}
                 className="inline-flex items-center justify-center gap-2 text-white/80 font-medium hover:text-white transition-colors text-sm">
                 {secondaryCta.label}
-                <ArrowRight size={14} />
+                {secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={14} />}
               </a>
             )}
           </motion.div>
@@ -116,7 +129,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primar
 }
 
 /* ─── MODERN: Split layout, text left / image right, minimalist, generous whitespace ─── */
-function HeroModern({ headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta }: HeroProps) {
+function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta }: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center -mt-[112px] pt-[112px] bg-white">
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-12 md:py-20">
@@ -138,7 +151,7 @@ function HeroModern({ headline, subline, badgeText, bgImage, trustItems, primary
               <a href={primaryCta.href || '#'}
                 className="group inline-flex items-center gap-3 text-gray-900 font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-brand-accent hover:text-brand-accent transition-colors">
                 {primaryCta.label}
-                <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                {primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
               </a>
             )}
             {secondaryCta.label && (
@@ -157,10 +170,12 @@ function HeroModern({ headline, subline, badgeText, bgImage, trustItems, primary
 
         {/* Image side */}
         <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
-          {bgImage ? (
+          {(bgMode === 'image' && bgImage) ? (
             <div className="relative aspect-[4/5] rounded-[0.5rem] overflow-hidden">
               <Image src={bgImage} alt="" fill className="object-cover" priority sizes="50vw" />
             </div>
+          ) : (bgMode === 'color' && bgColor) ? (
+            <div className="aspect-[4/5] rounded-[0.5rem] overflow-hidden" style={{ backgroundColor: bgColor }} />
           ) : (
             <div className="aspect-[4/5] rounded-[0.5rem] bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-100" />
           )}
@@ -171,17 +186,19 @@ function HeroModern({ headline, subline, badgeText, bgImage, trustItems, primary
 }
 
 /* ─── BOLD: Fullscreen dark bg, diagonal accent stripe, brutalist buttons, uppercase ─── */
-function HeroBold({ headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta }: HeroProps) {
+function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta }: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
       {/* Background image + dark overlay */}
-      {bgImage && (
+      {(bgMode === 'image' && bgImage) ? (
         <>
           <Image src={bgImage} alt="" fill priority className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-black/40" />
           <div className="absolute inset-0 bg-[#111827]/75" />
         </>
-      )}
+      ) : (bgMode === 'color' && bgColor) ? (
+        <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
+      ) : null}
 
       {/* Diagonal accent stripe */}
       <div className="absolute top-0 right-0 w-1/3 h-full bg-brand-accent/10 skew-x-[-12deg] translate-x-20" />
@@ -220,7 +237,7 @@ function HeroBold({ headline, subline, badgeText, bgImage, trustItems, primaryCt
             {primaryCta.label && (
               <a href={primaryCta.href || '#'}
                 className="inline-flex items-center gap-3 bg-brand-accent text-gray-900 font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
-                {primaryCta.label}<ArrowRight size={18} />
+                {primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} />}
               </a>
             )}
             {secondaryCta.label && (

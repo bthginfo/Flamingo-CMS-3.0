@@ -10,7 +10,7 @@ export function PublishFab() {
   const pathname = usePathname();
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
-  const { state: saveState, triggerSave } = useSaveState();
+  const { state: saveState, hasSaveHandler, triggerSave, reset } = useSaveState();
 
   // Page editor and collection item editor have their own FAB bars
   if (/^\/admin\/pages\/[^/]+$/.test(pathname)) return null;
@@ -24,6 +24,7 @@ export function PublishFab() {
         alert(result.error);
       } else {
         setPublished(true);
+        reset();
         setTimeout(() => setPublished(false), 5000);
       }
     } finally {
@@ -31,7 +32,10 @@ export function PublishFab() {
     }
   }
 
-  const showSaveHint = saveState === 'dirty' || saveState === 'saving';
+  // Show "Speichern" when dirty or saving, or idle with a registered handler (initial state)
+  const showSave = saveState !== 'saved' && hasSaveHandler;
+  // Show "Veröffentlichen" when saved (after a successful save)
+  const showPublish = saveState === 'saved' || !hasSaveHandler;
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
@@ -43,9 +47,13 @@ export function PublishFab() {
       >
         <ExternalLink size={16} /> Vorschau
       </a>
-      {showSaveHint ? (
-        <button onClick={triggerSave} className="flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-full shadow-lg text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all">
-          <Save size={16} /> Speichern
+      {showSave ? (
+        <button
+          onClick={triggerSave}
+          disabled={saveState === 'saving' || saveState === 'idle'}
+          className="flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-full shadow-lg text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Save size={16} /> {saveState === 'saving' ? 'Speichert…' : 'Speichern'}
         </button>
       ) : (
         <button

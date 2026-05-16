@@ -40,7 +40,7 @@ After creating all content, call the publish endpoint to make it live.`,
 
 function getSectionSchemas(industry: string): Record<string, object> {
   const schemas: Record<string, object> = {
-    hero: { fields: { headline: 'string', subline: 'string', badgeText: 'string?', bgImage: 'url?', primaryCta: '{ label: string, href: string }?', secondaryCta: '{ label: string, href: string }?', trustItems: 'string[]?', overlayColor: 'hex?', overlayOpacity: '0-1?' } },
+    hero: { fields: { headline: 'string', subline: 'string', badgeText: 'string?', badgeIcon: 'lucide-icon-name?', badgeStarsIcon: 'lucide-icon-name? (leer = keine Sterne)', bgImage: 'url?', primaryCta: '{ label: string, href: string }?', secondaryCta: '{ label: string, href: string }?', trustItems: 'string[]?', overlayColor: 'hex?', overlayOpacity: '0-1?' } },
     richText: { fields: { content: 'html-string' } },
     collectionHero: { fields: { headline: 'string', subline: 'string?', bgImage: 'url?', breadcrumb: '{ label: string, href: string }[]?', meta: 'string[]?' } },
   };

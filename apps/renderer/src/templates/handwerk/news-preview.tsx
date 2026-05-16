@@ -2,7 +2,8 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Calendar, ArrowRight } from 'lucide-react';
+import { Calendar } from 'lucide-react';
+import { DynamicIcon } from '@/components/ui/icon-map';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -16,6 +17,7 @@ export function NewsPreviewSection({ data }: Props) {
   const collectionKey = (data.collectionKey as string) || 'news';
   const linkLabel = (data.linkLabel as string) || 'Alle Beiträge';
   const linkHref = (data.linkHref as string) || `/${collectionKey}`;
+  const linkIcon = (data.linkIcon as string) || '';
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -33,7 +35,7 @@ export function NewsPreviewSection({ data }: Props) {
           {subline && <p className="section-subline">{subline}</p>}
         </div>
         <Link href={linkHref} className="hidden sm:flex items-center gap-1.5 text-sm font-medium text-brand-primary hover:underline">
-          {linkLabel} <ArrowRight size={14} />
+          {linkLabel} {linkIcon && <DynamicIcon name={linkIcon} size={14} />}
         </Link>
       </motion.div>
 
@@ -65,7 +67,7 @@ export function NewsPreviewSection({ data }: Props) {
       </div>
 
       <Link href={linkHref} className="sm:hidden flex items-center justify-center gap-1.5 mt-6 text-sm font-medium text-brand-primary">
-        {linkLabel} <ArrowRight size={14} />
+        {linkLabel} {linkIcon && <DynamicIcon name={linkIcon} size={14} />}
       </Link>
     </div>
   );

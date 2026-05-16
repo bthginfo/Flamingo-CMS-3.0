@@ -3,9 +3,6 @@ import { Inter, Outfit } from 'next/font/google';
 import { ConsentWrapper } from '@/components/consent-wrapper';
 import '../globals.css';
 
-// Disable Next.js fetch() data cache - ensures fresh DB reads after publish
-export const fetchCache = 'force-no-store';
-
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit', weight: ['400', '500', '600', '700', '800'] });
 

@@ -4,11 +4,11 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { HoverEffect } from '@/components/ui/hover-effect';
 import { DynamicIcon, MediaDisplay } from '@/components/ui/icon-map';
-import { ArrowRight } from 'lucide-react';
+
 import Link from 'next/link';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
-type CardData = { title: string; text?: string; icon?: string; image?: string; mediaType?: 'icon' | 'image'; href?: string };
+type CardData = { title: string; text?: string; icon?: string; image?: string; mediaType?: 'icon' | 'image'; href?: string; ctaIcon?: string };
 
 export function ServicesGridSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || '';
@@ -17,16 +17,17 @@ export function ServicesGridSection({ data, styleVariant }: Props) {
   const cards = (data.manualCards as CardData[]) || [];
   const ctaLabel = (data.ctaLabel as string) || '';
   const ctaHref = (data.ctaHref as string) || '';
+  const ctaIcon = (data.ctaIcon as string) || '';
 
-  if (styleVariant === 'modern') return <ServicesModern headline={headline} subline={subline} badgeText={badgeText} cards={cards} ctaLabel={ctaLabel} ctaHref={ctaHref} />;
-  if (styleVariant === 'bold') return <ServicesBold headline={headline} subline={subline} badgeText={badgeText} cards={cards} ctaLabel={ctaLabel} ctaHref={ctaHref} />;
-  return <ServicesClassic headline={headline} subline={subline} badgeText={badgeText} cards={cards} ctaLabel={ctaLabel} ctaHref={ctaHref} />;
+  if (styleVariant === 'modern') return <ServicesModern headline={headline} subline={subline} badgeText={badgeText} cards={cards} ctaLabel={ctaLabel} ctaHref={ctaHref} ctaIcon={ctaIcon} />;
+  if (styleVariant === 'bold') return <ServicesBold headline={headline} subline={subline} badgeText={badgeText} cards={cards} ctaLabel={ctaLabel} ctaHref={ctaHref} ctaIcon={ctaIcon} />;
+  return <ServicesClassic headline={headline} subline={subline} badgeText={badgeText} cards={cards} ctaLabel={ctaLabel} ctaHref={ctaHref} ctaIcon={ctaIcon} />;
 }
 
-type SProps = { headline: string; subline: string; badgeText: string; cards: CardData[]; ctaLabel: string; ctaHref: string };
+type SProps = { headline: string; subline: string; badgeText: string; cards: CardData[]; ctaLabel: string; ctaHref: string; ctaIcon: string };
 
 /* ─── CLASSIC: Rounded cards, soft shadows, icon on top, 3-column, hover lift ─── */
-function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHref }: SProps) {
+function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHref, ctaIcon }: SProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -51,7 +52,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="text-center mt-12">
           <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-brand-primary text-white font-semibold rounded-full hover:bg-brand-dark transition-all shadow-md hover:shadow-lg">
-            {ctaLabel} <ArrowRight size={16} />
+            {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={16} />}
           </Link>
         </motion.div>
       )}
@@ -60,7 +61,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
 }
 
 /* ─── MODERN: Borderless, only bottom line, 2-column, generous padding, outline icons ─── */
-function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref }: SProps) {
+function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref, ctaIcon }: SProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -89,7 +90,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
                 {card.text && <p className="text-gray-400 mt-2 leading-relaxed">{card.text}</p>}
                 {card.href && (
                   <span className="inline-flex items-center gap-1 text-sm text-brand-primary mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    Mehr erfahren <ArrowRight size={14} />
+                    Mehr erfahren {card.icon && <DynamicIcon name={card.icon} size={14} />}
                   </span>
                 )}
               </div>
@@ -111,7 +112,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="mt-16">
           <Link href={ctaHref} className="inline-flex items-center gap-2 text-sm font-medium text-brand-primary border-b border-brand-primary pb-1 hover:text-brand-dark hover:border-brand-dark transition-colors">
-            {ctaLabel} <ArrowRight size={14} />
+            {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={14} />}
           </Link>
         </motion.div>
       )}
@@ -120,7 +121,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
 }
 
 /* ─── BOLD: Sharp edges, thick border, hard-offset shadow, 4-column tight grid ─── */
-function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref }: SProps) {
+function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, ctaIcon }: SProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -148,7 +149,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref }
               {card.text && <p className="text-gray-500 text-sm mt-2 leading-relaxed">{card.text}</p>}
               {card.href && (
                 <span className="inline-flex items-center gap-1 text-xs font-bold uppercase text-brand-accent mt-3">
-                  Details <ArrowRight size={12} />
+                  Details {card.ctaIcon && <DynamicIcon name={card.ctaIcon} size={12} />}
                 </span>
               )}
             </>
@@ -169,7 +170,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref }
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="mt-10">
           <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-brand-dark text-brand-accent font-bold uppercase tracking-wide border-3 border-brand-dark shadow-[4px_4px_0_#f39c12] hover:shadow-[-4px_4px_0_#f39c12] transition-all">
-            {ctaLabel} <ArrowRight size={16} />
+            {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={16} />}
           </Link>
         </motion.div>
       )}

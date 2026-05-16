@@ -50,11 +50,6 @@ export function SocialForm({ initial }: { initial: Record<string, string> }) {
           </div>
         ))}
       </div>
-      <div className="flex justify-end pt-2">
-        <button type="submit" disabled={saving} className="admin-btn-primary">
-          {saving ? 'Speichern…' : 'Speichern'}
-        </button>
-      </div>
     </form>
   );
 }

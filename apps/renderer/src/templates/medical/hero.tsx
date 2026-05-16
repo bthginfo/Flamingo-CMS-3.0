@@ -2,14 +2,18 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { AlertCircle, ArrowRight, Shield, Stethoscope, Heart, CheckCircle, Cross } from 'lucide-react';
+import { Stethoscope, Heart, CheckCircle, Cross } from 'lucide-react';
+import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 
 export function MedicalHeroSection({ data, styleVariant }: SectionProps) {
   const headline = (data.headline as string) || 'Praxis';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || 'Medizin';
+  const badgeIcon = (data.badgeIcon as string) || 'Shield';
   const bgImage = (data.bgImage as string) || '';
+  const bgColor = (data.bgColor as string) || '';
+  const bgMode = (data.bgMode as string) || 'image';
   const specialtyLabel = (data.specialtyLabel as string) || '';
   const emergencyHint = (data.emergencyHint as string) || '';
   const trustItems = asList<string>(data.trustItems);
@@ -17,7 +21,7 @@ export function MedicalHeroSection({ data, styleVariant }: SectionProps) {
   const emergencyCta = asButton(data.emergencyCta);
   const secondaryCta = asButton(data.secondaryCta);
 
-  const props = { headline, subline, badgeText, bgImage, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta };
+  const props = { headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta };
 
   if (styleVariant === 'modern') return <HeroModern {...props} />;
   if (styleVariant === 'bold') return <HeroBold {...props} />;
@@ -25,35 +29,38 @@ export function MedicalHeroSection({ data, styleVariant }: SectionProps) {
 }
 
 type HeroProps = {
-  headline: string; subline: string; badgeText: string; bgImage: string;
+  headline: string; subline: string; badgeText: string; badgeIcon: string; bgImage: string;
+  bgColor: string; bgMode: string;
   specialtyLabel: string; emergencyHint: string; trustItems: string[];
   primaryCta: ButtonValue; emergencyCta: ButtonValue; secondaryCta: ButtonValue;
 };
 
 /* ─── Classic: fullscreen teal gradient, heartbeat SVG, stagger, shield badge ─── */
-function HeroClassic({ headline, subline, badgeText, bgImage, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta }: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta }: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
-      {bgImage && (
+      {(bgMode === 'image' && bgImage) ? (
         <>
           <Image src={bgImage} alt="" fill priority className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-gradient-to-b from-teal-900/70 via-teal-800/50 to-cyan-900/60" />
         </>
-      )}
+      ) : (bgMode === 'color' && bgColor) ? (
+        <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
+      ) : null}
       <svg className="absolute bottom-0 left-0 w-full text-[#ffffff]" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
         <path fill="currentColor" d="M0,120 L0,90 Q120,70 240,80 L480,80 L520,30 L560,100 L600,60 L640,80 Q900,90 1080,80 Q1260,70 1440,85 L1440,120Z" />
       </svg>
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-7xl flex-col items-center justify-center px-6 py-12 md:py-20 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-4 flex items-center gap-2">
-          <Shield className="text-cyan-300" size={20} />
+          <DynamicIcon name={badgeIcon} className="text-cyan-300" size={20} />
           {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-cyan-300">{badgeText}</p>}
           <Stethoscope className="text-cyan-300" size={20} />
         </motion.div>
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-white sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>{headline}</motion.h1>
         {subline && <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-7 max-w-2xl text-lg leading-8 text-white/80" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>{subline}</motion.p>}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-cyan-400 px-6 py-3 font-semibold text-teal-950">{primaryCta.label}<ArrowRight size={17} /></a>}
-          {emergencyCta.label && <a href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 font-semibold text-white"><AlertCircle size={17} />{emergencyCta.label}</a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-cyan-400 px-6 py-3 font-semibold text-teal-950">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+          {emergencyCta.label && <a href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 font-semibold text-white">{emergencyCta.icon && <DynamicIcon name={emergencyCta.icon} size={17} />}{emergencyCta.label}</a>}
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-white/35 px-6 py-3 font-semibold text-white">{secondaryCta.label}</a>}
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-white/80">
@@ -67,7 +74,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, specialtyLabel, em
 }
 
 /* ─── Modern: split layout, clinical clean, light blue-white ─── */
-function HeroModern({ headline, subline, badgeText, bgImage, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta }: HeroProps) {
+function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta }: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-white">
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-10 px-6 py-12 md:py-20 lg:grid-cols-2">
@@ -76,8 +83,8 @@ function HeroModern({ headline, subline, badgeText, bgImage, specialtyLabel, eme
           <h1 className="mt-5 text-3xl md:text-5xl font-light leading-[0.95] text-gray-900 sm:text-6xl lg:text-7xl">{headline}</h1>
           {subline && <p className="mt-7 max-w-lg text-lg font-light leading-8 text-gray-600">{subline}</p>}
           <div className="mt-8 flex flex-wrap gap-3">
-            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white">{primaryCta.label}<ArrowRight size={17} /></a>}
-            {emergencyCta.label && <a href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-3 font-semibold text-white"><AlertCircle size={17} />{emergencyCta.label}</a>}
+            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+            {emergencyCta.label && <a href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-3 font-semibold text-white">{emergencyCta.icon && <DynamicIcon name={emergencyCta.icon} size={17} />}{emergencyCta.label}</a>}
             {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-black/15 px-5 py-3 font-semibold text-gray-900">{secondaryCta.label}</a>}
           </div>
           <div className="mt-10 flex flex-wrap gap-3 text-sm text-gray-600">
@@ -87,7 +94,11 @@ function HeroModern({ headline, subline, badgeText, bgImage, specialtyLabel, eme
           </div>
         </div>
         <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-black/10">
-          {bgImage && <Image src={bgImage} alt="" fill priority className="object-cover" sizes="50vw" />}
+          {(bgMode === 'image' && bgImage) ? (
+            <Image src={bgImage} alt="" fill priority className="object-cover" sizes="50vw" />
+          ) : (bgMode === 'color' && bgColor) ? (
+            <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
+          ) : null}
         </div>
       </div>
     </section>
@@ -95,27 +106,29 @@ function HeroModern({ headline, subline, badgeText, bgImage, specialtyLabel, eme
 }
 
 /* ─── Bold: fullscreen dark, teal diagonal stripe, brutalist ─── */
-function HeroBold({ headline, subline, badgeText, bgImage, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta }: HeroProps) {
+function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta }: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-gray-950">
-      {bgImage && (
+      {(bgMode === 'image' && bgImage) ? (
         <>
           <Image src={bgImage} alt="" fill priority className="object-cover opacity-40" sizes="100vw" />
           <div className="absolute inset-0 bg-gray-950/60" />
         </>
-      )}
+      ) : (bgMode === 'color' && bgColor) ? (
+        <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
+      ) : null}
       <div className="absolute right-0 top-0 h-full w-1/3 origin-top-right skew-x-[-8deg] bg-teal-500/20" aria-hidden="true" />
       <div className="absolute left-10 top-1/4 opacity-10" aria-hidden="true"><Cross size={200} className="text-teal-400" /></div>
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-7xl flex-col justify-center px-6 py-12 md:py-20">
         <div className="flex items-center gap-3">
-          <Shield className="text-teal-400" size={28} />
+          <DynamicIcon name={badgeIcon} className="text-teal-400" size={28} />
           {badgeText && <p className="text-xs font-black uppercase tracking-widest text-teal-400">{badgeText}</p>}
         </div>
         <h1 className="mt-5 max-w-5xl text-3xl md:text-5xl font-black uppercase leading-[0.95] text-white sm:text-6xl lg:text-8xl">{headline}</h1>
         {subline && <p className="mt-7 max-w-2xl text-lg leading-8 text-white/70">{subline}</p>}
         <div className="mt-8 flex flex-wrap gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-teal-400 bg-teal-400 px-6 py-3 font-black uppercase text-gray-950 shadow-[4px_4px_0_theme(colors.teal.700)]">{primaryCta.label}<ArrowRight size={17} /></a>}
-          {emergencyCta.label && <a href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-red-500 bg-red-500 px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_theme(colors.red.800)]"><AlertCircle size={17} />{emergencyCta.label}</a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-teal-400 bg-teal-400 px-6 py-3 font-black uppercase text-gray-950 shadow-[4px_4px_0_theme(colors.teal.700)]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+          {emergencyCta.label && <a href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-red-500 bg-red-500 px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_theme(colors.red.800)]">{emergencyCta.icon && <DynamicIcon name={emergencyCta.icon} size={17} />}{emergencyCta.label}</a>}
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-white/40 px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(255,255,255,0.15)]">{secondaryCta.label}</a>}
         </div>
         <div className="mt-10 flex flex-wrap gap-3 text-sm text-white/70">

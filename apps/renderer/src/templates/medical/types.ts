@@ -4,7 +4,7 @@ export type SectionProps = {
   styleVariant?: string;
 };
 
-export type ButtonValue = { label?: string; href?: string };
+export type ButtonValue = { label?: string; href?: string; icon?: string };
 
 export function asButton(value: unknown): ButtonValue {
   return (value as ButtonValue | undefined) ?? {};

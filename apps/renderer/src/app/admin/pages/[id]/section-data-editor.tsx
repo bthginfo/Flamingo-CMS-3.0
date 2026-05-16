@@ -5,6 +5,7 @@ import { Save } from 'lucide-react';
 import { ImageUploadField } from '@/components/image-upload-field';
 import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { IconPickerField } from '@/components/icon-picker-field';
+import { RichTextEditorField } from '@/components/rich-text-editor';
 
 // Reports current editor data to parent on every change (skip initial render).
 function useReport(data: Record<string, unknown>, onChange: (d: Record<string, unknown>) => void) {
@@ -55,7 +56,11 @@ function HeroEditor({ data, onChange }: EditorProps) {
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
     badgeText: (data.badgeText as string) || '',
+    badgeIcon: (data.badgeIcon as string) || '',
+    badgeStarsIcon: (data.badgeStarsIcon as string) || '',
+    bgMode: (data.bgMode as string) || 'image',
     bgImage: (data.bgImage as string) || '',
+    bgColor: (data.bgColor as string) || '#1a1a2e',
     overlayColor: (data.overlayColor as string) || '#000000',
     overlayOpacity: (data.overlayOpacity as number) ?? 0,
     trustItems: (data.trustItems as string[]) || [],
@@ -69,19 +74,37 @@ function HeroEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
-      <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
-      {d.bgImage && (
-        <div className="grid grid-cols-2 gap-3">
-          <label className="block">
-            <span className="text-xs font-medium text-zinc-600">Overlay-Farbe</span>
-            <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} />
-          </label>
-          <label className="block">
-            <span className="text-xs font-medium text-zinc-600">Overlay-Deckkraft ({Math.round(d.overlayOpacity * 100)}%)</span>
-            <input type="range" min="0" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} />
-          </label>
+      <IconPickerField label="Badge-Icon" value={d.badgeIcon} onChange={(v) => setD({ ...d, badgeIcon: v })} />
+      <IconPickerField label="Badge-Sterne-Icon (leer = keine Sterne)" value={d.badgeStarsIcon} onChange={(v) => setD({ ...d, badgeStarsIcon: v })} />
+      <div>
+        <label className="text-xs font-medium text-zinc-600 mb-1 block">Hintergrund</label>
+        <div className="flex gap-2 mb-3">
+          <button type="button" onClick={() => setD({ ...d, bgMode: 'image' })} className={`px-3 py-1.5 text-xs rounded-md transition-colors ${d.bgMode === 'image' ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Bild</button>
+          <button type="button" onClick={() => setD({ ...d, bgMode: 'color' })} className={`px-3 py-1.5 text-xs rounded-md transition-colors ${d.bgMode === 'color' ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Farbe</button>
         </div>
-      )}
+        {d.bgMode === 'image' ? (
+          <>
+            <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
+            {d.bgImage && (
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <label className="block">
+                  <span className="text-xs font-medium text-zinc-600">Overlay-Farbe</span>
+                  <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-medium text-zinc-600">Overlay-Deckkraft ({Math.round(d.overlayOpacity * 100)}%)</span>
+                  <input type="range" min="0" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} />
+                </label>
+              </div>
+            )}
+          </>
+        ) : (
+          <label className="block">
+            <span className="text-xs font-medium text-zinc-600">Hintergrundfarbe</span>
+            <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.bgColor} onChange={(e) => setD({ ...d, bgColor: e.target.value })} />
+          </label>
+        )}
+      </div>
       <div className="space-y-2">
         <label className="text-xs font-medium text-zinc-600">Trust-Elemente</label>
         {d.trustItems.map((item, i) => (
@@ -750,7 +773,7 @@ function RichTextEditor({ data, onChange }: EditorProps) {
     <div className="space-y-3">
       <Field label="Headline (optional)" value={headline} onChange={setHeadline} />
       <div>
-        <label className="text-xs font-medium text-zinc-600 mb-1 block">Inhalt (HTML)</label>
+        <label className="text-xs font-medium text-zinc-600 mb-1 block">HTML-Code</label>
         <textarea
           className="admin-input w-full min-h-[300px] font-mono text-xs leading-relaxed"
           value={content}
@@ -759,6 +782,19 @@ function RichTextEditor({ data, onChange }: EditorProps) {
         />
         <p className="text-[10px] text-zinc-400 mt-1">HTML-Tags: &lt;h2&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;a&gt; werden unterstützt.</p>
       </div>
+    </div>
+  );
+}
+
+function FreeTextEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [content, setContent] = useState((data.content as string) || '');
+  useReport({ headline, content }, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline (optional)" value={headline} onChange={setHeadline} />
+      <RichTextEditorField label="Inhalt" value={content} onChange={setContent} />
     </div>
   );
 }
@@ -1089,6 +1125,7 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   portfolio: PortfolioEditor,
   team: TeamEditor,
   richText: RichTextEditor,
+  freeText: FreeTextEditor,
   headerBanner: HeaderBannerEditor,
   collectionHero: CollectionHeroEditor,
   textImage: TextImageEditor,

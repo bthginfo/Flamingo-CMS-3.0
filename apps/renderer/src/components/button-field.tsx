@@ -2,10 +2,11 @@
 
 import { useState, useEffect, createContext, useContext } from 'react';
 import { ExternalLink, FileText } from 'lucide-react';
+import { IconPickerField } from '@/components/icon-picker-field';
 import { getPagesAction } from '@/app/admin/pages/actions';
 import { getCollectionLinksAction } from '@/app/admin/collections/actions';
 
-type ButtonValue = { label: string; href: string };
+type ButtonValue = { label: string; href: string; icon?: string };
 type CollectionGroup = { key: string; label: string; items: { title: string; slug: string }[] };
 type SectionAnchor = { id: string; type: string; anchorId: string | null };
 
@@ -103,6 +104,7 @@ export function ButtonField({ label: fieldLabel, value, onChange }: { label: str
           )}
         </label>
       </div>
+      <IconPickerField label="Suffix-Icon (optional)" value={value.icon || ''} onChange={(v) => onChange({ ...value, icon: v })} />
     </div>
   );
 }

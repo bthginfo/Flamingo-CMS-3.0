@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import Link from 'next/link';
 
@@ -49,7 +48,7 @@ export function CtaLinksSection({ data }: Props) {
                 <div className="font-semibold text-gray-900 group-hover:text-brand-primary transition-colors">{link.label}</div>
                 {link.description && <div className="text-sm text-gray-500 mt-0.5 truncate">{link.description}</div>}
               </div>
-              <ArrowRight size={18} className="text-gray-300 group-hover:text-brand-primary group-hover:translate-x-1 transition-all shrink-0" />
+              {link.icon && <DynamicIcon name={link.icon} size={18} className="text-gray-300 group-hover:text-brand-primary group-hover:translate-x-1 transition-all shrink-0" />}
             </Link>
           </motion.div>
         ))}

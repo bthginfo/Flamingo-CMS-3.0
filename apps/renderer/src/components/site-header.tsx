@@ -73,10 +73,11 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta }: { n
         )}>
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-[72px]">
             <Link href="/" className="flex items-center gap-2 font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || !darkBg) ? brand.primaryColor : 'white' }}>
-              {brand.logoUrl ? (
+              {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
                 <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto object-contain" />
-              ) : (
-                brand.companyName || 'Firmenname'
+              )}
+              {(brand.logoDisplay === 'logoAndName' || brand.logoDisplay === 'name' || !brand.logoUrl) && (
+                <span>{brand.companyName || 'Firmenname'}</span>
               )}
             </Link>
 
@@ -132,10 +133,11 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta }: { n
               {/* Close button */}
               <div className="flex items-center justify-between h-[72px] px-6">
                 <Link href="/" className="flex items-center gap-2 font-display font-bold text-xl tracking-tight" style={{ color: brand.primaryColor }}>
-                  {brand.logoUrl ? (
+                  {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
                     <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto object-contain" />
-                  ) : (
-                    brand.companyName || 'Firmenname'
+                  )}
+                  {(brand.logoDisplay === 'logoAndName' || brand.logoDisplay === 'name' || !brand.logoUrl) && (
+                    <span>{brand.companyName || 'Firmenname'}</span>
                   )}
                 </Link>
                 <button onClick={() => setMobileOpen(false)} className="p-2 rounded-lg text-gray-700 hover:bg-gray-100">

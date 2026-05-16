@@ -71,6 +71,12 @@ html {
   [data-style] section:first-child {
     background-color: transparent;
   }
+
+  /* Preserve newlines from textarea input in frontend rendering */
+  [data-style] section p,
+  [data-style] section span {
+    white-space: pre-line;
+  }
 }
 
 @layer components {

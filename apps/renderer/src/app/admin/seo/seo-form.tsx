@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { getSeoGlobalAction, saveSeoGlobalAction } from './actions';
-import { Save } from 'lucide-react';
 
 export function SeoForm() {
   const [pending, startTransition] = useTransition();
@@ -81,11 +80,6 @@ export function SeoForm() {
         {field('Canonical-Basis-URL', 'canonicalBase', { placeholder: 'https://www.mueller-soehne.de' })}
         {field('Locale', 'locale', { placeholder: 'de_DE' })}
         {field('Robots', 'robots', { placeholder: 'index,follow', hint: 'z.B. index,follow oder noindex,nofollow' })}
-      </div>
-      <div className="flex justify-end pt-2">
-        <button onClick={handleSave} disabled={pending} className="admin-btn-primary flex items-center gap-2">
-          <Save size={16} /> Speichern
-        </button>
       </div>
     </div>
   );

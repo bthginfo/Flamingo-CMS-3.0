@@ -25,9 +25,10 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-14 border-b border-white/[0.08]">
           {/* Brand block */}
           <div className="lg:col-span-4 space-y-5">
-            {brand.logoUrl ? (
+            {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
               <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={180} height={50} className="h-10 w-auto object-contain brightness-0 invert" />
-            ) : (
+            )}
+            {(brand.logoDisplay === 'logoAndName' || brand.logoDisplay === 'name' || !brand.logoUrl) && (
               <div className="font-display font-bold text-2xl">{brand.companyName}</div>
             )}
             {brand.tagline && (

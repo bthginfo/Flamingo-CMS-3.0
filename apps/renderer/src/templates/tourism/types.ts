@@ -7,6 +7,7 @@ export type SectionProps = {
 export type ButtonValue = {
   label?: string;
   href?: string;
+  icon?: string;
 };
 
 export function asButton(value: unknown): ButtonValue {

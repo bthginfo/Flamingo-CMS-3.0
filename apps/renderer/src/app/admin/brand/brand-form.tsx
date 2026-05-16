@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { ImageUploadField } from '@/components/image-upload-field';
 
-type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; headingFont?: string; bodyFont?: string };
+type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string };
 
 const GOOGLE_FONTS = [
   { value: '', label: 'Standard (Outfit / Inter)' },
@@ -39,6 +39,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     secondaryColor: initial.secondaryColor || '#2e86c1',
     accentColor: initial.accentColor || '#f39c12',
     logoUrl: initial.logoUrl || '',
+    logoDisplay: initial.logoDisplay || 'logoAndName',
     headingFont: initial.headingFont || '',
     bodyFont: initial.bodyFont || '',
   });
@@ -96,6 +97,14 @@ export function BrandForm({ initial }: { initial: BrandData }) {
           value={form.logoUrl}
           onChange={(url) => setForm(f => ({ ...f, logoUrl: url }))}
         />
+        <div>
+          <label className="admin-label">Logo-Anzeige in Navigation & Footer</label>
+          <select className="admin-input" value={form.logoDisplay} onChange={e => setForm(f => ({ ...f, logoDisplay: e.target.value }))}>
+            <option value="logo">Nur Logo</option>
+            <option value="logoAndName">Logo + Firmenname</option>
+            <option value="name">Nur Firmenname</option>
+          </select>
+        </div>
       </div>
 
       <div className="admin-card p-6 space-y-5">
@@ -162,12 +171,6 @@ export function BrandForm({ initial }: { initial: BrandData }) {
             )}
           </div>
         </div>
-      </div>
-
-      <div className="flex justify-end">
-        <button type="submit" disabled={saving} className="admin-btn-primary">
-          {saving ? 'Speichern…' : 'Änderungen speichern'}
-        </button>
       </div>
     </form>
   );

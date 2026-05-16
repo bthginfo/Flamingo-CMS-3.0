@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { DynamicIcon } from '@/components/ui/icon-map';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -14,6 +14,7 @@ type ProjectItem = {
   description?: string;
   image: string;
   href?: string;
+  icon?: string;
   stats?: { label: string; value: string }[];
 };
 
@@ -24,6 +25,7 @@ export function PortfolioSection({ data }: Props) {
   const projects = (data.projects as ProjectItem[]) || [];
   const ctaLabel = (data.ctaLabel as string) || '';
   const ctaHref = (data.ctaHref as string) || '';
+  const ctaIcon = (data.ctaIcon as string) || '';
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -86,7 +88,7 @@ export function PortfolioSection({ data }: Props) {
                 )}
                 {project.href && (
                   <span className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-primary mt-4 group-hover:underline">
-                    Projekt ansehen <ArrowRight size={14} />
+                    Projekt ansehen {project.icon && <DynamicIcon name={project.icon} size={14} />}
                   </span>
                 )}
               </div>
@@ -98,7 +100,7 @@ export function PortfolioSection({ data }: Props) {
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }} className="text-center mt-12">
           <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-brand-primary text-white font-semibold rounded-full hover:bg-brand-dark transition-all shadow-md hover:shadow-lg">
-            {ctaLabel} <ArrowRight size={16} />
+            {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={16} />}
           </Link>
         </motion.div>
       )}

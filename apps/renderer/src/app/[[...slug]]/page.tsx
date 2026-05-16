@@ -1,5 +1,8 @@
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
 import { getTenantNav, getTenantFooter, getTenantBrand, getTenantSeoGlobal, getTenantSeoPage, getTenantStyle } from '@/lib/tenant-data';
+
+// ISR: revalidate every 60s, on-demand revalidation via publish webhook
+export const revalidate = 60;
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { notFound } from 'next/navigation';

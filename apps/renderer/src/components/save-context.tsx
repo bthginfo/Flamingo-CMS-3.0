@@ -7,6 +7,7 @@ type SaveState = 'idle' | 'dirty' | 'saving' | 'saved';
 
 type SaveContextType = {
   state: SaveState;
+  hasSaveHandler: boolean;
   markDirty: () => void;
   markSaving: () => void;
   markSaved: () => void;
@@ -17,6 +18,7 @@ type SaveContextType = {
 
 const SaveContext = createContext<SaveContextType>({
   state: 'idle',
+  hasSaveHandler: false,
   markDirty: () => {},
   markSaving: () => {},
   markSaved: () => {},
@@ -27,21 +29,22 @@ const SaveContext = createContext<SaveContextType>({
 
 export function SaveProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<SaveState>('idle');
+  const [hasSaveHandler, setHasSaveHandler] = useState(false);
   const pathname = usePathname();
   const saveFnRef = useRef<(() => void) | null>(null);
 
   // Reset save state on navigation
-  useEffect(() => { setState('idle'); saveFnRef.current = null; }, [pathname]);
+  useEffect(() => { setState('idle'); saveFnRef.current = null; setHasSaveHandler(false); }, [pathname]);
 
   const markDirty = useCallback(() => setState('dirty'), []);
   const markSaving = useCallback(() => setState('saving'), []);
   const markSaved = useCallback(() => setState('saved'), []);
   const reset = useCallback(() => setState('idle'), []);
-  const registerSave = useCallback((fn: () => void) => { saveFnRef.current = fn; }, []);
+  const registerSave = useCallback((fn: () => void) => { saveFnRef.current = fn; setHasSaveHandler(true); }, []);
   const triggerSave = useCallback(() => { saveFnRef.current?.(); }, []);
 
   return (
-    <SaveContext.Provider value={{ state, markDirty, markSaving, markSaved, reset, registerSave, triggerSave }}>
+    <SaveContext.Provider value={{ state, hasSaveHandler, markDirty, markSaving, markSaved, reset, registerSave, triggerSave }}>
       {children}
     </SaveContext.Provider>
   );

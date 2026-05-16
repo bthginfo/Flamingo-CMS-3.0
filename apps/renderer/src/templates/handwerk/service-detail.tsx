@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { DynamicIcon } from '@/components/ui/icon-map';
-import { ArrowRight, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 type ServiceItem = { title: string; text: string; image?: string; icon?: string; mediaType?: 'icon' | 'image'; features?: string[]; ctaLabel?: string; ctaHref?: string };
@@ -59,7 +59,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 text-brand-primary font-medium hover:gap-3 transition-all">
-                  {item.ctaLabel}<ArrowRight size={16} />
+                  {item.ctaLabel}{item.icon && <DynamicIcon name={item.icon} size={16} />}
                 </a>
               )}
             </div>
@@ -100,7 +100,7 @@ function ServiceModern({ headline, subline, badgeText, items }: SProps) {
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 text-gray-900 font-medium mt-6 border-b border-gray-900 pb-0.5 hover:border-brand-accent hover:text-brand-accent transition-colors">
-                  {item.ctaLabel}<ArrowRight size={14} />
+                  {item.ctaLabel}{item.icon && <DynamicIcon name={item.icon} size={14} />}
                 </a>
               )}
             </div>
@@ -145,7 +145,7 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 mt-4 font-bold uppercase text-sm text-brand-dark hover:text-brand-accent transition-colors">
-                  {item.ctaLabel}<ArrowRight size={14} />
+                  {item.ctaLabel}{item.icon && <DynamicIcon name={item.icon} size={14} />}
                 </a>
               )}
             </div>

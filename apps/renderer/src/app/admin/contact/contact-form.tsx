@@ -67,11 +67,6 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
           <label className="admin-label">Adresse</label>
           <input className="admin-input" value={contact.address} onChange={e => setContact(c => ({ ...c, address: e.target.value }))} placeholder="Musterstraße 1, 50667 Köln" />
         </div>
-        <div className="flex justify-end pt-2">
-          <button type="submit" disabled={saving} className="admin-btn-primary">
-            {saving ? 'Speichern…' : 'Kontaktdaten speichern'}
-          </button>
-        </div>
       </form>
 
       <div className="admin-card p-6 space-y-5">
@@ -90,11 +85,6 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
         <button type="button" onClick={() => setHours([...hours, { day: '', hours: '' }])} className="admin-btn-secondary">
           <Plus size={16} /> Zeile hinzufügen
         </button>
-        <div className="flex justify-end pt-2">
-          <button type="button" onClick={handleSaveHours} disabled={saving} className="admin-btn-primary">
-            {saving ? 'Speichern…' : 'Öffnungszeiten speichern'}
-          </button>
-        </div>
       </div>
     </div>
   );

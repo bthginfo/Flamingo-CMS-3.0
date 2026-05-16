@@ -80,12 +80,6 @@ export function NavigationForm({ initial, initialCta }: { initial: NavItem[]; in
           </div>
         </div>
       </div>
-
-      <div className="flex justify-end pt-4">
-        <button type="button" onClick={handleSave} disabled={saving} className="admin-btn-primary">
-          {saving ? 'Speichern…' : 'Navigation speichern'}
-        </button>
-      </div>
     </div>
   );
 }

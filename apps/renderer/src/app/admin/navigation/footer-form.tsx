@@ -93,12 +93,6 @@ export function FooterForm({ initial }: { initial: FooterData }) {
           + Rechtlichen Link hinzufügen
         </button>
       </div>
-
-      <div className="flex justify-end pt-4">
-        <button type="button" onClick={handleSave} disabled={saving} className="admin-btn-primary">
-          {saving ? 'Speichern…' : 'Footer speichern'}
-        </button>
-      </div>
     </div>
   );
 }

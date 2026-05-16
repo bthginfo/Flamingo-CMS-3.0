@@ -1,7 +1,8 @@
 'use client';
 
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Shield, Phone, Star, CheckCircle } from 'lucide-react';
+import { Phone, CheckCircle } from 'lucide-react';
+import { DynamicIcon } from '@/components/ui/icon-map';
 import { Spotlight } from '@/components/ui/spotlight';
 import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
 import Image from 'next/image';
@@ -12,44 +13,55 @@ export function HeroSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || 'Willkommen';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
+  const badgeIcon = (data.badgeIcon as string) || 'Shield';
+  const badgeStarsIcon = (data.badgeStarsIcon as string) || 'Star';
   const trustItems = (data.trustItems as string[]) || [];
   const bgImage = (data.bgImage as string) || '';
-  const primaryCta = data.primaryCta as { label: string; href: string } | undefined;
-  const secondaryCta = data.secondaryCta as { label: string; href: string } | undefined;
+  const bgColor = (data.bgColor as string) || '';
+  const bgMode = (data.bgMode as string) || 'image';
+  const primaryCta = data.primaryCta as { label: string; href: string; icon?: string } | undefined;
+  const secondaryCta = data.secondaryCta as { label: string; href: string; icon?: string } | undefined;
   const overlayColor = (data.overlayColor as string) || '';
   const overlayOpacity = (data.overlayOpacity as number) ?? 0;
 
-  if (styleVariant === 'modern') return <HeroModern headline={headline} subline={subline} badgeText={badgeText} trustItems={trustItems} bgImage={bgImage} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} />;
-  if (styleVariant === 'bold') return <HeroBold headline={headline} subline={subline} badgeText={badgeText} trustItems={trustItems} bgImage={bgImage} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} />;
-  return <HeroClassic headline={headline} subline={subline} badgeText={badgeText} trustItems={trustItems} bgImage={bgImage} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} />;
+  if (styleVariant === 'modern') return <HeroModern headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} badgeStarsIcon={badgeStarsIcon} trustItems={trustItems} bgImage={bgImage} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} />;
+  if (styleVariant === 'bold') return <HeroBold headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} badgeStarsIcon={badgeStarsIcon} trustItems={trustItems} bgImage={bgImage} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} />;
+  return <HeroClassic headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} badgeStarsIcon={badgeStarsIcon} trustItems={trustItems} bgImage={bgImage} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} />;
 }
 
 type HeroProps = {
   headline: string;
   subline: string;
   badgeText: string;
+  badgeIcon: string;
+  badgeStarsIcon: string;
   trustItems: string[];
   bgImage: string;
-  primaryCta?: { label: string; href: string };
-  secondaryCta?: { label: string; href: string };
+  bgColor: string;
+  bgMode: string;
+  primaryCta?: { label: string; href: string; icon?: string };
+  secondaryCta?: { label: string; href: string; icon?: string };
   overlayColor?: string;
   overlayOpacity?: number;
 };
 
 /* ─── CLASSIC: Fullscreen gradient overlay, spotlight, floating orbs, pill buttons ─── */
-function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primaryCta, secondaryCta, overlayColor, overlayOpacity }: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity }: HeroProps) {
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
   const y = useTransform(scrollY, [0, 400], [0, 100]);
+  const useBgImage = bgMode === 'image' && bgImage;
 
   return (
     <div className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px]">
-      {bgImage ? (
+      {useBgImage ? (
         <>
           <Image src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
           <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/90 via-brand-dark/70 to-brand-dark/50" />
           {overlayColor && overlayOpacity ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : null}
         </>
+      ) : bgMode === 'color' && bgColor ? (
+        <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
       ) : (
         <>
           <div className="absolute inset-0 bg-hero-gradient" />
@@ -66,11 +78,13 @@ function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primar
           {badgeText && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
               className="inline-flex items-center gap-2.5 bg-white/[0.07] backdrop-blur-md border border-white/[0.12] rounded-full px-5 py-2.5 text-sm text-white/90 mt-6">
-              <Shield size={15} className="text-brand-accent" />
+              <DynamicIcon name={badgeIcon} size={15} className="text-brand-accent" />
               <span className="font-medium">{badgeText}</span>
-              <div className="flex -space-x-0.5 ml-2">
-                {[1,2,3,4,5].map(i => <Star key={i} size={12} className="fill-brand-accent text-brand-accent" />)}
-              </div>
+              {badgeStarsIcon && (
+                <div className="flex -space-x-0.5 ml-2">
+                  {[1,2,3,4,5].map(i => <DynamicIcon key={i} name={badgeStarsIcon} size={12} className="fill-brand-accent text-brand-accent" />)}
+                </div>
+              )}
             </motion.div>
           )}
           {subline && (
@@ -80,12 +94,12 @@ function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primar
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.0 }} className="flex flex-col sm:flex-row gap-4 mb-10 md:mb-16">
             {primaryCta?.label && (
               <a href={primaryCta.href} className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-full bg-brand-accent px-8 py-4 font-semibold text-gray-900 transition-all duration-300 hover:shadow-glow-accent hover:-translate-y-0.5 text-base">
-                <span className="relative z-10 flex items-center gap-2.5">{primaryCta.label}<ArrowRight size={18} className="transition-transform group-hover:translate-x-1" /></span>
+                <span className="relative z-10 flex items-center gap-2.5">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} className="transition-transform group-hover:translate-x-1" />}</span>
                 <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.3),transparent)] bg-[length:200%_100%]" />
               </a>
             )}
             {secondaryCta?.label && (
-              <a href={secondaryCta.href} className="btn-secondary group !rounded-full"><Phone size={18} />{secondaryCta.label}</a>
+              <a href={secondaryCta.href} className="btn-secondary group !rounded-full">{secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={18} />}{secondaryCta.label}</a>
             )}
           </motion.div>
           {trustItems.length > 0 && (
@@ -103,7 +117,7 @@ function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primar
 }
 
 /* ─── MODERN: Split layout, text left / image right, generous whitespace, understated ─── */
-function HeroModern({ headline, subline, badgeText, trustItems, bgImage, primaryCta, secondaryCta, overlayColor, overlayOpacity }: HeroProps) {
+function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity }: HeroProps) {
   return (
     <div className="relative min-h-screen flex items-center -mt-[112px] pt-[112px] bg-white">
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-12 md:py-20">
@@ -120,7 +134,7 @@ function HeroModern({ headline, subline, badgeText, trustItems, bgImage, primary
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta?.label && (
               <a href={primaryCta.href} className="group inline-flex items-center gap-3 text-gray-900 font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-brand-accent hover:text-brand-accent transition-colors">
-                {primaryCta.label}<ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                {primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
               </a>
             )}
             {secondaryCta?.label && (
@@ -136,11 +150,13 @@ function HeroModern({ headline, subline, badgeText, trustItems, bgImage, primary
           )}
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
-          {bgImage ? (
+          {(bgMode === 'image' && bgImage) ? (
             <div className="relative aspect-[4/5] rounded-[0.5rem] overflow-hidden">
               <Image src={bgImage} alt="" fill className="object-cover" priority sizes="50vw" />
               {overlayColor && overlayOpacity ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : null}
             </div>
+          ) : (bgMode === 'color' && bgColor) ? (
+            <div className="aspect-[4/5] rounded-[0.5rem]" style={{ backgroundColor: bgColor }} />
           ) : (
             <div className="aspect-[4/5] rounded-[0.5rem] bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-100" />
           )}
@@ -151,10 +167,11 @@ function HeroModern({ headline, subline, badgeText, trustItems, bgImage, primary
 }
 
 /* ─── BOLD: Full-width dark block, diagonal accent stripe, sharp edges, uppercase ─── */
-function HeroBold({ headline, subline, badgeText, trustItems, bgImage, primaryCta, secondaryCta, overlayColor, overlayOpacity }: HeroProps) {
+function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity }: HeroProps) {
+  const useBgImage = bgMode === 'image' && bgImage;
   return (
-    <div className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-brand-dark">
-      {bgImage && (
+    <div className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-brand-dark" style={bgMode === 'color' && bgColor ? { backgroundColor: bgColor } : undefined}>
+      {useBgImage && (
         <>
           <Image src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
           <div className="absolute inset-0 bg-brand-dark/80" />
@@ -182,7 +199,7 @@ function HeroBold({ headline, subline, badgeText, trustItems, bgImage, primaryCt
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta?.label && (
               <a href={primaryCta.href} className="inline-flex items-center gap-3 bg-brand-accent text-brand-dark font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
-                {primaryCta.label}<ArrowRight size={18} />
+                {primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} />}
               </a>
             )}
             {secondaryCta?.label && (

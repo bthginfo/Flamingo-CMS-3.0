@@ -24,11 +24,6 @@ export function ScriptsForm() {
           <p className="text-xs text-zinc-400 mt-1">Wird im &lt;head&gt; eingefügt (nur nach Consent).</p>
         </div>
       </div>
-      <div className="flex justify-end pt-2">
-        <button type="button" onClick={() => toast.info('Script-Engine wird in M17 implementiert')} className="admin-btn-primary">
-          Speichern
-        </button>
-      </div>
     </div>
   );
 }
