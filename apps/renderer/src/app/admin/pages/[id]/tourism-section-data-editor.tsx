@@ -86,9 +86,44 @@ function DownloadGuidesEditor({ data, onChange }: EditorProps) {
 }
 
 function GalleryEditor({ data, onChange }: EditorProps) {
-  const [d, setD] = useState({ ...basicData(data), images: arr(data.images).map(galleryFromData) });
-  useReport(d, onChange);
-  return <div className="space-y-3"><Basics d={d} setD={setD} /><Repeater items={d.images} addLabel="+ Bild" onAdd={() => setD({ ...d, images: [...d.images, galleryFromData({})] })} render={(item, index) => <div className="space-y-3"><ImageUploadField label="Bild" value={item.src} onChange={(v) => updateItem(d, setD, 'images', index, { ...item, src: v })} /><Field label="Alt" value={item.alt} onChange={(v) => updateItem(d, setD, 'images', index, { ...item, alt: v })} /><Field label="Caption" value={item.caption} onChange={(v) => updateItem(d, setD, 'images', index, { ...item, caption: v })} /><Field label="Kategorie" value={item.category} onChange={(v) => updateItem(d, setD, 'images', index, { ...item, category: v })} /></div>} /></div>;
+  const [d, setD] = useState({ ...basicData(data) });
+  const [categories, setCategories] = useState<string[]>(() => [...new Set(arr(data.images).map(i => str(i.category)).filter(Boolean))]);
+  const [newCat, setNewCat] = useState('');
+  const [images, setImages] = useState(arr(data.images).map(galleryFromData));
+  const [openCats, setOpenCats] = useState<Record<string, boolean>>({});
+  const [bulkUploading, setBulkUploading] = useState<string | null>(null);
+  const bulkRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  useReport({ ...d, images }, onChange);
+
+  function addCategory() { const name = newCat.trim(); if (!name || categories.includes(name)) return; setCategories([...categories, name]); setOpenCats({ ...openCats, [name]: true }); setNewCat(''); }
+  function removeCategory(cat: string) { setCategories(categories.filter(c => c !== cat)); setImages(images.filter(img => img.category !== cat)); }
+
+  async function handleBulkUpload(files: FileList, category: string) {
+    setBulkUploading(category);
+    const { upload } = await import('@vercel/blob/client');
+    const { resizeImage } = await import('@/components/image-upload-field');
+    const newImgs: { src: string; alt: string; caption: string; category: string }[] = [];
+    for (const file of Array.from(files)) { if (!file.type.startsWith('image/')) continue; try { const optimized = await resizeImage(file, 1920, 0.85); const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, { access: 'public', handleUploadUrl: '/api/upload' }); newImgs.push({ src: blob.url, alt: file.name.replace(/\.[^.]+$/, ''), caption: '', category }); } catch (e) { console.error(e); } }
+    setImages(prev => [...prev, ...newImgs]); setBulkUploading(null);
+  }
+
+  const uncategorized = images.filter(img => !img.category || !categories.includes(img.category));
+  return (
+    <div className="space-y-3">
+      <Basics d={d} setD={setD} />
+      <div>
+        <p className="text-xs font-medium text-zinc-600 mb-2">Kategorien</p>
+        <div className="flex items-center gap-2 mb-2"><input className="admin-input flex-1" placeholder="Neue Kategorie…" value={newCat} onChange={(e) => setNewCat(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCategory())} /><button onClick={addCategory} className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 whitespace-nowrap">+ Hinzufügen</button></div>
+      </div>
+      {categories.map(cat => { const catImgs = images.filter(img => img.category === cat); const isOpen = openCats[cat]; return (
+        <div key={cat} className="border border-zinc-200 rounded-lg overflow-hidden">
+          <div className="flex items-center justify-between px-3 py-2 bg-zinc-50 cursor-pointer" onClick={() => setOpenCats({ ...openCats, [cat]: !isOpen })}><span className="text-sm font-medium text-zinc-700">{cat} <span className="text-zinc-400 font-normal">({catImgs.length})</span></span><div className="flex items-center gap-2"><button onClick={(e) => { e.stopPropagation(); removeCategory(cat); }} className="text-xs text-red-400 hover:text-red-600">Entfernen</button><span className="text-zinc-400 text-xs">{isOpen ? '▲' : '▼'}</span></div></div>
+          {isOpen && (<div className="p-3 space-y-2">{catImgs.map((img) => { const i = images.indexOf(img); return (<div key={i} className="relative border border-zinc-100 rounded p-3"><button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button><ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} /><div className="grid grid-cols-2 gap-2 mt-2"><Field label="Alt" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} /><Field label="Caption" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} /></div></div>); })}<div className="flex items-center gap-3 pt-1"><button onClick={() => setImages([...images, { src: '', alt: '', caption: '', category: cat }])} className="text-xs text-blue-600 hover:underline">+ Bild</button><button onClick={() => bulkRefs.current[cat]?.click()} disabled={bulkUploading === cat} className="text-xs text-blue-600 hover:underline disabled:opacity-50">{bulkUploading === cat ? '⏳ Hochladen...' : '+ Bulk Upload'}</button><input ref={(el) => { bulkRefs.current[cat] = el; }} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files, cat)} /></div></div>)}
+        </div>
+      ); })}
+      {uncategorized.length > 0 && (<div className="border border-amber-200 rounded-lg p-3"><p className="text-xs font-medium text-amber-700 mb-2">Ohne Kategorie ({uncategorized.length})</p>{uncategorized.map((img) => { const i = images.indexOf(img); return (<div key={i} className="relative border border-zinc-100 rounded p-3 mb-2"><button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button><ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} /><div className="grid grid-cols-3 gap-2 mt-2"><Field label="Alt" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} /><Field label="Caption" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} /><label className="block"><span className="text-gray-600 text-xs">Kategorie</span><select className="admin-input mt-1 w-full" value={img.category} onChange={(e) => setImages(images.map((im, idx) => idx === i ? { ...im, category: e.target.value } : im))}><option value="">—</option>{categories.map(c => <option key={c} value={c}>{c}</option>)}</select></label></div></div>); })}</div>)}
+    </div>
+  );
 }
 
 function FaqEditor({ data, onChange }: EditorProps) {
