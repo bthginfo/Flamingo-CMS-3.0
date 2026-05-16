@@ -99,10 +99,13 @@ function HeroEditor({ data, onChange }: EditorProps) {
             )}
           </>
         ) : (
-          <label className="block">
+          <div className="block">
             <span className="text-xs font-medium text-zinc-600">Hintergrundfarbe</span>
-            <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.bgColor} onChange={(e) => setD({ ...d, bgColor: e.target.value })} />
-          </label>
+            <div className="flex items-center gap-2 mt-1">
+              <input type="color" className="h-9 w-12 p-1 cursor-pointer rounded border border-zinc-200" value={d.bgColor} onChange={(e) => setD({ ...d, bgColor: e.target.value })} />
+              <input type="text" className="admin-input flex-1" value={d.bgColor} onChange={(e) => setD({ ...d, bgColor: e.target.value })} placeholder="#1a1a2e" />
+            </div>
+          </div>
         )}
       </div>
       <div className="space-y-2">
