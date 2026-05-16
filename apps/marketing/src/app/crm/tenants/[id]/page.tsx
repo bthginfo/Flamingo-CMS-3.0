@@ -7,6 +7,8 @@ import { ArrowLeft, Globe, FileText, Layers, ExternalLink, Shield, Server, Cloud
 import { TenantActions } from './tenant-actions';
 import { DomainManager } from './domain-manager';
 import { DesignEditor } from './design-editor';
+import { PatManager } from './pat-manager';
+import { getActiveToken } from './pat-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,11 +19,12 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
   const [tenant] = await db.select().from(tenants).where(eq(tenants.id, id));
   if (!tenant) notFound();
 
-  const [domains, tenantPages, [snapCount], settings] = await Promise.all([
+  const [domains, tenantPages, [snapCount], settings, activeToken] = await Promise.all([
     db.select().from(tenantDomains).where(eq(tenantDomains.tenantId, id)),
     db.select().from(pages).where(eq(pages.tenantId, id)),
     db.select({ count: count() }).from(publishedSnapshots).where(eq(publishedSnapshots.tenantId, id)),
     db.select().from(globalSettings).where(eq(globalSettings.tenantId, id)),
+    getActiveToken(id),
   ]);
 
   const brand = settings[0]?.brand as Record<string, unknown> | undefined;
@@ -144,6 +147,9 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
               </div>
             </div>
           </div>
+
+          {/* PAT Manager */}
+          <PatManager tenantId={id} activeToken={activeToken} />
 
           {/* Quick links */}
           <div className="crm-card p-5 space-y-3">

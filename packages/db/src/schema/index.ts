@@ -384,3 +384,18 @@ export const rsvpResponses = pgTable('rsvp_responses', {
 }, (t) => [
   index('rsvp_responses_tenant_idx').on(t.tenantId),
 ]);
+
+// ─── Tenant API Tokens (PAT for AI content fill) ─────────────────────
+export const tenantApiTokens = pgTable('tenant_api_tokens', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  tokenHash: varchar('token_hash', { length: 128 }).notNull(),
+  label: varchar('label', { length: 100 }).notNull().default('AI Content Token'),
+  lastUsedAt: timestamp('last_used_at', { withTimezone: true }),
+  expiresAt: timestamp('expires_at', { withTimezone: true }),
+  revoked: boolean('revoked').notNull().default(false),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('tenant_api_tokens_tenant_idx').on(t.tenantId),
+  index('tenant_api_tokens_hash_idx').on(t.tokenHash),
+]);
