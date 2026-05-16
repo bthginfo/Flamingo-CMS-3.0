@@ -23,6 +23,7 @@ export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'serviceDetail', label: 'Leistungs-Detail', description: 'Detaillierte Leistungsbeschreibung' },
   { type: 'portfolio', label: 'Portfolio', description: 'Referenzprojekte-Galerie' },
   { type: 'team', label: 'Team', description: 'Team-Mitglieder' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
   { type: 'headerBanner', label: 'Header-Banner', description: 'Obere Hinweisleiste' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
@@ -36,6 +37,7 @@ export const RESTAURANT_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'openingHours', label: 'Öffnungszeiten', description: 'Restaurantzeiten, Küchenzeiten und Hinweise' },
   { type: 'ambience', label: 'Ambiente', description: 'Atmosphäre, Bilder und Highlights' },
   { type: 'events', label: 'Events', description: 'Themenabende, Feiern und Buchungs-CTAs' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
@@ -54,6 +56,7 @@ export const HOTEL_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'testimonials', label: 'Bewertungen', description: 'Gästestimmen, Rating und Quelle' },
   { type: 'faq', label: 'FAQ', description: 'Check-in, Parken, Buchung, Storno' },
   { type: 'contact', label: 'Kontakt', description: 'Kontaktformular, Infokarten und Route' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
@@ -73,6 +76,7 @@ export const TOURISM_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'gallery', label: 'Galerie', description: 'Destinationsbilder mit Kategorien und Captions' },
   { type: 'faq', label: 'FAQ', description: 'Häufige Fragen fuer Besucher' },
   { type: 'tourismContact', label: 'Tourismus-Kontakt', description: 'Tourismusbuero, Formular, Infokarten und CTAs' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
@@ -92,6 +96,7 @@ export const SALON_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'bookingCta', label: 'Buchungs-CTA', description: 'Onlinebuchung, Telefon, WhatsApp und Hinweise' },
   { type: 'locationContact', label: 'Kontakt & Standort', description: 'Adresse, Karte, Formular und CTAs' },
   { type: 'faq', label: 'FAQ', description: 'Häufige Fragen' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
@@ -115,6 +120,7 @@ export const MEDICAL_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'valuesGrid', label: 'Praxiswerte', description: 'Haltung, Betreuung und Versorgungsanspruch' },
   { type: 'locationContact', label: 'Kontakt & Anfahrt', description: 'Adresse, Karte, Formular und Kontaktkarten' },
   { type: 'faq', label: 'FAQ', description: 'Häufige Patientenfragen' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
@@ -132,6 +138,7 @@ export const WEDDING_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'weddingMenu', label: 'Menü', description: 'Hochzeitsmenü mit Gängen' },
   { type: 'faq', label: 'FAQ', description: 'Häufige Fragen der Gäste' },
   { type: 'gallery', label: 'Galerie', description: 'Fotos vom Paar / Engagement-Shooting' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
