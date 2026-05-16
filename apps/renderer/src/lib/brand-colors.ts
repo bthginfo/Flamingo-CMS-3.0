@@ -24,7 +24,7 @@ function hexToRgb(hex: string): string {
   return `${parseInt(hex.slice(1, 3), 16)} ${parseInt(hex.slice(3, 5), 16)} ${parseInt(hex.slice(5, 7), 16)}`;
 }
 
-export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?: string; accentColor?: string }): Record<string, string> {
+export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?: string; accentColor?: string; topBarColor?: string; footerColor?: string }): Record<string, string> {
   const vars: Record<string, string> = {};
   const primary = brand.primaryColor;
   if (!primary || !/^#[0-9a-fA-F]{6}$/.test(primary)) return vars;
@@ -34,6 +34,8 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   vars['--brand-dark'] = darken(primary, 0.45);
   vars['--brand-secondary'] = brand.secondaryColor || lighten(primary, 0.3);
   vars['--brand-accent'] = brand.accentColor || '#f39c12';
+  vars['--brand-topbar'] = brand.topBarColor || vars['--brand-dark'];
+  vars['--brand-footer'] = brand.footerColor || vars['--brand-dark'];
 
   return vars;
 }

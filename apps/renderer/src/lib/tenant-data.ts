@@ -6,7 +6,7 @@ export type NavItem = { label: string; href: string; type?: string };
 export type NavCta = { label: string; href: string };
 export type FooterColumn = { title: string; items: { text: string; href?: string }[] };
 export type FooterData = { columns: FooterColumn[]; legalLinks: { label: string; href: string }[] };
-export type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: 'logo' | 'logoAndName' | 'name'; headingFont?: string; bodyFont?: string };
+export type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: 'logo' | 'logoAndName' | 'name'; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string };
 export type SocialLinks = Record<string, string>;
 export type ContactData = { phone?: string; email?: string; address?: string };
 

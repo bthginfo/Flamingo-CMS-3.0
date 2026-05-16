@@ -37,7 +37,8 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta }: { n
       <motion.div
         animate={{ y: scrolled ? -40 : 0, opacity: scrolled ? 0 : 1 }}
         transition={{ duration: 0.3 }}
-        className="fixed top-0 left-0 right-0 z-[60] bg-brand-dark text-white/80 text-xs py-2.5"
+        className="fixed top-0 left-0 right-0 z-[60] text-white/80 text-xs py-2.5"
+      style={{ backgroundColor: 'var(--brand-topbar, var(--brand-dark))' }}
       >
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-5">

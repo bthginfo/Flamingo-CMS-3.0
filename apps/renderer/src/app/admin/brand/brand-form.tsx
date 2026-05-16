@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { ImageUploadField } from '@/components/image-upload-field';
 
-type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string };
+type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string };
 
 const GOOGLE_FONTS = [
   { value: '', label: 'Standard (Outfit / Inter)' },
@@ -42,6 +42,8 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     logoDisplay: initial.logoDisplay || 'logoAndName',
     headingFont: initial.headingFont || '',
     bodyFont: initial.bodyFont || '',
+    topBarColor: initial.topBarColor || '',
+    footerColor: initial.footerColor || '',
   });
   const [saving, setSaving] = useState(false);
   const { markDirty, markSaved } = useSaveState();
@@ -140,6 +142,29 @@ export function BrandForm({ initial }: { initial: BrandData }) {
             <div className="w-16 h-16 rounded-xl shadow-sm" style={{ background: form.primaryColor }} />
             <div className="w-16 h-16 rounded-xl shadow-sm" style={{ background: form.secondaryColor }} />
             <div className="w-16 h-16 rounded-xl shadow-sm" style={{ background: form.accentColor }} />
+          </div>
+        </div>
+      </div>
+
+      <div className="admin-card p-6 space-y-5">
+        <h2 className="font-semibold text-lg">Bereichsfarben (optional)</h2>
+        <p className="text-sm text-zinc-500">Standardmäßig wird eine dunklere Abwandlung der Primärfarbe verwendet. Hier können Sie eigene Farben festlegen.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label className="admin-label">Top-Banner Farbe</label>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.topBarColor || form.primaryColor} onChange={e => setForm(f => ({ ...f, topBarColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.topBarColor} onChange={e => setForm(f => ({ ...f, topBarColor: e.target.value }))} placeholder="Leer = Abwandlung Primärfarbe" />
+              {form.topBarColor && <button type="button" onClick={() => setForm(f => ({ ...f, topBarColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Footer Farbe</label>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.footerColor || form.primaryColor} onChange={e => setForm(f => ({ ...f, footerColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.footerColor} onChange={e => setForm(f => ({ ...f, footerColor: e.target.value }))} placeholder="Leer = Abwandlung Primärfarbe" />
+              {form.footerColor && <button type="button" onClick={() => setForm(f => ({ ...f, footerColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
           </div>
         </div>
       </div>
