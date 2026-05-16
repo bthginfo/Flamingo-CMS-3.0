@@ -13,7 +13,8 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
   const socials = Object.entries(socialLinks || {}).filter(([, url]) => url);
 
   return (
-    <footer className="relative text-white overflow-hidden" style={{ backgroundColor: 'var(--brand-footer, var(--brand-dark))' }}>
+    <footer id="site-footer" className="relative overflow-hidden" style={{ backgroundColor: 'var(--brand-footer, var(--brand-dark))', color: 'var(--brand-footer-text, white)' }}>
+      <style dangerouslySetInnerHTML={{ __html: `#site-footer a { color: var(--brand-footer-link, rgb(156 163 175)) } #site-footer a:hover { opacity: 0.8 }` }} />
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-brand-primary/[0.04] rounded-full blur-[100px]" />
