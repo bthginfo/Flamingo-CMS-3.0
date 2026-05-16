@@ -50,7 +50,7 @@ export function UspStripSection({ data }: Props) {
               className="bg-white p-8 lg:p-10 text-center group hover:bg-gradient-to-br hover:from-brand-primary/[0.02] hover:to-brand-secondary/[0.02] transition-all duration-500"
             >
               {item.icon && (
-                <div className="text-4xl mb-4 transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1">
+                <div className="flex items-center justify-center text-4xl mb-4 transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1">
                   <DynamicIcon name={item.icon} size={32} className="text-brand-primary" />
                 </div>
               )}
