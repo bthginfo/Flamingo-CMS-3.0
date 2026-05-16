@@ -77,7 +77,7 @@ function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVi
   const typeInfo = sectionTypes.find(t => t.type === section.type);
 
   return (
-    <div ref={setNodeRef} style={style} className={`admin-card mb-3 p-0 overflow-hidden ${expanded ? 'ring-2 ring-blue-500/20 border-blue-300' : ''}`}>
+    <div ref={setNodeRef} style={style} className={`admin-card mb-3 p-0 ${expanded ? 'ring-2 ring-blue-500/20 border-blue-300' : ''}`}>
       <div className={`flex items-center px-4 py-3 border-b cursor-pointer ${expanded ? 'bg-blue-50' : 'bg-gray-50 hover:bg-gray-100'} transition-colors`} onClick={() => setExpanded(!expanded)}>
         <button {...attributes} {...listeners} className="cursor-grab mr-3 text-gray-400 hover:text-gray-600" onClick={(e) => e.stopPropagation()}>
           <GripVertical size={18} />
