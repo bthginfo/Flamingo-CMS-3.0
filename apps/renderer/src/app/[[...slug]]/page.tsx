@@ -1,6 +1,7 @@
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
 import { getTenantNav, getTenantFooter, getTenantBrand, getTenantSeoGlobal, getTenantSeoPage, getTenantStyle } from '@/lib/tenant-data';
 import { getStyleCssVars } from '@/lib/styles';
+import { getBrandCssVars } from '@/lib/brand-colors';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { SectionRenderer } from '@/components/section-renderer';
@@ -132,8 +133,10 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
     ...(brand.companyName && { isPartOf: { '@type': 'WebSite', name: brand.companyName } }),
   };
 
+  const brandCssVars = getBrandCssVars(brand);
+
   return (
-    <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
+    <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
       {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
       {brand.bodyFont && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />

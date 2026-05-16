@@ -5,6 +5,7 @@ import { SectionRenderer } from '@/components/section-renderer';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { getStyleCssVars } from '@/lib/styles';
+import { getBrandCssVars } from '@/lib/brand-colors';
 import type { SnapshotSection } from '@/lib/snapshot';
 import { DemoFab } from './demo-fab';
 import type { DemoSiteData } from './demo-data';
@@ -23,9 +24,10 @@ export function DemoPageShell({ sections, industry, industryKey, defaultStyle, s
   const [style, setStyle] = useState(defaultStyle);
   const styleCssVars = getStyleCssVars(industry, style);
   const { navItems, cta, brand, contact, socialLinks, footer } = siteData;
+  const brandCssVars = getBrandCssVars(brand);
 
   return (
-    <div data-style={style} style={styleCssVars as React.CSSProperties}>
+    <div data-style={style} style={{ ...styleCssVars, ...brandCssVars } as React.CSSProperties}>
       <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={darkBg} cta={cta} />
       <main>
         {sections.map((section) => (
