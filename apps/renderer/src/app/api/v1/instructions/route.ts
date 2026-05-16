@@ -28,6 +28,10 @@ export async function GET(req: NextRequest) {
       createPage: { method: 'POST', path: '/api/v1/content/pages', description: 'Create a new page with sections' },
       updatePage: { method: 'PUT', path: '/api/v1/content/pages/:id', description: 'Update a page (title, sections)' },
       deletePage: { method: 'DELETE', path: '/api/v1/content/pages/:id', description: 'Delete a page' },
+      listCollections: { method: 'GET', path: '/api/v1/content/collections', description: 'List all collections' },
+      createCollectionItem: { method: 'POST', path: '/api/v1/content/collections/:key/items', description: 'Create a collection item (title, slug, data with sections)' },
+      updateCollectionItem: { method: 'PUT', path: '/api/v1/content/collections/:key/items/:id', description: 'Update a collection item' },
+      deleteCollectionItem: { method: 'DELETE', path: '/api/v1/content/collections/:key/items/:id', description: 'Delete a collection item' },
       publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content as snapshot' },
     },
     instructions: `You are an AI assistant filling content for a "${auth.tenant.industry}" website called "${auth.tenant.name}". 
@@ -40,8 +44,11 @@ After creating all content, call the publish endpoint to make it live.`,
 
 function getSectionSchemas(industry: string): Record<string, object> {
   const schemas: Record<string, object> = {
-    hero: { fields: { headline: 'string', subline: 'string', badgeText: 'string?', badgeIcon: 'lucide-icon-name?', badgeStarsIcon: 'lucide-icon-name? (leer = keine Sterne)', bgImage: 'url?', primaryCta: '{ label: string, href: string }?', secondaryCta: '{ label: string, href: string }?', trustItems: 'string[]?', overlayColor: 'hex?', overlayOpacity: '0-1?' } },
+    hero: { fields: { headline: 'string', subline: 'string', badgeText: 'string?', badgeIcon: 'lucide-icon-name?', badgeStarsIcon: 'lucide-icon-name? (leer = keine Sterne)', bgImage: 'url?', bgColor: 'hex? (alternative bg color if no image)', bgMode: '"image"|"color"|"gradient" (default gradient)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', trustItems: 'string[]?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string? (CSS object-position, e.g. "center 30%")' } },
     richText: { fields: { content: 'html-string' } },
+    freeText: { fields: { content: 'rich-text (Tiptap JSON or HTML)' } },
+    videoEmbed: { fields: { headline: 'string?', subline: 'string?', videoUrl: 'youtube/vimeo URL', aspectRatio: '"16:9"|"4:3"|"1:1"?' } },
+    textImage: { fields: { headline: 'string', text: 'string (html)', image: 'url', imagePosition: '"left"|"right"?', cta: '{ label: string, href: string }?' } },
     collectionHero: { fields: { headline: 'string', subline: 'string?', bgImage: 'url?', breadcrumb: '{ label: string, href: string }[]?', meta: 'string[]?' } },
   };
 
@@ -79,6 +86,13 @@ function getSectionSchemas(industry: string): Record<string, object> {
       reservation: { fields: { headline: 'string', text: 'string?', cta: '{ label: string, href: string }?' } },
       openingHours: { fields: { headline: 'string', days: '{ label: string, hours: string }[]' } },
       signatureDishes: { fields: { headline: 'string', dishes: '{ name: string, description: string, image?: url, price?: string }[]' } },
+    });
+  } else if (industry === 'photography') {
+    Object.assign(schemas, {
+      portfolioGallery: { fields: { headline: 'string?', images: '{ src: url, alt: string, category: string, location?: string }[]' } },
+      servicePackages: { fields: { headline: 'string', subline: 'string?', packages: '{ title: string, price: string, description?: string, features: string[], cta?: { label: string, href: string }, highlighted?: boolean }[]' } },
+      photographerAbout: { fields: { headline: 'string', text: 'string (html)', image: 'url?', signature: 'string?', stats: '{ label: string, value: string }[]?' } },
+      shootingProcess: { fields: { headline: 'string', subline: 'string?', steps: '{ icon?: lucide-icon-name, title: string, text: string }[]' } },
     });
   }
 
