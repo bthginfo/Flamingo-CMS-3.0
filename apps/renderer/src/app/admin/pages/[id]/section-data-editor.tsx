@@ -254,7 +254,7 @@ function CtaLinksEditor({ data, onChange }: EditorProps) {
           <DetailLinkField label="Link" value={link.href} onChange={(v) => updateLink(i, 'href', v)} />
           <div className="grid grid-cols-2 gap-3">
             <IconPickerField label="Icon" value={link.icon} onChange={(v) => updateLink(i, 'icon', v)} />
-            <Field label="Beschreibung" value={link.description} onChange={(v) => updateLink(i, 'description', v)} />
+            <Field label="Beschreibung" value={link.description} onChange={(v) => updateLink(i, 'description', v)} multiline />
           </div>
         </div>
       ))}
@@ -399,7 +399,7 @@ function UspStripEditor({ data, onChange }: EditorProps) {
           <div className="grid grid-cols-3 gap-3">
             <IconPickerField label="Icon" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
             <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
-            <Field label="Text" value={item.text} onChange={(v) => update(i, 'text', v)} />
+            <Field label="Text" value={item.text} onChange={(v) => update(i, 'text', v)} multiline />
           </div>
         </div>
       ))}
@@ -442,7 +442,7 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
           <button onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Titel" value={card.title} onChange={(v) => update(i, 'title', v)} />
-            <Field label="Beschreibung" value={card.text} onChange={(v) => update(i, 'text', v)} />
+            <Field label="Beschreibung" value={card.text} onChange={(v) => update(i, 'text', v)} multiline />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <SelectField label="Medientyp" value={card.mediaType} options={['icon', 'image']} onChange={(v) => update(i, 'mediaType', v)} />
@@ -482,7 +482,7 @@ function ProcessStepsEditor({ data, onChange }: EditorProps) {
           <button onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-3 gap-3">
             <Field label="Titel" value={step.title} onChange={(v) => update(i, 'title', v)} />
-            <Field label="Beschreibung" value={step.text} onChange={(v) => update(i, 'text', v)} />
+            <Field label="Beschreibung" value={step.text} onChange={(v) => update(i, 'text', v)} multiline />
             <IconPickerField label="Icon" value={step.icon} onChange={(v) => update(i, 'icon', v)} />
           </div>
         </div>
@@ -570,7 +570,7 @@ function ServiceDetailEditor({ data, onChange }: EditorProps) {
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
-            <Field label="Beschreibung" value={item.text} onChange={(v) => update(i, 'text', v)} />
+            <Field label="Beschreibung" value={item.text} onChange={(v) => update(i, 'text', v)} multiline />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <SelectField label="Medientyp" value={item.mediaType} options={['icon', 'image']} onChange={(v) => update(i, 'mediaType', v)} />
@@ -708,7 +708,7 @@ function TeamEditor({ data, onChange }: EditorProps) {
           <button onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Titel" value={v.title} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, title: val } : vl))} />
-            <Field label="Text" value={v.text} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, text: val } : vl))} />
+            <Field label="Text" value={v.text} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, text: val } : vl))} multiline />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <SelectField label="Medientyp" value={v.mediaType} options={['icon', 'image']} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, mediaType: val } : vl))} />
@@ -860,7 +860,7 @@ function TextImageEditor({ data, onChange }: EditorProps) {
               <Field label="Titel" value={item.title} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, title: v } : it))} />
               <IconPickerField label="Icon" value={item.icon} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, icon: v } : it))} />
             </div>
-            <Field label="Text" value={item.text} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, text: v } : it))} />
+            <Field label="Text" value={item.text} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, text: v } : it))} multiline />
           </div>
         ))}
         <button onClick={() => setItems([...items, { icon: '', title: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Punkt hinzufügen</button>
@@ -961,7 +961,7 @@ function PhotographerAboutEditor({ data, onChange }: EditorProps) {
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
             <button onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
             <Field label="Titel" value={v.title} onChange={(val) => setValues(values.map((x, idx) => idx === i ? { ...x, title: val } : x))} />
-            <Field label="Text" value={v.text} onChange={(val) => setValues(values.map((x, idx) => idx === i ? { ...x, text: val } : x))} />
+            <Field label="Text" value={v.text} onChange={(val) => setValues(values.map((x, idx) => idx === i ? { ...x, text: val } : x))} multiline />
           </div>
         ))}
         <button onClick={() => setValues([...values, { title: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Wert hinzufügen</button>
@@ -1050,7 +1050,7 @@ function ServicePackagesEditor({ data, onChange }: EditorProps) {
               <Field label="Name" value={pkg.name} onChange={(v) => updatePkg(i, 'name', v)} />
               <Field label="Preis" value={pkg.price} onChange={(v) => updatePkg(i, 'price', v)} placeholder="z.B. ab 490€" />
             </div>
-            <Field label="Beschreibung" value={pkg.description} onChange={(v) => updatePkg(i, 'description', v)} />
+            <Field label="Beschreibung" value={pkg.description} onChange={(v) => updatePkg(i, 'description', v)} multiline />
             <div className="mt-2">
               <p className="text-xs text-zinc-500 mb-1">Features (eins pro Zeile)</p>
               <textarea className="admin-input text-xs w-full" rows={3} value={pkg.features.join('\n')} onChange={(e) => updatePkg(i, 'features', e.target.value.split('\n').filter(Boolean))} />
