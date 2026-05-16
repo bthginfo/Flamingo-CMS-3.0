@@ -1,5 +1,5 @@
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
-import { getTenantNav, getTenantFooter, getTenantBrand } from '@/lib/tenant-data';
+import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle } from '@/lib/tenant-data';
 import { notFound } from 'next/navigation';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
@@ -10,11 +10,12 @@ export default async function CollectionItemPage({ params }: { params: Promise<{
   const tenantId = await resolveTenant();
   if (!tenantId) notFound();
 
-  const [snapshot, navData, footerData, { brand, contact, socialLinks }] = await Promise.all([
+  const [snapshot, navData, footerData, { brand, contact, socialLinks }, tenantStyle] = await Promise.all([
     getActiveSnapshot(tenantId),
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
+    getTenantStyle(tenantId),
   ]);
 
   if (!snapshot?.collections) notFound();
@@ -29,7 +30,7 @@ export default async function CollectionItemPage({ params }: { params: Promise<{
     <>
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} />
       <main>
-        <CollectionDetail item={item} collection={col} />
+        <CollectionDetail item={item} collection={col} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} />
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />
     </>

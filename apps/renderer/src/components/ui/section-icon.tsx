@@ -123,7 +123,18 @@ export function SectionIcon({
   className?: string;
 }) {
   const key = icon.toLowerCase().trim();
-  const LucideComp = ICON_MAP[key];
+
+  // 1. Try manual map (supports legacy lowercase/German keys)
+  let LucideComp = ICON_MAP[key];
+
+  // 2. Try dynamic lookup by PascalCase name (stored by IconPickerField)
+  if (!LucideComp) {
+    try {
+      const allIcons = require('lucide-react') as Record<string, unknown>;
+      const comp = allIcons[icon.trim()];
+      if (typeof comp === 'function') LucideComp = comp as LucideIcon;
+    } catch { /* ignore */ }
+  }
 
   if (LucideComp) {
     return <LucideComp size={size} className={className} />;

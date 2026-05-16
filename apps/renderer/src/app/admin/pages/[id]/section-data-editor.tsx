@@ -253,7 +253,7 @@ function CtaLinksEditor({ data, onChange }: EditorProps) {
           <Field label="Label" value={link.label} onChange={(v) => updateLink(i, 'label', v)} />
           <DetailLinkField label="Link" value={link.href} onChange={(v) => updateLink(i, 'href', v)} />
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Icon (Lucide-Name)" value={link.icon} onChange={(v) => updateLink(i, 'icon', v)} />
+            <IconPickerField label="Icon" value={link.icon} onChange={(v) => updateLink(i, 'icon', v)} />
             <Field label="Beschreibung" value={link.description} onChange={(v) => updateLink(i, 'description', v)} />
           </div>
         </div>
@@ -311,7 +311,7 @@ function StatsEditor({ data, onChange }: EditorProps) {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Label" value={stat.label} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} />
-            <Field label="Icon (Lucide-Name)" value={stat.icon} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, icon: v } : s))} />
+            <IconPickerField label="Icon" value={stat.icon} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, icon: v } : s))} />
           </div>
         </div>
       ))}
@@ -483,7 +483,7 @@ function ProcessStepsEditor({ data, onChange }: EditorProps) {
           <div className="grid grid-cols-3 gap-3">
             <Field label="Titel" value={step.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Beschreibung" value={step.text} onChange={(v) => update(i, 'text', v)} />
-            <Field label="Icon (optional)" value={step.icon} onChange={(v) => update(i, 'icon', v)} />
+            <IconPickerField label="Icon" value={step.icon} onChange={(v) => update(i, 'icon', v)} />
           </div>
         </div>
       ))}
@@ -789,6 +789,45 @@ function HeaderBannerEditor({ data, onChange }: EditorProps) {
   );
 }
 
+// ─── Collection Hero Editor ──────────────────────────────────────
+function CollectionHeroEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    bgImage: (data.bgImage as string) || '',
+    category: (data.category as string) || '',
+    date: (data.date as string) || '',
+    overlayColor: (data.overlayColor as string) || '#000000',
+    overlayOpacity: (data.overlayOpacity as number) ?? 0.5,
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Kategorie (optional)" value={d.category} onChange={(v) => setD({ ...d, category: v })} />
+        <Field label="Datum (optional)" value={d.date} onChange={(v) => setD({ ...d, date: v })} />
+      </div>
+      <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
+      {d.bgImage && (
+        <div className="grid grid-cols-2 gap-3">
+          <label className="block">
+            <span className="text-xs font-medium text-zinc-600">Overlay-Farbe</span>
+            <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} />
+          </label>
+          <label className="block">
+            <span className="text-xs font-medium text-zinc-600">Overlay-Deckkraft ({Math.round(d.overlayOpacity * 100)}%)</span>
+            <input type="range" min="0" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} />
+          </label>
+        </div>
+      )}
+      <p className="text-xs text-gray-400">Variante &quot;minimal&quot; in den erweiterten Einstellungen für reinen Text-Hero ohne Bild.</p>
+    </div>
+  );
+}
+
 // ─── Editor registry ─────────────────────────────────────────────
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
@@ -811,4 +850,5 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   team: TeamEditor,
   richText: RichTextEditor,
   headerBanner: HeaderBannerEditor,
+  collectionHero: CollectionHeroEditor,
 };

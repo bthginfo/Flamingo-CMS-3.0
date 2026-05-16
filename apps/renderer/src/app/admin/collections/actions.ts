@@ -2,7 +2,7 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { collections, collectionItems } from '@flamingo/db';
+import { collections, collectionItems, tenants } from '@flamingo/db';
 import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -100,4 +100,13 @@ export async function getCollectionLinksAction() {
     label: c.label,
     items: items.filter(i => i.collectionId === c.id).map(i => ({ title: i.title, slug: i.slug })),
   }));
+}
+
+export async function getItemWithIndustryAction(itemId: string) {
+  const session = await requireSession();
+  const db = getDb();
+  const [item] = await db.select().from(collectionItems).where(and(eq(collectionItems.id, itemId), eq(collectionItems.tenantId, session.tenantId)));
+  if (!item) return null;
+  const [tenant] = await db.select({ industry: tenants.industry }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1);
+  return { item, industry: tenant?.industry ?? 'tradesman' };
 }

@@ -25,6 +25,7 @@ export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'team', label: 'Team', description: 'Team-Mitglieder' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
   { type: 'headerBanner', label: 'Header-Banner', description: 'Obere Hinweisleiste' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
 export const RESTAURANT_SECTION_TYPES: SectionTypeDefinition[] = [
@@ -36,6 +37,7 @@ export const RESTAURANT_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'ambience', label: 'Ambiente', description: 'Atmosphäre, Bilder und Highlights' },
   { type: 'events', label: 'Events', description: 'Themenabende, Feiern und Buchungs-CTAs' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
 export const HOTEL_SECTION_TYPES: SectionTypeDefinition[] = [
@@ -53,6 +55,7 @@ export const HOTEL_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'faq', label: 'FAQ', description: 'Check-in, Parken, Buchung, Storno' },
   { type: 'contact', label: 'Kontakt', description: 'Kontaktformular, Infokarten und Route' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
 export const TOURISM_SECTION_TYPES: SectionTypeDefinition[] = [
@@ -71,6 +74,7 @@ export const TOURISM_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'faq', label: 'FAQ', description: 'Häufige Fragen fuer Besucher' },
   { type: 'tourismContact', label: 'Tourismus-Kontakt', description: 'Tourismusbuero, Formular, Infokarten und CTAs' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
 export const SALON_SECTION_TYPES: SectionTypeDefinition[] = [
@@ -89,6 +93,7 @@ export const SALON_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'locationContact', label: 'Kontakt & Standort', description: 'Adresse, Karte, Formular und CTAs' },
   { type: 'faq', label: 'FAQ', description: 'Häufige Fragen' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
 export const MEDICAL_SECTION_TYPES: SectionTypeDefinition[] = [
@@ -111,6 +116,7 @@ export const MEDICAL_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'locationContact', label: 'Kontakt & Anfahrt', description: 'Adresse, Karte, Formular und Kontaktkarten' },
   { type: 'faq', label: 'FAQ', description: 'Häufige Patientenfragen' },
   { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
 export function getSectionTypesForIndustry(industry: string): SectionTypeDefinition[] {

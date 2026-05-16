@@ -87,7 +87,7 @@ export default async function DemoCollectionDetailPage({
       }}
       darkBg={false}
     >
-      <CollectionDetail item={item} collection={col} backHrefPrefix={demoPrefix} />
+      <CollectionDetail item={item} collection={col} collections={snapshot.collections} backHrefPrefix={demoPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} />
     </DemoPageShell>
   );
 }

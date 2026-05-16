@@ -4,16 +4,42 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import type { SnapshotCollectionItem, SnapshotCollection } from '@/lib/snapshot';
+import type { SnapshotCollectionItem, SnapshotCollection, SnapshotSection } from '@/lib/snapshot';
+import { SectionRenderer } from './section-renderer';
 
 type Props = {
   item: SnapshotCollectionItem;
   collection: SnapshotCollection;
+  collections?: SnapshotCollection[];
   backHrefPrefix?: string;
+  styleVariant?: string;
+  industry?: string;
 };
 
-export function CollectionDetail({ item, collection, backHrefPrefix = '' }: Props) {
+export function CollectionDetail({ item, collection, collections, backHrefPrefix = '', styleVariant, industry }: Props) {
   const data = item.data;
+  const sections = data.sections as SnapshotSection[] | undefined;
+
+  // If the item has sections (page builder), render them
+  if (sections && sections.length > 0) {
+    const visibleSections = sections.filter(s => s.visible);
+    return (
+      <div>
+        {/* Back link */}
+        <div className="max-w-7xl mx-auto px-6 pt-8">
+          <Link href={`${backHrefPrefix}/${collection.key}`} className="inline-flex items-center gap-2 text-sm text-brand-primary hover:underline mb-4">
+            <ArrowLeft size={16} />
+            Zurück zu {collection.label}
+          </Link>
+        </div>
+        {visibleSections.map((section) => (
+          <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} />
+        ))}
+      </div>
+    );
+  }
+
+  // Legacy flat data rendering (backward compatibility)
   const image = data.image as string | undefined;
   const description = data.description as string | undefined;
   const content = data.content as string | undefined;

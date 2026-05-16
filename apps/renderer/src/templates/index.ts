@@ -18,6 +18,7 @@ import { LogoCloudSection } from './handwerk/logo-cloud';
 import { GalleryGridSection } from './handwerk/gallery-grid';
 import { RichTextSection } from './handwerk/rich-text';
 import { HeaderBannerSection } from './handwerk/header-banner';
+import { CollectionHeroSection } from './handwerk/collection-hero';
 import {
   AmbienceSection,
   EventsSection,
@@ -128,6 +129,7 @@ export const TRADESMAN_TEMPLATES: Record<string, TemplateComponent> = {
   galleryGrid: GalleryGridSection,
   richText: RichTextSection,
   headerBanner: HeaderBannerSection,
+  collectionHero: CollectionHeroSection,
 };
 
 export const RESTAURANT_TEMPLATES: Record<string, TemplateComponent> = {
@@ -146,6 +148,7 @@ export const RESTAURANT_TEMPLATES: Record<string, TemplateComponent> = {
   newsPreview: NewsPreviewSection,
   newsGrid: NewsPreviewSection,
   richText: RichTextSection,
+  collectionHero: CollectionHeroSection,
 };
 
 export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent>> = {
@@ -169,6 +172,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     newsPreview: NewsPreviewSection,
     newsGrid: NewsPreviewSection,
     richText: RichTextSection,
+    collectionHero: CollectionHeroSection,
   },
   tourism: {
     hero: TourismHeroSection,
@@ -190,6 +194,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     newsPreview: NewsPreviewSection,
     newsGrid: NewsPreviewSection,
     richText: RichTextSection,
+    collectionHero: CollectionHeroSection,
   },
   salon: {
     hero: SalonHeroSection,
@@ -209,6 +214,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     newsPreview: NewsPreviewSection,
     newsGrid: NewsPreviewSection,
     richText: RichTextSection,
+    collectionHero: CollectionHeroSection,
   },
   medical: {
     hero: MedicalHeroSection,
@@ -234,6 +240,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     newsPreview: NewsPreviewSection,
     newsGrid: NewsPreviewSection,
     richText: RichTextSection,
+    collectionHero: CollectionHeroSection,
   },
 };
 

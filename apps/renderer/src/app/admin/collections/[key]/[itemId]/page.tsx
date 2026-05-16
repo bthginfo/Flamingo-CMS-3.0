@@ -1,10 +1,12 @@
-import { getItemAction } from '../../actions';
+import { getItemWithIndustryAction } from '../../actions';
 import { notFound } from 'next/navigation';
 import { ItemEditor } from './item-editor';
 
+export const dynamic = 'force-dynamic';
+
 export default async function CollectionItemEditPage({ params }: { params: Promise<{ key: string; itemId: string }> }) {
   const { key, itemId } = await params;
-  const item = await getItemAction(itemId);
-  if (!item) notFound();
-  return <ItemEditor item={item} collectionKey={key} />;
+  const result = await getItemWithIndustryAction(itemId);
+  if (!result) notFound();
+  return <ItemEditor item={result.item} collectionKey={key} industry={result.industry} />;
 }
