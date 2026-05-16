@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { upload } from '@vercel/blob/client';
+import { resizeImage } from '@/components/image-upload-field';
 import { saveMediaRecord, deleteMediaAsset, updateMediaAlt, type MediaAsset } from '../media-actions';
 import { toast } from 'sonner';
 import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2 } from 'lucide-react';
@@ -21,16 +22,22 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = useCallback(async (files: FileList | File[]) => {
+    const MAX_SIZE = 1 * 1024 * 1024; // 1 MB
     const fileArray = Array.from(files).filter(f => f.type.startsWith('image/'));
     if (fileArray.length === 0) {
       toast.error('Nur Bilddateien sind erlaubt');
       return;
     }
+    const tooLarge = fileArray.filter(f => f.size > MAX_SIZE);
+    if (tooLarge.length) {
+      toast.error(`${tooLarge.length} Bild${tooLarge.length > 1 ? 'er' : ''} über 1 MB — werden automatisch optimiert`);
+    }
 
     setUploading(true);
     try {
       for (const file of fileArray) {
-        const blob = await upload(file.name, file, {
+        const optimized = await resizeImage(file, 1920, 0.85);
+        const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, {
           access: 'public',
           handleUploadUrl: '/api/upload',
         });
@@ -38,9 +45,9 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
         const record = await saveMediaRecord({
           blobUrl: blob.url,
           pathname: blob.pathname,
-          filename: file.name,
-          mimeType: file.type,
-          size: file.size,
+          filename: optimized.name,
+          mimeType: optimized.type || 'image/webp',
+          size: optimized.size,
         });
 
         setAssets(prev => [{ ...record, alt: null, createdAt: new Date() }, ...prev]);
