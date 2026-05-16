@@ -101,10 +101,9 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-lg text-gray-600 leading-relaxed mb-8"
-          >
-            {description}
-          </motion.p>
+            className="text-lg text-gray-600 leading-relaxed mb-8 rt-content"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
         )}
 
         {/* Features list */}

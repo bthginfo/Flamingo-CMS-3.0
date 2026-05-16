@@ -74,10 +74,9 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-4 text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed"
-          >
-            {subline}
-          </motion.p>
+            className="mt-4 text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed rt-content"
+            dangerouslySetInnerHTML={{ __html: subline }}
+          />
         )}
       </div>
     </section>
@@ -118,10 +117,9 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-4 text-lg md:text-xl text-gray-600 max-w-2xl leading-relaxed"
-          >
-            {subline}
-          </motion.p>
+            className="mt-4 text-lg md:text-xl text-gray-600 max-w-2xl leading-relaxed rt-content"
+            dangerouslySetInnerHTML={{ __html: subline }}
+          />
         )}
 
         <div className="mt-10 border-b border-gray-200" />

@@ -31,7 +31,7 @@ export function WeddingVenueInfoSection({ data }: Props) {
             </motion.div>
           )}
           <div className={image ? '' : 'md:col-span-2 max-w-3xl mx-auto text-center'}>
-            {description && <p className="text-gray-600 text-lg leading-relaxed mb-8">{description}</p>}
+            {description && <div className="text-gray-600 text-lg leading-relaxed mb-8 rt-content" dangerouslySetInnerHTML={{ __html: description }} />}
             <div className="space-y-4">
               {address && (
                 <div className="flex items-start gap-3">

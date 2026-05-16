@@ -21,7 +21,7 @@ export function WeddingGiftRegistrySection({ data }: Props) {
           <h2 className="section-headline">{headline}</h2>
           {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {text && <p className="text-gray-600 text-lg text-center mb-12 max-w-2xl mx-auto">{text}</p>}
+        {text && <div className="text-gray-600 text-lg text-center mb-12 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {items.length > 0 && (
           <div className="grid sm:grid-cols-2 gap-6 mb-12">
             {items.map((item, i) => (

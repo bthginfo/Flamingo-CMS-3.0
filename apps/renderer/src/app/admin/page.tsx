@@ -42,7 +42,7 @@ export default async function DashboardPage() {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-semibold text-zinc-900">Dashboard</h1>
           <p className="text-sm text-zinc-500 mt-1">

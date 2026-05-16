@@ -90,10 +90,10 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
           {/* Subline */}
           {subline && (
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.7 }}
-              className="mt-8 max-w-2xl mx-auto text-lg leading-8 text-white/70"
-              style={{ textShadow: '0 2px 16px rgba(0,0,0,0.4)' }}>
-              {subline}
-            </motion.p>
+              className="mt-8 max-w-2xl mx-auto text-lg leading-8 text-white/70 rt-content"
+              style={{ textShadow: '0 2px 16px rgba(0,0,0,0.4)' }}
+              dangerouslySetInnerHTML={{ __html: subline }}
+            />
           )}
 
           {/* CTAs */}
@@ -231,10 +231,10 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgI
           {/* Subline */}
           {subline && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.4 }}
-              className="text-lg text-white/50 mt-8 max-w-2xl font-medium"
-              style={{ textShadow: '0 2px 16px rgba(0,0,0,0.4)' }}>
-              {subline}
-            </motion.p>
+              className="text-lg text-white/50 mt-8 max-w-2xl font-medium rt-content"
+              style={{ textShadow: '0 2px 16px rgba(0,0,0,0.4)' }}
+              dangerouslySetInnerHTML={{ __html: subline }}
+            />
           )}
 
           {/* Brutalist CTAs */}

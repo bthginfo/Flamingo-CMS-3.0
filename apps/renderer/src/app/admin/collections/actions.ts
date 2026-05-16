@@ -40,6 +40,7 @@ export async function updateCollectionAction(id: string, data: { label?: string;
 export async function deleteCollectionAction(id: string) {
   const session = await requireSession();
   const db = getDb();
+  await db.delete(collectionItems).where(and(eq(collectionItems.collectionId, id), eq(collectionItems.tenantId, session.tenantId)));
   await db.delete(collections).where(and(eq(collections.id, id), eq(collections.tenantId, session.tenantId)));
   revalidatePath('/admin/collections');
 }
@@ -47,6 +48,9 @@ export async function deleteCollectionAction(id: string) {
 export async function ensureDefaultCollections() {
   const session = await requireSession();
   const db = getDb();
+  // Only seed defaults if no collections exist at all (first visit)
+  const existing = await db.select({ id: collections.id }).from(collections).where(eq(collections.tenantId, session.tenantId));
+  if (existing.length > 0) return;
   const defaults = [
     { key: 'services', label: 'Leistungen' },
     { key: 'projects', label: 'Projekte' },
@@ -54,10 +58,7 @@ export async function ensureDefaultCollections() {
     { key: 'news', label: 'News & Blog' },
   ];
   for (const d of defaults) {
-    const existing = await db.select().from(collections).where(and(eq(collections.tenantId, session.tenantId), eq(collections.key, d.key)));
-    if (existing.length === 0) {
-      await db.insert(collections).values({ tenantId: session.tenantId, key: d.key, label: d.label });
-    }
+    await db.insert(collections).values({ tenantId: session.tenantId, key: d.key, label: d.label });
   }
 }
 

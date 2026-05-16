@@ -17,7 +17,7 @@ export function WeddingDresscodeSection({ data }: Props) {
       <div className="max-w-3xl mx-auto text-center">
         <span className="section-badge">{badge}</span>
         <h2 className="section-headline">{headline}</h2>
-        {text && <p className="text-gray-600 text-lg mt-6 leading-relaxed">{text}</p>}
+        {text && <div className="text-gray-600 text-lg mt-6 leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {colors.length > 0 && (
           <div className="flex items-center justify-center gap-4 mt-10">
             {colors.map((color, i) => (

@@ -27,7 +27,7 @@ export function ImageCard({ image, title, text, meta, cta }: { image?: string; t
       <div className="p-5">
         {meta && <p className="text-xs font-bold uppercase tracking-widest text-gray-600">{meta}</p>}
         <h3 className="mt-2 text-xl font-bold text-gray-900">{title || ''}</h3>
-        {text && <p className="mt-3 text-sm leading-6 text-gray-600">{text}</p>}
+        {text && <div className="mt-3 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {cta?.label && <div className="mt-5"><CtaButton cta={cta} /></div>}
       </div>
     </article>

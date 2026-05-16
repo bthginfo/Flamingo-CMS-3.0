@@ -20,6 +20,22 @@ export async function getPagesAction() {
   return db.select().from(pages).where(eq(pages.tenantId, session.tenantId)).orderBy(asc(pages.sortOrder), desc(pages.updatedAt));
 }
 
+export async function ensureDefaultPages() {
+  const session = await requireSession();
+  const db = getDb();
+  const existing = await db.select({ slug: pages.slug }).from(pages).where(eq(pages.tenantId, session.tenantId));
+  const slugs = new Set(existing.map(p => p.slug));
+  const defaults = [
+    { slug: 'impressum', title: 'Impressum' },
+    { slug: 'datenschutz', title: 'Datenschutz' },
+  ];
+  for (const d of defaults) {
+    if (!slugs.has(d.slug)) {
+      await db.insert(pages).values({ tenantId: session.tenantId, title: d.title, slug: d.slug, type: 'free', status: 'draft', visible: true, sortOrder: 99 });
+    }
+  }
+}
+
 export async function createPageAction(formData: FormData) {
   const session = await requireSession();
   const db = getDb();

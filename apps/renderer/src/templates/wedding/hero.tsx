@@ -45,9 +45,7 @@ export function WeddingHeroSection({ data }: Props) {
         <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/5 via-white to-brand-secondary/5" />
       )}
       <div className="relative z-10 text-center px-6 py-12 md:py-20">
-        <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={`text-sm tracking-[0.3em] uppercase mb-6 ${bgImage ? 'text-white/70' : 'text-brand-primary'}`}>
-          {subline}
-        </motion.p>
+        <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={`text-sm tracking-[0.3em] uppercase mb-6 ${bgImage ? 'text-white/70' : 'text-brand-primary'} rt-content`} dangerouslySetInnerHTML={{ __html: subline }} />
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={`text-5xl md:text-7xl lg:text-8xl font-serif font-light tracking-tight ${bgImage ? 'text-white' : 'text-gray-900'}`}>
           {names}
         </motion.h1>

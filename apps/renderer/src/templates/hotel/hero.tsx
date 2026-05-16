@@ -87,10 +87,10 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
         </motion.h1>
         {subline && (
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.7 }}
-            className="mt-7 max-w-2xl mx-auto text-lg leading-8 text-white/70"
-            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>
-            {subline}
-          </motion.p>
+            className="mt-7 max-w-2xl mx-auto text-lg leading-8 text-white/70 rt-content"
+            style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
+            dangerouslySetInnerHTML={{ __html: subline }}
+          />
         )}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.9 }}
           className="mt-10 flex flex-col sm:flex-row justify-center gap-4">

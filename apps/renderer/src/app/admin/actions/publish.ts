@@ -1,6 +1,9 @@
 'use server';
 
 import { getSession } from '@/lib/session';
+import { getDb } from '@/lib/db';
+import { pages } from '@flamingo/db';
+import { eq, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
@@ -12,15 +15,18 @@ async function requireSession() {
 }
 
 /**
- * Publish = invalidate all cached pages so the frontend re-reads from DB.
- * No more snapshot blob — frontend reads directly from pages/page_sections.
+ * Publish = mark all draft pages as published + invalidate all cached pages.
  */
 export async function publishAction() {
   const cookieStore = await cookies();
   if (cookieStore.get('flamingo_demo')?.value === '1') {
     return { error: 'Veröffentlichung ist im Demo-Modus deaktiviert.' };
   }
-  await requireSession();
+  const session = await requireSession();
+
+  // Mark all draft pages as published
+  const db = getDb();
+  await db.update(pages).set({ status: 'published' }).where(and(eq(pages.tenantId, session.tenantId), eq(pages.status, 'draft')));
 
   // Invalidate all frontend caches
   revalidatePath('/', 'layout');

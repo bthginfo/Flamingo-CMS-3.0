@@ -5,7 +5,7 @@ import { upload } from '@vercel/blob/client';
 import { resizeImage } from '@/components/image-upload-field';
 import { saveMediaRecord, deleteMediaAsset, updateMediaAlt, type MediaAsset } from '../media-actions';
 import { toast } from 'sonner';
-import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2 } from 'lucide-react';
+import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2, Pencil } from 'lucide-react';
 import Image from 'next/image';
 
 function formatSize(bytes: number) {
@@ -79,6 +79,11 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
 
   return (
     <div className="space-y-6">
+      {/* Alt-text info */}
+      <div className="admin-card p-4 bg-blue-50 border-blue-200">
+        <p className="text-sm text-blue-800"><strong>Tipp:</strong> Hinterlegen Sie für jedes Bild einen Alt-Text (Bildbeschreibung). Dieser wird automatisch für SEO und Barrierefreiheit verwendet, wenn das Bild auf Ihrer Website eingesetzt wird. Klicken Sie auf das <Pencil size={12} className="inline" />-Icon oder wählen Sie ein Bild aus, um den Alt-Text zu bearbeiten.</p>
+      </div>
+
       {/* Upload zone */}
       <div
         className={`admin-card border-2 border-dashed transition-colors p-8 text-center cursor-pointer ${dragOver ? 'border-admin-accent bg-admin-accent/5' : 'border-admin-border hover:border-admin-accent/50'}`}
@@ -140,6 +145,12 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
                 className="absolute top-2 right-2 w-7 h-7 rounded-lg bg-red-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700"
               >
                 <Trash2 size={14} />
+              </button>
+              <button
+                onClick={e => { e.stopPropagation(); setSelected(asset); }}
+                className="absolute top-2 right-11 w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-blue-700"
+              >
+                <Pencil size={14} />
               </button>
             </div>
           ))}
