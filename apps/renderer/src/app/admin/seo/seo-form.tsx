@@ -8,7 +8,7 @@ import { Save } from 'lucide-react';
 
 export function SeoForm() {
   const [pending, startTransition] = useTransition();
-  const { markDirty, markSaved } = useSaveState();
+  const { markDirty, markSaved, registerSave } = useSaveState();
   const mounted = useRef(0);
   const [data, setData] = useState({
     defaultTitle: '',
@@ -43,6 +43,8 @@ export function SeoForm() {
       markSaved();
     });
   }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { registerSave(() => handleSave()); }, []);
 
   const field = (label: string, key: keyof typeof data, opts?: { placeholder?: string; hint?: string; maxLength?: number; multiline?: boolean }) => (
     <div>

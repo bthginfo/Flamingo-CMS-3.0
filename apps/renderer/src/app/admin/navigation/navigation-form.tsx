@@ -12,7 +12,7 @@ export function NavigationForm({ initial, initialCta }: { initial: NavItem[]; in
   const [items, setItems] = useState<NavItem[]>(initial.length > 0 ? initial : [{ label: '', href: '/', type: 'link' }]);
   const [cta, setCta] = useState(initialCta || { label: 'Termin vereinbaren', href: '/kontakt' });
   const [saving, setSaving] = useState(false);
-  const { markDirty, markSaved } = useSaveState();
+  const { markDirty, markSaved, registerSave } = useSaveState();
   const mounted = useRef(false);
   useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [items, cta]);
 
@@ -28,6 +28,7 @@ export function NavigationForm({ initial, initialCta }: { initial: NavItem[]; in
       setSaving(false);
     }
   };
+  useEffect(() => { registerSave(() => handleSave()); }, []);
 
   const moveItem = (from: number, to: number) => {
     const updated = [...items];

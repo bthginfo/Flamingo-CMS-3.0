@@ -43,9 +43,11 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     bodyFont: initial.bodyFont || '',
   });
   const [saving, setSaving] = useState(false);
-  const { markDirty, markSaved } = useSaveState();
+  const { markDirty, markSaved, registerSave } = useSaveState();
   const mounted = useRef(false);
+  const formRef = useRef<HTMLFormElement>(null);
   useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [form]);
+  useEffect(() => { registerSave(() => formRef.current?.requestSubmit()); }, [registerSave]);
 
   // Load Google Fonts for preview
   useEffect(() => {
@@ -78,7 +80,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
       <div className="admin-card p-6 space-y-5">
         <h2 className="font-semibold text-lg">Firmeninfo</h2>
         <div>

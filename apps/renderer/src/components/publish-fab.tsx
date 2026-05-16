@@ -10,7 +10,7 @@ export function PublishFab() {
   const pathname = usePathname();
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
-  const { state: saveState } = useSaveState();
+  const { state: saveState, triggerSave } = useSaveState();
 
   // Page editor and collection item editor have their own FAB bars
   if (/^\/admin\/pages\/[^/]+$/.test(pathname)) return null;
@@ -44,9 +44,9 @@ export function PublishFab() {
         <ExternalLink size={16} /> Vorschau
       </a>
       {showSaveHint ? (
-        <span className="flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-full shadow-lg text-sm font-semibold opacity-80 cursor-default">
-          <Save size={16} /> Erst speichern
-        </span>
+        <button onClick={triggerSave} className="flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-full shadow-lg text-sm font-semibold hover:bg-blue-700 active:scale-95 transition-all">
+          <Save size={16} /> Speichern
+        </button>
       ) : (
         <button
           onClick={handlePublish}

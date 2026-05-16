@@ -17,12 +17,11 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
   });
   const [hours, setHours] = useState<HoursRow[]>(initialHours.length > 0 ? initialHours : [{ day: '', hours: '' }]);
   const [saving, setSaving] = useState(false);
-  const { markDirty, markSaved } = useSaveState();
+  const { markDirty, markSaved, registerSave } = useSaveState();
   const mounted = useRef(false);
   useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [contact, hours]);
 
-  const handleSaveContact = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const doSave = async () => {
     setSaving(true);
     try {
       await saveContactSettings(contact);
@@ -34,6 +33,9 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
       setSaving(false);
     }
   };
+  useEffect(() => { registerSave(() => doSave()); }, []);
+
+  const handleSaveContact = (e: React.FormEvent) => { e.preventDefault(); doSave(); };
 
   const handleSaveHours = async () => {
     setSaving(true);

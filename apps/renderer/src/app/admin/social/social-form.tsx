@@ -17,12 +17,11 @@ const PLATFORMS = [
 export function SocialForm({ initial }: { initial: Record<string, string> }) {
   const [links, setLinks] = useState<Record<string, string>>(initial);
   const [saving, setSaving] = useState(false);
-  const { markDirty, markSaved } = useSaveState();
+  const { markDirty, markSaved, registerSave } = useSaveState();
   const mounted = useRef(false);
   useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [links]);
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const doSave = async () => {
     setSaving(true);
     try {
       const filtered = Object.fromEntries(Object.entries(links).filter(([, v]) => v.trim()));
@@ -35,6 +34,9 @@ export function SocialForm({ initial }: { initial: Record<string, string> }) {
       setSaving(false);
     }
   };
+  useEffect(() => { registerSave(() => doSave()); }, []);
+
+  const handleSave = (e: React.FormEvent) => { e.preventDefault(); doSave(); };
 
   return (
     <form onSubmit={handleSave} className="admin-card p-6 space-y-5">
