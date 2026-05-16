@@ -33,7 +33,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
               <div className="font-display font-bold text-2xl">{brand.companyName}</div>
             )}
             {brand.tagline && (
-              <p className="text-sm text-gray-400 leading-relaxed max-w-xs">{brand.tagline}</p>
+              <p className="text-sm leading-relaxed max-w-xs opacity-70">{brand.tagline}</p>
             )}
             {/* Contact info */}
             <div className="flex flex-col gap-2.5 pt-2">

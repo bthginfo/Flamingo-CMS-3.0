@@ -100,15 +100,15 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.8 }}
               className="text-lg sm:text-xl text-white/60 leading-relaxed mb-12 max-w-2xl mt-8 [&_p]:m-0 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />
           )}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.0 }} className="flex flex-col sm:flex-row gap-4 mb-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.0 }} className="flex flex-col items-center sm:items-start sm:flex-row gap-4 mb-6">
             {primaryCta?.label && (
-              <a href={primaryCta.href} className="group relative inline-flex items-center overflow-hidden rounded-full bg-brand-accent px-8 py-4 font-semibold text-gray-900 transition-all duration-300 hover:shadow-glow-accent hover:-translate-y-0.5 text-base w-full sm:w-auto">
+              <a href={primaryCta.href} className="group relative inline-flex items-center overflow-hidden rounded-full bg-brand-accent px-8 py-4 font-semibold text-gray-900 transition-all duration-300 hover:shadow-glow-accent hover:-translate-y-0.5 text-base sm:w-auto">
                 <span className="relative z-10 flex items-center w-full justify-between sm:justify-center sm:gap-2.5">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} className="transition-transform group-hover:translate-x-1" />}</span>
                 <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.3),transparent)] bg-[length:200%_100%]" />
               </a>
             )}
             {secondaryCta?.label && (
-              <a href={secondaryCta.href} className="btn-secondary group !rounded-full w-full sm:w-auto flex items-center justify-between sm:justify-center sm:gap-2">{secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={18} />}{secondaryCta.label}</a>
+              <a href={secondaryCta.href} className="btn-secondary group !rounded-full sm:w-auto flex items-center justify-between sm:justify-center sm:gap-2">{secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={18} />}{secondaryCta.label}</a>
             )}
           </motion.div>
         </div>

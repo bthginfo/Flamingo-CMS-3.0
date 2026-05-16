@@ -48,8 +48,8 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta }: { n
               </a>
             )}
             {contact.email && (
-              <a href={`mailto:${contact.email}`} className="flex items-center gap-1.5 hover:text-white transition-colors hidden sm:flex">
-                <Mail size={12} className="text-brand-accent" />{contact.email}
+              <a href={`mailto:${contact.email}`} className="flex items-center gap-1.5 hover:text-white transition-colors truncate max-w-[180px] sm:max-w-none">
+                <Mail size={12} className="text-brand-accent shrink-0" /><span className="truncate">{contact.email}</span>
               </a>
             )}
           </div>
