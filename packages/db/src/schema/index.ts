@@ -71,6 +71,8 @@ export const globalSettings = pgTable('global_settings', {
   design: jsonb('design').$type<Record<string, unknown>>().default({}),
   banners: jsonb('banners').$type<Record<string, unknown>[]>().default([]),
   smtp: jsonb('smtp').$type<{ host: string; port: number; user: string; pass: string; from: string } | null>().default(null),
+  autoResponse: jsonb('auto_response').$type<{ enabled: boolean; subject: string; body: string } | null>().default(null),
+  formFields: jsonb('form_fields').$type<{ name: string; label: string; type: string; placeholder?: string; required?: boolean; options?: string[]; halfWidth?: boolean }[] | null>().default(null),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [

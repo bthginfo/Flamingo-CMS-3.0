@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Star } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps } from './types';
+import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
 
 type InfoCard = { icon?: string; label?: string; value?: string };
 
@@ -13,17 +14,15 @@ export function HotelContactSection({ data, styleVariant }: SectionProps) {
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || 'Anfrage';
   const introText = (data.introText as string) || '';
-  const namePlaceholder = (data.namePlaceholder as string) || 'Name';
-  const emailPlaceholder = (data.emailPlaceholder as string) || 'E-Mail';
-  const messagePlaceholder = (data.messagePlaceholder as string) || 'Nachricht';
   const submitLabel = (data.submitLabel as string) || 'Anfrage senden';
   const formEnabled = (data.formEnabled as boolean) ?? true;
+  const formFields = data.formFields as FormFieldDef[] | undefined;
   const infoCards = asList<InfoCard>(data.infoCards);
   const contactCta = asButton(data.contactCta);
   const routeCta = asButton(data.routeCta);
   const image = (data.image as string) || '';
 
-  const props = { headline, subline, badgeText, introText, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, formEnabled, infoCards, contactCta, routeCta, image };
+  const props = { headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image };
 
   if (styleVariant === 'modern') return <ContactModern {...props} />;
   if (styleVariant === 'bold') return <ContactBold {...props} />;
@@ -32,13 +31,13 @@ export function HotelContactSection({ data, styleVariant }: SectionProps) {
 
 type Props = {
   headline: string; subline: string; badgeText: string; introText: string;
-  namePlaceholder: string; emailPlaceholder: string; messagePlaceholder: string; submitLabel: string;
-  formEnabled: boolean; infoCards: InfoCard[]; contactCta: { label?: string; href?: string };
+  submitLabel: string; formEnabled: boolean; formFields?: FormFieldDef[];
+  infoCards: InfoCard[]; contactCta: { label?: string; href?: string };
   routeCta: { label?: string; href?: string }; image: string;
 };
 
 /* --- CLASSIC --- */
-function ContactClassic({ headline, subline, badgeText, introText, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, formEnabled, infoCards, contactCta, routeCta, image }: Props) {
+function ContactClassic({ headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
@@ -63,14 +62,14 @@ function ContactClassic({ headline, subline, badgeText, introText, namePlacehold
       </div>
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[var(--brand-primary)]/20 bg-white p-5 shadow-lg">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="rounded-xl bg-[#111827] px-5 py-3 font-semibold text-white shadow-md">{submitLabel}</button></form>}
+        {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </motion.div>
     </div>
   );
 }
 
 /* --- MODERN --- */
-function ContactModern({ headline, subline, badgeText, introText, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, formEnabled, infoCards, contactCta, routeCta, image }: Props) {
+function ContactModern({ headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image }: Props) {
   return (
     <div className="grid gap-12 lg:grid-cols-2">
       <div>
@@ -95,14 +94,14 @@ function ContactModern({ headline, subline, badgeText, introText, namePlaceholde
       </div>
       <div className="border border-black/10 bg-white p-8">
         {image && <div className="relative mb-6 aspect-[16/10] overflow-hidden"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {formEnabled && <form className="grid gap-4"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="font-light text-gray-900 underline underline-offset-4">{submitLabel}</button></form>}
+        {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>
   );
 }
 
 /* --- BOLD --- */
-function ContactBold({ headline, subline, badgeText, introText, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, formEnabled, infoCards, contactCta, routeCta, image }: Props) {
+function ContactBold({ headline, subline, badgeText, introText, submitLabel, formEnabled, formFields, infoCards, contactCta, routeCta, image }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
@@ -127,7 +126,7 @@ function ContactBold({ headline, subline, badgeText, introText, namePlaceholder,
       </div>
       <div className="border-2 border-[#111827] bg-white p-5 shadow-[4px_4px_0_#111827]">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--brand-primary)]">{submitLabel}</button></form>}
+        {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>
   );

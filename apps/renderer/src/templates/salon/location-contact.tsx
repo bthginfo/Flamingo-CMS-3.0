@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
+import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
 
 type InfoCard = { icon?: string; label?: string; value?: string };
 
@@ -15,24 +16,22 @@ export function LocationContactSection({ data, styleVariant }: SectionProps) {
   const image = (data.image as string) || '';
   const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
   const formEnabled = (data.formEnabled as boolean) ?? true;
-  const namePlaceholder = (data.namePlaceholder as string) || 'Name';
-  const emailPlaceholder = (data.emailPlaceholder as string) || 'E-Mail';
-  const messagePlaceholder = (data.messagePlaceholder as string) || 'Nachricht';
   const submitLabel = (data.submitLabel as string) || 'Anfrage senden';
+  const formFields = data.formFields as FormFieldDef[] | undefined;
   const infoCards = asList<InfoCard>(data.infoCards);
   const primaryCta = asButton(data.primaryCta);
   const secondaryCta = asButton(data.secondaryCta);
 
-  const props = { headline, subline, badgeText, introText, image, mapEmbedUrl, formEnabled, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, infoCards, primaryCta, secondaryCta };
+  const props = { headline, subline, badgeText, introText, image, mapEmbedUrl, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta };
 
   if (styleVariant === 'modern') return <ContactModern {...props} />;
   if (styleVariant === 'bold') return <ContactBold {...props} />;
   return <ContactClassic {...props} />;
 }
 
-type Props = { headline: string; subline: string; badgeText: string; introText: string; image: string; mapEmbedUrl: string; formEnabled: boolean; namePlaceholder: string; emailPlaceholder: string; messagePlaceholder: string; submitLabel: string; infoCards: InfoCard[]; primaryCta: ButtonValue; secondaryCta: ButtonValue };
+type Props = { headline: string; subline: string; badgeText: string; introText: string; image: string; mapEmbedUrl: string; formEnabled: boolean; submitLabel: string; formFields?: FormFieldDef[]; infoCards: InfoCard[]; primaryCta: ButtonValue; secondaryCta: ButtonValue };
 
-function ContactClassic({ headline, subline, badgeText, introText, image, mapEmbedUrl, formEnabled, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, infoCards, primaryCta, secondaryCta }: Props) {
+function ContactClassic({ headline, subline, badgeText, introText, image, mapEmbedUrl, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
@@ -51,13 +50,13 @@ function ContactClassic({ headline, subline, badgeText, introText, image, mapEmb
       <div className="rounded-xl border border-[var(--brand-primary)]/20 bg-white p-5 shadow-md">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {mapEmbedUrl && <iframe src={mapEmbedUrl} className="mb-5 h-56 w-full rounded-xl" loading="lazy" />}
-        {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="rounded-full bg-[#111827] px-5 py-3 font-semibold text-white shadow-md">{submitLabel}</button></form>}
+        {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>
   );
 }
 
-function ContactModern({ headline, subline, badgeText, introText, image, mapEmbedUrl, formEnabled, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, infoCards, primaryCta, secondaryCta }: Props) {
+function ContactModern({ headline, subline, badgeText, introText, image, mapEmbedUrl, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta }: Props) {
   return (
     <div className="grid gap-16 lg:grid-cols-2">
       <div>
@@ -76,13 +75,13 @@ function ContactModern({ headline, subline, badgeText, introText, image, mapEmbe
       <div className="border border-black/10 p-5">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {mapEmbedUrl && <iframe src={mapEmbedUrl} className="mb-5 h-56 w-full" loading="lazy" />}
-        {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="border border-[#111827] px-5 py-3 font-light text-gray-900">{submitLabel}</button></form>}
+        {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>
   );
 }
 
-function ContactBold({ headline, subline, badgeText, introText, image, mapEmbedUrl, formEnabled, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, infoCards, primaryCta, secondaryCta }: Props) {
+function ContactBold({ headline, subline, badgeText, introText, image, mapEmbedUrl, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta }: Props) {
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
@@ -101,7 +100,7 @@ function ContactBold({ headline, subline, badgeText, introText, image, mapEmbedU
       <div className="border-2 border-[#111827] bg-[#111] p-5 shadow-[4px_4px_0_var(--brand-accent)]">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {mapEmbedUrl && <iframe src={mapEmbedUrl} className="mb-5 h-56 w-full" loading="lazy" />}
-        {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="bg-brand-accent px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{submitLabel}</button></form>}
+        {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>
   );

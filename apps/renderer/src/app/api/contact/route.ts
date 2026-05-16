@@ -5,7 +5,8 @@ import { eq } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 import nodemailer from 'nodemailer';
 
-const MAX_MESSAGE_LENGTH = 5000;
+const MAX_FIELD_LENGTH = 5000;
+const MAX_FIELDS = 20;
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,15 +16,21 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, email, phone, message, page } = body;
-
-    // Validate required fields
-    if (!name || !email || !message) {
-      return NextResponse.json({ error: 'Name, E-Mail und Nachricht sind Pflichtfelder.' }, { status: 400 });
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ error: 'Ungültige Eingabe.' }, { status: 400 });
     }
 
-    if (typeof name !== 'string' || typeof email !== 'string' || typeof message !== 'string') {
-      return NextResponse.json({ error: 'Ungültige Eingabe.' }, { status: 400 });
+    const { _page, ...fields } = body as Record<string, unknown>;
+
+    // Extract standard fields for DB storage (backwards-compatible)
+    const name = typeof fields.name === 'string' ? fields.name.trim().slice(0, 200) : null;
+    const email = typeof fields.email === 'string' ? fields.email.trim().slice(0, 320) : null;
+    const phone = typeof fields.phone === 'string' ? fields.phone.trim().slice(0, 50) : null;
+    const message = typeof fields.message === 'string' ? fields.message.trim().slice(0, MAX_FIELD_LENGTH) : null;
+
+    // Require at least name and email
+    if (!name || !email) {
+      return NextResponse.json({ error: 'Name und E-Mail sind Pflichtfelder.' }, { status: 400 });
     }
 
     // Basic email validation
@@ -31,8 +38,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Ungültige E-Mail-Adresse.' }, { status: 400 });
     }
 
-    if (message.length > MAX_MESSAGE_LENGTH) {
-      return NextResponse.json({ error: 'Nachricht ist zu lang.' }, { status: 400 });
+    // Sanitize all fields for notification email
+    const sanitizedFields: Record<string, string> = {};
+    let fieldCount = 0;
+    for (const [key, val] of Object.entries(fields)) {
+      if (fieldCount >= MAX_FIELDS) break;
+      if (typeof val === 'string' && val.trim()) {
+        sanitizedFields[key] = val.trim().slice(0, MAX_FIELD_LENGTH);
+        fieldCount++;
+      }
     }
 
     const db = getDb();
@@ -40,22 +54,23 @@ export async function POST(req: NextRequest) {
     // Save to DB
     await db.insert(formSubmissions).values({
       tenantId,
-      name: name.trim().slice(0, 200),
-      email: email.trim().slice(0, 320),
-      phone: phone ? String(phone).trim().slice(0, 50) : null,
-      message: message.trim().slice(0, MAX_MESSAGE_LENGTH),
-      page: page ? String(page).slice(0, 200) : null,
+      name: name!,
+      email: email!,
+      phone,
+      message: message || '',
+      page: typeof _page === 'string' ? _page.slice(0, 200) : null,
     });
 
-    // Try to send email notification if SMTP is configured
+    // Load SMTP + auto-response settings
     try {
       const [settings] = await db
-        .select({ smtp: globalSettings.smtp })
+        .select({ smtp: globalSettings.smtp, autoResponse: globalSettings.autoResponse })
         .from(globalSettings)
         .where(eq(globalSettings.tenantId, tenantId))
         .limit(1);
 
       const smtp = settings?.smtp as { host: string; port: number; user: string; pass: string; from: string } | null;
+      const autoResponse = settings?.autoResponse as { enabled: boolean; subject: string; body: string } | null;
 
       if (smtp?.host && smtp?.user && smtp?.pass && smtp?.from) {
         const transporter = nodemailer.createTransport({
@@ -65,12 +80,29 @@ export async function POST(req: NextRequest) {
           auth: { user: smtp.user, pass: smtp.pass },
         });
 
+        // Build field summary for notification
+        const fieldLines = Object.entries(sanitizedFields)
+          .map(([key, val]) => `${key}: ${val}`)
+          .join('\n');
+
+        // 1) Notification email to business owner
         await transporter.sendMail({
           from: smtp.from,
-          to: smtp.from, // Send notification to the configured sender address
+          to: smtp.from,
           subject: `Neue Kontaktanfrage von ${name}`,
-          text: `Name: ${name}\nE-Mail: ${email}\nTelefon: ${phone || '-'}\n\nNachricht:\n${message}`,
+          text: `Neue Anfrage über das Kontaktformular:\n\n${fieldLines}\n\nSeite: ${_page || '-'}`,
         });
+
+        // 2) Auto-response email to sender
+        if (autoResponse?.enabled && autoResponse.subject && autoResponse.body) {
+          const responseBody = autoResponse.body.replace(/\{name\}/g, name);
+          await transporter.sendMail({
+            from: smtp.from,
+            to: email,
+            subject: autoResponse.subject,
+            text: responseBody,
+          });
+        }
       }
     } catch {
       // SMTP failure should not fail the submission

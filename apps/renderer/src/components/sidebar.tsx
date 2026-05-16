@@ -6,7 +6,7 @@ import { useState } from 'react';
 import {
   LayoutDashboard, FileText, FolderOpen, Newspaper, Navigation,
   Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Eye, Heart,
-  Menu, X,
+  Menu, X, ClipboardList,
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
 
@@ -25,6 +25,7 @@ const NAV = [
   { href: '/admin/seo', label: 'SEO & Sichtbarkeit', icon: Search },
   { href: '/admin/scripts', label: 'Skripte & Tracking', icon: Code },
   { href: '/admin/mail', label: 'Mail-Server', icon: Mail },
+  { href: '/admin/contact-form', label: 'Kontaktformular', icon: ClipboardList },
   { href: '/admin/legal', label: 'Impressum & Datenschutz', icon: Scale },
   { href: '/admin/security', label: 'Passwort & Zugang', icon: Lock },
 ];

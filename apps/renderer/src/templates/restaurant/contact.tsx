@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
+import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
 
 type InfoCard = { icon?: string; label?: string; value?: string };
 
@@ -15,22 +16,20 @@ export function RestaurantContactSection({ data, styleVariant }: SectionProps) {
   const image = (data.image as string) || '';
   const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
   const formEnabled = (data.formEnabled as boolean) ?? true;
-  const namePlaceholder = (data.namePlaceholder as string) || 'Name';
-  const emailPlaceholder = (data.emailPlaceholder as string) || 'E-Mail';
-  const messagePlaceholder = (data.messagePlaceholder as string) || 'Ihre Nachricht';
   const submitLabel = (data.submitLabel as string) || 'Nachricht senden';
+  const formFields = data.formFields as FormFieldDef[] | undefined;
   const infoCards = asList<InfoCard>(data.infoCards);
   const primaryCta = asButton(data.primaryCta);
   const secondaryCta = asButton(data.secondaryCta);
 
-  const props = { headline, subline, badgeText, introText, image, mapEmbedUrl, formEnabled, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel, infoCards, primaryCta, secondaryCta };
+  const props = { headline, subline, badgeText, introText, image, mapEmbedUrl, formEnabled, submitLabel, formFields, infoCards, primaryCta, secondaryCta };
 
   if (styleVariant === 'modern') return <Modern {...props} />;
   if (styleVariant === 'bold') return <Bold {...props} />;
   return <Classic {...props} />;
 }
 
-type Props = { headline: string; subline: string; badgeText: string; introText: string; image: string; mapEmbedUrl: string; formEnabled: boolean; namePlaceholder: string; emailPlaceholder: string; messagePlaceholder: string; submitLabel: string; infoCards: InfoCard[]; primaryCta: ButtonValue; secondaryCta: ButtonValue };
+type Props = { headline: string; subline: string; badgeText: string; introText: string; image: string; mapEmbedUrl: string; formEnabled: boolean; submitLabel: string; formFields?: FormFieldDef[]; infoCards: InfoCard[]; primaryCta: ButtonValue; secondaryCta: ButtonValue };
 
 function InfoCards({ cards }: { cards: InfoCard[] }) {
   return (
@@ -45,18 +44,6 @@ function InfoCards({ cards }: { cards: InfoCard[] }) {
         </div>
       ))}
     </div>
-  );
-}
-
-function FormBlock({ formEnabled, namePlaceholder, emailPlaceholder, messagePlaceholder, submitLabel }: Pick<Props, 'formEnabled' | 'namePlaceholder' | 'emailPlaceholder' | 'messagePlaceholder' | 'submitLabel'>) {
-  if (!formEnabled) return null;
-  return (
-    <form className="grid gap-3">
-      <input className="admin-input" placeholder={namePlaceholder} readOnly />
-      <input className="admin-input" placeholder={emailPlaceholder} readOnly />
-      <textarea className="admin-input" rows={4} placeholder={messagePlaceholder} readOnly />
-      <button type="button" className="rounded-full bg-[#111827] px-5 py-3 font-semibold text-white shadow-md">{submitLabel}</button>
-    </form>
   );
 }
 
@@ -79,7 +66,7 @@ function Classic(p: Props) {
       <div className="rounded-xl border border-[var(--brand-primary)]/20 bg-white p-5 shadow-md">
         {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {p.mapEmbedUrl && <iframe src={p.mapEmbedUrl} title="Standort" className="mb-5 h-56 w-full rounded-xl" loading="lazy" />}
-        <FormBlock formEnabled={p.formEnabled} namePlaceholder={p.namePlaceholder} emailPlaceholder={p.emailPlaceholder} messagePlaceholder={p.messagePlaceholder} submitLabel={p.submitLabel} />
+        {p.formEnabled && <DynamicContactForm fields={p.formFields} submitLabel={p.submitLabel} />}
       </div>
     </div>
   );
@@ -104,7 +91,7 @@ function Modern(p: Props) {
       <div className="border border-black/10 p-5">
         {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {p.mapEmbedUrl && <iframe src={p.mapEmbedUrl} title="Standort" className="mb-5 h-56 w-full" loading="lazy" />}
-        {p.formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={p.namePlaceholder} readOnly /><input className="admin-input" placeholder={p.emailPlaceholder} readOnly /><textarea className="admin-input" rows={4} placeholder={p.messagePlaceholder} readOnly /><button type="button" className="border border-[#111827] px-5 py-3 font-light text-gray-900">{p.submitLabel}</button></form>}
+        {p.formEnabled && <DynamicContactForm fields={p.formFields} submitLabel={p.submitLabel} />}
       </div>
     </div>
   );
@@ -129,7 +116,7 @@ function Bold(p: Props) {
       <div className="bg-white p-5 shadow-[6px_6px_0_var(--brand-accent)]">
         {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {p.mapEmbedUrl && <iframe src={p.mapEmbedUrl} title="Standort" className="mb-5 h-56 w-full" loading="lazy" />}
-        {p.formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={p.namePlaceholder} readOnly /><input className="admin-input" placeholder={p.emailPlaceholder} readOnly /><textarea className="admin-input" rows={4} placeholder={p.messagePlaceholder} readOnly /><button type="button" className="bg-brand-accent px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{p.submitLabel}</button></form>}
+        {p.formEnabled && <DynamicContactForm fields={p.formFields} submitLabel={p.submitLabel} />}
       </div>
     </div>
   );

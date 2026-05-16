@@ -91,7 +91,7 @@ function applyShowcasePalette() {
 }
 
 /* ─── Template metadata ────────────────────────────────────────────── */
-const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding', {
+const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography', {
   label: string;
   tagline: string;
   description: string;
@@ -155,9 +155,17 @@ const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     accent: '#d4a373',
     bullets: ['Liebesgeschichte & Countdown', 'Tagesablauf & Location', 'RSVP-Formular & Menü', 'Dresscode & Geschenke'],
   },
+  photography: {
+    label: 'Fotografie',
+    tagline: 'Hochzeit · Portrait · Event',
+    description: 'Portfolio-Galerie mit Kategorie-Filter, Shooting-Pakete, Über-mich-Story, Ablauf-Timeline und Kontakt.',
+    image: 'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?auto=format&fit=crop&w=1400&q=80',
+    accent: '#9c7c5c',
+    bullets: ['Masonry-Portfolio mit Lightbox', 'Service-Pakete & Preise', 'Shooting-Ablauf Timeline', 'Bewertungen & Kontakt'],
+  },
 };
 
-const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding', { classic: string; modern: string; bold: string }> = {
+const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography', { classic: string; modern: string; bold: string }> = {
   handwerk: {
     classic: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80',
@@ -192,6 +200,11 @@ const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     classic: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=1400&q=80',
+  },
+  photography: {
+    classic: 'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=1400&q=80',
   },
 };
 
