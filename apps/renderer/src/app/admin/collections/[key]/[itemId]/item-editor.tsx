@@ -11,6 +11,7 @@ import { publishAction } from '@/app/admin/actions/publish';
 import { PageSectionsProvider } from '@/components/button-field';
 import { IndustrySectionDataEditor } from '../../../pages/[id]/industry-section-editor';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from '../../../pages/[id]/section-types';
+import { ItemSeoPanel } from './item-seo-panel';
 import { toast } from 'sonner';
 
 type Section = {
@@ -249,16 +250,21 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
         </div>
 
         {/* Item meta */}
-        <div className="admin-card mb-4 flex items-center gap-6">
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={item.published} onChange={() => { setItem({ ...item, published: !item.published }); markDirty(); }} />
-            Veröffentlicht
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <span className="text-gray-600 text-xs">Priorität</span>
-            <input type="number" className="admin-input w-20" value={item.priority} onChange={(e) => { setItem({ ...item, priority: parseInt(e.target.value) || 0 }); markDirty(); }} />
-          </label>
+        <div className="admin-card mb-4 p-4">
+          <div className="flex flex-wrap items-center gap-6">
+            <label className="flex items-center gap-2.5 text-sm cursor-pointer">
+              <input type="checkbox" className="rounded border-gray-300" checked={item.published} onChange={() => { setItem({ ...item, published: !item.published }); markDirty(); }} />
+              <span className={item.published ? 'text-green-700 font-medium' : 'text-zinc-600'}>Veröffentlicht</span>
+            </label>
+            <label className="flex items-center gap-2.5 text-sm">
+              <span className="text-zinc-500">Priorität</span>
+              <input type="number" className="admin-input w-20 !py-1.5 text-center" value={item.priority} onChange={(e) => { setItem({ ...item, priority: parseInt(e.target.value) || 0 }); markDirty(); }} />
+            </label>
+          </div>
         </div>
+
+        {/* SEO */}
+        <ItemSeoPanel itemId={item.id} />
 
         {/* Section List with DnD */}
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
