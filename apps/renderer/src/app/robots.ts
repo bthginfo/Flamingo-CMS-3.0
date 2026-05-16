@@ -15,7 +15,9 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
   } catch { /* build-time: no DB */ }
 
   return {
-    rules: { userAgent: '*', allow: '/' },
+    rules: [
+      { userAgent: '*', allow: '/', disallow: ['/admin/', '/api/'] },
+    ],
     sitemap: `${base}/sitemap.xml`,
   };
 }

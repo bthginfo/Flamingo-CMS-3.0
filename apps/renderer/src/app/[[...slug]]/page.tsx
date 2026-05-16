@@ -78,11 +78,12 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   if (!result) notFound();
 
   const { tenantId, snapshot, page } = result;
-  const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle] = await Promise.all([
+  const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle, seoGlobal] = await Promise.all([
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
     getTenantStyle(tenantId),
+    getTenantSeoGlobal(tenantId),
   ]);
 
   const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
@@ -121,20 +122,77 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
 
   // JSON-LD structured data
   const isHome = !slug || slug.length === 0;
-  const jsonLd = isHome ? {
+  const canonicalBase = seoGlobal?.canonicalBase || `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL || 'localhost:3000'}`;
+  const pageUrl = isHome ? canonicalBase : `${canonicalBase.replace(/\/$/, '')}/${page.slug}`;
+
+  // Parse address into structured components
+  const addressParts = contact.address?.split(',').map(s => s.trim()) || [];
+  const structuredAddress = contact.address ? {
+    '@type': 'PostalAddress' as const,
+    streetAddress: addressParts[0] || contact.address,
+    ...(addressParts[1] && { addressLocality: addressParts[1] }),
+    ...(addressParts[2] && { postalCode: addressParts[2] }),
+    addressCountry: 'DE',
+  } : undefined;
+
+  // Build breadcrumb list
+  const breadcrumbItems = [
+    { '@type': 'ListItem', position: 1, name: 'Startseite', item: canonicalBase },
+    ...(!isHome ? [{ '@type': 'ListItem', position: 2, name: page.title, item: pageUrl }] : []),
+  ];
+
+  // Detect FAQ sections for FAQPage schema
+  const faqSections = visibleSections.filter(s => s.type === 'faq');
+  const faqEntries = faqSections.flatMap(s => {
+    const items = (s.data.items as { question: string; answer: string }[] | undefined) || [];
+    return items.map(item => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    }));
+  });
+
+  const jsonLdList: Record<string, unknown>[] = [];
+
+  // Main entity
+  if (isHome) {
+    jsonLdList.push({
+      '@context': 'https://schema.org',
+      '@type': 'LocalBusiness',
+      '@id': `${canonicalBase}/#business`,
+      name: brand.companyName || '',
+      url: canonicalBase,
+      ...(brand.logoUrl && { logo: brand.logoUrl, image: brand.logoUrl }),
+      ...(contact.phone && { telephone: contact.phone }),
+      ...(contact.email && { email: contact.email }),
+      ...(structuredAddress && { address: structuredAddress }),
+    });
+  } else {
+    jsonLdList.push({
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      '@id': pageUrl,
+      name: page.title,
+      url: pageUrl,
+      isPartOf: { '@type': 'WebSite', '@id': `${canonicalBase}/#website`, name: brand.companyName || '', url: canonicalBase },
+    });
+  }
+
+  // BreadcrumbList (always)
+  jsonLdList.push({
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    name: brand.companyName || '',
-    ...(brand.logoUrl && { logo: brand.logoUrl, image: brand.logoUrl }),
-    ...(contact.phone && { telephone: contact.phone }),
-    ...(contact.email && { email: contact.email }),
-    ...(contact.address && { address: { '@type': 'PostalAddress', streetAddress: contact.address } }),
-  } : {
-    '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: page.title,
-    ...(brand.companyName && { isPartOf: { '@type': 'WebSite', name: brand.companyName } }),
-  };
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbItems,
+  });
+
+  // FAQPage if FAQ sections exist
+  if (faqEntries.length > 0) {
+    jsonLdList.push({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqEntries,
+    });
+  }
 
   const brandCssVars = getBrandCssVars(brand);
 
@@ -142,7 +200,7 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
     <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
       {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
       {brand.bodyFont && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdList) }} />
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} />
       <main>
         {visibleSections.map((section) => (
