@@ -1,3 +1,4 @@
+import * as allLucideIcons from 'lucide-react';
 import { icons, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -10,11 +11,22 @@ function toPascalCase(str: string): string {
     .join('');
 }
 
+function resolveIcon(name: string): LucideIcon | null {
+  const lib = allLucideIcons as unknown as Record<string, unknown>;
+  // 1. Direct export match (PascalCase from icon picker)
+  const direct = lib[name];
+  if (direct && typeof direct === 'object' && 'displayName' in (direct as object)) return direct as LucideIcon;
+  // 2. icons record (different naming scheme in lucide v0.x)
+  const rec = (icons as Record<string, LucideIcon>)[name] || (icons as Record<string, LucideIcon>)[toPascalCase(name)];
+  if (rec) return rec;
+  // 3. Convert kebab to PascalCase and try direct export
+  const pascal = lib[toPascalCase(name)];
+  if (pascal && typeof pascal === 'object' && 'displayName' in (pascal as object)) return pascal as LucideIcon;
+  return null;
+}
+
 export function DynamicIcon({ name, size = 24, className }: { name: string; size?: number; className?: string }) {
-  // Try exact PascalCase match first, then convert from kebab/lowercase
-  const Icon: LucideIcon | undefined =
-    (icons as Record<string, LucideIcon>)[name] ||
-    (icons as Record<string, LucideIcon>)[toPascalCase(name)];
+  const Icon = resolveIcon(name);
   if (!Icon) return <span className={className}>{name}</span>;
   return <Icon size={size} className={className} />;
 }

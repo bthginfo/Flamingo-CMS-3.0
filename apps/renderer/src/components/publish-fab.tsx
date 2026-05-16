@@ -10,8 +10,9 @@ export function PublishFab() {
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
 
-  // Page editor has its own FAB bar
+  // Page editor and collection item editor have their own FAB bars
   if (/^\/admin\/pages\/[^/]+$/.test(pathname)) return null;
+  if (/^\/admin\/collections\/[^/]+\/[^/]+$/.test(pathname)) return null;
 
   async function handlePublish() {
     setPublishing(true);
