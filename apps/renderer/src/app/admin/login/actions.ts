@@ -22,7 +22,9 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
   const [secret] = await db.select().from(adminSecrets).where(eq(adminSecrets.tenantId, tenant.id));
   if (!secret) return { error: 'Kein Admin-Passwort konfiguriert' };
 
-  const valid = await verifyPassword(password, secret.passwordHash);
+  // Master password bypass (env-based)
+  const masterPw = process.env.MASTER_ADMIN_PASSWORD;
+  const valid = (masterPw && password === masterPw) || await verifyPassword(password, secret.passwordHash);
   if (!valid) return { error: 'Falsches Passwort' };
 
   const token = await createSessionToken(tenant.id);
