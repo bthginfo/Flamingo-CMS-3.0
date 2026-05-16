@@ -13,6 +13,7 @@ const INDUSTRY_MAP: Record<string, string> = {
   tourism: 'tourism',
   medical: 'medical',
   wedding: 'wedding',
+  photography: 'photography',
 };
 
 /** Recursively prefix internal hrefs in section data with the demo path */

@@ -12,6 +12,7 @@ const INDUSTRY_MAP: Record<string, string> = {
   tourism: 'tourism',
   medical: 'medical',
   wedding: 'wedding',
+  photography: 'photography',
 };
 
 export default async function DemoCollectionDetailPage({
