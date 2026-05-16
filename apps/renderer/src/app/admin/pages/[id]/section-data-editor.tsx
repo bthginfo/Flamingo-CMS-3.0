@@ -876,7 +876,8 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
   });
-  const [categories, setCategories] = useState<string[]>((data.categories as string[]) || []);
+  const [catInput, setCatInput] = useState(((data.categories as string[]) || []).join(', '));
+  const categories = catInput.split(',').map(s => s.trim()).filter(Boolean);
   const [images, setImages] = useState<{ src: string; alt: string; category: string; location: string }[]>(
     ((data.images as unknown[]) || []).map((img: unknown) => {
       const i = img as Record<string, string>;
@@ -892,7 +893,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <div>
         <p className="text-xs font-medium text-zinc-600 mb-1">Kategorien (kommagetrennt)</p>
-        <input className="admin-input" value={categories.join(', ')} onChange={(e) => setCategories(e.target.value.split(',').map(s => s.trim()).filter(Boolean))} />
+        <input className="admin-input" value={catInput} onChange={(e) => setCatInput(e.target.value)} />
       </div>
       <div>
         <p className="text-xs font-medium text-zinc-600 mb-2">Bilder</p>
