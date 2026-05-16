@@ -23,10 +23,11 @@ export function HeroSection({ data, styleVariant }: Props) {
   const secondaryCta = data.secondaryCta as { label: string; href: string; icon?: string } | undefined;
   const overlayColor = (data.overlayColor as string) || '';
   const overlayOpacity = (data.overlayOpacity as number) ?? 0;
+  const bgPosition = (data.bgPosition as string) || 'center';
 
-  if (styleVariant === 'modern') return <HeroModern headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} badgeStarsIcon={badgeStarsIcon} trustItems={trustItems} bgImage={bgImage} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} />;
-  if (styleVariant === 'bold') return <HeroBold headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} badgeStarsIcon={badgeStarsIcon} trustItems={trustItems} bgImage={bgImage} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} />;
-  return <HeroClassic headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} badgeStarsIcon={badgeStarsIcon} trustItems={trustItems} bgImage={bgImage} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} />;
+  if (styleVariant === 'modern') return <HeroModern headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} badgeStarsIcon={badgeStarsIcon} trustItems={trustItems} bgImage={bgImage} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} bgPosition={bgPosition} />;
+  if (styleVariant === 'bold') return <HeroBold headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} badgeStarsIcon={badgeStarsIcon} trustItems={trustItems} bgImage={bgImage} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} bgPosition={bgPosition} />;
+  return <HeroClassic headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} badgeStarsIcon={badgeStarsIcon} trustItems={trustItems} bgImage={bgImage} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} bgPosition={bgPosition} />;
 }
 
 type HeroProps = {
@@ -43,10 +44,11 @@ type HeroProps = {
   secondaryCta?: { label: string; href: string; icon?: string };
   overlayColor?: string;
   overlayOpacity?: number;
+  bgPosition?: string;
 };
 
 /* ─── CLASSIC: Fullscreen gradient overlay, spotlight, floating orbs, pill buttons ─── */
-function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity }: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition }: HeroProps) {
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
   const y = useTransform(scrollY, [0, 400], [0, 100]);
@@ -56,7 +58,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
     <div className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px]">
       {useBgImage ? (
         <>
-          <Image src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
+          <Image src={bgImage} alt="" fill className="object-cover" style={{ objectPosition: bgPosition }} priority sizes="100vw" />
           <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/90 via-brand-dark/70 to-brand-dark/50" />
           {overlayColor && overlayOpacity ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : null}
         </>
@@ -117,7 +119,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
 }
 
 /* ─── MODERN: Split layout, text left / image right, generous whitespace, understated ─── */
-function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity }: HeroProps) {
+function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition }: HeroProps) {
   return (
     <div className="relative min-h-screen flex items-center -mt-[112px] pt-[112px] bg-white">
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-12 md:py-20">
@@ -152,7 +154,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
         <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
           {(bgMode === 'image' && bgImage) ? (
             <div className="relative aspect-[4/5] rounded-[0.5rem] overflow-hidden">
-              <Image src={bgImage} alt="" fill className="object-cover" priority sizes="50vw" />
+              <Image src={bgImage} alt="" fill className="object-cover" style={{ objectPosition: bgPosition }} priority sizes="50vw" />
               {overlayColor && overlayOpacity ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : null}
             </div>
           ) : (bgMode === 'color' && bgColor) ? (
@@ -167,13 +169,13 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
 }
 
 /* ─── BOLD: Full-width dark block, diagonal accent stripe, sharp edges, uppercase ─── */
-function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity }: HeroProps) {
+function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition }: HeroProps) {
   const useBgImage = bgMode === 'image' && bgImage;
   return (
     <div className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-brand-dark" style={bgMode === 'color' && bgColor ? { backgroundColor: bgColor } : undefined}>
       {useBgImage && (
         <>
-          <Image src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
+          <Image src={bgImage} alt="" fill className="object-cover" style={{ objectPosition: bgPosition }} priority sizes="100vw" />
           <div className="absolute inset-0 bg-brand-dark/80" />
           {overlayColor && overlayOpacity ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : null}
         </>

@@ -61,6 +61,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
     bgMode: (data.bgMode as string) || 'image',
     bgImage: (data.bgImage as string) || '',
     bgColor: (data.bgColor as string) || '#1a1a2e',
+    bgPosition: (data.bgPosition as string) || 'center',
     overlayColor: (data.overlayColor as string) || '#000000',
     overlayOpacity: (data.overlayOpacity as number) ?? 0,
     trustItems: (data.trustItems as string[]) || [],
@@ -86,6 +87,15 @@ function HeroEditor({ data, onChange }: EditorProps) {
           <>
             <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
             {d.bgImage && (
+              <>
+              <div className="mt-3">
+                <span className="text-xs font-medium text-zinc-600 block mb-1.5">Bildposition (Fokuspunkt)</span>
+                <div className="inline-grid grid-cols-3 gap-1 bg-zinc-100 p-1 rounded-lg">
+                  {(['top left','top center','top right','center left','center','center right','bottom left','bottom center','bottom right'] as const).map(pos => (
+                    <button key={pos} type="button" onClick={() => setD({ ...d, bgPosition: pos })} className={`w-7 h-7 rounded text-[9px] leading-none transition-colors ${d.bgPosition === pos ? 'bg-blue-500 text-white shadow-sm' : 'hover:bg-zinc-200 text-zinc-400'}`} title={pos}>●</button>
+                  ))}
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-3 mt-3">
                 <label className="block">
                   <span className="text-xs font-medium text-zinc-600">Overlay-Farbe</span>
@@ -96,6 +106,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
                   <input type="range" min="0" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} />
                 </label>
               </div>
+              </>
             )}
           </>
         ) : (

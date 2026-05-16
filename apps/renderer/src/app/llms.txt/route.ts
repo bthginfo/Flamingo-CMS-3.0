@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
 import { getTenantBrand, getTenantSeoGlobal } from '@/lib/tenant-data';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const tenantId = await resolveTenant();

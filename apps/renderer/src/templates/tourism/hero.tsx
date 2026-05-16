@@ -31,15 +31,16 @@ type HeroProps = {
   bgColor: string; bgMode: string;
   locationLabel: string; seasonLabel: string; trustItems: string[];
   primaryCta: ButtonValue; secondaryCta: ButtonValue;
-};
+
+  bgPosition?: string;};
 
 /* ─── Classic: panoramic bg, green/lime gradient, mountain SVG, stagger ─── */
-function HeroClassic({ headline, subline, badgeText, bgImage, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta }: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, bgImage, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta , bgPosition}: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
       {(bgMode === 'image' && bgImage) ? (
         <>
-          <Image src={bgImage} alt="" fill priority className="object-cover" sizes="100vw" />
+          <Image src={bgImage} alt="" fill priority className="object-cover" style={{ objectPosition: bgPosition }} sizes="100vw" />
           <div className="absolute inset-0 bg-gradient-to-b from-green-900/70 via-green-800/50 to-lime-900/60" />
         </>
       ) : (bgMode === 'color' && bgColor) ? (
@@ -71,7 +72,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgColor, bgMode, l
 }
 
 /* ─── Modern: split layout, teal-white, clean/airy ─── */
-function HeroModern({ headline, subline, badgeText, bgImage, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta }: HeroProps) {
+function HeroModern({ headline, subline, badgeText, bgImage, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta , bgPosition}: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-white">
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-10 px-6 py-12 md:py-20 lg:grid-cols-2">
@@ -91,7 +92,7 @@ function HeroModern({ headline, subline, badgeText, bgImage, bgColor, bgMode, lo
         </div>
         <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-black/10">
           {(bgMode === 'image' && bgImage) ? (
-            <Image src={bgImage} alt="" fill priority className="object-cover" sizes="50vw" />
+            <Image src={bgImage} alt="" fill priority className="object-cover" style={{ objectPosition: bgPosition }} sizes="50vw" />
           ) : (bgMode === 'color' && bgColor) ? (
             <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
           ) : null}
@@ -102,7 +103,7 @@ function HeroModern({ headline, subline, badgeText, bgImage, bgColor, bgMode, lo
 }
 
 /* ─── Bold: fullscreen dark, orange diagonal stripe, brutalist ─── */
-function HeroBold({ headline, subline, badgeText, bgImage, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta }: HeroProps) {
+function HeroBold({ headline, subline, badgeText, bgImage, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta , bgPosition}: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-gray-950">
       {(bgMode === 'image' && bgImage) ? (

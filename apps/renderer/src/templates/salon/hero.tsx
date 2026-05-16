@@ -31,15 +31,16 @@ type HeroProps = {
   bgColor: string; bgMode: string;
   trustItems: string[]; primaryCta: ButtonValue; secondaryCta: ButtonValue;
   bookingHint: string; ratingText: string;
-};
+
+  bgPosition?: string;};
 
 /* ─── CLASSIC: Fullscreen bg, organic rose gradient overlay, flowing curves, centered elegant typography ─── */
-function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText }: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText , bgPosition}: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px]">
       {(bgMode === 'image' && bgImage) ? (
         <>
-          <Image src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
+          <Image src={bgImage} alt="" fill className="object-cover" style={{ objectPosition: bgPosition }} priority sizes="100vw" />
           <div className="absolute inset-0 bg-gradient-to-br from-[#6b2148]/85 via-[#8b3a62]/65 to-[#c0528a]/40" />
         </>
       ) : (bgMode === 'color' && bgColor) ? (
@@ -76,7 +77,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgColor
 }
 
 /* ─── MODERN: Split layout (text left / image right), clean minimalist, dusty-rose accents ─── */
-function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText }: HeroProps) {
+function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText , bgPosition}: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-white">
       {(bgMode === 'image' && bgImage) ? (
@@ -106,7 +107,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgColor,
 }
 
 /* ─── BOLD: Fullscreen dark, hot-pink diagonal stripe, uppercase brutalist ─── */
-function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText }: HeroProps) {
+function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText , bgPosition}: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111]">
       {(bgMode === 'image' && bgImage) ? (
