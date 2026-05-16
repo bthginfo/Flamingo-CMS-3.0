@@ -10,6 +10,7 @@ const INDUSTRIES = [
   { key: 'medical', label: 'Arztpraxis' },
   { key: 'salon', label: 'Salon & Beauty' },
   { key: 'tourism', label: 'Tourismus' },
+  { key: 'wedding', label: 'Hochzeit' },
 ] as const;
 
 const STYLES = [
@@ -103,7 +104,7 @@ export function DemoFab({ currentIndustry, currentStyle, onStyleChange }: DemoFa
               Admin-Demo öffnen
             </a>
             <a
-              href="https://flamingo-cms.de"
+              href="https://www.flamingomedia.online"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-xs text-white/60 hover:text-white transition py-1"
