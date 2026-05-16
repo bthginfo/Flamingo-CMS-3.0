@@ -70,6 +70,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
     overlayColor: (data.overlayColor as string) || '#000000',
     overlayOpacity: (data.overlayOpacity as number) ?? 0,
     trustItems: (data.trustItems as string[]) || [],
+    trustStripColor: (data.trustStripColor as string) || '',
     primaryCta: (data.primaryCta as { label: string; href: string }) || { label: '', href: '' },
     secondaryCta: (data.secondaryCta as { label: string; href: string }) || { label: '', href: '' },
   });
@@ -144,6 +145,11 @@ function HeroEditor({ data, onChange }: EditorProps) {
           </div>
         ))}
         <button onClick={() => setD({ ...d, trustItems: [...d.trustItems, ''] })} className="text-xs text-blue-600 hover:underline">+ Trust-Element</button>
+        <div className="flex items-center gap-2 mt-2">
+          <label className="text-xs text-zinc-600">Strip-Farbe</label>
+          <input type="color" value={d.trustStripColor || '#000000'} onChange={(e) => setD({ ...d, trustStripColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" />
+          {d.trustStripColor && <button onClick={() => setD({ ...d, trustStripColor: '' })} className="text-xs text-red-400 hover:text-red-600">×</button>}
+        </div>
       </div>
       <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
       <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
