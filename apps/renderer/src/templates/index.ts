@@ -19,6 +19,7 @@ import { GalleryGridSection } from './handwerk/gallery-grid';
 import { RichTextSection } from './handwerk/rich-text';
 import { HeaderBannerSection } from './handwerk/header-banner';
 import { CollectionHeroSection } from './handwerk/collection-hero';
+import { TextImageSection } from './handwerk/text-image';
 import {
   AmbienceSection,
   EventsSection,
@@ -143,6 +144,7 @@ export const TRADESMAN_TEMPLATES: Record<string, TemplateComponent> = {
   galleryGrid: GalleryGridSection,
   richText: RichTextSection,
   headerBanner: HeaderBannerSection,
+  textImage: TextImageSection,
   collectionHero: CollectionHeroSection,
 };
 
@@ -269,6 +271,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     weddingMenu: WeddingMenuSection,
     faq: WeddingFaqSection,
     gallery: WeddingGallerySection,
+    textImage: TextImageSection,
     richText: RichTextSection,
     collectionHero: CollectionHeroSection,
   },

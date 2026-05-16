@@ -4,6 +4,7 @@ import { restaurantSite } from './restaurant';
 import { medicalSite } from './medical';
 import { salonSite } from './salon';
 import { tourismSite } from './tourism';
+import { weddingSite } from './wedding';
 import type { DemoSite } from './types';
 
 export type { DemoSite, DemoPage } from './types';
@@ -15,6 +16,7 @@ const SITES: Record<string, DemoSite> = {
   medical: medicalSite,
   salon: salonSite,
   tourism: tourismSite,
+  wedding: weddingSite,
 };
 
 export function getDemoSite(industryKey: string): DemoSite | undefined {
