@@ -17,6 +17,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         return {
           allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/avif'],
           maximumSizeInBytes: 10 * 1024 * 1024, // 10MB
+          addRandomSuffix: true,
           tokenPayload: JSON.stringify({ tenantId: session.tenantId }),
         };
       },
