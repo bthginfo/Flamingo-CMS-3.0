@@ -50,3 +50,11 @@ export function SaveProvider({ children }: { children: ReactNode }) {
 export function useSaveState() {
   return useContext(SaveContext);
 }
+
+/** Register a save function that always calls the latest version (avoids stale closures). */
+export function useRegisterSave(saveFn: () => void) {
+  const { registerSave } = useContext(SaveContext);
+  const ref = useRef(saveFn);
+  ref.current = saveFn;
+  useEffect(() => { registerSave(() => ref.current()); }, [registerSave]);
+}

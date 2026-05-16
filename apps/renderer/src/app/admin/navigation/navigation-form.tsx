@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { saveNavigationSettings } from '../settings-actions';
 import { toast } from 'sonner';
-import { useSaveState } from '@/components/save-context';
+import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
 
 type NavItem = { label: string; href: string; type?: string };
@@ -12,7 +12,7 @@ export function NavigationForm({ initial, initialCta }: { initial: NavItem[]; in
   const [items, setItems] = useState<NavItem[]>(initial.length > 0 ? initial : [{ label: '', href: '/', type: 'link' }]);
   const [cta, setCta] = useState(initialCta || { label: 'Termin vereinbaren', href: '/kontakt' });
   const [saving, setSaving] = useState(false);
-  const { markDirty, markSaved, registerSave } = useSaveState();
+  const { markDirty, markSaved } = useSaveState();
   const mounted = useRef(false);
   useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [items, cta]);
 
@@ -28,7 +28,7 @@ export function NavigationForm({ initial, initialCta }: { initial: NavItem[]; in
       setSaving(false);
     }
   };
-  useEffect(() => { registerSave(() => handleSave()); }, []);
+  useRegisterSave(handleSave);
 
   const moveItem = (from: number, to: number) => {
     const updated = [...items];

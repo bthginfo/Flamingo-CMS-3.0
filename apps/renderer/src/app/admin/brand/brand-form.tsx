@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { saveBrandSettings } from '../settings-actions';
 import { toast } from 'sonner';
-import { useSaveState } from '@/components/save-context';
+import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { ImageUploadField } from '@/components/image-upload-field';
 
 type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; headingFont?: string; bodyFont?: string };
@@ -43,11 +43,11 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     bodyFont: initial.bodyFont || '',
   });
   const [saving, setSaving] = useState(false);
-  const { markDirty, markSaved, registerSave } = useSaveState();
+  const { markDirty, markSaved } = useSaveState();
   const mounted = useRef(false);
   const formRef = useRef<HTMLFormElement>(null);
   useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [form]);
-  useEffect(() => { registerSave(() => formRef.current?.requestSubmit()); }, [registerSave]);
+  useRegisterSave(() => formRef.current?.requestSubmit());
 
   // Load Google Fonts for preview
   useEffect(() => {

@@ -55,11 +55,14 @@ export async function updatePageAction(pageId: string, data: { title?: string; s
 export async function getPageWithSectionsAction(pageId: string) {
   const session = await requireSession();
   const db = getDb();
-  const [page] = await db.select().from(pages).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId)));
+  const [pageResult, sectionsResult, tenantResult] = await Promise.all([
+    db.select().from(pages).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId))),
+    db.select().from(pageSections).where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).orderBy(asc(pageSections.sortOrder)),
+    db.select({ industry: tenants.industry }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1),
+  ]);
+  const page = pageResult[0];
   if (!page) return null;
-  const sections = await db.select().from(pageSections).where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).orderBy(asc(pageSections.sortOrder));
-  const [tenant] = await db.select({ industry: tenants.industry }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1);
-  return { page, sections, industry: tenant?.industry ?? 'tradesman' };
+  return { page, sections: sectionsResult, industry: tenantResult[0]?.industry ?? 'tradesman' };
 }
 
 export async function addSectionAction(pageId: string, type: string) {

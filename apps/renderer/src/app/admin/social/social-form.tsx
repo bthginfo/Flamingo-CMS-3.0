@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { saveSocialLinks } from '../settings-actions';
 import { toast } from 'sonner';
-import { useSaveState } from '@/components/save-context';
+import { useSaveState, useRegisterSave } from '@/components/save-context';
 
 const PLATFORMS = [
   { key: 'instagram', label: 'Instagram', placeholder: 'https://instagram.com/...' },
@@ -17,7 +17,7 @@ const PLATFORMS = [
 export function SocialForm({ initial }: { initial: Record<string, string> }) {
   const [links, setLinks] = useState<Record<string, string>>(initial);
   const [saving, setSaving] = useState(false);
-  const { markDirty, markSaved, registerSave } = useSaveState();
+  const { markDirty, markSaved } = useSaveState();
   const mounted = useRef(false);
   useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [links]);
 
@@ -34,7 +34,7 @@ export function SocialForm({ initial }: { initial: Record<string, string> }) {
       setSaving(false);
     }
   };
-  useEffect(() => { registerSave(() => doSave()); }, []);
+  useRegisterSave(doSave);
 
   const handleSave = (e: React.FormEvent) => { e.preventDefault(); doSave(); };
 

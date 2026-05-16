@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { saveFooterSettings } from '../settings-actions';
 import { toast } from 'sonner';
-import { useSaveState } from '@/components/save-context';
+import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { Plus, Trash2 } from 'lucide-react';
 
 type FooterColumn = { title: string; items: { text: string; href?: string }[] };
@@ -16,7 +16,7 @@ export function FooterForm({ initial }: { initial: FooterData }) {
   const [columns, setColumns] = useState<FooterColumn[]>(initial.columns);
   const [legalLinks, setLegalLinks] = useState(initial.legalLinks);
   const [saving, setSaving] = useState(false);
-  const { markDirty, markSaved, registerSave } = useSaveState();
+  const { markDirty, markSaved } = useSaveState();
   const mounted = useRef(false);
   useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [columns, legalLinks]);
 
@@ -35,7 +35,7 @@ export function FooterForm({ initial }: { initial: FooterData }) {
       setSaving(false);
     }
   };
-  useEffect(() => { registerSave(() => handleSave()); }, []);
+  useRegisterSave(handleSave);
 
   const updateColumn = (ci: number, col: FooterColumn) => {
     const u = [...columns];

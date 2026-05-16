@@ -2,13 +2,13 @@
 
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
-import { useSaveState } from '@/components/save-context';
+import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { getSeoGlobalAction, saveSeoGlobalAction } from './actions';
 import { Save } from 'lucide-react';
 
 export function SeoForm() {
   const [pending, startTransition] = useTransition();
-  const { markDirty, markSaved, registerSave } = useSaveState();
+  const { markDirty, markSaved } = useSaveState();
   const mounted = useRef(0);
   const [data, setData] = useState({
     defaultTitle: '',
@@ -43,8 +43,7 @@ export function SeoForm() {
       markSaved();
     });
   }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { registerSave(() => handleSave()); }, []);
+  useRegisterSave(handleSave);
 
   const field = (label: string, key: keyof typeof data, opts?: { placeholder?: string; hint?: string; maxLength?: number; multiline?: boolean }) => (
     <div>

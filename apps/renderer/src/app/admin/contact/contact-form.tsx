@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { saveContactSettings, saveOpeningHours } from '../settings-actions';
 import { toast } from 'sonner';
-import { useSaveState } from '@/components/save-context';
+import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { Plus, Trash2 } from 'lucide-react';
 
 type ContactData = { phone?: string; email?: string; address?: string };
@@ -17,7 +17,7 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
   });
   const [hours, setHours] = useState<HoursRow[]>(initialHours.length > 0 ? initialHours : [{ day: '', hours: '' }]);
   const [saving, setSaving] = useState(false);
-  const { markDirty, markSaved, registerSave } = useSaveState();
+  const { markDirty, markSaved } = useSaveState();
   const mounted = useRef(false);
   useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [contact, hours]);
 
@@ -33,7 +33,7 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
       setSaving(false);
     }
   };
-  useEffect(() => { registerSave(() => doSave()); }, []);
+  useRegisterSave(doSave);
 
   const handleSaveContact = (e: React.FormEvent) => { e.preventDefault(); doSave(); };
 

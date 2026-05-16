@@ -3,8 +3,7 @@ import { BrandForm } from './brand-form';
 import { StyleSwitcher } from './style-switcher';
 
 export default async function BrandPage() {
-  const { brand } = await getBrandSettings();
-  const tenantInfo = await getTenantInfo();
+  const [{ brand }, tenantInfo] = await Promise.all([getBrandSettings(), getTenantInfo()]);
 
   return (
     <div>
