@@ -53,7 +53,8 @@ export function BrandForm({ initial }: { initial: BrandData }) {
   const { markDirty, markSaved } = useSaveState();
   const mounted = useRef(false);
   const formRef = useRef<HTMLFormElement>(null);
-  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [form]);
+  const formJson = JSON.stringify(form);
+  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [formJson]);
   useRegisterSave(() => formRef.current?.requestSubmit());
 
   // Load Google Fonts for preview

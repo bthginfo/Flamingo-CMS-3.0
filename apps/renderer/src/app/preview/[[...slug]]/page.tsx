@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export default async function PreviewPage({ params, searchParams }: { params: Promise<{ slug?: string[] }>; searchParams: Promise<{ token?: string }> }) {
   const { slug } = await params;
   const { token } = await searchParams;
-  const secret = process.env.PREVIEW_SECRET || 'preview';
+  const secret = process.env.PREVIEW_SECRET || process.env.NEXT_PUBLIC_PREVIEW_SECRET || 'preview';
 
   if (token !== secret) notFound();
 

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { saveActiveStyle } from '../settings-actions';
 import { toast } from 'sonner';
 import { Check } from 'lucide-react';
+import { useSaveState } from '@/components/save-context';
 
 const STYLE_OPTIONS: Record<string, { label: string; description: string; preview: string }[]> = {
   handwerk: [
@@ -16,6 +17,7 @@ const STYLE_OPTIONS: Record<string, { label: string; description: string; previe
 export function StyleSwitcher({ industry, activeStyle }: { industry: string; activeStyle: string }) {
   const [current, setCurrent] = useState(activeStyle);
   const [saving, setSaving] = useState(false);
+  const { markSaved } = useSaveState();
   const options = STYLE_OPTIONS[industry] || STYLE_OPTIONS.handwerk;
 
   async function handleSelect(style: string) {
@@ -24,6 +26,7 @@ export function StyleSwitcher({ industry, activeStyle }: { industry: string; act
     try {
       await saveActiveStyle(style);
       setCurrent(style);
+      markSaved();
       toast.success('Stil geändert');
     } catch {
       toast.error('Fehler beim Speichern');

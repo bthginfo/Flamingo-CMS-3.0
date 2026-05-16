@@ -40,7 +40,7 @@ export function PublishFab() {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
       <a
-        href="/preview/"
+        href={`/preview/?token=${encodeURIComponent(process.env.NEXT_PUBLIC_PREVIEW_SECRET || 'preview')}`}
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-full shadow-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
