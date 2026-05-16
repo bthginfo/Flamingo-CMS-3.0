@@ -21,6 +21,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
   const date = (data.date as string) || '';
   const overlayColor = (data.overlayColor as string) || '#000000';
   const overlayOpacity = typeof data.overlayOpacity === 'number' ? data.overlayOpacity : 0.5;
+  const bgPosition = (data.bgPosition as string) || 'center';
 
   if (styleVariant === 'minimal') {
     return <CollectionHeroMinimal headline={headline} subline={subline} category={category} date={date} />;
@@ -31,7 +32,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
       {/* Background Image */}
       {bgImage ? (
         <>
-          <Image src={bgImage} alt={headline} fill className="object-cover" priority />
+          <Image src={bgImage} alt={headline} fill className="object-cover" style={{ objectPosition: bgPosition }} priority />
           <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
         </>
       ) : (
