@@ -23,16 +23,8 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
   // If the item has sections (page builder), render them
   if (sections && sections.length > 0) {
     const visibleSections = sections.filter(s => s.visible);
-    // Split into hero (first) and rest
     const heroSections = visibleSections.filter(s => s.type === 'collectionHero');
     const otherSections = visibleSections.filter(s => s.type !== 'collectionHero');
-
-    // Extract body/content fields that should render between hero and CTA
-    const body = data.body as string | undefined;
-    const description = data.description as string | undefined;
-    const features = data.features as string[] | undefined;
-    const stats = data.stats as { label: string; value: string }[] | undefined;
-    const gallery = data.gallery as string[] | undefined;
 
     return (
       <div>
@@ -47,47 +39,6 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
             Zurück zu {collection.label}
           </Link>
         </div>
-        {/* Inline content from data fields */}
-        {(body || description || features || stats || gallery) && (
-          <div className="max-w-4xl mx-auto px-6 py-12">
-            {stats && stats.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
-                {stats.map((s, i) => (
-                  <div key={i} className="text-center p-4 rounded-xl bg-gray-50">
-                    <div className="text-2xl font-bold text-brand-primary">{s.value}</div>
-                    <div className="text-sm text-gray-500 mt-1">{s.label}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-            {description && <p className="text-lg text-gray-600 leading-relaxed mb-8">{description}</p>}
-            {body && (
-              <div className="prose prose-lg max-w-none mb-10" dangerouslySetInnerHTML={{ __html: body.replace(/\n/g, '<br/>') }} />
-            )}
-            {features && features.length > 0 && (
-              <div className="bg-gray-50 rounded-xl p-6 mb-8">
-                <h3 className="font-semibold text-lg mb-3">Leistungen im Detail</h3>
-                <ul className="space-y-2">
-                  {features.map((f, i) => (
-                    <li key={i} className="flex items-start gap-2 text-gray-700">
-                      <span className="w-1.5 h-1.5 rounded-full bg-brand-primary mt-2 shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {gallery && gallery.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-10">
-                {gallery.map((src, i) => (
-                  <div key={i} className="relative aspect-[4/3] rounded-lg overflow-hidden">
-                    <Image src={src} alt="" fill className="object-cover" sizes="(max-width: 768px) 50vw, 33vw" />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
         {/* Remaining sections (CTA bands, etc.) */}
         {otherSections.map((section) => (
           <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} />
