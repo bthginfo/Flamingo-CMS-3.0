@@ -2,7 +2,7 @@
 
 import { type Dispatch, type SetStateAction, useEffect, useRef, useState } from 'react';
 import { ImageUploadField } from '@/components/image-upload-field';
-import { ButtonField } from '@/components/button-field';
+import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { IconPickerField } from '@/components/icon-picker-field';
 
 type ButtonValue = { label: string; href: string };
@@ -82,7 +82,7 @@ function VisitorInfoEditor({ data, onChange }: EditorProps) {
 function DownloadGuidesEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({ ...basicData(data), items: arr(data.items).map(downloadFromData) });
   useReport(d, onChange);
-  return <div className="space-y-3"><Basics d={d} setD={setD} /><Repeater items={d.items} addLabel="+ Download" onAdd={() => setD({ ...d, items: [...d.items, downloadFromData({})] })} render={(item, index) => <div className="space-y-3"><Field label="Titel" value={item.title} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, title: v })} /><Field label="Text" value={item.text} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, text: v })} multiline /><div className="grid grid-cols-3 gap-3"><Field label="Datei-Label" value={item.fileLabel} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, fileLabel: v })} /><Field label="Datei-Link" value={item.fileHref} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, fileHref: v })} /><Field label="Meta" value={item.metaLabel} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, metaLabel: v })} /></div></div>} /></div>;
+  return <div className="space-y-3"><Basics d={d} setD={setD} /><Repeater items={d.items} addLabel="+ Download" onAdd={() => setD({ ...d, items: [...d.items, downloadFromData({})] })} render={(item, index) => <div className="space-y-3"><Field label="Titel" value={item.title} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, title: v })} /><Field label="Text" value={item.text} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, text: v })} multiline /><div className="grid grid-cols-3 gap-3"><Field label="Datei-Label" value={item.fileLabel} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, fileLabel: v })} /><DetailLinkField label="Datei-Link" value={item.fileHref} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, fileHref: v })} /><Field label="Meta" value={item.metaLabel} onChange={(v) => updateItem(d, setD, 'items', index, { ...item, metaLabel: v })} /></div></div>} /></div>;
 }
 
 function GalleryEditor({ data, onChange }: EditorProps) {

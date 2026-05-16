@@ -941,10 +941,7 @@ function PhotographerAboutEditor({ data, onChange }: EditorProps) {
       <Field label="Intro" value={d.intro} onChange={(v) => setD({ ...d, intro: v })} multiline />
       <Field label="Story" value={d.story} onChange={(v) => setD({ ...d, story: v })} multiline />
       <ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="CTA Label" value={d.ctaLabel} onChange={(v) => setD({ ...d, ctaLabel: v })} />
-        <Field label="CTA Link" value={d.ctaHref} onChange={(v) => setD({ ...d, ctaHref: v })} />
-      </div>
+      <ButtonField label="CTA" value={{ label: d.ctaLabel, href: d.ctaHref }} onChange={(v) => setD({ ...d, ctaLabel: v.label, ctaHref: v.href })} />
       <div>
         <p className="text-xs font-medium text-zinc-600 mb-2">Fakten</p>
         {facts.map((f, i) => (
@@ -1055,9 +1052,8 @@ function ServicePackagesEditor({ data, onChange }: EditorProps) {
               <p className="text-xs text-zinc-500 mb-1">Features (eins pro Zeile)</p>
               <textarea className="admin-input text-xs w-full" rows={3} value={pkg.features.join('\n')} onChange={(e) => updatePkg(i, 'features', e.target.value.split('\n').filter(Boolean))} />
             </div>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              <Field label="CTA Label" value={pkg.ctaLabel} onChange={(v) => updatePkg(i, 'ctaLabel', v)} />
-              <Field label="CTA Link" value={pkg.ctaHref} onChange={(v) => updatePkg(i, 'ctaHref', v)} />
+            <div className="mt-2">
+              <ButtonField label="CTA" value={{ label: pkg.ctaLabel, href: pkg.ctaHref }} onChange={(v) => { updatePkg(i, 'ctaLabel', v.label); updatePkg(i, 'ctaHref', v.href); }} />
             </div>
             <label className="flex items-center gap-2 mt-2 text-xs text-zinc-600">
               <input type="checkbox" checked={pkg.highlighted} onChange={(e) => updatePkg(i, 'highlighted', e.target.checked)} />
