@@ -89,7 +89,7 @@ function CtaBold({ headline, subline, badgeText, cta }: CProps) {
         {subline && <div className="text-white/50 mt-3 font-medium max-w-xl rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {cta?.label && (
-        <a href={cta.href} className="inline-flex items-center gap-3 bg-brand-accent text-brand-dark font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] shrink-0">
+        <a href={cta.href} className="inline-flex items-center justify-between lg:justify-center lg:gap-3 bg-brand-accent text-brand-dark font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] shrink-0 w-full lg:w-auto">
           {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} />}
         </a>
       )}

@@ -98,8 +98,8 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.9 }}
           className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
           {primaryCta.label && (
-              <a href={primaryCta.href || '#'} className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-white px-8 py-4 font-semibold text-[#0f1d2e] transition-all hover:shadow-lg hover:-translate-y-0.5">
-              <span className="relative z-10 flex items-center gap-2.5">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} className="transition-transform group-hover:translate-x-1" />}</span>
+              <a href={primaryCta.href || '#'} className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-white px-8 py-4 font-semibold text-[#0f1d2e] transition-all hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto">
+              <span className="relative z-10 flex items-center justify-between sm:justify-center sm:gap-2.5 w-full sm:w-auto">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} className="transition-transform group-hover:translate-x-1" />}</span>
               <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.3),transparent)] bg-[length:200%_100%]" />
             </a>
           )}
@@ -139,7 +139,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, trustItems, bgIma
           {subline && <div className="text-lg text-gray-400 leading-relaxed mt-8 max-w-lg rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta.label && (
-              <a href={primaryCta.href || '#'} className="group inline-flex items-center gap-3 text-gray-900 font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-amber-500 hover:text-amber-600 transition-colors">
+              <a href={primaryCta.href || '#'} className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 text-gray-900 font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-amber-500 hover:text-amber-600 transition-colors w-full sm:w-auto">
                 {primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
               </a>
             )}
@@ -210,7 +210,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, trustItems, bgImage
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta.label && (
-              <a href={primaryCta.href || '#'} className="inline-flex items-center gap-3 bg-white text-gray-950 font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
+              <a href={primaryCta.href || '#'} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 bg-white text-gray-950 font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] w-full sm:w-auto">
                 {primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} />}
               </a>
             )}
