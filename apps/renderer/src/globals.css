@@ -272,9 +272,8 @@ html {
   color: var(--style-text-secondary, #64748b);
 }
 
-/* Badge overrides */
-[data-style] [class*="badge"],
-[data-style] [class*="Badge"] {
+/* Badge overrides — only target the dedicated .section-badge class */
+[data-style] .section-badge {
   background: var(--style-badge-bg, rgba(26,82,118,0.05));
   border: 1px solid var(--style-badge-border, rgba(26,82,118,0.1));
   border-radius: var(--style-radius-full, 2rem);
