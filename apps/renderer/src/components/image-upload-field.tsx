@@ -6,7 +6,7 @@ import { ImageIcon, Upload, X, Link as LinkIcon, FolderOpen } from 'lucide-react
 import { saveMediaRecord, getMediaAssets, type MediaAsset } from '@/app/admin/media-actions';
 
 /** Resize image to maxWidth and convert to WebP. Returns original if SVG or already small. */
-async function resizeImage(file: File, maxWidth: number, quality: number): Promise<File> {
+export async function resizeImage(file: File, maxWidth: number, quality: number): Promise<File> {
   if (file.type === 'image/svg+xml') return file;
   if (file.size < 200 * 1024) return file; // Skip if under 200KB
 

@@ -393,10 +393,32 @@ function GalleryGridEditor({ data, onChange }: EditorProps) {
   const [images, setImages] = useState<{ src: string; alt: string; caption: string }[]>(
     (data.images as { src: string; alt: string; caption: string }[]) || []
   );
+  const [bulkUploading, setBulkUploading] = useState(false);
+  const bulkInputRef = useRef<HTMLInputElement>(null);
   useReport({ headline, subline, images }, onChange);
 
   function addImage() { setImages([...images, { src: '', alt: '', caption: '' }]); }
   function removeImage(i: number) { setImages(images.filter((_, idx) => idx !== i)); }
+
+  async function handleBulkUpload(files: FileList) {
+    setBulkUploading(true);
+    const { upload } = await import('@vercel/blob/client');
+    const { resizeImage } = await import('@/components/image-upload-field');
+    const newImages: { src: string; alt: string; caption: string }[] = [];
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith('image/')) continue;
+      try {
+        const optimized = await resizeImage(file, 1920, 0.85);
+        const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        newImages.push({ src: blob.url, alt: file.name.replace(/\.[^.]+$/, ''), caption: '' });
+      } catch (e) { console.error('Bulk upload failed for', file.name, e); }
+    }
+    setImages(prev => [...prev, ...newImages]);
+    setBulkUploading(false);
+  }
 
   return (
     <div className="space-y-3">
@@ -412,7 +434,13 @@ function GalleryGridEditor({ data, onChange }: EditorProps) {
           </div>
         </div>
       ))}
-      <button onClick={addImage} className="text-sm text-blue-600 hover:underline">+ Bild hinzufügen</button>
+      <div className="flex items-center gap-3">
+        <button onClick={addImage} className="text-sm text-blue-600 hover:underline">+ Bild hinzufügen</button>
+        <button onClick={() => bulkInputRef.current?.click()} disabled={bulkUploading} className="text-sm text-blue-600 hover:underline disabled:opacity-50">
+          {bulkUploading ? '⏳ Wird hochgeladen...' : '+ Bulk Upload'}
+        </button>
+        <input ref={bulkInputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files)} />
+      </div>
     </div>
   );
 }
