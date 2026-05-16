@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { ImageUploadField } from '@/components/image-upload-field';
 
-type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string };
+type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string };
 
 const GOOGLE_FONTS = [
   { value: '', label: 'Standard (Outfit / Inter)' },
@@ -44,6 +44,10 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     bodyFont: initial.bodyFont || '',
     topBarColor: initial.topBarColor || '',
     footerColor: initial.footerColor || '',
+    customHeadingFontUrl: initial.customHeadingFontUrl || '',
+    customHeadingFontName: initial.customHeadingFontName || '',
+    customBodyFontUrl: initial.customBodyFontUrl || '',
+    customBodyFontName: initial.customBodyFontName || '',
   });
   const [saving, setSaving] = useState(false);
   const { markDirty, markSaved } = useSaveState();
@@ -171,26 +175,66 @@ export function BrandForm({ initial }: { initial: BrandData }) {
 
       <div className="admin-card p-6 space-y-5">
         <h2 className="font-semibold text-lg">Schriften</h2>
-        <p className="text-sm text-zinc-500">Wählen Sie Google Fonts für Überschriften und Fließtext. Leer = Standard-Schrift.</p>
+        <p className="text-sm text-zinc-500">Wählen Sie Google Fonts oder laden Sie eigene Schrift-Dateien (.woff2, .woff, .ttf) hoch.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div>
+          <div className="space-y-3">
             <label className="admin-label">Überschriften-Schrift</label>
-            <select className="admin-input" value={form.headingFont} onChange={e => setForm(f => ({ ...f, headingFont: e.target.value }))}>
+            <select className="admin-input" value={form.customHeadingFontUrl ? '__custom__' : form.headingFont} onChange={e => {
+              if (e.target.value === '__custom__') return;
+              setForm(f => ({ ...f, headingFont: e.target.value, customHeadingFontUrl: '', customHeadingFontName: '' }));
+            }}>
               {GOOGLE_FONTS.map(f => <option key={f.value} value={f.value}>{f.label}</option>)}
+              {form.customHeadingFontUrl && <option value="__custom__">✦ {form.customHeadingFontName || 'Custom Font'}</option>}
             </select>
-            {form.headingFont && (
-              <p className="mt-2 text-lg" style={{ fontFamily: `"${form.headingFont}", sans-serif` }}>
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-blue-600 hover:underline cursor-pointer">
+                Eigene Schrift hochladen
+                <input type="file" accept=".woff2,.woff,.ttf,.otf" className="hidden" onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const { upload } = await import('@vercel/blob/client');
+                  const blob = await upload(file.name, file, { access: 'public', handleUploadUrl: '/api/upload' });
+                  const fontName = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+                  setForm(f => ({ ...f, customHeadingFontUrl: blob.url, customHeadingFontName: fontName, headingFont: '' }));
+                }} />
+              </label>
+              {form.customHeadingFontUrl && (
+                <button type="button" onClick={() => setForm(f => ({ ...f, customHeadingFontUrl: '', customHeadingFontName: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕ Entfernen</button>
+              )}
+            </div>
+            {(form.headingFont || form.customHeadingFontUrl) && (
+              <p className="mt-1 text-lg" style={{ fontFamily: form.customHeadingFontUrl ? `"${form.customHeadingFontName}"` : `"${form.headingFont}", sans-serif` }}>
                 Vorschau: Überschrift
               </p>
             )}
           </div>
-          <div>
+          <div className="space-y-3">
             <label className="admin-label">Fließtext-Schrift</label>
-            <select className="admin-input" value={form.bodyFont} onChange={e => setForm(f => ({ ...f, bodyFont: e.target.value }))}>
+            <select className="admin-input" value={form.customBodyFontUrl ? '__custom__' : form.bodyFont} onChange={e => {
+              if (e.target.value === '__custom__') return;
+              setForm(f => ({ ...f, bodyFont: e.target.value, customBodyFontUrl: '', customBodyFontName: '' }));
+            }}>
               {GOOGLE_FONTS.map(f => <option key={f.value} value={f.value}>{f.label}</option>)}
+              {form.customBodyFontUrl && <option value="__custom__">✦ {form.customBodyFontName || 'Custom Font'}</option>}
             </select>
-            {form.bodyFont && (
-              <p className="mt-2 text-sm" style={{ fontFamily: `"${form.bodyFont}", sans-serif` }}>
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-blue-600 hover:underline cursor-pointer">
+                Eigene Schrift hochladen
+                <input type="file" accept=".woff2,.woff,.ttf,.otf" className="hidden" onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const { upload } = await import('@vercel/blob/client');
+                  const blob = await upload(file.name, file, { access: 'public', handleUploadUrl: '/api/upload' });
+                  const fontName = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+                  setForm(f => ({ ...f, customBodyFontUrl: blob.url, customBodyFontName: fontName, bodyFont: '' }));
+                }} />
+              </label>
+              {form.customBodyFontUrl && (
+                <button type="button" onClick={() => setForm(f => ({ ...f, customBodyFontUrl: '', customBodyFontName: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕ Entfernen</button>
+              )}
+            </div>
+            {(form.bodyFont || form.customBodyFontUrl) && (
+              <p className="mt-1 text-sm" style={{ fontFamily: form.customBodyFontUrl ? `"${form.customBodyFontName}"` : `"${form.bodyFont}", sans-serif` }}>
                 Vorschau: Dies ist ein Beispieltext für die Fließtext-Schrift.
               </p>
             )}

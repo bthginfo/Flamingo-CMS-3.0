@@ -10,6 +10,7 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild', category: 'Inhalt' },
   { type: 'freeText', label: 'Freitext', description: 'Formatierter Text mit Editor', category: 'Inhalt' },
   { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)', category: 'Inhalt' },
+  { type: 'videoEmbed', label: 'Video', description: 'YouTube / Vimeo Video einbetten', category: 'Inhalt' },
   { type: 'headerBanner', label: 'Header-Banner', description: 'Obere Hinweisleiste', category: 'Inhalt' },
   { type: 'ctaBand', label: 'CTA-Band', description: 'Call-to-Action Banner', category: 'Marketing' },
   { type: 'ctaLinks', label: 'CTA-Links', description: 'Button-Links zu Unterseiten', category: 'Marketing' },

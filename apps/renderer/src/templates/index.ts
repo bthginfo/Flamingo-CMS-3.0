@@ -17,6 +17,7 @@ import { StatsSection } from './handwerk/stats';
 import { LogoCloudSection } from './handwerk/logo-cloud';
 import { GalleryGridSection } from './handwerk/gallery-grid';
 import { RichTextSection } from './handwerk/rich-text';
+import { VideoEmbedSection } from './shared/video-embed';
 import { HeaderBannerSection } from './handwerk/header-banner';
 import { CollectionHeroSection } from './handwerk/collection-hero';
 import { TextImageSection } from './handwerk/text-image';
@@ -149,6 +150,7 @@ export const TRADESMAN_TEMPLATES: Record<string, TemplateComponent> = {
   logoCloud: LogoCloudSection,
   galleryGrid: GalleryGridSection,
   richText: RichTextSection,
+  videoEmbed: VideoEmbedSection,
   freeText: RichTextSection,
   headerBanner: HeaderBannerSection,
   textImage: TextImageSection,
@@ -174,6 +176,7 @@ export const RESTAURANT_TEMPLATES: Record<string, TemplateComponent> = {
   ctaBand: CtaBandSection,
   textImage: TextImageSection,
   richText: RichTextSection,
+  videoEmbed: VideoEmbedSection,
   collectionHero: CollectionHeroSection,
 };
 
@@ -201,6 +204,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     ctaBand: CtaBandSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+  videoEmbed: VideoEmbedSection,
     collectionHero: CollectionHeroSection,
   },
   tourism: {
@@ -226,6 +230,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     ctaBand: CtaBandSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+  videoEmbed: VideoEmbedSection,
     collectionHero: CollectionHeroSection,
   },
   salon: {
@@ -249,6 +254,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     ctaBand: CtaBandSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+  videoEmbed: VideoEmbedSection,
     collectionHero: CollectionHeroSection,
   },
   medical: {
@@ -278,6 +284,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     ctaBand: CtaBandSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+  videoEmbed: VideoEmbedSection,
     collectionHero: CollectionHeroSection,
   },
   wedding: {
@@ -297,6 +304,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     ctaBand: CtaBandSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+  videoEmbed: VideoEmbedSection,
     collectionHero: CollectionHeroSection,
   },
   photography: {
@@ -314,6 +322,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     uspStrip: UspStripSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+  videoEmbed: VideoEmbedSection,
     newsPreview: NewsPreviewSection,
     newsGrid: NewsPreviewSection,
     collectionHero: CollectionHeroSection,
@@ -333,6 +342,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   logoCloud: LogoCloudSection,
   galleryGrid: GalleryGridSection,
   richText: RichTextSection,
+  videoEmbed: VideoEmbedSection,
   freeText: RichTextSection,
   headerBanner: HeaderBannerSection,
   textImage: TextImageSection,

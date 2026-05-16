@@ -841,6 +841,27 @@ function FreeTextEditor({ data, onChange }: EditorProps) {
   );
 }
 
+// ─── Video Embed Editor ──────────────────────────────────────────
+function VideoEmbedEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    text: (data.text as string) || '',
+    videoUrl: (data.videoUrl as string) || '',
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Eyebrow / Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Titel" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Text" value={d.text} onChange={(v) => setD({ ...d, text: v })} multiline />
+      <Field label="Video-URL (YouTube / Vimeo)" value={d.videoUrl} onChange={(v) => setD({ ...d, videoUrl: v })} />
+      {d.videoUrl && <p className="text-[11px] text-zinc-400">Unterstützt: YouTube, Vimeo – einfach den normalen Link einfügen.</p>}
+    </div>
+  );
+}
+
 // ─── Header Banner Editor ────────────────────────────────────────
 function HeaderBannerEditor({ data, onChange }: EditorProps) {
   const [items, setItems] = useState<{ text: string; link: string }[]>(
@@ -1198,6 +1219,7 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   team: TeamEditor,
   richText: RichTextEditor,
   freeText: FreeTextEditor,
+  videoEmbed: VideoEmbedEditor,
   headerBanner: HeaderBannerEditor,
   collectionHero: CollectionHeroEditor,
   textImage: TextImageEditor,

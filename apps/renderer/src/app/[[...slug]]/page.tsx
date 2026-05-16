@@ -117,8 +117,20 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
     ? `https://fonts.googleapis.com/css2?${customFonts.map(f => `family=${f.replace(/ /g, '+')}:wght@400;500;600;700;800`).join('&')}&display=swap`
     : null;
   const fontCssVars: Record<string, string> = {};
-  if (brand.headingFont) fontCssVars['--style-heading-font'] = `"${brand.headingFont}", var(--font-outfit), system-ui, sans-serif`;
-  if (brand.bodyFont) fontCssVars['--custom-body-font'] = `"${brand.bodyFont}", var(--font-inter), system-ui, sans-serif`;
+  // Custom uploaded fonts take priority
+  const headingFontName = brand.customHeadingFontName || brand.headingFont || '';
+  const bodyFontName = brand.customBodyFontName || brand.bodyFont || '';
+  if (headingFontName) fontCssVars['--style-heading-font'] = `"${headingFontName}", var(--font-outfit), system-ui, sans-serif`;
+  if (bodyFontName) fontCssVars['--custom-body-font'] = `"${bodyFontName}", var(--font-inter), system-ui, sans-serif`;
+
+  // @font-face declarations for custom uploaded fonts
+  const fontFaceRules: string[] = [];
+  if (brand.customHeadingFontUrl && brand.customHeadingFontName) {
+    fontFaceRules.push(`@font-face { font-family: "${brand.customHeadingFontName}"; src: url("${brand.customHeadingFontUrl}"); font-display: swap; }`);
+  }
+  if (brand.customBodyFontUrl && brand.customBodyFontName) {
+    fontFaceRules.push(`@font-face { font-family: "${brand.customBodyFontName}"; src: url("${brand.customBodyFontUrl}"); font-display: swap; }`);
+  }
 
   // JSON-LD structured data
   const isHome = !slug || slug.length === 0;
@@ -199,7 +211,8 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   return (
     <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
       {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
-      {brand.bodyFont && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
+      {fontFaceRules.length > 0 && <style dangerouslySetInnerHTML={{ __html: fontFaceRules.join('\n') }} />}
+      {bodyFontName && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdList) }} />
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} />
       <main>
