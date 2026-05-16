@@ -2,12 +2,11 @@
 
 import { useState, useTransition, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, Rocket } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { updateItemAction } from '../../actions';
-import { publishAction } from '../../../actions/publish';
 import { PageSectionsProvider } from '@/components/button-field';
 import { IndustrySectionDataEditor } from '../../../pages/[id]/industry-section-editor';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from '../../../pages/[id]/section-types';
@@ -141,7 +140,6 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [publishing, setPublishing] = useState(false);
   const [hasDirty, setHasDirty] = useState(false);
   const [pending, startTransition] = useTransition();
   const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
@@ -231,21 +229,6 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
     }
   }
 
-  async function handlePublish() {
-    setPublishing(true);
-    try {
-      const result = await publishAction();
-      if ('error' in result) {
-        toast.error(result.error);
-      } else {
-        toast.success('Änderungen veröffentlicht');
-        setSaved(false);
-      }
-    } finally {
-      setPublishing(false);
-    }
-  }
-
   const sectionAnchors = sections.map(s => ({ id: s.id, type: s.type, anchorId: s.anchorId || null }));
 
   return (
@@ -318,23 +301,13 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
 
         {/* FAB Bar */}
         <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
-          {!saved ? (
-            <button
-              onClick={handleSaveAll}
-              disabled={saving}
-              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Save size={16} /> {saving ? 'Speichert…' : 'Speichern'}
-            </button>
-          ) : (
-            <button
-              onClick={handlePublish}
-              disabled={publishing}
-              className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Rocket size={16} /> {publishing ? 'Wird veröffentlicht…' : 'Veröffentlichen'}
-            </button>
-          )}
+          <button
+            onClick={handleSaveAll}
+            disabled={saving || saved}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full shadow-lg text-sm font-medium transition-colors ${saved ? 'bg-green-600 text-white cursor-default' : 'bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'}`}
+          >
+            <Save size={16} /> {saving ? 'Speichert…' : saved ? 'Gespeichert ✓' : 'Speichern'}
+          </button>
         </div>
       </div>
     </PageSectionsProvider>

@@ -1,73 +1,20 @@
-import {
-  Trophy, Zap, Wallet, Leaf, Flame, ShowerHead, Wrench, Settings,
-  Siren, BarChart3, ClipboardList, Ruler, HardHat, CheckCircle2, Handshake,
-  Phone, Mail, MapPin, Clock, HelpCircle, Shield, Star, ArrowRight,
-  Users, Building2, Award, Heart, Target, Lightbulb, TrendingUp,
-  Activity, Brain, Car, Cloud, Dumbbell, FileText, FlaskConical, Globe,
-  HeartPulse, Mountain, Plane, ScanLine, Sparkles, Stethoscope, Sun,
-  Ticket, Train, Truck, Utensils, Waves, Wind, Wine,
-  type LucideIcon,
-} from 'lucide-react';
+import { icons, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
-const ICON_MAP: Record<string, LucideIcon> = {
-  trophy: Trophy,
-  zap: Zap,
-  wallet: Wallet,
-  leaf: Leaf,
-  flame: Flame,
-  shower: ShowerHead,
-  wrench: Wrench,
-  settings: Settings,
-  siren: Siren,
-  'bar-chart': BarChart3,
-  clipboard: ClipboardList,
-  ruler: Ruler,
-  'hard-hat': HardHat,
-  'check-circle': CheckCircle2,
-  handshake: Handshake,
-  phone: Phone,
-  mail: Mail,
-  'map-pin': MapPin,
-  clock: Clock,
-  'help-circle': HelpCircle,
-  shield: Shield,
-  star: Star,
-  'arrow-right': ArrowRight,
-  users: Users,
-  building: Building2,
-  award: Award,
-  heart: Heart,
-  target: Target,
-  lightbulb: Lightbulb,
-  'trending-up': TrendingUp,
-  activity: Activity,
-  brain: Brain,
-  car: Car,
-  cloud: Cloud,
-  dumbbell: Dumbbell,
-  'file-text': FileText,
-  flask: FlaskConical,
-  globe: Globe,
-  'heart-pulse': HeartPulse,
-  mountain: Mountain,
-  plane: Plane,
-  scan: ScanLine,
-  sparkles: Sparkles,
-  stethoscope: Stethoscope,
-  sun: Sun,
-  ticket: Ticket,
-  train: Train,
-  truck: Truck,
-  utensils: Utensils,
-  waves: Waves,
-  wind: Wind,
-  wine: Wine,
-};
+/** Convert kebab-case or lowercase to PascalCase for lucide-react lookup */
+function toPascalCase(str: string): string {
+  return str
+    .split(/[-_\s]+/)
+    .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+    .join('');
+}
 
 export function DynamicIcon({ name, size = 24, className }: { name: string; size?: number; className?: string }) {
-  const Icon = ICON_MAP[name];
+  // Try exact PascalCase match first, then convert from kebab/lowercase
+  const Icon: LucideIcon | undefined =
+    (icons as Record<string, LucideIcon>)[name] ||
+    (icons as Record<string, LucideIcon>)[toPascalCase(name)];
   if (!Icon) return <span className={className}>{name}</span>;
   return <Icon size={size} className={className} />;
 }
