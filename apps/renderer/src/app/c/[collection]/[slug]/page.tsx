@@ -9,6 +9,7 @@ import { notFound } from 'next/navigation';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { CollectionDetail } from '@/components/collection-detail';
+import { WhatsAppFab } from '@/components/whatsapp-fab';
 
 async function resolveItem(params: Promise<{ collection: string; slug: string }>) {
   const { collection, slug } = await params;
@@ -89,6 +90,7 @@ export default async function CollectionItemPage({ params }: { params: Promise<{
         <CollectionDetail item={item} collection={col} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} />
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />
+      {contact.whatsappEnabled && contact.whatsapp && <WhatsAppFab phone={contact.whatsapp} color={contact.whatsappColor} />}
     </div>
   );
 }

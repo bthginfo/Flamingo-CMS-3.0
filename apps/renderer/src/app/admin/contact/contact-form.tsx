@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { Plus, Trash2 } from 'lucide-react';
 
-type ContactData = { phone?: string; email?: string; address?: string };
+type ContactData = { phone?: string; email?: string; address?: string; whatsapp?: string; whatsappEnabled?: boolean; whatsappColor?: string };
 type HoursRow = { day: string; hours: string };
 
 export function ContactForm({ initialContact, initialHours }: { initialContact: ContactData; initialHours: HoursRow[] }) {
@@ -14,6 +14,9 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
     phone: initialContact.phone || '',
     email: initialContact.email || '',
     address: initialContact.address || '',
+    whatsapp: initialContact.whatsapp || '',
+    whatsappEnabled: initialContact.whatsappEnabled ?? false,
+    whatsappColor: initialContact.whatsappColor || '',
   });
   const [hours, setHours] = useState<HoursRow[]>(initialHours.length > 0 ? initialHours : [{ day: '', hours: '' }]);
   const [saving, setSaving] = useState(false);
@@ -66,6 +69,32 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
         <div>
           <label className="admin-label">Adresse</label>
           <input className="admin-input" value={contact.address} onChange={e => setContact(c => ({ ...c, address: e.target.value }))} placeholder="Musterstraße 1, 50667 Köln" />
+        </div>
+        <hr className="border-gray-200" />
+        <h3 className="font-medium text-sm text-zinc-700">WhatsApp Button</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label className="admin-label">WhatsApp Nummer</label>
+            <input className="admin-input" value={contact.whatsapp} onChange={e => setContact(c => ({ ...c, whatsapp: e.target.value }))} placeholder="z.B. +49 160 1234567" />
+            <p className="text-xs text-zinc-400 mt-1">Nur Nummer eingeben – Link wird automatisch generiert</p>
+          </div>
+          <div className="flex flex-col gap-3">
+            <label className="admin-label flex items-center gap-2">
+              <input type="checkbox" checked={contact.whatsappEnabled} onChange={e => setContact(c => ({ ...c, whatsappEnabled: e.target.checked }))} className="rounded" />
+              Button anzeigen
+            </label>
+            <div className="flex items-center gap-2">
+              <label className="admin-label mb-0">Farbe</label>
+              <select className="admin-input w-auto text-sm" value={!contact.whatsappColor || contact.whatsappColor === 'whatsapp' ? 'whatsapp' : contact.whatsappColor === 'primary' ? 'primary' : 'custom'} onChange={e => setContact(c => ({ ...c, whatsappColor: e.target.value === 'custom' ? '#25D366' : e.target.value }))}>
+                <option value="whatsapp">WhatsApp Grün</option>
+                <option value="primary">Primärfarbe</option>
+                <option value="custom">Eigene Farbe</option>
+              </select>
+            </div>
+            {contact.whatsappColor && contact.whatsappColor !== 'whatsapp' && contact.whatsappColor !== 'primary' && (
+              <input type="color" value={contact.whatsappColor} onChange={e => setContact(c => ({ ...c, whatsappColor: e.target.value }))} className="w-10 h-10 rounded border cursor-pointer" />
+            )}
+          </div>
         </div>
       </form>
 

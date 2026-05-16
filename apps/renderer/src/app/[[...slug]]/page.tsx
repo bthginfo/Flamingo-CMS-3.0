@@ -10,6 +10,7 @@ import type { Metadata } from 'next';
 import { SectionRenderer } from '@/components/section-renderer';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
+import { WhatsAppFab } from '@/components/whatsapp-fab';
 
 async function resolvePageData(slug?: string[]) {
   const tenantId = await resolveTenant();
@@ -221,6 +222,7 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
         ))}
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />
+      {contact.whatsappEnabled && contact.whatsapp && <WhatsAppFab phone={contact.whatsapp} color={contact.whatsappColor} />}
     </div>
   );
 }

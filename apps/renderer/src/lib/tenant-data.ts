@@ -8,7 +8,7 @@ export type FooterColumn = { title: string; items: { text: string; href?: string
 export type FooterData = { columns: FooterColumn[]; legalLinks: { label: string; href: string }[] };
 export type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: 'logo' | 'logoAndName' | 'name'; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string };
 export type SocialLinks = Record<string, string>;
-export type ContactData = { phone?: string; email?: string; address?: string };
+export type ContactData = { phone?: string; email?: string; address?: string; whatsapp?: string; whatsappEnabled?: boolean; whatsappColor?: string };
 
 export async function getTenantStyle(tenantId: string): Promise<{ industry: string; activeStyle: string }> {
   const db = getDb();

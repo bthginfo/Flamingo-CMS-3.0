@@ -47,7 +47,7 @@ export async function getContactSettings() {
   };
 }
 
-export async function saveContactSettings(data: { phone: string; email: string; address: string }) {
+export async function saveContactSettings(data: { phone: string; email: string; address: string; whatsapp?: string; whatsappEnabled?: boolean; whatsappColor?: string }) {
   const tenantId = await requireTenant();
   const db = getDb();
   await db.update(globalSettings)
