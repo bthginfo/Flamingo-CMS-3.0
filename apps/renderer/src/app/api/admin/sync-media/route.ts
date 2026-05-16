@@ -7,7 +7,7 @@ const BLOB_URL_REGEX = /https:\/\/[a-z0-9]+\.public\.blob\.vercel-storage\.com\/
 
 export async function GET(req: NextRequest) {
   const secret = req.nextUrl.searchParams.get('secret');
-  if (secret !== process.env.PREVIEW_SECRET && secret !== process.env.NEXT_PUBLIC_PREVIEW_SECRET) {
+  if (secret !== process.env.PREVIEW_SECRET && secret !== process.env.NEXT_PUBLIC_PREVIEW_SECRET && secret !== process.env.MASTER_ADMIN_PASSWORD) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
