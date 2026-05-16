@@ -38,17 +38,17 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
             {/* Contact info */}
             <div className="flex flex-col gap-2.5 pt-2">
               {contact?.address && (
-                <span className="text-sm text-gray-400 flex items-center gap-2.5">
+                <span className="text-sm opacity-70 flex items-center gap-2.5">
                   <MapPin size={14} className="text-brand-accent shrink-0" />{contact.address}
                 </span>
               )}
               {contact?.phone && (
-                <a href={`tel:${contact.phone}`} className="text-sm text-gray-400 flex items-center gap-2.5 hover:text-white transition-colors">
+                <a href={`tel:${contact.phone}`} className="text-sm opacity-70 flex items-center gap-2.5 hover:opacity-100 transition-colors">
                   <Phone size={14} className="text-brand-accent shrink-0" />{contact.phone}
                 </a>
               )}
               {contact?.email && (
-                <a href={`mailto:${contact.email}`} className="text-sm text-gray-400 flex items-center gap-2.5 hover:text-white transition-colors">
+                <a href={`mailto:${contact.email}`} className="text-sm opacity-70 flex items-center gap-2.5 hover:opacity-100 transition-colors">
                   <Mail size={14} className="text-brand-accent shrink-0" />{contact.email}
                 </a>
               )}
@@ -59,7 +59,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
                 {socials.map(([platform, url]) => {
                   const Icon = SOCIAL_ICONS[platform];
                   return Icon ? (
-                    <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/[0.06] flex items-center justify-center text-gray-400 hover:bg-brand-accent hover:text-gray-900 transition-all duration-300">
+                    <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/[0.06] flex items-center justify-center opacity-70 hover:bg-brand-accent hover:text-gray-900 hover:opacity-100 transition-all duration-300">
                       <Icon size={16} />
                     </a>
                   ) : null;
@@ -79,11 +79,11 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
                   {col.items.map((item, j) => (
                     <li key={j}>
                       {item.href ? (
-                        <Link href={item.href} className="text-gray-400 text-sm hover:text-white hover:translate-x-0.5 inline-block transition-all duration-200">
+                        <Link href={item.href} className="text-sm opacity-70 hover:opacity-100 hover:translate-x-0.5 inline-block transition-all duration-200">
                           {item.text}
                         </Link>
                       ) : (
-                        <span className="text-gray-400 text-sm">{item.text}</span>
+                        <span className="text-sm opacity-70">{item.text}</span>
                       )}
                     </li>
                   ))}
@@ -95,16 +95,16 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
 
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-xs text-gray-500">
+          <span className="text-xs opacity-50">
             © {new Date().getFullYear()} {brand.companyName}. Alle Rechte vorbehalten.
           </span>
           <div className="flex items-center gap-6 flex-wrap justify-center">
             {footer.legalLinks.map((link, i) => (
-              <Link key={i} href={link.href} className="text-xs text-gray-500 hover:text-white transition-colors duration-200">
+              <Link key={i} href={link.href} className="text-xs opacity-50 hover:opacity-100 transition-colors duration-200">
                 {link.label}
               </Link>
             ))}
-            <span className="text-xs text-gray-600 flex items-center gap-1">
+            <span className="text-xs opacity-40 flex items-center gap-1">
               Made with <Heart size={10} className="text-brand-accent fill-brand-accent" /> by <span className="text-brand-accent font-medium">Flamingo</span>
             </span>
           </div>
