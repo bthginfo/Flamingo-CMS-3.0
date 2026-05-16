@@ -3,15 +3,15 @@
 type RsvpResponse = {
   id: string;
   name: string;
-  email: string;
+  email: string | null;
   attending: boolean;
-  guestCount: number | null;
+  guestCount: number;
   guestNames: string | null;
   dietary: string | null;
   allergies: string | null;
   songWish: string | null;
   comment: string | null;
-  createdAt: Date | null;
+  createdAt: Date;
 };
 
 export function RsvpList({ responses }: { responses: RsvpResponse[] }) {
