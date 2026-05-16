@@ -32,20 +32,20 @@ function Classic({ headline, subline, badgeText, ratingValue, ratingCount, items
   return (
     <div>
       <SectionHeader headline={headline} subline={subline} badgeText={badgeText} />
-      {(ratingValue || ratingCount) && <p className="mb-6 text-sm text-[var(--style-text-secondary)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
+      {(ratingValue || ratingCount) && <p className="mb-6 text-sm text-gray-600">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
-          <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-[var(--style-card-radius)] border border-black/10 bg-[var(--style-card-bg)] p-5 shadow-[var(--style-card-shadow)]">
-            <div className="text-[var(--style-accent,var(--style-badge-bg))]"><Stars count={item.rating || 5} /></div>
-            {item.quote && <p className="mt-4 text-sm leading-6 text-[var(--style-text-primary)]">&ldquo;{item.quote}&rdquo;</p>}
+          <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-xl border border-black/10 bg-white p-5 shadow-sm">
+            <div className="text-[var(--brand-accent))]"><Stars count={item.rating || 5} /></div>
+            {item.quote && <p className="mt-4 text-sm leading-6 text-gray-900">&ldquo;{item.quote}&rdquo;</p>}
             <div className="mt-4 border-t border-black/10 pt-3">
-              <p className="font-semibold text-[var(--style-text-primary)]">{item.name || ''}</p>
-              <p className="text-xs text-[var(--style-text-secondary)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
+              <p className="font-semibold text-gray-900">{item.name || ''}</p>
+              <p className="text-xs text-gray-600">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
             </div>
           </motion.article>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-[var(--style-button-radius)] bg-[var(--style-text-primary)] px-5 py-3 font-semibold text-white">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[#111827] px-5 py-3 font-semibold text-white">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -54,18 +54,18 @@ function Mod({ headline, subline, badgeText, ratingValue, ratingCount, items, ct
   return (
     <div>
       <SectionHeader headline={headline} subline={subline} badgeText={badgeText} />
-      {(ratingValue || ratingCount) && <p className="mb-8 text-sm font-light text-[var(--style-text-secondary)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
+      {(ratingValue || ratingCount) && <p className="mb-8 text-sm font-light text-gray-600">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       <div className="grid gap-8 md:grid-cols-3">
         {items.map((item, i) => (
           <article key={`${item.name}-${i}`} className="border-t border-black/10 pt-6">
-            <div className="text-[var(--style-accent,var(--style-badge-bg))]"><Stars count={item.rating || 5} /></div>
-            {item.quote && <p className="mt-4 text-sm font-light leading-7 text-[var(--style-text-primary)]">&ldquo;{item.quote}&rdquo;</p>}
-            <p className="mt-4 font-medium text-[var(--style-text-primary)]">{item.name || ''}</p>
-            <p className="text-xs font-light text-[var(--style-text-secondary)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
+            <div className="text-[var(--brand-accent))]"><Stars count={item.rating || 5} /></div>
+            {item.quote && <p className="mt-4 text-sm font-light leading-7 text-gray-900">&ldquo;{item.quote}&rdquo;</p>}
+            <p className="mt-4 font-medium text-gray-900">{item.name || ''}</p>
+            <p className="text-xs font-light text-gray-600">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 rounded-[var(--style-button-radius)] border border-[var(--style-text-primary)] px-5 py-3 font-medium text-[var(--style-text-primary)]">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 rounded-lg border border-[#111827] px-5 py-3 font-medium text-gray-900">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -74,20 +74,20 @@ function Bold({ headline, subline, badgeText, ratingValue, ratingCount, items, c
   return (
     <div>
       <SectionHeader headline={headline} subline={subline} badgeText={badgeText} />
-      {(ratingValue || ratingCount) && <p className="mb-6 text-sm font-bold uppercase text-[var(--style-text-secondary)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
+      {(ratingValue || ratingCount) && <p className="mb-6 text-sm font-bold uppercase text-gray-600">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
-          <article key={`${item.name}-${i}`} className="border-2 border-[var(--style-text-primary)] bg-[var(--style-card-bg)] p-5 shadow-[4px_4px_0_var(--style-text-primary)]">
-            <div className="text-[var(--style-accent,var(--style-badge-bg))]"><Stars count={item.rating || 5} /></div>
-            {item.quote && <p className="mt-4 text-sm leading-6 text-[var(--style-text-primary)]">&ldquo;{item.quote}&rdquo;</p>}
-            <div className="mt-4 border-t-2 border-[var(--style-text-primary)] pt-3">
-              <p className="font-black uppercase text-[var(--style-text-primary)]">{item.name || ''}</p>
-              <p className="text-xs font-bold text-[var(--style-text-secondary)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
+          <article key={`${item.name}-${i}`} className="border-2 border-[#111827] bg-white p-5 shadow-[4px_4px_0_#111827]">
+            <div className="text-[var(--brand-accent))]"><Stars count={item.rating || 5} /></div>
+            {item.quote && <p className="mt-4 text-sm leading-6 text-gray-900">&ldquo;{item.quote}&rdquo;</p>}
+            <div className="mt-4 border-t-2 border-[#111827] pt-3">
+              <p className="font-black uppercase text-gray-900">{item.name || ''}</p>
+              <p className="text-xs font-bold text-gray-600">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
             </div>
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[var(--style-text-primary)] bg-[var(--style-text-primary)] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--style-badge-bg)]">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--brand-primary)]">{ctaPrimary.label}</a>}
     </div>
   );
 }

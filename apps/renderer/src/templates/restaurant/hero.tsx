@@ -34,7 +34,7 @@ type HeroProps = {
 /* ─── CLASSIC: Fullscreen bg, warm gradient overlay, grain texture, spotlight, staggered fade-in ─── */
 function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta }: HeroProps) {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[var(--style-text-primary)]">
+    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
       {/* Background image + overlays */}
       {bgImage && (
         <>
@@ -43,11 +43,11 @@ function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primar
         </>
       )}
       {/* Warm terra-cotta gradient overlay */}
-      <div className="absolute inset-0" style={{ background: 'var(--style-hero-overlay)' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.5))' }} />
       {/* SVG grain texture */}
       <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC43IiBudW1PY3RhdmVzPSI0IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI24pIi8+PC9zdmc+')] bg-repeat" />
       {/* Warm spotlight */}
-      <div className="absolute top-1/4 left-1/3 w-[700px] h-[700px] rounded-full blur-[150px] bg-[var(--style-brand)]/10 animate-pulse" style={{ animationDuration: '6s' }} />
+      <div className="absolute top-1/4 left-1/3 w-[700px] h-[700px] rounded-full blur-[150px] bg-brand-primary/10 animate-pulse" style={{ animationDuration: '6s' }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
         <div className="max-w-4xl mx-auto text-center">
@@ -55,17 +55,17 @@ function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primar
           {badgeText && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
               className="inline-flex items-center gap-2.5 bg-white/[0.08] backdrop-blur-md border border-white/[0.12] rounded-full px-5 py-2.5 text-sm text-white/90 mb-8">
-              <UtensilsCrossed size={14} className="text-[var(--style-accent)]" />
+              <UtensilsCrossed size={14} className="text-brand-accent" />
               <span className="font-medium">{badgeText}</span>
               <div className="flex -space-x-0.5 ml-1">
-                {[1, 2, 3, 4, 5].map(i => <Star key={i} size={11} className="fill-[var(--style-accent)] text-[var(--style-accent)]" />)}
+                {[1, 2, 3, 4, 5].map(i => <Star key={i} size={11} className="fill-brand-accent text-brand-accent" />)}
               </div>
             </motion.div>
           )}
 
           {/* Headline */}
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }}
-            className="text-5xl sm:text-6xl lg:text-8xl font-[var(--style-heading-weight)] leading-[0.95] text-white"
+            className="text-5xl sm:text-6xl lg:text-8xl font-[700] leading-[0.95] text-white"
             style={{ textShadow: '0 2px 24px rgba(0,0,0,0.5)' }}>
             {headline}
           </motion.h1>
@@ -84,7 +84,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primar
             className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
             {primaryCta.label && (
               <a href={primaryCta.href || '#'}
-                className="group inline-flex items-center justify-center gap-2 rounded-full bg-[var(--style-accent)] px-8 py-4 font-semibold text-[var(--style-text-primary)] transition-all hover:shadow-lg hover:-translate-y-0.5">
+                className="group inline-flex items-center justify-center gap-2 rounded-full bg-brand-accent px-8 py-4 font-semibold text-gray-900 transition-all hover:shadow-lg hover:-translate-y-0.5">
                 {primaryCta.label}
                 <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" />
               </a>
@@ -104,7 +104,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primar
               className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-white/50">
               {trustItems.map((item) => (
                 <span key={item} className="flex items-center gap-2">
-                  <CheckCircle size={14} className="text-[var(--style-accent)]/70" />{item}
+                  <CheckCircle size={14} className="text-brand-accent/70" />{item}
                 </span>
               ))}
             </motion.div>
@@ -123,7 +123,7 @@ function HeroModern({ headline, subline, badgeText, bgImage, trustItems, primary
         {/* Text side */}
         <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
           {badgeText && (
-            <div className="flex items-center gap-3 text-sm text-[var(--style-text-muted)] mb-8 tracking-wide uppercase">
+            <div className="flex items-center gap-3 text-sm text-gray-500 mb-8 tracking-wide uppercase">
               <span className="w-8 h-px bg-gray-300" />{badgeText}
             </div>
           )}
@@ -131,25 +131,25 @@ function HeroModern({ headline, subline, badgeText, bgImage, trustItems, primary
             {headline}
           </h1>
           {subline && (
-            <p className="text-lg text-[var(--style-text-muted)] leading-relaxed mt-8 max-w-lg">{subline}</p>
+            <p className="text-lg text-gray-500 leading-relaxed mt-8 max-w-lg">{subline}</p>
           )}
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta.label && (
               <a href={primaryCta.href || '#'}
-                className="group inline-flex items-center gap-3 text-gray-900 font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-[var(--style-accent)] hover:text-[var(--style-accent)] transition-colors">
+                className="group inline-flex items-center gap-3 text-gray-900 font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-brand-accent hover:text-brand-accent transition-colors">
                 {primaryCta.label}
                 <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </a>
             )}
             {secondaryCta.label && (
               <a href={secondaryCta.href || '#'}
-                className="inline-flex items-center gap-2 text-[var(--style-text-muted)] hover:text-gray-600 transition-colors text-sm">
+                className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-600 transition-colors text-sm">
                 {secondaryCta.label}
               </a>
             )}
           </div>
           {trustItems.length > 0 && (
-            <div className="flex flex-wrap gap-6 mt-16 text-xs text-[var(--style-text-muted)] uppercase tracking-wider">
+            <div className="flex flex-wrap gap-6 mt-16 text-xs text-gray-500 uppercase tracking-wider">
               {trustItems.map((item) => <span key={item}>{item}</span>)}
             </div>
           )}
@@ -173,27 +173,27 @@ function HeroModern({ headline, subline, badgeText, bgImage, trustItems, primary
 /* ─── BOLD: Fullscreen dark bg, diagonal accent stripe, brutalist buttons, uppercase ─── */
 function HeroBold({ headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta }: HeroProps) {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[var(--style-text-primary)]">
+    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
       {/* Background image + dark overlay */}
       {bgImage && (
         <>
           <Image src={bgImage} alt="" fill priority className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-black/40" />
-          <div className="absolute inset-0 bg-[var(--style-text-primary)]/75" />
+          <div className="absolute inset-0 bg-[#111827]/75" />
         </>
       )}
 
       {/* Diagonal accent stripe */}
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-[var(--style-accent)]/10 skew-x-[-12deg] translate-x-20" />
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-brand-accent/10 skew-x-[-12deg] translate-x-20" />
       {/* Thick accent line */}
-      <div className="absolute top-[112px] left-0 w-full h-1.5 bg-[var(--style-accent)]" />
+      <div className="absolute top-[112px] left-0 w-full h-1.5 bg-brand-accent" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
         <div className="max-w-5xl">
           {/* Badge as solid rectangle */}
           {badgeText && (
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
-              className="inline-block bg-[var(--style-accent)] text-[var(--style-text-primary)] font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8">
+              className="inline-block bg-brand-accent text-gray-900 font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8">
               {badgeText}
             </motion.div>
           )}
@@ -219,7 +219,7 @@ function HeroBold({ headline, subline, badgeText, bgImage, trustItems, primaryCt
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta.label && (
               <a href={primaryCta.href || '#'}
-                className="inline-flex items-center gap-3 bg-[var(--style-accent)] text-[var(--style-text-primary)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
+                className="inline-flex items-center gap-3 bg-brand-accent text-gray-900 font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
                 {primaryCta.label}<ArrowRight size={18} />
               </a>
             )}
@@ -237,7 +237,7 @@ function HeroBold({ headline, subline, badgeText, bgImage, trustItems, primaryCt
               className="flex flex-wrap gap-6 mt-16 text-sm text-white/40 font-bold uppercase tracking-wider">
               {trustItems.map((item) => (
                 <span key={item} className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-[var(--style-accent)]" />{item}
+                  <span className="w-2 h-2 bg-brand-accent" />{item}
                 </span>
               ))}
             </motion.div>

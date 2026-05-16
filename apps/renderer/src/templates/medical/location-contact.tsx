@@ -36,18 +36,18 @@ function Classic({ header, introText, image, mapEmbedUrl, formEnabled, namePlace
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="grid gap-10 lg:grid-cols-2">
       <div>
         <SectionHeader {...header} />
-        {introText && <p className="text-[var(--style-text-secondary)]">{introText}</p>}
+        {introText && <p className="text-gray-600">{introText}</p>}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-black/10 pt-4">
               <DynamicIcon name={card.icon || 'mail'} size={20} className="text-teal-700" />
-              <div><p className="text-xs text-[var(--style-text-secondary)]">{card.label || ''}</p><p className="font-semibold text-[var(--style-text-primary)]">{card.value || ''}</p></div>
+              <div><p className="text-xs text-gray-600">{card.label || ''}</p><p className="font-semibold text-gray-900">{card.value || ''}</p></div>
             </div>
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3"><CtaButton cta={primaryCta} /><CtaButton cta={secondaryCta} /></div>
       </div>
-      <div className="rounded-xl bg-[var(--style-card-bg)] p-5 shadow-lg">
+      <div className="rounded-xl bg-white p-5 shadow-lg">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {mapEmbedUrl && <iframe src={mapEmbedUrl} className="mb-5 h-56 w-full rounded-xl" loading="lazy" />}
         {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="rounded-full bg-teal-700 px-5 py-3 font-semibold text-white">{submitLabel}</button></form>}
@@ -61,24 +61,24 @@ function Modern({ header, introText, image, mapEmbedUrl, formEnabled, namePlaceh
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <SectionHeader {...header} />
-        {introText && <p className="font-light text-[var(--style-text-secondary)]">{introText}</p>}
+        {introText && <p className="font-light text-gray-600">{introText}</p>}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-black/10 pt-4">
               <DynamicIcon name={card.icon || 'mail'} size={20} className="text-blue-500" />
-              <div><p className="text-xs font-light text-[var(--style-text-secondary)]">{card.label || ''}</p><p className="font-light text-[var(--style-text-primary)]">{card.value || ''}</p></div>
+              <div><p className="text-xs font-light text-gray-600">{card.label || ''}</p><p className="font-light text-gray-900">{card.value || ''}</p></div>
             </div>
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-[var(--style-button-radius)] border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white">{primaryCta.label}<ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-[var(--style-button-radius)] border border-black/15 px-5 py-3 font-light text-[var(--style-text-primary)]">{secondaryCta.label}</a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white">{primaryCta.label}<ArrowRight size={16} /></a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-black/15 px-5 py-3 font-light text-gray-900">{secondaryCta.label}</a>}
         </div>
       </div>
-      <div className="border border-black/10 bg-[var(--style-card-bg)] p-5">
+      <div className="border border-black/10 bg-white p-5">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {mapEmbedUrl && <iframe src={mapEmbedUrl} className="mb-5 h-56 w-full" loading="lazy" />}
-        {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="rounded-[var(--style-button-radius)] border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white">{submitLabel}</button></form>}
+        {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="rounded-lg border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white">{submitLabel}</button></form>}
       </div>
     </div>
   );
@@ -90,24 +90,24 @@ function Bold({ header, introText, image, mapEmbedUrl, formEnabled, namePlacehol
       <div>
         <div className="mb-10 max-w-3xl">
           {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-teal-400">{header.badgeText}</p>}
-          <h2 className="mt-3 text-3xl font-black uppercase text-[var(--style-text-primary)] sm:text-5xl">{header.headline}</h2>
-          {header.subline && <p className="mt-4 text-[var(--style-text-secondary)]">{header.subline}</p>}
+          <h2 className="mt-3 text-3xl font-black uppercase text-gray-900 sm:text-5xl">{header.headline}</h2>
+          {header.subline && <p className="mt-4 text-gray-600">{header.subline}</p>}
         </div>
-        {introText && <p className="text-[var(--style-text-secondary)]">{introText}</p>}
+        {introText && <p className="text-gray-600">{introText}</p>}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
-            <div key={`${card.label}-${index}`} className="flex gap-4 border-t-2 border-[var(--style-text-primary)] pt-4">
+            <div key={`${card.label}-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4">
               <DynamicIcon name={card.icon || 'mail'} size={20} className="text-teal-400" />
-              <div><p className="text-xs font-bold uppercase text-[var(--style-text-secondary)]">{card.label || ''}</p><p className="font-black text-[var(--style-text-primary)]">{card.value || ''}</p></div>
+              <div><p className="text-xs font-bold uppercase text-gray-600">{card.label || ''}</p><p className="font-black text-gray-900">{card.value || ''}</p></div>
             </div>
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-teal-400 bg-teal-400 px-5 py-3 font-black uppercase text-gray-950 shadow-[4px_4px_0_theme(colors.teal.700)]">{primaryCta.label}<ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--style-text-primary)] px-5 py-3 font-black uppercase text-[var(--style-text-primary)] shadow-[4px_4px_0_var(--style-text-primary)]">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[#111827] px-5 py-3 font-black uppercase text-gray-900 shadow-[4px_4px_0_#111827]">{secondaryCta.label}</a>}
         </div>
       </div>
-      <div className="border-2 border-[var(--style-text-primary)] bg-[var(--style-card-bg)] p-5 shadow-[4px_4px_0_var(--style-text-primary)]">
+      <div className="border-2 border-[#111827] bg-white p-5 shadow-[4px_4px_0_#111827]">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {mapEmbedUrl && <iframe src={mapEmbedUrl} className="mb-5 h-56 w-full" loading="lazy" />}
         {formEnabled && <form className="grid gap-3"><input className="admin-input" placeholder={namePlaceholder} readOnly /><input className="admin-input" placeholder={emailPlaceholder} readOnly /><textarea className="admin-input" placeholder={messagePlaceholder} readOnly /><button type="button" className="border-2 border-teal-400 bg-teal-400 px-5 py-3 font-black uppercase text-gray-950 shadow-[4px_4px_0_theme(colors.teal.700)]">{submitLabel}</button></form>}

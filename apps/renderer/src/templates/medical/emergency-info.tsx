@@ -56,7 +56,7 @@ function Modern({ header, introText, items, ctaPrimary }: Props) {
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <div className="mt-6"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-[var(--style-button-radius)] border border-red-600 bg-red-600 px-5 py-3 font-semibold text-white">{ctaPrimary.label}<ArrowRight size={16} /></a></div>}
+      {ctaPrimary.label && <div className="mt-6"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-red-600 bg-red-600 px-5 py-3 font-semibold text-white">{ctaPrimary.label}<ArrowRight size={16} /></a></div>}
     </div>
   );
 }

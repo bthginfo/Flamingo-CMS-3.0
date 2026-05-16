@@ -24,14 +24,14 @@ type Props = { header: { headline: string; subline: string; badgeText: string };
 
 function Classic({ header, introText, onlineCta, phoneCta, callbackCta, externalCta, notes }: Props) {
   return (
-    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl bg-[var(--style-card-bg)] p-6 shadow-lg sm:p-10">
+    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl bg-white p-6 shadow-lg sm:p-10">
       <SectionHeader {...header} />
-      {introText && <p className="max-w-2xl text-[var(--style-text-secondary)]">{introText}</p>}
+      {introText && <p className="max-w-2xl text-gray-600">{introText}</p>}
       <div className="mt-8 flex flex-wrap gap-3">
         {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-teal-700 px-5 py-3 font-semibold text-white"><CalendarDays size={17} />{onlineCta.label}</a>}
-        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-teal-700/30 px-5 py-3 font-semibold text-[var(--style-text-primary)]"><Phone size={17} />{phoneCta.label}</a>}
-        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex rounded-full border border-black/10 px-5 py-3 font-semibold text-[var(--style-text-primary)]">{callbackCta.label}</a>}
-        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex rounded-full border border-black/10 px-5 py-3 font-semibold text-[var(--style-text-primary)]">{externalCta.label}</a>}
+        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-teal-700/30 px-5 py-3 font-semibold text-gray-900"><Phone size={17} />{phoneCta.label}</a>}
+        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex rounded-full border border-black/10 px-5 py-3 font-semibold text-gray-900">{callbackCta.label}</a>}
+        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex rounded-full border border-black/10 px-5 py-3 font-semibold text-gray-900">{externalCta.label}</a>}
       </div>
       <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="rounded-full bg-teal-50 px-3 py-1 text-xs text-teal-800">{note}</span>)}</div>
     </motion.div>
@@ -40,23 +40,23 @@ function Classic({ header, introText, onlineCta, phoneCta, callbackCta, external
 
 function Modern({ header, introText, onlineCta, phoneCta, callbackCta, externalCta, notes }: Props) {
   return (
-    <div className="border border-black/10 bg-[var(--style-card-bg)] p-6 sm:p-10">
+    <div className="border border-black/10 bg-white p-6 sm:p-10">
       <SectionHeader {...header} />
-      {introText && <p className="max-w-2xl font-light text-[var(--style-text-secondary)]">{introText}</p>}
+      {introText && <p className="max-w-2xl font-light text-gray-600">{introText}</p>}
       <div className="mt-8 flex flex-wrap gap-3">
-        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-[var(--style-button-radius)] border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white"><CalendarDays size={17} />{onlineCta.label}</a>}
-        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-[var(--style-button-radius)] border border-black/15 px-5 py-3 font-light text-[var(--style-text-primary)]"><Phone size={17} />{phoneCta.label}</a>}
-        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex rounded-[var(--style-button-radius)] border border-black/15 px-5 py-3 font-light text-[var(--style-text-primary)]">{callbackCta.label}</a>}
-        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex rounded-[var(--style-button-radius)] border border-black/15 px-5 py-3 font-light text-[var(--style-text-primary)]">{externalCta.label}</a>}
+        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white"><CalendarDays size={17} />{onlineCta.label}</a>}
+        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-black/15 px-5 py-3 font-light text-gray-900"><Phone size={17} />{phoneCta.label}</a>}
+        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex rounded-lg border border-black/15 px-5 py-3 font-light text-gray-900">{callbackCta.label}</a>}
+        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex rounded-lg border border-black/15 px-5 py-3 font-light text-gray-900">{externalCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="border border-black/10 px-3 py-1 text-xs text-[var(--style-text-secondary)]">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="border border-black/10 px-3 py-1 text-xs text-gray-600">{note}</span>)}</div>
     </div>
   );
 }
 
 function Bold({ header, introText, onlineCta, phoneCta, callbackCta, externalCta, notes }: Props) {
   return (
-    <div className="border-2 border-[var(--style-text-primary)] bg-gray-950 p-6 shadow-[4px_4px_0_var(--style-text-primary)] sm:p-10">
+    <div className="border-2 border-[#111827] bg-gray-950 p-6 shadow-[4px_4px_0_#111827] sm:p-10">
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-teal-400">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-white sm:text-5xl">{header.headline}</h2>
