@@ -178,25 +178,33 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
           placeholder="https://..."
         />
       ) : (
-        <div className="border border-zinc-200 rounded-lg p-2 max-h-48 overflow-y-auto">
-          {loadingLib ? (
-            <p className="text-xs text-gray-400 text-center py-4">Laden...</p>
-          ) : libraryAssets.length === 0 ? (
-            <p className="text-xs text-gray-400 text-center py-4">Keine Bilder vorhanden</p>
-          ) : (
-            <div className="grid grid-cols-4 gap-1.5">
-              {libraryAssets.map((asset) => (
-                <button
-                  key={asset.id}
-                  type="button"
-                  onClick={() => { onChange(asset.blobUrl); setMode('upload'); }}
-                  className="relative aspect-square rounded overflow-hidden border border-zinc-200 hover:border-blue-400 transition"
-                >
-                  <img src={asset.blobUrl} alt={asset.filename} className="w-full h-full object-cover" />
-                </button>
-              ))}
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50" onClick={() => setMode('upload')}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-200">
+              <h3 className="font-semibold text-base">Mediathek</h3>
+              <button type="button" onClick={() => setMode('upload')} className="text-zinc-400 hover:text-zinc-600"><X size={18} /></button>
             </div>
-          )}
+            <div className="p-4 overflow-y-auto flex-1">
+              {loadingLib ? (
+                <p className="text-sm text-gray-400 text-center py-12">Laden...</p>
+              ) : libraryAssets.length === 0 ? (
+                <p className="text-sm text-gray-400 text-center py-12">Keine Bilder vorhanden</p>
+              ) : (
+                <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2">
+                  {libraryAssets.map((asset) => (
+                    <button
+                      key={asset.id}
+                      type="button"
+                      onClick={() => { onChange(asset.blobUrl); setMode('upload'); }}
+                      className="relative aspect-square rounded-lg overflow-hidden border-2 border-zinc-200 hover:border-blue-500 transition"
+                    >
+                      <img src={asset.blobUrl} alt={asset.filename} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

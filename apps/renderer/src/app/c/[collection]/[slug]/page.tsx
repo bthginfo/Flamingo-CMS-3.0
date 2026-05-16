@@ -83,7 +83,7 @@ export default async function CollectionItemPage({ params }: { params: Promise<{
   if (brand.accentColor) designOverrides['--style-accent'] = brand.accentColor;
 
   return (
-    <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...brandCssVars, ...designOverrides } as React.CSSProperties}>
+    <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...brandCssVars, ...designOverrides } as React.CSSProperties} className="overflow-x-hidden">
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} />
       <main>
         <CollectionDetail item={item} collection={col} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} />

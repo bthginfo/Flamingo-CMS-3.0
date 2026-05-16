@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { ImageUploadField } from '@/components/image-upload-field';
 
-type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string };
+type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; headingColor?: string; bodyTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string };
 
 const GOOGLE_FONTS = [
   { value: '', label: 'Standard (Outfit / Inter)' },
@@ -48,6 +48,15 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     customHeadingFontName: initial.customHeadingFontName || '',
     customBodyFontUrl: initial.customBodyFontUrl || '',
     customBodyFontName: initial.customBodyFontName || '',
+    footerLinkColor: initial.footerLinkColor || '',
+    footerTextColor: initial.footerTextColor || '',
+    navLinkColor: initial.navLinkColor || '',
+    headingColor: initial.headingColor || '',
+    bodyTextColor: initial.bodyTextColor || '',
+    linkColor: initial.linkColor || '',
+    linkHoverColor: initial.linkHoverColor || '',
+    btnPrimaryBg: initial.btnPrimaryBg || '',
+    btnPrimaryText: initial.btnPrimaryText || '',
   });
   const [saving, setSaving] = useState(false);
   const { markDirty, markSaved } = useSaveState();
@@ -242,6 +251,35 @@ export function BrandForm({ initial }: { initial: BrandData }) {
           </div>
         </div>
       </div>
+
+      <details className="admin-card p-6">
+        <summary className="font-semibold text-lg cursor-pointer select-none">Erweiterte Farbeinstellungen</summary>
+        <div className="space-y-5 mt-5">
+          <p className="text-sm text-zinc-500">Diese Farben überschreiben die Standardwerte. Leer lassen = automatisch abgeleitet.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {([
+              { key: 'headingColor', label: 'Überschriften-Farbe' },
+              { key: 'bodyTextColor', label: 'Fließtext-Farbe' },
+              { key: 'linkColor', label: 'Link-Farbe' },
+              { key: 'linkHoverColor', label: 'Link-Hover-Farbe' },
+              { key: 'navLinkColor', label: 'Navigation-Link-Farbe' },
+              { key: 'footerTextColor', label: 'Footer Text-Farbe' },
+              { key: 'footerLinkColor', label: 'Footer Link-Farbe' },
+              { key: 'btnPrimaryBg', label: 'Button Hintergrund' },
+              { key: 'btnPrimaryText', label: 'Button Textfarbe' },
+            ] as const).map(({ key, label }) => (
+              <div key={key}>
+                <label className="admin-label">{label}</label>
+                <div className="flex items-center gap-3">
+                  <input type="color" value={(form as Record<string, string>)[key] || '#000000'} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+                  <input className="admin-input flex-1" value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder="Leer = Standard" />
+                  {(form as Record<string, string>)[key] && <button type="button" onClick={() => setForm(f => ({ ...f, [key]: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </details>
     </form>
   );
 }

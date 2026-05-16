@@ -11,6 +11,7 @@ export function SalonHeroSection({ data, styleVariant }: SectionProps) {
   const badgeText = (data.badgeText as string) || 'Beauty';
   const badgeIcon = (data.badgeIcon as string) || 'Sparkles';
   const bgImage = (data.bgImage as string) || '';
+  const bgImageMobile = (data.bgImageMobile as string) || '';
   const bgColor = (data.bgColor as string) || '';
   const bgMode = (data.bgMode as string) || 'image';
   const trustItems = asList<string>(data.trustItems);
@@ -19,7 +20,7 @@ export function SalonHeroSection({ data, styleVariant }: SectionProps) {
   const bookingHint = (data.bookingHint as string) || '';
   const ratingText = (data.ratingText as string) || '';
 
-  const props = { headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText };
+  const props = { headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText };
 
   if (styleVariant === 'modern') return <HeroModern {...props} />;
   if (styleVariant === 'bold') return <HeroBold {...props} />;
@@ -28,6 +29,7 @@ export function SalonHeroSection({ data, styleVariant }: SectionProps) {
 
 type HeroProps = {
   headline: string; subline: string; badgeText: string; badgeIcon: string; bgImage: string;
+  bgImageMobile?: string;
   bgColor: string; bgMode: string;
   trustItems: string[]; primaryCta: ButtonValue; secondaryCta: ButtonValue;
   bookingHint: string; ratingText: string;
@@ -35,12 +37,13 @@ type HeroProps = {
   bgPosition?: string;};
 
 /* ─── CLASSIC: Fullscreen bg, organic rose gradient overlay, flowing curves, centered elegant typography ─── */
-function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText , bgPosition}: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText , bgPosition}: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px]">
       {(bgMode === 'image' && bgImage) ? (
         <>
-          <Image src={bgImage} alt="" fill className="object-cover" style={{ objectPosition: bgPosition }} priority sizes="100vw" />
+          <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
+          {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPosition }} priority sizes="100vw" />}
           <div className="absolute inset-0 bg-gradient-to-br from-[#6b2148]/85 via-[#8b3a62]/65 to-[#c0528a]/40" />
         </>
       ) : (bgMode === 'color' && bgColor) ? (
@@ -77,11 +80,12 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgColor
 }
 
 /* ─── MODERN: Split layout (text left / image right), clean minimalist, dusty-rose accents ─── */
-function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText , bgPosition}: HeroProps) {
+function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText , bgPosition}: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-white">
       {(bgMode === 'image' && bgImage) ? (
-        <Image src={bgImage} alt="" fill className="object-cover lg:left-1/2 lg:w-1/2" priority sizes="50vw" />
+        <Image src={bgImage} alt="" fill className={`object-cover lg:left-1/2 lg:w-1/2${bgImageMobile ? ' hidden md:block' : ''}`} priority sizes="50vw" />
+        {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover lg:left-1/2 lg:w-1/2 md:hidden" priority sizes="50vw" />}
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0 lg:left-1/2 lg:w-1/2" style={{ backgroundColor: bgColor }} />
       ) : null}
@@ -107,12 +111,13 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgColor,
 }
 
 /* ─── BOLD: Fullscreen dark, hot-pink diagonal stripe, uppercase brutalist ─── */
-function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText , bgPosition}: HeroProps) {
+function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText , bgPosition}: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111]">
       {(bgMode === 'image' && bgImage) ? (
         <>
-          <Image src={bgImage} alt="" fill className="object-cover opacity-30" priority sizes="100vw" />
+          <Image src={bgImage} alt="" fill className={`object-cover opacity-30${bgImageMobile ? ' hidden md:block' : ''}`} priority sizes="100vw" />
+          {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover opacity-30 md:hidden" priority sizes="100vw" />}
           <div className="absolute inset-0 bg-black/50" />
         </>
       ) : (bgMode === 'color' && bgColor) ? (

@@ -209,7 +209,7 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
   const brandCssVars = getBrandCssVars(brand);
 
   return (
-    <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
+    <div data-style={tenantStyle.activeStyle} className="overflow-x-hidden" style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
       {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
       {fontFaceRules.length > 0 && <style dangerouslySetInnerHTML={{ __html: fontFaceRules.join('\n') }} />}
       {bodyFontName && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}

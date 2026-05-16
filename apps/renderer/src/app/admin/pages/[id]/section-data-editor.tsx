@@ -63,6 +63,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
     badgeStarsIcon: (data.badgeStarsIcon as string) || '',
     bgMode: (data.bgMode as string) || 'image',
     bgImage: (data.bgImage as string) || '',
+    bgImageMobile: (data.bgImageMobile as string) || '',
     bgColor: (data.bgColor as string) || '#1a1a2e',
     bgPosition: (data.bgPosition as string) || 'center',
     overlayColor: (data.overlayColor as string) || '#000000',
@@ -89,6 +90,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
         {d.bgMode === 'image' ? (
           <>
             <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
+            <ImageUploadField label="Hintergrundbild (Mobil, optional)" value={d.bgImageMobile} onChange={(v) => setD({ ...d, bgImageMobile: v })} />
             {d.bgImage && (
               <>
               <div className="mt-3">

@@ -28,6 +28,7 @@ export function WeddingHeroSection({ data }: Props) {
   const venue = (data.venue as string) || '';
   const subline = (data.subline as string) || 'Wir heiraten!';
   const bgImage = (data.bgImage as string) || '';
+  const bgImageMobile = (data.bgImageMobile as string) || '';
   const showCountdown = data.showCountdown !== false;
   const countdown = useCountdown(date);
   const formattedDate = new Date(date).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -36,7 +37,8 @@ export function WeddingHeroSection({ data }: Props) {
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden -mt-[112px] pt-[112px]">
       {bgImage ? (
         <>
-          <Image src={bgImage} alt={names} fill className="object-cover" priority />
+          <Image src={bgImage} alt={names} fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} priority />
+          {bgImageMobile && <Image src={bgImageMobile} alt={names} fill className="object-cover md:hidden" priority />}
           <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/60 via-brand-dark/40 to-brand-dark/60" />
         </>
       ) : (
