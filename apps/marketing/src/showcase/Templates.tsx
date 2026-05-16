@@ -11,6 +11,7 @@ const DEMO_LINKS: Record<string, string> = {
   tourism: '/demo/tourism',
   medical: '/demo/medical',
   wedding: '/demo/wedding',
+  photography: '/demo/photography',
 };
 
 const TEMPLATES = [
@@ -82,6 +83,16 @@ const TEMPLATES = [
     image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80',
     color: '#d4a373',
     features: ['Countdown & Liebesgeschichte', 'Tagesablauf & Location', 'RSVP-Formular', 'Menü & Dresscode', 'Trauzeugen & Galerie', 'Geschenke & Anreise'],
+    status: 'live' as const,
+  },
+  {
+    key: 'photography',
+    name: 'Fotografie',
+    tagline: 'Hochzeits-, Portrait- & Eventfotografie',
+    description: 'Portfolio-Galerie mit Kategorie-Filter, Shooting-Pakete, Über-mich-Story, Ablauf-Timeline und Kontakt.',
+    image: 'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=800&q=80',
+    color: '#9c7c5c',
+    features: ['Masonry-Portfolio mit Lightbox', 'Service-Pakete & Preise', 'Persönliche Story', 'Shooting-Ablauf Timeline', 'Kundenbewertungen', 'Kontakt & FAQ'],
     status: 'live' as const,
   },
 ];
