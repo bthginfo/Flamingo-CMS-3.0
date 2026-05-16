@@ -1,8 +1,8 @@
 import { getSession } from '@/lib/session';
 import { getDb } from '@/lib/db';
-import { pages, pageSections, collectionItems, publishedSnapshots, tenants } from '@flamingo/db';
+import { pages, pageSections, collectionItems, publishedSnapshots, tenants, mediaAssets, seoGlobal, seoPage } from '@flamingo/db';
 import { eq, count, and } from 'drizzle-orm';
-import { FileText, Layers, FolderOpen, Rocket, Eye, Globe } from 'lucide-react';
+import { FileText, Layers, FolderOpen, Rocket, Eye, Globe, ImageIcon, Search, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 
 const RENDERER_URL = '';
@@ -19,6 +19,19 @@ export default async function DashboardPage() {
   const [sectionCount] = await db.select({ value: count() }).from(pageSections).where(eq(pageSections.tenantId, tid));
   const [itemCount] = await db.select({ value: count() }).from(collectionItems).where(eq(collectionItems.tenantId, tid));
   const [snapCount] = await db.select({ value: count() }).from(publishedSnapshots).where(and(eq(publishedSnapshots.tenantId, tid), eq(publishedSnapshots.isActive, true)));
+  const [mediaCount] = await db.select({ value: count() }).from(mediaAssets).where(eq(mediaAssets.tenantId, tid));
+  const [seoRow] = await db.select().from(seoGlobal).where(eq(seoGlobal.tenantId, tid));
+
+  // Check SEO completeness
+  const allPages = await db.select({ id: pages.id, title: pages.title }).from(pages).where(eq(pages.tenantId, tid));
+  const seoPages = await db.select({ pageId: seoPage.pageId }).from(seoPage).where(eq(seoPage.tenantId, tid));
+  const seoPageIds = new Set(seoPages.map(s => s.pageId));
+  const pagesWithoutSeo = allPages.filter(p => !seoPageIds.has(p.id));
+  const seoGlobalComplete = !!(seoRow?.defaultTitle && seoRow?.defaultDescription);
+
+  // Check media without alt
+  const allMedia = await db.select({ id: mediaAssets.id, alt: mediaAssets.alt }).from(mediaAssets).where(eq(mediaAssets.tenantId, tid));
+  const mediaWithoutAlt = allMedia.filter(m => !m.alt);
 
   const stats = [
     { label: 'Seiten', value: pageCount?.value ?? 0, icon: FileText, href: '/admin/pages' },
@@ -82,21 +95,43 @@ export default async function DashboardPage() {
         </div>
 
         <div className="admin-card p-6">
-          <h2 className="font-semibold text-zinc-900 mb-4">Status</h2>
+          <h2 className="font-semibold text-zinc-900 mb-4">Website-Health</h2>
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-zinc-600">Website</span>
-              <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" /> Online
-              </span>
+              <span className="text-zinc-600 flex items-center gap-2"><Search size={14} /> SEO Global</span>
+              {seoGlobalComplete ? (
+                <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium"><CheckCircle2 size={14} /> Gepflegt</span>
+              ) : (
+                <Link href="/admin/seo" className="inline-flex items-center gap-1.5 text-amber-600 font-medium hover:underline"><AlertTriangle size={14} /> Unvollständig</Link>
+              )}
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-zinc-600">Draft Status</span>
-              <span className="text-amber-600 font-medium">Noch keine Inhalte</span>
+              <span className="text-zinc-600 flex items-center gap-2"><FileText size={14} /> Seiten-SEO</span>
+              {pagesWithoutSeo.length === 0 ? (
+                <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium"><CheckCircle2 size={14} /> Alle gepflegt</span>
+              ) : (
+                <span className="text-amber-600 font-medium">{pagesWithoutSeo.length} ohne Meta</span>
+              )}
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-zinc-600">Letzter Publish</span>
-              <span className="text-zinc-400">–</span>
+              <span className="text-zinc-600 flex items-center gap-2"><ImageIcon size={14} /> Mediathek</span>
+              <span className="text-zinc-900 font-medium">{mediaCount?.value ?? 0} Bilder</span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-600 flex items-center gap-2"><ImageIcon size={14} /> Bilder ohne Alt-Text</span>
+              {mediaWithoutAlt.length === 0 ? (
+                <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium"><CheckCircle2 size={14} /> Alle gepflegt</span>
+              ) : (
+                <Link href="/admin/media" className="text-amber-600 font-medium hover:underline">{mediaWithoutAlt.length} ohne Alt</Link>
+              )}
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-zinc-600 flex items-center gap-2"><Globe size={14} /> Live Status</span>
+              {(snapCount?.value ?? 0) > 0 ? (
+                <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Online</span>
+              ) : (
+                <span className="text-zinc-400">Nicht veröffentlicht</span>
+              )}
             </div>
           </div>
         </div>
