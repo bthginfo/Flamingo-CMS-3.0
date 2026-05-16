@@ -129,7 +129,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta }: { n
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-[55] bg-white flex flex-col md:hidden"
+              className="fixed inset-0 z-[70] bg-white flex flex-col md:hidden"
             >
               {/* Close button */}
               <div className="flex items-center justify-between h-[72px] px-6">
