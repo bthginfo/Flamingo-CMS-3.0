@@ -146,6 +146,7 @@ export const WEDDING_SECTION_TYPES: SectionTypeDefinition[] = [
 export const PHOTOGRAPHY_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'hero', label: 'Hero', description: 'Fullscreen-Hero mit Bild und CTA' },
   { type: 'portfolioGallery', label: 'Portfolio-Galerie', description: 'Filterbare Masonry-Galerie mit Lightbox' },
+  { type: 'servicesGrid', label: 'Leistungen', description: 'Leistungs-Grid mit Links zu Detail-Seiten' },
   { type: 'servicePackages', label: 'Pakete & Preise', description: 'Shooting-Pakete mit Features und Preisen' },
   { type: 'photographerAbout', label: 'Über mich', description: 'Persönliche Vorstellung mit Bild und Story' },
   { type: 'shootingProcess', label: 'Ablauf', description: 'Schritte vom Kennenlernen bis zur Übergabe' },

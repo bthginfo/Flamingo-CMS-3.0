@@ -168,9 +168,22 @@ export const SABRINA_CONFIG = {
           subline: 'Individuelle Pakete für Hochzeiten, Paar- und Portraitshootings.',
           bgImage: 'https://lirp.cdn-website.com/85d0b5f0/dms3rep/multi/opt/DSC03736-1920w.jpg',
         }},
-        { type: 'servicePackages', sortOrder: 1, data: {
+        { type: 'servicesGrid', sortOrder: 1, data: {
+          badge: 'Meine Leistungen',
+          headline: 'Was ich für euch fotografiere',
+          subline: 'Klickt auf eine Leistung für mehr Infos, Beispielbilder und Preise.',
+          manualCards: [
+            { title: 'Hochzeitsfotografie', text: 'Authentische Hochzeitsreportagen von Getting Ready bis zum letzten Tanz.', image: 'https://lirp.cdn-website.com/85d0b5f0/dms3rep/multi/opt/DSC01854-1920w.jpg', mediaType: 'image', href: '/leistungen/hochzeitsreportage' },
+            { title: 'Babybauch-Shooting', text: 'Haltet die Vorfreude auf euer Baby in stimmungsvollen Bildern fest.', image: 'https://lirp.cdn-website.com/85d0b5f0/dms3rep/multi/opt/DSC01670-1920w.jpg', mediaType: 'image', href: '/leistungen/babybauch' },
+            { title: 'JGA Shooting', text: 'Spaß, Freundschaft und unvergessliche Erinnerungen vom Junggesellinnenabschied.', image: 'https://lirp.cdn-website.com/85d0b5f0/dms3rep/multi/opt/DSC03736-1920w.jpg', mediaType: 'image', href: '/leistungen/jga-shooting' },
+            { title: 'Portrait-Shooting', text: 'Business oder Privat – ich bringe eure Persönlichkeit aufs Bild.', image: 'https://lirp.cdn-website.com/85d0b5f0/dms3rep/multi/opt/DSC00552-Edit-1920w.jpg', mediaType: 'image', href: '/leistungen/portrait' },
+            { title: 'Paarshooting', text: 'Zeit zu zweit, festgehalten in wunderschönen Bildern.', image: 'https://lirp.cdn-website.com/85d0b5f0/dms3rep/multi/opt/DSC09597-1920w.jpg', mediaType: 'image', href: '/leistungen/paarshooting' },
+            { title: 'After-Wedding', text: 'Entspanntes Shooting nach der Hochzeit an eurem Lieblings-Ort.', image: 'https://lirp.cdn-website.com/85d0b5f0/dms3rep/multi/opt/DSC02467-1920w.jpg', mediaType: 'image', href: '/leistungen/after-wedding' },
+          ],
+        }},
+        { type: 'servicePackages', sortOrder: 2, data: {
           badge: 'Hochzeitsfotografie',
-          headline: 'Hochzeitsreportage',
+          headline: 'Hochzeitsreportage-Pakete',
           subline: 'Euer großer Tag verdient besondere Bilder.',
           packages: [
             {
@@ -198,7 +211,7 @@ export const SABRINA_CONFIG = {
           ],
           note: 'Alle Preise sind Startpreise. Individuelle Pakete auf Anfrage.',
         }},
-        { type: 'servicePackages', sortOrder: 2, data: {
+        { type: 'servicePackages', sortOrder: 3, data: {
           badge: 'Weitere Shootings',
           headline: 'Portraits, Paare & mehr',
           packages: [
@@ -228,7 +241,7 @@ export const SABRINA_CONFIG = {
             },
           ],
         }},
-        { type: 'textImage', sortOrder: 3, data: {
+        { type: 'textImage', sortOrder: 4, data: {
           badge: 'Mein Versprechen',
           headline: 'Was euch bei mir erwartet',
           text: 'Bei mir bekommt ihr keine 08/15-Fotos von der Stange. Jede Reportage ist individuell, jedes Bild mit Liebe bearbeitet. Ich nehme mir Zeit für euch – vor, während und nach dem Shooting. Mein Ziel: Bilder, die euch beim Anschauen genauso berühren wie der Moment selbst.',
@@ -401,6 +414,18 @@ export const SABRINA_CONFIG = {
             image: 'https://lirp.cdn-website.com/85d0b5f0/dms3rep/multi/opt/DSC09597-1920w.jpg',
             features: ['1-2 Stunden', '50-80 bearbeitete Fotos', 'Location-Beratung', 'Online-Galerie', '10 Fine-Art Prints'],
             price: 'ab 320€',
+          },
+        },
+        {
+          slug: 'after-wedding',
+          title: 'After-Wedding Shooting',
+          priority: 6,
+          data: {
+            title: 'After-Wedding Shooting',
+            description: 'Entspanntes Shooting nach der Hochzeit an eurem Lieblings-Ort. Ohne Zeitdruck, ohne Stress – nur ihr zwei und wunderschöne Bilder.',
+            image: 'https://lirp.cdn-website.com/85d0b5f0/dms3rep/multi/opt/DSC02467-1920w.jpg',
+            features: ['1-2 Stunden', '50-80 bearbeitete Fotos', 'Location eurer Wahl', 'Brautkleid nochmal anziehen', 'Online-Galerie & Prints'],
+            price: 'ab 390€',
           },
         },
       ],

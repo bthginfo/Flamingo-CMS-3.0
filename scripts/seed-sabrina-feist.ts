@@ -61,6 +61,7 @@ async function main() {
   await db.delete(schema.footer).where(eq(schema.footer.tenantId, tenantId));
   await db.delete(schema.globalSettings).where(eq(schema.globalSettings.tenantId, tenantId));
   await db.delete(schema.adminSecrets).where(eq(schema.adminSecrets.tenantId, tenantId));
+  await db.delete(schema.mediaAssets).where(eq(schema.mediaAssets.tenantId, tenantId));
 
   // Admin secret
   await db.insert(schema.adminSecrets).values({ tenantId, passwordHash: DEFAULT_PASSWORD_HASH });
@@ -147,6 +148,38 @@ async function main() {
     }
     console.log(`✅ ${SABRINA_CONFIG.collections.length} collections, ${totalItems} items`);
   }
+
+  // Populate media_assets from all image URLs used in sections and collections
+  const imageUrls = new Set<string>();
+  function extractImages(obj: unknown) {
+    if (!obj) return;
+    if (typeof obj === 'string' && (obj.startsWith('http') && /\.(jpg|jpeg|png|webp|gif)/i.test(obj))) {
+      imageUrls.add(obj);
+    } else if (Array.isArray(obj)) {
+      obj.forEach(extractImages);
+    } else if (typeof obj === 'object') {
+      Object.values(obj as Record<string, unknown>).forEach(extractImages);
+    }
+  }
+  extractImages(SABRINA_CONFIG.pages);
+  extractImages(SABRINA_CONFIG.collections);
+  if (SABRINA_CONFIG.brand?.logo) imageUrls.add(SABRINA_CONFIG.brand.logo);
+
+  for (const url of imageUrls) {
+    const filename = decodeURIComponent(url.split('/').pop() || 'image.jpg');
+    await db.insert(schema.mediaAssets).values({
+      tenantId,
+      blobUrl: url,
+      pathname: filename,
+      filename,
+      mimeType: filename.endsWith('.png') ? 'image/png' : 'image/jpeg',
+      size: 0,
+      width: null,
+      height: null,
+      alt: filename.replace(/[-_]/g, ' ').replace(/\.\w+$/, ''),
+    });
+  }
+  console.log(`✅ ${imageUrls.size} media assets populated`);
 
   // Publish snapshot
   const allPages = await db.select().from(schema.pages).where(eq(schema.pages.tenantId, tenantId));

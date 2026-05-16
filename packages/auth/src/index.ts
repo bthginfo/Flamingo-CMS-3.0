@@ -18,10 +18,8 @@ export async function verifyPassword(plain: string, hash: string): Promise<boole
 function getSecret() {
   const s = process.env.ADMIN_JWT_SECRET || process.env.PREVIEW_SECRET;
   if (!s) {
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('ADMIN_JWT_SECRET must be set in production');
-    }
-    return new TextEncoder().encode('flamingo-dev-secret-NOT-FOR-PRODUCTION');
+    console.warn('[Flamingo Auth] ADMIN_JWT_SECRET is not set. Using insecure fallback. Set ADMIN_JWT_SECRET in production!');
+    return new TextEncoder().encode('flamingo-fallback-secret-PLEASE-SET-ENV');
   }
   return new TextEncoder().encode(s);
 }
