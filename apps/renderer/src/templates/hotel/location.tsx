@@ -41,14 +41,14 @@ function LocationClassic({ headline, subline, badgeText, addressText, mapEmbedUr
         <div className="mb-6 max-w-3xl">
           {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-brand-primary" />{badgeText}</motion.p>}
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
-          {subline && <p className="mt-4 text-gray-600">{subline}</p>}
+          {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {addressText && <p className="text-gray-600">{addressText}</p>}
         <div className="mt-6 grid gap-3">
           {transportItems.map((item, index) => (
             <motion.div key={`${item.label}-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[var(--brand-primary)]/20 pt-4">
               <div className="text-brand-primary"><DynamicIcon name={item.icon || 'map-pin'} size={20} /></div>
-              <div><h3 className="font-semibold text-gray-900">{item.label || ''} {item.value || ''}</h3>{item.text && <p className="text-sm text-gray-600">{item.text}</p>}</div>
+              <div><h3 className="font-semibold text-gray-900">{item.label || ''} {item.value || ''}</h3>{item.text && <div className="text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}</div>
             </motion.div>
           ))}
         </div>
@@ -63,7 +63,7 @@ function LocationClassic({ headline, subline, badgeText, addressText, mapEmbedUr
               {item.image && <div className="relative mb-3 aspect-[16/10] overflow-hidden rounded-xl"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               <h3 className="font-semibold text-gray-900">{item.title || ''}</h3>
               {item.distanceLabel && <p className="text-xs text-gray-600">{item.distanceLabel}</p>}
-              {item.text && <p className="mt-2 text-sm text-gray-600">{item.text}</p>}
+              {item.text && <div className="mt-2 text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             </motion.article>
           ))}
         </div>
@@ -80,14 +80,14 @@ function LocationModern({ headline, subline, badgeText, addressText, mapEmbedUrl
         <div className="mb-8 max-w-3xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
           <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
-          {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
+          {subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {addressText && <p className="font-light text-gray-600">{addressText}</p>}
         <div className="mt-8 grid gap-4">
           {transportItems.map((item, index) => (
             <div key={`${item.label}-${index}`} className="flex gap-4 border-t border-black/10 pt-4">
               <DynamicIcon name={item.icon || 'map-pin'} size={18} className="text-gray-600" />
-              <div><h3 className="font-light text-gray-900">{item.label || ''} {item.value || ''}</h3>{item.text && <p className="text-sm font-light text-gray-600">{item.text}</p>}</div>
+              <div><h3 className="font-light text-gray-900">{item.label || ''} {item.value || ''}</h3>{item.text && <div className="text-sm font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}</div>
             </div>
           ))}
         </div>
@@ -102,7 +102,7 @@ function LocationModern({ headline, subline, badgeText, addressText, mapEmbedUrl
               {item.image && <div className="relative mb-4 aspect-[16/10] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               <h3 className="font-light text-gray-900">{item.title || ''}</h3>
               {item.distanceLabel && <p className="text-xs font-light text-gray-600">{item.distanceLabel}</p>}
-              {item.text && <p className="mt-2 text-sm font-light text-gray-600">{item.text}</p>}
+              {item.text && <div className="mt-2 text-sm font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             </article>
           ))}
         </div>
@@ -119,14 +119,14 @@ function LocationBold({ headline, subline, badgeText, addressText, mapEmbedUrl, 
         <div className="mb-6 max-w-3xl">
           {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
-          {subline && <p className="mt-4 text-gray-600">{subline}</p>}
+          {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {addressText && <p className="font-bold text-gray-600">{addressText}</p>}
         <div className="mt-6 grid gap-3">
           {transportItems.map((item, index) => (
             <div key={`${item.label}-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4">
               <div className="text-brand-primary"><DynamicIcon name={item.icon || 'map-pin'} size={20} /></div>
-              <div><h3 className="font-black text-gray-900">{item.label || ''} {item.value || ''}</h3>{item.text && <p className="text-sm text-gray-600">{item.text}</p>}</div>
+              <div><h3 className="font-black text-gray-900">{item.label || ''} {item.value || ''}</h3>{item.text && <div className="text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}</div>
             </div>
           ))}
         </div>
@@ -141,7 +141,7 @@ function LocationBold({ headline, subline, badgeText, addressText, mapEmbedUrl, 
               {item.image && <div className="relative mb-3 aspect-[16/10] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               <h3 className="font-black uppercase text-gray-900">{item.title || ''}</h3>
               {item.distanceLabel && <p className="text-xs font-bold text-gray-600">{item.distanceLabel}</p>}
-              {item.text && <p className="mt-2 text-sm text-gray-600">{item.text}</p>}
+              {item.text && <div className="mt-2 text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             </article>
           ))}
         </div>

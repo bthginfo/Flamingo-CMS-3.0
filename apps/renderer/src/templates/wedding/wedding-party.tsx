@@ -25,7 +25,7 @@ export function WeddingPartySection({ data }: Props) {
               </div>
               <h3 className="text-lg font-semibold text-gray-900">{m.name}</h3>
               <p className="text-brand-primary text-sm font-medium mt-1">{m.role}</p>
-              {m.text && <p className="text-gray-600 text-sm mt-3 max-w-xs mx-auto">{m.text}</p>}
+              {m.text && <div className="text-gray-600 text-sm mt-3 max-w-xs mx-auto rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </motion.div>
           ))}
         </div>

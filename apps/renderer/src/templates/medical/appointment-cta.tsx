@@ -26,7 +26,7 @@ function Classic({ header, introText, onlineCta, phoneCta, callbackCta, external
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl bg-white p-6 shadow-lg sm:p-10">
       <SectionHeader {...header} />
-      {introText && <p className="max-w-2xl text-gray-600">{introText}</p>}
+      {introText && <div className="max-w-2xl text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
         {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-teal-700 px-5 py-3 font-semibold text-white"><CalendarDays size={17} />{onlineCta.label}</a>}
         {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-teal-700/30 px-5 py-3 font-semibold text-gray-900"><Phone size={17} />{phoneCta.label}</a>}
@@ -42,7 +42,7 @@ function Modern({ header, introText, onlineCta, phoneCta, callbackCta, externalC
   return (
     <div className="border border-black/10 bg-white p-6 sm:p-10">
       <SectionHeader {...header} />
-      {introText && <p className="max-w-2xl font-light text-gray-600">{introText}</p>}
+      {introText && <div className="max-w-2xl font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
         {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white"><CalendarDays size={17} />{onlineCta.label}</a>}
         {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-black/15 px-5 py-3 font-light text-gray-900"><Phone size={17} />{phoneCta.label}</a>}
@@ -60,9 +60,9 @@ function Bold({ header, introText, onlineCta, phoneCta, callbackCta, externalCta
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-teal-400">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-white sm:text-3xl md:text-5xl">{header.headline}</h2>
-        {header.subline && <p className="mt-4 text-white/70">{header.subline}</p>}
+        {header.subline && <div className="mt-4 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
-      {introText && <p className="max-w-2xl text-white/70">{introText}</p>}
+      {introText && <div className="max-w-2xl text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
         {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-teal-400 bg-teal-400 px-5 py-3 font-black uppercase text-gray-950 shadow-[4px_4px_0_theme(colors.teal.700)]"><CalendarDays size={17} />{onlineCta.label}</a>}
         {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-white/40 px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(255,255,255,0.15)]"><Phone size={17} />{phoneCta.label}</a>}

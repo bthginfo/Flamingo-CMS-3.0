@@ -33,7 +33,7 @@ function SignatureDishesClassic({ headline, subline, badgeText, dishes }: Signat
       <div className="mb-10 max-w-3xl text-center mx-auto">
         {badgeText && <p className="inline-block rounded-full bg-brand-accent/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-accent">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 text-gray-500">{subline}</p>}
+        {subline && <div className="mt-4 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {dishes.map((dish, index) => (
@@ -45,7 +45,7 @@ function SignatureDishesClassic({ headline, subline, badgeText, dishes }: Signat
                 <h3 className="text-xl font-bold text-gray-900">{dish.name || ''}</h3>
                 {dish.price && <p className="shrink-0 font-bold text-gray-900">{dish.price}</p>}
               </div>
-              {dish.description && <p className="mt-3 text-sm leading-6 text-gray-500">{dish.description}</p>}
+              {dish.description && <div className="mt-3 text-sm leading-6 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: dish.description }} />}
               {asList<string>(dish.ingredients).length > 0 && <p className="mt-4 text-xs text-gray-500">{asList<string>(dish.ingredients).join(' / ')}</p>}
               {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-brand-primary">{dish.cta.label}<ArrowRight size={16} /></a>}
             </div>
@@ -63,7 +63,7 @@ function SignatureDishesModern({ headline, subline, badgeText, dishes }: Signatu
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-gray-500">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light text-gray-900 sm:text-3xl md:text-5xl">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-brand-accent" />
-        {subline && <p className="mt-6 font-light text-gray-500">{subline}</p>}
+        {subline && <div className="mt-6 font-light text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-8 md:grid-cols-3">
         {dishes.map((dish, index) => (
@@ -75,7 +75,7 @@ function SignatureDishesModern({ headline, subline, badgeText, dishes }: Signatu
                 <h3 className="text-xl font-medium text-gray-900">{dish.name || ''}</h3>
                 {dish.price && <p className="shrink-0 font-medium text-gray-900">{dish.price}</p>}
               </div>
-              {dish.description && <p className="mt-3 text-sm font-light leading-6 text-gray-500">{dish.description}</p>}
+              {dish.description && <div className="mt-3 text-sm font-light leading-6 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: dish.description }} />}
               {asList<string>(dish.ingredients).length > 0 && <p className="mt-4 text-xs font-light text-gray-500">{asList<string>(dish.ingredients).join(' / ')}</p>}
               {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 border-b border-[#111827] pb-0.5 text-sm font-medium text-gray-900">{dish.cta.label}<ArrowRight size={16} /></a>}
             </div>
@@ -93,7 +93,7 @@ function SignatureDishesBold({ headline, subline, badgeText, dishes }: Signature
         {badgeText && <p className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase tracking-widest text-gray-900">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl">{headline}</h2>
         <div className="mt-2 h-1.5 w-20 bg-brand-accent" />
-        {subline && <p className="mt-4 text-white/70">{subline}</p>}
+        {subline && <div className="mt-4 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-5 md:grid-cols-3">
         {dishes.map((dish, index) => (
@@ -105,7 +105,7 @@ function SignatureDishesBold({ headline, subline, badgeText, dishes }: Signature
                 <h3 className="text-xl font-bold uppercase">{dish.name || ''}</h3>
                 {dish.price && <p className="shrink-0 font-bold text-brand-accent">{dish.price}</p>}
               </div>
-              {dish.description && <p className="mt-3 text-sm leading-6 text-white/60">{dish.description}</p>}
+              {dish.description && <div className="mt-3 text-sm leading-6 text-white/60 rt-content" dangerouslySetInnerHTML={{ __html: dish.description }} />}
               {asList<string>(dish.ingredients).length > 0 && <p className="mt-4 text-xs text-white/50">{asList<string>(dish.ingredients).join(' / ')}</p>}
               {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-bold uppercase text-white">{dish.cta.label}<ArrowRight size={16} /></a>}
             </div>

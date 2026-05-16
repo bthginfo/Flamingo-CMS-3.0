@@ -87,7 +87,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
               )}
               <div>
                 <h3 className="text-lg font-medium text-gray-900 group-hover:text-brand-primary transition-colors">{card.title}</h3>
-                {card.text && <p className="text-gray-400 mt-2 leading-relaxed">{card.text}</p>}
+                {card.text && <div className="text-gray-400 mt-2 leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: card.text }} />}
                 {card.href && (
                   <span className="inline-flex items-center gap-1 text-sm text-brand-primary mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
                     Mehr erfahren {card.icon && <DynamicIcon name={card.icon} size={14} />}
@@ -146,7 +146,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
                 </div>
               )}
               <h3 className="font-bold text-base uppercase tracking-wide text-gray-900">{card.title}</h3>
-              {card.text && <p className="text-gray-500 text-sm mt-2 leading-relaxed">{card.text}</p>}
+              {card.text && <div className="text-gray-500 text-sm mt-2 leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: card.text }} />}
               {card.href && (
                 <span className="inline-flex items-center gap-1 text-xs font-bold uppercase text-brand-accent mt-3">
                   Details {card.ctaIcon && <DynamicIcon name={card.ctaIcon} size={12} />}

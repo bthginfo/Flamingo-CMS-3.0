@@ -25,13 +25,13 @@ function Classic({ header, introText, items, ctaPrimary }: Props) {
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl border border-red-200 bg-red-50 p-6 shadow-lg sm:p-8">
       <SectionHeader {...header} />
-      {introText && <p className="max-w-3xl text-sm leading-6 text-red-900/80">{introText}</p>}
+      {introText && <div className="max-w-3xl text-sm leading-6 text-red-900/80 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
           <article key={`${item.title}-${index}`} className="border-t border-red-200 pt-4">
             <AlertCircle size={18} className="text-red-700" />
             <h3 className="mt-2 font-bold text-red-950">{item.title || ''}</h3>
-            {item.text && <p className="mt-2 text-sm leading-6 text-red-900/75">{item.text}</p>}
+            {item.text && <div className="mt-2 text-sm leading-6 text-red-900/75 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-3 inline-flex font-semibold text-red-950">{item.phoneLabel}</a>}
           </article>
         ))}
@@ -45,13 +45,13 @@ function Modern({ header, introText, items, ctaPrimary }: Props) {
   return (
     <div className="border border-red-200 bg-red-50/50 p-6 sm:p-8">
       <SectionHeader {...header} />
-      {introText && <p className="max-w-3xl text-sm font-light leading-6 text-red-900/80">{introText}</p>}
+      {introText && <div className="max-w-3xl text-sm font-light leading-6 text-red-900/80 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
           <article key={`${item.title}-${index}`} className="border-t border-red-200 pt-4">
             <AlertCircle size={18} className="text-red-600" />
             <h3 className="mt-2 font-light text-red-950">{item.title || ''}</h3>
-            {item.text && <p className="mt-2 text-sm font-light leading-6 text-red-900/75">{item.text}</p>}
+            {item.text && <div className="mt-2 text-sm font-light leading-6 text-red-900/75 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-3 inline-flex font-semibold text-red-700">{item.phoneLabel}</a>}
           </article>
         ))}
@@ -67,15 +67,15 @@ function Bold({ header, introText, items, ctaPrimary }: Props) {
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-red-400">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-white sm:text-3xl md:text-5xl">{header.headline}</h2>
-        {header.subline && <p className="mt-4 text-white/70">{header.subline}</p>}
+        {header.subline && <div className="mt-4 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
-      {introText && <p className="max-w-3xl text-sm leading-6 text-white/70">{introText}</p>}
+      {introText && <div className="max-w-3xl text-sm leading-6 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
           <article key={`${item.title}-${index}`} className="border-t border-red-500/40 pt-4">
             <AlertCircle size={18} className="text-red-400" />
             <h3 className="mt-2 font-black uppercase text-white">{item.title || ''}</h3>
-            {item.text && <p className="mt-2 text-sm leading-6 text-white/70">{item.text}</p>}
+            {item.text && <div className="mt-2 text-sm leading-6 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-3 inline-flex font-black uppercase text-red-400">{item.phoneLabel}</a>}
           </article>
         ))}

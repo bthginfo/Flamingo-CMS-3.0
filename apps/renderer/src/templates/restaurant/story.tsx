@@ -38,8 +38,8 @@ function StoryClassic({ headline, subline, badgeText, storyText, imagePrimary, i
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
           {badgeText && <p className="inline-block rounded-full bg-brand-accent/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-accent">{badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</h2>
-          {subline && <p className="mt-4 text-lg text-gray-500">{subline}</p>}
-          {storyText && <p className="mt-6 whitespace-pre-line leading-7 text-gray-500">{storyText}</p>}
+          {subline && <div className="mt-4 text-lg text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {storyText && <div className="mt-6 whitespace-pre-line leading-7 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: storyText }} />}
           {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-full bg-brand-primary px-6 py-3 font-semibold text-white shadow-md">{ctaPrimary.label}</a>}
         </motion.div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -61,7 +61,7 @@ function StoryClassic({ headline, subline, badgeText, storyText, imagePrimary, i
               <div className="shrink-0 rounded-full bg-brand-accent/10 p-2.5 text-brand-accent"><DynamicIcon name={v.icon || 'heart'} size={20} /></div>
               <div>
                 <h3 className="font-semibold text-gray-900">{v.title || ''}</h3>
-                {v.text && <p className="mt-1 text-sm leading-6 text-gray-500">{v.text}</p>}
+                {v.text && <div className="mt-1 text-sm leading-6 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
               </div>
             </motion.div>
           ))}
@@ -75,7 +75,7 @@ function StoryClassic({ headline, subline, badgeText, storyText, imagePrimary, i
                 <div className="absolute -left-[2.55rem] top-1 h-4 w-4 rounded-full border-2 border-brand-accent bg-white" />
                 {m.year && <p className="text-xs font-bold uppercase tracking-widest text-brand-accent">{m.year}</p>}
                 <h3 className="mt-1 font-semibold text-gray-900">{m.title || ''}</h3>
-                {m.text && <p className="mt-1 text-sm leading-6 text-gray-500">{m.text}</p>}
+                {m.text && <div className="mt-1 text-sm leading-6 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
               </motion.div>
             ))}
           </div>
@@ -93,8 +93,8 @@ function StoryModern({ headline, subline, badgeText, storyText, imagePrimary, im
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-gray-500">{badgeText}</p>}
           <h2 className="mt-4 text-3xl font-light text-gray-900 sm:text-3xl md:text-5xl">{headline}</h2>
           <div className="mt-2 h-px w-16 bg-brand-accent" />
-          {subline && <p className="mt-6 font-light leading-relaxed text-gray-500">{subline}</p>}
-          {storyText && <p className="mt-6 whitespace-pre-line font-light leading-7 text-gray-500">{storyText}</p>}
+          {subline && <div className="mt-6 font-light leading-relaxed text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {storyText && <div className="mt-6 whitespace-pre-line font-light leading-7 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: storyText }} />}
           {founderQuote && (
             <blockquote className="mt-8 border-l-2 border-brand-accent pl-5">
               <p className="text-sm italic font-light leading-6 text-gray-900">&ldquo;{founderQuote}&rdquo;</p>
@@ -115,7 +115,7 @@ function StoryModern({ headline, subline, badgeText, storyText, imagePrimary, im
             <div key={`${v.title}-${i}`} className="border-l-2 border-brand-accent pl-5">
               <DynamicIcon name={v.icon || 'heart'} size={18} className="text-gray-500" />
               <h3 className="mt-2 font-medium text-gray-900">{v.title || ''}</h3>
-              {v.text && <p className="mt-1 text-sm font-light leading-6 text-gray-500">{v.text}</p>}
+              {v.text && <div className="mt-1 text-sm font-light leading-6 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
           ))}
         </div>
@@ -126,7 +126,7 @@ function StoryModern({ headline, subline, badgeText, storyText, imagePrimary, im
             <div key={`${m.year}-${i}`}>
               {m.year && <p className="text-xs font-light uppercase tracking-[0.2em] text-gray-500">{m.year}</p>}
               <h3 className="mt-1 font-medium text-gray-900">{m.title || ''}</h3>
-              {m.text && <p className="mt-1 text-sm font-light leading-6 text-gray-500">{m.text}</p>}
+              {m.text && <div className="mt-1 text-sm font-light leading-6 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </div>
           ))}
         </div>
@@ -143,8 +143,8 @@ function StoryBold({ headline, subline, badgeText, storyText, imagePrimary, imag
           {badgeText && <p className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase tracking-widest text-white">{badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
           <div className="mt-2 h-1.5 w-20 bg-brand-accent" />
-          {subline && <p className="mt-4 font-bold text-gray-500">{subline}</p>}
-          {storyText && <p className="mt-6 whitespace-pre-line leading-7 text-gray-500">{storyText}</p>}
+          {subline && <div className="mt-4 font-bold text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {storyText && <div className="mt-6 whitespace-pre-line leading-7 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: storyText }} />}
           {founderQuote && (
             <div className="mt-8 border-l-4 border-brand-accent bg-black/5 p-5">
               <p className="text-sm italic font-bold text-gray-900">&ldquo;{founderQuote}&rdquo;</p>
@@ -165,7 +165,7 @@ function StoryBold({ headline, subline, badgeText, storyText, imagePrimary, imag
             <div key={`${v.title}-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_var(--brand-accent)]">
               <DynamicIcon name={v.icon || 'heart'} size={20} className="text-brand-accent" />
               <h3 className="mt-2 font-black uppercase text-gray-900">{v.title || ''}</h3>
-              {v.text && <p className="mt-1 text-sm leading-6 text-gray-500">{v.text}</p>}
+              {v.text && <div className="mt-1 text-sm leading-6 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
           ))}
         </div>
@@ -176,7 +176,7 @@ function StoryBold({ headline, subline, badgeText, storyText, imagePrimary, imag
             <div key={`${m.year}-${i}`} className="border-2 border-[#111827] p-5">
               {m.year && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{m.year}</p>}
               <h3 className="mt-1 font-black uppercase text-gray-900">{m.title || ''}</h3>
-              {m.text && <p className="mt-1 text-sm leading-6 text-gray-500">{m.text}</p>}
+              {m.text && <div className="mt-1 text-sm leading-6 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </div>
           ))}
         </div>

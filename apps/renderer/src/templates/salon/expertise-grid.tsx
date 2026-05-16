@@ -27,7 +27,7 @@ function ExpertiseClassic({ headline, subline, badgeText, items }: Props) {
       <div className="mb-10 max-w-3xl">
         {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-gray-600">{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
-        {subline && <p className="mt-4 text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
@@ -37,7 +37,7 @@ function ExpertiseClassic({ headline, subline, badgeText, items }: Props) {
               <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-brand-accent" />
               <div>
                 <h3 className="font-semibold text-gray-900">{item.title || ''}</h3>
-                {item.text && <p className="mt-1 text-sm leading-6 text-gray-600">{item.text}</p>}
+                {item.text && <div className="mt-1 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               </div>
             </div>
           </motion.article>
@@ -53,7 +53,7 @@ function ExpertiseModern({ headline, subline, badgeText, items }: Props) {
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-8 md:grid-cols-3">
         {items.map((item, i) => (
@@ -63,7 +63,7 @@ function ExpertiseModern({ headline, subline, badgeText, items }: Props) {
               <DynamicIcon name={item.icon || 'sparkles'} size={18} className="text-brand-accent" />
               <div>
                 <h3 className="font-light text-gray-900">{item.title || ''}</h3>
-                {item.text && <p className="mt-2 text-sm font-light leading-6 text-gray-600">{item.text}</p>}
+                {item.text && <div className="mt-2 text-sm font-light leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               </div>
             </div>
           </article>
@@ -79,7 +79,7 @@ function ExpertiseBold({ headline, subline, badgeText, items }: Props) {
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 font-bold text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 font-bold text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
@@ -89,7 +89,7 @@ function ExpertiseBold({ headline, subline, badgeText, items }: Props) {
               <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-brand-accent" />
               <div>
                 <h3 className="font-black uppercase text-white">{item.title || ''}</h3>
-                {item.text && <p className="mt-1 text-sm leading-6 text-white/70">{item.text}</p>}
+                {item.text && <div className="mt-1 text-sm leading-6 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               </div>
             </div>
           </article>

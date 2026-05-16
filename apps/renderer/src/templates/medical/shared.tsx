@@ -12,7 +12,7 @@ export function baseHeader(data: Record<string, unknown>, headline: string, badg
 }
 
 export function SectionHeader({ headline, subline, badgeText }: { headline: string; subline: string; badgeText: string }) {
-  return <div className="mb-10 max-w-3xl">{badgeText && <p className="text-xs font-bold uppercase tracking-widest text-gray-600">{badgeText}</p>}<h2 className="mt-3 text-3xl font-[700] text-gray-900 sm:text-3xl md:text-5xl">{headline}</h2>{subline && <p className="mt-4 text-gray-600">{subline}</p>}</div>;
+  return <div className="mb-10 max-w-3xl">{badgeText && <p className="text-xs font-bold uppercase tracking-widest text-gray-600">{badgeText}</p>}<h2 className="mt-3 text-3xl font-[700] text-gray-900 sm:text-3xl md:text-5xl">{headline}</h2>{subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}</div>;
 }
 
 export function CtaButton({ cta }: { cta: ButtonValue }) {
@@ -25,7 +25,7 @@ export function ImageCard({ image, title, text, meta, cta }: { image?: string; t
 }
 
 export function IconRows({ items }: { items: unknown }) {
-  return <div className="grid gap-4">{asList<{ icon?: string; title?: string; text?: string }>(items).map((item, index) => <div key={`${item.title}-${index}`} className="flex gap-4 border-t border-black/10 pt-4"><DynamicIcon name={item.icon || 'stethoscope'} size={20} /><div><h3 className="font-semibold text-gray-900">{item.title || ''}</h3>{item.text && <p className="mt-1 text-sm leading-6 text-gray-600">{item.text}</p>}</div></div>)}</div>;
+  return <div className="grid gap-4">{asList<{ icon?: string; title?: string; text?: string }>(items).map((item, index) => <div key={`${item.title}-${index}`} className="flex gap-4 border-t border-black/10 pt-4"><DynamicIcon name={item.icon || 'stethoscope'} size={20} /><div><h3 className="font-semibold text-gray-900">{item.title || ''}</h3>{item.text && <div className="mt-1 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}</div></div>)}</div>;
 }
 
 export { asButton, asList };

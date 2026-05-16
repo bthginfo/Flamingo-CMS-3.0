@@ -27,7 +27,7 @@ function TreatmentClassic({ headline, subline, badgeText, treatments }: Props) {
       <div className="mb-10 max-w-3xl">
         {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-gray-600">{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
-        {subline && <p className="mt-4 text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {treatments.map((item, i) => (
@@ -36,7 +36,7 @@ function TreatmentClassic({ headline, subline, badgeText, treatments }: Props) {
             <div className="p-5">
               {(item.resultLabel || item.durationLabel || item.priceLabel) && <p className="text-xs font-bold uppercase tracking-widest text-gray-600">{[item.resultLabel, item.durationLabel, item.priceLabel].filter(Boolean).join(' / ')}</p>}
               <h3 className="mt-2 text-xl font-bold text-gray-900">{item.title || ''}</h3>
-              {item.text && <p className="mt-3 text-sm leading-6 text-gray-600">{item.text}</p>}
+              {item.text && <div className="mt-3 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {asList<string>(item.steps).length > 0 && <p className="mt-2 text-sm text-gray-600">{asList<string>(item.steps).join(' / ')}</p>}
               {asList<string>(item.careTips).length > 0 && <p className="mt-2 text-sm text-gray-600">{asList<string>(item.careTips).join(' / ')}</p>}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex rounded-full bg-[#111827] px-5 py-2 text-sm font-semibold text-white shadow-md">{item.cta.label}</a>}
@@ -54,7 +54,7 @@ function TreatmentModern({ headline, subline, badgeText, treatments }: Props) {
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-8 md:grid-cols-2">
         {treatments.map((item, i) => (
@@ -63,7 +63,7 @@ function TreatmentModern({ headline, subline, badgeText, treatments }: Props) {
             <div className="mt-4">
               {(item.resultLabel || item.durationLabel || item.priceLabel) && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{[item.resultLabel, item.durationLabel, item.priceLabel].filter(Boolean).join(' / ')}</p>}
               <h3 className="mt-2 text-xl font-light text-gray-900">{item.title || ''}</h3>
-              {item.text && <p className="mt-3 text-sm font-light leading-6 text-gray-600">{item.text}</p>}
+              {item.text && <div className="mt-3 text-sm font-light leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {asList<string>(item.steps).length > 0 && <p className="mt-2 text-sm font-light text-gray-600">{asList<string>(item.steps).join(' / ')}</p>}
               {asList<string>(item.careTips).length > 0 && <p className="mt-2 text-sm font-light text-gray-600">{asList<string>(item.careTips).join(' / ')}</p>}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex border-b border-brand-accent pb-1 text-sm font-light text-gray-900">{item.cta.label}</a>}
@@ -81,7 +81,7 @@ function TreatmentBold({ headline, subline, badgeText, treatments }: Props) {
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 font-bold text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 font-bold text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {treatments.map((item, i) => (
@@ -90,7 +90,7 @@ function TreatmentBold({ headline, subline, badgeText, treatments }: Props) {
             <div className="p-5">
               {(item.resultLabel || item.durationLabel || item.priceLabel) && <span className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase text-white">{[item.resultLabel, item.durationLabel, item.priceLabel].filter(Boolean).join(' / ')}</span>}
               <h3 className="mt-2 text-xl font-black uppercase text-white">{item.title || ''}</h3>
-              {item.text && <p className="mt-3 text-sm leading-6 text-white/70">{item.text}</p>}
+              {item.text && <div className="mt-3 text-sm leading-6 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {asList<string>(item.steps).length > 0 && <p className="mt-2 text-sm text-white/60">{asList<string>(item.steps).join(' / ')}</p>}
               {asList<string>(item.careTips).length > 0 && <p className="mt-2 text-sm text-white/60">{asList<string>(item.careTips).join(' / ')}</p>}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex bg-brand-accent px-5 py-2 text-sm font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{item.cta.label}</a>}

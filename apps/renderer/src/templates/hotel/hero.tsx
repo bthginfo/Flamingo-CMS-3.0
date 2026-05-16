@@ -130,7 +130,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, trustItems, bgIma
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-gray-900 !leading-[1.1] tracking-tight">
             {headline}
           </h1>
-          {subline && <p className="text-lg text-gray-400 leading-relaxed mt-8 max-w-lg">{subline}</p>}
+          {subline && <div className="text-lg text-gray-400 leading-relaxed mt-8 max-w-lg rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta.label && (
               <a href={primaryCta.href || '#'} className="group inline-flex items-center gap-3 text-gray-900 font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-amber-500 hover:text-amber-600 transition-colors">
@@ -197,7 +197,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, trustItems, bgImage
           </motion.h1>
           {subline && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.4 }}
-              className="text-lg text-white/50 mt-8 max-w-2xl font-medium">{subline}</motion.p>
+              className="text-lg text-white/50 mt-8 max-w-2xl font-medium rt-content" dangerouslySetInnerHTML={{ __html: subline }} />
           )}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 mt-12">

@@ -57,7 +57,7 @@ function Classic(p: Props) {
           {p.values.map((v, i) => (
             <motion.div key={`${v.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-black/10 bg-white p-5 shadow-sm">
               <div className="shrink-0 text-[var(--brand-accent))]"><DynamicIcon name={v.icon || 'stethoscope'} size={20} /></div>
-              <div><h3 className="font-semibold text-gray-900">{v.title || ''}</h3>{v.text && <p className="mt-1 text-sm leading-6 text-gray-600">{v.text}</p>}</div>
+              <div><h3 className="font-semibold text-gray-900">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
             </motion.div>
           ))}
         </div>
@@ -69,7 +69,7 @@ function Classic(p: Props) {
               <div className="absolute -left-[2.55rem] top-1 h-4 w-4 rounded-full border-2 border-[var(--brand-accent))] bg-white" />
               {m.year && <p className="text-xs font-bold uppercase tracking-widest text-[var(--brand-accent))]">{m.year}</p>}
               <h3 className="mt-1 font-semibold text-gray-900">{m.title || ''}</h3>
-              {m.text && <p className="mt-1 text-sm leading-6 text-gray-600">{m.text}</p>}
+              {m.text && <div className="mt-1 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </motion.div>
           ))}
         </div>
@@ -105,7 +105,7 @@ function Mod(p: Props) {
             <div key={`${v.title}-${i}`} className="border-l border-black/20 pl-5">
               <DynamicIcon name={v.icon || 'stethoscope'} size={18} className="text-gray-600" />
               <h3 className="mt-2 font-medium text-gray-900">{v.title || ''}</h3>
-              {v.text && <p className="mt-1 text-sm font-light leading-6 text-gray-600">{v.text}</p>}
+              {v.text && <div className="mt-1 text-sm font-light leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
           ))}
         </div>
@@ -116,7 +116,7 @@ function Mod(p: Props) {
             <div key={`${m.year}-${i}`}>
               {m.year && <p className="text-xs font-light uppercase tracking-[0.2em] text-gray-600">{m.year}</p>}
               <h3 className="mt-1 font-medium text-gray-900">{m.title || ''}</h3>
-              {m.text && <p className="mt-1 text-sm font-light leading-6 text-gray-600">{m.text}</p>}
+              {m.text && <div className="mt-1 text-sm font-light leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </div>
           ))}
         </div>
@@ -152,7 +152,7 @@ function Bold(p: Props) {
             <div key={`${v.title}-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_var(--brand-accent))]">
               <DynamicIcon name={v.icon || 'stethoscope'} size={20} className="text-[var(--brand-accent))]" />
               <h3 className="mt-2 font-black uppercase text-gray-900">{v.title || ''}</h3>
-              {v.text && <p className="mt-1 text-sm leading-6 text-gray-600">{v.text}</p>}
+              {v.text && <div className="mt-1 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
           ))}
         </div>
@@ -163,7 +163,7 @@ function Bold(p: Props) {
             <div key={`${m.year}-${i}`} className="border-2 border-[#111827] p-5">
               {m.year && <p className="text-xs font-black uppercase tracking-widest text-[var(--brand-accent))]">{m.year}</p>}
               <h3 className="mt-1 font-black uppercase text-gray-900">{m.title || ''}</h3>
-              {m.text && <p className="mt-1 text-sm leading-6 text-gray-600">{m.text}</p>}
+              {m.text && <div className="mt-1 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </div>
           ))}
         </div>

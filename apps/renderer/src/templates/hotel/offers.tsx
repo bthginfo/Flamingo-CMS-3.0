@@ -33,7 +33,7 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
       <div className="mb-10 max-w-3xl">
         {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-brand-primary" />{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
-        {subline && <p className="mt-4 text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {offers.length === 0 && fallbackText ? <p className="text-gray-600">{fallbackText}</p> : null}
       <div className="grid gap-6 md:grid-cols-2">
@@ -47,7 +47,7 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
                 {offer.validUntilLabel && <span>{offer.validUntilLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-bold text-gray-900">{offer.title || ''}</h3>
-              {offer.description && <p className="mt-3 text-sm leading-6 text-gray-600">{offer.description}</p>}
+              {offer.description && <div className="mt-3 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: offer.description }} />}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs text-gray-600">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">
                 {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-semibold text-brand-accent">{offer.cta.label}</a>}
@@ -68,7 +68,7 @@ function OffersModern({ headline, subline, badgeText, offers, fallbackText }: Pr
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {offers.length === 0 && fallbackText ? <p className="font-light text-gray-600">{fallbackText}</p> : null}
       <div className="grid gap-px border border-black/10 md:grid-cols-2">
@@ -82,7 +82,7 @@ function OffersModern({ headline, subline, badgeText, offers, fallbackText }: Pr
                 {offer.validUntilLabel && <span>{offer.validUntilLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-light text-gray-900">{offer.title || ''}</h3>
-              {offer.description && <p className="mt-3 text-sm font-light leading-7 text-gray-600">{offer.description}</p>}
+              {offer.description && <div className="mt-3 text-sm font-light leading-7 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: offer.description }} />}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs font-light text-gray-600">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">
                 {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-light text-gray-900 underline underline-offset-4">{offer.cta.label}</a>}
@@ -103,7 +103,7 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {offers.length === 0 && fallbackText ? <p className="text-gray-600">{fallbackText}</p> : null}
       <div className="grid gap-4 md:grid-cols-2">
@@ -117,7 +117,7 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
                 {offer.validUntilLabel && <span>{offer.validUntilLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-black uppercase text-gray-900">{offer.title || ''}</h3>
-              {offer.description && <p className="mt-3 text-sm leading-6 text-gray-600">{offer.description}</p>}
+              {offer.description && <div className="mt-3 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: offer.description }} />}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs text-gray-600">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">
                 {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-black uppercase text-brand-accent">{offer.cta.label}</a>}

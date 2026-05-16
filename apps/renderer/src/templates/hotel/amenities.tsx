@@ -41,7 +41,7 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
           </motion.p>
         )}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
-        {subline && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="mt-4 text-gray-600">{subline}</motion.p>}
+        {subline && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
@@ -52,7 +52,7 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
               <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-brand-primary/10/10 text-brand-primary"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
             )}
             <h3 className="font-bold text-gray-900">{item.title || ''}</h3>
-            {item.text && <p className="mt-2 text-sm leading-6 text-gray-600">{item.text}</p>}
+            {item.text && <div className="mt-2 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </motion.article>
         ))}
       </div>
@@ -68,7 +68,7 @@ function AmenitiesModern({ headline, subline, badgeText, items, ctaPrimary }: Pr
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-px border border-black/10 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
@@ -79,7 +79,7 @@ function AmenitiesModern({ headline, subline, badgeText, items, ctaPrimary }: Pr
               <div className="mb-6 text-gray-600"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
             )}
             <h3 className="font-light text-lg text-gray-900">{item.title || ''}</h3>
-            {item.text && <p className="mt-3 text-sm font-light leading-7 text-gray-600">{item.text}</p>}
+            {item.text && <div className="mt-3 text-sm font-light leading-7 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </article>
         ))}
       </div>
@@ -95,7 +95,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
@@ -106,7 +106,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
               <div className="mb-4 inline-block border-2 border-[var(--brand-primary)] p-2 text-brand-primary"><DynamicIcon name={item.icon || 'star'} size={22} /></div>
             )}
             <h3 className="font-black uppercase text-gray-900">{item.title || ''}</h3>
-            {item.text && <p className="mt-2 text-sm leading-6 text-gray-600">{item.text}</p>}
+            {item.text && <div className="mt-2 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </article>
         ))}
       </div>

@@ -74,7 +74,7 @@ export function PortfolioSection({ data }: Props) {
               <div className="p-6 lg:p-8">
                 <h3 className="font-display font-bold text-xl mb-2 text-gray-900">{project.title}</h3>
                 {project.description && (
-                  <p className="text-gray-500 text-sm leading-relaxed mb-4">{project.description}</p>
+                  <div className="text-gray-500 text-sm leading-relaxed mb-4 rt-content" dangerouslySetInnerHTML={{ __html: project.description }} />
                 )}
                 {project.stats && project.stats.length > 0 && (
                   <div className="flex gap-6 pt-4 border-t border-gray-100">

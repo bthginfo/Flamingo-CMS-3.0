@@ -22,7 +22,7 @@ export function WeddingVenueInfoSection({ data }: Props) {
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
-          {subline && <p className="section-subline">{subline}</p>}
+          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           {image && (
@@ -73,7 +73,7 @@ export function WeddingTravelInfoSection({ data }: Props) {
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
-          {subline && <p className="section-subline">{subline}</p>}
+          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {directions.length > 0 && (
           <div className="grid md:grid-cols-3 gap-8 mb-10 md:mb-16">
@@ -85,7 +85,7 @@ export function WeddingTravelInfoSection({ data }: Props) {
                     <Icon className="w-5 h-5 text-brand-primary" />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">{d.title}</h3>
-                  <p className="text-gray-600 text-sm">{d.text}</p>
+                  <div className="text-gray-600 text-sm rt-content" dangerouslySetInnerHTML={{ __html: d.text }} />
                 </motion.div>
               );
             })}
@@ -100,7 +100,7 @@ export function WeddingTravelInfoSection({ data }: Props) {
                   {a.image && <div className="relative h-40"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <div className="p-5">
                     <h4 className="font-semibold text-gray-900">{a.name}</h4>
-                    {a.description && <p className="text-gray-600 text-sm mt-1">{a.description}</p>}
+                    {a.description && <div className="text-gray-600 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: a.description }} />}
                     {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-brand-primary text-sm font-medium mt-3 inline-block hover:underline">Mehr erfahren →</a>}
                   </div>
                 </motion.div>

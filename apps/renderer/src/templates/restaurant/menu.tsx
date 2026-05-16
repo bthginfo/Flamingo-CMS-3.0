@@ -101,8 +101,8 @@ function MenuHeader({ headline, subline, badgeText, introText, align, inverted }
     <div className={`${align === 'center' ? 'text-center mx-auto' : ''} max-w-3xl p-6 sm:p-10`}>
       {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[var(--brand-accent)]' : 'text-gray-600'}`}>{badgeText}</p>}
       <h2 className={`mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] ${inverted ? 'text-white' : 'text-gray-900'}`}>{headline}</h2>
-      {subline && <p className={`mt-4 text-base sm:text-lg ${inverted ? 'text-white/70' : 'text-gray-600'}`}>{subline}</p>}
-      {introText && <p className={`mt-5 leading-7 ${inverted ? 'text-white/65' : 'text-gray-600'}`}>{introText}</p>}
+      {subline && <div className={`mt-4 text-base sm:text-lg ${inverted ? 'text-white/70' : 'text-gray-600'} rt-content`} dangerouslySetInnerHTML={{ __html: subline }} />}
+      {introText && <div className={`mt-5 leading-7 ${inverted ? 'text-white/65' : 'text-gray-600'} rt-content`} dangerouslySetInnerHTML={{ __html: introText }} />}
     </div>
   );
 }
@@ -113,7 +113,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
     <div className={`${layout === 'classic' ? 'p-6 sm:p-10' : layout === 'bold' ? 'border-2 border-white/20 p-5' : 'border border-black/10 p-6'}`}>
       <div className="mb-6">
         <h3 className={`text-2xl font-bold ${layout === 'bold' ? 'text-white uppercase' : 'text-gray-900'}`}>{category.title || ''}</h3>
-        {category.description && <p className={`mt-2 text-sm ${layout === 'bold' ? 'text-white/60' : 'text-gray-600'}`}>{category.description}</p>}
+        {category.description && <div className={`mt-2 text-sm ${layout === 'bold' ? 'text-white/60' : 'text-gray-600'}`} dangerouslySetInnerHTML={{ __html: category.description }} />}
       </div>
       <div className="space-y-5">
         {items.map((item, index) => (
@@ -128,7 +128,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
                 <h4 className={`font-semibold ${layout === 'bold' ? 'text-white' : 'text-gray-900'}`}>{item.name || ''}</h4>
                 {item.price && <p className={`shrink-0 font-bold ${layout === 'bold' ? 'text-[var(--brand-accent)]' : 'text-gray-900'}`}>{item.price}</p>}
               </div>
-              {item.description && <p className={`mt-1 text-sm leading-6 ${layout === 'bold' ? 'text-white/60' : 'text-gray-600'}`}>{item.description}</p>}
+              {item.description && <div className={`mt-1 text-sm leading-6 ${layout === 'bold' ? 'text-white/60' : 'text-gray-600'}`} dangerouslySetInnerHTML={{ __html: item.description }} />}
               <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
                 {asList<string>(item.tags).map((tag) => <Badge key={tag} icon={item.spicy ? <Flame size={12} /> : item.vegetarian || item.vegan ? <Leaf size={12} /> : null} label={tag} />)}
                 {asList<string>(item.allergens).map((allergen) => <Badge key={allergen} icon={<Wheat size={12} />} label={allergen} />)}

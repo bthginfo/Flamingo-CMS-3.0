@@ -35,7 +35,7 @@ function EventsClassic({ headline, subline, badgeText, events, fallbackText }: E
       <div className="mb-10 max-w-3xl text-center mx-auto">
         {badgeText && <p className="inline-block rounded-full bg-brand-accent/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-accent">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 text-gray-500">{subline}</p>}
+        {subline && <div className="mt-4 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {events.length === 0 && fallbackText ? <p className="text-center text-gray-500">{fallbackText}</p> : null}
       <div className="grid gap-6 lg:grid-cols-2">
@@ -49,7 +49,7 @@ function EventsClassic({ headline, subline, badgeText, events, fallbackText }: E
                 {event.priceLabel && <span className="rounded-full bg-black/5 px-3 py-1">{event.priceLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-bold text-gray-900">{event.title || ''}</h3>
-              {event.description && <p className="mt-3 text-sm leading-6 text-gray-500">{event.description}</p>}
+              {event.description && <div className="mt-3 text-sm leading-6 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
               <div className="mt-5 flex flex-wrap gap-4">
                 {event.cta?.label && <a href={event.cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-white">{event.cta.label}</a>}
                 {event.detailHref && event.detailLabel && <a href={event.detailHref} className="inline-flex items-center gap-1 text-sm text-gray-500">{event.detailLabel}<ArrowRight size={14} /></a>}
@@ -69,7 +69,7 @@ function EventsModern({ headline, subline, badgeText, events, fallbackText }: Ev
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-gray-500">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light text-gray-900 sm:text-3xl md:text-5xl">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-brand-accent" />
-        {subline && <p className="mt-6 font-light text-gray-500">{subline}</p>}
+        {subline && <div className="mt-6 font-light text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {events.length === 0 && fallbackText ? <p className="font-light text-gray-500">{fallbackText}</p> : null}
       <div className="grid gap-8 lg:grid-cols-2">
@@ -83,7 +83,7 @@ function EventsModern({ headline, subline, badgeText, events, fallbackText }: Ev
                 {event.priceLabel && <span>{event.priceLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-medium text-gray-900">{event.title || ''}</h3>
-              {event.description && <p className="mt-3 text-sm font-light leading-6 text-gray-500">{event.description}</p>}
+              {event.description && <div className="mt-3 text-sm font-light leading-6 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
               <div className="mt-5 flex flex-wrap gap-4">
                 {event.cta?.label && <a href={event.cta.href || '#'} className="border-b border-[#111827] pb-0.5 text-sm font-medium text-gray-900">{event.cta.label}</a>}
                 {event.detailHref && event.detailLabel && <a href={event.detailHref} className="inline-flex items-center gap-1 text-sm font-light text-gray-500">{event.detailLabel}<ArrowRight size={14} /></a>}
@@ -103,7 +103,7 @@ function EventsBold({ headline, subline, badgeText, events, fallbackText }: Even
         {badgeText && <p className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase tracking-widest text-gray-900">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl">{headline}</h2>
         <div className="mt-2 h-1.5 w-20 bg-brand-accent" />
-        {subline && <p className="mt-4 text-white/70">{subline}</p>}
+        {subline && <div className="mt-4 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {events.length === 0 && fallbackText ? <p className="text-white/60">{fallbackText}</p> : null}
       <div className="grid gap-5 lg:grid-cols-2">
@@ -117,7 +117,7 @@ function EventsBold({ headline, subline, badgeText, events, fallbackText }: Even
                 {event.priceLabel && <span>{event.priceLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-bold uppercase">{event.title || ''}</h3>
-              {event.description && <p className="mt-3 text-sm leading-6 text-white/60">{event.description}</p>}
+              {event.description && <div className="mt-3 text-sm leading-6 text-white/60 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
               <div className="mt-5 flex flex-wrap gap-4">
                 {event.cta?.label && <a href={event.cta.href || '#'} className="rounded-none border-2 border-white bg-white px-4 py-2 text-sm font-bold uppercase text-gray-900">{event.cta.label}</a>}
                 {event.detailHref && event.detailLabel && <a href={event.detailHref} className="inline-flex items-center gap-1 text-sm font-bold uppercase text-white/70">{event.detailLabel}<ArrowRight size={14} /></a>}

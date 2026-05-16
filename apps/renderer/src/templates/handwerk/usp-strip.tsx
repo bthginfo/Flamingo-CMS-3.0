@@ -55,7 +55,7 @@ export function UspStripSection({ data }: Props) {
                 </div>
               )}
               <h3 className="font-display font-semibold text-lg mb-1.5 text-gray-900">{item.title}</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">{item.text}</p>
+              <div className="text-slate-500 text-sm leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />
             </motion.div>
           ))}
         </div>

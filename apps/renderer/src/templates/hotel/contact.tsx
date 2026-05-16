@@ -44,9 +44,9 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
         <div className="mb-6 max-w-3xl">
           {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-brand-primary" />{badgeText}</motion.p>}
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
-          {subline && <p className="mt-4 text-gray-600">{subline}</p>}
+          {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {introText && <p className="text-gray-600">{introText}</p>}
+        {introText && <div className="text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <motion.div key={`${card.label}-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[var(--brand-primary)]/20 pt-4">
@@ -76,9 +76,9 @@ function ContactModern({ headline, subline, badgeText, introText, submitLabel, f
         <div className="mb-8 max-w-3xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
           <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
-          {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
+          {subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {introText && <p className="font-light text-gray-600">{introText}</p>}
+        {introText && <div className="font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-8 grid gap-4">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-black/10 pt-4">
@@ -108,9 +108,9 @@ function ContactBold({ headline, subline, badgeText, introText, submitLabel, for
         <div className="mb-6 max-w-3xl">
           {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
-          {subline && <p className="mt-4 text-gray-600">{subline}</p>}
+          {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {introText && <p className="text-gray-600">{introText}</p>}
+        {introText && <div className="text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4">

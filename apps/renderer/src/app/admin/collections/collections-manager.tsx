@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FolderOpen, ChevronRight, Plus, Pencil, Trash2, X, Check, Loader2 } from 'lucide-react';
 import { createCollectionAction, updateCollectionAction, deleteCollectionAction } from './actions';
 import { toast } from 'sonner';
@@ -13,11 +14,13 @@ export function CollectionsManager({ collections }: { collections: Collection[] 
   const [editing, setEditing] = useState<string | null>(null);
   const [editLabel, setEditLabel] = useState('');
   const [pending, startTransition] = useTransition();
+  const router = useRouter();
 
   function handleCreate(formData: FormData) {
     startTransition(async () => {
       await createCollectionAction(formData);
       setShowCreate(false);
+      router.refresh();
       toast.success('Collection erstellt');
     });
   }
@@ -27,6 +30,7 @@ export function CollectionsManager({ collections }: { collections: Collection[] 
     startTransition(async () => {
       await updateCollectionAction(id, { label: editLabel.trim() });
       setEditing(null);
+      router.refresh();
       toast.success('Umbenannt');
     });
   }
@@ -35,6 +39,7 @@ export function CollectionsManager({ collections }: { collections: Collection[] 
     if (!confirm(`"${col.label}" wirklich löschen? Alle Einträge werden ebenfalls gelöscht.`)) return;
     startTransition(async () => {
       await deleteCollectionAction(col.id);
+      router.refresh();
       toast.success('Gelöscht');
     });
   }

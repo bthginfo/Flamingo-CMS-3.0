@@ -44,7 +44,7 @@ function Classic({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: P
                 <p className="text-xs font-semibold uppercase tracking-widest text-green-700">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-bold text-gray-900">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-gray-600"><MapPin size={13} />{place.address}</p>}
-                {place.text && <p className="mt-2 text-sm leading-6 text-gray-600">{place.text}</p>}
+                {place.text && <div className="mt-2 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: place.text }} />}
                 {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-green-700">{place.cta.label}<ArrowRight size={14} /></a>}
               </div>
             </motion.article>
@@ -70,7 +70,7 @@ function Modern({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Pr
                 <p className="text-xs font-light uppercase tracking-widest text-teal-600">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-light text-gray-900">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-gray-600"><MapPin size={13} />{place.address}</p>}
-                {place.text && <p className="mt-2 text-sm font-light leading-6 text-gray-600">{place.text}</p>}
+                {place.text && <div className="mt-2 text-sm font-light leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: place.text }} />}
                 {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-teal-600">{place.cta.label}<ArrowRight size={14} /></a>}
               </div>
             </article>
@@ -90,7 +90,7 @@ function Bold({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Prop
         <div className="mb-10 max-w-3xl">
           {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-orange-500">{header.badgeText}</p>}
           <h2 className="mt-3 text-3xl font-black uppercase text-gray-900 sm:text-3xl md:text-5xl">{header.headline}</h2>
-          {header.subline && <p className="mt-4 text-gray-600">{header.subline}</p>}
+          {header.subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
         </div>
         <div className="grid gap-4">
           {places.map((place, index) => (
@@ -100,7 +100,7 @@ function Bold({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Prop
                 <p className="text-xs font-black uppercase tracking-widest text-orange-500">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-black uppercase text-gray-900">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-gray-600"><MapPin size={13} />{place.address}</p>}
-                {place.text && <p className="mt-2 text-sm leading-6 text-gray-600">{place.text}</p>}
+                {place.text && <div className="mt-2 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: place.text }} />}
                 {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-black uppercase text-orange-500">{place.cta.label}<ArrowRight size={14} /></a>}
               </div>
             </article>

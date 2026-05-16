@@ -36,7 +36,7 @@ export function WeddingMenuSection({ data }: Props) {
                         return <Icon key={tag} className="w-3.5 h-3.5 text-green-600" title={tag} />;
                       })}
                     </div>
-                    {item.description && <p className="text-gray-500 text-sm mt-0.5">{item.description}</p>}
+                    {item.description && <div className="text-gray-500 text-sm mt-0.5 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
                   </div>
                 ))}
               </div>

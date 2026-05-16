@@ -29,9 +29,9 @@ function BookingClassic({ headline, subline, badgeText, introText, onlineCta, ph
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-gray-600">{badgeText}</p>}
         <h2 className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      {introText && <p className="max-w-2xl text-gray-600">{introText}</p>}
+      {introText && <div className="max-w-2xl text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
         {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[#111827] px-5 py-3 font-semibold text-white shadow-md"><CalendarDays size={17} />{onlineCta.label}</a>}
         {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--brand-primary)]/30 px-5 py-3 font-semibold text-gray-900"><Phone size={17} />{phoneCta.label}</a>}
@@ -48,9 +48,9 @@ function BookingModern({ headline, subline, badgeText, introText, onlineCta, pho
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
+        {subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      {introText && <p className="max-w-2xl font-light text-gray-600">{introText}</p>}
+      {introText && <div className="max-w-2xl font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
         {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 border border-[#111827] px-6 py-3 font-light text-gray-900"><CalendarDays size={16} />{onlineCta.label}</a>}
         {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-gray-600"><Phone size={16} />{phoneCta.label}</a>}
@@ -67,9 +67,9 @@ function BookingBold({ headline, subline, badgeText, introText, onlineCta, phone
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-white">{headline}</h2>
-        {subline && <p className="mt-4 font-bold text-white/70">{subline}</p>}
+        {subline && <div className="mt-4 font-bold text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      {introText && <p className="max-w-2xl font-bold text-white/70">{introText}</p>}
+      {introText && <div className="max-w-2xl font-bold text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
         {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 bg-brand-accent px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]"><CalendarDays size={17} />{onlineCta.label}</a>}
         {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-white px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]"><Phone size={17} />{phoneCta.label}</a>}

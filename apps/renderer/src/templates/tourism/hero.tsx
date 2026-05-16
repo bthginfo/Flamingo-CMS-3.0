@@ -56,7 +56,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgColor, bgMode, l
           <Mountain className="text-lime-300" size={20} />
         </motion.div>
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-white sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>{headline}</motion.h1>
-        {subline && <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-7 max-w-2xl text-lg leading-8 text-white/80" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>{subline}</motion.p>}
+        {subline && <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-7 max-w-2xl text-lg leading-8 text-white/80 rt-content" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }} dangerouslySetInnerHTML={{ __html: subline }} />}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-lime-500 px-6 py-3 font-semibold text-green-950">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-white/35 px-6 py-3 font-semibold text-white">{secondaryCta.label}</a>}
@@ -79,7 +79,7 @@ function HeroModern({ headline, subline, badgeText, bgImage, bgColor, bgMode, lo
         <div className="max-w-xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-widest text-teal-600">{badgeText}</p>}
           <h1 className="mt-5 text-3xl md:text-5xl font-light leading-[0.95] text-gray-900 sm:text-6xl lg:text-7xl">{headline}</h1>
-          {subline && <p className="mt-7 max-w-lg text-lg font-light leading-8 text-gray-600">{subline}</p>}
+          {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="mt-8 flex flex-wrap gap-3">
             {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-teal-600 bg-teal-600 px-5 py-3 font-semibold text-white">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
             {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-black/15 px-5 py-3 font-semibold text-gray-900">{secondaryCta.label}</a>}
@@ -121,7 +121,7 @@ function HeroBold({ headline, subline, badgeText, bgImage, bgColor, bgMode, loca
           {badgeText && <p className="text-xs font-black uppercase tracking-widest text-orange-500">{badgeText}</p>}
         </div>
         <h1 className="mt-5 max-w-5xl text-3xl md:text-5xl font-black uppercase leading-[0.95] text-white sm:text-6xl lg:text-8xl">{headline}</h1>
-        {subline && <p className="mt-7 max-w-2xl text-lg leading-8 text-white/70">{subline}</p>}
+        {subline && <div className="mt-7 max-w-2xl text-lg leading-8 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-orange-500 bg-orange-500 px-6 py-3 font-black uppercase text-gray-950 shadow-[4px_4px_0_theme(colors.orange.700)]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-white/40 px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(255,255,255,0.15)]">{secondaryCta.label}</a>}

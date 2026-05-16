@@ -41,7 +41,7 @@ export function ContactSection({ data }: Props) {
           </div>
         )}
         <h2 className="section-headline">{headline}</h2>
-        {introText && <p className="section-subline">{introText}</p>}
+        {introText && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-8 lg:gap-16">

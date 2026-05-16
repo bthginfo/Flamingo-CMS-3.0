@@ -53,7 +53,7 @@ function Bold({ header, items }: Props) {
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-teal-400">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-gray-900 sm:text-3xl md:text-5xl">{header.headline}</h2>
-        {header.subline && <p className="mt-4 text-gray-600">{header.subline}</p>}
+        {header.subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, index) => (

@@ -145,7 +145,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
             {headline}
           </h1>
           {subline && (
-            <p className="text-lg text-gray-500 leading-relaxed mt-8 max-w-lg">{subline}</p>
+            <div className="text-lg text-gray-500 leading-relaxed mt-8 max-w-lg rt-content" dangerouslySetInnerHTML={{ __html: subline }} />
           )}
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta.label && (

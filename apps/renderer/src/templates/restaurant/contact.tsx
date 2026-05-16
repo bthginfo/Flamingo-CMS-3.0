@@ -54,7 +54,7 @@ function Classic(p: Props) {
         <div className="mb-10 max-w-3xl">
           {p.badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-gray-600">{p.badgeText}</motion.p>}
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{p.headline}</motion.h2>
-          {p.subline && <p className="mt-4 text-gray-600">{p.subline}</p>}
+          {p.subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
         {p.introText && <p className="text-gray-600">{p.introText}</p>}
         <div className="mt-6"><InfoCards cards={p.infoCards} /></div>
@@ -79,7 +79,7 @@ function Modern(p: Props) {
         <div className="mb-14 max-w-3xl">
           {p.badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{p.badgeText}</p>}
           <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{p.headline}</h2>
-          {p.subline && <p className="mt-4 font-light text-gray-600">{p.subline}</p>}
+          {p.subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
         {p.introText && <p className="font-light text-gray-600">{p.introText}</p>}
         <div className="mt-6">{p.infoCards.map((c, i) => <div key={`${c.label}-${i}`} className="flex gap-4 border-t border-black/10 pt-4"><DynamicIcon name={c.icon || 'mail'} size={18} className="text-brand-accent" /><div><p className="text-xs font-light text-gray-600">{c.label || ''}</p><p className="font-light text-gray-900">{c.value || ''}</p></div></div>)}</div>
@@ -104,7 +104,7 @@ function Bold(p: Props) {
         <div className="mb-10 max-w-3xl">
           {p.badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{p.badgeText}</p>}
           <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{p.headline}</h2>
-          {p.subline && <p className="mt-4 font-bold text-gray-600">{p.subline}</p>}
+          {p.subline && <div className="mt-4 font-bold text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
         {p.introText && <p className="font-bold text-gray-600">{p.introText}</p>}
         <div className="mt-6">{p.infoCards.map((c, i) => <div key={`${c.label}-${i}`} className="flex gap-4 border-t-2 border-[#111827] pt-4"><DynamicIcon name={c.icon || 'mail'} size={20} className="text-brand-accent" /><div><p className="text-xs font-bold uppercase text-gray-600">{c.label || ''}</p><p className="font-black text-gray-900">{c.value || ''}</p></div></div>)}</div>

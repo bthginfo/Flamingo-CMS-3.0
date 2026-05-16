@@ -32,7 +32,7 @@ export function WeddingCoupleStorySection({ data }: Props) {
                 {milestones.map((m, i) => (
                   <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
                     <span className="text-sm font-semibold text-brand-primary">{m.date}</span>
-                    <p className="text-gray-700 mt-1">{m.text}</p>
+                    <div className="text-gray-700 mt-1 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />
                   </motion.div>
                 ))}
               </div>

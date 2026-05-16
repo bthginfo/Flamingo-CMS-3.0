@@ -40,15 +40,15 @@ function DiningClassic({ headline, subline, badgeText, introText, image, opening
         <div className="mb-6 max-w-3xl">
           {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-brand-primary" />{badgeText}</motion.p>}
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
-          {subline && <p className="mt-4 text-gray-600">{subline}</p>}
+          {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {introText && <p className="text-gray-600 leading-7">{introText}</p>}
+        {introText && <div className="text-gray-600 leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         {openingText && <p className="mt-4 text-sm font-semibold text-gray-900">{openingText}</p>}
         <div className="mt-6 grid gap-4">
           {menus.map((menu, index) => (
             <motion.article key={`${menu.title}-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} className="border-t border-[var(--brand-primary)]/20 pt-4">
               <div className="flex justify-between gap-4"><h3 className="font-bold text-gray-900">{menu.title || ''}</h3><span className="text-sm text-gray-600">{menu.priceLabel || ''}</span></div>
-              {menu.description && <p className="mt-2 text-sm text-gray-600">{menu.description}</p>}
+              {menu.description && <div className="mt-2 text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: menu.description }} />}
               {menu.timeLabel && <p className="mt-2 text-xs text-gray-600">{menu.timeLabel}</p>}
               {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-semibold text-brand-primary">{menu.cta.label}</a>}
             </motion.article>
@@ -63,7 +63,7 @@ function DiningClassic({ headline, subline, badgeText, introText, image, opening
             <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--brand-primary)]/20 bg-white p-4 shadow-md">
               {item.image && <div className="relative mb-3 aspect-[16/10] overflow-hidden rounded-xl"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               <h3 className="font-semibold text-gray-900">{item.title || ''}</h3>
-              {item.text && <p className="mt-2 text-sm text-gray-600">{item.text}</p>}
+              {item.text && <div className="mt-2 text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             </motion.article>
           ))}
         </div>
@@ -80,15 +80,15 @@ function DiningModern({ headline, subline, badgeText, introText, image, openingT
         <div className="mb-8 max-w-3xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
           <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
-          {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
+          {subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {introText && <p className="font-light text-gray-600 leading-7">{introText}</p>}
+        {introText && <div className="font-light text-gray-600 leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         {openingText && <p className="mt-4 text-sm font-light text-gray-900">{openingText}</p>}
         <div className="mt-8 grid gap-4">
           {menus.map((menu, index) => (
             <article key={`${menu.title}-${index}`} className="border-t border-black/10 pt-4">
               <div className="flex justify-between gap-4"><h3 className="font-light text-gray-900">{menu.title || ''}</h3><span className="text-sm font-light text-gray-600">{menu.priceLabel || ''}</span></div>
-              {menu.description && <p className="mt-2 text-sm font-light text-gray-600">{menu.description}</p>}
+              {menu.description && <div className="mt-2 text-sm font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: menu.description }} />}
               {menu.timeLabel && <p className="mt-2 text-xs font-light text-gray-600">{menu.timeLabel}</p>}
               {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-light text-gray-900 underline underline-offset-4">{menu.cta.label}</a>}
             </article>
@@ -103,7 +103,7 @@ function DiningModern({ headline, subline, badgeText, introText, image, openingT
             <article key={`${item.title}-${index}`} className="border border-black/10 bg-white p-5">
               {item.image && <div className="relative mb-4 aspect-[16/10] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               <h3 className="font-light text-gray-900">{item.title || ''}</h3>
-              {item.text && <p className="mt-2 text-sm font-light text-gray-600">{item.text}</p>}
+              {item.text && <div className="mt-2 text-sm font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             </article>
           ))}
         </div>
@@ -120,15 +120,15 @@ function DiningBold({ headline, subline, badgeText, introText, image, openingTex
         <div className="mb-6 max-w-3xl">
           {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
-          {subline && <p className="mt-4 text-gray-600">{subline}</p>}
+          {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {introText && <p className="text-gray-600 leading-7">{introText}</p>}
+        {introText && <div className="text-gray-600 leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         {openingText && <p className="mt-4 text-sm font-black uppercase text-gray-900">{openingText}</p>}
         <div className="mt-6 grid gap-4">
           {menus.map((menu, index) => (
             <article key={`${menu.title}-${index}`} className="border-t-2 border-[#111827] pt-4">
               <div className="flex justify-between gap-4"><h3 className="font-black uppercase text-gray-900">{menu.title || ''}</h3><span className="text-sm font-bold text-gray-600">{menu.priceLabel || ''}</span></div>
-              {menu.description && <p className="mt-2 text-sm text-gray-600">{menu.description}</p>}
+              {menu.description && <div className="mt-2 text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: menu.description }} />}
               {menu.timeLabel && <p className="mt-2 text-xs font-bold text-gray-600">{menu.timeLabel}</p>}
               {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-black uppercase text-brand-primary">{menu.cta.label}</a>}
             </article>
@@ -143,7 +143,7 @@ function DiningBold({ headline, subline, badgeText, introText, image, openingTex
             <article key={`${item.title}-${index}`} className="border-2 border-[#111827] bg-white p-4 shadow-[4px_4px_0_#111827]">
               {item.image && <div className="relative mb-3 aspect-[16/10] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               <h3 className="font-black uppercase text-gray-900">{item.title || ''}</h3>
-              {item.text && <p className="mt-2 text-sm text-gray-600">{item.text}</p>}
+              {item.text && <div className="mt-2 text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             </article>
           ))}
         </div>

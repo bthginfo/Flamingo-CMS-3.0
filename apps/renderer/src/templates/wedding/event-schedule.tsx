@@ -29,7 +29,7 @@ export function WeddingEventScheduleSection({ data }: Props) {
                   <div className={`flex-1 ${i % 2 === 0 ? 'md:text-right' : 'md:text-left'} hidden md:block`}>
                     <span className="text-sm font-semibold text-brand-primary">{event.time}</span>
                     <h3 className="text-xl font-semibold text-gray-900 mt-1">{event.title}</h3>
-                    {event.description && <p className="text-gray-600 mt-1">{event.description}</p>}
+                    {event.description && <div className="text-gray-600 mt-1 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
                     {event.location && <p className="text-sm text-gray-500 mt-2 flex items-center gap-1 {i % 2 === 0 ? 'justify-end' : ''}"><MapPin className="w-3 h-3" />{event.location}</p>}
                   </div>
                   <div className="relative z-10 w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center shrink-0">
@@ -38,7 +38,7 @@ export function WeddingEventScheduleSection({ data }: Props) {
                   <div className="flex-1 md:hidden">
                     <span className="text-sm font-semibold text-brand-primary">{event.time}</span>
                     <h3 className="text-xl font-semibold text-gray-900 mt-1">{event.title}</h3>
-                    {event.description && <p className="text-gray-600 mt-1">{event.description}</p>}
+                    {event.description && <div className="text-gray-600 mt-1 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
                     {event.location && <p className="text-sm text-gray-500 mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" />{event.location}</p>}
                   </div>
                   <div className="flex-1 hidden md:block" />

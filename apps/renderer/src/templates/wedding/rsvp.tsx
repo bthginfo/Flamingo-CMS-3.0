@@ -33,7 +33,7 @@ export function WeddingRsvpSection({ data }: Props) {
         <div className="text-center mb-12">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
-          {subline && <p className="section-subline">{subline}</p>}
+          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           {deadline && <p className="text-sm text-brand-primary font-medium mt-4">Bitte bis {new Date(deadline).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })}</p>}
         </div>
         <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-5 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">

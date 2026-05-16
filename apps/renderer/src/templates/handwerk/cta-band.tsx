@@ -41,7 +41,7 @@ function CtaClassic({ headline, subline, badgeText, cta }: CProps) {
         </motion.div>
         <motion.h2 initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 }}
           className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight !leading-[1.1]">{headline}</motion.h2>
-        {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="text-lg sm:text-xl opacity-70 mb-10 max-w-2xl mx-auto">{subline}</motion.p>}
+        {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="text-lg sm:text-xl opacity-70 mb-10 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         {cta?.label && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }}>
             <a href={cta.href} className="group inline-flex items-center gap-2.5 bg-brand-accent px-8 py-4 rounded-full font-semibold text-gray-900 hover:shadow-glow-accent hover:-translate-y-0.5 transition-all">

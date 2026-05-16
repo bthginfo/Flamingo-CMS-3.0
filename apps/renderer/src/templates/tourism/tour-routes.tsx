@@ -43,7 +43,7 @@ function Classic({ header, routes, ctaPrimary }: Props) {
             <div className="p-6">
               <RouteMeta route={route} className="text-green-700" />
               <h3 className="mt-3 text-2xl font-bold text-gray-900">{route.title || ''}</h3>
-              {route.text && <p className="mt-3 text-sm leading-6 text-gray-600">{route.text}</p>}
+              {route.text && <div className="mt-3 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: route.text }} />}
               <div className="mt-4 flex flex-wrap gap-2">{asList<string>(route.highlights).map((item) => <span key={item} className="rounded-full bg-green-50 px-3 py-1 text-xs text-green-800">{item}</span>)}</div>
               {route.cta?.label && <div className="mt-5"><a href={route.cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-green-700 px-5 py-2.5 text-sm font-semibold text-white">{route.cta.label}<ArrowRight size={14} /></a></div>}
             </div>
@@ -66,7 +66,7 @@ function Modern({ header, routes, ctaPrimary }: Props) {
             <div className="p-6">
               <RouteMeta route={route} className="text-teal-600 font-light" />
               <h3 className="mt-3 text-2xl font-light text-gray-900">{route.title || ''}</h3>
-              {route.text && <p className="mt-3 text-sm font-light leading-6 text-gray-600">{route.text}</p>}
+              {route.text && <div className="mt-3 text-sm font-light leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: route.text }} />}
               <div className="mt-4 flex flex-wrap gap-2">{asList<string>(route.highlights).map((item) => <span key={item} className="border border-black/10 px-3 py-1 text-xs text-gray-600">{item}</span>)}</div>
               {route.cta?.label && <div className="mt-5"><a href={route.cta.href || '#'} className="inline-flex items-center gap-2 font-semibold text-teal-600">{route.cta.label}<ArrowRight size={14} /></a></div>}
             </div>
@@ -84,7 +84,7 @@ function Bold({ header, routes, ctaPrimary }: Props) {
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-orange-500">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-gray-900 sm:text-3xl md:text-5xl">{header.headline}</h2>
-        {header.subline && <p className="mt-4 text-gray-600">{header.subline}</p>}
+        {header.subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         {routes.map((route, index) => (
@@ -93,7 +93,7 @@ function Bold({ header, routes, ctaPrimary }: Props) {
             <div className="p-6">
               <RouteMeta route={route} className="text-orange-500 font-black" />
               <h3 className="mt-3 text-2xl font-black uppercase text-gray-900">{route.title || ''}</h3>
-              {route.text && <p className="mt-3 text-sm leading-6 text-gray-600">{route.text}</p>}
+              {route.text && <div className="mt-3 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: route.text }} />}
               <div className="mt-4 flex flex-wrap gap-2">{asList<string>(route.highlights).map((item) => <span key={item} className="border border-orange-500 px-3 py-1 text-xs font-bold uppercase text-orange-500">{item}</span>)}</div>
               {route.cta?.label && <div className="mt-5"><a href={route.cta.href || '#'} className="inline-flex items-center gap-2 border-2 border-orange-500 bg-orange-500 px-5 py-2.5 text-sm font-black uppercase text-gray-950 shadow-[4px_4px_0_theme(colors.orange.700)]">{route.cta.label}<ArrowRight size={14} /></a></div>}
             </div>

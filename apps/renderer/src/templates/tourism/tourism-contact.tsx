@@ -38,7 +38,7 @@ function Classic({ header, introText, image, formEnabled, submitLabel, formField
     <div className="grid gap-10 lg:grid-cols-2">
       <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
         <SectionHeader {...header} />
-        {introText && <p className="text-gray-600">{introText}</p>}
+        {introText && <div className="text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-black/10 pt-4">
@@ -65,7 +65,7 @@ function Modern({ header, introText, image, formEnabled, submitLabel, formFields
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <SectionHeader {...header} />
-        {introText && <p className="font-light text-gray-600">{introText}</p>}
+        {introText && <div className="font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-black/10 pt-4">
@@ -94,9 +94,9 @@ function Bold({ header, introText, image, formEnabled, submitLabel, formFields, 
         <div className="mb-10 max-w-3xl">
           {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-orange-500">{header.badgeText}</p>}
           <h2 className="mt-3 text-3xl font-black uppercase text-gray-900 sm:text-3xl md:text-5xl">{header.headline}</h2>
-          {header.subline && <p className="mt-4 text-gray-600">{header.subline}</p>}
+          {header.subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
         </div>
-        {introText && <p className="text-gray-600">{introText}</p>}
+        {introText && <div className="text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4">

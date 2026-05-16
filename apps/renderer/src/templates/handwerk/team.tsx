@@ -77,7 +77,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
               <div key={i} className="p-8 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-all group">
                 {v.icon && <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform"><DynamicIcon name={v.icon} size={28} className="text-brand-primary" /></div>}
                 <h4 className="font-semibold text-lg mb-2">{v.title}</h4>
-                <p className="text-gray-500 text-sm leading-relaxed">{v.text}</p>
+                <div className="text-gray-500 text-sm leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
               </div>
             ))}
           </div>

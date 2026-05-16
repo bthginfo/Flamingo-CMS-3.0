@@ -47,7 +47,7 @@ function BookingClassic({ headline, subline, badgeText, submitCta, secondaryCta,
         <div>
           {badgeText && <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-brand-primary" />{badgeText}</p>}
           <h2 className="mt-2 text-2xl font-[700] text-gray-900">{headline}</h2>
-          {subline && <p className="mt-1 text-sm text-gray-600">{subline}</p>}
+          {subline && <div className="mt-1 text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {bookingNote && <p className="text-sm text-gray-600">{bookingNote}</p>}
       </div>
@@ -75,7 +75,7 @@ function BookingModern({ headline, subline, badgeText, submitCta, secondaryCta, 
         <div>
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
           <h2 className="mt-2 text-2xl font-light text-gray-900">{headline}</h2>
-          {subline && <p className="mt-1 text-sm font-light text-gray-600">{subline}</p>}
+          {subline && <div className="mt-1 text-sm font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {bookingNote && <p className="text-sm font-light text-gray-600">{bookingNote}</p>}
       </div>
@@ -103,7 +103,7 @@ function BookingBold({ headline, subline, badgeText, submitCta, secondaryCta, bo
         <div>
           {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
           <h2 className="mt-2 text-2xl font-black uppercase text-gray-900">{headline}</h2>
-          {subline && <p className="mt-1 text-sm text-gray-600">{subline}</p>}
+          {subline && <div className="mt-1 text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {bookingNote && <p className="text-sm font-bold text-gray-600">{bookingNote}</p>}
       </div>

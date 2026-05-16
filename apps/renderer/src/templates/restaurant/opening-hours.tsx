@@ -40,7 +40,7 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
       <div>
         {badgeText && <p className="inline-block rounded-full bg-brand-accent/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-accent">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</h2>
-        {subline && <p className="mt-4 text-gray-500">{subline}</p>}
+        {subline && <div className="mt-4 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         {kitchenHoursHeadline && <h3 className="mt-8 font-semibold text-gray-900">{kitchenHoursHeadline}</h3>}
         {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-gray-500">{kitchenHoursText}</p>}
         {holidayNote && <p className="mt-4 text-xs text-gray-500">{holidayNote}</p>}
@@ -71,7 +71,7 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-gray-500">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light text-gray-900 sm:text-3xl md:text-5xl">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-brand-accent" />
-        {subline && <p className="mt-6 font-light text-gray-500">{subline}</p>}
+        {subline && <div className="mt-6 font-light text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         {kitchenHoursHeadline && <h3 className="mt-8 font-medium text-gray-900">{kitchenHoursHeadline}</h3>}
         {kitchenHoursText && <p className="mt-2 text-sm font-light leading-6 text-gray-500">{kitchenHoursText}</p>}
         {holidayNote && <p className="mt-4 text-xs font-light text-gray-500">{holidayNote}</p>}
@@ -103,7 +103,7 @@ function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHead
           {badgeText && <p className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase tracking-widest text-gray-900">{badgeText}</p>}
           <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl">{headline}</h2>
           <div className="mt-2 h-1.5 w-20 bg-brand-accent" />
-          {subline && <p className="mt-4 text-white/70">{subline}</p>}
+          {subline && <div className="mt-4 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           {kitchenHoursHeadline && <h3 className="mt-8 font-bold uppercase">{kitchenHoursHeadline}</h3>}
           {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-white/60">{kitchenHoursText}</p>}
           {holidayNote && <p className="mt-4 text-xs text-white/50">{holidayNote}</p>}

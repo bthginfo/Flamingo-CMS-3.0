@@ -44,7 +44,7 @@ function Classic({ header, events, fallbackText }: Props) {
             <div className="p-5">
               <EventMeta event={event} />
               <h3 className="mt-3 text-xl font-bold text-gray-900">{event.title || ''}</h3>
-              {event.text && <p className="mt-3 text-sm leading-6 text-gray-600">{event.text}</p>}
+              {event.text && <div className="mt-3 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: event.text }} />}
               {event.cta?.label && <a href={event.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-green-700">{event.cta.label}<ArrowRight size={14} /></a>}
             </div>
           </motion.article>
@@ -72,7 +72,7 @@ function Modern({ header, events, fallbackText }: Props) {
                 {event.priceLabel && <span>{event.priceLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-light text-gray-900">{event.title || ''}</h3>
-              {event.text && <p className="mt-3 text-sm font-light leading-6 text-gray-600">{event.text}</p>}
+              {event.text && <div className="mt-3 text-sm font-light leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: event.text }} />}
               {event.cta?.label && <a href={event.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-teal-600">{event.cta.label}<ArrowRight size={14} /></a>}
             </div>
           </article>
@@ -88,7 +88,7 @@ function Bold({ header, events, fallbackText }: Props) {
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-orange-500">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-gray-900 sm:text-3xl md:text-5xl">{header.headline}</h2>
-        {header.subline && <p className="mt-4 text-gray-600">{header.subline}</p>}
+        {header.subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
       {events.length === 0 && fallbackText ? <p className="text-gray-600">{fallbackText}</p> : null}
       <div className="grid gap-6 lg:grid-cols-2">
@@ -104,7 +104,7 @@ function Bold({ header, events, fallbackText }: Props) {
                 {event.priceLabel && <span>{event.priceLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-black uppercase text-gray-900">{event.title || ''}</h3>
-              {event.text && <p className="mt-3 text-sm leading-6 text-gray-600">{event.text}</p>}
+              {event.text && <div className="mt-3 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: event.text }} />}
               {event.cta?.label && <a href={event.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-black uppercase text-orange-500">{event.cta.label}<ArrowRight size={14} /></a>}
             </div>
           </article>

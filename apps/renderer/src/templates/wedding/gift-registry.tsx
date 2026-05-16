@@ -19,7 +19,7 @@ export function WeddingGiftRegistrySection({ data }: Props) {
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
-          {subline && <p className="section-subline">{subline}</p>}
+          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {text && <p className="text-gray-600 text-lg text-center mb-12 max-w-2xl mx-auto">{text}</p>}
         {items.length > 0 && (
@@ -31,7 +31,7 @@ export function WeddingGiftRegistrySection({ data }: Props) {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                  {item.description && <p className="text-gray-600 text-sm mt-1">{item.description}</p>}
+                  {item.description && <div className="text-gray-600 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
                   {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand-primary text-sm font-medium mt-2 hover:underline"><ExternalLink className="w-3 h-3" />Ansehen</a>}
                 </div>
               </motion.div>
