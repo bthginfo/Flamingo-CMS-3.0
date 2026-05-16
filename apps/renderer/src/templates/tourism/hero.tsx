@@ -95,8 +95,10 @@ function HeroModern({ headline, subline, badgeText, bgImage, bgImageMobile, bgCo
         </div>
         <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-black/10">
           {(bgMode === 'image' && bgImage) ? (
-            <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="50vw" />
-            {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPosition }} sizes="50vw" />}
+            <>
+              <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="50vw" />
+              {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPosition }} sizes="50vw" />}
+            </>
           ) : (bgMode === 'color' && bgColor) ? (
             <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
           ) : null}

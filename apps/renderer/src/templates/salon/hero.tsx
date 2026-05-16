@@ -84,8 +84,10 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageM
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-white">
       {(bgMode === 'image' && bgImage) ? (
-        <Image src={bgImage} alt="" fill className={`object-cover lg:left-1/2 lg:w-1/2${bgImageMobile ? ' hidden md:block' : ''}`} priority sizes="50vw" />
-        {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover lg:left-1/2 lg:w-1/2 md:hidden" priority sizes="50vw" />}
+        <>
+          <Image src={bgImage} alt="" fill className={`object-cover lg:left-1/2 lg:w-1/2${bgImageMobile ? ' hidden md:block' : ''}`} priority sizes="50vw" />
+          {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover lg:left-1/2 lg:w-1/2 md:hidden" priority sizes="50vw" />}
+        </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0 lg:left-1/2 lg:w-1/2" style={{ backgroundColor: bgColor }} />
       ) : null}
