@@ -59,7 +59,7 @@ function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primar
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20 text-center">
+      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20 text-center">
         {badgeText && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
             className="inline-flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2.5 text-sm text-white/80 mb-6">
@@ -110,7 +110,7 @@ function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primar
 function HeroModern({ headline, subline, badgeText, trustItems, bgImage, primaryCta, secondaryCta, availabilityHint, ratingText }: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center -mt-[112px] pt-[112px] bg-white">
-      <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-20">
+      <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-12 md:py-20">
         <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
           {badgeText && (
             <div className="flex items-center gap-3 text-sm text-gray-400 mb-8 tracking-wide uppercase">
@@ -169,7 +169,7 @@ function HeroBold({ headline, subline, badgeText, trustItems, bgImage, primaryCt
       <div className="absolute top-0 left-0 w-full h-1.5 bg-white" />
       <div className="absolute bottom-0 left-0 w-full h-1.5 bg-white" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20">
         <div className="max-w-5xl">
           {badgeText && (
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}

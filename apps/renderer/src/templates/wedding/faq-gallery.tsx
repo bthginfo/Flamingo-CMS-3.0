@@ -13,9 +13,9 @@ export function WeddingFaqSection({ data }: Props) {
   const items = (data.items as Array<{ question: string; answer: string }>) || [];
 
   return (
-    <section className="py-24 px-6 bg-brand-primary/[0.02]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
         </div>
@@ -48,9 +48,9 @@ export function WeddingGallerySection({ data }: Props) {
   const images = (data.images as Array<{ src: string; alt?: string }>) || [];
 
   return (
-    <section className="py-24 px-6 bg-white">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-white">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
         </div>

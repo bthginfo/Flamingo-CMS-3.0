@@ -26,7 +26,7 @@ function BeforeAfterClassic({ headline, subline, badgeText, items }: Props) {
     <div>
       <div className="mb-10 max-w-3xl">
         {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-gray-600">{badgeText}</motion.p>}
-        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
+        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
         {subline && <p className="mt-4 text-gray-600">{subline}</p>}
       </div>
       <div className="grid gap-6 md:grid-cols-2">
@@ -55,13 +55,13 @@ function BeforeAfterModern({ headline, subline, badgeText, items }: Props) {
     <div>
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-5xl text-gray-900">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
         {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
       </div>
       <div className="grid gap-8 md:grid-cols-2">
         {items.map((item, i) => (
           <article key={`${item.title}-${i}`} className="border-b border-black/10 pb-8">
-            <div className="grid grid-cols-2 gap-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
               {item.beforeImage && <div className="relative aspect-square"><Image src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               {item.afterImage && <div className="relative aspect-square"><Image src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             </div>
@@ -83,7 +83,7 @@ function BeforeAfterBold({ headline, subline, badgeText, items }: Props) {
     <div>
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
-        <h2 className="mt-3 text-3xl font-black uppercase sm:text-5xl text-gray-900">{headline}</h2>
+        <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
         {subline && <p className="mt-4 font-bold text-gray-600">{subline}</p>}
       </div>
       <div className="grid gap-6 md:grid-cols-2">

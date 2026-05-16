@@ -39,14 +39,14 @@ export function AmbienceSection({ data, styleVariant }: SectionProps) {
 function AmbienceClassic({ headline, subline, badgeText, imagePrimary, imageSecondary, imageTertiary, highlights, ctaPrimary }: AmbienceViewProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="grid gap-10 lg:grid-cols-2 lg:items-center">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-lg"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         {imageTertiary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image src={imageTertiary} alt="" fill className="object-cover" sizes="25vw" /></div>}
       </div>
       <div>
         {badgeText && <p className="inline-block rounded-full bg-brand-accent/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-accent">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-5xl font-[700] text-gray-900">{headline}</h2>
+        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</h2>
         {subline && <p className="mt-4 text-lg text-gray-500">{subline}</p>}
         <div className="mt-8 grid gap-5">
           {highlights.map((highlight, index) => (
@@ -68,14 +68,14 @@ function AmbienceClassic({ headline, subline, badgeText, imagePrimary, imageSeco
 function AmbienceModern({ headline, subline, badgeText, imagePrimary, imageSecondary, imageTertiary, highlights, ctaPrimary }: AmbienceViewProps) {
   return (
     <div className="grid gap-16 lg:grid-cols-2 lg:items-start">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border border-black/5"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {imageSecondary && <div className="relative aspect-square overflow-hidden border border-black/5"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         {imageTertiary && <div className="relative aspect-square overflow-hidden border border-black/5"><Image src={imageTertiary} alt="" fill className="object-cover" sizes="25vw" /></div>}
       </div>
       <div>
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-gray-500">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light text-gray-900 sm:text-5xl">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light text-gray-900 sm:text-3xl md:text-5xl">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-brand-accent" />
         {subline && <p className="mt-6 font-light leading-relaxed text-gray-500">{subline}</p>}
         <div className="mt-10 grid gap-6">
@@ -99,14 +99,14 @@ function AmbienceBold({ headline, subline, badgeText, imagePrimary, imageSeconda
   return (
     <div className="bg-[#111827] p-6 text-white sm:p-10">
       <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-none border-2 border-white/20"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
           {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-none border-2 border-white/20"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
           {imageTertiary && <div className="relative aspect-square overflow-hidden rounded-none border-2 border-white/20"><Image src={imageTertiary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
         <div>
           {badgeText && <p className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase tracking-widest text-gray-900">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl font-black uppercase sm:text-5xl">{headline}</h2>
+          <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl">{headline}</h2>
           <div className="mt-2 h-1.5 w-20 bg-brand-accent" />
           {subline && <p className="mt-4 text-lg text-white/70">{subline}</p>}
           <div className="mt-8 grid gap-4">

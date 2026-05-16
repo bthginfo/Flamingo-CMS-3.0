@@ -13,9 +13,9 @@ export function WeddingEventScheduleSection({ data }: Props) {
   const events = (data.events as Array<{ time: string; title: string; description?: string; icon?: string; location?: string }>) || [];
 
   return (
-    <section className="py-24 px-6 bg-brand-primary/[0.02]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
         </div>

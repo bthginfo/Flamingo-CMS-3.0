@@ -22,7 +22,7 @@ export function PortfolioGallerySection({ data }: Props) {
   const filtered = filter ? images.filter(i => i.category === filter) : images;
 
   return (
-    <section className="py-24 px-6 bg-white">
+    <section className="py-12 md:py-24 px-4 md:px-6 bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <span className="section-badge">{badge}</span>

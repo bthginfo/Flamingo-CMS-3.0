@@ -38,7 +38,7 @@ function ContactClassic({ headline, subline, badgeText, introText, image, mapEmb
       <div>
         <div className="mb-10 max-w-3xl">
           {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-gray-600">{badgeText}</motion.p>}
-          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
           {subline && <p className="mt-4 text-gray-600">{subline}</p>}
         </div>
         {introText && <p className="text-gray-600">{introText}</p>}
@@ -63,7 +63,7 @@ function ContactModern({ headline, subline, badgeText, introText, image, mapEmbe
       <div>
         <div className="mb-14 max-w-3xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl font-light sm:text-5xl text-gray-900">{headline}</h2>
+          <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
           {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
         </div>
         {introText && <p className="font-light text-gray-600">{introText}</p>}
@@ -88,7 +88,7 @@ function ContactBold({ headline, subline, badgeText, introText, image, mapEmbedU
       <div>
         <div className="mb-10 max-w-3xl">
           {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
-          <h2 className="mt-3 text-3xl font-black uppercase sm:text-5xl text-gray-900">{headline}</h2>
+          <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
           {subline && <p className="mt-4 font-bold text-gray-600">{subline}</p>}
         </div>
         {introText && <p className="font-bold text-gray-600">{introText}</p>}

@@ -29,7 +29,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
 
   return (
     <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-20">
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-12 md:mb-20">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
         {headline && <h2 className="section-headline">{headline}</h2>}
         {subline && <p className="section-subline">{subline}</p>}
@@ -37,7 +37,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
       <div className="space-y-24">
         {items.map((item, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.15 }}
-            className={`flex flex-col ${i % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-12 lg:gap-16 items-center`}>
+            className={`flex flex-col ${i % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-12 lg:gap-8 lg:gap-16 items-center`}>
             <div className="w-full lg:w-1/2">
               {item.mediaType === 'image' && item.image ? (
                 <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-xl">
@@ -77,9 +77,9 @@ function ServiceModern({ headline, subline, badgeText, items }: SProps) {
 
   return (
     <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-20">
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
         {badgeText && <div className="flex items-center gap-3 text-sm text-gray-400 mb-4 tracking-wide uppercase"><span className="w-8 h-px bg-gray-300" />{badgeText}</div>}
-        {headline && <h2 className="text-4xl lg:text-5xl font-light text-gray-900 tracking-tight">{headline}</h2>}
+        {headline && <h2 className="text-4xl lg:text-3xl md:text-5xl font-light text-gray-900 tracking-tight">{headline}</h2>}
         {subline && <p className="text-lg text-gray-400 mt-4 max-w-2xl">{subline}</p>}
       </motion.div>
       <div className="space-y-20">

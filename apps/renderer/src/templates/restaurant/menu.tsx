@@ -100,7 +100,7 @@ function MenuHeader({ headline, subline, badgeText, introText, align, inverted }
   return (
     <div className={`${align === 'center' ? 'text-center mx-auto' : ''} max-w-3xl p-6 sm:p-10`}>
       {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[var(--brand-accent)]' : 'text-gray-600'}`}>{badgeText}</p>}
-      <h2 className={`mt-3 text-3xl sm:text-5xl font-[700] ${inverted ? 'text-white' : 'text-gray-900'}`}>{headline}</h2>
+      <h2 className={`mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] ${inverted ? 'text-white' : 'text-gray-900'}`}>{headline}</h2>
       {subline && <p className={`mt-4 text-base sm:text-lg ${inverted ? 'text-white/70' : 'text-gray-600'}`}>{subline}</p>}
       {introText && <p className={`mt-5 leading-7 ${inverted ? 'text-white/65' : 'text-gray-600'}`}>{introText}</p>}
     </div>

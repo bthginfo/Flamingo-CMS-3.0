@@ -60,7 +60,7 @@ function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primar
       <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-brand-accent/8 rounded-full blur-[120px] animate-pulse-slow" />
       <div className="absolute bottom-0 -left-20 w-[500px] h-[500px] bg-brand-secondary/15 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
 
-      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20 lg:py-0 lg:pt-12">
+      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20 lg:py-0 lg:pt-12">
         <div className="max-w-4xl">
           <TextGenerateEffect words={headline} className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white !leading-[1.02]" duration={0.6} />
           {badgeText && (
@@ -77,7 +77,7 @@ function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primar
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.8 }}
               className="text-lg sm:text-xl text-white/60 leading-relaxed mb-12 max-w-2xl mt-8">{subline}</motion.p>
           )}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.0 }} className="flex flex-col sm:flex-row gap-4 mb-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.0 }} className="flex flex-col sm:flex-row gap-4 mb-10 md:mb-16">
             {primaryCta?.label && (
               <a href={primaryCta.href} className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-full bg-brand-accent px-8 py-4 font-semibold text-gray-900 transition-all duration-300 hover:shadow-glow-accent hover:-translate-y-0.5 text-base">
                 <span className="relative z-10 flex items-center gap-2.5">{primaryCta.label}<ArrowRight size={18} className="transition-transform group-hover:translate-x-1" /></span>
@@ -106,7 +106,7 @@ function HeroClassic({ headline, subline, badgeText, trustItems, bgImage, primar
 function HeroModern({ headline, subline, badgeText, trustItems, bgImage, primaryCta, secondaryCta, overlayColor, overlayOpacity }: HeroProps) {
   return (
     <div className="relative min-h-screen flex items-center -mt-[112px] pt-[112px] bg-white">
-      <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-20">
+      <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-12 md:py-20">
         <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
           {badgeText && (
             <div className="flex items-center gap-3 text-sm text-gray-400 mb-8 tracking-wide uppercase">
@@ -162,7 +162,7 @@ function HeroBold({ headline, subline, badgeText, trustItems, bgImage, primaryCt
         </>
       )}
       <div className="absolute top-0 right-0 w-1/3 h-full bg-brand-accent/10 skew-x-[-12deg] translate-x-20" />
-      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20">
         <div className="max-w-5xl">
           {badgeText && (
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}

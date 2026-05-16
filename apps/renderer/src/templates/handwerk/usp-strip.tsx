@@ -15,7 +15,7 @@ function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
       ref={ref}
       initial={{ opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
-      className="font-display font-bold text-4xl lg:text-5xl text-brand-primary"
+      className="font-display font-bold text-4xl lg:text-3xl md:text-5xl text-brand-primary"
     >
       {inView ? (
         <motion.span

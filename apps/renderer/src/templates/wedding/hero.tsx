@@ -42,7 +42,7 @@ export function WeddingHeroSection({ data }: Props) {
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/5 via-white to-brand-secondary/5" />
       )}
-      <div className="relative z-10 text-center px-6 py-20">
+      <div className="relative z-10 text-center px-6 py-12 md:py-20">
         <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={`text-sm tracking-[0.3em] uppercase mb-6 ${bgImage ? 'text-white/70' : 'text-brand-primary'}`}>
           {subline}
         </motion.p>

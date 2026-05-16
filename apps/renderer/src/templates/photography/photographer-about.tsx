@@ -17,9 +17,9 @@ export function PhotographerAboutSection({ data }: Props) {
   const ctaHref = (data.ctaHref as string) || '';
 
   return (
-    <section className="py-24 px-6 bg-white">
+    <section className="py-12 md:py-24 px-4 md:px-6 bg-white">
       <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-5 gap-12 lg:gap-16 items-start">
+        <div className="grid md:grid-cols-5 gap-8 md:gap-12 lg:gap-8 lg:gap-16 items-start">
           {/* Image */}
           {image && (
             <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="md:col-span-2 relative">

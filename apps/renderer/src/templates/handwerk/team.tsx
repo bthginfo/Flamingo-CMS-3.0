@@ -43,13 +43,13 @@ type TProps = {
 function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, storyImage, valuesHeadline, membersHeadline, members, values, stats, ref, inView }: TProps) {
   return (
     <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-20">
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-12 md:mb-20">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
         {headline && <h2 className="section-headline">{headline}</h2>}
         {subline && <p className="section-subline">{subline}</p>}
       </motion.div>
       {(storyHeadline || storyText) && (
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center mb-24">
+        <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} className="flex flex-col lg:flex-row gap-12 lg:gap-8 lg:gap-16 items-center mb-12 md:mb-24">
           {storyImage && (
             <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-xl"><Image src={storyImage} alt={storyHeadline || ''} fill className="object-cover" sizes="50vw" /></div></div>
           )}
@@ -60,7 +60,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
         </motion.div>
       )}
       {stats.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 md:mb-24">
           {stats.map((s, i) => (
             <div key={i} className="text-center p-6 rounded-2xl bg-gradient-to-br from-brand-primary/[0.03] to-brand-secondary/[0.03] border border-gray-100">
               <div className="font-display font-bold text-3xl lg:text-4xl text-brand-primary mb-1">{s.value}</div>
@@ -70,7 +70,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
         </div>
       )}
       {values.length > 0 && (
-        <div className="mb-24">
+        <div className="mb-12 md:mb-24">
           <h3 className="font-display font-bold text-2xl text-center mb-12">{valuesHeadline}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {values.map((v, i) => (
@@ -108,13 +108,13 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
 function TeamModern({ headline, subline, badgeText, storyHeadline, storyText, storyImage, membersHeadline, members, values, valuesHeadline, stats, ref, inView }: TProps) {
   return (
     <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-20">
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
         {badgeText && <div className="flex items-center gap-3 text-sm text-gray-400 mb-4 tracking-wide uppercase"><span className="w-8 h-px bg-gray-300" />{badgeText}</div>}
-        {headline && <h2 className="text-4xl lg:text-5xl font-light text-gray-900 tracking-tight">{headline}</h2>}
+        {headline && <h2 className="text-4xl lg:text-3xl md:text-5xl font-light text-gray-900 tracking-tight">{headline}</h2>}
         {subline && <p className="text-lg text-gray-400 mt-4 max-w-2xl">{subline}</p>}
       </motion.div>
       {(storyHeadline || storyText) && (
-        <div className="flex flex-col lg:flex-row gap-16 items-center mb-24">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center mb-12 md:mb-24">
           {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[3/2] rounded-lg overflow-hidden"><Image src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
             {storyHeadline && <h3 className="text-2xl font-light text-gray-900 mb-4">{storyHeadline}</h3>}
@@ -123,7 +123,7 @@ function TeamModern({ headline, subline, badgeText, storyHeadline, storyText, st
         </div>
       )}
       {stats.length > 0 && (
-        <div className="flex flex-wrap gap-12 mb-24 justify-center">
+        <div className="flex flex-wrap gap-8 md:gap-12 mb-24 justify-center">
           {stats.map((s, i) => <div key={i} className="text-center"><div className="text-4xl font-light text-gray-900">{s.value}</div><div className="text-xs text-gray-400 uppercase tracking-wider mt-1">{s.label}</div></div>)}
         </div>
       )}
@@ -157,7 +157,7 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
         {subline && <p className="text-gray-500 mt-3 font-medium">{subline}</p>}
       </motion.div>
       {(storyHeadline || storyText) && (
-        <div className="flex flex-col lg:flex-row gap-8 items-start mb-16">
+        <div className="flex flex-col lg:flex-row gap-8 items-start mb-10 md:mb-16">
           {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] overflow-hidden border-3 border-gray-900 shadow-[6px_6px_0_#0d2137]"><Image src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
             {storyHeadline && <h3 className="text-xl font-bold uppercase mb-3">{storyHeadline}</h3>}
@@ -166,7 +166,7 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
         </div>
       )}
       {stats.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 md:mb-16">
           {stats.map((s, i) => (
             <div key={i} className="bg-brand-dark text-white p-5 text-center">
               <div className="text-2xl font-black text-brand-accent">{s.value}</div>

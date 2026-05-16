@@ -43,13 +43,13 @@ function HeroClassic({ headline, subline, badgeText, bgImage, specialtyLabel, em
       <svg className="absolute bottom-0 left-0 w-full text-[#ffffff]" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
         <path fill="currentColor" d="M0,120 L0,90 Q120,70 240,80 L480,80 L520,30 L560,100 L600,60 L640,80 Q900,90 1080,80 Q1260,70 1440,85 L1440,120Z" />
       </svg>
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-7xl flex-col items-center justify-center px-6 py-20 text-center">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-7xl flex-col items-center justify-center px-6 py-12 md:py-20 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-4 flex items-center gap-2">
           <Shield className="text-cyan-300" size={20} />
           {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-cyan-300">{badgeText}</p>}
           <Stethoscope className="text-cyan-300" size={20} />
         </motion.div>
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-5xl font-[700] leading-[0.95] text-white sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>{headline}</motion.h1>
+        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-white sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>{headline}</motion.h1>
         {subline && <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-7 max-w-2xl text-lg leading-8 text-white/80" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>{subline}</motion.p>}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-cyan-400 px-6 py-3 font-semibold text-teal-950">{primaryCta.label}<ArrowRight size={17} /></a>}
@@ -70,10 +70,10 @@ function HeroClassic({ headline, subline, badgeText, bgImage, specialtyLabel, em
 function HeroModern({ headline, subline, badgeText, bgImage, specialtyLabel, emergencyHint, trustItems, primaryCta, emergencyCta, secondaryCta }: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-white">
-      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-10 px-6 py-20 lg:grid-cols-2">
+      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-10 px-6 py-12 md:py-20 lg:grid-cols-2">
         <div className="max-w-xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-widest text-blue-500">{badgeText}</p>}
-          <h1 className="mt-5 text-5xl font-light leading-[0.95] text-gray-900 sm:text-6xl lg:text-7xl">{headline}</h1>
+          <h1 className="mt-5 text-3xl md:text-5xl font-light leading-[0.95] text-gray-900 sm:text-6xl lg:text-7xl">{headline}</h1>
           {subline && <p className="mt-7 max-w-lg text-lg font-light leading-8 text-gray-600">{subline}</p>}
           <div className="mt-8 flex flex-wrap gap-3">
             {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white">{primaryCta.label}<ArrowRight size={17} /></a>}
@@ -106,12 +106,12 @@ function HeroBold({ headline, subline, badgeText, bgImage, specialtyLabel, emerg
       )}
       <div className="absolute right-0 top-0 h-full w-1/3 origin-top-right skew-x-[-8deg] bg-teal-500/20" aria-hidden="true" />
       <div className="absolute left-10 top-1/4 opacity-10" aria-hidden="true"><Cross size={200} className="text-teal-400" /></div>
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-7xl flex-col justify-center px-6 py-20">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-7xl flex-col justify-center px-6 py-12 md:py-20">
         <div className="flex items-center gap-3">
           <Shield className="text-teal-400" size={28} />
           {badgeText && <p className="text-xs font-black uppercase tracking-widest text-teal-400">{badgeText}</p>}
         </div>
-        <h1 className="mt-5 max-w-5xl text-5xl font-black uppercase leading-[0.95] text-white sm:text-6xl lg:text-8xl">{headline}</h1>
+        <h1 className="mt-5 max-w-5xl text-3xl md:text-5xl font-black uppercase leading-[0.95] text-white sm:text-6xl lg:text-8xl">{headline}</h1>
         {subline && <p className="mt-7 max-w-2xl text-lg leading-8 text-white/70">{subline}</p>}
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-teal-400 bg-teal-400 px-6 py-3 font-black uppercase text-gray-950 shadow-[4px_4px_0_theme(colors.teal.700)]">{primaryCta.label}<ArrowRight size={17} /></a>}

@@ -45,7 +45,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primar
       <div className="absolute bottom-0 left-0 right-0 h-32 overflow-hidden">
         <svg viewBox="0 0 1440 120" className="w-full text-[#ffffff]" preserveAspectRatio="none"><path fill="currentColor" d="M0,60 C360,120 720,0 1080,80 C1260,100 1380,40 1440,60 L1440,120 L0,120Z" /></svg>
       </div>
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-20 text-center">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-12 md:py-20 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
           {badgeText && (
             <motion.p initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-2 text-xs font-bold uppercase tracking-widest text-white/90 backdrop-blur-sm">
@@ -74,10 +74,10 @@ function HeroModern({ headline, subline, badgeText, bgImage, trustItems, primary
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-white">
       {bgImage && <Image src={bgImage} alt="" fill className="object-cover lg:left-1/2 lg:w-1/2" priority sizes="50vw" />}
-      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-16 px-6 py-20 lg:grid-cols-2">
+      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-8 lg:gap-16 px-6 py-12 md:py-20 lg:grid-cols-2">
         <div className="max-w-xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
-          <h1 className="mt-6 text-5xl font-light leading-[1.05] text-gray-900 sm:text-6xl lg:text-7xl">{headline}</h1>
+          <h1 className="mt-6 text-3xl md:text-5xl font-light leading-[1.05] text-gray-900 sm:text-6xl lg:text-7xl">{headline}</h1>
           {subline && <p className="mt-7 max-w-lg text-lg font-light leading-8 text-gray-600">{subline}</p>}
           <div className="mt-3 h-px w-16 bg-brand-accent" />
           <div className="mt-8 flex flex-wrap gap-3">
@@ -107,9 +107,9 @@ function HeroBold({ headline, subline, badgeText, bgImage, trustItems, primaryCt
       )}
       {/* Diagonal hot-pink stripe */}
       <div className="absolute inset-0 overflow-hidden"><div className="absolute -right-20 top-[20%] h-24 w-[140%] rotate-[-8deg] bg-brand-accent" /></div>
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-20">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-12 md:py-20">
         {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
-        <h1 className="mt-5 text-5xl font-black uppercase leading-[0.95] text-white sm:text-7xl lg:text-9xl">{headline}</h1>
+        <h1 className="mt-5 text-3xl md:text-5xl font-black uppercase leading-[0.95] text-white sm:text-7xl lg:text-9xl">{headline}</h1>
         {subline && <p className="mt-7 max-w-2xl text-lg font-bold uppercase leading-8 text-white/70">{subline}</p>}
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 bg-brand-accent px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{primaryCta.label}<ArrowRight size={17} /></a>}

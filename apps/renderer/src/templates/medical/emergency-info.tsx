@@ -66,7 +66,7 @@ function Bold({ header, introText, items, ctaPrimary }: Props) {
     <div className="border-2 border-red-500 bg-gray-950 p-6 shadow-[4px_4px_0_theme(colors.red.700)] sm:p-8">
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-red-400">{header.badgeText}</p>}
-        <h2 className="mt-3 text-3xl font-black uppercase text-white sm:text-5xl">{header.headline}</h2>
+        <h2 className="mt-3 text-3xl font-black uppercase text-white sm:text-3xl md:text-5xl">{header.headline}</h2>
         {header.subline && <p className="mt-4 text-white/70">{header.subline}</p>}
       </div>
       {introText && <p className="max-w-3xl text-sm leading-6 text-white/70">{introText}</p>}

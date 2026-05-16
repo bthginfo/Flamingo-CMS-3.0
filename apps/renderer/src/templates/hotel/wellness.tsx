@@ -40,7 +40,7 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
       <div>
         <div className="mb-6 max-w-3xl">
           {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-brand-primary" />{badgeText}</motion.p>}
-          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
           {subline && <p className="mt-4 text-gray-600">{subline}</p>}
         </div>
         {introText && <p className="text-gray-600 leading-7">{introText}</p>}
@@ -55,7 +55,7 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
         {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#111827] px-5 py-3 font-semibold text-white shadow-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
       </div>
       <div className="space-y-5">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-md"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
           {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
@@ -80,7 +80,7 @@ function WellnessModern({ headline, subline, badgeText, introText, imagePrimary,
       <div>
         <div className="mb-8 max-w-3xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl font-light sm:text-5xl text-gray-900">{headline}</h2>
+          <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
           {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
         </div>
         {introText && <p className="font-light text-gray-600 leading-7">{introText}</p>}
@@ -95,7 +95,7 @@ function WellnessModern({ headline, subline, badgeText, introText, imagePrimary,
         {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 font-light text-gray-900 underline underline-offset-4">{ctaPrimary.label}<ArrowRight size={14} /></a>}
       </div>
       <div className="space-y-5">
-        <div className="grid grid-cols-2 gap-px border border-black/10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-px border border-black/10">
           {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
           {imageSecondary && <div className="relative aspect-square overflow-hidden border-t border-black/10"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
@@ -120,7 +120,7 @@ function WellnessBold({ headline, subline, badgeText, introText, imagePrimary, i
       <div>
         <div className="mb-6 max-w-3xl">
           {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl sm:text-5xl font-black uppercase text-gray-900">{headline}</h2>
+          <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
           {subline && <p className="mt-4 text-gray-600">{subline}</p>}
         </div>
         {introText && <p className="text-gray-600 leading-7">{introText}</p>}
@@ -135,7 +135,7 @@ function WellnessBold({ headline, subline, badgeText, introText, imagePrimary, i
         {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--brand-primary)]">{ctaPrimary.label}<ArrowRight size={16} /></a>}
       </div>
       <div className="space-y-5">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
           {imageSecondary && <div className="relative aspect-square overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>

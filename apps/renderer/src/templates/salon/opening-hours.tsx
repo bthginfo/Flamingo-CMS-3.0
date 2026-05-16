@@ -29,7 +29,7 @@ function HoursClassic({ headline, subline, badgeText, days, bookingNote, ctaPrim
       <div>
         <div className="mb-10 max-w-3xl">
           {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-gray-600">{badgeText}</motion.p>}
-          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
           {subline && <p className="mt-4 text-gray-600">{subline}</p>}
         </div>
         {bookingNote && <p className="text-sm leading-6 text-gray-600">{bookingNote}</p>}
@@ -53,7 +53,7 @@ function HoursModern({ headline, subline, badgeText, days, bookingNote, ctaPrima
       <div>
         <div className="mb-14 max-w-3xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl font-light sm:text-5xl text-gray-900">{headline}</h2>
+          <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
           {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
         </div>
         {bookingNote && <p className="text-sm font-light leading-6 text-gray-600">{bookingNote}</p>}
@@ -77,7 +77,7 @@ function HoursBold({ headline, subline, badgeText, days, bookingNote, ctaPrimary
       <div>
         <div className="mb-10 max-w-3xl">
           {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
-          <h2 className="mt-3 text-3xl font-black uppercase sm:text-5xl text-gray-900">{headline}</h2>
+          <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
           {subline && <p className="mt-4 font-bold text-gray-600">{subline}</p>}
         </div>
         {bookingNote && <p className="text-sm font-bold leading-6 text-gray-600">{bookingNote}</p>}

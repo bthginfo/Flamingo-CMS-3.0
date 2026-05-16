@@ -11,9 +11,9 @@ export function WeddingPartySection({ data }: Props) {
   const members = (data.members as Array<{ name: string; role: string; image?: string; text?: string }>) || [];
 
   return (
-    <section className="py-24 px-6 bg-white">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-white">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
         </div>

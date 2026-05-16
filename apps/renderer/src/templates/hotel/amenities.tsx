@@ -40,7 +40,7 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
             <Star size={12} className="text-brand-primary" />{badgeText}
           </motion.p>
         )}
-        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="mt-3 text-3xl sm:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
+        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
         {subline && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="mt-4 text-gray-600">{subline}</motion.p>}
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -67,7 +67,7 @@ function AmenitiesModern({ headline, subline, badgeText, items, ctaPrimary }: Pr
     <div>
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-5xl text-gray-900">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
         {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
       </div>
       <div className="grid gap-px border border-black/10 sm:grid-cols-2 lg:grid-cols-3">
@@ -94,7 +94,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
     <div>
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-5xl font-black uppercase text-gray-900">{headline}</h2>
+        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
         {subline && <p className="mt-4 text-gray-600">{subline}</p>}
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

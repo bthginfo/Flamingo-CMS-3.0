@@ -33,7 +33,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
     <div>
       <div className="mb-10 max-w-3xl text-center mx-auto">
         {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-brand-accent/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-accent">{badgeText}</motion.p>}
-        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-4 text-3xl sm:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
+        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
         {subline && <p className="mt-4 text-gray-500">{subline}</p>}
         {(ratingValue || ratingCount) && <p className="mt-3 text-sm text-gray-500">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       </div>
@@ -59,7 +59,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
     <div>
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-gray-500">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-5xl text-gray-900">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-brand-accent" />
         {subline && <p className="mt-6 font-light text-gray-500">{subline}</p>}
         {(ratingValue || ratingCount) && <p className="mt-3 text-sm font-light text-gray-500">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
@@ -84,7 +84,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
     <div className="bg-[#111827] p-6 text-white sm:p-10">
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase tracking-widest text-gray-900">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-5xl font-black uppercase">{headline}</h2>
+        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase">{headline}</h2>
         <div className="mt-2 h-1.5 w-20 bg-brand-accent" />
         {subline && <p className="mt-4 text-white/70">{subline}</p>}
         {(ratingValue || ratingCount) && <p className="mt-3 text-sm font-bold text-white/50">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}

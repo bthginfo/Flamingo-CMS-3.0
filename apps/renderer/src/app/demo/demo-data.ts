@@ -129,6 +129,45 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
       legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
     },
   },
+  wedding: {
+    brand: { companyName: 'Anna & Max', tagline: 'Unsere Hochzeit – 14. September 2025', primaryColor: '#d4a373' },
+    contact: { phone: '', email: 'anna.max@hochzeit.de', address: 'Schloss Johannisberg, Rheingau' },
+    socialLinks: {},
+    navItems: [
+      { label: 'Unsere Geschichte', href: '/demo/wedding/geschichte' },
+      { label: 'Ablauf', href: '/demo/wedding/ablauf' },
+      { label: 'Location', href: '/demo/wedding/location' },
+      { label: 'RSVP', href: '/demo/wedding/rsvp' },
+    ],
+    cta: { label: 'RSVP', href: '/demo/wedding/rsvp' },
+    footer: {
+      columns: [
+        { title: 'Hochzeit', items: [{ text: 'Unsere Geschichte', href: '/demo/wedding/geschichte' }, { text: 'Ablauf', href: '/demo/wedding/ablauf' }, { text: 'Location', href: '/demo/wedding/location' }] },
+        { title: 'Gäste', items: [{ text: 'RSVP', href: '/demo/wedding/rsvp' }, { text: 'Dresscode', href: '/demo/wedding/dresscode' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    },
+  },
+  photography: {
+    brand: { companyName: 'Lisa Fotografie', tagline: 'Emotionale Momentaufnahmen – Hochzeiten, Paare & Portraits', primaryColor: '#9c7c5c' },
+    contact: { phone: '+49 171 1234567', email: 'hello@lisa-fotografie.de', address: 'Mainstraße 8, 55116 Mainz' },
+    socialLinks: { instagram: '#' },
+    navItems: [
+      { label: 'Portfolio', href: '/demo/photography/portfolio' },
+      { label: 'Leistungen', href: '/demo/photography/leistungen' },
+      { label: 'Über mich', href: '/demo/photography/ueber-mich' },
+      { label: 'FAQ', href: '/demo/photography/faq' },
+      { label: 'Kontakt', href: '/demo/photography/kontakt' },
+    ],
+    cta: { label: 'Anfragen', href: '/demo/photography/kontakt' },
+    footer: {
+      columns: [
+        { title: 'Fotografie', items: [{ text: 'Hochzeiten', href: '/demo/photography/leistungen' }, { text: 'Paare', href: '/demo/photography/leistungen' }, { text: 'Portfolio', href: '/demo/photography/portfolio' }] },
+        { title: 'Mehr', items: [{ text: 'FAQ', href: '/demo/photography/faq' }, { text: 'Über mich', href: '/demo/photography/ueber-mich' }, { text: 'Kontakt', href: '/demo/photography/kontakt' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    },
+  },
 };
 
 export function getDemoSiteData(industry: IndustryKey): DemoSiteData {

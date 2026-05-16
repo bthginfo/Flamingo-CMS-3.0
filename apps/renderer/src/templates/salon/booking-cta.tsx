@@ -28,7 +28,7 @@ function BookingClassic({ headline, subline, badgeText, introText, onlineCta, ph
     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[var(--brand-primary)]/20 bg-white p-6 shadow-md sm:p-10">
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-gray-600">{badgeText}</p>}
-        <h2 className="mt-3 text-3xl sm:text-5xl font-[700] text-gray-900">{headline}</h2>
+        <h2 className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</h2>
         {subline && <p className="mt-4 text-gray-600">{subline}</p>}
       </div>
       {introText && <p className="max-w-2xl text-gray-600">{introText}</p>}
@@ -47,7 +47,7 @@ function BookingModern({ headline, subline, badgeText, introText, onlineCta, pho
     <div className="border-y border-black/10 py-14">
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-5xl text-gray-900">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
         {subline && <p className="mt-4 font-light text-gray-600">{subline}</p>}
       </div>
       {introText && <p className="max-w-2xl font-light text-gray-600">{introText}</p>}
@@ -66,7 +66,7 @@ function BookingBold({ headline, subline, badgeText, introText, onlineCta, phone
     <div className="border-2 border-[#111827] bg-[#111] p-6 shadow-[4px_4px_0_var(--brand-accent)] sm:p-10">
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
-        <h2 className="mt-3 text-3xl font-black uppercase sm:text-5xl text-white">{headline}</h2>
+        <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-white">{headline}</h2>
         {subline && <p className="mt-4 font-bold text-white/70">{subline}</p>}
       </div>
       {introText && <p className="max-w-2xl font-bold text-white/70">{introText}</p>}

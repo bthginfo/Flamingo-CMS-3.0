@@ -49,7 +49,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primar
       {/* Warm spotlight */}
       <div className="absolute top-1/4 left-1/3 w-[700px] h-[700px] rounded-full blur-[150px] bg-brand-primary/10 animate-pulse" style={{ animationDuration: '6s' }} />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           {badgeText && (
@@ -119,7 +119,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, trustItems, primar
 function HeroModern({ headline, subline, badgeText, bgImage, trustItems, primaryCta, secondaryCta }: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center -mt-[112px] pt-[112px] bg-white">
-      <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-20">
+      <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-12 md:py-20">
         {/* Text side */}
         <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
           {badgeText && (
@@ -188,7 +188,7 @@ function HeroBold({ headline, subline, badgeText, bgImage, trustItems, primaryCt
       {/* Thick accent line */}
       <div className="absolute top-[112px] left-0 w-full h-1.5 bg-brand-accent" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20">
         <div className="max-w-5xl">
           {/* Badge as solid rectangle */}
           {badgeText && (

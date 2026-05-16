@@ -13,7 +13,7 @@ export function WeddingDresscodeSection({ data }: Props) {
   const hints = (data.hints as string[]) || [];
 
   return (
-    <section className="py-24 px-6 bg-white">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-white">
       <div className="max-w-3xl mx-auto text-center">
         <span className="section-badge">{badge}</span>
         <h2 className="section-headline">{headline}</h2>

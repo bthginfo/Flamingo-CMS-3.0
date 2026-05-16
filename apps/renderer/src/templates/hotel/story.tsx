@@ -40,7 +40,7 @@ function StoryClassic(p: Props) {
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
           {p.badgeText && <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-brand-primary" />{p.badgeText}</p>}
-          <h2 className="mt-3 text-3xl sm:text-5xl font-[700] text-gray-900">{p.headline}</h2>
+          <h2 className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{p.headline}</h2>
           {p.subline && <p className="mt-4 text-lg text-gray-600">{p.subline}</p>}
           {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-gray-600">{p.storyText}</p>}
           {p.founderQuote && (
@@ -58,7 +58,7 @@ function StoryClassic(p: Props) {
         </div>
       </div>
       {p.stats.length > 0 && (
-        <div className="mt-16 grid grid-cols-2 gap-5 md:grid-cols-4">
+        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-5 md:grid-cols-4">
           {p.stats.map((s, i) => (
             <motion.div key={`${s.label}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--brand-primary)]/20 bg-white p-5 text-center shadow-sm">
               <p className="text-3xl font-bold text-gray-900">{s.value || ''}</p>
@@ -99,7 +99,7 @@ function StoryModern(p: Props) {
       <div className="grid gap-16 lg:grid-cols-2 lg:items-start">
         <div>
           {p.badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{p.badgeText}</p>}
-          <h2 className="mt-4 text-3xl font-light sm:text-5xl text-gray-900">{p.headline}</h2>
+          <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{p.headline}</h2>
           {p.subline && <p className="mt-4 font-light text-gray-600">{p.subline}</p>}
           {p.storyText && <p className="mt-6 whitespace-pre-line font-light leading-7 text-gray-600">{p.storyText}</p>}
           {p.founderQuote && (
@@ -117,7 +117,7 @@ function StoryModern(p: Props) {
         </div>
       </div>
       {p.stats.length > 0 && (
-        <div className="mt-16 grid grid-cols-2 gap-px border border-black/10 md:grid-cols-4">
+        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-px border border-black/10 md:grid-cols-4">
           {p.stats.map((s, i) => (
             <div key={`${s.label}-${i}`} className="border border-black/10 bg-white p-6 text-center">
               <p className="text-3xl font-light text-gray-900">{s.value || ''}</p>
@@ -158,7 +158,7 @@ function StoryBold(p: Props) {
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <div>
           {p.badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{p.badgeText}</p>}
-          <h2 className="mt-4 text-3xl sm:text-5xl font-black uppercase text-gray-900">{p.headline}</h2>
+          <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{p.headline}</h2>
           {p.subline && <p className="mt-4 text-gray-600">{p.subline}</p>}
           {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-gray-600">{p.storyText}</p>}
           {p.founderQuote && (
@@ -176,7 +176,7 @@ function StoryBold(p: Props) {
         </div>
       </div>
       {p.stats.length > 0 && (
-        <div className="mt-16 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-4 md:grid-cols-4">
           {p.stats.map((s, i) => (
             <div key={`${s.label}-${i}`} className="border-2 border-[#111827] p-5 text-center shadow-[4px_4px_0_var(--brand-primary)]">
               <p className="text-3xl font-black text-gray-900">{s.value || ''}</p>

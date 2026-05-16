@@ -24,9 +24,9 @@ export function ServicePackagesSection({ data }: Props) {
   const note = (data.note as string) || '';
 
   return (
-    <section className="py-24 px-6 bg-brand-primary/[0.02]">
+    <section className="py-12 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
           {subline && <p className="section-subline">{subline}</p>}
@@ -34,12 +34,12 @@ export function ServicePackagesSection({ data }: Props) {
 
         <div className={`grid gap-8 ${packages.length === 2 ? 'md:grid-cols-2 max-w-4xl mx-auto' : packages.length >= 3 ? 'md:grid-cols-3' : 'max-w-lg mx-auto'}`}>
           {packages.map((pkg, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className={`relative rounded-2xl p-8 ${pkg.highlighted ? 'bg-brand-primary text-white shadow-xl ring-2 ring-brand-primary/20 scale-[1.02]' : 'bg-white shadow-sm border border-gray-100'}`}>
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className={`relative rounded-2xl p-5 md:p-8 ${pkg.highlighted ? 'bg-brand-primary text-white shadow-xl ring-2 ring-brand-primary/20 md:scale-[1.02]' : 'bg-white shadow-sm border border-gray-100'}`}>
               {pkg.highlighted && <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-accent text-white text-xs font-bold px-3 py-1 rounded-full">Beliebt</span>}
               <h3 className={`text-xl font-bold ${pkg.highlighted ? 'text-white' : 'text-gray-900'}`}>{pkg.name}</h3>
               {pkg.price && (
                 <div className="mt-3">
-                  <span className={`text-3xl font-bold ${pkg.highlighted ? 'text-white' : 'text-brand-primary'}`}>{pkg.price}</span>
+                  <span className={`text-2xl md:text-3xl font-bold ${pkg.highlighted ? 'text-white' : 'text-brand-primary'}`}>{pkg.price}</span>
                   {pkg.priceNote && <span className={`text-sm ml-1 ${pkg.highlighted ? 'text-white/70' : 'text-gray-500'}`}>{pkg.priceNote}</span>}
                 </div>
               )}

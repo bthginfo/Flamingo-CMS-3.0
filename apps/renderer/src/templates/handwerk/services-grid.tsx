@@ -40,7 +40,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
 
   return (
     <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-16">
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-10 md:mb-16">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
         {headline && <h2 className="section-headline">{headline}</h2>}
         {subline && <p className="section-subline">{subline}</p>}
@@ -66,13 +66,13 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
 
   return (
     <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-20">
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
         {badgeText && (
           <div className="flex items-center gap-3 text-sm text-gray-400 mb-4 tracking-wide uppercase">
             <span className="w-8 h-px bg-gray-300" />{badgeText}
           </div>
         )}
-        {headline && <h2 className="text-4xl lg:text-5xl font-light text-gray-900 tracking-tight">{headline}</h2>}
+        {headline && <h2 className="text-4xl lg:text-3xl md:text-5xl font-light text-gray-900 tracking-tight">{headline}</h2>}
         {subline && <p className="text-lg text-gray-400 mt-4 max-w-2xl">{subline}</p>}
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0">

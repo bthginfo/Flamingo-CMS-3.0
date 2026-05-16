@@ -17,14 +17,14 @@ export function WeddingVenueInfoSection({ data }: Props) {
   const contact = (data.contact as string) || '';
 
   return (
-    <section className="py-24 px-6 bg-white">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-white">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
           {subline && <p className="section-subline">{subline}</p>}
         </div>
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           {image && (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative aspect-[3/2] rounded-2xl overflow-hidden shadow-lg">
               <Image src={image} alt={headline} fill className="object-cover" />
@@ -68,15 +68,15 @@ export function WeddingTravelInfoSection({ data }: Props) {
   const dirIcons: Record<string, React.ElementType> = { car: Car, train: Train, plane: Plane };
 
   return (
-    <section className="py-24 px-6 bg-brand-primary/[0.02]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
           <h2 className="section-headline">{headline}</h2>
           {subline && <p className="section-subline">{subline}</p>}
         </div>
         {directions.length > 0 && (
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="grid md:grid-cols-3 gap-8 mb-10 md:mb-16">
             {directions.map((d, i) => {
               const Icon = dirIcons[(d.icon || 'car').toLowerCase()] || Car;
               return (

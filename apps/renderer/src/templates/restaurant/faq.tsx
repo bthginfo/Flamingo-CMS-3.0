@@ -54,7 +54,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
     <div className="mx-auto max-w-3xl">
       <div className="mb-10 text-center">
         {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-brand-accent/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-accent">{badgeText}</motion.p>}
-        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-4 text-3xl sm:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
+        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
         {subline && <p className="mt-4 text-gray-500">{subline}</p>}
       </div>
       <div className="rounded-xl border border-black/10 bg-white px-6 shadow-md">
@@ -70,7 +70,7 @@ function FaqModern({ headline, subline, badgeText, items, ctaPrimary }: Props) {
     <div className="mx-auto max-w-3xl">
       <div className="mb-14">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-gray-500">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-5xl text-gray-900">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-brand-accent" />
         {subline && <p className="mt-6 font-light text-gray-500">{subline}</p>}
       </div>
@@ -85,7 +85,7 @@ function FaqBold({ headline, subline, badgeText, items, ctaPrimary }: Props) {
     <div className="mx-auto max-w-3xl">
       <div className="mb-10">
         {badgeText && <p className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase tracking-widest text-white">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-5xl font-black uppercase text-gray-900">{headline}</h2>
+        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
         <div className="mt-2 h-1.5 w-20 bg-brand-accent" />
         {subline && <p className="mt-4 font-bold text-gray-500">{subline}</p>}
       </div>

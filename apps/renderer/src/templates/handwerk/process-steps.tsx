@@ -29,7 +29,7 @@ function ProcessClassic({ headline, badgeText, steps }: PProps) {
     <div ref={ref} className="relative">
       <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] opacity-40 rounded-4xl" />
       <div className="relative bg-gradient-to-br from-surface to-white rounded-4xl p-8 sm:p-12 lg:p-20 border border-gray-100/50">
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-16">
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-10 md:mb-16">
           {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
           {headline && <h2 className="section-headline">{headline}</h2>}
         </motion.div>
@@ -65,15 +65,15 @@ function ProcessModern({ headline, badgeText, steps }: PProps) {
 
   return (
     <div ref={ref}>
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-20">
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
         {badgeText && <div className="flex items-center gap-3 text-sm text-gray-400 mb-4 tracking-wide uppercase"><span className="w-8 h-px bg-gray-300" />{badgeText}</div>}
-        {headline && <h2 className="text-4xl lg:text-5xl font-light text-gray-900 tracking-tight">{headline}</h2>}
+        {headline && <h2 className="text-4xl lg:text-3xl md:text-5xl font-light text-gray-900 tracking-tight">{headline}</h2>}
       </motion.div>
       <div className="max-w-3xl mx-auto space-y-0">
         {steps.map((step, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.1 }}
             className="flex gap-8 py-10 border-b border-gray-100 last:border-b-0">
-            <div className="shrink-0 text-5xl font-extralight text-gray-200">{String(i + 1).padStart(2, '0')}</div>
+            <div className="shrink-0 text-3xl md:text-5xl font-extralight text-gray-200">{String(i + 1).padStart(2, '0')}</div>
             <div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">{step.title}</h3>
               <p className="text-gray-400 leading-relaxed">{step.text}</p>

@@ -33,7 +33,7 @@ function CtaClassic({ headline, subline, badgeText, cta }: CProps) {
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-accent/15 rounded-full blur-[120px] animate-pulse-slow" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-white/5 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
       </div>
-      <div className="relative z-10 text-center text-white px-6 py-20 sm:py-24 lg:py-32">
+      <div className="relative z-10 text-center text-white px-6 py-12 md:py-20 sm:py-16 md:py-24 lg:py-32">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
           className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 text-sm mb-8">
           <Sparkles size={14} className="text-brand-accent" /><span>{badgeText || 'Jetzt Termin sichern'}</span>
@@ -60,7 +60,7 @@ function CtaModern({ headline, subline, cta }: CProps) {
 
   return (
     <motion.div ref={ref} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.8 }}
-      className="text-center py-24 lg:py-32">
+      className="text-center py-16 md:py-24 lg:py-32">
       <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light text-gray-900 tracking-tight !leading-[1.1] max-w-4xl mx-auto">
         {headline}
       </h2>

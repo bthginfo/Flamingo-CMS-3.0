@@ -15,7 +15,7 @@ export function WeddingRsvpSection({ data }: Props) {
 
   if (submitted) {
     return (
-      <section className="py-24 px-6 bg-brand-primary/[0.02]">
+      <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">
         <div className="max-w-lg mx-auto text-center">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-16 h-16 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
             <Check className="w-8 h-8 text-green-600" />
@@ -28,7 +28,7 @@ export function WeddingRsvpSection({ data }: Props) {
   }
 
   return (
-    <section className="py-24 px-6 bg-brand-primary/[0.02]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">
       <div className="max-w-lg mx-auto">
         <div className="text-center mb-12">
           <span className="section-badge">{badge}</span>

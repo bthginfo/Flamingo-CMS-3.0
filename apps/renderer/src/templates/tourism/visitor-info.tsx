@@ -75,7 +75,7 @@ function Bold({ header, introText, blocks }: Props) {
       <div>
         <div className="mb-10 max-w-3xl">
           {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-orange-500">{header.badgeText}</p>}
-          <h2 className="mt-3 text-3xl font-black uppercase text-gray-900 sm:text-5xl">{header.headline}</h2>
+          <h2 className="mt-3 text-3xl font-black uppercase text-gray-900 sm:text-3xl md:text-5xl">{header.headline}</h2>
           {header.subline && <p className="mt-4 text-gray-600">{header.subline}</p>}
         </div>
         {introText && <p className="text-gray-600">{introText}</p>}

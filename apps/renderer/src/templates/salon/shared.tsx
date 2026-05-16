@@ -15,7 +15,7 @@ export function SectionHeader({ headline, subline, badgeText }: { headline: stri
   return (
     <div className="mb-10 max-w-3xl">
       {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-gray-600">{badgeText}</p>}
-      <h2 className="mt-3 text-3xl font-[700] text-gray-900 sm:text-5xl">{headline}</h2>
+      <h2 className="mt-3 text-3xl font-[700] text-gray-900 sm:text-3xl md:text-5xl">{headline}</h2>
       {subline && <p className="mt-4 text-gray-600">{subline}</p>}
     </div>
   );

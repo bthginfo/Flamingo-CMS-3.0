@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
 import {
   LayoutDashboard, FileText, FolderOpen, Newspaper, Navigation,
   Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Eye, Heart,
+  Menu, X,
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
 
@@ -32,11 +34,12 @@ const RENDERER_URL = '';
 export function Sidebar({ tenantId }: { tenantId: string }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [open, setOpen] = useState(false);
 
-  return (
-    <aside className="w-64 shrink-0 bg-sidebar text-sidebar-fg flex flex-col h-full border-r border-sidebar-border">
+  const navContent = (
+    <>
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-sidebar-border">
+      <div className="px-5 py-5 border-b border-sidebar-border flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-admin-accent text-white flex items-center justify-center text-sm font-bold">
             F
@@ -46,6 +49,9 @@ export function Sidebar({ tenantId }: { tenantId: string }) {
             <p className="text-[11px] text-sidebar-muted truncate max-w-[160px]">{tenantId.slice(0, 8)}…</p>
           </div>
         </div>
+        <button onClick={() => setOpen(false)} className="md:hidden text-sidebar-muted hover:text-white p-1">
+          <X size={20} />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -56,6 +62,7 @@ export function Sidebar({ tenantId }: { tenantId: string }) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setOpen(false)}
               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                 isActive
                   ? 'bg-white/10 text-white font-medium'
@@ -91,6 +98,34 @@ export function Sidebar({ tenantId }: { tenantId: string }) {
           Abmelden
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile burger button */}
+      <button
+        onClick={() => setOpen(true)}
+        className="md:hidden fixed top-4 left-4 z-50 bg-sidebar text-white p-2 rounded-lg shadow-lg"
+        aria-label="Menü öffnen"
+      >
+        <Menu size={22} />
+      </button>
+
+      {/* Mobile overlay */}
+      {open && (
+        <div className="md:hidden fixed inset-0 z-40 bg-black/50" onClick={() => setOpen(false)} />
+      )}
+
+      {/* Mobile drawer */}
+      <aside className={`md:hidden fixed inset-y-0 left-0 z-50 w-72 bg-sidebar text-sidebar-fg flex flex-col transform transition-transform duration-200 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+        {navContent}
+      </aside>
+
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex w-64 shrink-0 bg-sidebar text-sidebar-fg flex-col h-full border-r border-sidebar-border">
+        {navContent}
+      </aside>
+    </>
   );
 }
