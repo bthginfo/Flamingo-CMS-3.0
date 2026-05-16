@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { upload } from '@vercel/blob/client';
 import { ImageIcon, Upload, X, Link as LinkIcon } from 'lucide-react';
+import { saveMediaRecord } from '@/app/admin/media-actions';
 
 /** Resize image to maxWidth and convert to WebP. Returns original if SVG or already small. */
 async function resizeImage(file: File, maxWidth: number, quality: number): Promise<File> {
@@ -55,6 +56,14 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
         access: 'public',
         handleUploadUrl: '/api/upload',
       });
+      // Register in media library
+      saveMediaRecord({
+        blobUrl: blob.url,
+        pathname: blob.pathname,
+        filename: optimized.name,
+        mimeType: optimized.type || 'image/webp',
+        size: optimized.size,
+      }).catch(() => {}); // non-blocking
       onChange(blob.url);
     } catch (e) {
       console.error('Upload failed:', e);
@@ -132,6 +141,19 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
           className="admin-input w-full"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onBlur={(e) => {
+            const url = e.target.value.trim();
+            if (url && url.startsWith('http')) {
+              const filename = url.split('/').pop()?.split('?')[0] || 'image';
+              saveMediaRecord({
+                blobUrl: url,
+                pathname: url,
+                filename,
+                mimeType: 'image/unknown',
+                size: 0,
+              }).catch(() => {});
+            }
+          }}
           placeholder="https://..."
         />
       )}

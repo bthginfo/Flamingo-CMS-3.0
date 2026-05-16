@@ -21,6 +21,12 @@ import { HeaderBannerSection } from './handwerk/header-banner';
 import { CollectionHeroSection } from './handwerk/collection-hero';
 import { TextImageSection } from './handwerk/text-image';
 import {
+  PortfolioGallerySection,
+  ServicePackagesSection,
+  PhotographerAboutSection,
+  ShootingProcessSection,
+} from './photography';
+import {
   AmbienceSection,
   EventsSection,
   MenuSection,
@@ -290,6 +296,24 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     ctaBand: CtaBandSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+    collectionHero: CollectionHeroSection,
+  },
+  photography: {
+    hero: HeroSection,
+    portfolioGallery: PortfolioGallerySection,
+    servicePackages: ServicePackagesSection,
+    photographerAbout: PhotographerAboutSection,
+    shootingProcess: ShootingProcessSection,
+    testimonials: TestimonialsSection,
+    faq: FaqSection,
+    contact: ContactSection,
+    map: MapSection,
+    ctaBand: CtaBandSection,
+    uspStrip: UspStripSection,
+    textImage: TextImageSection,
+    richText: RichTextSection,
+    newsPreview: NewsPreviewSection,
+    newsGrid: NewsPreviewSection,
     collectionHero: CollectionHeroSection,
   },
 };

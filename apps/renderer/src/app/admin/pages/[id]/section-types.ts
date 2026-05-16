@@ -143,7 +143,25 @@ export const WEDDING_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
+export const PHOTOGRAPHY_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Hero', description: 'Fullscreen-Hero mit Bild und CTA' },
+  { type: 'portfolioGallery', label: 'Portfolio-Galerie', description: 'Filterbare Masonry-Galerie mit Lightbox' },
+  { type: 'servicePackages', label: 'Pakete & Preise', description: 'Shooting-Pakete mit Features und Preisen' },
+  { type: 'photographerAbout', label: 'Über mich', description: 'Persönliche Vorstellung mit Bild und Story' },
+  { type: 'shootingProcess', label: 'Ablauf', description: 'Schritte vom Kennenlernen bis zur Übergabe' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen und Ratings' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular' },
+  { type: 'ctaBand', label: 'CTA-Band', description: 'Call-to-Action Banner' },
+  { type: 'uspStrip', label: 'USP-Leiste', description: 'Einzigartige Verkaufsargumente' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
+  { type: 'newsPreview', label: 'News-Vorschau', description: 'Aktuelle Beiträge' },
+  { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
 export function getSectionTypesForIndustry(industry: string): SectionTypeDefinition[] {
+  if (industry === 'photography') return PHOTOGRAPHY_SECTION_TYPES;
   if (industry === 'wedding') return WEDDING_SECTION_TYPES;
   if (industry === 'medical') return MEDICAL_SECTION_TYPES;
   if (industry === 'salon') return SALON_SECTION_TYPES;
