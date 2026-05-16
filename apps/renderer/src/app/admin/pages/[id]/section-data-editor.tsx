@@ -828,6 +828,249 @@ function CollectionHeroEditor({ data, onChange }: EditorProps) {
   );
 }
 
+// ─── TextImage Editor ────────────────────────────────────────────
+function TextImageEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    text: (data.text as string) || '',
+    image: (data.image as string) || '',
+    imageAlt: (data.imageAlt as string) || '',
+    imagePosition: (data.imagePosition as string) || (data.layout as string) || 'right',
+  });
+  const [items, setItems] = useState<{ icon: string; title: string; text: string }[]>(
+    (data.items as { icon: string; title: string; text: string }[]) || []
+  );
+  useReport({ ...d, items } as unknown as Record<string, unknown>, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Text" value={d.text} onChange={(v) => setD({ ...d, text: v })} multiline />
+      <ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <Field label="Bild Alt-Text" value={d.imageAlt} onChange={(v) => setD({ ...d, imageAlt: v })} />
+      <SelectField label="Bild-Position" value={d.imagePosition} options={['left', 'right']} onChange={(v) => setD({ ...d, imagePosition: v })} />
+      <div>
+        <p className="text-xs font-medium text-zinc-600 mb-2">Auflistung (optional)</p>
+        {items.map((item, i) => (
+          <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
+            <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <div className="grid grid-cols-2 gap-2">
+              <Field label="Titel" value={item.title} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, title: v } : it))} />
+              <IconPickerField label="Icon" value={item.icon} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, icon: v } : it))} />
+            </div>
+            <Field label="Text" value={item.text} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, text: v } : it))} />
+          </div>
+        ))}
+        <button onClick={() => setItems([...items, { icon: '', title: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Punkt hinzufügen</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── PortfolioGallery Editor ─────────────────────────────────────
+function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+  });
+  const [categories, setCategories] = useState<string[]>((data.categories as string[]) || []);
+  const [images, setImages] = useState<{ src: string; alt: string; category: string; location: string }[]>(
+    ((data.images as unknown[]) || []).map((img: unknown) => {
+      const i = img as Record<string, string>;
+      return { src: i.src || '', alt: i.alt || '', category: i.category || '', location: i.location || '' };
+    })
+  );
+  useReport({ ...d, categories, images } as unknown as Record<string, unknown>, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <div>
+        <p className="text-xs font-medium text-zinc-600 mb-1">Kategorien (kommagetrennt)</p>
+        <input className="admin-input" value={categories.join(', ')} onChange={(e) => setCategories(e.target.value.split(',').map(s => s.trim()).filter(Boolean))} />
+      </div>
+      <div>
+        <p className="text-xs font-medium text-zinc-600 mb-2">Bilder</p>
+        {images.map((img, i) => (
+          <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
+            <button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
+            <div className="grid grid-cols-3 gap-2 mt-2">
+              <Field label="Alt-Text" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
+              <Field label="Kategorie" value={img.category} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, category: v } : im))} />
+              <Field label="Ort" value={img.location} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, location: v } : im))} />
+            </div>
+          </div>
+        ))}
+        <button onClick={() => setImages([...images, { src: '', alt: '', category: '', location: '' }])} className="text-xs text-blue-600 hover:underline">+ Bild hinzufügen</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── PhotographerAbout Editor ────────────────────────────────────
+function PhotographerAboutEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    intro: (data.intro as string) || '',
+    story: (data.story as string) || '',
+    image: (data.image as string) || '',
+    ctaLabel: (data.ctaLabel as string) || '',
+    ctaHref: (data.ctaHref as string) || '',
+  });
+  const [facts, setFacts] = useState<string[]>((data.facts as string[]) || []);
+  const [values, setValues] = useState<{ title: string; text: string }[]>(
+    ((data.values as unknown[]) || []).map((v: unknown) => {
+      const val = v as Record<string, string>;
+      return { title: val.title || '', text: val.text || '' };
+    })
+  );
+  useReport({ ...d, facts, values } as unknown as Record<string, unknown>, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Intro" value={d.intro} onChange={(v) => setD({ ...d, intro: v })} multiline />
+      <Field label="Story" value={d.story} onChange={(v) => setD({ ...d, story: v })} multiline />
+      <ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="CTA Label" value={d.ctaLabel} onChange={(v) => setD({ ...d, ctaLabel: v })} />
+        <Field label="CTA Link" value={d.ctaHref} onChange={(v) => setD({ ...d, ctaHref: v })} />
+      </div>
+      <div>
+        <p className="text-xs font-medium text-zinc-600 mb-2">Fakten</p>
+        {facts.map((f, i) => (
+          <div key={i} className="flex gap-2 mb-1">
+            <input className="admin-input flex-1" value={f} onChange={(e) => setFacts(facts.map((x, idx) => idx === i ? e.target.value : x))} />
+            <button onClick={() => setFacts(facts.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600 text-xs">×</button>
+          </div>
+        ))}
+        <button onClick={() => setFacts([...facts, ''])} className="text-xs text-blue-600 hover:underline">+ Fakt hinzufügen</button>
+      </div>
+      <div>
+        <p className="text-xs font-medium text-zinc-600 mb-2">Werte</p>
+        {values.map((v, i) => (
+          <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
+            <button onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <Field label="Titel" value={v.title} onChange={(val) => setValues(values.map((x, idx) => idx === i ? { ...x, title: val } : x))} />
+            <Field label="Text" value={v.text} onChange={(val) => setValues(values.map((x, idx) => idx === i ? { ...x, text: val } : x))} />
+          </div>
+        ))}
+        <button onClick={() => setValues([...values, { title: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Wert hinzufügen</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── ShootingProcess Editor ──────────────────────────────────────
+function ShootingProcessEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+  });
+  const [steps, setSteps] = useState<{ title: string; text: string; icon: string }[]>(
+    ((data.steps as unknown[]) || []).map((s: unknown) => {
+      const step = s as Record<string, string>;
+      return { title: step.title || '', text: step.text || '', icon: step.icon || '' };
+    })
+  );
+  useReport({ ...d, steps } as unknown as Record<string, unknown>, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <div>
+        <p className="text-xs font-medium text-zinc-600 mb-2">Schritte</p>
+        {steps.map((step, i) => (
+          <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
+            <button onClick={() => setSteps(steps.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <div className="grid grid-cols-2 gap-2">
+              <Field label="Titel" value={step.title} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, title: v } : s))} />
+              <IconPickerField label="Icon" value={step.icon} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, icon: v } : s))} />
+            </div>
+            <Field label="Beschreibung" value={step.text} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, text: v } : s))} multiline />
+          </div>
+        ))}
+        <button onClick={() => setSteps([...steps, { title: '', text: '', icon: '' }])} className="text-xs text-blue-600 hover:underline">+ Schritt hinzufügen</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── ServicePackages Editor ──────────────────────────────────────
+function ServicePackagesEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    note: (data.note as string) || '',
+  });
+  const [packages, setPackages] = useState<{ name: string; price: string; description: string; features: string[]; highlighted: boolean; ctaLabel: string; ctaHref: string }[]>(
+    ((data.packages as unknown[]) || []).map((p: unknown) => {
+      const pkg = p as Record<string, unknown>;
+      return {
+        name: (pkg.name as string) || '',
+        price: (pkg.price as string) || '',
+        description: (pkg.description as string) || '',
+        features: (pkg.features as string[]) || [],
+        highlighted: (pkg.highlighted as boolean) || false,
+        ctaLabel: (pkg.ctaLabel as string) || '',
+        ctaHref: (pkg.ctaHref as string) || '',
+      };
+    })
+  );
+  useReport({ ...d, packages } as unknown as Record<string, unknown>, onChange);
+
+  function updatePkg(i: number, field: string, val: unknown) {
+    setPackages(packages.map((p, idx) => idx === i ? { ...p, [field]: val } : p));
+  }
+
+  return (
+    <div className="space-y-3">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <div>
+        <p className="text-xs font-medium text-zinc-600 mb-2">Pakete</p>
+        {packages.map((pkg, i) => (
+          <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-3">
+            <button onClick={() => setPackages(packages.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <div className="grid grid-cols-2 gap-2">
+              <Field label="Name" value={pkg.name} onChange={(v) => updatePkg(i, 'name', v)} />
+              <Field label="Preis" value={pkg.price} onChange={(v) => updatePkg(i, 'price', v)} placeholder="z.B. ab 490€" />
+            </div>
+            <Field label="Beschreibung" value={pkg.description} onChange={(v) => updatePkg(i, 'description', v)} />
+            <div className="mt-2">
+              <p className="text-xs text-zinc-500 mb-1">Features (eins pro Zeile)</p>
+              <textarea className="admin-input text-xs w-full" rows={3} value={pkg.features.join('\n')} onChange={(e) => updatePkg(i, 'features', e.target.value.split('\n').filter(Boolean))} />
+            </div>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              <Field label="CTA Label" value={pkg.ctaLabel} onChange={(v) => updatePkg(i, 'ctaLabel', v)} />
+              <Field label="CTA Link" value={pkg.ctaHref} onChange={(v) => updatePkg(i, 'ctaHref', v)} />
+            </div>
+            <label className="flex items-center gap-2 mt-2 text-xs text-zinc-600">
+              <input type="checkbox" checked={pkg.highlighted} onChange={(e) => updatePkg(i, 'highlighted', e.target.checked)} />
+              Hervorgehoben
+            </label>
+          </div>
+        ))}
+        <button onClick={() => setPackages([...packages, { name: '', price: '', description: '', features: [], highlighted: false, ctaLabel: '', ctaHref: '' }])} className="text-xs text-blue-600 hover:underline">+ Paket hinzufügen</button>
+      </div>
+      <Field label="Hinweis (unter Paketen)" value={d.note} onChange={(v) => setD({ ...d, note: v })} />
+    </div>
+  );
+}
+
 // ─── Editor registry ─────────────────────────────────────────────
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
@@ -851,4 +1094,9 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   richText: RichTextEditor,
   headerBanner: HeaderBannerEditor,
   collectionHero: CollectionHeroEditor,
+  textImage: TextImageEditor,
+  portfolioGallery: PortfolioGalleryEditor,
+  photographerAbout: PhotographerAboutEditor,
+  shootingProcess: ShootingProcessEditor,
+  servicePackages: ServicePackagesEditor,
 };
