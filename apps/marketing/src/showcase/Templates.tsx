@@ -10,6 +10,7 @@ const DEMO_LINKS: Record<string, string> = {
   hotel: '/demo/hotel',
   tourism: '/demo/tourism',
   medical: '/demo/medical',
+  wedding: '/demo/wedding',
 };
 
 const TEMPLATES = [
@@ -71,6 +72,16 @@ const TEMPLATES = [
     image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&q=80',
     color: '#0f4c5c',
     features: ['Leistungen & Diagnostik', 'Ärzte- & Praxisteam', 'Patienteninfo & Downloads', 'Terminbuchung', 'Sprechzeiten', 'Kontakt mit Karte'],
+    status: 'live' as const,
+  },
+  {
+    key: 'wedding',
+    name: 'Hochzeit',
+    tagline: 'Einladung, Programm & RSVP',
+    description: 'Eure Geschichte, Location, Tagesablauf, Dresscode, Menü, Galerie und digitale Gäste-Rückmeldung.',
+    image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80',
+    color: '#d4a373',
+    features: ['Countdown & Liebesgeschichte', 'Tagesablauf & Location', 'RSVP-Formular', 'Menü & Dresscode', 'Trauzeugen & Galerie', 'Geschenke & Anreise'],
     status: 'live' as const,
   },
 ];

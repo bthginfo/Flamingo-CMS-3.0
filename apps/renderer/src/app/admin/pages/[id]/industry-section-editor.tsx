@@ -6,8 +6,13 @@ import { hasRestaurantEditor, RestaurantSectionDataEditor } from './restaurant-s
 import { hasTourismEditor, TourismSectionDataEditor } from './tourism-section-data-editor';
 import { hasSalonEditor, SalonSectionDataEditor } from './salon-section-data-editor';
 import { hasMedicalEditor, MedicalSectionDataEditor } from './medical-section-data-editor';
+import { hasWeddingEditor, WeddingSectionDataEditor } from './wedding-section-data-editor';
 
 export function IndustrySectionDataEditor({ industry, type, data, onChange }: { industry: string; type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void }) {
+  if (industry === 'wedding' && hasWeddingEditor(type)) {
+    return <WeddingSectionDataEditor type={type} data={data} onChange={onChange} />;
+  }
+
   if (industry === 'medical' && hasMedicalEditor(type)) {
     return <MedicalSectionDataEditor type={type} data={data} onChange={onChange} />;
   }

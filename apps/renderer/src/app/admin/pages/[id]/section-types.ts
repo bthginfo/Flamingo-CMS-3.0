@@ -119,7 +119,25 @@ export const MEDICAL_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
+export const WEDDING_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Wedding-Hero', description: 'Paarnamen, Datum, Countdown und Hochzeitsbild' },
+  { type: 'coupleStory', label: 'Unsere Geschichte', description: 'Timeline mit Meilensteinen des Paares' },
+  { type: 'eventSchedule', label: 'Tagesablauf', description: 'Zeitplan des Hochzeitstags' },
+  { type: 'venueInfo', label: 'Location', description: 'Veranstaltungsort mit Karte und Infos' },
+  { type: 'travelInfo', label: 'Anreise & Hotels', description: 'Anfahrt und Übernachtungsempfehlungen' },
+  { type: 'weddingParty', label: 'Trauzeugen', description: 'Trauzeugen und Brautjungfern' },
+  { type: 'giftRegistry', label: 'Geschenke', description: 'Geschenkewünsche und Bankverbindung' },
+  { type: 'dresscode', label: 'Dresscode', description: 'Kleidungsempfehlungen und Farbpalette' },
+  { type: 'rsvp', label: 'Zusage (RSVP)', description: 'Anmeldeformular für Gäste' },
+  { type: 'weddingMenu', label: 'Menü', description: 'Hochzeitsmenü mit Gängen' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen der Gäste' },
+  { type: 'gallery', label: 'Galerie', description: 'Fotos vom Paar / Engagement-Shooting' },
+  { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz etc.' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
 export function getSectionTypesForIndustry(industry: string): SectionTypeDefinition[] {
+  if (industry === 'wedding') return WEDDING_SECTION_TYPES;
   if (industry === 'medical') return MEDICAL_SECTION_TYPES;
   if (industry === 'salon') return SALON_SECTION_TYPES;
   if (industry === 'tourism') return TOURISM_SECTION_TYPES;

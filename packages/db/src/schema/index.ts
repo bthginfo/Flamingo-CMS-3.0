@@ -365,3 +365,22 @@ export const formSubmissions = pgTable('form_submissions', {
   index('form_submissions_tenant_idx').on(t.tenantId),
   index('form_submissions_status_idx').on(t.tenantId, t.status),
 ]);
+
+// ─── RSVP Responses (Wedding) ────────────────────────────────────────
+export const rsvpResponses = pgTable('rsvp_responses', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }),
+  attending: boolean('attending').notNull().default(true),
+  guestCount: integer('guest_count').notNull().default(1),
+  guestNames: text('guest_names'),
+  dietary: varchar('dietary', { length: 100 }),
+  allergies: text('allergies'),
+  songWish: varchar('song_wish', { length: 255 }),
+  comment: text('comment'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('rsvp_responses_tenant_idx').on(t.tenantId),
+]);

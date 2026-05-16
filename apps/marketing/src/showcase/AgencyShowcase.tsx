@@ -91,7 +91,7 @@ function applyShowcasePalette() {
 }
 
 /* ─── Template metadata ────────────────────────────────────────────── */
-const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical', {
+const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding', {
   label: string;
   tagline: string;
   description: string;
@@ -147,9 +147,17 @@ const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     accent: '#0e7490',
     bullets: ['Leistungen & Diagnostik', 'Ärzte- & Praxisteam', 'Patienteninfo, Kassen & Downloads', 'Sprechzeiten & Kontakt mit Karte'],
   },
+  wedding: {
+    label: 'Hochzeit',
+    tagline: 'Einladung · Programm · RSVP',
+    description: 'Eure Geschichte, Location, Tagesablauf, Dresscode, Menü, Galerie und digitale Gäste-Rückmeldung.',
+    image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1400&q=80',
+    accent: '#d4a373',
+    bullets: ['Liebesgeschichte & Countdown', 'Tagesablauf & Location', 'RSVP-Formular & Menü', 'Dresscode & Geschenke'],
+  },
 };
 
-const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical', { classic: string; modern: string; bold: string }> = {
+const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding', { classic: string; modern: string; bold: string }> = {
   handwerk: {
     classic: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80',
@@ -180,12 +188,17 @@ const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     modern: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&w=1400&q=80',
   },
+  wedding: {
+    classic: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=1400&q=80',
+  },
 };
 
 /* ─── Coming-soon branches ───────────────────────────────────────── */
-type ExtraBranchKey = 'consulting' | 'fitness' | 'wedding';
+type ExtraBranchKey = 'consulting' | 'fitness';
 type BranchKey = TemplateKey | ExtraBranchKey;
-const EXTRA_KEYS: ExtraBranchKey[] = ['consulting', 'fitness', 'wedding'];
+const EXTRA_KEYS: ExtraBranchKey[] = ['consulting', 'fitness'];
 const isExtraKey = (k: string | undefined): k is ExtraBranchKey =>
   !!k && (EXTRA_KEYS as string[]).includes(k);
 
@@ -214,14 +227,6 @@ const EXTRA_BRANCHES: Record<ExtraBranchKey, {
     image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1400&q=80',
     accent: '#9333ea',
     bullets: ['Programme & Kursformat', 'Trainer:innen mit Stories', 'Probetraining-CTA im Hero', 'Preise pro Kurs / Paket'],
-  },
-  wedding: {
-    label: 'Wedding Website',
-    tagline: 'Einladung · Programm · RSVP',
-    description: 'Eure Geschichte, Location, Ablauf und Gäste-Rückmeldung — alles auf einer schönen Seite.',
-    image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1400&q=80',
-    accent: '#d4a373',
-    bullets: ['Eure Liebesgeschichte', 'Programm & Ablauf', 'Galerie & Eindrücke', 'RSVP-Formular für Gäste'],
   },
 };
 
@@ -467,6 +472,7 @@ function ShowcaseFooter() {
               <li><a href={`${DEMO_BASE}/demo/salon`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Salon &amp; Beauty</a></li>
               <li><a href={`${DEMO_BASE}/demo/medical`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Arztpraxis</a></li>
               <li><a href={`${DEMO_BASE}/demo/tourism`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Tourismus</a></li>
+              <li><a href={`${DEMO_BASE}/demo/wedding`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Hochzeit</a></li>
             </ul>
           </div>
           <div>

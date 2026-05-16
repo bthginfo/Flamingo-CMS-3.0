@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, FileText, FolderOpen, Newspaper, Navigation,
-  Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Eye,
+  Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Eye, Heart,
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
 
@@ -15,6 +15,7 @@ const NAV = [
   { href: '/admin/news', label: 'News & Blog', icon: Newspaper },
   { href: '/admin/media', label: 'Mediathek', icon: ImageIcon },
   { href: '/admin/inbox', label: 'Posteingang', icon: Inbox },
+  { href: '/admin/rsvp', label: 'RSVP-Gäste', icon: Heart },
   { href: '/admin/navigation', label: 'Navigation & Footer', icon: Navigation },
   { href: '/admin/brand', label: 'Marke & Design', icon: Palette },
   { href: '/admin/contact', label: 'Kontakt & Zeiten', icon: Phone },

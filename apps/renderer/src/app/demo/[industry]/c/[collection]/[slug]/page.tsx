@@ -11,6 +11,7 @@ const INDUSTRY_MAP: Record<string, string> = {
   salon: 'salon',
   tourism: 'tourism',
   medical: 'medical',
+  wedding: 'wedding',
 };
 
 export default async function DemoCollectionDetailPage({
