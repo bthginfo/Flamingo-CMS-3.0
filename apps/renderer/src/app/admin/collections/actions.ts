@@ -20,6 +20,30 @@ export async function getCollectionsAction() {
   return db.select().from(collections).where(eq(collections.tenantId, session.tenantId)).orderBy(asc(collections.key));
 }
 
+export async function createCollectionAction(formData: FormData) {
+  const session = await requireSession();
+  const db = getDb();
+  const label = (formData.get('label') as string)?.trim();
+  if (!label) return;
+  const key = label.toLowerCase().replace(/[^a-z0-9äöüß]+/g, '-').replace(/(^-|-$)/g, '').replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
+  await db.insert(collections).values({ tenantId: session.tenantId, key: key || 'new', label });
+  revalidatePath('/admin/collections');
+}
+
+export async function updateCollectionAction(id: string, data: { label?: string; key?: string }) {
+  const session = await requireSession();
+  const db = getDb();
+  await db.update(collections).set({ ...data, updatedAt: new Date() }).where(and(eq(collections.id, id), eq(collections.tenantId, session.tenantId)));
+  revalidatePath('/admin/collections');
+}
+
+export async function deleteCollectionAction(id: string) {
+  const session = await requireSession();
+  const db = getDb();
+  await db.delete(collections).where(and(eq(collections.id, id), eq(collections.tenantId, session.tenantId)));
+  revalidatePath('/admin/collections');
+}
+
 export async function ensureDefaultCollections() {
   const session = await requireSession();
   const db = getDb();
