@@ -301,6 +301,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
   photography: {
     hero: HeroSection,
     portfolioGallery: PortfolioGallerySection,
+    servicesGrid: ServicesGridSection,
     servicePackages: ServicePackagesSection,
     photographerAbout: PhotographerAboutSection,
     shootingProcess: ShootingProcessSection,
@@ -318,6 +319,36 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
   },
 };
 
+// Shared/generic sections available to ALL templates
+const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
+  uspStrip: UspStripSection,
+  servicesGrid: ServicesGridSection,
+  processSteps: ProcessStepsSection,
+  ctaBand: CtaBandSection,
+  ctaLinks: CtaLinksSection,
+  newsPreview: NewsPreviewSection,
+  newsGrid: NewsPreviewSection,
+  stats: StatsSection,
+  logoCloud: LogoCloudSection,
+  galleryGrid: GalleryGridSection,
+  richText: RichTextSection,
+  headerBanner: HeaderBannerSection,
+  textImage: TextImageSection,
+  collectionHero: CollectionHeroSection,
+  contact: ContactSection,
+  map: MapSection,
+  testimonials: TestimonialsSection,
+  faq: FaqSection,
+  team: TeamSection,
+  portfolio: PortfolioSection,
+  serviceDetail: ServiceDetailSection,
+  portfolioGallery: PortfolioGallerySection,
+  servicePackages: ServicePackagesSection,
+  photographerAbout: PhotographerAboutSection,
+  shootingProcess: ShootingProcessSection,
+};
+
 export function getIndustryTemplates(industry: string): Record<string, TemplateComponent> {
-  return INDUSTRY_TEMPLATES[industry] ?? TRADESMAN_TEMPLATES;
+  const specific = INDUSTRY_TEMPLATES[industry] ?? TRADESMAN_TEMPLATES;
+  return { ...SHARED_TEMPLATES, ...specific };
 }

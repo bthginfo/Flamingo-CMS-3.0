@@ -338,12 +338,24 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         </button>
         {showAddMenu && (
           <div className="absolute top-full left-0 right-0 mt-2 bg-white border rounded-lg shadow-lg max-h-80 overflow-auto z-10">
-            {sectionTypes.map((st) => (
-              <button key={st.type} onClick={() => handleAddSection(st.type)} className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b last:border-b-0">
-                <span className="font-medium text-sm">{st.label}</span>
-                <span className="text-xs text-gray-500 ml-2">{st.description}</span>
-              </button>
-            ))}
+            {(() => {
+              const grouped: Record<string, typeof sectionTypes> = {};
+              for (const st of sectionTypes) {
+                const cat = st.category || 'Branchenspezifisch';
+                (grouped[cat] ??= []).push(st);
+              }
+              return Object.entries(grouped).map(([cat, items]) => (
+                <div key={cat}>
+                  <div className="px-4 py-1.5 bg-gray-50 text-[10px] font-semibold text-gray-500 uppercase tracking-wide sticky top-0">{cat}</div>
+                  {items.map((st) => (
+                    <button key={st.type} onClick={() => handleAddSection(st.type)} className="w-full text-left px-4 py-2.5 hover:bg-blue-50 border-b last:border-b-0">
+                      <span className="font-medium text-sm">{st.label}</span>
+                      <span className="text-xs text-gray-500 ml-2">{st.description}</span>
+                    </button>
+                  ))}
+                </div>
+              ));
+            })()}
           </div>
         )}
       </div>

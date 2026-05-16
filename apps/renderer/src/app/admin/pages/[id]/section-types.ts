@@ -2,7 +2,33 @@
   type: string;
   label: string;
   description: string;
+  category?: string;
 };
+
+// Shared sections available to all templates
+const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild', category: 'Inhalt' },
+  { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.', category: 'Inhalt' },
+  { type: 'headerBanner', label: 'Header-Banner', description: 'Obere Hinweisleiste', category: 'Inhalt' },
+  { type: 'ctaBand', label: 'CTA-Band', description: 'Call-to-Action Banner', category: 'Marketing' },
+  { type: 'ctaLinks', label: 'CTA-Links', description: 'Button-Links zu Unterseiten', category: 'Marketing' },
+  { type: 'uspStrip', label: 'USP-Leiste', description: 'Einzigartige Verkaufsargumente', category: 'Marketing' },
+  { type: 'stats', label: 'Zahlen & Fakten', description: 'Animierte Statistik-Zähler', category: 'Marketing' },
+  { type: 'logoCloud', label: 'Logo-Cloud', description: 'Partner- & Zertifikats-Logos', category: 'Marketing' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen', category: 'Social Proof' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen', category: 'Social Proof' },
+  { type: 'galleryGrid', label: 'Galerie', description: 'Bildergalerie mit Lightbox', category: 'Medien' },
+  { type: 'newsPreview', label: 'News-Vorschau', description: 'Aktuelle Beiträge (News/Blog)', category: 'Medien' },
+  { type: 'newsGrid', label: 'News-Grid', description: 'News-Beiträge als Grid', category: 'Medien' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular', category: 'Kontakt' },
+  { type: 'map', label: 'Karte', description: 'Google Maps Einbettung', category: 'Kontakt' },
+  { type: 'team', label: 'Team', description: 'Team-Mitglieder', category: 'Team & Personen' },
+  { type: 'servicesGrid', label: 'Leistungen', description: 'Leistungs-Grid', category: 'Leistungen' },
+  { type: 'processSteps', label: 'Ablauf', description: 'Prozess-Schritte Timeline', category: 'Leistungen' },
+  { type: 'serviceDetail', label: 'Leistungs-Detail', description: 'Detaillierte Leistungsbeschreibung', category: 'Leistungen' },
+  { type: 'portfolio', label: 'Portfolio', description: 'Referenzprojekte-Galerie', category: 'Medien' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten', category: 'Inhalt' },
+];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'hero', label: 'Hero', description: 'Hauptbanner der Seite' },
@@ -162,12 +188,18 @@ export const PHOTOGRAPHY_SECTION_TYPES: SectionTypeDefinition[] = [
 ];
 
 export function getSectionTypesForIndustry(industry: string): SectionTypeDefinition[] {
-  if (industry === 'photography') return PHOTOGRAPHY_SECTION_TYPES;
-  if (industry === 'wedding') return WEDDING_SECTION_TYPES;
-  if (industry === 'medical') return MEDICAL_SECTION_TYPES;
-  if (industry === 'salon') return SALON_SECTION_TYPES;
-  if (industry === 'tourism') return TOURISM_SECTION_TYPES;
-  if (industry === 'hotel') return HOTEL_SECTION_TYPES;
-  if (industry === 'restaurant') return RESTAURANT_SECTION_TYPES;
-  return TRADESMAN_SECTION_TYPES;
+  let specific: SectionTypeDefinition[];
+  if (industry === 'photography') specific = PHOTOGRAPHY_SECTION_TYPES;
+  else if (industry === 'wedding') specific = WEDDING_SECTION_TYPES;
+  else if (industry === 'medical') specific = MEDICAL_SECTION_TYPES;
+  else if (industry === 'salon') specific = SALON_SECTION_TYPES;
+  else if (industry === 'tourism') specific = TOURISM_SECTION_TYPES;
+  else if (industry === 'hotel') specific = HOTEL_SECTION_TYPES;
+  else if (industry === 'restaurant') specific = RESTAURANT_SECTION_TYPES;
+  else specific = TRADESMAN_SECTION_TYPES;
+
+  // Merge: industry-specific first, then shared (skip duplicates)
+  const types = new Set(specific.map(s => s.type));
+  const shared = SHARED_SECTION_TYPES.filter(s => !types.has(s.type));
+  return [...specific, ...shared];
 }
