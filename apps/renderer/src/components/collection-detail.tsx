@@ -36,17 +36,17 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
 
     return (
       <div>
-        {/* Back link */}
+        {/* Hero sections */}
+        {heroSections.map((section) => (
+          <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} />
+        ))}
+        {/* Back link — placed after hero so it's not hidden behind fixed nav */}
         <div className="max-w-7xl mx-auto px-6 pt-8">
           <Link href={`${backHrefPrefix}/${collection.key}`} className="inline-flex items-center gap-2 text-sm text-brand-primary hover:underline mb-4">
             <ArrowLeft size={16} />
             Zurück zu {collection.label}
           </Link>
         </div>
-        {/* Hero sections */}
-        {heroSections.map((section) => (
-          <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} />
-        ))}
         {/* Inline content from data fields */}
         {(body || description || features || stats || gallery) && (
           <div className="max-w-4xl mx-auto px-6 py-12">
