@@ -416,7 +416,7 @@ function GalleryGridEditor({ data, onChange }: EditorProps) {
           handleUploadUrl: '/api/upload',
         });
         newImages.push({ src: blob.url, alt: file.name.replace(/\.[^.]+$/, ''), caption: '' });
-        saveMediaRecord({ blobUrl: blob.url, pathname: blob.pathname, filename: optimized.name, mimeType: optimized.type || 'image/webp', size: optimized.size }).catch(() => {});
+        await saveMediaRecord({ blobUrl: blob.url, pathname: blob.pathname, filename: optimized.name, mimeType: optimized.type || 'image/webp', size: optimized.size }).catch(e => console.error('saveMediaRecord failed:', e));
       } catch (e) { console.error('Bulk upload failed for', file.name, e); }
     }
     setImages(prev => [...prev, ...newImages]);
@@ -1017,7 +1017,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
         const optimized = await resizeImage(file, 1920, 0.85);
         const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, { access: 'public', handleUploadUrl: '/api/upload' });
         newImages.push({ src: blob.url, alt: file.name.replace(/\.[^.]+$/, ''), category, location: '' });
-        saveMediaRecord({ blobUrl: blob.url, pathname: blob.pathname, filename: optimized.name, mimeType: optimized.type || 'image/webp', size: optimized.size }).catch(() => {});
+        await saveMediaRecord({ blobUrl: blob.url, pathname: blob.pathname, filename: optimized.name, mimeType: optimized.type || 'image/webp', size: optimized.size }).catch(e => console.error('saveMediaRecord failed:', e));
       } catch (e) { console.error('Bulk upload failed for', file.name, e); }
     }
     setImages(prev => [...prev, ...newImages]);
