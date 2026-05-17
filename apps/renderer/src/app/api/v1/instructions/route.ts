@@ -13,31 +13,47 @@ export async function GET(req: NextRequest) {
   const tenantPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title }).from(pages).where(eq(pages.tenantId, auth.tenantId));
 
   const sectionTypes = getSectionTypesForIndustry(auth.tenant.industry);
+  // Exclude HTML-Block (freeHtml) from AI usage
+  const allowedSectionTypes = sectionTypes.filter((s: { type?: string; id?: string }) => {
+    const key = s.type || s.id || '';
+    return key !== 'freeHtml' && key !== 'htmlBlock' && key !== 'html';
+  });
 
   return NextResponse.json({
     tenant: auth.tenant,
     tenantId: auth.tenantId,
     existingPages: tenantPages,
-    availableSectionTypes: sectionTypes,
+    availableSectionTypes: allowedSectionTypes,
     sectionDataSchemas: getSectionSchemas(auth.tenant.industry),
     endpoints: {
       brand: { method: 'PUT', path: '/api/v1/content/brand', description: 'Set brand data (companyName, tagline, primaryColor, logo, etc.)' },
-      contact: { method: 'PUT', path: '/api/v1/content/contact', description: 'Set contact info (email, phone, address)' },
+      contact: { method: 'PUT', path: '/api/v1/content/contact', description: 'Set contact info (email, phone, address, whatsapp, whatsappEnabled, whatsappColor)' },
       navigation: { method: 'PUT', path: '/api/v1/content/navigation', description: 'Set nav items + CTA' },
       footer: { method: 'PUT', path: '/api/v1/content/footer', description: 'Set footer columns + legal links + CTA' },
       createPage: { method: 'POST', path: '/api/v1/content/pages', description: 'Create a new page with sections' },
       updatePage: { method: 'PUT', path: '/api/v1/content/pages/:id', description: 'Update a page (title, sections)' },
       deletePage: { method: 'DELETE', path: '/api/v1/content/pages/:id', description: 'Delete a page' },
+      seoGlobal: { method: 'PUT', path: '/api/v1/content/seo', description: 'Set global SEO defaults (titleTemplate, defaultDescription, canonicalBase, locale)' },
+      seoPage: { method: 'PUT', path: '/api/v1/content/seo/:pageId', description: 'Set page-level SEO (metaTitle, metaDescription, ogImage, canonical, noindex)' },
+      design: { method: 'PUT', path: '/api/v1/content/design', description: 'Set design overrides (textPrimary, textSecondary, sectionBg, sectionBgAlt, cardBg, badgeBg, badgeText, brand, dividerColor)' },
+      formFields: { method: 'PUT', path: '/api/v1/content/form-fields', description: 'Set contact form fields: { fields: [{ name, label, type: "text"|"email"|"tel"|"textarea"|"select", placeholder?, required?, options?, halfWidth? }] }' },
+      openingHours: { method: 'PUT', path: '/api/v1/content/opening-hours', description: 'Set opening hours: { hours: [{ day: string, hours: string }] }' },
       listCollections: { method: 'GET', path: '/api/v1/content/collections', description: 'List all collections' },
       createCollectionItem: { method: 'POST', path: '/api/v1/content/collections/:key/items', description: 'Create a collection item (title, slug, data with sections)' },
       updateCollectionItem: { method: 'PUT', path: '/api/v1/content/collections/:key/items/:id', description: 'Update a collection item' },
       deleteCollectionItem: { method: 'DELETE', path: '/api/v1/content/collections/:key/items/:id', description: 'Delete a collection item' },
       publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content as snapshot' },
     },
+    restrictions: [
+      'Do NOT use section type "freeHtml" or "htmlBlock" — raw HTML is not allowed.',
+      'Only use section types listed in availableSectionTypes.',
+      'Only fill fields defined in sectionDataSchemas — do not invent custom fields.',
+    ],
     instructions: `You are an AI assistant filling content for a "${auth.tenant.industry}" website called "${auth.tenant.name}". 
 Use the endpoints above to create pages with sections. Each section requires a "type" from availableSectionTypes and a "data" object matching the schema for that type.
 Always include relevant real-looking content. Use German language for all content.
 Create at least a homepage with hero + 3-5 supporting sections, plus any relevant subpages.
+Set SEO fields for each page, configure brand colors, navigation, footer, and contact info.
 After creating all content, call the publish endpoint to make it live.`,
   });
 }
