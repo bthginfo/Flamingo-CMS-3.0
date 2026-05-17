@@ -29,7 +29,12 @@ async function vercelFetch(path: string, method = 'GET', body?: unknown) {
     },
   };
   if (body) options.body = JSON.stringify(body);
-  const res = await fetch(`${VERCEL_API}${path}${path.includes('?') ? '&' : '?'}teamId=${getTeamId()}`, options);
+  const tid = getTeamId();
+  const separator = path.includes('?') ? '&' : '?';
+  const url = tid
+    ? `${VERCEL_API}${path}${separator}teamId=${tid}`
+    : `${VERCEL_API}${path}`;
+  const res = await fetch(url, options);
   const data = await res.json();
   if (!res.ok) {
     throw new Error(`Vercel API ${method} ${path}: ${res.status} - ${JSON.stringify(data)}`);
