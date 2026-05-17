@@ -12,11 +12,11 @@ export async function createTenantAction(input: ProvisionInput) {
     const result = await provisionTenant(input);
     revalidatePath('/crm');
     revalidatePath('/crm/tenants');
-    return result;
+    return { success: true as const, ...result };
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Provisioning failed';
-    console.error('Provisioning error:', message);
-    throw new Error(message);
+    console.error('Provisioning error:', message, err);
+    return { success: false as const, error: message };
   }
 }
 

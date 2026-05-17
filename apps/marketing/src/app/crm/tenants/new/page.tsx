@@ -58,18 +58,19 @@ export default function NewTenantPage() {
       return;
     }
     startTransition(async () => {
-      try {
-        const result = await createTenantAction({
-          ...form,
-          industry: form.industry as any,
-          domain: form.domain || undefined,
-          deploymentMode: form.deploymentMode,
-        });
-        toast.success(`Tenant "${form.name}" wurde erstellt! Erreichbar unter: ${result.rendererUrl}`);
-        router.push(`/crm/tenants/${result.tenantId}`);
-      } catch (err) {
-        toast.error((err as Error).message);
+      const result = await createTenantAction({
+        ...form,
+        industry: form.industry as any,
+        domain: form.domain || undefined,
+        deploymentMode: form.deploymentMode,
+      });
+      if (!result.success) {
+        toast.error(result.error);
+        return;
       }
+      if (result.warning) toast.warning(result.warning, { duration: 10000 });
+      toast.success(`Tenant "${form.name}" wurde erstellt! Erreichbar unter: ${result.rendererUrl}`);
+      router.push(`/crm/tenants/${result.tenantId}`);
     });
   }
 

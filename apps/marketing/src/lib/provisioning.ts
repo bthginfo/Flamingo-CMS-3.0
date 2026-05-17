@@ -32,6 +32,7 @@ export type ProvisionResult = {
   domainConfigured?: boolean;
   adminUrl: string;
   rendererUrl: string;
+  warning?: string;
 };
 
 type DefaultPage = {
@@ -166,11 +167,17 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   // 8. Domain provisioning
   let domainConfigured = false;
   let vercelProjectId: string | undefined;
+  let standaloneError: string | undefined;
 
   if (deploymentMode === 'standalone') {
     // Create a dedicated Vercel project for this tenant
-    const standaloneResult = await createStandaloneProject(input.slug, tenantId);
-    vercelProjectId = standaloneResult.projectId;
+    try {
+      const standaloneResult = await createStandaloneProject(input.slug, tenantId);
+      vercelProjectId = standaloneResult.projectId;
+    } catch (err) {
+      standaloneError = err instanceof Error ? err.message : 'Unbekannter Fehler';
+      console.error('Standalone project creation failed:', standaloneError);
+    }
 
     // Store the Vercel test domain as preview
     const vercelDomain = vercelProjectId
@@ -260,6 +267,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     domainConfigured,
     adminUrl: standaloneUrl ? `${standaloneUrl}/admin` : `${rendererBaseUrl}/${input.slug}/admin`,
     rendererUrl: standaloneUrl || sharedUrl,
+    warning: standaloneError ? `Standalone-Projekt Fehler: ${standaloneError}` : undefined,
   };
 }
 
