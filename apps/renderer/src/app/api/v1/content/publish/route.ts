@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     await db.insert(publishedSnapshots).values({
       id: crypto.randomUUID(),
       tenantId: auth.tenantId,
-      version: Date.now(),
+      version: Math.floor(Date.now() / 1000),
       snapshot: snapshotData,
       checksum: crypto.createHash('md5').update(JSON.stringify(snapshotData)).digest('hex'),
       createdBy: 'api',
