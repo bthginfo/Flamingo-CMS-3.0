@@ -60,7 +60,10 @@ After creating all content, call the publish endpoint to make it live.
 IMPORTANT — Collections statt Unterseiten:
 Für wiederkehrende Inhaltstypen wie Leistungen, Zimmer, News, Team-Mitglieder, Referenzen, Menü-Kategorien, Behandlungen usw. sollst du IMMER Collections verwenden statt einzelne Unterseiten anzulegen.
 Workflow: 1) POST /api/v1/content/collections mit key (z.B. "leistungen", "zimmer", "news") und label (z.B. "Leistungen") um die Collection zu erstellen. 2) Dann POST /api/v1/content/collections/:key/items für jeden Eintrag. Jedes Item bekommt einen title, slug und data (mit sections-Array genau wie bei Seiten). 3) Auf der Startseite oder einer Übersichtsseite verweise auf /c/:key/:slug für die Detailseiten.
-Beispiel: Statt 5 einzelne Seiten "/badezimmer", "/heizung", "/solar" anzulegen, erstelle eine Collection "leistungen" und lege Items "Badezimmer", "Heizung", "Solar" als Collection Items an. Die Übersichtsseite kann dann ein servicesGrid mit href="/c/leistungen/badezimmer" etc. nutzen.`,
+Beispiel: Statt 5 einzelne Seiten "/badezimmer", "/heizung", "/solar" anzulegen, erstelle eine Collection "leistungen" und lege Items "Badezimmer", "Heizung", "Solar" als Collection Items an. Die Übersichtsseite kann dann ein servicesGrid mit href="/c/leistungen/badezimmer" etc. nutzen.
+
+WICHTIG — Slugs:
+Slugs dürfen NIEMALS mit einem "/" beginnen. Ein Slug ist nur der Pfadteil ohne führenden Slash, z.B. "kontakt" (NICHT "/kontakt"), "ueber-uns" (NICHT "/ueber-uns"). Die Startseite/Homepage MUSS den Slug "startseite" haben. Falsche Slugs wie "/kontakt" führen zu 404-Fehlern.`,
   });
 }
 

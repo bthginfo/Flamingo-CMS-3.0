@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
   const db = getDb();
   const pageId = crypto.randomUUID();
-  const normalizedSlug = slug.startsWith('/') ? slug : `/${slug}`;
+  const normalizedSlug = slug.replace(/^\/+/, '');
 
   await db.insert(pages).values({
     id: pageId,
