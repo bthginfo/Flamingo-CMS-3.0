@@ -39,6 +39,7 @@ export async function GET(req: NextRequest) {
       formFields: { method: 'PUT', path: '/api/v1/content/form-fields', description: 'Set contact form fields: { fields: [{ name, label, type: "text"|"email"|"tel"|"textarea"|"select", placeholder?, required?, options?, halfWidth? }] }' },
       openingHours: { method: 'PUT', path: '/api/v1/content/opening-hours', description: 'Set opening hours: { hours: [{ day: string, hours: string }] }' },
       listCollections: { method: 'GET', path: '/api/v1/content/collections', description: 'List all collections' },
+      createCollection: { method: 'POST', path: '/api/v1/content/collections', description: 'Create a new collection (key: lowercase-slug, label: display name). Use for repeating content types like services, rooms, news, team members, etc.' },
       createCollectionItem: { method: 'POST', path: '/api/v1/content/collections/:key/items', description: 'Create a collection item (title, slug, data with sections)' },
       updateCollectionItem: { method: 'PUT', path: '/api/v1/content/collections/:key/items/:id', description: 'Update a collection item' },
       deleteCollectionItem: { method: 'DELETE', path: '/api/v1/content/collections/:key/items/:id', description: 'Delete a collection item' },
@@ -54,7 +55,12 @@ Use the endpoints above to create pages with sections. Each section requires a "
 Always include relevant real-looking content. Use German language for all content.
 Create at least a homepage with hero + 3-5 supporting sections, plus any relevant subpages.
 Set SEO fields for each page, configure brand colors, navigation, footer, and contact info.
-After creating all content, call the publish endpoint to make it live.`,
+After creating all content, call the publish endpoint to make it live.
+
+IMPORTANT — Collections statt Unterseiten:
+Für wiederkehrende Inhaltstypen wie Leistungen, Zimmer, News, Team-Mitglieder, Referenzen, Menü-Kategorien, Behandlungen usw. sollst du IMMER Collections verwenden statt einzelne Unterseiten anzulegen.
+Workflow: 1) POST /api/v1/content/collections mit key (z.B. "leistungen", "zimmer", "news") und label (z.B. "Leistungen") um die Collection zu erstellen. 2) Dann POST /api/v1/content/collections/:key/items für jeden Eintrag. Jedes Item bekommt einen title, slug und data (mit sections-Array genau wie bei Seiten). 3) Auf der Startseite oder einer Übersichtsseite verweise auf /c/:key/:slug für die Detailseiten.
+Beispiel: Statt 5 einzelne Seiten "/badezimmer", "/heizung", "/solar" anzulegen, erstelle eine Collection "leistungen" und lege Items "Badezimmer", "Heizung", "Solar" als Collection Items an. Die Übersichtsseite kann dann ein servicesGrid mit href="/c/leistungen/badezimmer" etc. nutzen.`,
   });
 }
 
