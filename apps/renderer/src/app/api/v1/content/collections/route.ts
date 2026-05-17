@@ -26,33 +26,40 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const auth = await validatePat(req.headers.get('authorization'));
-  if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const auth = await validatePat(req.headers.get('authorization'));
+    if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { key, label, schema: colSchema, settings } = await req.json();
-  if (!key || !label) return NextResponse.json({ error: 'key and label required' }, { status: 400 });
+    const body = await req.json();
+    const { key, label, schema: colSchema, settings } = body;
+    if (!key || !label) return NextResponse.json({ error: 'key and label required' }, { status: 400 });
 
-  if (!/^[a-z0-9-]+$/.test(key)) {
-    return NextResponse.json({ error: 'key must be lowercase alphanumeric with hyphens only' }, { status: 400 });
+    if (!/^[a-z0-9-]+$/.test(key)) {
+      return NextResponse.json({ error: 'key must be lowercase alphanumeric with hyphens only' }, { status: 400 });
+    }
+
+    const db = getDb();
+
+    const [existing] = await db.select({ id: collections.id }).from(collections)
+      .where(and(eq(collections.tenantId, auth.tenantId), eq(collections.key, key)));
+    if (existing) {
+      return NextResponse.json({ id: existing.id, key }, { status: 200 });
+    }
+
+    const id = crypto.randomUUID();
+    await db.insert(collections).values({
+      id,
+      tenantId: auth.tenantId,
+      key,
+      label,
+      schema: colSchema || {},
+      settings: settings || {},
+    });
+
+    return NextResponse.json({ id, key }, { status: 201 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('POST /collections error:', message);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  const db = getDb();
-
-  const [existing] = await db.select({ id: collections.id }).from(collections)
-    .where(and(eq(collections.tenantId, auth.tenantId), eq(collections.key, key)));
-  if (existing) {
-    return NextResponse.json({ error: 'Collection with this key already exists', id: existing.id }, { status: 409 });
-  }
-
-  const id = crypto.randomUUID();
-  await db.insert(collections).values({
-    id,
-    tenantId: auth.tenantId,
-    key,
-    label,
-    schema: colSchema || {},
-    settings: settings || {},
-  });
-
-  return NextResponse.json({ id, key }, { status: 201 });
 }
