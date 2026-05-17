@@ -55,17 +55,22 @@ export async function resolveTenant(): Promise<string | null> {
   const fixedTenantId = process.env.FIXED_TENANT_ID;
   if (fixedTenantId) return fixedTenantId;
 
-  const db = getDb();
-  const headersList = await headers();
-  const host = headersList.get('host') ?? 'localhost';
+  try {
+    const db = getDb();
+    const headersList = await headers();
+    const host = headersList.get('host') ?? 'localhost';
 
-  // Try domain lookup
-  const [domain] = await db.select({ tenantId: tenantDomains.tenantId }).from(tenantDomains).where(eq(tenantDomains.domain, host)).limit(1);
-  if (domain) return domain.tenantId;
+    // Try domain lookup
+    const [domain] = await db.select({ tenantId: tenantDomains.tenantId }).from(tenantDomains).where(eq(tenantDomains.domain, host)).limit(1);
+    if (domain) return domain.tenantId;
 
-  // Fallback: first active tenant (dev mode)
-  const [tenant] = await db.select({ id: tenants.id }).from(tenants).where(eq(tenants.status, 'active')).limit(1);
-  return tenant?.id ?? null;
+    // Fallback: first active tenant (dev mode)
+    const [tenant] = await db.select({ id: tenants.id }).from(tenants).where(eq(tenants.status, 'active')).limit(1);
+    return tenant?.id ?? null;
+  } catch (err) {
+    console.error('[resolveTenant] DB error:', err);
+    return null;
+  }
 }
 
 /** Get live data for the tenant (cached for public frontend, invalidated on publish). */
