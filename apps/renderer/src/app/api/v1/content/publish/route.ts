@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
         id: p.id,
         slug: p.slug,
         title: p.title,
+        visible: p.visible ?? true,
         sections: allSections.filter(s => s.pageId === p.id).map(s => ({ id: s.id, type: s.type, data: s.data, variant: s.variant, visible: s.visible, container: s.container, spacingTop: s.spacingTop, spacingBottom: s.spacingBottom, anchorId: s.anchorId })),
       })),
       collections: allCollections.map(c => ({
