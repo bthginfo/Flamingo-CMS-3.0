@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
 import { footer } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
+import { withApiHandler } from '@/lib/api-utils';
 
-export async function PUT(req: NextRequest) {
-  const auth = await validatePat(req.headers.get('authorization'));
-  if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
+export const PUT = withApiHandler(async (req, auth) => {
   const { columns, legalLinks, cta } = await req.json();
   const db = getDb();
 
@@ -19,4 +16,4 @@ export async function PUT(req: NextRequest) {
   }
 
   return NextResponse.json({ success: true });
-}
+});

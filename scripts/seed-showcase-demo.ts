@@ -58,21 +58,12 @@ async function main() {
   });
   await db.insert(schema.navigation).values({
     tenantId,
-    items: [
-      { label: 'Übersicht', href: '/', type: 'link' },
-      { label: 'Hero', href: '/hero-banner', type: 'link' },
-      { label: 'Text & Bild', href: '/text-bild', type: 'link' },
-      { label: 'Leistungen', href: '/leistungs-grid', type: 'link' },
-      { label: 'FAQ', href: '/faq', type: 'link' },
-    ] as any,
-    cta: { label: 'Alle Sektionen', href: '/' } as any,
+    items: [] as any,
+    cta: {} as any,
   });
   await db.insert(schema.footer).values({
     tenantId,
-    columns: [
-      { title: 'Sektionen', items: [{ text: 'Hero-Banner', href: '/hero-banner' }, { text: 'Leistungs-Grid', href: '/leistungs-grid' }, { text: 'Bewertungen', href: '/bewertungen' }, { text: 'FAQ', href: '/faq' }] },
-      { title: 'Mehr', items: [{ text: 'Text & Bild', href: '/text-bild' }, { text: 'Preispakete', href: '/preispakete' }, { text: 'Galerie', href: '/galerie' }, { text: 'Team', href: '/team' }] },
-    ] as any,
+    columns: [] as any,
     legalLinks: [] as any,
   });
 

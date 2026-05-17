@@ -1,5 +1,6 @@
 import type { SnapshotSection, SnapshotCollection } from '@/lib/snapshot';
 import { getIndustryTemplates } from '@/templates';
+import { SectionErrorBoundary } from './section-error-boundary';
 
 const SPACING: Record<string, string> = {
   none: 'py-0',
@@ -53,7 +54,9 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   if (isFullBleed) {
     return (
       <section id={section.anchorId ?? undefined}>
-        <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
+        <SectionErrorBoundary sectionType={section.type}>
+          <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
+        </SectionErrorBoundary>
       </section>
     );
   }
@@ -65,7 +68,9 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   return (
     <section id={section.anchorId ?? undefined} className={`${spacingClass} ${spacingBottomClass}`}>
       <div className={containerClass}>
-        <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
+        <SectionErrorBoundary sectionType={section.type}>
+          <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
+        </SectionErrorBoundary>
       </div>
     </section>
   );

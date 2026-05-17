@@ -1,20 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
+import { withApiHandler, normalizeSlug } from '@/lib/api-utils';
 
-export async function POST(req: NextRequest) {
-  const auth = await validatePat(req.headers.get('authorization'));
-  if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  const { slug, title, sections } = await req.json();
-  if (!slug || !title) return NextResponse.json({ error: 'slug and title required' }, { status: 400 });
+export const POST = withApiHandler(async (req, auth) => {
+  const body = await req.json();
+  const { slug, title, sections } = body;
+  if (!title) return NextResponse.json({ error: 'title required' }, { status: 400 });
 
   const db = getDb();
   const pageId = crypto.randomUUID();
-  const normalizedSlug = slug.replace(/^\/+/, '');
+  const normalizedSlug = slug ? normalizeSlug(slug) : normalizeSlug(title);
 
   await db.insert(pages).values({
     id: pageId,
@@ -23,7 +21,7 @@ export async function POST(req: NextRequest) {
     title,
   });
 
-  if (sections && sections.length > 0) {
+  if (Array.isArray(sections) && sections.length > 0) {
     await db.insert(pageSections).values(
       sections.map((s: any, i: number) => ({
         id: s.id || crypto.randomUUID(),
@@ -43,14 +41,10 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ success: true, id: pageId, slug: normalizedSlug });
-}
+});
 
-export async function GET(req: NextRequest) {
-  const auth = await validatePat(req.headers.get('authorization'));
-  if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
+export const GET = withApiHandler(async (_req, auth) => {
   const db = getDb();
   const allPages = await db.select().from(pages).where(eq(pages.tenantId, auth.tenantId));
-
   return NextResponse.json({ pages: allPages.map(p => ({ id: p.id, slug: p.slug, title: p.title })) });
-}
+});

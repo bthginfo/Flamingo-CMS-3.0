@@ -74,6 +74,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
 }
 
 export default async function CatchAllPage({ params }: { params: Promise<{ slug?: string[] }> }) {
+  try {
+    return await renderPage(params);
+  } catch (err) {
+    console.error('[CatchAllPage] Render error:', err instanceof Error ? err.message : err);
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
+        <div className="text-center max-w-md">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Seite konnte nicht geladen werden</h1>
+          <p className="text-gray-500">Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.</p>
+        </div>
+      </div>
+    );
+  }
+}
+
+async function renderPage(params: Promise<{ slug?: string[] }>) {
   const { slug } = await params;
   const result = await resolvePageData(slug);
   if (!result) notFound();

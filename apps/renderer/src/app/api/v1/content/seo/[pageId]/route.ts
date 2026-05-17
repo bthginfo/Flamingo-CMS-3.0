@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
 import { seoPage } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
+import { withApiHandlerParams } from '@/lib/api-utils';
 
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ pageId: string }> }) {
-  const auth = await validatePat(req.headers.get('authorization'));
-  if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  const { pageId } = await params;
+export const PUT = withApiHandlerParams(async (req, auth, params) => {
+  const { pageId } = params;
   const body = await req.json();
   const db = getDb();
 
@@ -28,4 +25,4 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ page
   }
 
   return NextResponse.json({ success: true });
-}
+});
