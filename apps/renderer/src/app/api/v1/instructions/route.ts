@@ -61,7 +61,13 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 1. BRAND (PUT /api/v1/content/brand):
-   - companyName, tagline, primaryColor, accentColor
+   - companyName, tagline, primaryColor, secondaryColor?, accentColor
+   - logoUrl: URL zum Firmenlogo (wird im Header + Footer gezeigt)
+   - logoDisplay: 'logo' | 'logoAndName' | 'name' (default: 'name' wenn kein Logo)
+   - headingFont: Google-Font-Name fÃ¼r Ãœberschriften (z.B. "Playfair Display", "Montserrat")
+   - bodyFont: Google-Font-Name fÃ¼r FlieÃŸtext (z.B. "Inter", "Open Sans")
+   - topBarColor?: hex (Farbe der Top-Navigation-Leiste)
+   - footerColor?: hex (Hintergrundfarbe des Footers)
 
 2. CONTACT (PUT /api/v1/content/contact):
    - phone, email, address (vollstÃ¤ndig mit StraÃŸe, PLZ, Ort)
@@ -74,7 +80,8 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
 
 4. FOOTER (PUT /api/v1/content/footer):
    - columns: MINDESTENS 2-3 Spalten, JEDE mit title UND items-Array
-   - Beispiel: { columns: [{ title: "Leistungen", items: [{ text: "Badezimmer", href: "/c/leistungen/badezimmer" }, ...] }, { title: "Unternehmen", items: [{ text: "Ãœber uns", href: "/ueber-uns" }, { text: "Kontakt", href: "/kontakt" }] }], legalLinks: [{ label: "Impressum", href: "/impressum" }, { label: "Datenschutz", href: "/datenschutz" }] }
+   - cta: { label: "Jetzt anfragen", href: "/kontakt" } (optionaler CTA-Button im Footer)
+   - Beispiel: { columns: [{ title: "Leistungen", items: [{ text: "Badezimmer", href: "/c/leistungen/badezimmer" }, ...] }, { title: "Unternehmen", items: [{ text: "Ãœber uns", href: "/ueber-uns" }, { text: "Kontakt", href: "/kontakt" }] }], legalLinks: [{ label: "Impressum", href: "/impressum" }, { label: "Datenschutz", href: "/datenschutz" }], cta: { label: "Termin vereinbaren", href: "/kontakt" } }
    - NIEMALS leere items-Arrays! Jede Spalte braucht mindestens 2 Links.
 
 5. SEITEN (POST /api/v1/content/pages) â€” Erstelle ALLE diese Seiten:
@@ -120,7 +127,11 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
 
 7. SEO (PUT /api/v1/content/seo):
    - titleTemplate: "%s | ${auth.tenant.name}"
+   - defaultTitle: Firmenname oder Slogan (Fallback-Titel)
    - defaultDescription: AussagekrÃ¤ftige Beschreibung
+   - defaultOgImage: URL zu einem OG-Bild (wird auf Social Media gezeigt wenn kein seitenspezifisches OG-Bild gesetzt ist)
+   - canonicalBase?: "https://domain.de" (optionale Basis-URL fÃ¼r canonical tags)
+   - locale?: "de_DE" (Standard)
    - Dann fÃ¼r JEDE Seite: PUT /api/v1/content/seo/:pageId mit metaTitle und metaDescription
 
 8. PUBLISH (POST /api/v1/content/publish):
