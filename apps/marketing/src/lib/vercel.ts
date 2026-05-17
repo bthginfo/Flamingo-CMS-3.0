@@ -85,6 +85,10 @@ export async function checkDomainStatus(domain: string): Promise<{ configured: b
 export async function createStandaloneProject(slug: string, tenantId: string): Promise<{ projectId: string; projectUrl: string }> {
   const projectName = `flamingo-${slug}`;
 
+  // Validate required env vars upfront
+  if (!process.env.VERCEL_TOKEN) throw new Error('VERCEL_TOKEN ist nicht gesetzt. Bitte in den Vercel-Umgebungsvariablen konfigurieren.');
+  if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL ist nicht gesetzt.');
+
   // Create project linked to the monorepo
   const repoId = process.env.GITHUB_REPO_ID;
   const projectBody: Record<string, unknown> = {
@@ -98,13 +102,23 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
     projectBody.gitRepository = { type: 'github', repo: repoId };
   }
 
-  const project = await vercelFetch('/v9/projects', 'POST', projectBody);
+  let project: Record<string, unknown>;
+  try {
+    project = await vercelFetch('/v9/projects', 'POST', projectBody);
+  } catch (err) {
+    const msg = (err as Error).message || '';
+    // If project already exists, try to fetch it
+    if (msg.includes('409') || msg.includes('already exist')) {
+      project = await vercelFetch(`/v9/projects/${projectName}`);
+    } else {
+      throw new Error(`Vercel-Projekt konnte nicht erstellt werden: ${msg}`);
+    }
+  }
 
-  const projectId = project.id;
+  const projectId = project.id as string;
 
-  // Set environment variables
-  const dbUrl = process.env.DATABASE_URL;
-  if (!dbUrl) throw new Error('DATABASE_URL not set for standalone project');
+  // Set environment variables — skip the upfront check since we already validated
+  const dbUrl = process.env.DATABASE_URL!;
 
   const envVars = [
     { key: 'DATABASE_URL', value: dbUrl, target: ['production', 'preview'], type: 'encrypted' },
@@ -138,7 +152,7 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
     }
   }
 
-  return { projectId, projectUrl: `https://${projectName}.vercel.app` };
+  return { projectId: projectId as string, projectUrl: `https://${projectName}.vercel.app` };
 }
 
 /** Add a domain to a specific Vercel project. */
@@ -158,7 +172,10 @@ export async function addDomainToProject(projectId: string, domain: string): Pro
 /** Trigger a deployment for a specific Vercel project. */
 export async function triggerProjectDeployment(projectName: string): Promise<{ id: string; url: string }> {
   const numericRepoId = process.env.GITHUB_REPO_NUMERIC_ID;
-  if (!numericRepoId) throw new Error('GITHUB_REPO_NUMERIC_ID not set');
+  if (!numericRepoId) {
+    console.warn('GITHUB_REPO_NUMERIC_ID not set – skipping deployment trigger. The project will build on next git push.');
+    return { id: '', url: `https://${projectName}.vercel.app` };
+  }
   const data = await vercelFetch('/v13/deployments', 'POST', {
     name: projectName,
     target: 'production',

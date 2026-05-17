@@ -32,7 +32,6 @@ export type ProvisionResult = {
   domainConfigured?: boolean;
   adminUrl: string;
   rendererUrl: string;
-  warning?: string;
 };
 
 type DefaultPage = {
@@ -170,12 +169,8 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
 
   if (deploymentMode === 'standalone') {
     // Create a dedicated Vercel project for this tenant
-    try {
-      const standaloneResult = await createStandaloneProject(input.slug, tenantId);
-      vercelProjectId = standaloneResult.projectId;
-    } catch (err) {
-      console.error('Standalone project creation failed:', err);
-    }
+    const standaloneResult = await createStandaloneProject(input.slug, tenantId);
+    vercelProjectId = standaloneResult.projectId;
 
     // Store the Vercel test domain as preview
     const vercelDomain = vercelProjectId
@@ -254,9 +249,6 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     .where(eq(tenants.id, tenantId));
 
   const standaloneUrl = vercelProjectId ? `https://flamingo-${input.slug}.vercel.app` : undefined;
-  const standaloneWarning = deploymentMode === 'standalone' && !vercelProjectId
-    ? 'Standalone-Projekt konnte nicht erstellt werden. Tenant läuft vorerst über den Shared Renderer.'
-    : undefined;
 
   const rendererBaseUrl = process.env.RENDERER_URL || 'https://flamingo-renderer.vercel.app';
   const sharedUrl = input.domain ? `https://${input.domain}` : `${rendererBaseUrl}/${input.slug}`;
@@ -268,7 +260,6 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     domainConfigured,
     adminUrl: standaloneUrl ? `${standaloneUrl}/admin` : `${rendererBaseUrl}/${input.slug}/admin`,
     rendererUrl: standaloneUrl || sharedUrl,
-    warning: standaloneWarning,
   };
 }
 
