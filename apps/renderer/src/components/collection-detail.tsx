@@ -33,8 +33,8 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
           <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} />
         ))}
         {/* Back link — placed after hero so it's not hidden behind fixed nav */}
-        <div className="max-w-7xl mx-auto px-6 pt-8">
-          <Link href={`${backHrefPrefix}/${collection.key}`} className="inline-flex items-center gap-2 text-sm text-brand-primary hover:underline mb-4">
+        <div className="max-w-7xl mx-auto px-6 pt-4 md:pt-8">
+          <Link href={`${backHrefPrefix}/${collection.key}`} className="inline-flex items-center gap-2 text-sm text-brand-primary hover:underline mb-2 md:mb-4">
             <ArrowLeft size={16} />
             Zurück zu {collection.label}
           </Link>
@@ -55,11 +55,11 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
   const gallery = data.gallery as string[] | undefined;
 
   return (
-    <div className="py-20">
+    <div className="py-10 md:py-20">
       <div className="max-w-4xl mx-auto px-6">
         {/* Back link */}
         <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
-          <Link href={`${backHrefPrefix}/${collection.key}`} className="inline-flex items-center gap-2 text-sm text-brand-primary hover:underline mb-8">
+          <Link href={`${backHrefPrefix}/${collection.key}`} className="inline-flex items-center gap-2 text-sm text-brand-primary hover:underline mb-4 md:mb-8">
             <ArrowLeft size={16} />
             Zurück zu {collection.label}
           </Link>
