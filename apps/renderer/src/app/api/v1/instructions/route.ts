@@ -49,21 +49,115 @@ export async function GET(req: NextRequest) {
       'Do NOT use section type "freeHtml" or "htmlBlock" — raw HTML is not allowed.',
       'Only use section types listed in availableSectionTypes.',
       'Only fill fields defined in sectionDataSchemas — do not invent custom fields.',
+      'Every section MUST have ALL required fields filled with real content — never leave fields empty or with placeholder text like "Lorem ipsum".',
+      'Every array field (items, services, steps, etc.) MUST have at least 3 entries unless the real business has fewer.',
+      'The footer MUST contain columns with items arrays. Each item needs text and optionally href. Never send empty columns or columns without items.',
+      'Navigation items MUST link to existing pages using their slug (e.g. href: "/leistungen", NOT href: "/services").',
     ],
-    instructions: `You are an AI assistant filling content for a "${auth.tenant.industry}" website called "${auth.tenant.name}". 
-Use the endpoints above to create pages with sections. Each section requires a "type" from availableSectionTypes and a "data" object matching the schema for that type.
-Always include relevant real-looking content. Use German language for all content.
-Create at least a homepage with hero + 3-5 supporting sections, plus any relevant subpages.
-Set SEO fields for each page, configure brand colors, navigation, footer, and contact info.
-After creating all content, call the publish endpoint to make it live.
+    instructions: `Du bist ein AI-Assistent der eine "${auth.tenant.industry}"-Website für "${auth.tenant.name}" mit deutschsprachigem Content füllt.
 
-IMPORTANT — Collections statt Unterseiten:
-Für wiederkehrende Inhaltstypen wie Leistungen, Zimmer, News, Team-Mitglieder, Referenzen, Menü-Kategorien, Behandlungen usw. sollst du IMMER Collections verwenden statt einzelne Unterseiten anzulegen.
-Workflow: 1) POST /api/v1/content/collections mit key (z.B. "leistungen", "zimmer", "news") und label (z.B. "Leistungen") um die Collection zu erstellen. 2) Dann POST /api/v1/content/collections/:key/items für jeden Eintrag. Jedes Item bekommt einen title, slug und data (mit sections-Array genau wie bei Seiten). 3) Auf der Startseite oder einer Übersichtsseite verweise auf /c/:key/:slug für die Detailseiten.
-Beispiel: Statt 5 einzelne Seiten "/badezimmer", "/heizung", "/solar" anzulegen, erstelle eine Collection "leistungen" und lege Items "Badezimmer", "Heizung", "Solar" als Collection Items an. Die Übersichtsseite kann dann ein servicesGrid mit href="/c/leistungen/badezimmer" etc. nutzen.
+═══════════════════════════════════════════
+PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
+═══════════════════════════════════════════
+
+1. BRAND (PUT /api/v1/content/brand):
+   - companyName, tagline, primaryColor, accentColor
+
+2. CONTACT (PUT /api/v1/content/contact):
+   - phone, email, address (vollständig mit Straße, PLZ, Ort)
+   - whatsapp (Nummer), whatsappEnabled: true
+
+3. NAVIGATION (PUT /api/v1/content/navigation):
+   - items: Array mit ALLEN Seiten die du erstellst (jede Seite braucht einen Nav-Eintrag)
+   - Format: { items: [{ label: "Startseite", href: "/" }, { label: "Leistungen", href: "/leistungen" }, ...], cta: { label: "Jetzt anfragen", href: "/kontakt" } }
+   - WICHTIG: href MUSS mit "/" beginnen + den Slug der Seite enthalten
+
+4. FOOTER (PUT /api/v1/content/footer):
+   - columns: MINDESTENS 2-3 Spalten, JEDE mit title UND items-Array
+   - Beispiel: { columns: [{ title: "Leistungen", items: [{ text: "Badezimmer", href: "/c/leistungen/badezimmer" }, ...] }, { title: "Unternehmen", items: [{ text: "Über uns", href: "/ueber-uns" }, { text: "Kontakt", href: "/kontakt" }] }], legalLinks: [{ label: "Impressum", href: "/impressum" }, { label: "Datenschutz", href: "/datenschutz" }] }
+   - NIEMALS leere items-Arrays! Jede Spalte braucht mindestens 2 Links.
+
+5. SEITEN (POST /api/v1/content/pages) — Erstelle ALLE diese Seiten:
+   a) Startseite (slug: "startseite") — MINDESTENS 6 Sections:
+      - hero (mit headline, subline, bgImage, primaryCta, secondaryCta, trustItems)
+      - uspStrip (mindestens 4 Items)
+      - servicesGrid (mindestens 4 Services mit icon, title, text, href zu Collection-Detail)  
+      - processSteps ODER textImage
+      - testimonials ODER stats
+      - faq (mindestens 4 Fragen)
+      - ctaBand (mit headline, text, primaryCta)
+   
+   b) Leistungen-Übersicht (slug: "leistungen"):
+      - collectionHero (headline, subline)
+      - servicesGrid (ALLE Leistungen aus der Collection mit href="/c/leistungen/[slug]")
+      - ctaBand
+   
+   c) Über uns (slug: "ueber-uns"):
+      - collectionHero
+      - textImage (mit echtem Text über die Firma, Bild)
+      - stats (Gründungsjahr, Mitarbeiter, Projekte, etc.)
+      - team (mindestens 2-3 Teammitglieder mit name, role)
+      - ctaBand
+   
+   d) Kontakt (slug: "kontakt"):
+      - collectionHero
+      - contact (headline, subline, formEnabled: true, mapEmbedUrl wenn möglich)
+      - textImage (Öffnungszeiten oder Anfahrt-Info)
+   
+   e) Impressum (slug: "impressum"):
+      - collectionHero
+      - richText (vollständiges deutsches Impressum mit Firmenname, Adresse, Telefon, E-Mail, Geschäftsführer, Handelsregister, USt-IdNr)
+   
+   f) Datenschutz (slug: "datenschutz"):
+      - collectionHero
+      - richText (Datenschutzerklärung nach DSGVO)
+
+6. COLLECTIONS — Erstelle MINDESTENS eine Collection für die Kernleistungen:
+   - POST /api/v1/content/collections → { key: "leistungen", label: "Leistungen" }
+   - Dann für JEDE Leistung ein Item erstellen (MINDESTENS 4 Items):
+     POST /api/v1/content/collections/leistungen/items → { title: "...", slug: "...", data: { sections: [...] } }
+   - Jedes Collection-Item braucht sections mit echtem Content (collectionHero + textImage + ctaBand minimum)
+
+7. SEO (PUT /api/v1/content/seo):
+   - titleTemplate: "%s | ${auth.tenant.name}"
+   - defaultDescription: Aussagekräftige Beschreibung
+   - Dann für JEDE Seite: PUT /api/v1/content/seo/:pageId mit metaTitle und metaDescription
+
+8. PUBLISH (POST /api/v1/content/publish):
+   - IMMER als letzter Schritt aufrufen!
+
+═══════════════════════════════════════════
+CONTENT-REGELN:
+═══════════════════════════════════════════
+
+- JEDES Feld das nicht mit "?" markiert ist, MUSS gefüllt werden
+- Array-Felder (items, services, steps, etc.) brauchen MINDESTENS 3-4 Einträge
+- Texte müssen ECHTEN, branchenspezifischen Content haben (keine Platzhalter)
+- Icons: Verwende passende Lucide-Icon-Namen (z.B. "Wrench", "Phone", "Mail", "MapPin", "Clock", "Shield", "Award", "Users", "Star", "ChevronRight")
+- Bilder: Verwende Unsplash-URLs im Format https://images.unsplash.com/photo-XXXXX?w=1200&q=80
+- CTAs: Immer mit konkretem href zu einer existierenden Seite (z.B. "/kontakt", "/leistungen")
+- ServicesGrid href: Verlinke zu Collection-Detail-Seiten als "/c/leistungen/[slug]"
+
+═══════════════════════════════════════════
+HÄUFIGE FEHLER (VERMEIDE DIESE):
+═══════════════════════════════════════════
+
+❌ Footer ohne items in columns → CRASH
+❌ Navigation ohne CTA → fehlender Anruf-Button
+❌ Leistungen nur als Seiten statt Collection Items
+❌ servicesGrid ohne href → keine Verlinkung zu Details
+❌ Kontaktseite ohne contact-Section → kein Formular
+❌ Hero ohne primaryCta → kein Call-to-Action
+❌ Sections mit leeren/fehlenden Pflichtfeldern
+❌ Slugs mit führendem "/" (FALSCH: "/kontakt", RICHTIG: "kontakt")
+❌ Publish vergessen am Ende
 
 WICHTIG — Slugs:
-Slugs dürfen NIEMALS mit einem "/" beginnen. Ein Slug ist nur der Pfadteil ohne führenden Slash, z.B. "kontakt" (NICHT "/kontakt"), "ueber-uns" (NICHT "/ueber-uns"). Die Startseite/Homepage MUSS den Slug "startseite" haben. Falsche Slugs wie "/kontakt" führen zu 404-Fehlern.`,
+Slugs dürfen NIEMALS mit "/" beginnen. Slug = nur Pfadteil, z.B. "kontakt", "ueber-uns", "leistungen". Die Startseite MUSS den Slug "startseite" haben.
+
+WICHTIG — Collections statt Unterseiten:
+Für wiederkehrende Inhalte (Leistungen, Zimmer, News, Team, Referenzen, Behandlungen) IMMER Collections verwenden.
+Workflow: 1) POST /collections → { key, label }  2) POST /collections/:key/items für jeden Eintrag  3) Auf Übersichtsseiten servicesGrid mit href="/c/:key/:slug" nutzen`,
   });
 }
 
