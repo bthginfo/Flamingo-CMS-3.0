@@ -72,7 +72,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
   const useBgImage = bgMode === 'image' && bgImage;
 
   return (
-    <div ref={ref} className="relative min-h-[100svh] flex items-center overflow-hidden -mt-[112px] pt-[112px]">
+    <div ref={ref} className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden -mt-[112px] pt-[112px]">
       {useBgImage ? (
         <>
           <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
@@ -92,8 +92,8 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
       <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-brand-accent/8 rounded-full blur-[120px] animate-pulse-slow" />
       <div className="absolute bottom-0 -left-20 w-[500px] h-[500px] bg-brand-secondary/15 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
 
-      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20 lg:py-0 lg:pt-12 pb-40">
-        <div className="max-w-4xl">
+      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full flex-1 flex items-center py-12 md:py-16">
+        <div className="max-w-4xl space-y-6">
           <TextGenerateEffect words={headline} className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white !leading-[1.02]" duration={0.6} />
           {badgeText && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
@@ -109,9 +109,9 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
           )}
           {subline && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.8 }}
-              className="text-lg sm:text-xl text-white/60 leading-relaxed mb-12 max-w-2xl mt-8 [&_p]:m-0 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />
+              className="text-lg sm:text-xl text-white/60 leading-relaxed max-w-2xl [&_p]:m-0 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />
           )}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.0 }} className="flex flex-col items-center sm:items-start sm:flex-row gap-4 mb-6">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.0 }} className="flex flex-col items-center sm:items-start sm:flex-row gap-4">
             {primaryCta?.label && (
               <a href={primaryCta.href} className="group relative inline-flex items-center overflow-hidden rounded-full bg-brand-accent px-8 py-4 font-semibold text-gray-900 transition-all duration-300 hover:shadow-glow-accent hover:-translate-y-0.5 text-base sm:w-auto">
                 <span className="relative z-10 flex items-center w-full justify-between gap-4 sm:justify-center sm:gap-2.5">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} className="transition-transform group-hover:translate-x-1" />}</span>
@@ -126,7 +126,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
       </motion.div>
       {trustItems.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.3 }}
-          className="absolute bottom-0 left-0 right-0 z-20"
+          className="relative z-20 mt-auto"
           style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}
         >
           <div className={`flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-sm px-6 py-3 ${trustStripColor ? 'text-white' : 'bg-black/30 backdrop-blur-sm text-white/80'}`}>
@@ -136,7 +136,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
           </div>
         </motion.div>
       )}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent -z-0" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none" />
     </div>
   );
 }
