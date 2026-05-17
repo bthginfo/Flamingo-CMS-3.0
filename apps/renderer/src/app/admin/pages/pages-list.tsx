@@ -43,15 +43,15 @@ export function PagesList({ pages, deleteAction }: { pages: Page[]; deleteAction
                 <span className={`inline-block px-2.5 py-1 rounded-full text-[11px] font-medium ${page.status === 'published' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
                   {page.status === 'published' ? 'Live' : 'Entwurf'}
                 </span>
-                {page.visible ? <Eye size={14} className="text-emerald-500" /> : <EyeOff size={14} className="text-zinc-300" />}
-                <div className="flex items-center gap-1 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                {page.visible ? <Eye size={14} className="text-emerald-500 hidden sm:block" /> : <EyeOff size={14} className="text-zinc-300 hidden sm:block" />}
+                <div className="hidden sm:flex items-center gap-1 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Pencil size={14} />
                   <span className="text-xs font-medium">Bearbeiten</span>
                   <ChevronRight size={14} />
                 </div>
               </div>
             </Link>
-            <div className="px-3 border-l">
+            <div className="px-2 sm:px-3 border-l flex items-center">
               <button
                 disabled={pending}
                 onClick={() => {
@@ -59,9 +59,9 @@ export function PagesList({ pages, deleteAction }: { pages: Page[]; deleteAction
                     startTransition(() => deleteAction(page.id));
                   }
                 }}
-                className="text-zinc-300 hover:text-red-500 p-2 transition-colors"
+                className="text-zinc-400 hover:text-red-500 p-2.5 transition-colors"
               >
-                <Trash2 size={16} />
+                <Trash2 size={18} />
               </button>
             </div>
           </div>
