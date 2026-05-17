@@ -76,7 +76,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
               <div key={i}>
                 <h4 className="font-display font-semibold text-sm uppercase tracking-wider text-white/70 mb-5">{col.title}</h4>
                 <ul className="space-y-3">
-                  {col.items.map((item, j) => (
+                  {(col.items || []).map((item, j) => (
                     <li key={j}>
                       {item.href ? (
                         <Link href={item.href} className="text-sm opacity-70 hover:opacity-100 hover:translate-x-0.5 inline-block transition-all duration-200">
