@@ -9,9 +9,12 @@ export function WeddingGiftRegistrySection({ data }: Props) {
   const badge = (data.badge as string) || 'Geschenke';
   const headline = (data.headline as string) || 'Geschenkideen';
   const subline = (data.subline as string) || '';
-  const text = (data.text as string) || '';
-  const items = (data.items as Array<{ title: string; description?: string; link?: string; image?: string }>) || [];
-  const bankDetails = data.bankDetails as { holder?: string; iban?: string; bic?: string; note?: string } | undefined;
+  const text = (data.text as string) || (data.freeText as string) || '';
+  // Support both 'items' and 'gifts' field names
+  const rawItems = (data.items || data.gifts) as Array<Record<string, string>> | undefined;
+  const items = (rawItems || []).map(g => ({ title: g.title || g.name || '', description: g.description || g.price || '', link: g.link, image: g.image }));
+  // Support both 'bankDetails' and 'bankInfo'
+  const bankDetails = (data.bankDetails || data.bankInfo) as { holder?: string; iban?: string; bic?: string; note?: string } | undefined;
 
   return (
     <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">

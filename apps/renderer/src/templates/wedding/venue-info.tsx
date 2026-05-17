@@ -7,12 +7,14 @@ import { MapPin, Car, Train, Plane, Phone } from 'lucide-react';
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function WeddingVenueInfoSection({ data }: Props) {
+  const venues = (data.venues as Array<Record<string, string>>) || [];
+  const firstVenue = venues[0] || {};
   const badge = (data.badge as string) || 'Location';
   const headline = (data.headline as string) || 'Die Location';
   const subline = (data.subline as string) || '';
-  const description = (data.description as string) || '';
-  const image = (data.image as string) || '';
-  const address = (data.address as string) || '';
+  const description = (data.description as string) || firstVenue.description || '';
+  const image = (data.image as string) || firstVenue.image || '';
+  const address = (data.address as string) || firstVenue.address || '';
   const mapUrl = (data.mapUrl as string) || '';
   const contact = (data.contact as string) || '';
 
@@ -62,8 +64,12 @@ export function WeddingTravelInfoSection({ data }: Props) {
   const badge = (data.badge as string) || 'Anreise';
   const headline = (data.headline as string) || 'Anreise & Unterkunft';
   const subline = (data.subline as string) || '';
-  const directions = (data.directions as Array<{ icon?: string; title: string; text: string }>) || [];
-  const accommodations = (data.accommodations as Array<{ name: string; description?: string; link?: string; image?: string }>) || [];
+  // Support both 'directions' and 'sections' field names
+  const rawDirections = (data.directions || data.sections) as Array<Record<string, string>> | undefined;
+  const directions = (rawDirections || []).map(d => ({ icon: d.icon, title: d.title, text: d.text || d.content || '' }));
+  // Support both 'accommodations' and 'hotels' field names
+  const rawAccom = (data.accommodations || data.hotels) as Array<Record<string, string>> | undefined;
+  const accommodations = (rawAccom || []).map(a => ({ name: a.name, description: a.description || (a.distance ? `${a.distance}${a.specialRate ? ' — ' + a.specialRate : ''}` : ''), link: a.link, image: a.image }));
 
   const dirIcons: Record<string, React.ElementType> = { car: Car, train: Train, plane: Plane };
 
