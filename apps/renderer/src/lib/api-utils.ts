@@ -65,6 +65,51 @@ export function validateSections(sections: unknown): string | null {
     if (s.data !== undefined && (typeof s.data !== 'object' || s.data === null || Array.isArray(s.data))) {
       return `sections[${i}].data must be an object`;
     }
+    // Section-specific validation
+    const data = s.data || {};
+    const err = validateSectionData(s.type, data, i);
+    if (err) return err;
+  }
+  return null;
+}
+
+function validateSectionData(type: string, data: Record<string, unknown>, idx: number): string | null {
+  switch (type) {
+    case 'servicesGrid':
+      if ((!Array.isArray(data.manualCards) || data.manualCards.length === 0) && (!Array.isArray(data.services) || data.services.length === 0))
+        return `sections[${idx}] (servicesGrid): data.manualCards (or data.services) must be a non-empty array. Each item needs { title, text, icon?, image?, href? }`;
+      for (const svc of ((data.manualCards || data.services) as any[])) {
+        if (!svc.title) return `sections[${idx}] (servicesGrid): each card needs a title`;
+        if (!svc.text) return `sections[${idx}] (servicesGrid): each card needs a text`;
+      }
+      break;
+    case 'faq':
+      if (!Array.isArray(data.items) || data.items.length === 0)
+        return `sections[${idx}] (faq): data.items must be a non-empty array. Each item needs { question, answer }`;
+      break;
+    case 'testimonials':
+      if (!Array.isArray(data.items) || data.items.length === 0)
+        return `sections[${idx}] (testimonials): data.items must be a non-empty array. Each item needs { quote, name }`;
+      break;
+    case 'processSteps':
+      if (!Array.isArray(data.steps) || data.steps.length === 0)
+        return `sections[${idx}] (processSteps): data.steps must be a non-empty array. Each item needs { icon, title, text }`;
+      break;
+    case 'uspStrip':
+      if (!Array.isArray(data.items) || data.items.length === 0)
+        return `sections[${idx}] (uspStrip): data.items must be a non-empty array. Each item needs { icon, text }`;
+      break;
+    case 'team':
+    case 'teamShowcase':
+    case 'doctorTeam':
+      if (!Array.isArray(data.members || data.doctors) || ((data.members || data.doctors) as any[]).length === 0)
+        return `sections[${idx}] (${type}): data.members/doctors must be a non-empty array`;
+      break;
+    case 'galleryGrid':
+    case 'gallery':
+      if (!Array.isArray(data.images) || data.images.length === 0)
+        return `sections[${idx}] (${type}): data.images must be a non-empty array`;
+      break;
   }
   return null;
 }

@@ -1,9 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, asc } from 'drizzle-orm';
 import crypto from 'crypto';
 import { withApiHandlerParams, normalizeSlug, validateSections } from '@/lib/api-utils';
+
+export const GET = withApiHandlerParams(async (_req, auth, params) => {
+  const { id } = params;
+  const db = getDb();
+  const [page] = await db.select().from(pages).where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId)));
+  if (!page) return NextResponse.json({ error: 'Page not found' }, { status: 404 });
+  const sections = await db.select().from(pageSections).where(and(eq(pageSections.pageId, id), eq(pageSections.tenantId, auth.tenantId))).orderBy(asc(pageSections.sortOrder));
+  return NextResponse.json({
+    id: page.id,
+    slug: page.slug,
+    title: page.title,
+    status: page.status,
+    visible: page.visible,
+    sections: sections.map(s => ({ id: s.id, type: s.type, data: s.data, variant: s.variant, visible: s.visible, sortOrder: s.sortOrder })),
+  });
+});
 
 export const PUT = withApiHandlerParams(async (req, auth, params) => {
   const { id } = params;
