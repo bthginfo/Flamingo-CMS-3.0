@@ -30,6 +30,8 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'serviceDetail', label: 'Leistungs-Detail', description: 'Detaillierte Leistungsbeschreibung', category: 'Leistungen' },
   { type: 'portfolio', label: 'Portfolio', description: 'Referenzprojekte-Galerie', category: 'Medien' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten', category: 'Inhalt' },
+  { type: 'servicePackages', label: 'Pakete & Preise', description: 'Leistungspakete mit Features und Preisen', category: 'Leistungen' },
+  { type: 'noticeBanner', label: 'Hinweisbanner', description: 'Auffälliges Banner für wichtige Hinweise (Urlaub, Aktionen etc.)', category: 'Marketing' },
 ];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [

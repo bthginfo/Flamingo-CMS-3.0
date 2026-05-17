@@ -66,6 +66,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
     videoEmbed: { fields: { headline: 'string?', subline: 'string?', videoUrl: 'youtube/vimeo URL', aspectRatio: '"16:9"|"4:3"|"1:1"?' } },
     textImage: { fields: { headline: 'string', text: 'string (html)', image: 'url', imagePosition: '"left"|"right"?', cta: '{ label: string, href: string }?' } },
     collectionHero: { fields: { headline: 'string', subline: 'string?', bgImage: 'url?', breadcrumb: '{ label: string, href: string }[]?', meta: 'string[]?' } },
+    noticeBanner: { fields: { headline: 'string', subline: 'string?', text: 'string? (html)', bgColor: 'hex?', textColor: 'hex? (default white)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
   };
 
   if (industry === 'wedding') {

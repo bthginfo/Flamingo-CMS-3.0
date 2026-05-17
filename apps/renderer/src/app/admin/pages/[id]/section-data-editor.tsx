@@ -911,6 +911,40 @@ function HeaderBannerEditor({ data, onChange }: EditorProps) {
   );
 }
 
+// ─── Notice Banner Editor ──────────────────────────────────────
+function NoticeBannerEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    text: (data.text as string) || '',
+    bgColor: (data.bgColor as string) || '',
+    textColor: (data.textColor as string) || '#ffffff',
+    primaryCta: (data.primaryCta as { label: string; href: string; icon?: string }) || { label: '', href: '' },
+    secondaryCta: (data.secondaryCta as { label: string; href: string; icon?: string }) || { label: '', href: '' },
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Titel" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <Field label="Fließtext (HTML)" value={d.text} onChange={(v) => setD({ ...d, text: v })} />
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs text-zinc-600">Hintergrundfarbe</label>
+          <input type="color" value={d.bgColor || '#2563eb'} onChange={(e) => setD({ ...d, bgColor: e.target.value })} className="w-full h-10 rounded border cursor-pointer" />
+        </div>
+        <div>
+          <label className="text-xs text-zinc-600">Textfarbe</label>
+          <input type="color" value={d.textColor} onChange={(e) => setD({ ...d, textColor: e.target.value })} className="w-full h-10 rounded border cursor-pointer" />
+        </div>
+      </div>
+      <ButtonField label="Button 1 (optional)" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
+      <ButtonField label="Button 2 (optional)" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
+    </div>
+  );
+}
+
 // ─── Collection Hero Editor ──────────────────────────────────────
 function CollectionHeroEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({
@@ -1325,4 +1359,5 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   photographerAbout: PhotographerAboutEditor,
   shootingProcess: ShootingProcessEditor,
   servicePackages: ServicePackagesEditor,
+  noticeBanner: NoticeBannerEditor,
 };

@@ -6,7 +6,7 @@ import { globalSettings, navigation, footer, tenants } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
-async function requireTenant() {
+export async function requireTenant() {
   const session = await getSession();
   if (!session) throw new Error('Unauthorized');
   return session.tenantId;

@@ -18,6 +18,7 @@ import { LogoCloudSection } from './handwerk/logo-cloud';
 import { GalleryGridSection } from './handwerk/gallery-grid';
 import { RichTextSection } from './handwerk/rich-text';
 import { VideoEmbedSection } from './shared/video-embed';
+import { NoticeBannerSection } from './shared/notice-banner';
 import { HeaderBannerSection } from './handwerk/header-banner';
 import { CollectionHeroSection } from './handwerk/collection-hero';
 import { TextImageSection } from './handwerk/text-image';
@@ -358,6 +359,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   servicePackages: ServicePackagesSection,
   photographerAbout: PhotographerAboutSection,
   shootingProcess: ShootingProcessSection,
+  noticeBanner: NoticeBannerSection,
 };
 
 export function getIndustryTemplates(industry: string): Record<string, TemplateComponent> {

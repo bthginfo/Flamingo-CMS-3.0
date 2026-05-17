@@ -6,7 +6,7 @@ import { useState } from 'react';
 import {
   LayoutDashboard, FileText, FolderOpen, Newspaper, Navigation,
   Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Eye, Heart,
-  Menu, X, ClipboardList,
+  Menu, X, ClipboardList, Bot,
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
 
@@ -28,6 +28,7 @@ const NAV = [
   { href: '/admin/contact-form', label: 'Kontaktformular', icon: ClipboardList },
   { href: '/admin/legal', label: 'Impressum & Datenschutz', icon: Scale },
   { href: '/admin/security', label: 'Passwort & Zugang', icon: Lock },
+  { href: '/admin/ai-api', label: 'KI-API', icon: Bot },
 ];
 
 const RENDERER_URL = '';
