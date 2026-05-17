@@ -140,3 +140,13 @@ export async function resolveDemoTenant(industry: string): Promise<string | null
     .limit(1);
   return tenant?.id ?? null;
 }
+
+export async function resolveDemoTenantBySlug(slug: string): Promise<string | null> {
+  const db = getDb();
+  const [tenant] = await db
+    .select({ id: tenants.id })
+    .from(tenants)
+    .where(and(eq(tenants.slug, slug), eq(tenants.isDemo, true), eq(tenants.status, 'active')))
+    .limit(1);
+  return tenant?.id ?? null;
+}

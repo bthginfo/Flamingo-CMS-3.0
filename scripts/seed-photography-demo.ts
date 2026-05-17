@@ -157,7 +157,20 @@ const CONFIG = {
           subline: 'Flexible Pakete für Hochzeiten, Paarshootings und mehr.',
           bgImage: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=1800&q=85',
         }},
-        { type: 'servicePackages', sortOrder: 1, data: {
+        { type: 'servicesGrid', sortOrder: 1, data: {
+          headline: 'Meine Leistungen',
+          subline: 'Von der Hochzeitsreportage bis zum Einzelportrait – ich biete verschiedene Shooting-Formate, individuell auf euch zugeschnitten.',
+          badgeText: 'Übersicht',
+          manualCards: [
+            { title: 'Hochzeitsreportage', text: 'Eure komplette Hochzeit in authentischen Bildern – von Getting Ready bis Party.', image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80', mediaType: 'image', href: '/c/leistungen/hochzeitsreportage' },
+            { title: 'Babybauch-Shooting', text: 'Die wunderschöne Vorfreude auf euer Baby in stimmungsvollen Bildern festgehalten.', image: 'https://images.unsplash.com/photo-1509027572446-af8401acfdc3?w=600&q=80', mediaType: 'image', href: '/c/leistungen/babybauch' },
+            { title: 'Paarshooting', text: 'Zeit zu zweit – ob Verlobung, Jahrestag oder einfach so.', image: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=600&q=80', mediaType: 'image', href: '/c/leistungen/paarshooting' },
+            { title: 'JGA Shooting', text: 'Feiert den Junggesellenabschied mit unvergesslichen Gruppenfotos.', image: 'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?w=600&q=80', mediaType: 'image', href: '/c/leistungen/jga-shooting' },
+            { title: 'Portrait-Shooting', text: 'Eure Persönlichkeit aufs Bild – für Business, Social Media oder privat.', image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&q=80', mediaType: 'image', href: '/c/leistungen/portrait' },
+            { title: 'After-Wedding', text: 'Entspannte Fotos nach der Hochzeit – ohne Zeitdruck, an eurem Lieblingsort.', image: 'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600&q=80', mediaType: 'image', href: '/c/leistungen/after-wedding' },
+          ],
+        }},
+        { type: 'servicePackages', sortOrder: 2, data: {
           badge: 'Pakete',
           headline: 'Hochzeitsfotografie',
           subline: 'Individuell abgestimmte Pakete für euren großen Tag.',
@@ -168,7 +181,7 @@ const CONFIG = {
           ],
           note: 'Alle Preise verstehen sich als Startpreise.',
         }},
-        { type: 'servicePackages', sortOrder: 2, data: {
+        { type: 'servicePackages', sortOrder: 3, data: {
           badge: 'Weitere Shootings',
           headline: 'Paar, Portrait & mehr',
           packages: [
@@ -252,6 +265,7 @@ const CONFIG = {
         { slug: 'paarshooting', title: 'Paarshooting', priority: 3, data: { title: 'Paarshooting', description: 'Zeit zu zweit in wunderschönen Bildern.', image: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=600&q=80', features: ['1-2 Stunden', '50-80 Fotos', 'Location-Beratung'], price: 'ab 290€' } },
         { slug: 'jga-shooting', title: 'JGA Shooting', priority: 4, data: { title: 'JGA Shooting', description: 'Spaß und Freundschaft festhalten.', image: 'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?w=600&q=80', features: ['1-2 Stunden', '80-120 Fotos', 'Gruppen & Einzel'], price: 'ab 350€' } },
         { slug: 'portrait', title: 'Portrait-Shooting', priority: 5, data: { title: 'Portrait-Shooting', description: 'Eure Persönlichkeit aufs Bild.', image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&q=80', features: ['45-60 Min', '20-30 Fotos', 'Business/Privat'], price: 'ab 220€' } },
+        { slug: 'after-wedding', title: 'After-Wedding-Shooting', priority: 6, data: { title: 'After-Wedding-Shooting', description: 'Entspannte Fotos nach der Hochzeit – ohne Zeitdruck, an eurem Lieblingsort.', image: 'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600&q=80', features: ['1-2 Stunden', '60-100 Fotos', 'Location eurer Wahl', 'Brautkleid nochmal tragen'], price: 'ab 350€' } },
       ],
     },
   ],

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { resolveDemoTenant, getActiveSnapshot } from '@/lib/snapshot';
+import { resolveDemoTenant, resolveDemoTenantBySlug, getActiveSnapshot } from '@/lib/snapshot';
 import type { SnapshotSection } from '@/lib/snapshot';
 import { getTenantStyle, getTenantNav, getTenantFooter, getTenantBrand } from '@/lib/tenant-data';
 import { DemoPageShell } from '../../demo-page-shell';
@@ -14,6 +14,7 @@ const INDUSTRY_MAP: Record<string, string> = {
   medical: 'medical',
   wedding: 'wedding',
   photography: 'photography',
+  showcase: 'tradesman',
 };
 
 /** Recursively prefix internal hrefs in section data with the demo path */
@@ -40,7 +41,11 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
   const dbIndustry = INDUSTRY_MAP[industry];
   if (!dbIndustry) return notFound();
 
-  const tenantId = await resolveDemoTenant(dbIndustry);
+  // Resolve by slug for special demos (e.g. showcase), otherwise by industry
+  const SLUG_MAP: Record<string, string> = { showcase: 'demo-showcase' };
+  const tenantId = SLUG_MAP[industry]
+    ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
+    : await resolveDemoTenant(dbIndustry);
   if (!tenantId) return notFound();
 
   const [snapshot, tenantStyle, navData, footerData, brandData] = await Promise.all([

@@ -11,6 +11,8 @@ const INDUSTRIES = [
   { key: 'salon', label: 'Salon & Beauty' },
   { key: 'tourism', label: 'Tourismus' },
   { key: 'wedding', label: 'Hochzeit' },
+  { key: 'photography', label: 'Fotografie' },
+  { key: 'showcase', label: '📦 Sektionen-Demo' },
 ] as const;
 
 const STYLES = [

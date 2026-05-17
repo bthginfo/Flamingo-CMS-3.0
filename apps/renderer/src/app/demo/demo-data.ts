@@ -1,6 +1,6 @@
 import type { NavItem, NavCta, FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 
-export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography';
+export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'showcase';
 
 export interface DemoSiteData {
   navItems: NavItem[];
@@ -166,6 +166,26 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
         { title: 'Mehr', items: [{ text: 'FAQ', href: '/demo/photography/faq' }, { text: 'Über mich', href: '/demo/photography/ueber-mich' }, { text: 'Kontakt', href: '/demo/photography/kontakt' }] },
       ],
       legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    },
+  },
+  showcase: {
+    brand: { companyName: 'Flamingo CMS', tagline: 'Sektionen-Galerie — alle verfügbaren Inhaltsbausteine', primaryColor: '#6366f1' },
+    contact: { phone: '', email: 'info@flamingo-cms.de', address: '' },
+    socialLinks: {},
+    navItems: [
+      { label: 'Übersicht', href: '/demo/showcase' },
+      { label: 'Hero', href: '/demo/showcase/hero-banner' },
+      { label: 'Text & Bild', href: '/demo/showcase/text-bild' },
+      { label: 'Leistungen', href: '/demo/showcase/leistungs-grid' },
+      { label: 'FAQ', href: '/demo/showcase/faq' },
+    ],
+    cta: { label: 'Alle Sektionen', href: '/demo/showcase' },
+    footer: {
+      columns: [
+        { title: 'Sektionen', items: [{ text: 'Hero-Banner', href: '/demo/showcase/hero-banner' }, { text: 'Leistungs-Grid', href: '/demo/showcase/leistungs-grid' }, { text: 'Bewertungen', href: '/demo/showcase/bewertungen' }, { text: 'FAQ', href: '/demo/showcase/faq' }] },
+        { title: 'Mehr', items: [{ text: 'Text & Bild', href: '/demo/showcase/text-bild' }, { text: 'Preispakete', href: '/demo/showcase/preispakete' }, { text: 'Galerie', href: '/demo/showcase/galerie' }, { text: 'Team', href: '/demo/showcase/team' }] },
+      ],
+      legalLinks: [],
     },
   },
 };

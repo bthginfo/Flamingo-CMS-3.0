@@ -153,6 +153,22 @@ export const photographySite: DemoSite = {
           },
         },
         {
+          ...B, id: 'ph-leist-grid', type: 'servicesGrid',
+          data: {
+            headline: 'Meine Leistungen',
+            subline: 'Von der Hochzeitsreportage bis zum Einzelportrait – ich biete verschiedene Shooting-Formate, individuell auf euch zugeschnitten.',
+            badgeText: 'Übersicht',
+            manualCards: [
+              { title: 'Hochzeitsreportage', text: 'Eure komplette Hochzeit in authentischen Bildern.', image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80', mediaType: 'image', href: '/demo/photography/c/leistungen/hochzeitsreportage' },
+              { title: 'Babybauch-Shooting', text: 'Die wunderschöne Vorfreude festgehalten.', image: 'https://images.unsplash.com/photo-1509027572446-af8401acfdc3?w=600&q=80', mediaType: 'image', href: '/demo/photography/c/leistungen/babybauch' },
+              { title: 'Paarshooting', text: 'Zeit zu zweit in wunderschönen Bildern.', image: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=600&q=80', mediaType: 'image', href: '/demo/photography/c/leistungen/paarshooting' },
+              { title: 'JGA Shooting', text: 'Feiert den JGA mit unvergesslichen Gruppenfotos.', image: 'https://images.unsplash.com/photo-1523983388277-336a66bf9bcd?w=600&q=80', mediaType: 'image', href: '/demo/photography/c/leistungen/jga-shooting' },
+              { title: 'Portrait-Shooting', text: 'Eure Persönlichkeit aufs Bild.', image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&q=80', mediaType: 'image', href: '/demo/photography/c/leistungen/portrait' },
+              { title: 'After-Wedding', text: 'Entspannte Fotos nach der Hochzeit.', image: 'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600&q=80', mediaType: 'image', href: '/demo/photography/c/leistungen/after-wedding' },
+            ],
+          },
+        },
+        {
           ...B, id: 'ph-packages', type: 'servicePackages',
           data: {
             badge: 'Pakete',
