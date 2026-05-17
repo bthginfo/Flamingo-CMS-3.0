@@ -139,16 +139,73 @@ CONTENT-REGELN:
 - ServicesGrid href: Verlinke zu Collection-Detail-Seiten als "/c/leistungen/[slug]"
 
 ═══════════════════════════════════════════
+BEISPIEL — So sieht ein korrekter servicesGrid-Aufruf aus:
+═══════════════════════════════════════════
+
+{
+  "type": "servicesGrid",
+  "data": {
+    "headline": "Unsere Leistungen",
+    "subline": "Kompetenz aus einer Hand",
+    "services": [
+      { "icon": "Droplets", "title": "Leckortung", "text": "Modernste Messtechnik zur zerstörungsfreien Ortung von Wasserschäden.", "href": "/c/leistungen/leckortung" },
+      { "icon": "Wind", "title": "Bautrocknung", "text": "Professionelle Trocknung mit überwachtem Trocknungsverlauf.", "href": "/c/leistungen/bautrocknung" },
+      { "icon": "Hammer", "title": "Sanierung", "text": "Fachgerechte Wiederherstellung nach Wasserschäden.", "href": "/c/leistungen/sanierung" },
+      { "icon": "FileCheck", "title": "Versicherungsabwicklung", "text": "Komplette Dokumentation und Kommunikation mit Ihrer Versicherung.", "href": "/c/leistungen/versicherung" }
+    ]
+  }
+}
+
+WICHTIG: Jedes service-Objekt MUSS icon, title, text UND href haben!
+Die href-Werte MÜSSEN auf Collection-Items verweisen die du vorher angelegt hast.
+
+═══════════════════════════════════════════
+BEISPIEL — Footer mit vollständigen columns:
+═══════════════════════════════════════════
+
+{
+  "columns": [
+    { "title": "Leistungen", "items": [{ "text": "Leckortung", "href": "/c/leistungen/leckortung" }, { "text": "Bautrocknung", "href": "/c/leistungen/bautrocknung" }, { "text": "Sanierung", "href": "/c/leistungen/sanierung" }] },
+    { "title": "Unternehmen", "items": [{ "text": "Über uns", "href": "/ueber-uns" }, { "text": "Team", "href": "/ueber-uns" }, { "text": "Kontakt", "href": "/kontakt" }] },
+    { "title": "Service", "items": [{ "text": "Notdienst", "href": "/kontakt" }, { "text": "FAQ", "href": "/startseite" }] }
+  ],
+  "legalLinks": [{ "label": "Impressum", "href": "/impressum" }, { "label": "Datenschutz", "href": "/datenschutz" }],
+  "cta": { "label": "Schaden melden", "href": "/kontakt" }
+}
+
+WICHTIG: Jede column MUSS ein items-Array mit mindestens 2 Einträgen haben! Leere columns crashen die Seite.
+
+═══════════════════════════════════════════
+BEISPIEL — Contact-Section mit Info-Karten:
+═══════════════════════════════════════════
+
+{
+  "type": "contact",
+  "data": {
+    "headline": "Kontaktieren Sie uns",
+    "subline": "Wir sind für Sie da",
+    "formEnabled": true,
+    "mapEmbedUrl": "https://www.google.com/maps/embed?pb=..."
+  }
+}
+
+Hinweis: Die Kontaktdaten (Adresse, Telefon, E-Mail) werden automatisch aus den Brand/Contact-Settings geladen. Du MUSST also vorher PUT /contact mit allen Daten aufrufen!
+
+═══════════════════════════════════════════
 HÄUFIGE FEHLER (VERMEIDE DIESE):
 ═══════════════════════════════════════════
 
 ❌ Footer ohne items in columns → CRASH
+❌ servicesGrid mit services-Array aber OHNE href → keine Verlinkung
+❌ servicesGrid mit services-Array aber OHNE icon → leere Karten
+❌ servicesGrid mit services-Array aber OHNE text → leere Beschreibung
 ❌ Navigation ohne CTA → fehlender Anruf-Button
 ❌ Leistungen nur als Seiten statt Collection Items
-❌ servicesGrid ohne href → keine Verlinkung zu Details
+❌ Collection-Items angelegt aber NICHT im servicesGrid referenziert
 ❌ Kontaktseite ohne contact-Section → kein Formular
 ❌ Hero ohne primaryCta → kein Call-to-Action
 ❌ Sections mit leeren/fehlenden Pflichtfeldern
+❌ Array-Felder mit 0 oder 1 Einträgen (MINIMUM 3)
 ❌ Slugs mit führendem "/" (FALSCH: "/kontakt", RICHTIG: "kontakt")
 ❌ Publish vergessen am Ende
 
@@ -206,6 +263,80 @@ function getSectionSchemas(industry: string): Record<string, object> {
       reservation: { fields: { headline: 'string', text: 'string?', cta: '{ label: string, href: string }?' } },
       openingHours: { fields: { headline: 'string', days: '{ label: string, hours: string }[]' } },
       signatureDishes: { fields: { headline: 'string', dishes: '{ name: string, description: string, image?: url, price?: string }[]' } },
+      events: { fields: { headline: 'string', subline: 'string?', events: '{ title: string, text: string, image?: url, dateLabel?: string, cta?: { label: string, href: string } }[]' } },
+      ambience: { fields: { headline: 'string', subline: 'string?', text: 'string?', images: '{ src: url, alt?: string }[]', cta: '{ label: string, href: string }?' } },
+      story: { fields: { headline: 'string', subline: 'string?', text: 'string (html)', image: 'url?', founderName: 'string?', founderRole: 'string?', ctaPrimary: '{ label: string, href: string }?' } },
+      testimonials: { fields: { headline: 'string', items: '{ quote: string, name: string, role?: string, rating?: 1-5 }[]' } },
+      faq: { fields: { headline: 'string', items: '{ question: string, answer: string }[]' } },
+      contact: { fields: { headline: 'string', subline: 'string?', mapEmbedUrl: 'url?', formEnabled: 'boolean?', infoCards: '{ icon: lucide-icon-name, label: string, value: string }[]?' } },
+      gallery: { fields: { headline: 'string', images: '{ src: url, alt?: string, caption?: string }[]' } },
+    });
+  } else if (industry === 'hotel') {
+    Object.assign(schemas, {
+      bookingStrip: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', submitCta: '{ label: string, href: string }', bookingNote: 'string?' } },
+      roomShowcase: { fields: { headline: 'string', subline: 'string?', rooms: '{ name: string, description: string, image: url, priceLabel: string, sizeLabel?: string, occupancyLabel?: string, features: string[], detailCta?: { label: string, href: string }, highlighted?: boolean }[]' } },
+      amenities: { fields: { headline: 'string', subline: 'string?', items: '{ icon: lucide-icon-name, title: string, text: string, image?: url }[]', ctaPrimary: '{ label: string, href: string }?' } },
+      wellness: { fields: { headline: 'string', subline: 'string?', introText: 'string?', imagePrimary: 'url?', treatments: '{ title: string, text: string, durationLabel?: string, priceLabel?: string }[]', features: '{ icon: lucide-icon-name, title: string, text: string }[]?', ctaPrimary: '{ label: string, href: string }?' } },
+      location: { fields: { headline: 'string', subline: 'string?', addressText: 'string', mapEmbedUrl: 'url?', image: 'url?', transportItems: '{ icon: lucide-icon-name, label: string, value: string }[]?', nearbyItems: '{ title: string, distanceLabel: string, text?: string }[]?', routeCta: '{ label: string, href: string }?' } },
+      hotelDining: { fields: { headline: 'string', subline: 'string?', introText: 'string?', image: 'url?', openingText: 'string?', menus: '{ title: string, description: string, timeLabel?: string, priceLabel?: string }[]', ctaPrimary: '{ label: string, href: string }?' } },
+      eventSpaces: { fields: { headline: 'string', subline: 'string?', spaces: '{ name: string, description: string, image: url, capacityLabel?: string, sizeLabel?: string, features: string[] }[]', ctaPrimary: '{ label: string, href: string }?' } },
+      offers: { fields: { headline: 'string', subline: 'string?', offers: '{ title: string, description: string, image?: url, priceLabel?: string, durationLabel?: string, includes: string[], cta?: { label: string, href: string }, highlighted?: boolean }[]' } },
+      story: { fields: { headline: 'string', subline: 'string?', storyText: 'string (html)', imagePrimary: 'url?', founderName: 'string?', founderRole: 'string?', founderQuote: 'string?', stats: '{ value: string, label: string }[]?', milestones: '{ year: string, title: string, text: string }[]?' } },
+      testimonials: { fields: { headline: 'string', items: '{ quote: string, name: string, role?: string, rating?: 1-5 }[]' } },
+      faq: { fields: { headline: 'string', items: '{ question: string, answer: string }[]' } },
+      contact: { fields: { headline: 'string', subline: 'string?', mapEmbedUrl: 'url?', formEnabled: 'boolean?', infoCards: '{ icon: lucide-icon-name, label: string, value: string }[]?' } },
+      gallery: { fields: { headline: 'string', images: '{ src: url, alt?: string, caption?: string }[]' } },
+    });
+  } else if (industry === 'salon') {
+    Object.assign(schemas, {
+      serviceMenu: { fields: { headline: 'string', subline: 'string?', categories: '{ title: string, text?: string, image?: url, services: { name: string, description?: string, durationLabel?: string, priceLabel?: string }[], cta?: { label: string, href: string } }[]' } },
+      priceList: { fields: { headline: 'string', subline: 'string?', categories: '{ title: string, items: { name: string, description?: string, durationLabel?: string, priceLabel: string }[] }[]', footnote: 'string?' } },
+      packages: { fields: { headline: 'string', subline: 'string?', packages: '{ title: string, text: string, image?: url, priceLabel: string, includes: string[], cta?: { label: string, href: string } }[]' } },
+      teamShowcase: { fields: { headline: 'string', subline: 'string?', members: '{ name: string, role: string, bio?: string, image?: url, specialties: string[] }[]' } },
+      expertiseGrid: { fields: { headline: 'string', subline: 'string?', items: '{ icon: lucide-icon-name, title: string, text: string }[]' } },
+      beforeAfter: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text?: string, beforeImage: url, afterImage: url, category?: string }[]' } },
+      bookingCta: { fields: { headline: 'string', subline: 'string?', introText: 'string?', onlineCta: '{ label: string, href: string }?', phoneCta: '{ label: string, href: string }?', whatsappCta: '{ label: string, href: string }?', notes: 'string[]?' } },
+      locationContact: { fields: { headline: 'string', subline: 'string?', image: 'url?', mapEmbedUrl: 'url?', formEnabled: 'boolean?', infoCards: '{ icon: lucide-icon-name, label: string, value: string }[]?' } },
+      openingHours: { fields: { headline: 'string', days: '{ label: string, hours: string }[]' } },
+      testimonials: { fields: { headline: 'string', items: '{ quote: string, name: string, role?: string, rating?: 1-5 }[]' } },
+      faq: { fields: { headline: 'string', items: '{ question: string, answer: string }[]' } },
+      gallery: { fields: { headline: 'string', images: '{ src: url, alt?: string }[]' } },
+    });
+  } else if (industry === 'medical') {
+    Object.assign(schemas, {
+      serviceOverview: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text: string, image?: url, icon?: lucide-icon-name, cta?: { label: string, href: string } }[]' } },
+      treatmentDetail: { fields: { headline: 'string', subline: 'string?', treatments: '{ title: string, text: string, image?: url, durationLabel?: string, steps: string[]? }[]' } },
+      diagnostics: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text: string, image?: url, benefitLabel?: string, methodLabel?: string }[]' } },
+      doctorTeam: { fields: { headline: 'string', subline: 'string?', doctors: '{ name: string, title: string, specialty: string, bio?: string, image?: url, languages: string[]? }[]' } },
+      certifications: { fields: { headline: 'string', subline: 'string?', items: '{ icon: lucide-icon-name, title: string, text: string }[]' } },
+      patientInfo: { fields: { headline: 'string', subline: 'string?', introText: 'string?', cards: '{ icon: lucide-icon-name, title: string, text: string, items: string[]? }[]' } },
+      insuranceInfo: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text: string, typeLabel?: string, notice?: string }[]' } },
+      appointmentCta: { fields: { headline: 'string', subline: 'string?', introText: 'string?', onlineCta: '{ label: string, href: string }?', phoneCta: '{ label: string, href: string }?', notes: 'string[]?' } },
+      emergencyInfo: { fields: { headline: 'string', subline: 'string?', introText: 'string?', items: '{ title: string, text: string, phoneLabel?: string, phoneHref?: string }[]' } },
+      equipmentHighlights: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text: string, image?: url, category?: string, benefitLabel?: string }[]' } },
+      valuesGrid: { fields: { headline: 'string', subline: 'string?', items: '{ icon: lucide-icon-name, title: string, text: string }[]' } },
+      openingHours: { fields: { headline: 'string', days: '{ label: string, hours: string }[]' } },
+      testimonials: { fields: { headline: 'string', items: '{ quote: string, name: string, role?: string, rating?: 1-5 }[]' } },
+      faq: { fields: { headline: 'string', items: '{ question: string, answer: string }[]' } },
+      story: { fields: { headline: 'string', subline: 'string?', text: 'string (html)', image: 'url?', ctaPrimary: '{ label: string, href: string }?' } },
+      gallery: { fields: { headline: 'string', images: '{ src: url, alt?: string }[]' } },
+      locationContact: { fields: { headline: 'string', subline: 'string?', mapEmbedUrl: 'url?', formEnabled: 'boolean?', infoCards: '{ icon: lucide-icon-name, label: string, value: string }[]?' } },
+    });
+  } else if (industry === 'tourism') {
+    Object.assign(schemas, {
+      destinationHighlights: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text: string, image: url, category?: string, cta?: { label: string, href: string } }[]' } },
+      experienceGrid: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text: string, image: url, category?: string, durationLabel?: string, priceLabel?: string, cta?: { label: string, href: string } }[]' } },
+      seasonTeaser: { fields: { headline: 'string', subline: 'string?', seasons: '{ title: string, text: string, image: url, periodLabel?: string, cta?: { label: string, href: string } }[]' } },
+      eventsCalendar: { fields: { headline: 'string', subline: 'string?', events: '{ title: string, text: string, image?: url, dateLabel: string, locationLabel?: string, category?: string, priceLabel?: string, cta?: { label: string, href: string } }[]' } },
+      sightseeingList: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text: string, image: url, openingText?: string, category?: string, cta?: { label: string, href: string } }[]' } },
+      tourRoutes: { fields: { headline: 'string', subline: 'string?', routes: '{ title: string, text: string, image: url, lengthLabel?: string, durationLabel?: string, difficultyLabel?: string, highlights: string[]?, cta?: { label: string, href: string } }[]' } },
+      accommodationGrid: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text: string, image: url, typeLabel?: string, priceLabel?: string, amenities: string[]?, cta?: { label: string, href: string } }[]' } },
+      visitorInfo: { fields: { headline: 'string', subline: 'string?', introText: 'string?', blocks: '{ title: string, text: string, icon?: lucide-icon-name, items: string[]? }[]' } },
+      story: { fields: { headline: 'string', subline: 'string?', text: 'string (html)', image: 'url?', ctaPrimary: '{ label: string, href: string }?' } },
+      testimonials: { fields: { headline: 'string', items: '{ quote: string, name: string, role?: string, rating?: 1-5 }[]' } },
+      faq: { fields: { headline: 'string', items: '{ question: string, answer: string }[]' } },
+      gallery: { fields: { headline: 'string', images: '{ src: url, alt?: string }[]' } },
+      tourismContact: { fields: { headline: 'string', subline: 'string?', mapEmbedUrl: 'url?', formEnabled: 'boolean?', infoCards: '{ icon: lucide-icon-name, label: string, value: string }[]?' } },
     });
   } else if (industry === 'photography') {
     Object.assign(schemas, {
