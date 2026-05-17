@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Phone, CheckCircle } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
@@ -55,13 +56,23 @@ type HeroProps = {
 
 /* ─── CLASSIC: Fullscreen gradient overlay, spotlight, floating orbs, pill buttons ─── */
 function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, trustStripColor }: HeroProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
-  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
-  const y = useTransform(scrollY, [0, 400], [0, 100]);
+  const [heroH, setHeroH] = useState(800);
+  useEffect(() => {
+    const measure = () => { if (ref.current) setHeroH(ref.current.offsetHeight); };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+  const fadeStart = Math.max(heroH * 0.4, 200);
+  const fadeEnd = Math.max(heroH * 0.9, 500);
+  const opacity = useTransform(scrollY, [0, fadeStart, fadeEnd], [1, 1, 0]);
+  const y = useTransform(scrollY, [0, fadeEnd], [0, 100]);
   const useBgImage = bgMode === 'image' && bgImage;
 
   return (
-    <div className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px]">
+    <div ref={ref} className="relative min-h-[100svh] flex items-center overflow-hidden -mt-[112px] pt-[112px]">
       {useBgImage ? (
         <>
           <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
@@ -133,7 +144,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
 /* ─── MODERN: Split layout, text left / image right, generous whitespace, understated ─── */
 function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, trustStripColor }: HeroProps) {
   return (
-    <div className="relative min-h-screen flex items-center -mt-[112px] pt-[112px] bg-white">
+    <div className="relative min-h-[100svh] flex items-center -mt-[112px] pt-[112px] bg-white">
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-12 md:py-20">
         <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
           {badgeText && (
@@ -185,7 +196,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
 function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, trustStripColor }: HeroProps) {
   const useBgImage = bgMode === 'image' && bgImage;
   return (
-    <div className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-brand-dark" style={bgMode === 'color' && bgColor ? { backgroundColor: bgColor } : undefined}>
+    <div className="relative min-h-[100svh] flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-brand-dark" style={bgMode === 'color' && bgColor ? { backgroundColor: bgColor } : undefined}>
       {useBgImage && (
         <>
           <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
