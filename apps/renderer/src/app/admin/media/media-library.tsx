@@ -20,6 +20,8 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const [selected, setSelected] = useState<MediaAsset | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [altModalAsset, setAltModalAsset] = useState<MediaAsset | null>(null);
+  const [altValue, setAltValue] = useState('');
 
   const handleUpload = useCallback(async (files: FileList | File[]) => {
     const MAX_SIZE = 1 * 1024 * 1024; // 1 MB
@@ -147,7 +149,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
                 <Trash2 size={14} />
               </button>
               <button
-                onClick={e => { e.stopPropagation(); setSelected(asset); }}
+                onClick={e => { e.stopPropagation(); setAltModalAsset(asset); setAltValue(asset.alt || ''); }}
                 className="absolute top-2 right-11 w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-blue-700"
               >
                 <Pencil size={14} />
@@ -187,16 +189,78 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
               </div>
               <div>
                 <label className="admin-label">Alt-Text</label>
-                <input
-                  className="admin-input"
-                  defaultValue={selected.alt || ''}
-                  placeholder="Bildbeschreibung für SEO & Barrierefreiheit"
-                  onBlur={e => {
-                    updateMediaAlt(selected.id, e.target.value);
-                    setSelected({ ...selected, alt: e.target.value });
-                    setAssets(prev => prev.map(a => a.id === selected.id ? { ...a, alt: e.target.value } : a));
-                  }}
+                <div className="flex gap-2">
+                  <input className="admin-input flex-1" value={selected.alt || ''} readOnly placeholder="Kein Alt-Text" />
+                  <button
+                    onClick={() => { setAltModalAsset(selected); setAltValue(selected.alt || ''); }}
+                    className="admin-btn-secondary shrink-0"
+                  >
+                    <Pencil size={14} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Alt-Text Modal */}
+      {altModalAsset && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={() => setAltModalAsset(null)}>
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold">Alt-Text bearbeiten</h3>
+                <button onClick={() => setAltModalAsset(null)} className="text-zinc-400 hover:text-zinc-600 p-1">
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-zinc-100">
+                <Image src={altModalAsset.blobUrl} alt={altModalAsset.alt || ''} fill className="object-contain" sizes="400px" />
+              </div>
+              <p className="text-xs text-zinc-500 truncate">{altModalAsset.filename}</p>
+              <div>
+                <label className="admin-label">Alt-Text (Bildbeschreibung)</label>
+                <textarea
+                  className="admin-input w-full min-h-[80px] resize-y"
+                  value={altValue}
+                  onChange={e => setAltValue(e.target.value)}
+                  placeholder="z.B. Handwerker bei der Arbeit an einem Dachstuhl"
+                  autoFocus
                 />
+                <p className="text-[11px] text-zinc-400 mt-1">Beschreibe das Bild kurz und prägnant — wichtig für SEO und Barrierefreiheit.</p>
+              </div>
+              <div className="flex gap-2 justify-end">
+                {altModalAsset.alt && (
+                  <button
+                    onClick={() => {
+                      updateMediaAlt(altModalAsset.id, '');
+                      setAssets(prev => prev.map(a => a.id === altModalAsset.id ? { ...a, alt: '' } : a));
+                      if (selected?.id === altModalAsset.id) setSelected({ ...altModalAsset, alt: '' });
+                      setAltModalAsset(null);
+                      toast.success('Alt-Text gelöscht');
+                    }}
+                    className="admin-btn-secondary text-red-600 hover:bg-red-50 mr-auto"
+                  >
+                    <Trash2 size={14} /> Löschen
+                  </button>
+                )}
+                <button onClick={() => setAltModalAsset(null)} className="admin-btn-secondary">
+                  Abbrechen
+                </button>
+                <button
+                  onClick={() => {
+                    updateMediaAlt(altModalAsset.id, altValue);
+                    setAssets(prev => prev.map(a => a.id === altModalAsset.id ? { ...a, alt: altValue } : a));
+                    if (selected?.id === altModalAsset.id) setSelected({ ...altModalAsset, alt: altValue });
+                    setAltModalAsset(null);
+                    toast.success('Alt-Text gespeichert');
+                  }}
+                  className="admin-btn-primary"
+                >
+                  Speichern
+                </button>
               </div>
             </div>
           </div>
