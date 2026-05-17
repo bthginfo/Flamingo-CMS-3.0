@@ -21,7 +21,7 @@ async function resolvePageData(slug?: string[]) {
   const page = snapshot.pages.find(p =>
     p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
   );
-  if (!page || !page.visible) return null;
+  if (!page || page.visible === false) return null;
   return { tenantId, snapshot, page };
 }
 
