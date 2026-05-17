@@ -54,3 +54,17 @@ export function withApiHandlerParams<T extends Record<string, string>>(
 export function normalizeSlug(slug: string): string {
   return slug.replace(/^\/+/, '').replace(/\/+$/, '').toLowerCase();
 }
+
+/** Validate section array. Returns error string or null if valid. */
+export function validateSections(sections: unknown): string | null {
+  if (!Array.isArray(sections)) return 'sections must be an array';
+  for (let i = 0; i < sections.length; i++) {
+    const s = sections[i];
+    if (!s || typeof s !== 'object') return `sections[${i}] must be an object`;
+    if (!s.type || typeof s.type !== 'string') return `sections[${i}].type is required and must be a string`;
+    if (s.data !== undefined && (typeof s.data !== 'object' || s.data === null || Array.isArray(s.data))) {
+      return `sections[${i}].data must be an object`;
+    }
+  }
+  return null;
+}

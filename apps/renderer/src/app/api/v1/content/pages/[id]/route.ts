@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import crypto from 'crypto';
-import { withApiHandlerParams, normalizeSlug } from '@/lib/api-utils';
+import { withApiHandlerParams, normalizeSlug, validateSections } from '@/lib/api-utils';
 
 export const PUT = withApiHandlerParams(async (req, auth, params) => {
   const { id } = params;
@@ -19,6 +19,8 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
   }
 
   if (Array.isArray(body.sections)) {
+    const sectionErr = validateSections(body.sections);
+    if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
     await db.delete(pageSections).where(and(eq(pageSections.pageId, id), eq(pageSections.tenantId, auth.tenantId)));
     if (body.sections.length > 0) {
       await db.insert(pageSections).values(

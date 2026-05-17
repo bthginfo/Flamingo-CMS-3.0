@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
-import { withApiHandler, normalizeSlug } from '@/lib/api-utils';
+import { withApiHandler, normalizeSlug, validateSections } from '@/lib/api-utils';
 
 export const POST = withApiHandler(async (req, auth) => {
   const body = await req.json();
@@ -22,6 +22,8 @@ export const POST = withApiHandler(async (req, auth) => {
   });
 
   if (Array.isArray(sections) && sections.length > 0) {
+    const sectionErr = validateSections(sections);
+    if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
     await db.insert(pageSections).values(
       sections.map((s: any, i: number) => ({
         id: s.id || crypto.randomUUID(),
