@@ -21,6 +21,7 @@ export function AiApiClient({ existingToken, apiBase }: { existingToken: Token |
   const [creating, setCreating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
+  const [copiedPrompt, setCopiedPrompt] = useState(false);
 
   const handleCreate = async () => {
     setCreating(true);
@@ -151,9 +152,24 @@ export function AiApiClient({ existingToken, apiBase }: { existingToken: Token |
 
       {/* Help Prompt */}
       <div className="admin-card p-6 space-y-3">
-        <h3 className="font-semibold text-sm text-zinc-700">Hilfs-Prompt für die KI</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-sm text-zinc-700">Hilfs-Prompt für die KI</h3>
+          <button
+            onClick={() => {
+              const prompt = `Ich möchte, dass du meine Website mit Inhalten befüllst.\n\n1. Rufe zuerst GET ${instructionsUrl} auf (Header: Authorization: Bearer DEIN_API_KEY).\n   Du bekommst alle verfügbaren Section-Typen, Datenstrukturen und Endpoints zurück.\n\n2. Erstelle dann:\n   - Eine ansprechende Startseite mit Hero, Leistungen, Über uns, Bewertungen, FAQ und Kontakt\n   - Unterseiten für jede wichtige Leistung\n   - Eine Über-uns-Seite\n   - Impressum & Datenschutz (Seiten anlegen, Inhalte als Platzhalter)\n\n3. Befülle außerdem:\n   - Marke & Farben (Brand-Endpoint)\n   - Navigation mit Links zu allen Seiten\n   - Footer mit Spalten und Links\n   - Kontaktdaten und Öffnungszeiten\n   - SEO-Felder für jede Seite\n   - Kontaktformular-Felder\n\n4. Nutze KEINE section vom Typ "freeHtml" oder "htmlBlock".\n\n5. Wenn alles fertig ist, rufe den Publish-Endpoint auf.\n\nHier sind meine Infos:\n- Firmenname: [DEIN FIRMENNAME]\n- Branche: [DEINE BRANCHE]\n- Leistungen: [LEISTUNG 1, LEISTUNG 2, ...]\n- Adresse: [STRASSE, PLZ ORT]\n- Telefon: [NUMMER]\n- E-Mail: [EMAIL]\n- Besonderheiten: [WAS MACHT DICH BESONDERS?]`;
+              navigator.clipboard.writeText(prompt);
+              setCopiedPrompt(true);
+              setTimeout(() => setCopiedPrompt(false), 2000);
+              toast.success('Prompt kopiert!');
+            }}
+            className="shrink-0 flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-800 bg-white border rounded-lg px-3 py-1.5 transition-colors"
+          >
+            {copiedPrompt ? <CheckCircle size={14} className="text-emerald-500" /> : <Copy size={14} />}
+            {copiedPrompt ? 'Kopiert!' : 'Kopieren'}
+          </button>
+        </div>
         <p className="text-xs text-zinc-400">Kopiere diesen Prompt und gib ihn der KI zusammen mit deinem API-Link und Key. Passe die Platzhalter an dein Unternehmen an.</p>
-        <div className="bg-zinc-50 rounded-lg p-4 border text-sm text-zinc-700 whitespace-pre-wrap leading-relaxed font-mono">
+        <div className="bg-zinc-50 rounded-lg p-4 border text-sm text-zinc-700 whitespace-pre-wrap break-words leading-relaxed font-mono overflow-x-auto max-w-full">
 {`Ich möchte, dass du meine Website mit Inhalten befüllst.
 
 1. Rufe zuerst GET ${instructionsUrl} auf (Header: Authorization: Bearer DEIN_API_KEY).
@@ -186,16 +202,6 @@ Hier sind meine Infos:
 - E-Mail: [EMAIL]
 - Besonderheiten: [WAS MACHT DICH BESONDERS?]`}
         </div>
-        <button
-          onClick={() => {
-            const prompt = document.querySelector('.font-mono.whitespace-pre-wrap')?.textContent || '';
-            navigator.clipboard.writeText(prompt);
-            toast.success('Prompt kopiert!');
-          }}
-          className="text-sm text-blue-600 hover:underline flex items-center gap-1"
-        >
-          <Copy size={14} /> Prompt kopieren
-        </button>
       </div>
     </div>
   );
