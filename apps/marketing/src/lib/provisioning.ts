@@ -63,6 +63,17 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
   const db = getDb();
   const defaults = getProvisioningDefaults(input);
 
+  // Clean up zombie tenant from a previous failed attempt (stuck in 'provisioning')
+  const [existing] = await db.select().from(tenants).where(eq(tenants.slug, input.slug)).limit(1);
+  if (existing) {
+    if (existing.status === 'provisioning') {
+      // Safe to delete — was never fully provisioned
+      await db.delete(tenants).where(eq(tenants.id, existing.id));
+    } else {
+      throw new Error(`Ein Tenant mit dem Slug "${input.slug}" existiert bereits.`);
+    }
+  }
+
   // 1. Create tenant
   const deploymentMode = input.deploymentMode || 'shared';
   const [tenant] = await db.insert(tenants).values({
