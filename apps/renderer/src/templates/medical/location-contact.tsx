@@ -39,8 +39,8 @@ function Classic({ header, introText, image, mapEmbedUrl, formEnabled, submitLab
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-black/10 pt-4">
-              <DynamicIcon name={card.icon || 'mail'} size={20} className="text-teal-700" />
-              <div><p className="text-xs text-gray-600">{card.label || ''}</p><p className="font-semibold text-gray-900">{card.value || ''}</p></div>
+              <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-teal-700" />
+              <div className="min-w-0 flex-1"><p className="text-xs text-gray-600">{card.label || ''}</p><p className="break-words font-semibold text-gray-900">{card.value || ''}</p></div>
             </div>
           ))}
         </div>
@@ -64,8 +64,8 @@ function Modern({ header, introText, image, mapEmbedUrl, formEnabled, submitLabe
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-black/10 pt-4">
-              <DynamicIcon name={card.icon || 'mail'} size={20} className="text-blue-500" />
-              <div><p className="text-xs font-light text-gray-600">{card.label || ''}</p><p className="font-light text-gray-900">{card.value || ''}</p></div>
+              <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-blue-500" />
+              <div className="min-w-0 flex-1"><p className="text-xs font-light text-gray-600">{card.label || ''}</p><p className="break-words font-light text-gray-900">{card.value || ''}</p></div>
             </div>
           ))}
         </div>
@@ -96,8 +96,8 @@ function Bold({ header, introText, image, mapEmbedUrl, formEnabled, submitLabel,
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4">
-              <DynamicIcon name={card.icon || 'mail'} size={20} className="text-teal-400" />
-              <div><p className="text-xs font-bold uppercase text-gray-600">{card.label || ''}</p><p className="font-black text-gray-900">{card.value || ''}</p></div>
+              <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-teal-400" />
+              <div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase text-gray-600">{card.label || ''}</p><p className="break-words font-black text-gray-900">{card.value || ''}</p></div>
             </div>
           ))}
         </div>

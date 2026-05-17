@@ -82,7 +82,7 @@ function Modern(p: Props) {
           {p.subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
         {p.introText && <p className="font-light text-gray-600">{p.introText}</p>}
-        <div className="mt-6">{p.infoCards.map((c, i) => <div key={`${c.label}-${i}`} className="flex gap-4 border-t border-black/10 pt-4"><DynamicIcon name={c.icon || 'mail'} size={18} className="text-brand-accent" /><div><p className="text-xs font-light text-gray-600">{c.label || ''}</p><p className="font-light text-gray-900">{c.value || ''}</p></div></div>)}</div>
+        <div className="mt-6">{p.infoCards.map((c, i) => <div key={`${c.label}-${i}`} className="flex gap-4 border-t border-black/10 pt-4"><DynamicIcon name={c.icon || 'mail'} size={18} className="shrink-0 text-brand-accent" /><div className="min-w-0 flex-1"><p className="text-xs font-light text-gray-600">{c.label || ''}</p><p className="break-words font-light text-gray-900">{c.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
           {p.primaryCta.label && <a href={p.primaryCta.href || '#'} className="inline-flex border border-[#111827] px-6 py-3 font-light text-gray-900">{p.primaryCta.label}</a>}
           {p.secondaryCta.label && <a href={p.secondaryCta.href || '#'} className="inline-flex px-6 py-3 font-light text-gray-600">{p.secondaryCta.label}</a>}
@@ -107,7 +107,7 @@ function Bold(p: Props) {
           {p.subline && <div className="mt-4 font-bold text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
         {p.introText && <p className="font-bold text-gray-600">{p.introText}</p>}
-        <div className="mt-6">{p.infoCards.map((c, i) => <div key={`${c.label}-${i}`} className="flex gap-4 border-t-2 border-[#111827] pt-4"><DynamicIcon name={c.icon || 'mail'} size={20} className="text-brand-accent" /><div><p className="text-xs font-bold uppercase text-gray-600">{c.label || ''}</p><p className="font-black text-gray-900">{c.value || ''}</p></div></div>)}</div>
+        <div className="mt-6">{p.infoCards.map((c, i) => <div key={`${c.label}-${i}`} className="flex gap-4 border-t-2 border-[#111827] pt-4"><DynamicIcon name={c.icon || 'mail'} size={20} className="shrink-0 text-brand-accent" /><div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase text-gray-600">{c.label || ''}</p><p className="break-words font-black text-gray-900">{c.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
           {p.primaryCta.label && <a href={p.primaryCta.href || '#'} className="inline-flex bg-brand-accent px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{p.primaryCta.label}</a>}
           {p.secondaryCta.label && <a href={p.secondaryCta.href || '#'} className="inline-flex border-2 border-[#111827] px-6 py-3 font-black uppercase text-gray-900 shadow-[4px_4px_0_var(--brand-accent)]">{p.secondaryCta.label}</a>}

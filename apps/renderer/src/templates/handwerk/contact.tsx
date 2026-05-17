@@ -58,9 +58,9 @@ export function ContactSection({ data }: Props) {
               <div className={cn('w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform group-hover:scale-110')}>
                 <DynamicIcon name={card.icon} size={20} />
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <div className="text-xs text-slate-400 uppercase tracking-wider font-medium">{card.label}</div>
-                <div className="text-sm font-semibold text-gray-900">{card.value}</div>
+                <div className="text-sm font-semibold text-gray-900 break-words">{card.value}</div>
               </div>
             </motion.div>
           ))}
