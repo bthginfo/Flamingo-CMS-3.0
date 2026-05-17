@@ -19,6 +19,7 @@ export const POST = withApiHandler(async (req, auth) => {
     tenantId: auth.tenantId,
     slug: normalizedSlug,
     title,
+    status: 'published',
   });
 
   if (Array.isArray(sections) && sections.length > 0) {

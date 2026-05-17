@@ -12,6 +12,9 @@ export async function POST(req: NextRequest) {
 
     const db = getDb();
 
+    // Set all pages to "published" status
+    await db.update(pages).set({ status: 'published' }).where(eq(pages.tenantId, auth.tenantId));
+
     // Get all pages to revalidate their paths
     const allPages = await db.select({ slug: pages.slug }).from(pages).where(eq(pages.tenantId, auth.tenantId));
 
