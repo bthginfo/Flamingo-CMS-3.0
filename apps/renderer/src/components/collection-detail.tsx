@@ -32,12 +32,15 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
         {heroSections.map((section) => (
           <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} />
         ))}
-        {/* Back link — placed after hero so it's not hidden behind fixed nav */}
-        <div className="max-w-7xl mx-auto px-6 pt-4 md:pt-8">
-          <Link href={`${backHrefPrefix}/${collection.key}`} className="inline-flex items-center gap-2 text-sm text-brand-primary hover:underline mb-2 md:mb-4">
-            <ArrowLeft size={16} />
-            Zurück zu {collection.label}
-          </Link>
+        {/* Back link — integrated breadcrumb style */}
+        <div className="max-w-7xl mx-auto px-6 pt-4 md:pt-6">
+          <nav className="flex items-center gap-1.5 text-sm text-gray-500">
+            <Link href={`${backHrefPrefix}/${collection.key}`} className="hover:text-brand-primary transition-colors">
+              {collection.label}
+            </Link>
+            <span className="text-gray-300">/</span>
+            <span className="text-gray-900 font-medium truncate">{item.title || (item.data.headline as string) || ''}</span>
+          </nav>
         </div>
         {/* Remaining sections (CTA bands, etc.) */}
         {otherSections.map((section) => (

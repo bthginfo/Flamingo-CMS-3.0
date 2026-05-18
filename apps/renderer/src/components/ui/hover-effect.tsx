@@ -41,31 +41,56 @@ export function HoverEffect({
             )}
           </AnimatePresence>
           <div className="rounded-2xl h-full w-full overflow-hidden bg-white border border-gray-100 shadow-sm group-hover:shadow-lg group-hover:border-gray-200 transition-all duration-300 relative z-20">
-            {item.image && (
-              <div className="relative w-full h-48 overflow-hidden">
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 400px"
-                />
-              </div>
-            )}
-            <div className="p-6">
-              {item.icon && !item.image && (
-                <div className="mb-4 w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform duration-300 group-hover:scale-110">
-                  {item.icon}
+            {item.link ? (
+              <a href={item.link} className="block h-full">
+                {item.image && (
+                  <div className="relative w-full h-48 overflow-hidden">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 400px"
+                    />
+                  </div>
+                )}
+                <div className="p-6">
+                  {item.icon && !item.image && (
+                    <div className="mb-4 w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform duration-300 group-hover:scale-110">
+                      {item.icon}
+                    </div>
+                  )}
+                  <h4 className="font-display font-semibold text-lg mb-2 text-gray-900">{item.title}</h4>
+                  <p className="text-gray-500 text-sm leading-relaxed">{item.description}</p>
+                  <span className="inline-flex items-center text-brand-primary text-sm font-medium mt-4">
+                    Mehr erfahren →
+                  </span>
                 </div>
-              )}
-              <h4 className="font-display font-semibold text-lg mb-2 text-gray-900">{item.title}</h4>
-              <p className="text-gray-500 text-sm leading-relaxed">{item.description}</p>
-              {item.link && (
-                <a href={item.link} className="inline-flex items-center text-brand-primary text-sm font-medium mt-4 hover:underline">
-                  Mehr erfahren →
-                </a>
-              )}
-            </div>
+              </a>
+            ) : (
+              <>
+                {item.image && (
+                  <div className="relative w-full h-48 overflow-hidden">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 400px"
+                    />
+                  </div>
+                )}
+                <div className="p-6">
+                  {item.icon && !item.image && (
+                    <div className="mb-4 w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform duration-300 group-hover:scale-110">
+                      {item.icon}
+                    </div>
+                  )}
+                  <h4 className="font-display font-semibold text-lg mb-2 text-gray-900">{item.title}</h4>
+                  <p className="text-gray-500 text-sm leading-relaxed">{item.description}</p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       ))}
