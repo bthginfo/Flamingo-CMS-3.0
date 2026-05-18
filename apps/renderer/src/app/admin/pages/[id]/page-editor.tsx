@@ -78,7 +78,7 @@ function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVi
   onChangeRef.current = onChangeData;
   const stableOnChange = useCallback((data: Record<string, unknown>) => onChangeRef.current(data), []);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
-  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : !section.visible ? 0.5 : 1 };
   const typeInfo = sectionTypes.find(t => t.type === section.type);
 
   return (

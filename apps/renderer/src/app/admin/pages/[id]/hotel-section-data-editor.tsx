@@ -48,8 +48,8 @@ function HotelHeroEditor({ data, onChange }: EditorProps) {
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
       <Field label="Trust-Items (eine pro Zeile)" value={d.trustItems} onChange={(v) => setD({ ...d, trustItems: v })} multiline />
-      <ButtonField label="Primaerer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
-      <ButtonField label="Sekundaerer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
+      <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
+      <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
       <Field label="Verfuegbarkeits-Hinweis" value={d.availabilityHint} onChange={(v) => setD({ ...d, availabilityHint: v })} />
       <Field label="Rating-Text" value={d.ratingText} onChange={(v) => setD({ ...d, ratingText: v })} />
     </div>
@@ -81,7 +81,7 @@ function BookingStripEditor({ data, onChange }: EditorProps) {
         <Field label="Zimmer Label" value={d.roomLabel} onChange={(v) => setD({ ...d, roomLabel: v })} />
       </div>
       <ButtonField label="Submit CTA" value={d.submitCta} onChange={(v) => setD({ ...d, submitCta: v })} />
-      <ButtonField label="Sekundaerer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
+      <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
       <Field label="Buchungs-Hinweis" value={d.bookingNote} onChange={(v) => setD({ ...d, bookingNote: v })} multiline />
       <Repeater items={d.fields} addLabel="+ Feld" onAdd={() => setD({ ...d, fields: [...d.fields, fieldFromData({})] })} render={(field, index) => (
         <div className="grid grid-cols-3 gap-3">
