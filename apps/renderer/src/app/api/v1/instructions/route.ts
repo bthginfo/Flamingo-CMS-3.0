@@ -112,12 +112,10 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
       - textImage (Ã–ffnungszeiten oder Anfahrt-Info)
    
    e) Impressum (slug: "impressum"):
-      - collectionHero
-      - richText (vollstÃ¤ndiges deutsches Impressum mit Firmenname, Adresse, Telefon, E-Mail, GeschÃ¤ftsfÃ¼hrer, Handelsregister, USt-IdNr)
+      - legalContent (headline: "Impressum", blocks mit: Verantwortlicher, Kontaktdaten, Handelsregister, USt-IdNr, Haftungshinweis, Urheberrecht)
    
    f) Datenschutz (slug: "datenschutz"):
-      - collectionHero
-      - richText (DatenschutzerklÃ¤rung nach DSGVO)
+      - legalContent (headline: "Datenschutzerklärung", blocks mit: Verantwortlicher, Hosting, Cookies, Kontaktformular, Analyse-Tools, Rechte der Betroffenen)
 
 6. COLLECTIONS â€” Erstelle MINDESTENS eine Collection fÃ¼r die Kernleistungen:
    - POST /api/v1/content/collections â†’ { key: "leistungen", label: "Leistungen" }
@@ -242,6 +240,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
   const schemas: Record<string, object> = {
     hero: { fields: { headline: 'string', subline: 'string', badgeText: 'string?', badgeIcon: 'lucide-icon-name?', badgeStarsIcon: 'lucide-icon-name? (leer = keine Sterne)', bgImage: 'url?', bgImageMobile: 'url?', bgColor: 'hex? (alternative bg color if no image)', bgMode: '"image"|"color"|"gradient" (default gradient)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', trustItems: 'string[]?', trustStripColor: 'hex?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string? (CSS object-position, e.g. "center 30%")', bgPositionMobile: 'string?' } },
     richText: { fields: { headline: 'string?', content: 'html-string' } },
+    legalContent: { fields: { headline: 'string', blocks: '{ headline: string, text: string (html) }[] — je ein Block pro Thema (z.B. Verantwortlicher, Kontakt, Hosting, Cookies etc.)' } },
     freeText: { fields: { content: 'rich-text (Tiptap JSON or HTML)' } },
     videoEmbed: { fields: { headline: 'string?', subline: 'string?', videoUrl: 'youtube/vimeo URL', aspectRatio: '"16:9"|"4:3"|"1:1"?' } },
     textImage: { fields: { headline: 'string', text: 'string (html)', badge: 'string?', image: 'url', imageAlt: 'string?', layout: '"image-right"|"image-left"', items: '{ icon?: lucide-icon-name, title: string, text: string }[]?', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },

@@ -1,4 +1,4 @@
-import type { SectionProps } from './restaurant';
+﻿import type { SectionProps } from './restaurant';
 import { HeroSection } from './handwerk/hero';
 import { UspStripSection } from './handwerk/usp-strip';
 import { ServicesGridSection } from './handwerk/services-grid';
@@ -17,6 +17,7 @@ import { StatsSection } from './handwerk/stats';
 import { LogoCloudSection } from './handwerk/logo-cloud';
 import { GalleryGridSection } from './handwerk/gallery-grid';
 import { RichTextSection } from './handwerk/rich-text';
+import { LegalContentSection } from './handwerk/legal-content';
 import { VideoEmbedSection } from './shared/video-embed';
 import { NoticeBannerSection } from './shared/notice-banner';
 import { HeaderBannerSection } from './handwerk/header-banner';
@@ -151,6 +152,7 @@ export const TRADESMAN_TEMPLATES: Record<string, TemplateComponent> = {
   logoCloud: LogoCloudSection,
   galleryGrid: GalleryGridSection,
   richText: RichTextSection,
+  legalContent: LegalContentSection,
   videoEmbed: VideoEmbedSection,
   freeText: RichTextSection,
   headerBanner: HeaderBannerSection,
@@ -177,6 +179,7 @@ export const RESTAURANT_TEMPLATES: Record<string, TemplateComponent> = {
   ctaBand: CtaBandSection,
   textImage: TextImageSection,
   richText: RichTextSection,
+  legalContent: LegalContentSection,
   videoEmbed: VideoEmbedSection,
   collectionHero: CollectionHeroSection,
 };
@@ -205,6 +208,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     ctaBand: CtaBandSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+    legalContent: LegalContentSection,
   videoEmbed: VideoEmbedSection,
     collectionHero: CollectionHeroSection,
   },
@@ -231,6 +235,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     ctaBand: CtaBandSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+    legalContent: LegalContentSection,
   videoEmbed: VideoEmbedSection,
     collectionHero: CollectionHeroSection,
   },
@@ -255,6 +260,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     ctaBand: CtaBandSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+    legalContent: LegalContentSection,
   videoEmbed: VideoEmbedSection,
     collectionHero: CollectionHeroSection,
   },
@@ -285,6 +291,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     ctaBand: CtaBandSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+    legalContent: LegalContentSection,
   videoEmbed: VideoEmbedSection,
     collectionHero: CollectionHeroSection,
   },
@@ -305,6 +312,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     ctaBand: CtaBandSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+    legalContent: LegalContentSection,
   videoEmbed: VideoEmbedSection,
     collectionHero: CollectionHeroSection,
   },
@@ -323,6 +331,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     uspStrip: UspStripSection,
     textImage: TextImageSection,
     richText: RichTextSection,
+    legalContent: LegalContentSection,
   videoEmbed: VideoEmbedSection,
     newsPreview: NewsPreviewSection,
     newsGrid: NewsPreviewSection,
@@ -343,6 +352,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   logoCloud: LogoCloudSection,
   galleryGrid: GalleryGridSection,
   richText: RichTextSection,
+  legalContent: LegalContentSection,
   videoEmbed: VideoEmbedSection,
   freeText: RichTextSection,
   headerBanner: HeaderBannerSection,
