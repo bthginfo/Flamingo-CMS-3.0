@@ -27,20 +27,17 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
     const otherSections = visibleSections.filter(s => s.type !== 'collectionHero');
 
     return (
-      <div>
+      <div className="relative">
         {/* Hero sections */}
         {heroSections.map((section) => (
           <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} />
         ))}
-        {/* Back link — integrated breadcrumb style */}
-        <div className="max-w-7xl mx-auto px-6 pt-4 md:pt-6">
-          <nav className="flex items-center gap-1.5 text-sm text-gray-500">
-            <Link href={`${backHrefPrefix}/${collection.key}`} className="hover:text-brand-primary transition-colors">
-              {collection.label}
-            </Link>
-            <span className="text-gray-300">/</span>
-            <span className="text-gray-900 font-medium truncate">{item.title || (item.data.headline as string) || ''}</span>
-          </nav>
+        {/* Back button — floating pill at hero/content transition */}
+        <div className="relative z-30 -mt-5 ml-6 md:ml-10">
+          <Link href={`${backHrefPrefix}/${collection.key}`} className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md ring-1 ring-black/5 hover:bg-brand-primary hover:text-white transition-colors">
+            <ArrowLeft size={14} />
+            {collection.label}
+          </Link>
         </div>
         {/* Remaining sections (CTA bands, etc.) */}
         {otherSections.map((section) => (
