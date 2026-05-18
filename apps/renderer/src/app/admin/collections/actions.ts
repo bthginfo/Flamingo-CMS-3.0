@@ -51,9 +51,6 @@ export async function ensureDefaultCollections() {
   const existing = await db.select({ key: collections.key }).from(collections).where(eq(collections.tenantId, session.tenantId));
   const existingKeys = new Set(existing.map(c => c.key));
   const defaults = [
-    { key: 'services', label: 'Leistungen' },
-    { key: 'projects', label: 'Projekte' },
-    { key: 'team', label: 'Team' },
     { key: 'news', label: 'News & Blog' },
   ];
   for (const d of defaults) {
