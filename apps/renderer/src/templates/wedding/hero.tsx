@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -32,6 +33,8 @@ export function WeddingHeroSection({ data }: Props) {
   const bgPosition = (data.bgPosition as string) || 'center';
   const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
   const showCountdown = data.showCountdown !== false;
+  const imageEffect = (data.imageEffect as ImageEffect) || 'none';
+  const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
   const countdown = useCountdown(date);
   const formattedDate = new Date(date).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -39,8 +42,10 @@ export function WeddingHeroSection({ data }: Props) {
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden -mt-[112px] pt-[112px]">
       {bgImage ? (
         <>
-          <Image src={bgImage} alt={names} fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority />
-          {bgImageMobile && <Image src={bgImageMobile} alt={names} fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority />}
+          <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
+            <Image src={bgImage} alt={names} fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority />
+            {bgImageMobile && <Image src={bgImageMobile} alt={names} fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority />}
+          </ImageEffectWrapper>
           <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/60 via-brand-dark/40 to-brand-dark/60" />
         </>
       ) : (

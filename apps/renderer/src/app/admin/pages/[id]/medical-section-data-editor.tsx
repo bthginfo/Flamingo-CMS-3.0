@@ -32,6 +32,8 @@ function HeroEditor({ data, onChange }: EditorProps) {
     primaryCta: btn(data.primaryCta),
     emergencyCta: btn(data.emergencyCta),
     secondaryCta: btn(data.secondaryCta),
+    imageEffect: (data.imageEffect as string) || 'none',
+    imageEffectIntensity: (data.imageEffectIntensity as string) || 'medium',
   });
   useReport({ ...d, trustItems: lines(d.trustItems) }, onChange);
   return <div className="space-y-3"><Basics d={d} setD={setD} /><ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} /><div className="grid grid-cols-2 gap-3"><Field label="Fachrichtung" value={d.specialtyLabel} onChange={(v) => setD({ ...d, specialtyLabel: v })} /><Field label="Akuthinweis" value={d.emergencyHint} onChange={(v) => setD({ ...d, emergencyHint: v })} /></div><Field label="Trust-Items" value={d.trustItems} onChange={(v) => setD({ ...d, trustItems: v })} multiline /><ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} /><ButtonField label="Notfall-CTA" value={d.emergencyCta} onChange={(v) => setD({ ...d, emergencyCta: v })} /><ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} /></div>;

@@ -282,6 +282,8 @@ function HeroEditor({ data, onChange }: EditorProps) {
     trustItems: ((data.trustItems as string[]) || []).join('\n'),
     primaryCta: (data.primaryCta as ButtonValue) || { label: '', href: '' },
     secondaryCta: (data.secondaryCta as ButtonValue) || { label: '', href: '' },
+    imageEffect: (data.imageEffect as string) || 'none',
+    imageEffectIntensity: (data.imageEffectIntensity as string) || 'medium',
   });
   useReport({ ...d, trustItems: lines(d.trustItems) }, onChange);
   return (
@@ -293,6 +295,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
       <Field label="Trust-Items (je Zeile)" value={d.trustItems} onChange={(v) => setD({ ...d, trustItems: v })} multiline />
       <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
       <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
+      <div><label className="text-xs font-medium text-zinc-600 mb-1 block">Bild-Effekt</label><select className="admin-input" value={d.imageEffect} onChange={(e) => setD({ ...d, imageEffect: e.target.value })}><option value="none">Kein Effekt</option><option value="parallax">Parallax</option><option value="kenBurns">Ken Burns (Zoom)</option><option value="mouseGlow">Mouse Glow</option><option value="blurOnScroll">Blur on Scroll</option><option value="grain">Film-Grain</option></select>{d.imageEffect !== 'none' && (<select className="admin-input mt-2" value={d.imageEffectIntensity} onChange={(e) => setD({ ...d, imageEffectIntensity: e.target.value })}><option value="subtle">Dezent</option><option value="medium">Mittel</option><option value="strong">Stark</option></select>)}</div>
     </div>
   );
 }

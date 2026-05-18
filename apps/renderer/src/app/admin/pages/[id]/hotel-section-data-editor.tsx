@@ -39,6 +39,8 @@ function HotelHeroEditor({ data, onChange }: EditorProps) {
     secondaryCta: (data.secondaryCta as ButtonValue) || { label: '', href: '' },
     availabilityHint: (data.availabilityHint as string) || '',
     ratingText: (data.ratingText as string) || '',
+    imageEffect: (data.imageEffect as string) || 'none',
+    imageEffectIntensity: (data.imageEffectIntensity as string) || 'medium',
   });
   useReport({ ...d, trustItems: lines(d.trustItems) }, onChange);
   return (
@@ -52,6 +54,7 @@ function HotelHeroEditor({ data, onChange }: EditorProps) {
       <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
       <Field label="Verfuegbarkeits-Hinweis" value={d.availabilityHint} onChange={(v) => setD({ ...d, availabilityHint: v })} />
       <Field label="Rating-Text" value={d.ratingText} onChange={(v) => setD({ ...d, ratingText: v })} />
+      <div><label className="text-xs font-medium text-zinc-600 mb-1 block">Bild-Effekt</label><select className="admin-input" value={d.imageEffect} onChange={(e) => setD({ ...d, imageEffect: e.target.value })}><option value="none">Kein Effekt</option><option value="parallax">Parallax</option><option value="kenBurns">Ken Burns (Zoom)</option><option value="mouseGlow">Mouse Glow</option><option value="blurOnScroll">Blur on Scroll</option><option value="grain">Film-Grain</option></select>{d.imageEffect !== 'none' && (<select className="admin-input mt-2" value={d.imageEffectIntensity} onChange={(e) => setD({ ...d, imageEffectIntensity: e.target.value })}><option value="subtle">Dezent</option><option value="medium">Mittel</option><option value="strong">Stark</option></select>)}</div>
     </div>
   );
 }
