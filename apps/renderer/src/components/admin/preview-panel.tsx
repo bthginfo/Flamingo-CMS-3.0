@@ -11,7 +11,9 @@ type Props = {
 export function PreviewPanel({ url, onClose }: Props) {
   const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop');
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [scale, setScale] = useState(0.5);
 
   // Close on Escape
   useEffect(() => {
@@ -22,12 +24,27 @@ export function PreviewPanel({ url, onClose }: Props) {
     return () => window.removeEventListener('keydown', handleKey);
   }, [onClose]);
 
+  // Calculate scale to fit container
+  useEffect(() => {
+    function calcScale() {
+      const container = containerRef.current;
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      const iframeW = device === 'desktop' ? 1440 : 390;
+      const iframeH = device === 'desktop' ? 900 : 844;
+      const scaleX = (rect.width - 32) / iframeW;
+      const scaleY = (rect.height - 32) / iframeH;
+      setScale(Math.min(scaleX, scaleY, 1));
+    }
+    calcScale();
+    window.addEventListener('resize', calcScale);
+    return () => window.removeEventListener('resize', calcScale);
+  }, [device]);
+
   function handleRefresh() {
     setRefreshKey(k => k + 1);
   }
 
-  // Desktop: scale 1440px into ~50% width panel
-  // Mobile: scale 390px into panel
   const iframeWidth = device === 'desktop' ? 1440 : 390;
   const iframeHeight = device === 'desktop' ? 900 : 844;
 
@@ -50,59 +67,59 @@ export function PreviewPanel({ url, onClose }: Props) {
       </div>
 
       {/* Desktop: side panel */}
-      <div className="hidden lg:flex fixed top-0 right-0 h-screen w-[50vw] z-[60] flex-col border-l border-gray-200 bg-gray-100 shadow-2xl">
+      <div className="hidden lg:flex fixed top-0 right-0 h-screen w-[50vw] z-[60] flex-col border-l border-gray-200 bg-gray-900 shadow-2xl">
         {/* Toolbar */}
-        <div className="flex items-center gap-2 px-4 py-2.5 bg-white border-b">
-          <span className="text-sm font-medium text-gray-700">Vorschau</span>
+        <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-800 border-b border-gray-700">
+          <span className="text-sm font-medium text-gray-200">Vorschau</span>
           <div className="flex-1" />
-          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-0.5">
+          <div className="flex items-center gap-1 bg-gray-700 rounded-lg p-0.5">
             <button
               onClick={() => setDevice('desktop')}
-              className={`p-1.5 rounded ${device === 'desktop' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`p-1.5 rounded ${device === 'desktop' ? 'bg-gray-600 shadow-sm text-white' : 'text-gray-400 hover:text-gray-200'}`}
               title="Desktop"
             >
               <Monitor size={15} />
             </button>
             <button
               onClick={() => setDevice('mobile')}
-              className={`p-1.5 rounded ${device === 'mobile' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`p-1.5 rounded ${device === 'mobile' ? 'bg-gray-600 shadow-sm text-white' : 'text-gray-400 hover:text-gray-200'}`}
               title="Mobile"
             >
               <Smartphone size={15} />
             </button>
           </div>
-          <button onClick={handleRefresh} className="p-1.5 hover:bg-gray-100 rounded text-gray-500 hover:text-gray-700" title="Neu laden">
+          <button onClick={handleRefresh} className="p-1.5 hover:bg-gray-700 rounded text-gray-400 hover:text-gray-200" title="Neu laden">
             <RefreshCw size={15} />
           </button>
-          <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded text-gray-500 hover:text-gray-700" title="Schließen">
+          <button onClick={onClose} className="p-1.5 hover:bg-gray-700 rounded text-gray-400 hover:text-gray-200" title="Schließen">
             <X size={15} />
           </button>
         </div>
 
-        {/* Iframe container with scaling */}
-        <div className="flex-1 overflow-hidden flex items-start justify-center p-4">
+        {/* Iframe container — centered and scaled to fit */}
+        <div ref={containerRef} className="flex-1 overflow-hidden flex items-center justify-center p-4">
           <div
-            className="origin-top-left bg-white rounded-lg shadow-lg overflow-hidden ring-1 ring-black/5"
+            className="bg-white rounded-lg shadow-2xl overflow-hidden ring-1 ring-white/10"
             style={{
-              width: iframeWidth,
-              height: iframeHeight,
-              transform: `scale(var(--preview-scale))`,
+              width: iframeWidth * scale,
+              height: iframeHeight * scale,
             }}
           >
             <iframe
               key={refreshKey}
               ref={iframeRef}
               src={url}
-              className="w-full h-full border-0"
-              style={{ width: iframeWidth, height: iframeHeight }}
+              className="border-0 origin-top-left"
+              style={{
+                width: iframeWidth,
+                height: iframeHeight,
+                transform: `scale(${scale})`,
+              }}
             />
           </div>
-          {/* Calculate scale dynamically */}
-          <style>{`
-            :root { --preview-scale: calc((50vw - 3rem) / ${iframeWidth}); }
-          `}</style>
         </div>
       </div>
     </>
   );
 }
+

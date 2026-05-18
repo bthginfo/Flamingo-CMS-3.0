@@ -15,6 +15,7 @@ type Props = {
 /**
  * Wraps image content and applies a visual effect.
  * All effects are purely visual overlays / transforms.
+ * IMPORTANT: className is typically "absolute inset-0" — effects must preserve this.
  */
 export function ImageEffectWrapper({ effect = 'none', intensity = 'medium', children, className = '' }: Props) {
   if (!effect || effect === 'none') return <div className={className}>{children}</div>;
@@ -44,7 +45,7 @@ function ParallaxEffect({ intensity, className, children }: Omit<Props, 'effect'
 
   return (
     <div ref={ref} className={`overflow-hidden ${className}`}>
-      <motion.div style={{ y }} className="w-full h-full">
+      <motion.div style={{ y }} className="absolute inset-0">
         {children}
       </motion.div>
     </div>
@@ -59,7 +60,7 @@ function KenBurnsEffect({ intensity, className, children }: Omit<Props, 'effect'
   return (
     <div className={`overflow-hidden ${className}`}>
       <div
-        className="w-full h-full animate-kenBurns"
+        className="absolute inset-0 animate-kenBurns"
         style={{ '--kb-scale': scale, '--kb-duration': duration } as React.CSSProperties}
       >
         {children}
@@ -92,7 +93,7 @@ function MouseGlowEffect({ intensity, className, children }: Omit<Props, 'effect
   const size = intensity === 'subtle' ? '40%' : intensity === 'strong' ? '70%' : '55%';
 
   return (
-    <div ref={ref} className={`relative ${className}`}>
+    <div ref={ref} className={className}>
       {children}
       <div
         className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-300"
@@ -114,7 +115,7 @@ function BlurOnScrollEffect({ intensity, className, children }: Omit<Props, 'eff
 
   return (
     <div ref={ref} className={className}>
-      <motion.div style={{ filter: blur.get() > 0 ? `blur(${blur}px)` : undefined }} className="w-full h-full">
+      <motion.div style={{ filter: blur.get() > 0 ? `blur(${blur}px)` : undefined }} className="absolute inset-0">
         {children}
       </motion.div>
     </div>
@@ -126,7 +127,7 @@ function GrainEffect({ intensity, className, children }: Omit<Props, 'effect'>) 
   const opacity = intensity === 'subtle' ? 0.03 : intensity === 'strong' ? 0.08 : 0.05;
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={className}>
       {children}
       <div
         className="pointer-events-none absolute inset-0 z-10 animate-grain"
@@ -135,3 +136,4 @@ function GrainEffect({ intensity, className, children }: Omit<Props, 'effect'>) 
     </div>
   );
 }
+

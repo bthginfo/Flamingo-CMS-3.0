@@ -297,7 +297,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
 
   return (
     <PageSectionsProvider sections={sectionAnchors}>
-    <div className={showPreview ? 'lg:pr-[50vw] transition-all duration-300' : 'transition-all duration-300'}>
+    <div className={showPreview ? 'lg:pr-[50vw] lg:-mx-4 lg:px-2 lg:max-w-none transition-all duration-300' : 'transition-all duration-300'}>
       {/* SEO Panel */}
       <PageSeoPanel ref={seoRef} pageId={page.id} onDirty={() => { setHasDirty(true); setSaved(false); }} />
 
