@@ -42,6 +42,15 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   vars['--brand-topbar'] = brand.topBarColor || vars['--brand-dark'];
   vars['--brand-footer'] = brand.footerColor || vars['--brand-dark'];
 
+  // Override style-level variables so industry style defaults (e.g. salon pink)
+  // get replaced by the tenant's actual brand colors
+  vars['--style-brand'] = normalizedPrimary;
+  vars['--style-accent'] = brand.accentColor || vars['--brand-accent'];
+  vars['--style-badge-bg'] = `${normalizedPrimary}12`;
+  vars['--style-badge-border'] = `${normalizedPrimary}28`;
+  vars['--style-badge-text'] = normalizedPrimary;
+  vars['--style-accent-glow'] = `0 0 30px ${normalizedPrimary}33`;
+
   if (brand.footerLinkColor) vars['--brand-footer-link'] = brand.footerLinkColor;
   if (brand.footerTextColor) vars['--brand-footer-text'] = brand.footerTextColor;
   if (brand.navLinkColor) vars['--brand-nav-link'] = brand.navLinkColor;
