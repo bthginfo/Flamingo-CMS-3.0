@@ -1002,6 +1002,8 @@ function TextImageEditor({ data, onChange }: EditorProps) {
     image: (data.image as string) || '',
     imageAlt: (data.imageAlt as string) || '',
     imagePosition: (data.imagePosition as string) || (data.layout as string) || 'right',
+    primaryCta: (data.primaryCta as { label: string; href: string; icon?: string }) || { label: '', href: '' },
+    secondaryCta: (data.secondaryCta as { label: string; href: string; icon?: string }) || { label: '', href: '' },
   });
   const [items, setItems] = useState<{ icon: string; title: string; text: string }[]>(
     (data.items as { icon: string; title: string; text: string }[]) || []
@@ -1030,6 +1032,8 @@ function TextImageEditor({ data, onChange }: EditorProps) {
         ))}
         <button onClick={() => setItems([...items, { icon: '', title: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Punkt hinzufügen</button>
       </div>
+      <ButtonField label="Primärer Button (optional)" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
+      <ButtonField label="Sekundärer Button (optional)" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
     </div>
   );
 }

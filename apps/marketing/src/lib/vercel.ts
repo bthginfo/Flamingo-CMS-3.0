@@ -146,15 +146,30 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
 
   // Connect shared Blob store to the new project (provides BLOB_READ_WRITE_TOKEN automatically)
   const blobStoreId = process.env.VERCEL_BLOB_STORE_ID;
+  let blobConnected = false;
   if (blobStoreId) {
     try {
       await vercelFetch(`/v1/storage/stores/${blobStoreId}/connections`, 'POST', {
         projectId,
         environments: ['production', 'preview', 'development'],
       });
+      blobConnected = true;
     } catch (err) {
-      console.warn('Blob store connection failed (non-critical):', (err as Error).message);
+      console.warn('Blob store connection failed, falling back to explicit token:', (err as Error).message);
     }
+  }
+  // Fallback: set BLOB_READ_WRITE_TOKEN explicitly if store connection failed or no store ID
+  if (!blobConnected && process.env.BLOB_READ_WRITE_TOKEN) {
+    try {
+      await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', [
+        { key: 'BLOB_READ_WRITE_TOKEN', value: process.env.BLOB_READ_WRITE_TOKEN, target: ['production', 'preview'], type: 'encrypted' },
+      ]);
+    } catch (err) {
+      console.error('Failed to set BLOB_READ_WRITE_TOKEN on standalone project:', (err as Error).message);
+      throw new Error('Blob-Speicher konnte nicht konfiguriert werden. Bitte VERCEL_BLOB_STORE_ID oder BLOB_READ_WRITE_TOKEN setzen.');
+    }
+  } else if (!blobConnected && !process.env.BLOB_READ_WRITE_TOKEN) {
+    console.error('Neither VERCEL_BLOB_STORE_ID nor BLOB_READ_WRITE_TOKEN available — uploads will fail for this tenant!');
   }
 
   return { projectId: projectId as string, projectUrl: `https://${projectName}.vercel.app` };

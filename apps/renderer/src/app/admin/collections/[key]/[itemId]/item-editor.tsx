@@ -50,6 +50,10 @@ function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVi
   onSaveMeta: (meta: Partial<Section>) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
+  // Stabilize onChange ref to prevent useReport re-fires after parent re-render
+  const onChangeRef = useRef(onChangeData);
+  onChangeRef.current = onChangeData;
+  const stableOnChange = useCallback((data: Record<string, unknown>) => onChangeRef.current(data), []);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
   const typeInfo = sectionTypes.find(t => t.type === section.type);
@@ -76,7 +80,7 @@ function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVi
       </div>
       {expanded && (
         <div className="p-4">
-          <IndustrySectionDataEditor industry={industry} type={section.type} data={section.data} onChange={onChangeData} />
+          <IndustrySectionDataEditor industry={industry} type={section.type} data={section.data} onChange={stableOnChange} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
             <SectionMetaEditor section={section} onSave={onSaveMeta} />
