@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
 
 type Props = {
   data: Record<string, unknown>;
@@ -22,6 +23,8 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
   const overlayColor = (data.overlayColor as string) || '#000000';
   const overlayOpacity = typeof data.overlayOpacity === 'number' ? data.overlayOpacity : 0.5;
   const bgPosition = (data.bgPosition as string) || 'center';
+  const imageEffect = (data.imageEffect as ImageEffect) || 'none';
+  const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
   if (styleVariant === 'minimal') {
     return <CollectionHeroMinimal headline={headline} subline={subline} category={category} date={date} />;
@@ -32,7 +35,9 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
       {/* Background Image */}
       {bgImage ? (
         <>
-          <Image src={bgImage} alt={headline} fill className="object-cover" style={{ objectPosition: bgPosition }} priority />
+          <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
+            <Image src={bgImage} alt={headline} fill className="object-cover" style={{ objectPosition: bgPosition }} priority />
+          </ImageEffectWrapper>
           <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
         </>
       ) : (

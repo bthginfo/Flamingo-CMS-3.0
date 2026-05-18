@@ -7,6 +7,7 @@ import { DynamicIcon } from '@/components/ui/icon-map';
 import { Spotlight } from '@/components/ui/spotlight';
 import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
 import Image from 'next/image';
+import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -28,10 +29,13 @@ export function HeroSection({ data, styleVariant }: Props) {
   const overlayOpacity = (data.overlayOpacity as number) ?? 0;
   const bgPosition = (data.bgPosition as string) || 'center';
   const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
+  const imageEffect = (data.imageEffect as ImageEffect) || 'none';
+  const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
-  if (styleVariant === 'modern') return <HeroModern headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} badgeStarsIcon={badgeStarsIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} trustStripColor={trustStripColor} />;
-  if (styleVariant === 'bold') return <HeroBold headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} badgeStarsIcon={badgeStarsIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} trustStripColor={trustStripColor} />;
-  return <HeroClassic headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} badgeStarsIcon={badgeStarsIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} overlayColor={overlayColor} overlayOpacity={overlayOpacity} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} trustStripColor={trustStripColor} />;
+  const shared = { headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, trustStripColor, imageEffect, imageEffectIntensity };
+  if (styleVariant === 'modern') return <HeroModern {...shared} />;
+  if (styleVariant === 'bold') return <HeroBold {...shared} />;
+  return <HeroClassic {...shared} />;
 }
 
 type HeroProps = {
@@ -52,10 +56,12 @@ type HeroProps = {
   bgPosition?: string;
   bgPositionMobile?: string;
   trustStripColor?: string;
+  imageEffect?: ImageEffect;
+  imageEffectIntensity?: 'subtle' | 'medium' | 'strong';
 };
 
 /* ─── CLASSIC: Fullscreen gradient overlay, spotlight, floating orbs, pill buttons ─── */
-function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, trustStripColor }: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, trustStripColor, imageEffect, imageEffectIntensity }: HeroProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const [heroH, setHeroH] = useState(800);
@@ -75,8 +81,10 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
     <div ref={ref} className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden -mt-[112px] pt-[112px]">
       {useBgImage ? (
         <>
-          <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
-          {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="100vw" />}
+          <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
+            <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
+            {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="100vw" />}
+          </ImageEffectWrapper>
           <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/90 via-brand-dark/70 to-brand-dark/50" />
           {overlayColor && overlayOpacity ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : null}
         </>
@@ -142,7 +150,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
 }
 
 /* ─── MODERN: Split layout, text left / image right, generous whitespace, understated ─── */
-function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, trustStripColor }: HeroProps) {
+function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, trustStripColor, imageEffect, imageEffectIntensity }: HeroProps) {
   return (
     <div className="relative min-h-[100svh] flex items-center -mt-[112px] pt-[112px] bg-white">
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-12 md:py-20">
@@ -176,11 +184,11 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
           {(bgMode === 'image' && bgImage) ? (
-            <div className="relative aspect-[4/5] rounded-[0.5rem] overflow-hidden">
+            <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="relative aspect-[4/5] rounded-[0.5rem] overflow-hidden">
               <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="50vw" />
               {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="50vw" />}
               {overlayColor && overlayOpacity ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : null}
-            </div>
+            </ImageEffectWrapper>
           ) : (bgMode === 'color' && bgColor) ? (
             <div className="aspect-[4/5] rounded-[0.5rem]" style={{ backgroundColor: bgColor }} />
           ) : (
@@ -193,14 +201,16 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
 }
 
 /* ─── BOLD: Full-width dark block, diagonal accent stripe, sharp edges, uppercase ─── */
-function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, trustStripColor }: HeroProps) {
+function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, trustStripColor, imageEffect, imageEffectIntensity }: HeroProps) {
   const useBgImage = bgMode === 'image' && bgImage;
   return (
     <div className="relative min-h-[100svh] flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-brand-dark" style={bgMode === 'color' && bgColor ? { backgroundColor: bgColor } : undefined}>
       {useBgImage && (
         <>
-          <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
-          {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="100vw" />}
+          <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
+            <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
+            {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="100vw" />}
+          </ImageEffectWrapper>
           <div className="absolute inset-0 bg-brand-dark/80" />
           {overlayColor && overlayOpacity ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : null}
         </>

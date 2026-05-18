@@ -147,6 +147,7 @@ CONTENT-REGELN:
 - CTAs: Immer mit konkretem href zu einer existierenden Seite (z.B. "/kontakt", "/leistungen")
 - ServicesGrid href: Verlinke zu Collection-Detail-Seiten als "/c/leistungen/[slug]"
 - Hero Overlay: Nutze overlayColor (hex) + overlayOpacity (0-1) um das Bild-Overlay zu steuern. Ohne diese Felder wird das Standard-Gradient der Branche verwendet.
+- Bild-Effekte: Nutze imageEffect (parallax, kenBurns, mouseGlow, blurOnScroll, grain) + imageEffectIntensity (subtle/medium/strong) bei hero und collectionHero für visuelle Aufwertung. Standard: kein Effekt.
 - Google Maps: Nutze eine EIGENE "map" Section (NICHT in contact einbauen!). embedUrl = Google Maps > Teilen > Einbetten > src-URL aus dem iframe kopieren. Kontaktseite typisch: hero + contact (Formular+InfoCards) + map (Google Maps Embed).
 
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -238,13 +239,13 @@ Workflow: 1) POST /collections â†’ { key, label }  2) POST /collections/:ke
 
 function getSectionSchemas(industry: string): Record<string, object> {
   const schemas: Record<string, object> = {
-    hero: { fields: { headline: 'string', subline: 'string', badgeText: 'string?', badgeIcon: 'lucide-icon-name?', badgeStarsIcon: 'lucide-icon-name? (leer = keine Sterne)', bgImage: 'url?', bgImageMobile: 'url?', bgColor: 'hex? (alternative bg color if no image)', bgMode: '"image"|"color"|"gradient" (default gradient)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', trustItems: 'string[]?', trustStripColor: 'hex?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string? (CSS object-position, e.g. "center 30%")', bgPositionMobile: 'string?' } },
+    hero: { fields: { headline: 'string', subline: 'string', badgeText: 'string?', badgeIcon: 'lucide-icon-name?', badgeStarsIcon: 'lucide-icon-name? (leer = keine Sterne)', bgImage: 'url?', bgImageMobile: 'url?', bgColor: 'hex? (alternative bg color if no image)', bgMode: '"image"|"color"|"gradient" (default gradient)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', trustItems: 'string[]?', trustStripColor: 'hex?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string? (CSS object-position, e.g. "center 30%")', bgPositionMobile: 'string?', imageEffect: '"none"|"parallax"|"kenBurns"|"mouseGlow"|"blurOnScroll"|"grain"?', imageEffectIntensity: '"subtle"|"medium"|"strong"?' } },
     richText: { fields: { headline: 'string?', content: 'html-string' } },
     legalContent: { fields: { headline: 'string', blocks: '{ headline: string, text: string (html) }[] — je ein Block pro Thema (z.B. Verantwortlicher, Kontakt, Hosting, Cookies etc.)' } },
     freeText: { fields: { content: 'rich-text (Tiptap JSON or HTML)' } },
     videoEmbed: { fields: { headline: 'string?', subline: 'string?', videoUrl: 'youtube/vimeo URL', aspectRatio: '"16:9"|"4:3"|"1:1"?' } },
     textImage: { fields: { headline: 'string', text: 'string (html)', badge: 'string?', image: 'url', imageAlt: 'string?', layout: '"image-right"|"image-left"', items: '{ icon?: lucide-icon-name, title: string, text: string }[]?', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
-    collectionHero: { fields: { headline: 'string', subline: 'string?', bgImage: 'url?', category: 'string?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string?' } },
+    collectionHero: { fields: { headline: 'string', subline: 'string?', bgImage: 'url?', category: 'string?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string?', imageEffect: '"none"|"parallax"|"kenBurns"|"mouseGlow"|"blurOnScroll"|"grain"?', imageEffectIntensity: '"subtle"|"medium"|"strong"?' } },
     noticeBanner: { fields: { headline: 'string', subline: 'string?', text: 'string? (html)', bgColor: 'hex?', textColor: 'hex? (default white)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
   };
 
