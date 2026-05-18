@@ -22,7 +22,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
 
   // If the item has sections (page builder), render them
   if (sections && sections.length > 0) {
-    const visibleSections = sections.filter(s => s.visible);
+    const visibleSections = sections.filter(s => s.visible !== false);
     const heroSections = visibleSections.filter(s => s.type === 'collectionHero');
     const otherSections = visibleSections.filter(s => s.type !== 'collectionHero');
 

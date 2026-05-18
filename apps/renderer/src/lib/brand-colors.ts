@@ -27,12 +27,17 @@ function hexToRgb(hex: string): string {
 export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?: string; accentColor?: string; topBarColor?: string; footerColor?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; headingColor?: string; bodyTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string }): Record<string, string> {
   const vars: Record<string, string> = {};
   const primary = brand.primaryColor;
-  if (!primary || !/^#[0-9a-fA-F]{6}$/.test(primary)) return vars;
+  if (!primary || !/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(primary)) return vars;
 
-  vars['--brand-primary'] = primary;
-  vars['--brand-primary-rgb'] = hexToRgb(primary);
-  vars['--brand-dark'] = darken(primary, 0.45);
-  vars['--brand-secondary'] = brand.secondaryColor || lighten(primary, 0.3);
+  // Normalize 3-digit hex to 6-digit
+  const normalizedPrimary = primary.length === 4
+    ? `#${primary[1]}${primary[1]}${primary[2]}${primary[2]}${primary[3]}${primary[3]}`
+    : primary;
+
+  vars['--brand-primary'] = normalizedPrimary;
+  vars['--brand-primary-rgb'] = hexToRgb(normalizedPrimary);
+  vars['--brand-dark'] = darken(normalizedPrimary, 0.45);
+  vars['--brand-secondary'] = brand.secondaryColor || lighten(normalizedPrimary, 0.3);
   vars['--brand-accent'] = brand.accentColor || '#f39c12';
   vars['--brand-topbar'] = brand.topBarColor || vars['--brand-dark'];
   vars['--brand-footer'] = brand.footerColor || vars['--brand-dark'];
