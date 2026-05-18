@@ -289,9 +289,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     }
   }
 
-  const rendererUrl = '';
   const [showPreview, setShowPreview] = useState(false);
-  const previewUrl = `${rendererUrl}/${page.slug === 'home' ? '' : page.slug}`;
+  const previewUrl = `/preview/${page.slug === 'home' ? '' : page.slug}?token=preview`;
 
   const sectionAnchors = sections.map(s => ({ id: s.id, type: s.type, anchorId: s.anchorId || null }));
 
