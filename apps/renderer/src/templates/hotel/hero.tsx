@@ -22,10 +22,12 @@ export function HotelHeroSection({ data, styleVariant }: SectionProps) {
   const ratingText = (data.ratingText as string) || '';
   const bgPosition = (data.bgPosition as string) || 'center';
   const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
+  const overlayColor = (data.overlayColor as string) || '';
+  const overlayOpacity = (data.overlayOpacity as number) ?? undefined;
 
-  if (styleVariant === 'modern') return <HeroModern headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} />;
-  if (styleVariant === 'bold') return <HeroBold headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} />;
-  return <HeroClassic headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} />;
+  if (styleVariant === 'modern') return <HeroModern headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} overlayColor={overlayColor || undefined} overlayOpacity={overlayOpacity} />;
+  if (styleVariant === 'bold') return <HeroBold headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} overlayColor={overlayColor || undefined} overlayOpacity={overlayOpacity} />;
+  return <HeroClassic headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} overlayColor={overlayColor || undefined} overlayOpacity={overlayOpacity} />;
 }
 
 type HeroProps = {
@@ -42,12 +44,13 @@ type HeroProps = {
   secondaryCta: ButtonValue;
   availabilityHint: string;
   ratingText: string;
-
+  overlayColor?: string;
+  overlayOpacity?: number;
   bgPosition?: string;
   bgPositionMobile?: string;};
 
 /* ─── CLASSIC: Fullscreen forest-green/gold gradient, serif feel, gold accents, staggered animations ─── */
-function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, availabilityHint, ratingText , bgPosition, bgPositionMobile}: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, availabilityHint, ratingText, overlayColor, overlayOpacity, bgPosition, bgPositionMobile}: HeroProps) {
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
   const y = useTransform(scrollY, [0, 400], [0, 100]);
@@ -58,7 +61,11 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
         <>
           <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
           {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="100vw" />}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#0f1d2e]/90 via-[#0f1d2e]/70 to-[#1a3550]/60" />
+          {overlayColor ? (
+            <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.7 }} />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0f1d2e]/90 via-[#0f1d2e]/70 to-[#1a3550]/60" />
+          )}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />

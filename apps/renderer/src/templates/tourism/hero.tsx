@@ -21,8 +21,10 @@ export function TourismHeroSection({ data, styleVariant }: SectionProps) {
   const secondaryCta = asButton(data.secondaryCta);
   const bgPosition = (data.bgPosition as string) || 'center';
   const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
+  const overlayColor = (data.overlayColor as string) || '';
+  const overlayOpacity = (data.overlayOpacity as number) ?? undefined;
 
-  const props = { headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta, bgPosition, bgPositionMobile };
+  const props = { headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity };
 
   if (styleVariant === 'modern') return <HeroModern {...props} />;
   if (styleVariant === 'bold') return <HeroBold {...props} />;
@@ -35,19 +37,24 @@ type HeroProps = {
   bgColor: string; bgMode: string;
   locationLabel: string; seasonLabel: string; trustItems: string[];
   primaryCta: ButtonValue; secondaryCta: ButtonValue;
-
+  overlayColor?: string;
+  overlayOpacity?: number;
   bgPosition?: string;
   bgPositionMobile?: string;};
 
 /* ─── Classic: panoramic bg, green/lime gradient, mountain SVG, stagger ─── */
-function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile}: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile}: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
       {(bgMode === 'image' && bgImage) ? (
         <>
           <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
           {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
-          <div className="absolute inset-0 bg-gradient-to-b from-green-900/70 via-green-800/50 to-lime-900/60" />
+          {overlayColor ? (
+            <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-b from-green-900/70 via-green-800/50 to-lime-900/60" />
+          )}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />

@@ -21,8 +21,10 @@ export function SalonHeroSection({ data, styleVariant }: SectionProps) {
   const ratingText = (data.ratingText as string) || '';
   const bgPosition = (data.bgPosition as string) || 'center';
   const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
+  const overlayColor = (data.overlayColor as string) || '';
+  const overlayOpacity = (data.overlayOpacity as number) ?? undefined;
 
-  const props = { headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, bgPosition, bgPositionMobile };
+  const props = { headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity };
 
   if (styleVariant === 'modern') return <HeroModern {...props} />;
   if (styleVariant === 'bold') return <HeroBold {...props} />;
@@ -35,19 +37,23 @@ type HeroProps = {
   bgColor: string; bgMode: string;
   trustItems: string[]; primaryCta: ButtonValue; secondaryCta: ButtonValue;
   bookingHint: string; ratingText: string;
-
+  overlayColor?: string; overlayOpacity?: number;
   bgPosition?: string;
   bgPositionMobile?: string;};
 
 /* ─── CLASSIC: Fullscreen bg, organic rose gradient overlay, flowing curves, centered elegant typography ─── */
-function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText , bgPosition, bgPositionMobile}: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, overlayColor, overlayOpacity, bgPosition, bgPositionMobile}: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px]">
       {(bgMode === 'image' && bgImage) ? (
         <>
           <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
           {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="100vw" />}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#6b2148]/85 via-[#8b3a62]/65 to-[#c0528a]/40" />
+          {overlayColor ? (
+            <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-[#6b2148]/85 via-[#8b3a62]/65 to-[#c0528a]/40" />
+          )}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
@@ -83,7 +89,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
 }
 
 /* ─── MODERN: Split layout (text left / image right), clean minimalist, dusty-rose accents ─── */
-function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText , bgPosition, bgPositionMobile}: HeroProps) {
+function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, bgPosition, bgPositionMobile}: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-white">
       {(bgMode === 'image' && bgImage) ? (
@@ -116,14 +122,18 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageM
 }
 
 /* ─── BOLD: Fullscreen dark, hot-pink diagonal stripe, uppercase brutalist ─── */
-function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText , bgPosition, bgPositionMobile}: HeroProps) {
+function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, overlayColor, overlayOpacity, bgPosition, bgPositionMobile}: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111]">
       {(bgMode === 'image' && bgImage) ? (
         <>
           <Image src={bgImage} alt="" fill className={`object-cover opacity-30${bgImageMobile ? ' hidden md:block' : ''}`} priority sizes="100vw" />
           {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover opacity-30 md:hidden" priority sizes="100vw" />}
-          <div className="absolute inset-0 bg-black/50" />
+          {overlayColor ? (
+            <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.5 }} />
+          ) : (
+            <div className="absolute inset-0 bg-black/50" />
+          )}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
