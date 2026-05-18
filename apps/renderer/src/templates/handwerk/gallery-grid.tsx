@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
+import { BlurImage as Image } from '@/components/ui/blur-image';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 type GalleryImage = { src: string; alt?: string; caption?: string; width?: number; height?: number };

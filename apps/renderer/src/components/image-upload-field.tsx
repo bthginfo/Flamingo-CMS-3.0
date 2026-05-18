@@ -38,6 +38,28 @@ export async function resizeImage(file: File, maxWidth: number, quality: number)
   });
 }
 
+/** Generate a tiny blur placeholder (data URL) for LQIP. */
+async function generateBlurDataUrl(file: File): Promise<string | undefined> {
+  if (file.type === 'image/svg+xml') return undefined;
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const size = 16;
+      const aspect = img.height / img.width;
+      const w = size;
+      const h = Math.round(size * aspect);
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/webp', 0.2));
+    };
+    img.onerror = () => resolve(undefined);
+    img.src = URL.createObjectURL(file);
+  });
+}
+
 /**
  * Image field with blob upload + URL fallback.
  * Shows preview thumbnail when a URL is set.
@@ -65,18 +87,22 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
     setUploading(true);
     try {
       // Resize image client-side if too large (max 1920px wide, quality 0.85)
-      const optimized = await resizeImage(file, 1920, 0.85);
+      const [optimized, blurDataUrl] = await Promise.all([
+        resizeImage(file, 1920, 0.85),
+        generateBlurDataUrl(file),
+      ]);
       const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, {
         access: 'public',
         handleUploadUrl: '/api/upload',
       });
-      // Register in media library
+      // Register in media library with blur placeholder
       saveMediaRecord({
         blobUrl: blob.url,
         pathname: blob.pathname,
         filename: optimized.name,
         mimeType: optimized.type || 'image/webp',
         size: optimized.size,
+        blurDataUrl,
       }).catch(() => {}); // non-blocking
       onChange(blob.url);
     } catch (e) {

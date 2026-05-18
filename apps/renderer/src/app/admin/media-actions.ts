@@ -52,6 +52,7 @@ export async function saveMediaRecord(data: {
   size: number;
   width?: number;
   height?: number;
+  blurDataUrl?: string;
 }) {
   const tenantId = await requireTenant();
   const db = getDb();
@@ -64,6 +65,7 @@ export async function saveMediaRecord(data: {
     size: data.size,
     width: data.width || null,
     height: data.height || null,
+    metadata: data.blurDataUrl ? { blurDataUrl: data.blurDataUrl } : null,
   }).returning();
   revalidatePath('/admin/media');
   return row;

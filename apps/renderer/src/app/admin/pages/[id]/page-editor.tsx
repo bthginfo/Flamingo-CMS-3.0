@@ -2,7 +2,8 @@
 
 import { useState, useTransition, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, ExternalLink, Rocket } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, ExternalLink, Rocket, MonitorPlay } from 'lucide-react';
+import { PreviewPanel } from '@/components/admin/preview-panel';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -289,12 +290,14 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   }
 
   const rendererUrl = '';
+  const [showPreview, setShowPreview] = useState(false);
+  const previewUrl = `${rendererUrl}/${page.slug === 'home' ? '' : page.slug}`;
 
   const sectionAnchors = sections.map(s => ({ id: s.id, type: s.type, anchorId: s.anchorId || null }));
 
   return (
     <PageSectionsProvider sections={sectionAnchors}>
-    <div>
+    <div className={showPreview ? 'lg:pr-[50vw] transition-all duration-300' : 'transition-all duration-300'}>
       {/* SEO Panel */}
       <PageSeoPanel ref={seoRef} pageId={page.id} onDirty={() => { setHasDirty(true); setSaved(false); }} />
 
@@ -367,16 +370,17 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         )}
       </div>
 
+      {/* Preview Panel */}
+      {showPreview && <PreviewPanel url={previewUrl} onClose={() => setShowPreview(false)} />}
+
       {/* FAB Bar */}
       <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
-        <a
-          href={`${rendererUrl}/preview/${page.slug === 'home' ? '' : page.slug}?token=${encodeURIComponent(process.env.NEXT_PUBLIC_PREVIEW_SECRET || 'preview')}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-full shadow-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+        <button
+          onClick={() => setShowPreview(!showPreview)}
+          className={`flex items-center gap-2 px-4 py-2.5 border rounded-full shadow-lg text-sm font-medium transition-colors ${showPreview ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
         >
-          <ExternalLink size={16} /> Vorschau
-        </a>
+          <MonitorPlay size={16} /> Vorschau
+        </button>
         {!saved ? (
           <button
             onClick={handleSaveAll}
