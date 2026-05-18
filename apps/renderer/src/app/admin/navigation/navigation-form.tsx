@@ -68,7 +68,7 @@ export function NavigationForm({ initial, initialCta }: { initial: NavItem[]; in
       </div>
 
       <div className="border-t pt-5 mt-5 space-y-3">
-        <h3 className="font-semibold text-sm">CTA-Button (rechts in der Navigation)</h3>
+        <h3 className="font-semibold text-sm">CTA-Button (in der Navigation)</h3>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs text-zinc-500 mb-1 block">Label</label>

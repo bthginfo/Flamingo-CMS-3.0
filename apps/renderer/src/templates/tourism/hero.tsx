@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
 import { Compass, Mountain, MapPin, CheckCircle } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
@@ -23,8 +24,10 @@ export function TourismHeroSection({ data, styleVariant }: SectionProps) {
   const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
   const overlayColor = (data.overlayColor as string) || '';
   const overlayOpacity = (data.overlayOpacity as number) ?? undefined;
+  const imageEffect = (data.imageEffect as ImageEffect) || 'none';
+  const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
-  const props = { headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity };
+  const props = { headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity , imageEffect, imageEffectIntensity};
 
   if (styleVariant === 'modern') return <HeroModern {...props} />;
   if (styleVariant === 'bold') return <HeroBold {...props} />;
@@ -40,16 +43,20 @@ type HeroProps = {
   overlayColor?: string;
   overlayOpacity?: number;
   bgPosition?: string;
-  bgPositionMobile?: string;};
+  bgPositionMobile?: string;  imageEffect?: ImageEffect;
+  imageEffectIntensity?: 'subtle' | 'medium' | 'strong';
+};
 
 /* ─── Classic: panoramic bg, green/lime gradient, mountain SVG, stagger ─── */
-function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile}: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
       {(bgMode === 'image' && bgImage) ? (
         <>
-          <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
-          {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
+          <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
+            <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
+            {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
+          </ImageEffectWrapper>
           {overlayColor ? (
             <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />
           ) : (
@@ -85,7 +92,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgC
 }
 
 /* ─── Modern: split layout, teal-white, clean/airy ─── */
-function HeroModern({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile}: HeroProps) {
+function HeroModern({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-white">
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-10 px-6 py-12 md:py-20 lg:grid-cols-2">
@@ -119,7 +126,7 @@ function HeroModern({ headline, subline, badgeText, bgImage, bgImageMobile, bgCo
 }
 
 /* ─── Bold: fullscreen dark, orange diagonal stripe, brutalist ─── */
-function HeroBold({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile}: HeroProps) {
+function HeroBold({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-gray-950">
       {(bgMode === 'image' && bgImage) ? (

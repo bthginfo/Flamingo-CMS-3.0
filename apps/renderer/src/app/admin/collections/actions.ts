@@ -48,9 +48,8 @@ export async function deleteCollectionAction(id: string) {
 export async function ensureDefaultCollections() {
   const session = await requireSession();
   const db = getDb();
-  // Only seed defaults if no collections exist at all (first visit)
-  const existing = await db.select({ id: collections.id }).from(collections).where(eq(collections.tenantId, session.tenantId));
-  if (existing.length > 0) return;
+  const existing = await db.select({ key: collections.key }).from(collections).where(eq(collections.tenantId, session.tenantId));
+  const existingKeys = new Set(existing.map(c => c.key));
   const defaults = [
     { key: 'services', label: 'Leistungen' },
     { key: 'projects', label: 'Projekte' },
@@ -58,7 +57,9 @@ export async function ensureDefaultCollections() {
     { key: 'news', label: 'News & Blog' },
   ];
   for (const d of defaults) {
-    await db.insert(collections).values({ tenantId: session.tenantId, key: d.key, label: d.label });
+    if (!existingKeys.has(d.key)) {
+      await db.insert(collections).values({ tenantId: session.tenantId, key: d.key, label: d.label });
+    }
   }
 }
 

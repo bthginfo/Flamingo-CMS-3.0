@@ -1373,6 +1373,34 @@ function ServicePackagesEditor({ data, onChange }: EditorProps) {
   );
 }
 
+// ─── LegalContent Editor ─────────────────────────────────────────
+function LegalContentEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [blocks, setBlocks] = useState<{ headline: string; text: string }[]>(
+    (data.blocks as { headline: string; text: string }[]) || [{ headline: '', text: '' }]
+  );
+  useReport({ headline, blocks }, onChange);
+
+  return (
+    <div className="space-y-4">
+      <Field label="Hauptüberschrift" value={headline} onChange={setHeadline} />
+      <div>
+        <p className="text-xs font-medium text-zinc-600 mb-2">Inhaltsblöcke</p>
+        {blocks.map((block, i) => (
+          <div key={i} className="relative border border-zinc-200 rounded-lg p-4 mb-3">
+            <button onClick={() => setBlocks(blocks.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <Field label={`Block ${i + 1} — Überschrift`} value={block.headline} onChange={(v) => setBlocks(blocks.map((b, idx) => idx === i ? { ...b, headline: v } : b))} />
+            <div className="mt-2">
+              <MiniRichTextField label="Inhalt (HTML)" value={block.text} onChange={(v) => setBlocks(blocks.map((b, idx) => idx === i ? { ...b, text: v } : b))} />
+            </div>
+          </div>
+        ))}
+        <button onClick={() => setBlocks([...blocks, { headline: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Block hinzufügen</button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Editor registry ─────────────────────────────────────────────
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
@@ -1404,4 +1432,5 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   shootingProcess: ShootingProcessEditor,
   servicePackages: ServicePackagesEditor,
   noticeBanner: NoticeBannerEditor,
+  legalContent: LegalContentEditor,
 };

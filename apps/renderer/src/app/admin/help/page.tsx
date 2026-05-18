@@ -4,20 +4,31 @@ import { useState } from 'react';
 import {
   HelpCircle, FileText, Layers, ImageIcon, Search, FolderOpen, ChevronDown, ChevronRight,
   Plus, Pencil, Trash2, Eye, EyeOff, GripVertical, Upload, ArrowUpDown, Globe, Mail,
+  Rocket, Sparkles, Zap, BookOpen,
 } from 'lucide-react';
 
-type SectionProps = { title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean };
+type SectionProps = { title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean; color?: string };
 
-function HelpSection({ title, icon, children, defaultOpen = false }: SectionProps) {
+function HelpSection({ title, icon, children, defaultOpen = false, color = 'blue' }: SectionProps) {
   const [open, setOpen] = useState(defaultOpen);
+  const colorClasses: Record<string, string> = {
+    blue: 'from-blue-500/10 to-blue-600/5 border-blue-200/60',
+    purple: 'from-purple-500/10 to-purple-600/5 border-purple-200/60',
+    green: 'from-green-500/10 to-green-600/5 border-green-200/60',
+    amber: 'from-amber-500/10 to-amber-600/5 border-amber-200/60',
+    rose: 'from-rose-500/10 to-rose-600/5 border-rose-200/60',
+    cyan: 'from-cyan-500/10 to-cyan-600/5 border-cyan-200/60',
+    indigo: 'from-indigo-500/10 to-indigo-600/5 border-indigo-200/60',
+    emerald: 'from-emerald-500/10 to-emerald-600/5 border-emerald-200/60',
+  };
   return (
-    <div className="border border-zinc-200 rounded-xl bg-white overflow-hidden">
-      <button onClick={() => setOpen(!open)} className="flex items-center gap-3 w-full px-5 py-4 text-left hover:bg-zinc-50 transition-colors">
+    <div className={`border rounded-2xl overflow-hidden transition-all duration-200 ${open ? `bg-gradient-to-br ${colorClasses[color] || colorClasses.blue} shadow-sm` : 'bg-white border-zinc-200 hover:border-zinc-300'}`}>
+      <button onClick={() => setOpen(!open)} className="flex items-center gap-3 w-full px-5 py-4 text-left transition-colors">
         <span className="text-admin-accent">{icon}</span>
         <span className="font-semibold text-zinc-900 flex-1">{title}</span>
         {open ? <ChevronDown size={18} className="text-zinc-400" /> : <ChevronRight size={18} className="text-zinc-400" />}
       </button>
-      {open && <div className="px-5 pb-5 text-sm text-zinc-600 leading-relaxed space-y-3 border-t border-zinc-100 pt-4">{children}</div>}
+      {open && <div className="px-5 pb-5 text-sm text-zinc-600 leading-relaxed space-y-3 border-t border-zinc-100/50 pt-4">{children}</div>}
     </div>
   );
 }
@@ -37,14 +48,41 @@ function Tip({ children }: { children: React.ReactNode }) {
 
 export default function HelpPage() {
   return (
-    <div className="space-y-6 max-w-3xl">
-      <div>
-        <h1 className="text-2xl font-bold text-zinc-900">Hilfe & Anleitung</h1>
-        <p className="text-zinc-500 mt-1">So funktioniert dein Flamingo CMS – Schritt für Schritt.</p>
+    <div className="space-y-5 max-w-3xl">
+      {/* Hero header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-admin-accent/10 via-blue-50 to-purple-50 border border-blue-100 p-8">
+        <div className="absolute top-0 right-0 w-40 h-40 bg-admin-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="relative">
+          <div className="flex items-center gap-2 text-admin-accent mb-2">
+            <BookOpen size={20} />
+            <span className="text-xs font-bold uppercase tracking-wider">Anleitung</span>
+          </div>
+          <h1 className="text-3xl font-bold text-zinc-900">Hilfe & Anleitung</h1>
+          <p className="text-zinc-500 mt-2 max-w-lg">Alles was du brauchst, um deine Website zu erstellen und zu verwalten — Schritt für Schritt erklärt.</p>
+        </div>
+      </div>
+
+      {/* Quick-Start Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 text-center">
+          <Zap size={24} className="mx-auto text-amber-500 mb-2" />
+          <p className="text-xs font-semibold text-zinc-700">Speichern</p>
+          <p className="text-[11px] text-zinc-400 mt-0.5">Blauer Button unten rechts</p>
+        </div>
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 text-center">
+          <Rocket size={24} className="mx-auto text-green-500 mb-2" />
+          <p className="text-xs font-semibold text-zinc-700">Veröffentlichen</p>
+          <p className="text-[11px] text-zinc-400 mt-0.5">Grüner Button nach dem Speichern</p>
+        </div>
+        <div className="rounded-xl border border-zinc-200 bg-white p-4 text-center">
+          <Sparkles size={24} className="mx-auto text-purple-500 mb-2" />
+          <p className="text-xs font-semibold text-zinc-700">KI-Assistent</p>
+          <p className="text-[11px] text-zinc-400 mt-0.5">Generiert Inhalte automatisch</p>
+        </div>
       </div>
 
       {/* SEITEN */}
-      <HelpSection title="Seiten erstellen & bearbeiten" icon={<FileText size={20} />} defaultOpen>
+      <HelpSection title="Seiten erstellen & bearbeiten" icon={<FileText size={20} />} defaultOpen color="blue">
         <p>Seiten sind die Grundbausteine deiner Website. Jede Seite hat einen Titel, einen URL-Slug und beliebig viele Sektionen.</p>
         <h4 className="font-semibold text-zinc-800 mt-2">Neue Seite anlegen</h4>
         <Step n={1}>Gehe zu <strong>Seiten</strong> in der Seitenleiste.</Step>
@@ -63,7 +101,7 @@ export default function HelpPage() {
       </HelpSection>
 
       {/* SEKTIONEN */}
-      <HelpSection title="Sektionen hinzufügen & anordnen" icon={<Layers size={20} />}>
+      <HelpSection title="Sektionen hinzufügen & anordnen" icon={<Layers size={20} />} color="purple">
         <p>Sektionen sind die einzelnen Blöcke einer Seite (z.B. Hero-Banner, Text & Bild, FAQ, Galerie usw.).</p>
         <h4 className="font-semibold text-zinc-800 mt-2">Sektion hinzufügen</h4>
         <Step n={1}>Öffne eine Seite über <strong>Seiten → [Seitenname]</strong>.</Step>
@@ -88,7 +126,7 @@ export default function HelpPage() {
       </HelpSection>
 
       {/* INHALTE */}
-      <HelpSection title="Inhalte bearbeiten" icon={<Pencil size={20} />}>
+      <HelpSection title="Inhalte bearbeiten" icon={<Pencil size={20} />} color="green">
         <p>Jede Sektion hat eigene Felder, die du direkt im Editor ausfüllen kannst:</p>
         <ul className="list-disc pl-5 space-y-1">
           <li><strong>Texte:</strong> Überschriften, Beschreibungen und Fließtext. Einige Felder unterstützen Rich-Text (fett, kursiv, Links, Listen).</li>
@@ -100,7 +138,7 @@ export default function HelpPage() {
       </HelpSection>
 
       {/* MEDIATHEK */}
-      <HelpSection title="Mediathek (Bilder & Dateien)" icon={<ImageIcon size={20} />}>
+      <HelpSection title="Mediathek (Bilder & Dateien)" icon={<ImageIcon size={20} />} color="amber">
         <p>Die Mediathek verwaltet alle hochgeladenen Bilder und Dateien zentral.</p>
         <h4 className="font-semibold text-zinc-800 mt-2">Bilder hochladen</h4>
         <Step n={1}>Gehe zu <strong>Mediathek</strong> in der Seitenleiste.</Step>
@@ -113,7 +151,7 @@ export default function HelpPage() {
       </HelpSection>
 
       {/* SEO */}
-      <HelpSection title="SEO & Sichtbarkeit" icon={<Search size={20} />}>
+      <HelpSection title="SEO & Sichtbarkeit" icon={<Search size={20} />} color="cyan">
         <p>Unter <strong>SEO & Sichtbarkeit</strong> steuerst du, wie deine Website in Google erscheint.</p>
         <h4 className="font-semibold text-zinc-800 mt-2">Globale SEO-Einstellungen</h4>
         <ul className="list-disc pl-5 space-y-1">
@@ -129,7 +167,7 @@ export default function HelpPage() {
       </HelpSection>
 
       {/* COLLECTIONS */}
-      <HelpSection title="Collections & Collection Items" icon={<FolderOpen size={20} />}>
+      <HelpSection title="Collections & Collection Items" icon={<FolderOpen size={20} />} color="indigo">
         <p>Collections sind wiederverwendbare Datensammlungen – z.B. Referenzen, Portfolio-Projekte oder Produkte.</p>
         <h4 className="font-semibold text-zinc-800 mt-2">Collection anlegen</h4>
         <Step n={1}>Gehe zu <strong>Collections</strong> in der Seitenleiste.</Step>
@@ -147,7 +185,7 @@ export default function HelpPage() {
       </HelpSection>
 
       {/* MARKE & DESIGN */}
-      <HelpSection title="Marke & Design anpassen" icon={<Globe size={20} />}>
+      <HelpSection title="Marke & Design anpassen" icon={<Globe size={20} />} color="rose">
         <p>Unter <strong>Marke & Design</strong> passt du das Erscheinungsbild deiner Website an:</p>
         <ul className="list-disc pl-5 space-y-1">
           <li><strong>Logo:</strong> Lade dein Firmenlogo hoch (wird im Header und Footer angezeigt).</li>
@@ -160,7 +198,7 @@ export default function HelpPage() {
       </HelpSection>
 
       {/* VERÖFFENTLICHEN */}
-      <HelpSection title="Veröffentlichen – so geht's live" icon={<Eye size={20} />}>
+      <HelpSection title="Veröffentlichen – so geht's live" icon={<Eye size={20} />} color="emerald">
         <p>Im Flamingo CMS arbeitest du immer an einem <strong>Entwurf</strong>. Deine Änderungen sind erst für Besucher sichtbar, wenn du sie veröffentlichst.</p>
         <Step n={1}>Nimm alle gewünschten Änderungen vor (Seiten, Sektionen, Design, SEO, …).</Step>
         <Step n={2}>Klicke auf den grünen <strong>Veröffentlichen</strong>-Button (unten rechts, schwebendes Icon).</Step>

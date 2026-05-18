@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
 import { CheckCircle } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
@@ -23,8 +24,10 @@ export function RestaurantHeroSection({ data, styleVariant }: SectionProps) {
   const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
   const overlayColor = (data.overlayColor as string) || '';
   const overlayOpacity = (data.overlayOpacity as number) ?? undefined;
+  const imageEffect = (data.imageEffect as ImageEffect) || 'none';
+  const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
-  const props: HeroProps = { headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity };
+  const props: HeroProps = { headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity , imageEffect, imageEffectIntensity};
 
   if (styleVariant === 'modern') return <HeroModern {...props} />;
   if (styleVariant === 'bold') return <HeroBold {...props} />;
@@ -47,17 +50,21 @@ type HeroProps = {
   overlayColor?: string;
   overlayOpacity?: number;
   bgPosition?: string;
-  bgPositionMobile?: string;};
+  bgPositionMobile?: string;  imageEffect?: ImageEffect;
+  imageEffectIntensity?: 'subtle' | 'medium' | 'strong';
+};
 
 /* ─── CLASSIC: Fullscreen bg, warm gradient overlay, grain texture, spotlight, staggered fade-in ─── */
-function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile}: HeroProps) {
+function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
       {/* Background image + overlays */}
       {(bgMode === 'image' && bgImage) ? (
         <>
-          <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
-          {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
+          <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
+            <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
+            {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
+          </ImageEffectWrapper>
           {overlayColor ? (
             <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.5 }} />
           ) : (
@@ -143,7 +150,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
 }
 
 /* ─── MODERN: Split layout, text left / image right, minimalist, generous whitespace ─── */
-function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile}: HeroProps) {
+function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center -mt-[112px] pt-[112px] bg-white">
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-12 md:py-20">
@@ -201,7 +208,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
 }
 
 /* ─── BOLD: Fullscreen dark bg, diagonal accent stripe, brutalist buttons, uppercase ─── */
-function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile}: HeroProps) {
+function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
       {/* Background image + dark overlay */}

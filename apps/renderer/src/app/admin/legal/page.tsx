@@ -48,7 +48,7 @@ export default function LegalPage() {
           </li>
           <li className="flex items-start gap-3">
             <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold shrink-0">2</span>
-            <span>Fügen Sie eine <strong>Freitext / HTML</strong> Section hinzu und tragen Sie Ihren Rechtstext ein.</span>
+            <span>Fügen Sie eine <strong>Rechtliche Inhalte</strong> Sektion hinzu (Typ: &quot;Rechtliche Inhalte&quot;). Tragen Sie eine Hauptüberschrift ein und fügen Sie je Thema einen Block mit Überschrift + Text hinzu.</span>
           </li>
           <li className="flex items-start gap-3">
             <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold shrink-0">3</span>
