@@ -5,10 +5,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
   LayoutDashboard, FileText, FolderOpen, Newspaper, Navigation,
-  Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Eye, Heart,
+  Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Heart,
   Menu, X, ClipboardList, Bot, HelpCircle,
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
+import { usePreview } from '@/components/admin/preview-context';
+import { MonitorPlay } from 'lucide-react';
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -38,6 +40,7 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
   const filteredNav = NAV.filter(item => !item.industry || item.industry === industry);
   const pathname = usePathname();
   const router = useRouter();
+  const preview = usePreview();
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
@@ -94,9 +97,9 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
           })}
         </nav>
         <div className="px-3 py-4 border-t border-sidebar-border space-y-1">
-          <a href={RENDERER_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full">
-            <Eye size={18} /> Vorschau
-          </a>
+          <button onClick={() => { preview.isOpen ? preview.close() : preview.open('/preview/?token=preview'); setOpen(false); }} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full">
+            <MonitorPlay size={18} /> Vorschau
+          </button>
           <button onClick={async () => { await logoutAction(); router.push('/admin/login'); }} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full">
             <LogOut size={18} /> Abmelden
           </button>
@@ -134,11 +137,11 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
 
         {/* Footer */}
         <div className={`py-4 border-t border-sidebar-border space-y-1 ${collapsed ? 'px-2' : 'px-3'}`}>
-          <a href={RENDERER_URL} target="_blank" rel="noopener noreferrer" title={collapsed ? 'Vorschau' : undefined}
+          <button onClick={() => { preview.isOpen ? preview.close() : preview.open('/preview/?token=preview'); }} title={collapsed ? 'Vorschau' : undefined}
             className={`flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'}`}>
-            <Eye size={18} />
+            <MonitorPlay size={18} />
             {!collapsed && 'Vorschau'}
-          </a>
+          </button>
           <button onClick={async () => { await logoutAction(); router.push('/admin/login'); }} title={collapsed ? 'Abmelden' : undefined}
             className={`flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'}`}>
             <LogOut size={18} />

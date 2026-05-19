@@ -3,7 +3,7 @@
 import { useState, useTransition, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, Rocket, MonitorPlay } from 'lucide-react';
-import { PreviewPanel } from '@/components/admin/preview-panel';
+import { usePreview } from '@/components/admin/preview-context';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -144,8 +144,8 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
   const [sections, setSections] = useState<Section[]>(
     ((initial.data.sections as Section[]) || []).map(s => ({ ...s, visible: s.visible !== false }))
   );
-  const [showPreview, setShowPreview] = useState(false);
   const previewUrl = `/c/${collectionKey}/${item.slug}`;
+  const preview = usePreview();
   const sectionTypes = getSectionTypesForIndustry(industry);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -246,7 +246,7 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
 
   return (
     <PageSectionsProvider sections={sectionAnchors}>
-      <div className={showPreview ? 'lg:pr-[50vw] transition-all duration-300' : 'transition-all duration-300'}>
+      <div>
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Link href={`/admin/collections/${collectionKey}`} className="text-gray-500 hover:text-gray-800"><ArrowLeft size={20} /></Link>
@@ -329,14 +329,11 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
           )}
         </div>
 
-        {/* Preview Panel */}
-        {showPreview && <PreviewPanel url={previewUrl} onClose={() => setShowPreview(false)} />}
-
         {/* FAB Bar */}
         <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
           <button
-            onClick={() => setShowPreview(!showPreview)}
-            className={`flex items-center gap-2 px-4 py-2.5 border rounded-full shadow-lg text-sm font-medium transition-colors ${showPreview ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
+            onClick={() => { preview.isOpen ? preview.close() : preview.open(previewUrl); }}
+            className={`flex items-center gap-2 px-4 py-2.5 border rounded-full shadow-lg text-sm font-medium transition-colors ${preview.isOpen ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
           >
             <MonitorPlay size={16} /> Vorschau
           </button>

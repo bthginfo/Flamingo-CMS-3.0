@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { DemoBanner } from '@/components/demo-banner';
 import { PublishFab } from '@/components/publish-fab';
 import { SaveProvider } from '@/components/save-context';
+import { PreviewProvider } from '@/components/admin/preview-context';
 import { Toaster } from 'sonner';
 import { getTenantStyle } from '@/lib/tenant-data';
 
@@ -34,6 +35,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <SaveProvider>
+    <PreviewProvider>
     <div className="flex h-screen overflow-hidden bg-admin-bg text-zinc-900 antialiased" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
       <Sidebar tenantId={session.tenantId} industry={(await getTenantStyle(session.tenantId)).industry} />
       <main className="flex-1 overflow-y-auto bg-admin-bg">
@@ -45,6 +47,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <PublishFab />
       <Toaster position="top-right" richColors closeButton />
     </div>
+    </PreviewProvider>
     </SaveProvider>
   );
 }

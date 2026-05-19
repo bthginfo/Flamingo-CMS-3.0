@@ -3,7 +3,7 @@
 import { useState, useTransition, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, ExternalLink, Rocket, MonitorPlay } from 'lucide-react';
-import { PreviewPanel } from '@/components/admin/preview-panel';
+import { usePreview } from '@/components/admin/preview-context';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -176,7 +176,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
+  const preview = usePreview();
   const [pending, startTransition] = useTransition();
   const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
   const [hasDirty, setHasDirty] = useState(false);
@@ -257,7 +257,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         pendingChanges.current.clear();
         setHasDirty(false);
         setSaved(true);
-        setPreviewRefreshKey(k => k + 1);
+        preview.refresh();
         toast.success('Gespeichert');
       }
     } catch (e) {
@@ -291,14 +291,13 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     }
   }
 
-  const [showPreview, setShowPreview] = useState(false);
   const previewUrl = `/preview/${page.slug === 'home' ? '' : page.slug}?token=preview`;
 
   const sectionAnchors = sections.map(s => ({ id: s.id, type: s.type, anchorId: s.anchorId || null }));
 
   return (
     <PageSectionsProvider sections={sectionAnchors}>
-    <div className={showPreview ? 'lg:pr-[50vw] lg:-mx-4 lg:px-2 lg:max-w-none transition-all duration-300' : 'transition-all duration-300'}>
+    <div>
       {/* SEO Panel */}
       <PageSeoPanel ref={seoRef} pageId={page.id} onDirty={() => { setHasDirty(true); setSaved(false); }} />
 
@@ -380,14 +379,11 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         )}
       </div>
 
-      {/* Preview Panel */}
-      {showPreview && <PreviewPanel key={previewRefreshKey} url={previewUrl} onClose={() => setShowPreview(false)} />}
-
       {/* FAB Bar */}
       <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
         <button
-          onClick={() => setShowPreview(!showPreview)}
-          className={`flex items-center gap-2 px-4 py-2.5 border rounded-full shadow-lg text-sm font-medium transition-colors ${showPreview ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
+          onClick={() => { preview.isOpen ? preview.close() : preview.open(previewUrl); }}
+          className={`flex items-center gap-2 px-4 py-2.5 border rounded-full shadow-lg text-sm font-medium transition-colors ${preview.isOpen ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
         >
           <MonitorPlay size={16} /> Vorschau
         </button>
