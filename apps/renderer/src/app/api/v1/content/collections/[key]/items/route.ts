@@ -22,13 +22,22 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
     const itemSlug = slug || title.toLowerCase().replace(/[^a-z0-9äöüß]+/g, '-').replace(/(^-|-$)/g, '');
     const id = crypto.randomUUID();
 
+    // Ensure all sections have IDs for DnD support
+    const itemData = data || {};
+    if (Array.isArray(itemData.sections)) {
+      itemData.sections = itemData.sections.map((s: Record<string, unknown>) => ({
+        ...s,
+        id: s.id || crypto.randomUUID(),
+      }));
+    }
+
     await db.insert(collectionItems).values({
       id,
       tenantId: auth.tenantId,
       collectionId: collection.id,
       title,
       slug: itemSlug,
-      data: data || {},
+      data: itemData,
       published: published ?? false,
     });
 

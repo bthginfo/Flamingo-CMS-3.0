@@ -3,11 +3,20 @@ import { getDb } from '@/lib/db';
 import { collectionItems } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { withApiHandlerParams } from '@/lib/api-utils';
+import crypto from 'crypto';
 
 export const PUT = withApiHandlerParams(async (req, auth, params) => {
   const { id } = params;
   const body = await req.json();
   const db = getDb();
+
+  // Ensure all sections have IDs for DnD support
+  if (body.data && Array.isArray(body.data.sections)) {
+    body.data.sections = body.data.sections.map((s: Record<string, unknown>) => ({
+      ...s,
+      id: s.id || crypto.randomUUID(),
+    }));
+  }
 
   // Only allow safe fields to be updated
   const updates: Record<string, unknown> = { updatedAt: new Date() };
