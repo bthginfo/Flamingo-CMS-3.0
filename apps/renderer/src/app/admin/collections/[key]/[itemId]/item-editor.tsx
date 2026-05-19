@@ -142,7 +142,7 @@ function SectionMetaEditor({ section, onSave }: { section: Section; onSave: (met
 export function ItemEditor({ item: initial, collectionKey, industry }: { item: Item; collectionKey: string; industry: string }) {
   const [item, setItem] = useState(initial);
   const [sections, setSections] = useState<Section[]>(
-    ((initial.data.sections as Section[]) || []).map(s => ({ ...s, visible: s.visible !== false }))
+    ((initial.data.sections as Section[]) || []).map(s => ({ ...s, id: s.id || generateId(), visible: s.visible !== false }))
   );
   const previewUrl = `/c/${collectionKey}/${item.slug}`;
   const preview = usePreview();
@@ -155,20 +155,23 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
   const [pending, startTransition] = useTransition();
   const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
   const seoRef = useRef<ItemSeoPanelHandle>(null);
-  const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
+  const sectionsRef = useRef(sections);
+  sectionsRef.current = sections;
 
   // Send live preview data to iframe
   const sendPreviewData = useCallback(() => {
     if (!preview.isOpen) return;
-    const liveSections = sections.map(sec => {
+    const liveSections = sectionsRef.current.map(sec => {
       const newData = pendingChanges.current.get(sec.id);
       return { ...sec, data: newData ?? sec.data };
     });
     preview.sendLiveData({ sections: liveSections, industry });
-  }, [sections, preview, industry]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preview.isOpen, industry]);
 
   // Re-send on sections array change (add/remove/reorder/toggle)
-  useEffect(() => { sendPreviewData(); }, [sendPreviewData]);
+  useEffect(() => { sendPreviewData(); }, [sections, sendPreviewData]);
 
   // Listen for iframe ready signal to send initial data
   useEffect(() => {
@@ -225,15 +228,8 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
     pendingChanges.current.set(sectionId, data);
     setHasDirty(true);
     setSaved(false);
-    // Live preview update
-    if (preview.isOpen) {
-      const liveSections = sections.map(sec => {
-        const newData = sec.id === sectionId ? data : pendingChanges.current.get(sec.id);
-        return { ...sec, data: newData ?? sec.data };
-      });
-      preview.sendLiveData({ sections: liveSections, industry });
-    }
-  }, [sections, preview, industry]);
+    sendPreviewData();
+  }, [sendPreviewData]);
 
   function handleSaveMeta(sectionId: string, meta: Partial<Section>) {
     setSections(prev => prev.map(s => s.id === sectionId ? { ...s, ...meta } : s));
