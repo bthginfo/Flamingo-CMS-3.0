@@ -324,3 +324,12 @@ html {
 }
 
 /* Advanced brand color overrides are applied via inline styles in components */
+
+/* Hide scrollbar but keep scrollable */
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}

@@ -353,17 +353,26 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
                 const cat = st.category || 'Branchenspezifisch';
                 (grouped[cat] ??= []).push(st);
               }
-              return Object.entries(grouped).map(([cat, items]) => (
-                <div key={cat}>
-                  <div className="px-4 py-1.5 bg-gray-50 text-[10px] font-semibold text-gray-500 uppercase tracking-wide sticky top-0">{cat}</div>
-                  {items.map((st) => (
-                    <button key={st.type} onClick={() => handleAddSection(st.type)} className="w-full text-left px-4 py-2.5 hover:bg-blue-50 border-b last:border-b-0">
-                      <span className="font-medium text-sm">{st.label}</span>
-                      <span className="text-xs text-gray-500 ml-2">{st.description}</span>
-                    </button>
-                  ))}
-                </div>
-              ));
+              // Sort: native/shared categories first, "Andere:" categories last
+              const sorted = Object.entries(grouped).sort(([a], [b]) => {
+                const aForeign = a.startsWith('Andere:') ? 1 : 0;
+                const bForeign = b.startsWith('Andere:') ? 1 : 0;
+                return aForeign - bForeign;
+              });
+              return sorted.map(([cat, items]) => {
+                const isForeign = cat.startsWith('Andere:');
+                return (
+                  <div key={cat}>
+                    <div className={`px-4 py-1.5 text-[10px] font-semibold uppercase tracking-wide sticky top-0 ${isForeign ? 'bg-amber-50 text-amber-600' : 'bg-gray-50 text-gray-500'}`}>{cat}</div>
+                    {items.map((st) => (
+                      <button key={st.type} onClick={() => handleAddSection(st.type)} className={`w-full text-left px-4 py-2.5 hover:bg-blue-50 border-b last:border-b-0 ${isForeign ? 'opacity-75' : ''}`}>
+                        <span className="font-medium text-sm">{st.label}</span>
+                        <span className="text-xs text-gray-500 ml-2">{st.description}</span>
+                      </button>
+                    ))}
+                  </div>
+                );
+              });
             })()}
           </div>
         )}

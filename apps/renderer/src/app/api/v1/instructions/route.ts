@@ -149,6 +149,7 @@ CONTENT-REGELN:
 - Hero Overlay: Nutze overlayColor (hex) + overlayOpacity (0-1) um das Bild-Overlay zu steuern. Ohne diese Felder wird das Standard-Gradient der Branche verwendet.
 - Bild-Effekte: Nutze imageEffect (parallax, kenBurns, mouseGlow, blurOnScroll, grain) + imageEffectIntensity (subtle/medium/strong) bei hero und collectionHero für visuelle Aufwertung. Standard: kein Effekt.
 - Google Maps: Nutze eine EIGENE "map" Section (NICHT in contact einbauen!). embedUrl = Google Maps > Teilen > Einbetten > src-URL aus dem iframe kopieren. Kontaktseite typisch: hero + contact (Formular+InfoCards) + map (Google Maps Embed).
+- SECTION-AUSWAHL: In availableSectionTypes sind auch Sections aus ANDEREN Branchen enthalten (markiert mit Kategorie "Andere: ..."). Bevorzuge IMMER die brancheneigenen Sections! Nutze fremde Sections nur, wenn deine Branche keine passende eigene Section hat. Beispiel: Ein Hotel nutzt "roomShowcase" statt "servicesGrid".
 
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 BEISPIEL â€” So sieht ein korrekter servicesGrid-Aufruf aus:

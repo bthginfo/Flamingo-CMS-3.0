@@ -192,19 +192,45 @@ export const PHOTOGRAPHY_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
+const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
+  tradesman: TRADESMAN_SECTION_TYPES,
+  photography: PHOTOGRAPHY_SECTION_TYPES,
+  wedding: WEDDING_SECTION_TYPES,
+  medical: MEDICAL_SECTION_TYPES,
+  salon: SALON_SECTION_TYPES,
+  tourism: TOURISM_SECTION_TYPES,
+  hotel: HOTEL_SECTION_TYPES,
+  restaurant: RESTAURANT_SECTION_TYPES,
+};
+
+const INDUSTRY_LABELS: Record<string, string> = {
+  tradesman: 'Handwerk',
+  photography: 'Fotografie',
+  wedding: 'Hochzeit',
+  medical: 'Medizin',
+  salon: 'Salon',
+  tourism: 'Tourismus',
+  hotel: 'Hotel',
+  restaurant: 'Restaurant',
+};
+
 export function getSectionTypesForIndustry(industry: string): SectionTypeDefinition[] {
-  let specific: SectionTypeDefinition[];
-  if (industry === 'photography') specific = PHOTOGRAPHY_SECTION_TYPES;
-  else if (industry === 'wedding') specific = WEDDING_SECTION_TYPES;
-  else if (industry === 'medical') specific = MEDICAL_SECTION_TYPES;
-  else if (industry === 'salon') specific = SALON_SECTION_TYPES;
-  else if (industry === 'tourism') specific = TOURISM_SECTION_TYPES;
-  else if (industry === 'hotel') specific = HOTEL_SECTION_TYPES;
-  else if (industry === 'restaurant') specific = RESTAURANT_SECTION_TYPES;
-  else specific = TRADESMAN_SECTION_TYPES;
+  const specific = ALL_INDUSTRY_SECTIONS[industry] ?? TRADESMAN_SECTION_TYPES;
 
   // Merge: industry-specific first, then shared (skip duplicates)
   const types = new Set(specific.map(s => s.type));
   const shared = SHARED_SECTION_TYPES.filter(s => !types.has(s.type));
-  return [...specific, ...shared];
+
+  // Collect foreign sections from other industries
+  const foreign: SectionTypeDefinition[] = [];
+  for (const [key, sections] of Object.entries(ALL_INDUSTRY_SECTIONS)) {
+    if (key === industry) continue;
+    for (const s of sections) {
+      if (!types.has(s.type) && !shared.some(sh => sh.type === s.type) && !foreign.some(f => f.type === s.type)) {
+        foreign.push({ ...s, category: `Andere: ${INDUSTRY_LABELS[key] || key}` });
+      }
+    }
+  }
+
+  return [...specific, ...shared, ...foreign];
 }

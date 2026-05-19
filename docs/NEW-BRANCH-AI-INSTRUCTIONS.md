@@ -909,7 +909,19 @@ Zusätzliche Hero-Felder je Branche:
 
 ---
 
-## 📝 ZUSAMMENFASSUNG
+## � CROSS-TEMPLATE SECTIONS
+
+Alle Sections aller Branchen stehen auch in anderen Branchen zur Verfügung ("fremde Sections"). Im Admin-Dropdown erscheinen sie unter "Andere: [Branchenname]" am Ende der Liste.
+
+**Wichtige Regel für KI-Content-Generierung:**
+- **Bevorzuge IMMER die nativen (brancheneigenen) Sections** einer Branche, bevor du fremde Sections aus anderen Branchen verwendest.
+- Fremde Sections sind nur als Notfall-Fallback gedacht, wenn die eigene Branche keine passende Section bietet.
+- Beispiel: Ein Hotel sollte `roomShowcase` nutzen, nicht `servicesGrid` aus dem Handwerk-Template.
+- Fremde Sections rendern mit dem Design der Quell-Branche — sie passen visuell ggf. nicht perfekt.
+
+---
+
+## �📝 ZUSAMMENFASSUNG
 
 Du erstellst eine **vollständig eigenständige Branchen-Implementierung**, die:
 1. ✅ Einen eigenen Satz Section-Templates hat (eigenes Design)

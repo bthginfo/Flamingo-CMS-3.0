@@ -372,7 +372,13 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   noticeBanner: NoticeBannerSection,
 };
 
+// Merge ALL industry templates as ultimate fallback so foreign sections render
+const ALL_TEMPLATES: Record<string, TemplateComponent> = Object.values(INDUSTRY_TEMPLATES).reduce(
+  (acc, templates) => ({ ...acc, ...templates }),
+  {} as Record<string, TemplateComponent>
+);
+
 export function getIndustryTemplates(industry: string): Record<string, TemplateComponent> {
   const specific = INDUSTRY_TEMPLATES[industry] ?? TRADESMAN_TEMPLATES;
-  return { ...SHARED_TEMPLATES, ...specific };
+  return { ...ALL_TEMPLATES, ...SHARED_TEMPLATES, ...specific };
 }

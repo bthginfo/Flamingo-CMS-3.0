@@ -81,7 +81,7 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
             <X size={20} />
           </button>
         </div>
-        <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
+        <nav className="flex-1 overflow-y-auto scrollbar-hidden py-3 px-3 space-y-0.5">
           {filteredNav.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
             return (
@@ -119,7 +119,7 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
         </div>
 
         {/* Navigation */}
-        <nav className={`flex-1 overflow-y-auto py-3 space-y-0.5 ${collapsed ? 'px-2' : 'px-3'}`}>
+        <nav className={`flex-1 overflow-y-auto scrollbar-hidden py-3 space-y-0.5 ${collapsed ? 'px-2' : 'px-3'}`}>
           {filteredNav.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
             return (
