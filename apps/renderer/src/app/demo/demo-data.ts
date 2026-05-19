@@ -130,20 +130,21 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
     },
   },
   wedding: {
-    brand: { companyName: 'Anna & Max', tagline: 'Unsere Hochzeit – 14. September 2025', primaryColor: '#d4a373' },
-    contact: { phone: '', email: 'anna.max@hochzeit.de', address: 'Schloss Johannisberg, Rheingau' },
-    socialLinks: {},
+    brand: { companyName: 'Anna & Sebastian', tagline: 'Unsere Hochzeit – 14. September 2025, Salzburg', primaryColor: '#9f7048' },
+    contact: { phone: '', email: 'hochzeit@anna-sebastian.at', address: 'Schloss Mirabell, 5020 Salzburg' },
+    socialLinks: { instagram: '#' },
     navItems: [
-      { label: 'Unsere Geschichte', href: '/demo/wedding/geschichte' },
+      { label: 'Unsere Geschichte', href: '/demo/wedding/unsere-geschichte' },
       { label: 'Ablauf', href: '/demo/wedding/ablauf' },
       { label: 'Location', href: '/demo/wedding/location' },
+      { label: 'Anreise', href: '/demo/wedding/anreise' },
       { label: 'RSVP', href: '/demo/wedding/rsvp' },
     ],
-    cta: { label: 'RSVP', href: '/demo/wedding/rsvp' },
+    cta: { label: 'Zusagen', href: '/demo/wedding/rsvp' },
     footer: {
       columns: [
-        { title: 'Hochzeit', items: [{ text: 'Unsere Geschichte', href: '/demo/wedding/geschichte' }, { text: 'Ablauf', href: '/demo/wedding/ablauf' }, { text: 'Location', href: '/demo/wedding/location' }] },
-        { title: 'Gäste', items: [{ text: 'RSVP', href: '/demo/wedding/rsvp' }, { text: 'Dresscode', href: '/demo/wedding/dresscode' }] },
+        { title: 'Infos', items: [{ text: 'Unsere Geschichte', href: '/demo/wedding/unsere-geschichte' }, { text: 'Ablauf', href: '/demo/wedding/ablauf' }, { text: 'Location', href: '/demo/wedding/location' }] },
+        { title: 'Gäste', items: [{ text: 'Anreise & Hotels', href: '/demo/wedding/anreise' }, { text: 'RSVP', href: '/demo/wedding/rsvp' }] },
       ],
       legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
     },
