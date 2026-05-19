@@ -20,6 +20,9 @@ import { RichTextSection } from './handwerk/rich-text';
 import { LegalContentSection } from './handwerk/legal-content';
 import { VideoEmbedSection } from './shared/video-embed';
 import { NoticeBannerSection } from './shared/notice-banner';
+import { ComparisonTableSection } from './shared/comparison-table';
+import { SocialProofBarSection } from './shared/social-proof-bar';
+import { TimelineSection } from './shared/timeline';
 import { HeaderBannerSection } from './handwerk/header-banner';
 import { CollectionHeroSection } from './handwerk/collection-hero';
 import { TextImageSection } from './handwerk/text-image';
@@ -370,6 +373,9 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   photographerAbout: PhotographerAboutSection,
   shootingProcess: ShootingProcessSection,
   noticeBanner: NoticeBannerSection,
+  comparisonTable: ComparisonTableSection,
+  socialProofBar: SocialProofBarSection,
+  timeline: TimelineSection,
 };
 
 // Merge ALL industry templates as ultimate fallback so foreign sections render

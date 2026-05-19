@@ -56,11 +56,11 @@ function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVi
   onChangeRef.current = onChangeData;
   const stableOnChange = useCallback((data: Record<string, unknown>) => onChangeRef.current(data), []);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
-  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : !section.visible ? 0.5 : 1 };
+  const style = { transform: CSS.Transform.toString(transform), transition };
   const typeInfo = sectionTypes.find(t => t.type === section.type);
 
   return (
-    <div ref={setNodeRef} style={style} className={`admin-card mb-3 p-0 overflow-hidden ${expanded ? 'ring-2 ring-blue-500/20 border-blue-300' : ''}`}>
+    <div ref={setNodeRef} style={style} className={`admin-card mb-3 p-0 overflow-hidden ${expanded ? 'ring-2 ring-blue-500/20 border-blue-300' : ''} ${isDragging ? 'opacity-50' : !section.visible ? 'opacity-50' : ''}`}>
       <div className={`flex items-center px-4 py-3 border-b cursor-pointer ${expanded ? 'bg-blue-50' : 'bg-gray-50 hover:bg-gray-100'} transition-colors`} onClick={() => setExpanded(!expanded)}>
         <button {...attributes} {...listeners} className="cursor-grab mr-3 text-gray-400 hover:text-gray-600" onClick={(e) => e.stopPropagation()}>
           <GripVertical size={18} />

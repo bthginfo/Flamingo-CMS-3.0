@@ -1,0 +1,39 @@
+'use client';
+
+import { useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { Star } from 'lucide-react';
+import Image from 'next/image';
+
+type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
+
+type ProofItem = { value: string; label: string; icon?: string; logo?: string };
+
+export function SocialProofBarSection({ data }: Props) {
+  const items = (data.items as ProofItem[]) || [];
+  const bgStyle = (data.bgStyle as string) || 'light';
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
+
+  if (!items.length) return null;
+
+  const bg = bgStyle === 'dark' ? 'bg-zinc-900 text-white' : bgStyle === 'primary' ? 'bg-[var(--color-primary)] text-white' : 'bg-zinc-50 text-zinc-800';
+
+  return (
+    <div ref={ref} className={`${bg} py-6 px-4 rounded-xl`}>
+      <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.5 }} className="flex flex-wrap items-center justify-center gap-8 md:gap-12 lg:gap-16">
+        {items.map((item, i) => (
+          <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }} className="flex flex-col items-center text-center gap-1">
+            {item.logo ? (
+              <Image src={item.logo} alt={item.label} width={80} height={40} className="object-contain mb-1 max-h-10" />
+            ) : item.icon === 'star' ? (
+              <div className="flex gap-0.5 mb-1">{Array.from({ length: 5 }).map((_, si) => <Star key={si} size={14} className="fill-yellow-400 text-yellow-400" />)}</div>
+            ) : null}
+            <span className="text-2xl md:text-3xl font-bold leading-tight">{item.value}</span>
+            <span className={`text-xs md:text-sm ${bgStyle === 'light' ? 'text-zinc-500' : 'text-white/70'}`}>{item.label}</span>
+          </motion.div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}

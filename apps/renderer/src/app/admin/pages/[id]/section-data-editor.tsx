@@ -1401,6 +1401,128 @@ function LegalContentEditor({ data, onChange }: EditorProps) {
   );
 }
 
+// ─── Comparison Table Editor ─────────────────────────────────────
+function ComparisonTableEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [badge, setBadge] = useState((data.badge as string) || '');
+  const [text, setText] = useState((data.text as string) || '');
+  const [highlightCol, setHighlightCol] = useState<number>((data.highlightCol as number) ?? -1);
+  const [columns, setColumns] = useState<{ label: string }[]>((data.columns as { label: string }[]) || [{ label: 'Basis' }, { label: 'Premium' }]);
+  const [rows, setRows] = useState<{ feature: string; values: string[] }[]>((data.rows as { feature: string; values: string[] }[]) || []);
+  useReport({ headline, badge, text, highlightCol, columns, rows }, onChange);
+
+  function addColumn() { setColumns([...columns, { label: '' }]); setRows(rows.map(r => ({ ...r, values: [...r.values, ''] }))); }
+  function removeColumn(i: number) { setColumns(columns.filter((_, ci) => ci !== i)); setRows(rows.map(r => ({ ...r, values: r.values.filter((_, ci) => ci !== i) }))); }
+  function addRow() { setRows([...rows, { feature: '', values: columns.map(() => '') }]); }
+  function removeRow(i: number) { setRows(rows.filter((_, ri) => ri !== i)); }
+
+  return (
+    <div className="space-y-4">
+      <Field label="Badge" value={badge} onChange={setBadge} />
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Beschreibung" value={text} onChange={setText} multiline />
+      <div>
+        <span className="text-xs font-medium text-gray-600 mb-1 block">Spalten</span>
+        {columns.map((col, i) => (
+          <div key={i} className="flex gap-2 mb-1 items-center">
+            <input className="admin-input flex-1" value={col.label} onChange={(e) => { const c = [...columns]; c[i] = { label: e.target.value }; setColumns(c); }} placeholder={`Spalte ${i + 1}`} />
+            <label className="text-xs flex items-center gap-1"><input type="radio" name="highlight" checked={highlightCol === i} onChange={() => setHighlightCol(i)} /> Highlight</label>
+            <button onClick={() => removeColumn(i)} className="text-red-400 hover:text-red-600 text-xs">×</button>
+          </div>
+        ))}
+        <button onClick={addColumn} className="text-sm text-blue-600 hover:underline">+ Spalte</button>
+      </div>
+      <div>
+        <span className="text-xs font-medium text-gray-600 mb-1 block">Zeilen</span>
+        {rows.map((row, ri) => (
+          <div key={ri} className="border rounded p-2 mb-2 space-y-1 relative">
+            <button onClick={() => removeRow(ri)} className="absolute top-1 right-1 text-red-400 hover:text-red-600 text-xs">×</button>
+            <input className="admin-input w-full" value={row.feature} onChange={(e) => { const r = [...rows]; r[ri] = { ...r[ri], feature: e.target.value }; setRows(r); }} placeholder="Feature-Name" />
+            <div className="flex gap-1">
+              {row.values.map((val, ci) => (
+                <input key={ci} className="admin-input flex-1 text-xs" value={val} onChange={(e) => { const r = [...rows]; r[ri] = { ...r[ri], values: r[ri].values.map((v, vi) => vi === ci ? e.target.value : v) }; setRows(r); }} placeholder={columns[ci]?.label || `Wert ${ci + 1}`} title="true/false für ✓/✗ oder Freitext" />
+              ))}
+            </div>
+          </div>
+        ))}
+        <button onClick={addRow} className="text-sm text-blue-600 hover:underline">+ Zeile</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Social Proof Bar Editor ─────────────────────────────────────
+function SocialProofBarEditor({ data, onChange }: EditorProps) {
+  const [bgStyle, setBgStyle] = useState((data.bgStyle as string) || 'light');
+  const [items, setItems] = useState<{ value: string; label: string; icon: string; logo: string }[]>(
+    (data.items as { value: string; label: string; icon: string; logo: string }[]) || []
+  );
+  useReport({ bgStyle, items }, onChange);
+
+  function addItem() { setItems([...items, { value: '', label: '', icon: '', logo: '' }]); }
+  function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
+  function updateItem(i: number, field: string, val: string) { setItems(items.map((item, idx) => idx === i ? { ...item, [field]: val } : item)); }
+
+  return (
+    <div className="space-y-3">
+      <div>
+        <span className="text-xs font-medium text-gray-600">Hintergrund</span>
+        <select className="admin-input mt-1" value={bgStyle} onChange={(e) => setBgStyle(e.target.value)}>
+          <option value="light">Hell</option>
+          <option value="dark">Dunkel</option>
+          <option value="primary">Primärfarbe</option>
+        </select>
+      </div>
+      {items.map((item, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="Wert (z.B. 500+)" value={item.value} onChange={(v) => updateItem(i, 'value', v)} />
+            <Field label="Label" value={item.label} onChange={(v) => updateItem(i, 'label', v)} />
+            <Field label="Icon (star oder leer)" value={item.icon} onChange={(v) => updateItem(i, 'icon', v)} />
+            <Field label="Logo-URL (optional)" value={item.logo} onChange={(v) => updateItem(i, 'logo', v)} />
+          </div>
+        </div>
+      ))}
+      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Eintrag</button>
+    </div>
+  );
+}
+
+// ─── Timeline Editor ─────────────────────────────────────────────
+function TimelineEditor({ data, onChange }: EditorProps) {
+  const [badge, setBadge] = useState((data.badge as string) || '');
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [entries, setEntries] = useState<{ year: string; title: string; text: string }[]>(
+    (data.entries as { year: string; title: string; text: string }[]) || []
+  );
+  useReport({ badge, headline, subline, entries }, onChange);
+
+  function addEntry() { setEntries([...entries, { year: '', title: '', text: '' }]); }
+  function removeEntry(i: number) { setEntries(entries.filter((_, idx) => idx !== i)); }
+  function updateEntry(i: number, field: string, val: string) { setEntries(entries.map((e, idx) => idx === i ? { ...e, [field]: val } : e)); }
+
+  return (
+    <div className="space-y-3">
+      <Field label="Badge" value={badge} onChange={setBadge} />
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Unterzeile" value={subline} onChange={setSubline} />
+      {entries.map((entry, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => removeEntry(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="Jahr / Datum" value={entry.year} onChange={(v) => updateEntry(i, 'year', v)} />
+            <Field label="Titel" value={entry.title} onChange={(v) => updateEntry(i, 'title', v)} />
+          </div>
+          <Field label="Beschreibung" value={entry.text} onChange={(v) => updateEntry(i, 'text', v)} multiline />
+        </div>
+      ))}
+      <button onClick={addEntry} className="text-sm text-blue-600 hover:underline">+ Eintrag</button>
+    </div>
+  );
+}
+
 // ─── Editor registry ─────────────────────────────────────────────
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
@@ -1433,4 +1555,7 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   servicePackages: ServicePackagesEditor,
   noticeBanner: NoticeBannerEditor,
   legalContent: LegalContentEditor,
+  comparisonTable: ComparisonTableEditor,
+  socialProofBar: SocialProofBarEditor,
+  timeline: TimelineEditor,
 };
