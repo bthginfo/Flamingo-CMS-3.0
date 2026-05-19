@@ -183,6 +183,26 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const seoRef = useRef<PageSeoPanelHandle>(null);
   const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
 
+  // Live preview sync
+  const sendPreviewData = useCallback(() => {
+    if (!preview.isOpen) return;
+    const liveSections = sections.map(sec => {
+      const newData = pendingChanges.current.get(sec.id);
+      return { ...sec, data: newData ?? sec.data };
+    });
+    preview.sendLiveData({ sections: liveSections, industry });
+  }, [sections, preview, industry]);
+
+  useEffect(() => { sendPreviewData(); }, [sendPreviewData]);
+
+  useEffect(() => {
+    function onMsg(e: MessageEvent) {
+      if (e.data?.type === 'flamingo-live-preview-ready') sendPreviewData();
+    }
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, [sendPreviewData]);
+
   // Sync props from server component on navigation/revalidation
   useEffect(() => { setPage(initialPage); }, [initialPage]);
   useEffect(() => { setSections(initialSections); }, [initialSections]);
@@ -232,7 +252,14 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     pendingChanges.current.set(sectionId, data);
     setHasDirty(true);
     setSaved(false);
-  }, []);
+    if (preview.isOpen) {
+      const liveSections = sections.map(sec => {
+        const newData = sec.id === sectionId ? data : pendingChanges.current.get(sec.id);
+        return { ...sec, data: newData ?? sec.data };
+      });
+      preview.sendLiveData({ sections: liveSections, industry });
+    }
+  }, [sections, preview, industry]);
 
   async function handleSaveAll() {
     setSaving(true);
@@ -382,7 +409,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       {/* FAB Bar */}
       <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
         <button
-          onClick={() => { preview.isOpen ? preview.close() : preview.open(previewUrl); }}
+          onClick={() => { preview.isOpen ? preview.close() : preview.open('/admin/live-preview'); }}
           className={`flex items-center gap-2 px-4 py-2.5 border rounded-full shadow-lg text-sm font-medium transition-colors ${preview.isOpen ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
         >
           <MonitorPlay size={16} /> Vorschau

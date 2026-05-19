@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useRef } from 'react';
 import { PreviewPanel } from './preview-panel';
 
 type PreviewContextValue = {
@@ -9,6 +9,8 @@ type PreviewContextValue = {
   close: () => void;
   refresh: () => void;
   setUrl: (url: string) => void;
+  sendLiveData: (payload: Record<string, unknown>) => void;
+  iframeRef: React.RefObject<HTMLIFrameElement | null>;
 };
 
 const PreviewContext = createContext<PreviewContextValue>({
@@ -17,6 +19,8 @@ const PreviewContext = createContext<PreviewContextValue>({
   close: () => {},
   refresh: () => {},
   setUrl: () => {},
+  sendLiveData: () => {},
+  iframeRef: { current: null },
 });
 
 export function usePreview() {
@@ -25,11 +29,12 @@ export function usePreview() {
 
 export function PreviewProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [url, setUrlState] = useState('/preview/?token=preview');
+  const [url, setUrlState] = useState('/admin/live-preview');
   const [refreshKey, setRefreshKey] = useState(0);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
-  const open = useCallback((previewUrl: string) => {
-    setUrlState(previewUrl);
+  const open = useCallback((previewUrl?: string) => {
+    setUrlState(previewUrl || '/admin/live-preview');
     setIsOpen(true);
   }, []);
 
@@ -37,10 +42,17 @@ export function PreviewProvider({ children }: { children: React.ReactNode }) {
   const refresh = useCallback(() => setRefreshKey(k => k + 1), []);
   const setUrl = useCallback((u: string) => setUrlState(u), []);
 
+  const sendLiveData = useCallback((payload: Record<string, unknown>) => {
+    iframeRef.current?.contentWindow?.postMessage(
+      { type: 'flamingo-live-preview', payload },
+      '*'
+    );
+  }, []);
+
   return (
-    <PreviewContext.Provider value={{ isOpen, open, close, refresh, setUrl }}>
+    <PreviewContext.Provider value={{ isOpen, open, close, refresh, setUrl, sendLiveData, iframeRef }}>
       {children}
-      {isOpen && <PreviewPanel key={refreshKey} url={url} onClose={close} />}
+      {isOpen && <PreviewPanel key={refreshKey} url={url} onClose={close} iframeRef={iframeRef} />}
     </PreviewContext.Provider>
   );
 }

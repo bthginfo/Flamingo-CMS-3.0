@@ -1,16 +1,18 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type RefObject } from 'react';
 import { X, Monitor, Smartphone, RefreshCw } from 'lucide-react';
 
 type Props = {
   url: string;
   onClose: () => void;
+  iframeRef?: RefObject<HTMLIFrameElement | null>;
 };
 
-export function PreviewPanel({ url, onClose }: Props) {
+export function PreviewPanel({ url, onClose, iframeRef: externalRef }: Props) {
   const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop');
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const internalRef = useRef<HTMLIFrameElement>(null);
+  const iframeRef = externalRef || internalRef;
   const containerRef = useRef<HTMLDivElement>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [scale, setScale] = useState(0.5);
