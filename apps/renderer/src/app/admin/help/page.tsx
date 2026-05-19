@@ -4,7 +4,7 @@ import { useState } from 'react';
 import {
   HelpCircle, FileText, Layers, ImageIcon, Search, FolderOpen, ChevronDown, ChevronRight,
   Plus, Pencil, Trash2, Eye, EyeOff, GripVertical, Upload, ArrowUpDown, Globe, Mail,
-  Rocket, Sparkles, Zap, BookOpen,
+  Rocket, BookOpen,
 } from 'lucide-react';
 
 type SectionProps = { title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean; color?: string };
@@ -62,25 +62,6 @@ export default function HelpPage() {
         </div>
       </div>
 
-      {/* Quick-Start Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="rounded-xl border border-zinc-200 bg-white p-4 text-center">
-          <Zap size={24} className="mx-auto text-amber-500 mb-2" />
-          <p className="text-xs font-semibold text-zinc-700">Speichern</p>
-          <p className="text-[11px] text-zinc-400 mt-0.5">Blauer Button unten rechts</p>
-        </div>
-        <div className="rounded-xl border border-zinc-200 bg-white p-4 text-center">
-          <Rocket size={24} className="mx-auto text-green-500 mb-2" />
-          <p className="text-xs font-semibold text-zinc-700">Veröffentlichen</p>
-          <p className="text-[11px] text-zinc-400 mt-0.5">Grüner Button nach dem Speichern</p>
-        </div>
-        <div className="rounded-xl border border-zinc-200 bg-white p-4 text-center">
-          <Sparkles size={24} className="mx-auto text-purple-500 mb-2" />
-          <p className="text-xs font-semibold text-zinc-700">KI-Assistent</p>
-          <p className="text-[11px] text-zinc-400 mt-0.5">Generiert Inhalte automatisch</p>
-        </div>
-      </div>
-
       {/* SEITEN */}
       <HelpSection title="Seiten erstellen & bearbeiten" icon={<FileText size={20} />} defaultOpen color="blue">
         <p>Seiten sind die Grundbausteine deiner Website. Jede Seite hat einen Titel, einen URL-Slug und beliebig viele Sektionen.</p>
@@ -115,14 +96,17 @@ export default function HelpPage() {
         <h4 className="font-semibold text-zinc-800 mt-4">Verfügbare Sektionstypen</h4>
         <div className="grid grid-cols-2 gap-1.5 text-xs">
           {[
-            'Hero-Banner', 'Text & Bild', 'Nur Text (Rich-Text)', 'Galerie / Bildergitter',
-            'Leistungen / Services', 'Service-Pakete', 'Team-Vorstellung', 'Testimonials / Bewertungen',
-            'FAQ (Häufige Fragen)', 'Kontaktformular', 'Karte (Google Maps)', 'Zahlen & Statistiken',
-            'Call-to-Action', 'Zeitstrahl / Timeline', 'Logo-Leiste (Partner)', 'Preisliste',
-            'Öffnungszeiten', 'Hinweisbanner', 'HTML-Block',
+            'Hero-Banner', 'Text & Bild', 'Freitext / HTML', 'Galerie',
+            'Leistungen / Services', 'Service-Pakete', 'Leistungs-Detail', 'Team',
+            'Bewertungen / Testimonials', 'FAQ', 'Kontaktformular', 'Google Maps',
+            'Zahlen & Statistiken', 'Call-to-Action (Band)', 'CTA-Links', 'USP-Leiste',
+            'Logo-Cloud (Partner)', 'News-Vorschau', 'News-Grid', 'Portfolio',
+            'Hinweisbanner', 'Header-Banner', 'Video-Embed', 'Rechtliche Inhalte',
+            'Ablauf / Timeline', 'Collection-Hero',
+            '+ Branchenspezifische Sections',
           ].map(t => <span key={t} className="bg-zinc-100 rounded px-2 py-1">{t}</span>)}
         </div>
-        <Tip>Im <strong>Sektionen-Showcase</strong> (Demo-Bereich) kannst du alle Typen live ansehen.</Tip>
+        <Tip>Auch Sections aus anderen Branchen stehen dir zur Verfügung — sie erscheinen im Dropdown unter „Andere: [Branche]".</Tip>
       </HelpSection>
 
       {/* INHALTE */}
