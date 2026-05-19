@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { upload } from '@vercel/blob/client';
 import { ImageIcon, Upload, X, Link as LinkIcon, FolderOpen } from 'lucide-react';
 import { saveMediaRecord, getMediaAssets, type MediaAsset } from '@/app/admin/media-actions';
+import { toast } from 'sonner';
 
 /** Resize image to maxWidth and convert to WebP. Returns original if SVG or already small. */
 export async function resizeImage(file: File, maxWidth: number, quality: number): Promise<File> {
@@ -107,6 +108,7 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
       onChange(blob.url);
     } catch (e) {
       console.error('Upload failed:', e);
+      toast.error('Bild-Upload fehlgeschlagen. Bitte erneut versuchen.');
     } finally {
       setUploading(false);
     }

@@ -176,6 +176,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [previewRefreshKey, setPreviewRefreshKey] = useState(0);
   const [pending, startTransition] = useTransition();
   const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
   const [hasDirty, setHasDirty] = useState(false);
@@ -256,6 +257,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         pendingChanges.current.clear();
         setHasDirty(false);
         setSaved(true);
+        setPreviewRefreshKey(k => k + 1);
         toast.success('Gespeichert');
       }
     } catch (e) {
@@ -379,7 +381,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       </div>
 
       {/* Preview Panel */}
-      {showPreview && <PreviewPanel url={previewUrl} onClose={() => setShowPreview(false)} />}
+      {showPreview && <PreviewPanel key={previewRefreshKey} url={previewUrl} onClose={() => setShowPreview(false)} />}
 
       {/* FAB Bar */}
       <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
