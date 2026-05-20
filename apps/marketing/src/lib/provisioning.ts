@@ -204,13 +204,8 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       });
       domainConfigured = true;
 
-      // Trigger initial deployment
-      try {
-        await triggerProjectDeployment(`flamingo-${input.slug}`);
-        console.log(`  ✅ Standalone project: flamingo-${input.slug}`);
-      } catch (err) {
-        console.error('Standalone deployment trigger failed:', err);
-      }
+      // Deployment is now triggered inside createStandaloneProject after all env vars are set
+      console.log(`  ✅ Standalone project: flamingo-${input.slug}`);
     }
 
     // Optional: add custom domain if provided

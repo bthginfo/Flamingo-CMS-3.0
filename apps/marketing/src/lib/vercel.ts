@@ -181,6 +181,22 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
     throw new Error('Blob-Speicher konnte nicht konfiguriert werden: BLOB_READ_WRITE_TOKEN fehlt oder ist ein Placeholder. Bild-Uploads werden für diesen Tenant nicht funktionieren!');
   }
 
+  // Trigger a final production deployment AFTER all env vars (incl. blob token) are set.
+  // This guarantees the running deployment has access to BLOB_READ_WRITE_TOKEN,
+  // regardless of any earlier auto-deployment that started without it.
+  const repoId = process.env.GITHUB_REPO_NUMERIC_ID;
+  if (repoId) {
+    try {
+      await vercelFetch('/v13/deployments', 'POST', {
+        name: projectName,
+        target: 'production',
+        gitSource: { type: 'github', repoId: Number(repoId), ref: 'main' },
+      });
+    } catch (err) {
+      console.warn('Final redeploy after env setup failed (non-critical):', (err as Error).message);
+    }
+  }
+
   return { projectId: projectId as string, projectUrl: `https://${projectName}.vercel.app` };
 }
 
