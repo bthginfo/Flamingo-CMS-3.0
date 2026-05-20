@@ -1,4 +1,4 @@
-import { resolveTenant } from '@/lib/snapshot';
+import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
 import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle } from '@/lib/tenant-data';
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
@@ -14,12 +14,19 @@ export default async function LivePreviewPage() {
       return <LivePreviewClient initialData={{}} />;
     }
 
-  const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle] = await Promise.all([
+  const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle, snapshot] = await Promise.all([
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
     getTenantStyle(tenantId),
+    getActiveSnapshot(tenantId),
   ]);
+
+  // Load homepage sections as fallback when no editor is sending data
+  const homePage = snapshot?.pages.find((p: { slug: string }) =>
+    p.slug === '' || p.slug === 'home' || p.slug === 'startseite'
+  );
+  const initialSections = homePage?.sections || [];
 
   const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
   const brandCssVars = getBrandCssVars(brand);
@@ -52,6 +59,7 @@ export default async function LivePreviewPage() {
         footer: footerData || undefined,
         socialLinks,
         fontsUrl: googleFontsUrl,
+        sections: initialSections,
       }}
     />
   );

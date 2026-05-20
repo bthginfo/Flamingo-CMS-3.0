@@ -17,10 +17,11 @@ interface InitialData {
   footer?: Record<string, unknown>;
   socialLinks?: Record<string, string>;
   fontsUrl?: string | null;
+  sections?: SnapshotSection[];
 }
 
 export function LivePreviewClient({ initialData }: { initialData: InitialData }) {
-  const [sections, setSections] = useState<SnapshotSection[]>([]);
+  const [sections, setSections] = useState<SnapshotSection[]>(initialData.sections || []);
   const [industry, setIndustry] = useState(initialData.industry || 'tradesman');
   const [styleVariant, setStyleVariant] = useState(initialData.styleVariant || 'classic');
   const [cssVars, setCssVars] = useState<Record<string, string>>(initialData.cssVars || {});
