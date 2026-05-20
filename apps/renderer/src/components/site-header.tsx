@@ -111,6 +111,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta }: { n
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
               className={cn(
                 'md:hidden p-2 rounded-lg transition-colors',
                 (scrolled || !darkBg) ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10',
