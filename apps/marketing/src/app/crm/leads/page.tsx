@@ -11,6 +11,7 @@ interface Lead {
   company: string;
   email: string;
   status: LeadStatus;
+  location: string;
   websiteOld: string;
   flamingoLink: string;
   contact: string;
@@ -47,17 +48,17 @@ export default function LeadsPage() {
   useEffect(() => { if (leads.length > 0 || localStorage.getItem(STORAGE_KEY)) saveLeads(leads); }, [leads]);
 
   const [form, setForm] = useState<Omit<Lead, 'id' | 'createdAt'>>({
-    company: '', email: '', status: 'offen', websiteOld: '', flamingoLink: '', contact: '', responsible: 'Julius',
+    company: '', email: '', status: 'offen', location: '', websiteOld: '', flamingoLink: '', contact: '', responsible: 'Julius',
   });
 
   function openNew() {
-    setForm({ company: '', email: '', status: 'offen', websiteOld: '', flamingoLink: '', contact: '', responsible: 'Julius' });
+    setForm({ company: '', email: '', status: 'offen', location: '', websiteOld: '', flamingoLink: '', contact: '', responsible: 'Julius' });
     setEditId(null);
     setShowForm(true);
   }
 
   function openEdit(lead: Lead) {
-    setForm({ company: lead.company, email: lead.email, status: lead.status, websiteOld: lead.websiteOld, flamingoLink: lead.flamingoLink, contact: lead.contact, responsible: lead.responsible });
+    setForm({ company: lead.company, email: lead.email, status: lead.status, location: lead.location || '', websiteOld: lead.websiteOld, flamingoLink: lead.flamingoLink, contact: lead.contact, responsible: lead.responsible });
     setEditId(lead.id);
     setShowForm(true);
   }
@@ -105,6 +106,10 @@ export default function LeadsPage() {
                 <input type="email" className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
               </div>
               <div>
+                <label className="text-xs font-medium text-slate-500">Ort</label>
+                <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} />
+              </div>
+              <div>
                 <label className="text-xs font-medium text-slate-500">Ansprechpartner</label>
                 <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.contact} onChange={e => setForm({ ...form, contact: e.target.value })} />
               </div>
@@ -147,6 +152,7 @@ export default function LeadsPage() {
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200 text-left">
               <th className="px-4 py-3 font-medium text-slate-500">Firma</th>
+              <th className="px-4 py-3 font-medium text-slate-500">Ort</th>
               <th className="px-4 py-3 font-medium text-slate-500">E-Mail</th>
               <th className="px-4 py-3 font-medium text-slate-500">Status</th>
               <th className="px-4 py-3 font-medium text-slate-500">Ansprechpartner</th>
@@ -157,11 +163,12 @@ export default function LeadsPage() {
           </thead>
           <tbody>
             {leads.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-12 text-center text-slate-400">Noch keine Leads. Klicke &quot;Neuer Lead&quot; um einen anzulegen.</td></tr>
+              <tr><td colSpan={8} className="px-4 py-12 text-center text-slate-400">Noch keine Leads. Klicke &quot;Neuer Lead&quot; um einen anzulegen.</td></tr>
             )}
             {leads.map(lead => (
               <tr key={lead.id} className="border-b border-slate-100 hover:bg-slate-50/50 cursor-pointer" onClick={() => openEdit(lead)}>
                 <td className="px-4 py-3 font-medium text-slate-900">{lead.company}</td>
+                <td className="px-4 py-3 text-slate-500">{lead.location}</td>
                 <td className="px-4 py-3 text-slate-600">{lead.email}</td>
                 <td className="px-4 py-3">
                   <select
