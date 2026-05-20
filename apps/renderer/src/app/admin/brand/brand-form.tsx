@@ -114,8 +114,12 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     e.preventDefault();
     setSaving(true);
     try {
-      await saveBrandSettings(form);
-      toast.success('Marken-Einstellungen gespeichert');
+      const result = await saveBrandSettings(form);
+      if (result.verified) {
+        toast.success('Marken-Einstellungen gespeichert ✓');
+      } else {
+        toast.error('Speichern fehlgeschlagen — Daten nicht in DB geschrieben!');
+      }
       markSaved();
       router.refresh();
     } catch {
