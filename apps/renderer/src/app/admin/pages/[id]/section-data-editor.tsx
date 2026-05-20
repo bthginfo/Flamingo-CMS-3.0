@@ -173,7 +173,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
           <option value="none">Kein Effekt</option>
           <option value="parallax">Parallax</option>
           <option value="kenBurns">Ken Burns (Zoom)</option>
-          <option value="mouseGlow">Mouse Glow</option>
+          
           
           
         </select>
@@ -1039,7 +1039,7 @@ function CollectionHeroEditor({ data, onChange }: EditorProps) {
           <option value="none">Kein Effekt</option>
           <option value="parallax">Parallax</option>
           <option value="kenBurns">Ken Burns (Zoom)</option>
-          <option value="mouseGlow">Mouse Glow</option>
+          
           
           
         </select>

@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
 import { pages } from '@flamingo/db';
@@ -46,31 +46,31 @@ export async function GET(req: NextRequest) {
       publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content as snapshot' },
     },
     restrictions: [
-      'Do NOT use section type "freeHtml" or "htmlBlock" â€” raw HTML is not allowed.',
+      'Do NOT use section type "freeHtml" or "htmlBlock" — raw HTML is not allowed.',
       'Only use section types listed in availableSectionTypes.',
-      'Only fill fields defined in sectionDataSchemas â€” do not invent custom fields.',
-      'Every section MUST have ALL required fields filled with real content â€” never leave fields empty or with placeholder text like "Lorem ipsum".',
+      'Only fill fields defined in sectionDataSchemas — do not invent custom fields.',
+      'Every section MUST have ALL required fields filled with real content — never leave fields empty or with placeholder text like "Lorem ipsum".',
       'Every array field (items, services, steps, etc.) MUST have at least 3 entries unless the real business has fewer.',
       'The footer MUST contain columns with items arrays. Each item needs text and optionally href. Never send empty columns or columns without items.',
       'Navigation items MUST link to existing pages using their slug (e.g. href: "/leistungen", NOT href: "/services").',
     ],
-    instructions: `Du bist ein AI-Assistent der eine "${auth.tenant.industry}"-Website fÃ¼r "${auth.tenant.name}" mit deutschsprachigem Content fÃ¼llt.
+    instructions: `Du bist ein AI-Assistent der eine "${auth.tenant.industry}"-Website für "${auth.tenant.name}" mit deutschsprachigem Content füllt.
 
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+═══════════════════════════════════════════
 PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+═══════════════════════════════════════════
 
 1. BRAND (PUT /api/v1/content/brand):
    - companyName, tagline, primaryColor, secondaryColor?, accentColor
    - logoUrl: URL zum Firmenlogo (wird im Header + Footer gezeigt)
    - logoDisplay: 'logo' | 'logoAndName' | 'name' (default: 'name' wenn kein Logo)
-   - headingFont: Google-Font-Name fÃ¼r Ãœberschriften (z.B. "Playfair Display", "Montserrat")
-   - bodyFont: Google-Font-Name fÃ¼r FlieÃŸtext (z.B. "Inter", "Open Sans")
+   - headingFont: Google-Font-Name für Überschriften (z.B. "Playfair Display", "Montserrat")
+   - bodyFont: Google-Font-Name für Fließtext (z.B. "Inter", "Open Sans")
    - topBarColor?: hex (Farbe der Top-Navigation-Leiste)
    - footerColor?: hex (Hintergrundfarbe des Footers)
 
 2. CONTACT (PUT /api/v1/content/contact):
-   - phone, email, address (vollstÃ¤ndig mit StraÃŸe, PLZ, Ort)
+   - phone, email, address (vollständig mit Straße, PLZ, Ort)
    - whatsapp (Nummer), whatsappEnabled: true
 
 3. NAVIGATION (PUT /api/v1/content/navigation):
@@ -81,11 +81,11 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
 4. FOOTER (PUT /api/v1/content/footer):
    - columns: MINDESTENS 2-3 Spalten, JEDE mit title UND items-Array
    - cta: { label: "Jetzt anfragen", href: "/kontakt" } (optionaler CTA-Button im Footer)
-   - Beispiel: { columns: [{ title: "Leistungen", items: [{ text: "Badezimmer", href: "/c/leistungen/badezimmer" }, ...] }, { title: "Unternehmen", items: [{ text: "Ãœber uns", href: "/ueber-uns" }, { text: "Kontakt", href: "/kontakt" }] }], legalLinks: [{ label: "Impressum", href: "/impressum" }, { label: "Datenschutz", href: "/datenschutz" }], cta: { label: "Termin vereinbaren", href: "/kontakt" } }
+   - Beispiel: { columns: [{ title: "Leistungen", items: [{ text: "Badezimmer", href: "/c/leistungen/badezimmer" }, ...] }, { title: "Unternehmen", items: [{ text: "Über uns", href: "/ueber-uns" }, { text: "Kontakt", href: "/kontakt" }] }], legalLinks: [{ label: "Impressum", href: "/impressum" }, { label: "Datenschutz", href: "/datenschutz" }], cta: { label: "Termin vereinbaren", href: "/kontakt" } }
    - NIEMALS leere items-Arrays! Jede Spalte braucht mindestens 2 Links.
 
-5. SEITEN (POST /api/v1/content/pages) â€” Erstelle ALLE diese Seiten:
-   a) Startseite (slug: "startseite") â€” MINDESTENS 6 Sections:
+5. SEITEN (POST /api/v1/content/pages) — Erstelle ALLE diese Seiten:
+   a) Startseite (slug: "startseite") — MINDESTENS 6 Sections:
       - hero (mit headline, subline, bgImage, primaryCta, secondaryCta, trustItems)
       - uspStrip (mindestens 4 Items)
       - servicesGrid (mindestens 4 manualCards mit title, text, icon, href zu Collection-Detail)  
@@ -94,67 +94,67 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
       - faq (mindestens 4 Fragen)
       - ctaBand (mit headline, subline, ctaPrimary)
    
-   b) Leistungen-Ãœbersicht (slug: "leistungen"):
+   b) Leistungen-Übersicht (slug: "leistungen"):
       - collectionHero (headline, subline)
       - servicesGrid (ALLE Leistungen als manualCards mit href="/c/leistungen/[slug]")
       - ctaBand
    
-   c) Ãœber uns (slug: "ueber-uns"):
+   c) Über uns (slug: "ueber-uns"):
       - collectionHero
-      - textImage (mit echtem Text Ã¼ber die Firma, Bild)
-      - stats (GrÃ¼ndungsjahr, Mitarbeiter, Projekte, etc.)
+      - textImage (mit echtem Text über die Firma, Bild)
+      - stats (Gründungsjahr, Mitarbeiter, Projekte, etc.)
       - team (mindestens 2-3 Teammitglieder mit name, role)
       - ctaBand
    
    d) Kontakt (slug: "kontakt"):
       - collectionHero
-      - contact (headline, subline, formEnabled: true, mapEmbedUrl wenn mÃ¶glich)
-      - textImage (Ã–ffnungszeiten oder Anfahrt-Info)
+      - contact (headline, subline, formEnabled: true, mapEmbedUrl wenn möglich)
+      - textImage (Öffnungszeiten oder Anfahrt-Info)
    
    e) Impressum (slug: "impressum"):
       - legalContent (headline: "Impressum", blocks mit: Verantwortlicher, Kontaktdaten, Handelsregister, USt-IdNr, Haftungshinweis, Urheberrecht)
    
    f) Datenschutz (slug: "datenschutz"):
-      - legalContent (headline: "Datenschutzerklärung", blocks mit: Verantwortlicher, Hosting, Cookies, Kontaktformular, Analyse-Tools, Rechte der Betroffenen)
+      - legalContent (headline: "Datenschutzerkl�rung", blocks mit: Verantwortlicher, Hosting, Cookies, Kontaktformular, Analyse-Tools, Rechte der Betroffenen)
 
-6. COLLECTIONS â€” Erstelle MINDESTENS eine Collection fÃ¼r die Kernleistungen:
-   - POST /api/v1/content/collections â†’ { key: "leistungen", label: "Leistungen" }
-   - Dann fÃ¼r JEDE Leistung ein Item erstellen (MINDESTENS 4 Items):
-     POST /api/v1/content/collections/leistungen/items â†’ { title: "...", slug: "...", data: { sections: [...] } }
+6. COLLECTIONS — Erstelle MINDESTENS eine Collection für die Kernleistungen:
+   - POST /api/v1/content/collections → { key: "leistungen", label: "Leistungen" }
+   - Dann für JEDE Leistung ein Item erstellen (MINDESTENS 4 Items):
+     POST /api/v1/content/collections/leistungen/items → { title: "...", slug: "...", data: { sections: [...] } }
    - Jedes Collection-Item braucht sections mit echtem Content (collectionHero + textImage + ctaBand minimum)   - WICHTIG: Jede Section in data.sections MUSS ein "id"-Feld haben (UUID v4 Format, z.B. "a1b2c3d4-e5f6-7890-abcd-ef1234567890"). Ohne ID funktioniert Drag&Drop im Editor nicht!
 7. SEO (PUT /api/v1/content/seo):
    - titleTemplate: "%s | ${auth.tenant.name}"
    - defaultTitle: Firmenname oder Slogan (Fallback-Titel)
-   - defaultDescription: AussagekrÃ¤ftige Beschreibung
+   - defaultDescription: Aussagekräftige Beschreibung
    - defaultOgImage: URL zu einem OG-Bild (wird auf Social Media gezeigt wenn kein seitenspezifisches OG-Bild gesetzt ist)
-   - canonicalBase?: "https://domain.de" (optionale Basis-URL fÃ¼r canonical tags)
+   - canonicalBase?: "https://domain.de" (optionale Basis-URL für canonical tags)
    - locale?: "de_DE" (Standard)
-   - Dann fÃ¼r JEDE Seite: PUT /api/v1/content/seo/:pageId mit metaTitle und metaDescription
+   - Dann für JEDE Seite: PUT /api/v1/content/seo/:pageId mit metaTitle und metaDescription
 
 8. PUBLISH (POST /api/v1/content/publish):
    - IMMER als letzter Schritt aufrufen!
 
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+═══════════════════════════════════════════
 CONTENT-REGELN:
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+═══════════════════════════════════════════
 
-- JEDES Feld das nicht mit "?" markiert ist, MUSS gefÃ¼llt werden
-- Array-Felder (items, services, steps, etc.) brauchen MINDESTENS 3-4 EintrÃ¤ge
-- Texte mÃ¼ssen ECHTEN, branchenspezifischen Content haben (keine Platzhalter)
+- JEDES Feld das nicht mit "?" markiert ist, MUSS gefüllt werden
+- Array-Felder (items, services, steps, etc.) brauchen MINDESTENS 3-4 Einträge
+- Texte müssen ECHTEN, branchenspezifischen Content haben (keine Platzhalter)
 - Icons: Verwende passende Lucide-Icon-Namen (z.B. "Wrench", "Phone", "Mail", "MapPin", "Clock", "Shield", "Award", "Users", "Star", "ChevronRight")
 - Bilder: Verwende Unsplash-URLs im Format https://images.unsplash.com/photo-XXXXX?w=1200&q=80
 - CTAs: Immer mit konkretem href zu einer existierenden Seite (z.B. "/kontakt", "/leistungen")
 - ServicesGrid href: Verlinke zu Collection-Detail-Seiten als "/c/leistungen/[slug]"
 - Hero Overlay: Nutze overlayColor (hex) + overlayOpacity (0-1) um das Bild-Overlay zu steuern. Ohne diese Felder wird das Standard-Gradient der Branche verwendet.
-- Bild-Effekte: Nutze imageEffect (parallax, kenBurns, mouseGlow) + imageEffectIntensity (subtle/medium/strong) bei hero und collectionHero für visuelle Aufwertung. Standard: kein Effekt.
+- Bild-Effekte: Nutze imageEffect (parallax, kenBurns) + imageEffectIntensity (subtle/medium/strong) bei hero und collectionHero f�r visuelle Aufwertung. Standard: kein Effekt.
 - Google Maps: Nutze eine EIGENE "map" Section (NICHT in contact einbauen!). embedUrl = Google Maps > Teilen > Einbetten > src-URL aus dem iframe kopieren. Kontaktseite typisch: hero + contact (Formular+InfoCards) + map (Google Maps Embed).
 - SECTION-AUSWAHL: In availableSectionTypes sind auch Sections aus ANDEREN Branchen enthalten (markiert mit Kategorie "Andere: ..."). Bevorzuge IMMER die brancheneigenen Sections! Nutze fremde Sections nur, wenn deine Branche keine passende eigene Section hat. Beispiel: Ein Hotel nutzt "roomShowcase" statt "servicesGrid".
 
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-BEISPIEL â€” So sieht ein korrekter servicesGrid-Aufruf aus:
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+═══════════════════════════════════════════
+BEISPIEL — So sieht ein korrekter servicesGrid-Aufruf aus:
+═══════════════════════════════════════════
 
-WICHTIG: Das Array-Feld heiÃŸt "manualCards" (NICHT "services")!
+WICHTIG: Das Array-Feld heißt "manualCards" (NICHT "services")!
 Der Renderer liest NUR data.manualCards. Wenn du "services" sendest, werden die Karten NICHT angezeigt!
 
 {
@@ -166,9 +166,9 @@ Der Renderer liest NUR data.manualCards. Wenn du "services" sendest, werden die 
     "ctaLabel": "Alle Leistungen ansehen",
     "ctaHref": "/leistungen",
     "manualCards": [
-      { "icon": "Droplets", "title": "Leckortung", "text": "Modernste Messtechnik zur zerstÃ¶rungsfreien Ortung von WasserschÃ¤den.", "href": "/c/leistungen/leckortung", "mediaType": "icon" },
-      { "icon": "Wind", "title": "Bautrocknung", "text": "Professionelle Trocknung mit Ã¼berwachtem Trocknungsverlauf.", "href": "/c/leistungen/bautrocknung", "mediaType": "icon" },
-      { "icon": "Hammer", "title": "Sanierung", "text": "Fachgerechte Wiederherstellung nach WasserschÃ¤den.", "href": "/c/leistungen/sanierung", "mediaType": "icon" },
+      { "icon": "Droplets", "title": "Leckortung", "text": "Modernste Messtechnik zur zerstörungsfreien Ortung von Wasserschäden.", "href": "/c/leistungen/leckortung", "mediaType": "icon" },
+      { "icon": "Wind", "title": "Bautrocknung", "text": "Professionelle Trocknung mit überwachtem Trocknungsverlauf.", "href": "/c/leistungen/bautrocknung", "mediaType": "icon" },
+      { "icon": "Hammer", "title": "Sanierung", "text": "Fachgerechte Wiederherstellung nach Wasserschäden.", "href": "/c/leistungen/sanierung", "mediaType": "icon" },
       { "icon": "FileCheck", "title": "Versicherungsabwicklung", "text": "Komplette Dokumentation und Kommunikation mit Ihrer Versicherung.", "href": "/c/leistungen/versicherung", "mediaType": "icon" }
     ]
   }
@@ -176,33 +176,33 @@ Der Renderer liest NUR data.manualCards. Wenn du "services" sendest, werden die 
 
 WICHTIG: Jede Karte MUSS title und text haben. icon ODER image ist optional.
 Card-Schema: { title: string, text: string, icon?: lucide-name, image?: url, mediaType?: 'icon'|'image', href?: string }
-Die href-Werte MÃœSSEN auf Collection-Items verweisen die du vorher angelegt hast.
+Die href-Werte MÜSSEN auf Collection-Items verweisen die du vorher angelegt hast.
 
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-BEISPIEL â€” Footer mit vollstÃ¤ndigen columns:
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+═══════════════════════════════════════════
+BEISPIEL — Footer mit vollständigen columns:
+═══════════════════════════════════════════
 
 {
   "columns": [
     { "title": "Leistungen", "items": [{ "text": "Leckortung", "href": "/c/leistungen/leckortung" }, { "text": "Bautrocknung", "href": "/c/leistungen/bautrocknung" }, { "text": "Sanierung", "href": "/c/leistungen/sanierung" }] },
-    { "title": "Unternehmen", "items": [{ "text": "Ãœber uns", "href": "/ueber-uns" }, { "text": "Team", "href": "/ueber-uns" }, { "text": "Kontakt", "href": "/kontakt" }] },
+    { "title": "Unternehmen", "items": [{ "text": "Über uns", "href": "/ueber-uns" }, { "text": "Team", "href": "/ueber-uns" }, { "text": "Kontakt", "href": "/kontakt" }] },
     { "title": "Service", "items": [{ "text": "Notdienst", "href": "/kontakt" }, { "text": "FAQ", "href": "/startseite" }] }
   ],
   "legalLinks": [{ "label": "Impressum", "href": "/impressum" }, { "label": "Datenschutz", "href": "/datenschutz" }],
   "cta": { "label": "Schaden melden", "href": "/kontakt" }
 }
 
-WICHTIG: Jede column MUSS ein items-Array mit mindestens 2 EintrÃ¤gen haben! Leere columns crashen die Seite.
+WICHTIG: Jede column MUSS ein items-Array mit mindestens 2 Einträgen haben! Leere columns crashen die Seite.
 
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-BEISPIEL â€” Contact-Section mit Info-Karten:
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+═══════════════════════════════════════════
+BEISPIEL — Contact-Section mit Info-Karten:
+═══════════════════════════════════════════
 
 {
   "type": "contact",
   "data": {
     "headline": "Kontaktieren Sie uns",
-    "subline": "Wir sind fÃ¼r Sie da",
+    "subline": "Wir sind für Sie da",
     "formEnabled": true,
     "mapEmbedUrl": "https://www.google.com/maps/embed?pb=..."
   }
@@ -210,42 +210,42 @@ BEISPIEL â€” Contact-Section mit Info-Karten:
 
 Hinweis: Die Kontaktdaten (Adresse, Telefon, E-Mail) werden automatisch aus den Brand/Contact-Settings geladen. Du MUSST also vorher PUT /contact mit allen Daten aufrufen!
 
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-HÃ„UFIGE FEHLER (VERMEIDE DIESE):
-â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+═══════════════════════════════════════════
+HÄUFIGE FEHLER (VERMEIDE DIESE):
+═══════════════════════════════════════════
 
-âŒ Footer ohne items in columns â†’ CRASH
-âŒ servicesGrid mit "services" statt "manualCards" â†’ Karten werden NICHT angezeigt!
-âŒ servicesGrid mit manualCards aber OHNE href â†’ keine Verlinkung
-âŒ servicesGrid mit manualCards aber OHNE text â†’ leere Beschreibung
-âŒ Navigation ohne CTA â†’ fehlender Anruf-Button
-âŒ Leistungen nur als Seiten statt Collection Items
-âŒ Collection-Items angelegt aber NICHT im servicesGrid referenziert
-âŒ Kontaktseite ohne contact-Section â†’ kein Formular
-âŒ Hero ohne primaryCta â†’ kein Call-to-Action
-âŒ Sections mit leeren/fehlenden Pflichtfeldern
-âŒ Array-Felder mit 0 oder 1 EintrÃ¤gen (MINIMUM 3)
-âŒ Slugs mit fÃ¼hrendem "/" (FALSCH: "/kontakt", RICHTIG: "kontakt")
-âŒ Publish vergessen am Ende
+❌ Footer ohne items in columns → CRASH
+❌ servicesGrid mit "services" statt "manualCards" → Karten werden NICHT angezeigt!
+❌ servicesGrid mit manualCards aber OHNE href → keine Verlinkung
+❌ servicesGrid mit manualCards aber OHNE text → leere Beschreibung
+❌ Navigation ohne CTA → fehlender Anruf-Button
+❌ Leistungen nur als Seiten statt Collection Items
+❌ Collection-Items angelegt aber NICHT im servicesGrid referenziert
+❌ Kontaktseite ohne contact-Section → kein Formular
+❌ Hero ohne primaryCta → kein Call-to-Action
+❌ Sections mit leeren/fehlenden Pflichtfeldern
+❌ Array-Felder mit 0 oder 1 Einträgen (MINIMUM 3)
+❌ Slugs mit führendem "/" (FALSCH: "/kontakt", RICHTIG: "kontakt")
+❌ Publish vergessen am Ende
 
-WICHTIG â€” Slugs:
-Slugs dÃ¼rfen NIEMALS mit "/" beginnen. Slug = nur Pfadteil, z.B. "kontakt", "ueber-uns", "leistungen". Die Startseite MUSS den Slug "startseite" haben.
+WICHTIG — Slugs:
+Slugs dürfen NIEMALS mit "/" beginnen. Slug = nur Pfadteil, z.B. "kontakt", "ueber-uns", "leistungen". Die Startseite MUSS den Slug "startseite" haben.
 
-WICHTIG â€” Collections statt Unterseiten:
-FÃ¼r wiederkehrende Inhalte (Leistungen, Zimmer, News, Team, Referenzen, Behandlungen) IMMER Collections verwenden.
-Workflow: 1) POST /collections â†’ { key, label }  2) POST /collections/:key/items fÃ¼r jeden Eintrag  3) Auf Ãœbersichtsseiten servicesGrid mit href="/c/:key/:slug" nutzen`,
+WICHTIG — Collections statt Unterseiten:
+Für wiederkehrende Inhalte (Leistungen, Zimmer, News, Team, Referenzen, Behandlungen) IMMER Collections verwenden.
+Workflow: 1) POST /collections → { key, label }  2) POST /collections/:key/items für jeden Eintrag  3) Auf Übersichtsseiten servicesGrid mit href="/c/:key/:slug" nutzen`,
   });
 }
 
 function getSectionSchemas(industry: string): Record<string, object> {
   const schemas: Record<string, object> = {
-    hero: { fields: { headline: 'string', subline: 'string', badgeText: 'string?', badgeIcon: 'lucide-icon-name?', badgeStarsIcon: 'lucide-icon-name? (leer = keine Sterne)', bgImage: 'url?', bgImageMobile: 'url?', bgColor: 'hex? (alternative bg color if no image)', bgMode: '"image"|"color"|"gradient" (default gradient)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', trustItems: 'string[]?', trustStripColor: 'hex?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string? (CSS object-position, e.g. "center 30%")', bgPositionMobile: 'string?', imageEffect: '"none"|"parallax"|"kenBurns"|"mouseGlow"?', imageEffectIntensity: '"subtle"|"medium"|"strong"?' } },
+    hero: { fields: { headline: 'string', subline: 'string', badgeText: 'string?', badgeIcon: 'lucide-icon-name?', badgeStarsIcon: 'lucide-icon-name? (leer = keine Sterne)', bgImage: 'url?', bgImageMobile: 'url?', bgColor: 'hex? (alternative bg color if no image)', bgMode: '"image"|"color"|"gradient" (default gradient)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', trustItems: 'string[]?', trustStripColor: 'hex?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string? (CSS object-position, e.g. "center 30%")', bgPositionMobile: 'string?', imageEffect: '"none"|"parallax"|"kenBurns"?', imageEffectIntensity: '"subtle"|"medium"|"strong"?' } },
     richText: { fields: { headline: 'string?', content: 'html-string' } },
-    legalContent: { fields: { headline: 'string', blocks: '{ headline: string, text: string (html) }[] — je ein Block pro Thema (z.B. Verantwortlicher, Kontakt, Hosting, Cookies etc.)' } },
+    legalContent: { fields: { headline: 'string', blocks: '{ headline: string, text: string (html) }[] � je ein Block pro Thema (z.B. Verantwortlicher, Kontakt, Hosting, Cookies etc.)' } },
     freeText: { fields: { content: 'rich-text (Tiptap JSON or HTML)' } },
     videoEmbed: { fields: { headline: 'string?', subline: 'string?', videoUrl: 'youtube/vimeo URL', aspectRatio: '"16:9"|"4:3"|"1:1"?' } },
     textImage: { fields: { headline: 'string', text: 'string (html)', badge: 'string?', image: 'url', imageAlt: 'string?', layout: '"image-right"|"image-left"', items: '{ icon?: lucide-icon-name, title: string, text: string }[]?', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
-    collectionHero: { fields: { headline: 'string', subline: 'string?', bgImage: 'url?', category: 'string?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string?', imageEffect: '"none"|"parallax"|"kenBurns"|"mouseGlow"?', imageEffectIntensity: '"subtle"|"medium"|"strong"?' } },
+    collectionHero: { fields: { headline: 'string', subline: 'string?', bgImage: 'url?', category: 'string?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string?', imageEffect: '"none"|"parallax"|"kenBurns"?', imageEffectIntensity: '"subtle"|"medium"|"strong"?' } },
     noticeBanner: { fields: { headline: 'string', subline: 'string?', text: 'string? (html)', bgColor: 'hex?', textColor: 'hex? (default white)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
   };
 
@@ -272,7 +272,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
       testimonials: { fields: { headline: 'string', badgeText: 'string?', items: '{ quote: string, name: string, context?: string, rating?: 1-5 }[]' } },
       faq: { fields: { headline: 'string', badgeText: 'string?', expandFirst: 'boolean?', items: '{ question: string, answer: string }[]' } },
       ctaBand: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', ctaPrimary: '{ label: string, href: string, icon?: lucide-icon-name }' } },
-      contact: { fields: { headline: 'string', introText: 'string?', badgeText: 'string?', formEnabled: 'boolean (default true)', submitLabel: 'string?', formFields: '{ name: string, type: "text"|"email"|"tel"|"textarea", required?: boolean }[]?', infoCards: '{ icon: lucide-icon-name, label: string, value: string }[] (z.B. Phone/Mail/Adresse/Öffnungszeiten)' } },
+      contact: { fields: { headline: 'string', introText: 'string?', badgeText: 'string?', formEnabled: 'boolean (default true)', submitLabel: 'string?', formFields: '{ name: string, type: "text"|"email"|"tel"|"textarea", required?: boolean }[]?', infoCards: '{ icon: lucide-icon-name, label: string, value: string }[] (z.B. Phone/Mail/Adresse/�ffnungszeiten)' } },
       map: { fields: { headline: 'string?', embedUrl: 'Google Maps Embed-URL (https://www.google.com/maps/embed?pb=...)', height: '"s"|"m"|"l" (default "m")' } },
       team: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', membersHeadline: 'string?', members: '{ name: string, role: string, image?: url, bio?: string }[]', storyHeadline: 'string?', storyText: 'string?', storyImage: 'url?', valuesHeadline: 'string?', values: '{ icon: lucide-icon-name, title: string, text: string }[]?', stats: '{ value: string, label: string }[]?' } },
       textImage: { fields: { headline: 'string', text: 'string (html)', badge: 'string?', image: 'url', imageAlt: 'string?', layout: '"image-right" | "image-left"', items: '{ icon?: lucide-icon-name, title: string, text: string }[]?', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
@@ -313,7 +313,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
     });
   } else if (industry === 'salon') {
     Object.assign(schemas, {
-      serviceMenu: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', ctaPrimary: '{ label: string, href: string }?', categories: '{ title: string, text?: string, image?: url, category?: string, services: string[] (z.B. ["Waschen & Schneiden", "Färben", "Styling"]), cta?: { label: string, href: string } }[]' } },
+      serviceMenu: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', ctaPrimary: '{ label: string, href: string }?', categories: '{ title: string, text?: string, image?: url, category?: string, services: string[] (z.B. ["Waschen & Schneiden", "F�rben", "Styling"]), cta?: { label: string, href: string } }[]' } },
       priceList: { fields: { headline: 'string', subline: 'string?', categories: '{ title: string, items: { name: string, description?: string, durationLabel?: string, priceLabel: string }[] }[]', footnote: 'string?' } },
       packages: { fields: { headline: 'string', subline: 'string?', packages: '{ title: string, text: string, image?: url, priceLabel: string, includes: string[], cta?: { label: string, href: string } }[]' } },
       teamShowcase: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', members: '{ name: string, role: string, bio?: string, image?: url, specialties: string[], bookingCta?: { label: string, href: string } }[]' } },

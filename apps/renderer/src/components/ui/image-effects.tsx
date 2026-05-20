@@ -26,7 +26,8 @@ export function ImageEffectWrapper({ effect = 'none', intensity = 'medium', chil
     case 'kenBurns':
       return <KenBurnsEffect intensity={intensity} className={className}>{children}</KenBurnsEffect>;
     case 'mouseGlow':
-      return <MouseGlowEffect intensity={intensity} className={className}>{children}</MouseGlowEffect>;
+      // Mouse glow disabled — fallback to plain render
+      return <div className={className}>{children}</div>;
     default:
       return <div className={className}>{children}</div>;
   }
