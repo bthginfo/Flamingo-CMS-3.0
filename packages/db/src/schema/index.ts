@@ -401,3 +401,20 @@ export const tenantApiTokens = pgTable('tenant_api_tokens', {
   index('tenant_api_tokens_tenant_idx').on(t.tenantId),
   index('tenant_api_tokens_hash_idx').on(t.tokenHash),
 ]);
+
+// ─── CRM Leads ───────────────────────────────────────────────────────
+export const leadStatusEnum = pgEnum('lead_status', ['offen', 'kontaktiert', 'angenommen', 'abgelehnt']);
+
+export const leads = pgTable('leads', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  company: varchar('company', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }),
+  status: leadStatusEnum('status').notNull().default('offen'),
+  location: varchar('location', { length: 255 }),
+  websiteOld: varchar('website_old', { length: 500 }),
+  flamingoLink: varchar('flamingo_link', { length: 500 }),
+  contact: varchar('contact', { length: 255 }),
+  responsible: varchar('responsible', { length: 100 }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
