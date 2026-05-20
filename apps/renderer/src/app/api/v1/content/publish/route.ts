@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
       for (const s of sections) {
         const data = (s.data || {}) as Record<string, unknown>;
         const label = `"${p.title || p.slug}" → ${s.type}`;
-        if (s.type === 'servicesGrid' && (!Array.isArray(data.services) || data.services.length === 0))
-          warnings.push(`${label}: services array is empty`);
+        if (s.type === 'servicesGrid' && (!Array.isArray(data.manualCards) || data.manualCards.length === 0))
+          warnings.push(`${label}: manualCards array is empty`);
         if (s.type === 'faq' && (!Array.isArray(data.items) || data.items.length === 0))
           warnings.push(`${label}: items array is empty`);
         if (s.type === 'testimonials' && (!Array.isArray(data.items) || data.items.length === 0))

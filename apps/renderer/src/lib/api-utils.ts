@@ -113,3 +113,19 @@ function validateSectionData(type: string, data: Record<string, unknown>, idx: n
   }
   return null;
 }
+
+/**
+ * Normalize section data to use canonical field names.
+ * Fixes common AI mistakes like using "services" instead of "manualCards".
+ */
+export function normalizeSectionData(type: string, data: Record<string, unknown>): Record<string, unknown> {
+  const d = { ...data };
+  if (type === 'servicesGrid') {
+    if (Array.isArray(d.services) && !Array.isArray(d.manualCards)) {
+      d.manualCards = d.services;
+      delete d.services;
+    }
+    if (!d.source) d.source = 'manual';
+  }
+  return d;
+}

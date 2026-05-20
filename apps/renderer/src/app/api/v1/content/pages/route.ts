@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
-import { withApiHandler, normalizeSlug, validateSections } from '@/lib/api-utils';
+import { withApiHandler, normalizeSlug, validateSections, normalizeSectionData } from '@/lib/api-utils';
 
 export const POST = withApiHandler(async (req, auth) => {
   const body = await req.json();
@@ -31,7 +31,7 @@ export const POST = withApiHandler(async (req, auth) => {
         tenantId: auth.tenantId,
         pageId,
         type: s.type,
-        data: s.data || {},
+        data: normalizeSectionData(s.type, s.data || {}),
         variant: s.variant || null,
         visible: s.visible !== false,
         container: s.container || 'default',

@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
 import { eq, and, asc } from 'drizzle-orm';
 import crypto from 'crypto';
-import { withApiHandlerParams, normalizeSlug, validateSections } from '@/lib/api-utils';
+import { withApiHandlerParams, normalizeSlug, validateSections, normalizeSectionData } from '@/lib/api-utils';
 
 export const GET = withApiHandlerParams(async (_req, auth, params) => {
   const { id } = params;
@@ -45,7 +45,7 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
           tenantId: auth.tenantId,
           pageId: id,
           type: s.type,
-          data: s.data || {},
+          data: normalizeSectionData(s.type, s.data || {}),
           variant: s.variant || null,
           visible: s.visible !== false,
           container: s.container || 'default',
