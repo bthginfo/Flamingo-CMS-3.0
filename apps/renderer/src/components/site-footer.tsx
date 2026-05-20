@@ -110,7 +110,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
               </Link>
             ))}
             <span className="text-xs opacity-40 flex items-center gap-1">
-              Made with <Heart size={10} className="text-brand-accent fill-brand-accent" /> by <span className="text-brand-accent font-medium">Flamingo</span>
+              Made with <Heart size={10} className="text-brand-accent fill-brand-accent" /> by <a href="https://www.flamingomedia.online" target="_blank" rel="noopener noreferrer" className="text-brand-accent font-medium hover:underline">Flamingo Media</a>
             </span>
           </div>
         </div>

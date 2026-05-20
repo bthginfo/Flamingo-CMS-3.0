@@ -20,7 +20,7 @@ html {
 
 @layer base {
   body {
-    color: var(--style-text-primary, var(--text-primary));
+    color: var(--brand-body-text, var(--style-text-primary, var(--text-primary)));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
@@ -32,6 +32,7 @@ html {
   }
 
   h1, h2, h3, h4, h5, h6 {
+    color: var(--brand-heading, inherit);
     letter-spacing: var(--style-heading-tracking, -0.025em);
     text-wrap: balance;
     font-weight: var(--style-heading-weight, 700);
@@ -40,6 +41,19 @@ html {
   }
 
   /* Style-aware overrides: cards, buttons, sections adapt to active style vars */
+  [data-style] nav a {
+    color: var(--brand-nav-link, inherit);
+  }
+
+  [data-style] main a:not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-"]) {
+    color: var(--brand-link, inherit);
+  }
+
+  [data-style] .text-gray-500,
+  [data-style] .text-slate-500 {
+    color: var(--style-text-muted, inherit) !important;
+  }
+
   [data-style] .rounded-xl,
   [data-style] .rounded-2xl,
   [data-style] .rounded-3xl {
@@ -103,6 +117,15 @@ html {
     border-radius: var(--style-button-radius, 0.75rem);
     background: var(--brand-btn-bg, var(--brand-accent));
     color: var(--brand-btn-text, #1a1a1a);
+  }
+
+  /* Override inline Tailwind buttons (bg-brand-primary) to respect custom button colors */
+  [data-style] a.bg-brand-primary,
+  [data-style] button.bg-brand-primary,
+  [data-style] a[class*="bg-brand-primary"],
+  [data-style] button[class*="bg-brand-primary"] {
+    background-color: var(--brand-btn-bg, var(--brand-primary)) !important;
+    color: var(--brand-btn-text, white) !important;
   }
 
   .btn-secondary {
