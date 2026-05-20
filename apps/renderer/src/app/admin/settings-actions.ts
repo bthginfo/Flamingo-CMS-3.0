@@ -27,9 +27,20 @@ export async function getBrandSettings() {
 export async function saveBrandSettings(data: Record<string, unknown>) {
   const tenantId = await requireTenant();
   const db = getDb();
-  await db.update(globalSettings)
-    .set({ brand: data, updatedAt: new Date() })
-    .where(eq(globalSettings.tenantId, tenantId));
+
+  // Check if row exists
+  const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
+
+  console.log('[saveBrandSettings]', { tenantId, existing: !!existing, fields: Object.keys(data).filter(k => data[k]).length });
+
+  if (existing) {
+    await db.update(globalSettings)
+      .set({ brand: data, updatedAt: new Date() })
+      .where(eq(globalSettings.tenantId, tenantId));
+  } else {
+    await db.insert(globalSettings).values({ tenantId, brand: data });
+  }
+
   revalidatePath('/admin/brand');
   // Also revalidate the public site so brand/design changes appear immediately
   revalidatePath('/', 'layout');
@@ -53,9 +64,12 @@ export async function getContactSettings() {
 export async function saveContactSettings(data: { phone: string; email: string; address: string; whatsapp?: string; whatsappEnabled?: boolean; whatsappColor?: string }) {
   const tenantId = await requireTenant();
   const db = getDb();
-  await db.update(globalSettings)
-    .set({ contact: data, updatedAt: new Date() })
-    .where(eq(globalSettings.tenantId, tenantId));
+  const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
+  if (existing) {
+    await db.update(globalSettings).set({ contact: data, updatedAt: new Date() }).where(eq(globalSettings.tenantId, tenantId));
+  } else {
+    await db.insert(globalSettings).values({ tenantId, contact: data });
+  }
   revalidatePath('/admin/contact');
   return { success: true };
 }
@@ -63,9 +77,12 @@ export async function saveContactSettings(data: { phone: string; email: string; 
 export async function saveOpeningHours(hours: { day: string; hours: string }[]) {
   const tenantId = await requireTenant();
   const db = getDb();
-  await db.update(globalSettings)
-    .set({ openingHours: hours, updatedAt: new Date() })
-    .where(eq(globalSettings.tenantId, tenantId));
+  const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
+  if (existing) {
+    await db.update(globalSettings).set({ openingHours: hours, updatedAt: new Date() }).where(eq(globalSettings.tenantId, tenantId));
+  } else {
+    await db.insert(globalSettings).values({ tenantId, openingHours: hours });
+  }
   revalidatePath('/admin/contact');
   return { success: true };
 }
@@ -73,9 +90,12 @@ export async function saveOpeningHours(hours: { day: string; hours: string }[]) 
 export async function saveSocialLinks(links: Record<string, string>) {
   const tenantId = await requireTenant();
   const db = getDb();
-  await db.update(globalSettings)
-    .set({ socialLinks: links, updatedAt: new Date() })
-    .where(eq(globalSettings.tenantId, tenantId));
+  const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
+  if (existing) {
+    await db.update(globalSettings).set({ socialLinks: links, updatedAt: new Date() }).where(eq(globalSettings.tenantId, tenantId));
+  } else {
+    await db.insert(globalSettings).values({ tenantId, socialLinks: links });
+  }
   revalidatePath('/admin/social');
   return { success: true };
 }
@@ -162,9 +182,12 @@ export async function getDesignSettings(): Promise<Record<string, string>> {
 export async function saveDesignSettings(data: Record<string, string>) {
   const tenantId = await requireTenant();
   const db = getDb();
-  await db.update(globalSettings)
-    .set({ design: data, updatedAt: new Date() })
-    .where(eq(globalSettings.tenantId, tenantId));
+  const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
+  if (existing) {
+    await db.update(globalSettings).set({ design: data, updatedAt: new Date() }).where(eq(globalSettings.tenantId, tenantId));
+  } else {
+    await db.insert(globalSettings).values({ tenantId, design: data });
+  }
   revalidatePath('/admin/brand');
   return { success: true };
 }
