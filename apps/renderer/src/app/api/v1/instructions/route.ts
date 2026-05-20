@@ -381,6 +381,17 @@ function getSectionSchemas(industry: string): Record<string, object> {
       photographerAbout: { fields: { headline: 'string', text: 'string (html)', image: 'url?', signature: 'string?', stats: '{ label: string, value: string }[]?' } },
       shootingProcess: { fields: { headline: 'string', subline: 'string?', steps: '{ icon?: lucide-icon-name, title: string, text: string }[]' } },
     });
+  } else if (industry === 'consulting') {
+    Object.assign(schemas, {
+      practiceAreas: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', areas: '{ title: string, text: string, icon: lucide-icon-name, href?: string }[]' } },
+      caseResults: { fields: { headline: 'string', subline: 'string?', stats: '{ value: number, suffix?: string, prefix?: string, label: string, icon?: lucide-icon-name }[]' } },
+      feeTable: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', fees: '{ title: string, price?: string, description?: string, icon?: lucide-icon-name, highlighted?: boolean }[]', footnote: 'string?' } },
+      publications: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', articles: '{ title: string, excerpt?: string, date?: string, category?: string, href?: string, image?: url }[]', ctaLabel: 'string?', ctaHref: 'string?' } },
+      team: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', members: '{ name: string, role?: string, specialization?: string, image?: url, phone?: string, email?: string }[]' } },
+      testimonials: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', items: '{ quote: string, name: string, context?: string, rating?: 1-5 }[]' } },
+      faq: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', items: '{ question: string, answer: string }[]' } },
+      contact: { fields: { headline: 'string', subline: 'string?', phone: 'string?', email: 'string?', address: 'string?', hours: 'string[]?' } },
+    });
   }
 
   return schemas;

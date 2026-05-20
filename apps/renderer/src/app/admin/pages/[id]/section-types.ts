@@ -196,9 +196,29 @@ export const PHOTOGRAPHY_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
+export const CONSULTING_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Kanzlei-Hero', description: 'Seriöser Hero mit Vertrauenselementen und Erstberatungs-CTA' },
+  { type: 'practiceAreas', label: 'Rechtsgebiete', description: 'Grid mit Fachbereichen, Icons und Beschreibungen' },
+  { type: 'caseResults', label: 'Erfolgsbilanz', description: 'Animierte Statistiken (gewonnene Fälle, Zufriedenheit etc.)' },
+  { type: 'feeTable', label: 'Honorar-Übersicht', description: 'Transparente Kostenübersicht mit Preismodellen' },
+  { type: 'publications', label: 'Fachbeiträge', description: 'Blog/News für juristische Fachartikel und Neuigkeiten' },
+  { type: 'team', label: 'Anwälte & Team', description: 'Partner, Associates und Mitarbeiter mit Fachgebiet' },
+  { type: 'testimonials', label: 'Mandantenstimmen', description: 'Bewertungen und Erfahrungsberichte von Mandanten' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Rechtsfragen und Kanzlei-FAQs' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular mit Rechtsgebiet-Auswahl und Sprechzeiten' },
+  { type: 'processSteps', label: 'Beratungsablauf', description: 'Erstgespräch → Strategie → Umsetzung → Abschluss' },
+  { type: 'ctaBand', label: 'CTA-Band', description: 'Call-to-Action für Erstberatung' },
+  { type: 'stats', label: 'Zahlen & Fakten', description: 'Animierte Kennzahlen der Kanzlei' },
+  { type: 'map', label: 'Karte', description: 'Standort der Kanzlei' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt (z.B. Kanzleigeschichte)' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
 const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   tradesman: TRADESMAN_SECTION_TYPES,
   photography: PHOTOGRAPHY_SECTION_TYPES,
+  consulting: CONSULTING_SECTION_TYPES,
   wedding: WEDDING_SECTION_TYPES,
   medical: MEDICAL_SECTION_TYPES,
   salon: SALON_SECTION_TYPES,
@@ -210,6 +230,7 @@ const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
 const INDUSTRY_LABELS: Record<string, string> = {
   tradesman: 'Handwerk',
   photography: 'Fotografie',
+  consulting: 'Kanzlei & Beratung',
   wedding: 'Hochzeit',
   medical: 'Medizin',
   salon: 'Salon',
