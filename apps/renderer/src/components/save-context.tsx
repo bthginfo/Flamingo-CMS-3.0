@@ -31,17 +31,17 @@ export function SaveProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<SaveState>('idle');
   const [hasSaveHandler, setHasSaveHandler] = useState(false);
   const pathname = usePathname();
-  const saveFnRef = useRef<(() => void) | null>(null);
+  const saveFnsRef = useRef<Set<() => void>>(new Set());
 
   // Reset save state on navigation
-  useEffect(() => { setState('idle'); saveFnRef.current = null; setHasSaveHandler(false); }, [pathname]);
+  useEffect(() => { setState('idle'); saveFnsRef.current = new Set(); setHasSaveHandler(false); }, [pathname]);
 
   const markDirty = useCallback(() => setState('dirty'), []);
   const markSaving = useCallback(() => setState('saving'), []);
   const markSaved = useCallback(() => setState('saved'), []);
   const reset = useCallback(() => setState('idle'), []);
-  const registerSave = useCallback((fn: () => void) => { saveFnRef.current = fn; setHasSaveHandler(true); }, []);
-  const triggerSave = useCallback(() => { saveFnRef.current?.(); }, []);
+  const registerSave = useCallback((fn: () => void) => { saveFnsRef.current.add(fn); setHasSaveHandler(true); return () => { saveFnsRef.current.delete(fn); }; }, []);
+  const triggerSave = useCallback(() => { saveFnsRef.current.forEach(fn => fn()); }, []);
 
   return (
     <SaveContext.Provider value={{ state, hasSaveHandler, markDirty, markSaving, markSaved, reset, registerSave, triggerSave }}>
