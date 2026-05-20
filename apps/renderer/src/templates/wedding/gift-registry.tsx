@@ -21,7 +21,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
       <section className="py-24 md:py-36 px-4 md:px-6">
         <div className="max-w-4xl mx-auto">
           <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">{badge}</p>
-          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-8">{headline}</h2>
+          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-8 break-words">{headline}</h2>
           {text && <div className="text-gray-500 leading-relaxed mb-16 max-w-2xl rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <div className="space-y-6 mb-16">
@@ -57,7 +57,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
       <section className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
         <div className="max-w-5xl mx-auto">
           <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6">{headline}</h2>
+          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words">{headline}</h2>
           {text && <div className="text-white/60 text-lg mb-12 max-w-2xl rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <div className="grid sm:grid-cols-2 gap-4 mb-12">

@@ -48,7 +48,7 @@ function Modern({ badge, headline, members }: P) {
     <section className="py-24 md:py-36 px-4 md:px-6">
       <div className="max-w-5xl mx-auto">
         <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">{badge}</p>
-        <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-16">{headline}</h2>
+        <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-16 break-words">{headline}</h2>
         <div className="grid md:grid-cols-2 gap-12">
           {members.map((m, i) => (
             <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex gap-6 items-start border-t border-gray-200 pt-6">
@@ -73,7 +73,7 @@ function Bold({ badge, headline, members }: P) {
     <section className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
       <div className="max-w-6xl mx-auto">
         <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
-        <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12">{headline}</h2>
+        <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {members.map((m, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border border-white/10 p-6 text-center hover:border-brand-accent/50 transition-colors">

@@ -52,9 +52,9 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
           {isModern && <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">{badge}</p>}
           {!isBold && !isModern && <span className="section-badge">{badge}</span>}
           {isModern ? (
-            <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900">{headline}</h2>
+            <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 break-words">{headline}</h2>
           ) : isBold ? (
-            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide">{headline}</h2>
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide break-words">{headline}</h2>
           ) : (
             <h2 className="section-headline">{headline}</h2>
           )}

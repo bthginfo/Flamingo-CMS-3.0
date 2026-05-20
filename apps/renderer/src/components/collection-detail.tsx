@@ -55,6 +55,9 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
   const content = data.content as string | undefined;
   const features = data.features as string[] | undefined;
   const gallery = data.gallery as string[] | undefined;
+  const price = data.price as string | undefined;
+  const cta = data.cta as { label: string; href: string } | undefined;
+  const excerpt = data.excerpt as string | undefined;
 
   return (
     <div className="py-10 md:py-20">
@@ -79,32 +82,39 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
           </motion.div>
         )}
 
-        {/* Title */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
-        >
-          {item.title}
-        </motion.h1>
+        {/* Title + Price */}
+        <div className="flex flex-col md:flex-row md:items-baseline md:justify-between gap-2 mb-4">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-5xl font-bold tracking-tight"
+          >
+            {item.title}
+          </motion.h1>
+          {price && (
+            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="text-2xl font-semibold text-brand-primary shrink-0">
+              {price}
+            </motion.span>
+          )}
+        </div>
 
         {/* Date */}
-        {item.createdAt && (
+        {item.createdAt && !price && (
           <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
             <Calendar size={14} />
             {new Date(item.createdAt).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })}
           </div>
         )}
 
-        {/* Description */}
-        {description && (
+        {/* Description / Excerpt */}
+        {(description || excerpt) && (
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
             className="text-lg text-gray-600 leading-relaxed mb-8 rt-content"
-            dangerouslySetInnerHTML={{ __html: description }}
+            dangerouslySetInnerHTML={{ __html: (description || excerpt)! }}
           />
         )}
 
@@ -137,6 +147,15 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
             className="prose prose-lg max-w-none mb-10"
             dangerouslySetInnerHTML={{ __html: content }}
           />
+        )}
+
+        {/* CTA */}
+        {cta?.label && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38 }} className="mb-10">
+            <Link href={`${backHrefPrefix}${cta.href}`} className="inline-flex items-center gap-2 px-6 py-3 bg-brand-primary text-white rounded-lg font-medium hover:bg-brand-dark transition-colors">
+              {cta.label}
+            </Link>
+          </motion.div>
         )}
 
         {/* Gallery */}

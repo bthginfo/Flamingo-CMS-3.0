@@ -36,7 +36,7 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
       <section className="py-24 md:py-36 px-4 md:px-6">
         <div className="max-w-md mx-auto">
           <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">{badge}</p>
-          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-4">{headline}</h2>
+          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-4 break-words">{headline}</h2>
           {subline && <p className="text-gray-400 text-sm mb-2">{subline}</p>}
           {deadlineStr && <p className="text-gray-400 text-xs uppercase tracking-wider mb-12">Bis {deadlineStr}</p>}
           <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-6">
@@ -70,7 +70,7 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
       <section className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
         <div className="max-w-lg mx-auto">
           <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
-          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wide mb-4">{headline}</h2>
+          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wide mb-4 break-words">{headline}</h2>
           {subline && <p className="text-white/60 mb-2">{subline}</p>}
           {deadlineStr && <p className="text-brand-accent text-sm font-bold mb-10">Bis {deadlineStr}</p>}
           <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-5 border border-white/10 p-8">

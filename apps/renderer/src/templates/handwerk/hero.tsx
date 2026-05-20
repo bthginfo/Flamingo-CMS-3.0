@@ -102,7 +102,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
 
       <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full flex-1 flex items-center py-12 md:py-16">
         <div className="max-w-4xl space-y-6">
-          <TextGenerateEffect words={headline} className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white !leading-[1.02]" duration={0.6} />
+          <TextGenerateEffect words={headline} className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-white !leading-[1.02] break-words" duration={0.6} />
           {badgeText && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
               className="inline-flex items-center gap-2.5 bg-white/[0.07] backdrop-blur-md border border-white/[0.12] rounded-full px-5 py-2.5 text-sm text-white/90 mt-6">
@@ -160,7 +160,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
               <span className="w-8 h-px bg-gray-300" />{badgeText}
             </div>
           )}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-gray-900 !leading-[1.1] tracking-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-gray-900 !leading-[1.1] tracking-tight break-words">
             {headline}
           </h1>
           {subline && <div className="text-lg text-gray-400 leading-relaxed mt-8 max-w-lg [&_p]:inline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
@@ -225,7 +225,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
             </motion.div>
           )}
           <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] xl:text-[7rem] font-black text-white uppercase !leading-[0.9] tracking-tight">
+            className="text-4xl sm:text-5xl md:text-7xl lg:text-[6rem] xl:text-[7rem] font-black text-white uppercase !leading-[0.9] tracking-tight break-words">
             {headline}
           </motion.h1>
           {subline && (

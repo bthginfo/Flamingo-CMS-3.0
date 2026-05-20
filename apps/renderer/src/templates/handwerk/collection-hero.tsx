@@ -68,7 +68,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight break-words"
         >
           {headline}
         </motion.h1>
@@ -112,7 +112,7 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight break-words"
         >
           {headline}
         </motion.h1>

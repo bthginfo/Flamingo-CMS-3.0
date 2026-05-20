@@ -42,10 +42,10 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
   const isModern = styleVariant === 'modern';
 
   const nameClass = isBold
-    ? `text-4xl md:text-6xl lg:text-8xl font-black uppercase tracking-wider ${bgImage ? 'text-white' : 'text-gray-900'}`
+    ? `text-3xl md:text-6xl lg:text-8xl font-black uppercase tracking-wider break-words ${bgImage ? 'text-white' : 'text-gray-900'}`
     : isModern
-    ? `text-3xl md:text-5xl lg:text-7xl font-extralight uppercase tracking-[0.2em] ${bgImage ? 'text-white' : 'text-gray-900'}`
-    : `text-5xl md:text-7xl lg:text-8xl font-serif font-light tracking-tight ${bgImage ? 'text-white' : 'text-gray-900'}`;
+    ? `text-2xl md:text-5xl lg:text-7xl font-extralight uppercase tracking-[0.2em] break-words ${bgImage ? 'text-white' : 'text-gray-900'}`
+    : `text-4xl md:text-7xl lg:text-8xl font-serif font-light tracking-tight break-words ${bgImage ? 'text-white' : 'text-gray-900'}`;
 
   const sublineClass = isBold
     ? `text-xs font-bold tracking-[0.4em] uppercase mb-4 ${bgImage ? 'text-white/80' : 'text-gray-700'}`
