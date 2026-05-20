@@ -6,6 +6,7 @@ import { PublishFab } from '@/components/publish-fab';
 import { OnboardingTour } from '@/components/admin/onboarding-tour';
 import { SaveProvider } from '@/components/save-context';
 import { PreviewProvider } from '@/components/admin/preview-context';
+import { PreviewSlot } from '@/components/admin/preview-slot';
 import { Toaster } from 'sonner';
 import { getTenantStyle } from '@/lib/tenant-data';
 
@@ -39,12 +40,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <PreviewProvider>
     <div className="flex h-screen overflow-hidden bg-admin-bg text-zinc-900 antialiased" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
       <Sidebar tenantId={session.tenantId} industry={(await getTenantStyle(session.tenantId)).industry} />
-      <main className="flex-1 overflow-y-auto bg-admin-bg">
+      <main className="flex-1 min-w-0 overflow-y-auto bg-admin-bg">
         {isDemo && <DemoBanner />}
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-6 md:py-8 pt-16 md:pt-8">
           {children}
         </div>
       </main>
+      <PreviewSlot />
       <PublishFab />
       <OnboardingTour />
       <Toaster position="top-right" richColors closeButton />

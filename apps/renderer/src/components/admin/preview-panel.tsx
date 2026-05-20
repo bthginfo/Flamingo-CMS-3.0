@@ -69,7 +69,7 @@ export function PreviewPanel({ url, onClose, iframeRef: externalRef }: Props) {
       </div>
 
       {/* Desktop: side panel */}
-      <div className="hidden lg:flex fixed top-0 right-0 h-screen w-[50vw] z-[60] flex-col border-l border-gray-200 bg-gray-900 shadow-2xl">
+      <div className="hidden lg:flex w-[50vw] shrink-0 h-screen flex-col border-l border-gray-200 bg-gray-900 shadow-2xl">
         {/* Toolbar */}
         <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-800 border-b border-gray-700">
           <span className="text-sm font-medium text-gray-200">Vorschau</span>

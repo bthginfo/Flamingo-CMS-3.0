@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, FileText, FolderOpen, Newspaper, Navigation,
   Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Heart,
@@ -52,6 +52,16 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
     setCollapsed(next);
     localStorage.setItem('sidebar-collapsed', next ? '1' : '0');
   }
+
+  // Auto-collapse sidebar when preview opens, restore when it closes
+  const prevPreviewOpen = useRef(false);
+  useEffect(() => {
+    if (preview.isOpen && !prevPreviewOpen.current) {
+      setCollapsed(true);
+      localStorage.setItem('sidebar-collapsed', '1');
+    }
+    prevPreviewOpen.current = preview.isOpen;
+  }, [preview.isOpen]);
 
   return (
     <>

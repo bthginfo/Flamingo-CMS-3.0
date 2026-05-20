@@ -1,10 +1,11 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, useRef } from 'react';
-import { PreviewPanel } from './preview-panel';
+import { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
 
 type PreviewContextValue = {
   isOpen: boolean;
+  url: string;
+  refreshKey: number;
   open: (url: string) => void;
   close: () => void;
   refresh: () => void;
@@ -15,6 +16,8 @@ type PreviewContextValue = {
 
 const PreviewContext = createContext<PreviewContextValue>({
   isOpen: false,
+  url: '/live-preview',
+  refreshKey: 0,
   open: () => {},
   close: () => {},
   refresh: () => {},
@@ -50,9 +53,8 @@ export function PreviewProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <PreviewContext.Provider value={{ isOpen, open, close, refresh, setUrl, sendLiveData, iframeRef }}>
+    <PreviewContext.Provider value={{ isOpen, url, refreshKey, open, close, refresh, setUrl, sendLiveData, iframeRef }}>
       {children}
-      {isOpen && <PreviewPanel key={refreshKey} url={url} onClose={close} iframeRef={iframeRef} />}
     </PreviewContext.Provider>
   );
 }
