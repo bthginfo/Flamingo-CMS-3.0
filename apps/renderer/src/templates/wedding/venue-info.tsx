@@ -6,7 +6,7 @@ import { MapPin, Car, Train, Plane, Phone } from 'lucide-react';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
-export function WeddingVenueInfoSection({ data }: Props) {
+export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
   const venues = (data.venues as Array<Record<string, string>>) || [];
   const firstVenue = venues[0] || {};
   const badge = (data.badge as string) || 'Location';
@@ -17,6 +17,61 @@ export function WeddingVenueInfoSection({ data }: Props) {
   const address = (data.address as string) || firstVenue.address || '';
   const mapUrl = (data.mapUrl as string) || '';
   const contact = (data.contact as string) || '';
+  const isBold = styleVariant === 'bold';
+  const isModern = styleVariant === 'modern';
+
+  if (isModern) {
+    return (
+      <section className="py-24 md:py-36 px-4 md:px-6">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">{badge}</p>
+          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-16">{headline}</h2>
+          {image && (
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="relative w-full aspect-[16/9] mb-12">
+              <Image src={image} alt={headline} fill className="object-cover" />
+            </motion.div>
+          )}
+          <div className="grid md:grid-cols-2 gap-12">
+            <div>
+              {description && <div className="text-gray-500 leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: description }} />}
+            </div>
+            <div className="space-y-4 border-t border-gray-200 pt-6 md:border-t-0 md:pt-0 md:border-l md:pl-12">
+              {address && <p className="text-gray-600 text-sm">{address}</p>}
+              {contact && <p className="text-gray-600 text-sm">{contact}</p>}
+              {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-block text-sm text-gray-900 border-b border-gray-900 hover:opacity-70 transition-opacity mt-4">Route planen →</a>}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (isBold) {
+    return (
+      <section className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+        <div className="max-w-6xl mx-auto">
+          <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
+          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12">{headline}</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            {image && (
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative aspect-[4/3]">
+                <Image src={image} alt={headline} fill className="object-cover" />
+                <div className="absolute inset-0 border-2 border-white/20" />
+              </motion.div>
+            )}
+            <div className={image ? '' : 'md:col-span-2'}>
+              {description && <div className="text-white/70 text-lg leading-relaxed mb-8 rt-content" dangerouslySetInnerHTML={{ __html: description }} />}
+              <div className="space-y-4 border-l-4 border-brand-accent pl-6">
+                {address && <p className="text-white/80 flex items-center gap-2"><MapPin className="w-4 h-4 text-brand-accent" />{address}</p>}
+                {contact && <p className="text-white/80 flex items-center gap-2"><Phone className="w-4 h-4 text-brand-accent" />{contact}</p>}
+              </div>
+              {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-brand-accent text-black font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-opacity"><MapPin className="w-4 h-4" /> Route planen</a>}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 md:py-24 px-4 md:px-6 bg-white">
@@ -35,24 +90,10 @@ export function WeddingVenueInfoSection({ data }: Props) {
           <div className={image ? '' : 'md:col-span-2 max-w-3xl mx-auto text-center'}>
             {description && <div className="text-gray-600 text-lg leading-relaxed mb-8 rt-content" dangerouslySetInnerHTML={{ __html: description }} />}
             <div className="space-y-4">
-              {address && (
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-brand-primary mt-0.5 shrink-0" />
-                  <p className="text-gray-700">{address}</p>
-                </div>
-              )}
-              {contact && (
-                <div className="flex items-start gap-3">
-                  <Phone className="w-5 h-5 text-brand-primary mt-0.5 shrink-0" />
-                  <p className="text-gray-700">{contact}</p>
-                </div>
-              )}
+              {address && <div className="flex items-start gap-3"><MapPin className="w-5 h-5 text-brand-primary mt-0.5 shrink-0" /><p className="text-gray-700">{address}</p></div>}
+              {contact && <div className="flex items-start gap-3"><Phone className="w-5 h-5 text-brand-primary mt-0.5 shrink-0" /><p className="text-gray-700">{contact}</p></div>}
             </div>
-            {mapUrl && (
-              <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-brand-primary text-white rounded-full text-sm font-medium hover:bg-brand-dark transition-colors">
-                <MapPin className="w-4 h-4" /> Route planen
-              </a>
-            )}
+            {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-brand-primary text-white rounded-full text-sm font-medium hover:bg-brand-dark transition-colors"><MapPin className="w-4 h-4" /> Route planen</a>}
           </div>
         </div>
       </div>
@@ -60,18 +101,95 @@ export function WeddingVenueInfoSection({ data }: Props) {
   );
 }
 
-export function WeddingTravelInfoSection({ data }: Props) {
+export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
   const badge = (data.badge as string) || 'Anreise';
   const headline = (data.headline as string) || 'Anreise & Unterkunft';
   const subline = (data.subline as string) || '';
-  // Support both 'directions' and 'sections' field names
   const rawDirections = (data.directions || data.sections) as Array<Record<string, string>> | undefined;
   const directions = (rawDirections || []).map(d => ({ icon: d.icon, title: d.title, text: d.text || d.content || '' }));
-  // Support both 'accommodations' and 'hotels' field names
   const rawAccom = (data.accommodations || data.hotels) as Array<Record<string, string>> | undefined;
   const accommodations = (rawAccom || []).map(a => ({ name: a.name, description: a.description || (a.distance ? `${a.distance}${a.specialRate ? ' — ' + a.specialRate : ''}` : ''), link: a.link, image: a.image }));
-
   const dirIcons: Record<string, React.ElementType> = { car: Car, train: Train, plane: Plane };
+  const isBold = styleVariant === 'bold';
+  const isModern = styleVariant === 'modern';
+
+  if (isModern) {
+    return (
+      <section className="py-24 md:py-36 px-4 md:px-6">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">{badge}</p>
+          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-16">{headline}</h2>
+          {directions.length > 0 && (
+            <div className="space-y-8 mb-16">
+              {directions.map((d, i) => {
+                const Icon = dirIcons[(d.icon || 'car').toLowerCase()] || Car;
+                return (
+                  <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex gap-6 border-t border-gray-200 pt-6">
+                    <Icon className="w-5 h-5 text-gray-400 shrink-0 mt-1" />
+                    <div>
+                      <h3 className="text-base font-light text-gray-900">{d.title}</h3>
+                      <div className="text-gray-500 text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: d.text }} />
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+          {accommodations.length > 0 && (
+            <div className="grid md:grid-cols-2 gap-8">
+              {accommodations.map((a, i) => (
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-t border-gray-200 pt-6">
+                  {a.image && <div className="relative h-40 mb-4"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
+                  <h4 className="font-medium text-gray-900">{a.name}</h4>
+                  {a.description && <div className="text-gray-500 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: a.description }} />}
+                  {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-900 border-b border-gray-900 mt-3 inline-block hover:opacity-70">Details →</a>}
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  }
+
+  if (isBold) {
+    return (
+      <section className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+        <div className="max-w-6xl mx-auto">
+          <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
+          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12">{headline}</h2>
+          {directions.length > 0 && (
+            <div className="grid md:grid-cols-3 gap-4 mb-12">
+              {directions.map((d, i) => {
+                const Icon = dirIcons[(d.icon || 'car').toLowerCase()] || Car;
+                return (
+                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-white/10 p-6">
+                    <Icon className="w-6 h-6 text-brand-accent mb-3" />
+                    <h3 className="font-bold text-white mb-2">{d.title}</h3>
+                    <div className="text-white/60 text-sm rt-content" dangerouslySetInnerHTML={{ __html: d.text }} />
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+          {accommodations.length > 0 && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {accommodations.map((a, i) => (
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-white/10 overflow-hidden">
+                  {a.image && <div className="relative h-40"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
+                  <div className="p-5">
+                    <h4 className="font-bold text-white">{a.name}</h4>
+                    {a.description && <div className="text-white/60 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: a.description }} />}
+                    {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-brand-accent text-sm font-bold mt-3 inline-block hover:opacity-70">Details →</a>}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">

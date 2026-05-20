@@ -7,11 +7,20 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 
 const ICONS: Record<string, React.ElementType> = { clock: Clock, mappin: MapPin, music: Music, utensils: Utensils, heart: Heart, camera: Camera };
 
-export function WeddingEventScheduleSection({ data }: Props) {
+export function WeddingEventScheduleSection({ data, styleVariant }: Props) {
   const badge = (data.badge as string) || 'Tagesablauf';
   const headline = (data.headline as string) || 'Der schönste Tag';
   const events = (data.events as Array<{ time: string; title: string; description?: string; icon?: string; location?: string }>) || [];
 
+  if (styleVariant === 'modern') return <ScheduleModern badge={badge} headline={headline} events={events} />;
+  if (styleVariant === 'bold') return <ScheduleBold badge={badge} headline={headline} events={events} />;
+  return <ScheduleClassic badge={badge} headline={headline} events={events} />;
+}
+
+type Event = { time: string; title: string; description?: string; icon?: string; location?: string };
+type P = { badge: string; headline: string; events: Event[] };
+
+function ScheduleClassic({ badge, headline, events }: P) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">
       <div className="max-w-4xl mx-auto">
@@ -30,7 +39,7 @@ export function WeddingEventScheduleSection({ data }: Props) {
                     <span className="text-sm font-semibold text-brand-primary">{event.time}</span>
                     <h3 className="text-xl font-semibold text-gray-900 mt-1">{event.title}</h3>
                     {event.description && <div className="text-gray-600 mt-1 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
-                    {event.location && <p className="text-sm text-gray-500 mt-2 flex items-center gap-1 {i % 2 === 0 ? 'justify-end' : ''}"><MapPin className="w-3 h-3" />{event.location}</p>}
+                    {event.location && <p className="text-sm text-gray-500 mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" />{event.location}</p>}
                   </div>
                   <div className="relative z-10 w-12 h-12 rounded-full bg-brand-primary/10 flex items-center justify-center shrink-0">
                     <Icon className="w-5 h-5 text-brand-primary" />
@@ -46,6 +55,56 @@ export function WeddingEventScheduleSection({ data }: Props) {
               );
             })}
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ScheduleModern({ badge, headline, events }: P) {
+  return (
+    <section className="py-24 md:py-36 px-4 md:px-6">
+      <div className="max-w-4xl mx-auto">
+        <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">{badge}</p>
+        <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-20">{headline}</h2>
+        <div className="space-y-0">
+          {events.map((event, i) => (
+            <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="grid grid-cols-[80px_1fr] md:grid-cols-[120px_1fr] border-t border-gray-200 py-8">
+              <span className="text-sm font-light text-gray-400 pt-1">{event.time}</span>
+              <div>
+                <h3 className="text-lg font-light text-gray-900">{event.title}</h3>
+                {event.description && <div className="text-gray-500 text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
+                {event.location && <p className="text-xs text-gray-400 mt-2 uppercase tracking-wider">{event.location}</p>}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ScheduleBold({ badge, headline, events }: P) {
+  return (
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+      <div className="max-w-5xl mx-auto">
+        <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
+        <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-16">{headline}</h2>
+        <div className="grid md:grid-cols-2 gap-4">
+          {events.map((event, i) => {
+            const Icon = ICONS[(event.icon || 'heart').toLowerCase()] || Heart;
+            return (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="border border-white/10 p-6 hover:border-brand-accent/50 transition-colors">
+                <div className="flex items-center gap-3 mb-3">
+                  <Icon className="w-5 h-5 text-brand-accent" />
+                  <span className="text-brand-accent font-bold text-sm">{event.time}</span>
+                </div>
+                <h3 className="text-xl font-bold">{event.title}</h3>
+                {event.description && <div className="text-white/60 text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
+                {event.location && <p className="text-xs text-white/40 mt-3 uppercase tracking-wider flex items-center gap-1"><MapPin className="w-3 h-3" />{event.location}</p>}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
