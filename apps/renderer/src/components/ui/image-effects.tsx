@@ -74,24 +74,34 @@ function MouseGlowEffect({ intensity, className, children }: Omit<Props, 'effect
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    // Listen on the closest section/parent that captures pointer events
-    const section = el.closest('section') || el.parentElement?.parentElement || el;
+
     function handleMove(e: MouseEvent) {
       const rect = el!.getBoundingClientRect();
-      setPos({ x: ((e.clientX - rect.left) / rect.width) * 100, y: ((e.clientY - rect.top) / rect.height) * 100 });
-      setActive(true);
+      if (rect.width === 0 || rect.height === 0) return;
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      if (x >= 0 && x <= 100 && y >= 0 && y <= 100) {
+        setPos({ x, y });
+        setActive(true);
+      } else {
+        setActive(false);
+      }
     }
     function handleLeave() { setActive(false); }
-    section.addEventListener('mousemove', handleMove);
-    section.addEventListener('mouseleave', handleLeave);
-    return () => { section.removeEventListener('mousemove', handleMove); section.removeEventListener('mouseleave', handleLeave); };
+
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('mouseleave', handleLeave);
+    return () => {
+      document.removeEventListener('mousemove', handleMove);
+      document.removeEventListener('mouseleave', handleLeave);
+    };
   }, []);
 
   const opacity = intensity === 'subtle' ? 0.15 : intensity === 'strong' ? 0.4 : 0.25;
   const size = intensity === 'subtle' ? '40%' : intensity === 'strong' ? '70%' : '55%';
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} className={`${className} relative`}>
       {children}
       <div
         className="pointer-events-none absolute inset-0 z-10 transition-opacity duration-300"

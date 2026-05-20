@@ -174,8 +174,8 @@ function HeroEditor({ data, onChange }: EditorProps) {
           <option value="parallax">Parallax</option>
           <option value="kenBurns">Ken Burns (Zoom)</option>
           <option value="mouseGlow">Mouse Glow</option>
-          <option value="blurOnScroll">Blur on Scroll</option>
-          <option value="grain">Film-Grain</option>
+          
+          
         </select>
         {d.imageEffect !== 'none' && (
           <select className="admin-input mt-2" value={d.imageEffectIntensity} onChange={(e) => setD({ ...d, imageEffectIntensity: e.target.value })}>
@@ -1040,8 +1040,8 @@ function CollectionHeroEditor({ data, onChange }: EditorProps) {
           <option value="parallax">Parallax</option>
           <option value="kenBurns">Ken Burns (Zoom)</option>
           <option value="mouseGlow">Mouse Glow</option>
-          <option value="blurOnScroll">Blur on Scroll</option>
-          <option value="grain">Film-Grain</option>
+          
+          
         </select>
         {d.imageEffect !== 'none' && (
           <select className="admin-input mt-2" value={d.imageEffectIntensity} onChange={(e) => setD({ ...d, imageEffectIntensity: e.target.value })}>
