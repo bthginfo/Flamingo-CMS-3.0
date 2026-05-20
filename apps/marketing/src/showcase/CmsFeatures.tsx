@@ -48,6 +48,13 @@ const FEATURES = [
     highlights: ['Draft vs. Live Trennung', 'Multi-Page Publish', 'Publish-History mit Timestamps', 'Rollback jederzeit möglich'],
     demoUrl: `${DEMO_BASE}/demo/admin`,
   },
+  {
+    badge: 'Live-Vorschau',
+    title: 'Sofort sehen.\nWas du baust.',
+    description: 'Jede Änderung wird in Echtzeit in einer Live-Vorschau gerendert — genau so, wie deine Besucher es sehen werden. Desktop, Tablet und Mobile.',
+    highlights: ['Echtzeit-Rendering ohne Neuladen', 'Responsive-Vorschau (Desktop/Tablet/Mobile)', 'Design-Varianten live vergleichen', 'Direkt aus dem Editor erreichbar'],
+    demoUrl: `${DEMO_BASE}/demo/admin/live-preview`,
+  },
 ];
 
 function DesktopMockup({ demoUrl }: { demoUrl: string }) {
@@ -70,14 +77,25 @@ function DesktopMockup({ demoUrl }: { demoUrl: string }) {
         <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
         <span className="ml-3 text-[10px] text-slate-500 font-mono">flamingo-cms.de/admin</span>
       </div>
-      <div className="relative w-full h-[360px] overflow-hidden bg-slate-50">
+      {/* 16:10 aspect ratio container matching 1280×800 */}
+      <div className="relative w-full aspect-[16/10] overflow-hidden bg-slate-50">
         {mount ? (
           <iframe
             src={demoUrl}
-            className="absolute top-0 left-0 w-[1280px] h-[800px] origin-top-left border-0"
-            style={{ transform: 'scale(0.47)' }}
+            className="absolute top-0 left-0 w-[1280px] h-[800px] origin-top-left border-0 pointer-events-none"
+            style={{ transform: 'scale(var(--mockup-scale, 0.5))' }}
             loading="lazy"
             title="CMS Demo"
+            ref={(el) => {
+              if (!el) return;
+              const parent = el.parentElement;
+              if (!parent) return;
+              const ro = new ResizeObserver(() => {
+                const scale = parent.clientWidth / 1280;
+                parent.style.setProperty('--mockup-scale', String(scale));
+              });
+              ro.observe(parent);
+            }}
           />
         ) : (
           <div className="flex items-center justify-center h-full text-slate-300 text-sm">Laden…</div>

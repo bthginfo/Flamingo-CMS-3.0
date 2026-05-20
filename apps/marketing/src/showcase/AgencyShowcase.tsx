@@ -367,42 +367,37 @@ function ShowcaseShell() {
             : 'bg-transparent'
         }`}
       >
-        <div className="container-x">
-          {/* Row 1: Logo + CTAs */}
-          <div className="flex items-center justify-between py-3">
-            <Link to="/" className="flex items-center leading-none group" aria-label={AGENCY.fullName}>
-              <img
-                src={AGENCY.logoFullBesideSrc}
-                alt={AGENCY.name}
-                className="h-10 md:h-12 w-auto transition-transform group-hover:scale-[1.03]"
-              />
-            </Link>
-            <div className="hidden md:flex items-center gap-2">
-              <Link to="/kontakt" className="btn-accent !py-2 !px-5 text-sm">
-                Beratung <span aria-hidden>→</span>
-              </Link>
-              <Link to="/demo" className="rounded-full border border-white/30 px-5 py-2 text-sm font-medium text-white transition hover:bg-white/10">
-                Demo testen
-              </Link>
-            </div>
-          </div>
-          {/* Row 2: Nav links */}
-          <nav className="hidden md:flex items-center justify-center gap-1 -mt-1 pb-2">
+        <div className="container-x flex items-center justify-between py-3">
+          <Link to="/" className="flex items-center leading-none group" aria-label={AGENCY.fullName}>
+            <img
+              src={AGENCY.logoFullBesideSrc}
+              alt={AGENCY.name}
+              className="h-9 md:h-10 w-auto transition-transform group-hover:scale-[1.03]"
+            />
+          </Link>
+          <nav className="hidden lg:flex items-center gap-0.5">
             {NAV.map((n) => (
               <NavLink
                 key={n.to}
                 to={n.to}
                 className={({ isActive }) =>
-                  `link-underline px-3 py-1.5 text-[13px] font-medium transition-colors text-white/80 hover:text-white ${isActive ? 'is-active' : ''}`
+                  `px-3 py-1.5 text-[13px] font-medium rounded-full transition-colors ${isActive ? 'bg-white/15 text-white' : 'text-white/70 hover:text-white hover:bg-white/5'}`
                 }
               >
                 {n.label}
               </NavLink>
             ))}
+            <span className="w-px h-5 bg-white/20 mx-2" />
+            <Link to="/kontakt" className="btn-accent !py-1.5 !px-4 text-[13px]">
+              Beratung <span aria-hidden>→</span>
+            </Link>
+            <Link to="/demo" className="ml-1.5 rounded-full border border-white/30 px-4 py-1.5 text-[13px] font-medium text-white transition hover:bg-white/10">
+              Demo
+            </Link>
           </nav>
           <button
             onClick={() => setMobile(true)}
-            className="md:hidden p-2 rounded-full border text-white border-white/30"
+            className="lg:hidden p-2 rounded-full border text-white border-white/30"
             aria-label="Menü öffnen"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -908,7 +903,7 @@ const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://www.fla
 const DEVICE_ITEMS: DeviceItem[] = [
   {
     kind: 'laptop',
-    src: `${RENDERER_URL}/demo/handwerk`,
+    src: `${RENDERER_URL}/demo/handwerk?embed=1`,
     label: 'Handwerk · Home',
     caption: 'Handwerk-Template auf dem Desktop',
   },
@@ -920,7 +915,7 @@ const DEVICE_ITEMS: DeviceItem[] = [
   },
   {
     kind: 'phone',
-    src: `${RENDERER_URL}/demo/handwerk/leistungen`,
+    src: `${RENDERER_URL}/demo/handwerk/leistungen?embed=1`,
     label: 'Handwerk · Leistungen',
     caption: 'Mobile zuerst gedacht',
   },

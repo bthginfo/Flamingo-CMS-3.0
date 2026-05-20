@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { SectionRenderer } from '@/components/section-renderer';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
@@ -22,6 +23,8 @@ interface DemoPageShellProps {
 
 export function DemoPageShell({ sections, industry, industryKey, defaultStyle, siteData, darkBg = true, children }: DemoPageShellProps) {
   const [style, setStyle] = useState(defaultStyle);
+  const searchParams = useSearchParams();
+  const embed = searchParams.get('embed') === '1';
   const styleCssVars = getStyleCssVars(industry, style);
   const { navItems, cta, brand, contact, socialLinks, footer } = siteData;
   const brandCssVars = getBrandCssVars(brand);
@@ -36,7 +39,7 @@ export function DemoPageShell({ sections, industry, industryKey, defaultStyle, s
         {children}
       </main>
       <SiteFooter footer={footer} brand={brand} contact={contact} socialLinks={socialLinks} />
-      <DemoFab currentIndustry={industryKey} currentStyle={style} onStyleChange={setStyle} />
+      {!embed && <DemoFab currentIndustry={industryKey} currentStyle={style} onStyleChange={setStyle} />}
     </div>
   );
 }

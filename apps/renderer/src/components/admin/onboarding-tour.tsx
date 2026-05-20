@@ -93,29 +93,37 @@ export function OnboardingTour() {
   const currentStep = STEPS[step];
   const placement = currentStep.placement || 'right';
 
-  // Calculate tooltip position
+  // Calculate tooltip position (clamped to viewport)
   let tooltipStyle: React.CSSProperties = { position: 'fixed', zIndex: 10001 };
+  const tooltipW = 320;
+  const tooltipH = 160;
   if (targetRect) {
+    let top = 0;
+    let left = 0;
     switch (placement) {
       case 'right':
-        tooltipStyle.top = targetRect.top + targetRect.height / 2 - 60;
-        tooltipStyle.left = targetRect.right + 16;
+        top = targetRect.top + targetRect.height / 2 - tooltipH / 2;
+        left = targetRect.right + 16;
         break;
       case 'left':
-        tooltipStyle.top = targetRect.top + targetRect.height / 2 - 60;
-        tooltipStyle.right = window.innerWidth - targetRect.left + 16;
+        top = targetRect.top + targetRect.height / 2 - tooltipH / 2;
+        left = targetRect.left - tooltipW - 16;
         break;
       case 'bottom':
-        tooltipStyle.top = targetRect.bottom + 16;
-        tooltipStyle.left = targetRect.left + targetRect.width / 2 - 160;
+        top = targetRect.bottom + 16;
+        left = targetRect.left + targetRect.width / 2 - tooltipW / 2;
         break;
       case 'top':
-        tooltipStyle.bottom = window.innerHeight - targetRect.top + 16;
-        tooltipStyle.left = targetRect.left + targetRect.width / 2 - 160;
+        top = targetRect.top - tooltipH - 16;
+        left = targetRect.left + targetRect.width / 2 - tooltipW / 2;
         break;
     }
+    // Clamp to viewport
+    top = Math.max(8, Math.min(top, window.innerHeight - tooltipH - 8));
+    left = Math.max(8, Math.min(left, window.innerWidth - tooltipW - 8));
+    tooltipStyle.top = top;
+    tooltipStyle.left = left;
   } else {
-    // Fallback: center
     tooltipStyle.top = '50%';
     tooltipStyle.left = '50%';
     tooltipStyle.transform = 'translate(-50%, -50%)';
