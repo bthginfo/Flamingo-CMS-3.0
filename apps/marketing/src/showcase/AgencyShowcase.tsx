@@ -5,6 +5,7 @@ import { Imprint, Privacy } from './Legal';
 import { NotFound } from './Blog';
 import { TemplateGallery } from './Templates';
 import { FundingCalculatorPage } from './FundingCalculator';
+import CmsFeaturesPage, { CmsFeaturesTeaserSection } from './CmsFeatures';
 import Seo from '@/components/Seo';
 import {
   Marquee, AnimatedCounter, RotatingWord, ScrollProgress, Accordion, useReveal,
@@ -264,6 +265,7 @@ export default function AgencyShowcase() {
           <Route path="impressum" element={<Imprint />} />
           <Route path="datenschutz" element={<Privacy />} />
           <Route path="foerderrechner" element={<FundingCalculatorPage />} />
+          <Route path="cms" element={<CmsFeaturesPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 
@@ -536,6 +538,7 @@ function Landing() {
       <DeviceShowcaseSection />
       <ManifestoSection />
       <AdminPreviewSection />
+      <CmsFeaturesTeaserSection />
       <ProcessTimelineSection />
       <ProductionSection />
       <NumbersSection />

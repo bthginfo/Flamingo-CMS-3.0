@@ -7,10 +7,11 @@ import { LivePreviewClient } from './client';
 export const dynamic = 'force-dynamic';
 
 export default async function LivePreviewPage() {
-  const tenantId = await resolveTenant();
-  if (!tenantId) {
-    return <LivePreviewClient initialData={{}} />;
-  }
+  try {
+    const tenantId = await resolveTenant();
+    if (!tenantId) {
+      return <LivePreviewClient initialData={{}} />;
+    }
 
   const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle] = await Promise.all([
     getTenantNav(tenantId),
@@ -66,4 +67,8 @@ export default async function LivePreviewPage() {
       }}
     />
   );
+  } catch (err) {
+    console.error('[live-preview] Error loading tenant data:', err);
+    return <LivePreviewClient initialData={{}} />;
+  }
 }
