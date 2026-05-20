@@ -101,18 +101,24 @@ html {
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 text-base;
     border-radius: var(--style-button-radius, 0.75rem);
-    background: var(--brand-accent);
-    color: #1a1a1a;
+    background: var(--brand-btn-bg, var(--brand-accent));
+    color: var(--brand-btn-text, #1a1a1a);
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 border-2 border-white/20 text-white transition-all duration-300 hover:bg-white/10 hover:border-white/40 text-base backdrop-blur-sm;
+    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 text-base;
     border-radius: var(--style-button-radius, 0.75rem);
+    background: var(--brand-btn-secondary-bg, transparent);
+    color: var(--brand-btn-secondary-text, white);
+    border: 2px solid var(--brand-btn-secondary-border, rgba(255,255,255,0.2));
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 border-2 border-gray-200 text-gray-700 transition-all duration-300 hover:bg-gray-50 hover:border-gray-300 text-base;
+    @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 text-base;
     border-radius: var(--style-button-radius, 0.75rem);
+    background: var(--brand-btn-outline-bg, transparent);
+    color: var(--brand-btn-outline-text, #374151);
+    border: 2px solid var(--brand-btn-outline-border, #e5e7eb);
   }
 
   .card-hover {

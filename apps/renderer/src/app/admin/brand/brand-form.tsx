@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { ImageUploadField } from '@/components/image-upload-field';
 
-type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; headingColor?: string; bodyTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string };
+type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string };
 
 const GOOGLE_FONTS = [
   { value: '', label: 'Standard (Outfit / Inter)' },
@@ -53,10 +53,17 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     navLinkColor: initial.navLinkColor || '',
     headingColor: initial.headingColor || '',
     bodyTextColor: initial.bodyTextColor || '',
+    mutedTextColor: initial.mutedTextColor || '',
     linkColor: initial.linkColor || '',
     linkHoverColor: initial.linkHoverColor || '',
     btnPrimaryBg: initial.btnPrimaryBg || '',
     btnPrimaryText: initial.btnPrimaryText || '',
+    btnSecondaryBg: initial.btnSecondaryBg || '',
+    btnSecondaryText: initial.btnSecondaryText || '',
+    btnSecondaryBorder: initial.btnSecondaryBorder || '',
+    btnOutlineBg: initial.btnOutlineBg || '',
+    btnOutlineText: initial.btnOutlineText || '',
+    btnOutlineBorder: initial.btnOutlineBorder || '',
   });
   const [saving, setSaving] = useState(false);
   const { markDirty, markSaved } = useSaveState();
@@ -171,6 +178,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
           {([
             { key: 'headingColor', label: 'Überschriften', hint: 'Alle H1–H6 Titel, Section-Überschriften' },
             { key: 'bodyTextColor', label: 'Fließtext', hint: 'Absätze, Listen, Beschreibungen' },
+            { key: 'mutedTextColor', label: 'Dezenter Text', hint: 'Subtitles, Timestamps, Meta-Infos, Platzhalter' },
             { key: 'linkColor', label: 'Links', hint: 'Klickbare Textlinks im Inhaltsbereich' },
             { key: 'linkHoverColor', label: 'Links (Hover)', hint: 'Farbe beim Überfahren mit der Maus' },
           ] as { key: keyof typeof form; label: string; hint: string }[]).map(({ key, label, hint }) => (
@@ -249,35 +257,120 @@ export function BrandForm({ initial }: { initial: BrandData }) {
       </div>
 
       {/* ─── Buttons ─── */}
-      <div className="admin-card p-6 space-y-5">
-        <h2 className="font-semibold text-lg">Buttons</h2>
-        <p className="text-sm text-zinc-500">Farben für primäre Buttons (Call-to-Action, Formular-Absenden, Kontakt-Buttons).</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div>
-            <label className="admin-label">Hintergrund</label>
-            <p className="text-xs text-zinc-400 mb-1.5">Hintergrundfarbe aller primären Buttons</p>
-            <div className="flex items-center gap-3">
-              <input type="color" value={form.btnPrimaryBg || form.primaryColor} onChange={e => setForm(f => ({ ...f, btnPrimaryBg: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
-              <input className="admin-input flex-1" value={form.btnPrimaryBg} onChange={e => setForm(f => ({ ...f, btnPrimaryBg: e.target.value }))} placeholder="Leer = Primärfarbe" />
-              {form.btnPrimaryBg && <button type="button" onClick={() => setForm(f => ({ ...f, btnPrimaryBg: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+      <div className="admin-card p-6 space-y-6">
+        <div>
+          <h2 className="font-semibold text-lg">Buttons</h2>
+          <p className="text-sm text-zinc-500">Drei Button-Typen stehen zur Verfügung. Leer lassen = Standard-Farben aus dem Farbschema.</p>
+        </div>
+
+        {/* Primary Button */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-zinc-700">Primär-Button</h3>
+          <p className="text-xs text-zinc-400">Wichtigste Aktion: „Jetzt anfragen", „Termin buchen", Formular-Absenden</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="admin-label">Hintergrund</label>
+              <div className="flex items-center gap-3">
+                <input type="color" value={form.btnPrimaryBg || form.accentColor} onChange={e => setForm(f => ({ ...f, btnPrimaryBg: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+                <input className="admin-input flex-1" value={form.btnPrimaryBg} onChange={e => setForm(f => ({ ...f, btnPrimaryBg: e.target.value }))} placeholder="Leer = Akzentfarbe" />
+                {form.btnPrimaryBg && <button type="button" onClick={() => setForm(f => ({ ...f, btnPrimaryBg: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+              </div>
+            </div>
+            <div>
+              <label className="admin-label">Text</label>
+              <div className="flex items-center gap-3">
+                <input type="color" value={form.btnPrimaryText || '#1a1a1a'} onChange={e => setForm(f => ({ ...f, btnPrimaryText: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+                <input className="admin-input flex-1" value={form.btnPrimaryText} onChange={e => setForm(f => ({ ...f, btnPrimaryText: e.target.value }))} placeholder="Leer = Dunkel" />
+                {form.btnPrimaryText && <button type="button" onClick={() => setForm(f => ({ ...f, btnPrimaryText: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+              </div>
             </div>
           </div>
-          <div>
-            <label className="admin-label">Textfarbe</label>
-            <p className="text-xs text-zinc-400 mb-1.5">Beschriftung auf primären Buttons</p>
-            <div className="flex items-center gap-3">
-              <input type="color" value={form.btnPrimaryText || '#ffffff'} onChange={e => setForm(f => ({ ...f, btnPrimaryText: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
-              <input className="admin-input flex-1" value={form.btnPrimaryText} onChange={e => setForm(f => ({ ...f, btnPrimaryText: e.target.value }))} placeholder="Leer = Weiß" />
-              {form.btnPrimaryText && <button type="button" onClick={() => setForm(f => ({ ...f, btnPrimaryText: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
-            </div>
+          <div className="flex items-center gap-3 pt-1">
+            <span className="text-xs text-zinc-400">Vorschau:</span>
+            <button type="button" className="px-5 py-2.5 rounded-lg text-sm font-semibold shadow-sm" style={{ backgroundColor: form.btnPrimaryBg || form.accentColor, color: form.btnPrimaryText || '#1a1a1a' }}>
+              Jetzt anfragen
+            </button>
           </div>
         </div>
-        {/* Button preview */}
-        <div className="pt-4 border-t border-admin-border">
-          <p className="text-xs text-zinc-500 mb-2">Vorschau:</p>
-          <button type="button" className="px-5 py-2.5 rounded-lg text-sm font-medium" style={{ backgroundColor: form.btnPrimaryBg || form.primaryColor, color: form.btnPrimaryText || '#ffffff' }}>
-            Beispiel-Button
-          </button>
+
+        <hr className="border-admin-border" />
+
+        {/* Secondary Button */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-zinc-700">Sekundär-Button</h3>
+          <p className="text-xs text-zinc-400">Zweitwichtigste Aktion: „Mehr erfahren", zweiter CTA im Hero-Bereich (auf dunklem Hintergrund)</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="admin-label">Hintergrund</label>
+              <div className="flex items-center gap-3">
+                <input type="color" value={form.btnSecondaryBg || '#000000'} onChange={e => setForm(f => ({ ...f, btnSecondaryBg: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+                <input className="admin-input flex-1" value={form.btnSecondaryBg} onChange={e => setForm(f => ({ ...f, btnSecondaryBg: e.target.value }))} placeholder="Leer = transparent" />
+                {form.btnSecondaryBg && <button type="button" onClick={() => setForm(f => ({ ...f, btnSecondaryBg: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+              </div>
+            </div>
+            <div>
+              <label className="admin-label">Text</label>
+              <div className="flex items-center gap-3">
+                <input type="color" value={form.btnSecondaryText || '#ffffff'} onChange={e => setForm(f => ({ ...f, btnSecondaryText: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+                <input className="admin-input flex-1" value={form.btnSecondaryText} onChange={e => setForm(f => ({ ...f, btnSecondaryText: e.target.value }))} placeholder="Leer = Weiß" />
+                {form.btnSecondaryText && <button type="button" onClick={() => setForm(f => ({ ...f, btnSecondaryText: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+              </div>
+            </div>
+            <div>
+              <label className="admin-label">Rahmen</label>
+              <div className="flex items-center gap-3">
+                <input type="color" value={form.btnSecondaryBorder || '#ffffff'} onChange={e => setForm(f => ({ ...f, btnSecondaryBorder: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+                <input className="admin-input flex-1" value={form.btnSecondaryBorder} onChange={e => setForm(f => ({ ...f, btnSecondaryBorder: e.target.value }))} placeholder="Leer = Weiß/20%" />
+                {form.btnSecondaryBorder && <button type="button" onClick={() => setForm(f => ({ ...f, btnSecondaryBorder: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 pt-1">
+            <span className="text-xs text-zinc-400">Vorschau:</span>
+            <span className="px-5 py-2.5 rounded-lg text-sm font-semibold inline-block" style={{ backgroundColor: form.btnSecondaryBg || 'transparent', color: form.btnSecondaryText || '#ffffff', border: `2px solid ${form.btnSecondaryBorder || 'rgba(255,255,255,0.2)'}`, background: form.btnSecondaryBg || '#1e293b' }}>
+              Mehr erfahren
+            </span>
+          </div>
+        </div>
+
+        <hr className="border-admin-border" />
+
+        {/* Outline Button */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-zinc-700">Outline-Button</h3>
+          <p className="text-xs text-zinc-400">Dezente Aktion: „Details ansehen", „Mehr lesen", alternative CTAs auf hellem Hintergrund</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="admin-label">Hintergrund</label>
+              <div className="flex items-center gap-3">
+                <input type="color" value={form.btnOutlineBg || '#ffffff'} onChange={e => setForm(f => ({ ...f, btnOutlineBg: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+                <input className="admin-input flex-1" value={form.btnOutlineBg} onChange={e => setForm(f => ({ ...f, btnOutlineBg: e.target.value }))} placeholder="Leer = transparent" />
+                {form.btnOutlineBg && <button type="button" onClick={() => setForm(f => ({ ...f, btnOutlineBg: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+              </div>
+            </div>
+            <div>
+              <label className="admin-label">Text</label>
+              <div className="flex items-center gap-3">
+                <input type="color" value={form.btnOutlineText || '#374151'} onChange={e => setForm(f => ({ ...f, btnOutlineText: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+                <input className="admin-input flex-1" value={form.btnOutlineText} onChange={e => setForm(f => ({ ...f, btnOutlineText: e.target.value }))} placeholder="Leer = Dunkelgrau" />
+                {form.btnOutlineText && <button type="button" onClick={() => setForm(f => ({ ...f, btnOutlineText: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+              </div>
+            </div>
+            <div>
+              <label className="admin-label">Rahmen</label>
+              <div className="flex items-center gap-3">
+                <input type="color" value={form.btnOutlineBorder || '#e5e7eb'} onChange={e => setForm(f => ({ ...f, btnOutlineBorder: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+                <input className="admin-input flex-1" value={form.btnOutlineBorder} onChange={e => setForm(f => ({ ...f, btnOutlineBorder: e.target.value }))} placeholder="Leer = Hellgrau" />
+                {form.btnOutlineBorder && <button type="button" onClick={() => setForm(f => ({ ...f, btnOutlineBorder: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 pt-1">
+            <span className="text-xs text-zinc-400">Vorschau:</span>
+            <span className="px-5 py-2.5 rounded-lg text-sm font-semibold inline-block" style={{ backgroundColor: form.btnOutlineBg || 'transparent', color: form.btnOutlineText || '#374151', border: `2px solid ${form.btnOutlineBorder || '#e5e7eb'}` }}>
+              Details ansehen
+            </span>
+          </div>
         </div>
       </div>
 

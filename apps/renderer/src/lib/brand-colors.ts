@@ -24,7 +24,7 @@ function hexToRgb(hex: string): string {
   return `${parseInt(hex.slice(1, 3), 16)} ${parseInt(hex.slice(3, 5), 16)} ${parseInt(hex.slice(5, 7), 16)}`;
 }
 
-export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?: string; accentColor?: string; topBarColor?: string; footerColor?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; headingColor?: string; bodyTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string }): Record<string, string> {
+export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?: string; accentColor?: string; topBarColor?: string; footerColor?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string }): Record<string, string> {
   const vars: Record<string, string> = {};
   const primary = brand.primaryColor;
   if (!primary || !/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(primary)) return vars;
@@ -56,10 +56,17 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   if (brand.navLinkColor) vars['--brand-nav-link'] = brand.navLinkColor;
   if (brand.headingColor) vars['--brand-heading'] = brand.headingColor;
   if (brand.bodyTextColor) vars['--brand-body-text'] = brand.bodyTextColor;
+  if (brand.mutedTextColor) vars['--style-text-muted'] = brand.mutedTextColor;
   if (brand.linkColor) vars['--brand-link'] = brand.linkColor;
   if (brand.linkHoverColor) vars['--brand-link-hover'] = brand.linkHoverColor;
   if (brand.btnPrimaryBg) vars['--brand-btn-bg'] = brand.btnPrimaryBg;
   if (brand.btnPrimaryText) vars['--brand-btn-text'] = brand.btnPrimaryText;
+  if (brand.btnSecondaryBg) vars['--brand-btn-secondary-bg'] = brand.btnSecondaryBg;
+  if (brand.btnSecondaryText) vars['--brand-btn-secondary-text'] = brand.btnSecondaryText;
+  if (brand.btnSecondaryBorder) vars['--brand-btn-secondary-border'] = brand.btnSecondaryBorder;
+  if (brand.btnOutlineBg) vars['--brand-btn-outline-bg'] = brand.btnOutlineBg;
+  if (brand.btnOutlineText) vars['--brand-btn-outline-text'] = brand.btnOutlineText;
+  if (brand.btnOutlineBorder) vars['--brand-btn-outline-border'] = brand.btnOutlineBorder;
 
   return vars;
 }
