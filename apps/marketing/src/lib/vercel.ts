@@ -154,6 +154,14 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
         environments: ['production', 'preview', 'development'],
       });
       blobConnected = true;
+
+      // Wait for env var to propagate (Vercel injects BLOB_READ_WRITE_TOKEN async after store connection)
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const envsData = await vercelFetch(`/v9/projects/${projectId}/env`);
+        const envs = (envsData.envs || []) as { key: string }[];
+        if (envs.some((e) => e.key === 'BLOB_READ_WRITE_TOKEN')) break;
+        await new Promise((r) => setTimeout(r, 1500));
+      }
     } catch (err) {
       console.warn('Blob store connection failed, falling back to explicit token:', (err as Error).message);
     }
