@@ -7,10 +7,23 @@ const SOCIAL_ICONS: Record<string, React.ElementType> = {
   instagram: Instagram, facebook: Facebook, linkedin: Linkedin, youtube: Youtube, google: Globe, tiktok: Music,
 };
 
+/** Returns true if the hex color is "light" (luminance > 0.4) */
+function isLightColor(hex: string | undefined): boolean {
+  if (!hex || !/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(hex)) return false;
+  const h = hex.length === 4 ? `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}` : hex;
+  const r = parseInt(h.slice(1, 3), 16) / 255;
+  const g = parseInt(h.slice(3, 5), 16) / 255;
+  const b = parseInt(h.slice(5, 7), 16) / 255;
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  return lum > 0.4;
+}
+
 export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: FooterData | null; brand: BrandData; contact?: ContactData; socialLinks?: SocialLinks }) {
   if (!footer) return null;
 
   const socials = Object.entries(socialLinks || {}).filter(([, url]) => url);
+  const footerBg = (brand as Record<string, unknown>).footerColor as string | undefined;
+  const lightFooter = isLightColor(footerBg);
 
   return (
     <footer id="site-footer" className="relative overflow-hidden" style={{ backgroundColor: 'var(--brand-footer, var(--brand-dark))', color: 'var(--brand-footer-text, white)' }}>
@@ -64,7 +77,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
                 {socials.map(([platform, url]) => {
                   const Icon = SOCIAL_ICONS[platform];
                   return Icon ? (
-                    <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/[0.06] flex items-center justify-center opacity-70 hover:bg-brand-accent hover:text-gray-900 hover:opacity-100 transition-all duration-300">
+                    <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${lightFooter ? 'bg-black/[0.08] text-gray-700 hover:bg-brand-accent hover:text-white' : 'bg-white/[0.06] text-white/70 hover:bg-brand-accent hover:text-gray-900'}`}>
                       <Icon size={16} />
                     </a>
                   ) : null;
