@@ -184,13 +184,13 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
   // Trigger a final production deployment AFTER all env vars (incl. blob token) are set.
   // This guarantees the running deployment has access to BLOB_READ_WRITE_TOKEN,
   // regardless of any earlier auto-deployment that started without it.
-  const repoId = process.env.GITHUB_REPO_NUMERIC_ID;
-  if (repoId) {
+  const numericRepoId = process.env.GITHUB_REPO_NUMERIC_ID;
+  if (numericRepoId) {
     try {
       await vercelFetch('/v13/deployments', 'POST', {
         name: projectName,
         target: 'production',
-        gitSource: { type: 'github', repoId: Number(repoId), ref: 'main' },
+        gitSource: { type: 'github', repoId: Number(numericRepoId), ref: 'main' },
       });
     } catch (err) {
       console.warn('Final redeploy after env setup failed (non-critical):', (err as Error).message);
