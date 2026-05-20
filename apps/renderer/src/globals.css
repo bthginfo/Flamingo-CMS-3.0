@@ -128,6 +128,13 @@ html {
     color: var(--brand-btn-text, white) !important;
   }
 
+  /* Hero/CTA buttons using bg-brand-accent also respect custom button colors */
+  [data-style] a[class*="bg-brand-accent"],
+  [data-style] button[class*="bg-brand-accent"] {
+    background-color: var(--brand-btn-bg, var(--brand-accent)) !important;
+    color: var(--brand-btn-text, #1a1a1a) !important;
+  }
+
   /* Bold-style buttons (bg-[#111827]) also respect custom button colors when set */
   [data-style] a[class*="bg-[#111827]"],
   [data-style] button[class*="bg-[#111827]"] {
