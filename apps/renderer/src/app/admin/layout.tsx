@@ -13,6 +13,7 @@ import { getTenantStyle } from '@/lib/tenant-data';
 // Disable Next.js fetch() data cache for all admin routes
 // This ensures DB reads always return fresh data
 export const fetchCache = 'force-no-store';
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Flamingo CMS',
