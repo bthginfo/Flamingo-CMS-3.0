@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
     const auth = await validatePat(req.headers.get('authorization'));
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
-      return NextResponse.json({ error: 'Upload failed', details: 'Storage not configured (missing BLOB_READ_WRITE_TOKEN)' }, { status: 500 });
+    if (!process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN.startsWith('__PLACEHOLDER')) {
+      return NextResponse.json({ error: 'Upload failed', details: 'Storage not configured (BLOB_READ_WRITE_TOKEN missing or placeholder)' }, { status: 500 });
     }
 
     const contentType = req.headers.get('content-type') || '';

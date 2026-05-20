@@ -55,6 +55,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     footerLinkColor: initial.footerLinkColor || '',
     footerTextColor: initial.footerTextColor || '',
     navLinkColor: initial.navLinkColor || '',
+    navBgColor: initial.navBgColor || '',
     headingColor: initial.headingColor || '',
     bodyTextColor: initial.bodyTextColor || '',
     mutedTextColor: initial.mutedTextColor || '',
@@ -233,6 +234,15 @@ export function BrandForm({ initial }: { initial: BrandData }) {
               <input type="color" value={form.navLinkColor || '#000000'} onChange={e => setForm(f => ({ ...f, navLinkColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
               <input className="admin-input flex-1" value={form.navLinkColor} onChange={e => setForm(f => ({ ...f, navLinkColor: e.target.value }))} placeholder="Leer = Standard" />
               {form.navLinkColor && <button type="button" onClick={() => setForm(f => ({ ...f, navLinkColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Navigations-Hintergrund</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Hintergrundfläche der Hauptnavigation (beim Scrollen)</p>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.navBgColor || '#ffffff'} onChange={e => setForm(f => ({ ...f, navBgColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.navBgColor} onChange={e => setForm(f => ({ ...f, navBgColor: e.target.value }))} placeholder="Leer = Weiß transluzent" />
+              {form.navBgColor && <button type="button" onClick={() => setForm(f => ({ ...f, navBgColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
             </div>
           </div>
           <div>

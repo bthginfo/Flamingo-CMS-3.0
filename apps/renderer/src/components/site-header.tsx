@@ -69,9 +69,11 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta }: { n
         <div className={cn(
           'transition-all duration-500',
           scrolled
-            ? 'bg-white/80 backdrop-blur-2xl shadow-lg border-b border-gray-100/50'
-            : darkBg ? 'bg-gradient-to-b from-black/40 to-transparent' : 'bg-white/80 backdrop-blur-sm shadow-sm',
-        )}>
+            ? 'backdrop-blur-2xl shadow-lg border-b border-gray-100/50'
+            : darkBg ? 'bg-gradient-to-b from-black/40 to-transparent' : 'backdrop-blur-sm shadow-sm',
+        )}
+        style={(scrolled || !darkBg) ? { backgroundColor: brand.navBgColor || 'rgba(255,255,255,0.8)' } : undefined}
+        >
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-[72px]">
             <Link href="/" className="flex items-center gap-2 font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || !darkBg) ? brand.primaryColor : 'white' }}>
               {(brand.logoDisplay !== 'name' && brand.logoUrl) && (

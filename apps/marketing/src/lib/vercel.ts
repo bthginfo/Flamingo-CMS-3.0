@@ -159,17 +159,18 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
     }
   }
   // Fallback: set BLOB_READ_WRITE_TOKEN explicitly if store connection failed or no store ID
-  if (!blobConnected && process.env.BLOB_READ_WRITE_TOKEN) {
+  const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
+  if (!blobConnected && blobToken && !blobToken.startsWith('__PLACEHOLDER')) {
     try {
       await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', [
-        { key: 'BLOB_READ_WRITE_TOKEN', value: process.env.BLOB_READ_WRITE_TOKEN, target: ['production', 'preview'], type: 'encrypted' },
+        { key: 'BLOB_READ_WRITE_TOKEN', value: blobToken, target: ['production', 'preview'], type: 'encrypted' },
       ]);
     } catch (err) {
       console.error('Failed to set BLOB_READ_WRITE_TOKEN on standalone project:', (err as Error).message);
       throw new Error('Blob-Speicher konnte nicht konfiguriert werden. Bitte VERCEL_BLOB_STORE_ID oder BLOB_READ_WRITE_TOKEN setzen.');
     }
-  } else if (!blobConnected && !process.env.BLOB_READ_WRITE_TOKEN) {
-    console.error('Neither VERCEL_BLOB_STORE_ID nor BLOB_READ_WRITE_TOKEN available — uploads will fail for this tenant!');
+  } else if (!blobConnected) {
+    throw new Error('Blob-Speicher konnte nicht konfiguriert werden: BLOB_READ_WRITE_TOKEN fehlt oder ist ein Placeholder. Bild-Uploads werden für diesen Tenant nicht funktionieren!');
   }
 
   return { projectId: projectId as string, projectUrl: `https://${projectName}.vercel.app` };
