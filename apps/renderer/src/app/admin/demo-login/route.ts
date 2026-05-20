@@ -62,11 +62,7 @@ export async function GET(request: NextRequest) {
 
   const token = await createSessionToken(tenantId);
   const target = new URL('/admin/pages', request.nextUrl.origin);
-  // Pass token via URL so it works inside cross-origin iframes
-  // where third-party cookies are blocked. The middleware will
-  // pick up _dt, set the cookie same-origin, and redirect clean.
   target.searchParams.set('_dt', token);
-  target.searchParams.set('_demo', '1');
 
   return NextResponse.redirect(target);
 }
