@@ -6,7 +6,7 @@ type PreviewContextValue = {
   isOpen: boolean;
   url: string;
   refreshKey: number;
-  open: (url: string) => void;
+  open: (url?: string) => void;
   close: () => void;
   refresh: () => void;
   setUrl: (url: string) => void;
@@ -30,16 +30,17 @@ export function usePreview() {
   return useContext(PreviewContext);
 }
 
-export function PreviewProvider({ children }: { children: React.ReactNode }) {
+export function PreviewProvider({ children, tenantId }: { children: React.ReactNode; tenantId?: string }) {
+  const defaultUrl = tenantId ? `/live-preview?tenant=${tenantId}` : '/live-preview';
   const [isOpen, setIsOpen] = useState(false);
-  const [url, setUrlState] = useState('/live-preview');
+  const [url, setUrlState] = useState(defaultUrl);
   const [refreshKey, setRefreshKey] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const open = useCallback((previewUrl?: string) => {
-    setUrlState(previewUrl || '/live-preview');
+    setUrlState(previewUrl || defaultUrl);
     setIsOpen(true);
-  }, []);
+  }, [defaultUrl]);
 
   const close = useCallback(() => setIsOpen(false), []);
   const refresh = useCallback(() => setRefreshKey(k => k + 1), []);

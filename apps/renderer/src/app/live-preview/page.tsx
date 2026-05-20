@@ -7,9 +7,10 @@ import { LivePreviewClient } from './client';
 
 export const dynamic = 'force-dynamic';
 
-export default async function LivePreviewPage() {
+export default async function LivePreviewPage({ searchParams }: { searchParams: Promise<{ tenant?: string }> }) {
   try {
-    const tenantId = await resolveTenant();
+    const { tenant: tenantParam } = await searchParams;
+    const tenantId = tenantParam || await resolveTenant();
     if (!tenantId) {
       return <LivePreviewClient initialData={{}} />;
     }

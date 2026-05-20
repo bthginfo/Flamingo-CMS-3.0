@@ -42,7 +42,7 @@ export function PublishFab() {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3" data-tour="publish-fab">
       <button
-        onClick={() => preview.isOpen ? preview.close() : preview.open('/live-preview')}
+        onClick={() => preview.isOpen ? preview.close() : preview.open()}
         className={`flex items-center gap-2 px-4 py-3 border rounded-full shadow-lg text-sm font-medium transition-colors ${
           preview.isOpen ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
         }`}

@@ -37,7 +37,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <SaveProvider>
-    <PreviewProvider>
+    <PreviewProvider tenantId={session.tenantId}>
     <div className="flex h-screen overflow-hidden bg-admin-bg text-zinc-900 antialiased" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
       <Sidebar tenantId={session.tenantId} industry={(await getTenantStyle(session.tenantId)).industry} />
       <main className="flex-1 min-w-0 overflow-y-auto bg-admin-bg">
