@@ -2057,6 +2057,7 @@ function Pricing() {
     { t: 'Newsletter-Setup', p: '290 €', d: 'Anbindung an Mailerlite, Brevo oder Mailchimp.' },
     { t: 'Texte & SEO', p: 'ab 490 €', d: 'Schreiben aller Inhalte durch unsere Copywriter:innen, inkl. SEO-Recherche.' },
     { t: 'Logo-Refresh', p: 'ab 590 €', d: 'Modernisierung Deines bestehenden Logos. Drei Iterationen.' },
+    { t: 'Individuelle Sections', p: 'ab 200 €', d: 'Maßgeschneiderte Inhaltsblöcke außerhalb des Templates. Preis abhängig von Anzahl, Komplexität und Interaktivität.' },
   ];
 
   return (
