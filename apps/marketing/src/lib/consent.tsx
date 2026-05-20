@@ -81,9 +81,16 @@ type ConsentContextValue = {
 const ConsentContext = createContext<ConsentContextValue | null>(null);
 
 export function ConsentProvider({ children }: { children: React.ReactNode }) {
-  const [consent, setState] = useState<ConsentState>(() => load());
+  const [consent, setState] = useState<ConsentState>(DEFAULT_CONSENT);
+  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => { save(consent); }, [consent]);
+  // Read saved consent only on client to avoid hydration mismatch
+  useEffect(() => {
+    setState(load());
+    setMounted(true);
+  }, []);
+
+  useEffect(() => { if (mounted) save(consent); }, [consent, mounted]);
 
   const acceptAll = useCallback(() => {
     setState({ necessary: true, functional: true, analytics: true, marketing: true, ts: Date.now(), v: CURRENT_VERSION });
@@ -103,12 +110,12 @@ export function ConsentProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<ConsentContextValue>(() => ({
     consent,
-    needsDecision: consent.ts === 0,
+    needsDecision: mounted && consent.ts === 0,
     acceptAll,
     rejectAll,
     setConsent,
     revoke,
-  }), [consent, acceptAll, rejectAll, setConsent, revoke]);
+  }), [consent, mounted, acceptAll, rejectAll, setConsent, revoke]);
 
   return <ConsentContext.Provider value={value}>{children}</ConsentContext.Provider>;
 }
