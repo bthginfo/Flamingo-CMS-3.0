@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Save } from 'lucide-react';
+import { Save, Info } from 'lucide-react';
 import { ImageUploadField } from '@/components/image-upload-field';
 import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { IconPickerField } from '@/components/icon-picker-field';
@@ -9,6 +9,7 @@ import { MediaBulkPickerButton } from '@/components/media-bulk-picker';
 import { RichTextEditorField } from '@/components/rich-text-editor';
 import { MiniRichTextField } from '@/components/mini-rich-text';
 import { saveMediaRecord } from '@/app/admin/media-actions';
+import { EMBED_PROVIDERS, EMBED_CATEGORIES, getProvider } from '@/lib/embed-providers';
 
 // Reports current editor data to parent on every change (skip initial render).
 function useReport(data: Record<string, unknown>, onChange: (d: Record<string, unknown>) => void) {
@@ -917,6 +918,103 @@ function VideoEmbedEditor({ data, onChange }: EditorProps) {
   );
 }
 
+// ─── Embed Editor ────────────────────────────────────────────────
+function EmbedEditor({ data, onChange }: EditorProps) {
+  const [mode, setMode] = useState<'standard' | 'preset'>((data.mode as string) === 'standard' ? 'standard' : 'preset');
+  const [provider, setProvider] = useState((data.provider as string) || '');
+  const [config, setConfig] = useState<Record<string, string>>((data.config as Record<string, string>) || {});
+  const [embedCode, setEmbedCode] = useState((data.embedCode as string) || '');
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [height, setHeight] = useState((data.height as number) || 0);
+  const [maxWidth, setMaxWidth] = useState((data.maxWidth as string) || '100%');
+
+  const currentProvider = getProvider(provider);
+
+  useReport({
+    mode, provider: mode === 'preset' ? provider : '', config: mode === 'preset' ? config : {},
+    embedCode: mode === 'standard' ? embedCode : '', headline, subline,
+    height: height || (currentProvider?.defaultHeight ?? 500), maxWidth,
+  } as unknown as Record<string, unknown>, onChange);
+
+  return (
+    <div className="space-y-4">
+      <Field label="Überschrift (optional)" value={headline} onChange={setHeadline} />
+      <Field label="Beschreibung (optional)" value={subline} onChange={setSubline} multiline />
+
+      {/* Mode Switch */}
+      <div>
+        <span className="text-xs font-medium text-zinc-600 block mb-1.5">Modus</span>
+        <div className="flex gap-2">
+          <button type="button" onClick={() => setMode('preset')} className={`px-3 py-1.5 text-xs rounded-md transition-colors ${mode === 'preset' ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Anbieter-Preset</button>
+          <button type="button" onClick={() => setMode('standard')} className={`px-3 py-1.5 text-xs rounded-md transition-colors ${mode === 'standard' ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Standard (Embed-Code)</button>
+        </div>
+      </div>
+
+      {mode === 'standard' && (
+        <div>
+          <label className="block text-sm">
+            <span className="text-gray-600 text-xs">Embed-Code (iframe)</span>
+            <textarea className="admin-input mt-1 w-full font-mono text-xs" rows={5} value={embedCode} onChange={(e) => setEmbedCode(e.target.value)} placeholder='<iframe src="https://..." width="100%" height="400"></iframe>' />
+          </label>
+          <p className="text-[11px] text-amber-600 mt-1 flex items-center gap-1"><Info size={11} /> Nur &lt;iframe&gt; Tags werden akzeptiert. Scripts werden aus Sicherheitsgründen entfernt.</p>
+        </div>
+      )}
+
+      {mode === 'preset' && (
+        <>
+          {/* Provider Select grouped by category */}
+          <div>
+            <span className="text-xs font-medium text-zinc-600 block mb-1.5">Anbieter</span>
+            <select className="admin-input w-full" value={provider} onChange={(e) => { setProvider(e.target.value); setConfig({}); }}>
+              <option value="">— Anbieter wählen —</option>
+              {EMBED_CATEGORIES.map(cat => (
+                <optgroup key={cat.id} label={cat.label}>
+                  {EMBED_PROVIDERS.filter(p => p.category === cat.id).map(p => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          </div>
+
+          {/* Provider-specific fields */}
+          {currentProvider && (
+            <div className="border border-zinc-200 rounded-lg p-3 space-y-3 bg-zinc-50/50">
+              <p className="text-xs font-medium text-zinc-700">{currentProvider.label} — Konfiguration</p>
+              {currentProvider.fields.map(field => (
+                <div key={field.key}>
+                  <label className="block text-sm">
+                    <span className="text-gray-600 text-xs">{field.label}{field.required && <span className="text-red-400"> *</span>}</span>
+                    <input className="admin-input mt-1 w-full" value={config[field.key] || ''} onChange={(e) => setConfig({ ...config, [field.key]: e.target.value })} placeholder={field.placeholder} />
+                  </label>
+                  <p className="text-[11px] text-zinc-400 mt-0.5 flex items-center gap-1"><Info size={10} /> {field.help}</p>
+                </div>
+              ))}
+              {/* Preview URL */}
+              {currentProvider.buildUrl(config) && (
+                <p className="text-[11px] text-emerald-600 mt-1 truncate">✓ URL: {currentProvider.buildUrl(config)}</p>
+              )}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Layout options */}
+      <div className="grid grid-cols-2 gap-3">
+        <label className="block text-sm">
+          <span className="text-gray-600 text-xs">Höhe (px)</span>
+          <input type="number" className="admin-input mt-1 w-full" value={height || currentProvider?.defaultHeight || 500} onChange={(e) => setHeight(Number(e.target.value))} />
+        </label>
+        <label className="block text-sm">
+          <span className="text-gray-600 text-xs">Max-Breite</span>
+          <input className="admin-input mt-1 w-full" value={maxWidth} onChange={(e) => setMaxWidth(e.target.value)} placeholder="100%" />
+        </label>
+      </div>
+    </div>
+  );
+}
+
 // ─── Header Banner Editor ────────────────────────────────────────
 function HeaderBannerEditor({ data, onChange }: EditorProps) {
   const [items, setItems] = useState<{ text: string; link: string }[]>(
@@ -1568,6 +1666,7 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   richText: RichTextEditor,
   freeText: FreeTextEditor,
   videoEmbed: VideoEmbedEditor,
+  embed: EmbedEditor,
   headerBanner: HeaderBannerEditor,
   collectionHero: CollectionHeroEditor,
   textImage: TextImageEditor,

@@ -12,6 +12,7 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)', category: 'Inhalt' },
   { type: 'legalContent', label: 'Rechtliche Inhalte', description: 'Strukturierte Abschnitte für Impressum / Datenschutz', category: 'Inhalt' },
   { type: 'videoEmbed', label: 'Video', description: 'YouTube / Vimeo Video einbetten', category: 'Inhalt' },
+  { type: 'embed', label: 'Embed / Integration', description: 'Externe Dienste einbinden (Buchung, Bewertungen, Karten, etc.)', category: 'Inhalt' },
   { type: 'headerBanner', label: 'Header-Banner', description: 'Obere Hinweisleiste', category: 'Inhalt' },
   { type: 'ctaBand', label: 'CTA-Band', description: 'Call-to-Action Banner', category: 'Marketing' },
   { type: 'ctaLinks', label: 'CTA-Links', description: 'Button-Links zu Unterseiten', category: 'Marketing' },
