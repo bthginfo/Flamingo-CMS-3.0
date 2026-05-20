@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, FileText, FolderOpen, Newspaper, Navigation,
   Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Heart,
-  Menu, X, ClipboardList, Bot, HelpCircle,
+  Menu, X, ClipboardList, Bot, HelpCircle, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
 import { usePreview } from '@/components/admin/preview-context';
@@ -117,7 +117,7 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
       </aside>
 
       {/* Desktop sidebar */}
-      <aside className={`hidden md:flex shrink-0 bg-sidebar text-sidebar-fg flex-col h-full border-r border-sidebar-border transition-all duration-200 ${collapsed ? 'w-16' : 'w-64'}`}>
+      <aside className={`hidden md:flex shrink-0 bg-sidebar text-sidebar-fg flex-col h-full border-r border-sidebar-border transition-all duration-200 relative ${collapsed ? 'w-16' : 'w-64'}`}>
         {/* Logo */}
         <div className={`py-5 border-b border-sidebar-border flex items-center ${collapsed ? 'px-3 justify-center' : 'px-5'}`}>
           <div className="flex items-center gap-2.5">
@@ -157,13 +157,16 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
             <LogOut size={18} />
             {!collapsed && 'Abmelden'}
           </button>
-          {/* Collapse toggle */}
-          <button onClick={toggleCollapse} title={collapsed ? 'Sidebar ausklappen' : 'Sidebar einklappen'}
-            className={`flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'}`}>
-            <Menu size={18} />
-            {!collapsed && 'Einklappen'}
-          </button>
         </div>
+
+        {/* Collapse handle */}
+        <button
+          onClick={toggleCollapse}
+          title={collapsed ? 'Sidebar ausklappen' : 'Sidebar einklappen'}
+          className="absolute top-1/2 -right-3 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-sidebar border border-sidebar-border flex items-center justify-center text-sidebar-muted hover:text-white hover:bg-white/10 transition-colors shadow-sm"
+        >
+          {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        </button>
       </aside>
     </>
   );
