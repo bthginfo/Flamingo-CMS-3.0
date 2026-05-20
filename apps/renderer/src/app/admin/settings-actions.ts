@@ -146,3 +146,22 @@ export async function saveActiveStyle(style: string) {
   revalidatePath('/admin/design');
   return { success: true };
 }
+
+// ─── Design (Background & Text Colors) ───────────────────────────────
+
+export async function getDesignSettings(): Promise<Record<string, string>> {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  const [row] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
+  return (row?.design as Record<string, string>) || {};
+}
+
+export async function saveDesignSettings(data: Record<string, string>) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  await db.update(globalSettings)
+    .set({ design: data, updatedAt: new Date() })
+    .where(eq(globalSettings.tenantId, tenantId));
+  revalidatePath('/admin/brand');
+  return { success: true };
+}

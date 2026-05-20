@@ -1,9 +1,10 @@
-import { getBrandSettings, getTenantInfo } from '../settings-actions';
+import { getBrandSettings, getTenantInfo, getDesignSettings } from '../settings-actions';
 import { BrandForm } from './brand-form';
 import { StyleSwitcher } from './style-switcher';
+import { BackgroundForm } from './background-form';
 
 export default async function BrandPage() {
-  const [{ brand }, tenantInfo] = await Promise.all([getBrandSettings(), getTenantInfo()]);
+  const [{ brand }, tenantInfo, design] = await Promise.all([getBrandSettings(), getTenantInfo(), getDesignSettings()]);
 
   return (
     <div>
@@ -11,6 +12,7 @@ export default async function BrandPage() {
       <p className="text-zinc-500 text-sm mb-8">Firmenname, Slogan, Farbschema und Stil Ihrer Website.</p>
       <StyleSwitcher industry={tenantInfo.industry} activeStyle={tenantInfo.activeStyle} />
       <BrandForm initial={brand} />
+      <BackgroundForm initial={design} />
     </div>
   );
 }

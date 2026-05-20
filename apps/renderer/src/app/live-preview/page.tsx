@@ -2,6 +2,7 @@ import { resolveTenant } from '@/lib/snapshot';
 import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle } from '@/lib/tenant-data';
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
+import { getDesignCssVars } from '@/lib/design-vars';
 import { LivePreviewClient } from './client';
 
 export const dynamic = 'force-dynamic';
@@ -23,26 +24,9 @@ export default async function LivePreviewPage() {
   const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
   const brandCssVars = getBrandCssVars(brand);
   const designOverrides: Record<string, string> = {};
-  const designToCssVar: Record<string, string> = {
-    textPrimary: '--style-text-primary',
-    textSecondary: '--style-text-secondary',
-    textMuted: '--style-text-muted',
-    sectionBg: '--style-section-bg',
-    sectionBgAlt: '--style-section-bg-alt',
-    cardBg: '--style-card-bg',
-    bgSubtle: '--style-bg-subtle',
-    badgeBg: '--style-badge-bg',
-    badgeText: '--style-badge-text',
-    brand: '--style-brand',
-    borderStrong: '--style-border-strong',
-    borderLight: '--style-border-light',
-    dividerColor: '--style-divider-color',
-  };
   if (brand.primaryColor) designOverrides['--style-brand'] = brand.primaryColor;
   if (brand.accentColor) designOverrides['--style-accent'] = brand.accentColor;
-  for (const [key, cssVar] of Object.entries(designToCssVar)) {
-    if (design[key]) designOverrides[cssVar] = design[key];
-  }
+  Object.assign(designOverrides, getDesignCssVars(design));
   const fontCssVars: Record<string, string> = {};
   const headingFontName = brand.customHeadingFontName || brand.headingFont || '';
   const bodyFontName = brand.customBodyFontName || brand.bodyFont || '';

@@ -5,6 +5,7 @@ import { getTenantNav, getTenantFooter, getTenantBrand, getTenantSeoGlobal, getT
 export const revalidate = 60;
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
+import { getDesignCssVars } from '@/lib/design-vars';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { SectionRenderer } from '@/components/section-renderer';
@@ -107,24 +108,9 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
 
   // Merge custom design overrides from DB into CSS variables
   const designOverrides: Record<string, string> = {};
-  const designToCssVar: Record<string, string> = {
-    textPrimary: '--style-text-primary',
-    textSecondary: '--style-text-secondary',
-    sectionBg: '--style-section-bg',
-    sectionBgAlt: '--style-section-bg-alt',
-    cardBg: '--style-card-bg',
-    badgeBg: '--style-badge-bg',
-    badgeText: '--style-badge-text',
-    brand: '--style-brand',
-    dividerColor: '--style-divider-color',
-  };
-  // Map brand colors to accent/brand vars
   if (brand.primaryColor) designOverrides['--style-brand'] = brand.primaryColor;
   if (brand.accentColor) designOverrides['--style-accent'] = brand.accentColor;
-  // Map extended design fields
-  for (const [key, cssVar] of Object.entries(designToCssVar)) {
-    if (design[key]) designOverrides[cssVar] = design[key];
-  }
+  Object.assign(designOverrides, getDesignCssVars(design));
   const visibleSections = page.sections.filter(s => s.visible);
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
 
