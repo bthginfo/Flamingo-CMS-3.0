@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { saveBrandSettings } from '../settings-actions';
 import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
@@ -34,6 +35,7 @@ const GOOGLE_FONTS = [
 ];
 
 export function BrandForm({ initial }: { initial: BrandData }) {
+  const router = useRouter();
   const [form, setForm] = useState({
     companyName: initial.companyName || '',
     tagline: initial.tagline || '',
@@ -115,6 +117,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
       await saveBrandSettings(form);
       toast.success('Marken-Einstellungen gespeichert');
       markSaved();
+      router.refresh();
     } catch {
       toast.error('Fehler beim Speichern');
     } finally {

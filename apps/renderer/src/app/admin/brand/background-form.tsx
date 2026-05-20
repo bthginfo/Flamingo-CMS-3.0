@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { saveDesignSettings } from '../settings-actions';
 import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
@@ -26,6 +27,7 @@ const TEXT_OVERRIDE_KEYS: Record<string, string> = {
 };
 
 export function BackgroundForm({ initial }: { initial: DesignData }) {
+  const router = useRouter();
   const [form, setForm] = useState<DesignData>({ ...initial });
   const [saving, setSaving] = useState(false);
   const { markDirty, markSaved } = useSaveState();
@@ -81,6 +83,7 @@ export function BackgroundForm({ initial }: { initial: DesignData }) {
       }
       await saveDesignSettings(clean);
       markSaved();
+      router.refresh();
       toast.success('Hintergrundfarben gespeichert');
     } catch {
       toast.error('Fehler beim Speichern');
