@@ -165,20 +165,25 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 </svg>
               </button>
             </div>
-            <nav className="container-x flex flex-col gap-1 mt-8">
+            <nav className="container-x flex flex-col gap-0.5 mt-6">
               {NAV.map((n) => (
                 <Link
                   key={n.href}
                   href={n.href}
                   onClick={() => setMobile(false)}
-                  className="py-5 text-5xl font-display border-b border-line transition-transform hover:translate-x-2 text-slate-800"
+                  className="py-3 text-2xl font-display border-b border-line transition-transform hover:translate-x-2 text-slate-800"
                 >
                   {n.label}
                 </Link>
               ))}
-              <Link href="/kontakt" onClick={() => setMobile(false)} className="btn-accent mt-10 self-start">
-                Beratung anfragen <span aria-hidden>→</span>
-              </Link>
+              <div className="flex items-center gap-3 mt-8">
+                <Link href="/kontakt" onClick={() => setMobile(false)} className="btn-accent">
+                  Beratung anfragen <span aria-hidden>→</span>
+                </Link>
+                <Link href="/demo" onClick={() => setMobile(false)} className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-800 transition hover:bg-slate-100">
+                  Demo
+                </Link>
+              </div>
             </nav>
           </div>
         )}

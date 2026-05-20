@@ -125,7 +125,7 @@ function SplitPanelMockup() {
         <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
         <span className="ml-3 text-[10px] text-slate-500 font-mono">flamingo-cms.de/admin — Split-View</span>
       </div>
-      <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-100 flex">
+      <div className="relative w-full aspect-[16/8] overflow-hidden bg-slate-100 flex">
         {/* Admin side (left 40%) */}
         <div className="relative w-[40%] h-full border-r border-slate-200 overflow-hidden">
           {mount ? (
