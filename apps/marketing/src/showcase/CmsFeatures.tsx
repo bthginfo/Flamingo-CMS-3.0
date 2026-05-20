@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Seo from '@/components/Seo';
 
-const DEMO_BASE = 'https://www.flamingomedia.online';
+const DEMO_BASE = 'https://flamingo-renderer.vercel.app';
 
 const FEATURES = [
   {
