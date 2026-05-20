@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Link, NavLink, Outlet, Routes, Route, useLocation } from 'react-router-dom';
+import { Link, NavLink, Outlet, Routes, Route, useLocation } from '@/lib/nav-compat';
 import type { TemplateKey } from '@/lib/types';
 import { Imprint, Privacy } from './Legal';
 import { NotFound } from './Blog';
@@ -2263,3 +2263,6 @@ function Contact() {
     </>
   );
 }
+
+// Named exports for individual route pages
+export { Landing, ProcessPage, AboutPage, Pricing, Contact, CalloutFooter, ManifestoSection };

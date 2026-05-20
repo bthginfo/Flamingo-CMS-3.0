@@ -1,4 +1,5 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link } from '@/lib/nav-compat';
+import { useParams } from 'next/navigation';
 import Seo from '@/components/Seo';
 
 type Case = {

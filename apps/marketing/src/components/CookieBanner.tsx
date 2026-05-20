@@ -8,7 +8,7 @@
  *    selbst wird in localStorage (technisch notwendig) abgelegt.
  */
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/nav-compat';
 import { useConsent, type ConsentCategory } from '../lib/consent';
 
 const CATEGORY_INFO: { key: Exclude<ConsentCategory, 'necessary'>; label: string; desc: string }[] = [

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/nav-compat';
 import { useReveal } from '@/components/fx';
 import Seo from '@/components/Seo';
 import { CookieSettingsButton } from '@/components/CookieBanner';

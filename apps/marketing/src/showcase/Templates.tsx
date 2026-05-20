@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/nav-compat';
 
 const DEMO_LINKS: Record<string, string> = {
   tradesman: '/demo/handwerk',

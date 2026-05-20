@@ -36,14 +36,7 @@ export const metadata: Metadata = {
     description:
       'Editorial-Design mit Pop für Restaurants, Salons, Handwerk, Praxen, Beratung, Studios und viele mehr. Inhalte, die Sie selbst pflegen – ohne Agentur.',
     type: 'website',
-    images: [
-      {
-        url: '/og-image.svg',
-        width: 1200,
-        height: 630,
-        alt: 'FlamingoMedia – Websites für lokale Marken',
-      },
-    ],
+
     locale: 'de_AT',
     siteName: 'FlamingoMedia',
   },
@@ -52,7 +45,7 @@ export const metadata: Metadata = {
     title: 'FlamingoMedia · Websites für lokale Marken',
     description:
       'Editorial-Design mit Pop für Restaurants, Salons, Handwerk, Praxen, Beratung, Studios und viele mehr.',
-    images: ['/og-image.svg'],
+
   },
   robots: {
     index: true,
