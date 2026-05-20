@@ -418,7 +418,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       {/* FAB Bar */}
       <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
         <button
-          onClick={() => { preview.isOpen ? preview.close() : preview.open('/admin/live-preview'); }}
+          onClick={() => { preview.isOpen ? preview.close() : preview.open('/live-preview'); }}
           className={`flex items-center gap-2 px-4 py-2.5 border rounded-full shadow-lg text-sm font-medium transition-colors ${preview.isOpen ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
         >
           <MonitorPlay size={16} /> Vorschau
