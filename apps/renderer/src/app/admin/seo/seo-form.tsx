@@ -70,16 +70,34 @@ export function SeoForm() {
   );
 
   return (
-    <div className="admin-card p-6 space-y-5">
-      <h2 className="font-semibold text-lg">Globale SEO-Einstellungen</h2>
-      <div className="space-y-4">
-        {field('Standard-Titel', 'defaultTitle', { placeholder: 'Müller & Söhne Meisterbetrieb', maxLength: 70, hint: 'Wird verwendet wenn eine Seite keinen eigenen Titel hat.' })}
-        {field('Titel-Template', 'titleTemplate', { placeholder: '%s | Müller & Söhne', hint: '%s wird durch den Seitentitel ersetzt.' })}
-        {field('Standard-Beschreibung', 'defaultDescription', { placeholder: 'Ihr Experte für Heizung, Sanitär & Bäder...', maxLength: 170, multiline: true })}
-        {field('Standard OG-Bild (URL)', 'defaultOgImage', { placeholder: 'https://...' })}
-        {field('Canonical-Basis-URL', 'canonicalBase', { placeholder: 'https://www.mueller-soehne.de' })}
-        {field('Locale', 'locale', { placeholder: 'de_DE' })}
-        {field('Robots', 'robots', { placeholder: 'index,follow', hint: 'z.B. index,follow oder noindex,nofollow' })}
+    <div className="space-y-6">
+      <div className="admin-card p-5 bg-blue-50 border-blue-200 space-y-2">
+        <h3 className="font-semibold text-sm text-blue-900">Wozu brauche ich das?</h3>
+        <p className="text-sm text-blue-800">SEO (Suchmaschinenoptimierung) bestimmt, wie Ihre Website bei Google & Co. angezeigt wird. Titel und Beschreibung erscheinen direkt in den Suchergebnissen und beeinflussen, ob jemand auf Ihr Ergebnis klickt.</p>
+        <details className="text-sm text-blue-800">
+          <summary className="cursor-pointer font-medium hover:underline">Erklärung der Felder</summary>
+          <ul className="list-disc list-inside mt-2 space-y-1 text-blue-700 text-xs">
+            <li><strong>Standard-Titel:</strong> Wird als Browser-Tab-Titel und bei Google angezeigt (max. 70 Zeichen)</li>
+            <li><strong>Titel-Template:</strong> Schema für Unterseiten, z.B. &quot;Leistungen | Müller &amp; Söhne&quot;</li>
+            <li><strong>Standard-Beschreibung:</strong> Der kurze Text unter dem Titel bei Google (max. 170 Zeichen)</li>
+            <li><strong>OG-Bild:</strong> Das Vorschaubild wenn Ihre Seite auf Social Media geteilt wird</li>
+            <li><strong>Canonical-URL:</strong> Ihre Hauptdomain — hilft Google, Duplikate zu vermeiden</li>
+            <li><strong>Robots:</strong> &quot;index,follow&quot; = bei Google sichtbar. &quot;noindex&quot; = versteckt (z.B. für Testseiten)</li>
+          </ul>
+        </details>
+      </div>
+
+      <div className="admin-card p-6 space-y-5">
+        <h2 className="font-semibold text-lg">Globale SEO-Einstellungen</h2>
+        <div className="space-y-4">
+          {field('Standard-Titel', 'defaultTitle', { placeholder: 'Müller & Söhne Meisterbetrieb', maxLength: 70, hint: 'Wird verwendet wenn eine Seite keinen eigenen Titel hat.' })}
+          {field('Titel-Template', 'titleTemplate', { placeholder: '%s | Müller & Söhne', hint: '%s wird durch den Seitentitel ersetzt.' })}
+          {field('Standard-Beschreibung', 'defaultDescription', { placeholder: 'Ihr Experte für Heizung, Sanitär & Bäder...', maxLength: 170, multiline: true })}
+          {field('Standard OG-Bild (URL)', 'defaultOgImage', { placeholder: 'https://...' })}
+          {field('Canonical-Basis-URL', 'canonicalBase', { placeholder: 'https://www.mueller-soehne.de' })}
+          {field('Locale', 'locale', { placeholder: 'de_DE' })}
+          {field('Robots', 'robots', { placeholder: 'index,follow', hint: 'z.B. index,follow oder noindex,nofollow' })}
+        </div>
       </div>
     </div>
   );
