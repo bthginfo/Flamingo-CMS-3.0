@@ -109,7 +109,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
 
         {/* Right sidebar */}
         <div className="space-y-6">
-          <TenantActions tenantId={id} currentStatus={tenant.status} currentStyle={tenant.activeStyle} />
+          <TenantActions tenantId={id} currentStatus={tenant.status} currentStyle={tenant.activeStyle} isDemo={tenant.isDemo} />
 
           {/* Info */}
           <div className="crm-card p-5 space-y-3 text-sm">

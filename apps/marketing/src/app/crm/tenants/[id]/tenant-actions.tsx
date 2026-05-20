@@ -3,10 +3,10 @@
 import { useTransition } from 'react';
 import { updateTenantAction, deleteTenantAction } from '../actions';
 import { toast } from 'sonner';
-import { Power, Pause, Trash2 } from 'lucide-react';
+import { Power, Pause, Trash2, Eye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export function TenantActions({ tenantId, currentStatus, currentStyle }: { tenantId: string; currentStatus: string; currentStyle: string }) {
+export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo }: { tenantId: string; currentStatus: string; currentStyle: string; isDemo?: boolean }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -15,6 +15,13 @@ export function TenantActions({ tenantId, currentStatus, currentStyle }: { tenan
     startTransition(async () => {
       await updateTenantAction(tenantId, { status: newStatus as 'active' | 'suspended' });
       toast.success(`Status geändert: ${newStatus}`);
+    });
+  }
+
+  function toggleDemo() {
+    startTransition(async () => {
+      await updateTenantAction(tenantId, { isDemo: !isDemo });
+      toast.success(isDemo ? 'Demo-Flag entfernt' : 'Als Demo markiert');
     });
   }
 
@@ -27,6 +34,13 @@ export function TenantActions({ tenantId, currentStatus, currentStyle }: { tenan
         className={`w-full ${currentStatus === 'active' ? 'crm-btn-danger' : 'crm-btn bg-emerald-50 text-emerald-700 hover:bg-emerald-100 active:bg-emerald-200'}`}
       >
         {currentStatus === 'active' ? <><Pause size={14} /> Suspendieren</> : <><Power size={14} /> Aktivieren</>}
+      </button>
+      <button
+        onClick={toggleDemo}
+        disabled={pending}
+        className={`w-full crm-btn ${isDemo ? 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
+      >
+        <Eye size={14} /> {isDemo ? 'Demo-Flag entfernen' : 'Als Demo markieren'}
       </button>
       <button
         onClick={() => {
