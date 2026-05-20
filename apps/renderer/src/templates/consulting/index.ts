@@ -1,0 +1,9 @@
+export { ConsultingHeroSection } from './hero';
+export { PracticeAreasSection } from './practice-areas';
+export { CaseResultsSection } from './case-results';
+export { FeeTableSection } from './fee-table';
+export { PublicationsSection } from './publications';
+export { ConsultingTeamSection } from './team';
+export { ConsultingContactSection } from './contact';
+export { ConsultingTestimonialsSection } from './testimonials';
+export { ConsultingFaqSection } from './faq';

@@ -12,6 +12,7 @@ const DEMO_LINKS: Record<string, string> = {
   medical: '/demo/medical',
   wedding: '/demo/wedding',
   photography: '/demo/photography',
+  consulting: '/demo/consulting',
 };
 
 const TEMPLATES = [
@@ -93,6 +94,16 @@ const TEMPLATES = [
     image: 'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=800&q=80',
     color: '#9c7c5c',
     features: ['Masonry-Portfolio mit Lightbox', 'Service-Pakete & Preise', 'Persönliche Story', 'Shooting-Ablauf Timeline', 'Kundenbewertungen', 'Kontakt & FAQ'],
+    status: 'live' as const,
+  },
+  {
+    key: 'consulting',
+    name: 'Kanzlei & Beratung',
+    tagline: 'Anwälte, Kanzleien & Unternehmensberatung',
+    description: 'Rechtsgebiete-Übersicht, Anwaltsteam, Erfolgsbilanz, Honorartransparenz, Fachpublikationen und Kontakt mit Erstberatungsformular.',
+    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80',
+    color: '#1a2744',
+    features: ['Rechtsgebiete-Grid', 'Anwälte & Partner', 'Erfolgsbilanz', 'Honorar-Übersicht', 'Fachbeiträge', 'Kontakt mit Erstberatung'],
     status: 'live' as const,
   },
 ];

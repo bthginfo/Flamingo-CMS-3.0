@@ -1,6 +1,6 @@
 import type { NavItem, NavCta, FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 
-export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'showcase';
+export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'showcase';
 
 export interface DemoSiteData {
   navItems: NavItem[];
@@ -165,6 +165,26 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
       columns: [
         { title: 'Fotografie', items: [{ text: 'Hochzeiten', href: '/demo/photography/leistungen' }, { text: 'Paare', href: '/demo/photography/leistungen' }, { text: 'Portfolio', href: '/demo/photography/portfolio' }] },
         { title: 'Mehr', items: [{ text: 'FAQ', href: '/demo/photography/faq' }, { text: 'Über mich', href: '/demo/photography/ueber-mich' }, { text: 'Kontakt', href: '/demo/photography/kontakt' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    },
+  },
+  consulting: {
+    brand: { companyName: 'Kanzlei Bergmann & Partner', tagline: 'Ihre Experten für Arbeits-, Familien- und Wirtschaftsrecht', primaryColor: '#1a2744' },
+    contact: { phone: '+49 30 2589 4400', email: 'kanzlei@bergmann-partner.de', address: 'Friedrichstraße 78, 10117 Berlin' },
+    socialLinks: { linkedin: '#' },
+    navItems: [
+      { label: 'Rechtsgebiete', href: '/demo/consulting/rechtsgebiete' },
+      { label: 'Team', href: '/demo/consulting/team' },
+      { label: 'Über uns', href: '/demo/consulting/ueber-uns' },
+      { label: 'Aktuelles', href: '/demo/consulting/aktuelles' },
+      { label: 'Kontakt', href: '/demo/consulting/kontakt' },
+    ],
+    cta: { label: 'Erstberatung', href: '/demo/consulting/kontakt' },
+    footer: {
+      columns: [
+        { title: 'Rechtsgebiete', items: [{ text: 'Arbeitsrecht', href: '/demo/consulting/rechtsgebiete' }, { text: 'Familienrecht', href: '/demo/consulting/rechtsgebiete' }, { text: 'Mietrecht', href: '/demo/consulting/rechtsgebiete' }, { text: 'Handelsrecht', href: '/demo/consulting/rechtsgebiete' }] },
+        { title: 'Kanzlei', items: [{ text: 'Über uns', href: '/demo/consulting/ueber-uns' }, { text: 'Team', href: '/demo/consulting/team' }, { text: 'Aktuelles', href: '/demo/consulting/aktuelles' }, { text: 'Kontakt', href: '/demo/consulting/kontakt' }] },
       ],
       legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
     },
