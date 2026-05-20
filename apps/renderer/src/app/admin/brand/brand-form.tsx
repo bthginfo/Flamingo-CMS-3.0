@@ -4,9 +4,11 @@ import { useState, useEffect, useRef } from 'react';
 import { saveBrandSettings } from '../settings-actions';
 import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
+import { usePreview } from '@/components/admin/preview-context';
+import { getBrandCssVars } from '@/lib/brand-colors';
 import { ImageUploadField } from '@/components/image-upload-field';
 
-type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string };
+type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; dividerColor?: string; btnRadius?: string; cardRadius?: string };
 
 const GOOGLE_FONTS = [
   { value: '', label: 'Standard (Outfit / Inter)' },
@@ -64,6 +66,13 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     btnOutlineBg: initial.btnOutlineBg || '',
     btnOutlineText: initial.btnOutlineText || '',
     btnOutlineBorder: initial.btnOutlineBorder || '',
+    badgeBg: initial.badgeBg || '',
+    badgeText: initial.badgeText || '',
+    badgeBorder: initial.badgeBorder || '',
+    cardBorder: initial.cardBorder || '',
+    dividerColor: initial.dividerColor || '',
+    btnRadius: initial.btnRadius || '',
+    cardRadius: initial.cardRadius || '',
   });
   const [saving, setSaving] = useState(false);
   const { markDirty, markSaved } = useSaveState();
@@ -72,6 +81,16 @@ export function BrandForm({ initial }: { initial: BrandData }) {
   const formJson = JSON.stringify(form);
   useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [formJson]);
   useRegisterSave(() => formRef.current?.requestSubmit());
+
+  // Send live CSS vars to preview whenever brand colors change
+  const preview = usePreview();
+  useEffect(() => {
+    if (!mounted.current) return;
+    const cssVars = getBrandCssVars(form);
+    if (Object.keys(cssVars).length > 0) {
+      preview.sendLiveData({ cssVars });
+    }
+  }, [formJson]);
 
   // Load Google Fonts for preview
   useEffect(() => {
@@ -370,6 +389,96 @@ export function BrandForm({ initial }: { initial: BrandData }) {
             <span className="px-5 py-2.5 rounded-lg text-sm font-semibold inline-block" style={{ backgroundColor: form.btnOutlineBg || 'transparent', color: form.btnOutlineText || '#374151', border: `2px solid ${form.btnOutlineBorder || '#e5e7eb'}` }}>
               Details ansehen
             </span>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Badges & Tags ─── */}
+      <div className="admin-card p-6 space-y-5">
+        <h2 className="font-semibold text-lg">Badges & Tags</h2>
+        <p className="text-sm text-zinc-500">Section-Label (z.B. „Unsere Leistungen"), Kategorie-Tags, Status-Badges. Wenn nicht gesetzt, werden sie automatisch aus der Primärfarbe abgeleitet.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label className="admin-label">Hintergrund</label>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.badgeBg || form.primaryColor} onChange={e => setForm(f => ({ ...f, badgeBg: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.badgeBg} onChange={e => setForm(f => ({ ...f, badgeBg: e.target.value }))} placeholder="Auto (Primärfarbe 5%)" />
+              {form.badgeBg && <button type="button" onClick={() => setForm(f => ({ ...f, badgeBg: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Text</label>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.badgeText || form.primaryColor} onChange={e => setForm(f => ({ ...f, badgeText: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.badgeText} onChange={e => setForm(f => ({ ...f, badgeText: e.target.value }))} placeholder="Auto (Primärfarbe)" />
+              {form.badgeText && <button type="button" onClick={() => setForm(f => ({ ...f, badgeText: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Rahmen</label>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.badgeBorder || form.primaryColor} onChange={e => setForm(f => ({ ...f, badgeBorder: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.badgeBorder} onChange={e => setForm(f => ({ ...f, badgeBorder: e.target.value }))} placeholder="Auto (Primärfarbe 10%)" />
+              {form.badgeBorder && <button type="button" onClick={() => setForm(f => ({ ...f, badgeBorder: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 pt-1">
+          <span className="text-xs text-zinc-400">Vorschau:</span>
+          <span className="px-3 py-1.5 rounded-full text-xs font-medium uppercase tracking-wider inline-block" style={{ backgroundColor: form.badgeBg || `${form.primaryColor}0d`, color: form.badgeText || form.primaryColor, border: `1px solid ${form.badgeBorder || `${form.primaryColor}1a`}` }}>
+            Unsere Leistungen
+          </span>
+        </div>
+      </div>
+
+      {/* ─── Karten & Ränder ─── */}
+      <div className="admin-card p-6 space-y-5">
+        <h2 className="font-semibold text-lg">Karten & Ränder</h2>
+        <p className="text-sm text-zinc-500">Rahmen und Trennlinien zwischen Sektionen, Karten und Inhaltsblöcken.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="admin-label">Karten-Rahmen</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Umrandung von Team-Cards, Service-Karten, Testimonials etc.</p>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.cardBorder || '#e5e7eb'} onChange={e => setForm(f => ({ ...f, cardBorder: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.cardBorder} onChange={e => setForm(f => ({ ...f, cardBorder: e.target.value }))} placeholder="Leer = rgba(0,0,0,0.06)" />
+              {form.cardBorder && <button type="button" onClick={() => setForm(f => ({ ...f, cardBorder: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Trennlinien / Divider</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Horizontale Linien zwischen Abschnitten, unter dem Header etc.</p>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.dividerColor || '#e5e7eb'} onChange={e => setForm(f => ({ ...f, dividerColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.dividerColor} onChange={e => setForm(f => ({ ...f, dividerColor: e.target.value }))} placeholder="Leer = rgba(0,0,0,0.06)" />
+              {form.dividerColor && <button type="button" onClick={() => setForm(f => ({ ...f, dividerColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+        </div>
+        <hr className="border-admin-border" />
+        <h3 className="text-sm font-semibold text-zinc-700">Rundungen</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="admin-label">Button-Radius</label>
+            <select className="admin-input" value={form.btnRadius} onChange={e => setForm(f => ({ ...f, btnRadius: e.target.value }))}>
+              <option value="">Standard (0.75rem)</option>
+              <option value="0">Eckig (0)</option>
+              <option value="0.375rem">Leicht gerundet (0.375rem)</option>
+              <option value="0.75rem">Mittel (0.75rem)</option>
+              <option value="1.5rem">Stark gerundet (1.5rem)</option>
+              <option value="9999px">Pill / Rund</option>
+            </select>
+          </div>
+          <div>
+            <label className="admin-label">Karten-Radius</label>
+            <select className="admin-input" value={form.cardRadius} onChange={e => setForm(f => ({ ...f, cardRadius: e.target.value }))}>
+              <option value="">Standard (1rem)</option>
+              <option value="0">Eckig (0)</option>
+              <option value="0.5rem">Leicht gerundet (0.5rem)</option>
+              <option value="1rem">Mittel (1rem)</option>
+              <option value="1.5rem">Stark gerundet (1.5rem)</option>
+              <option value="2rem">Sehr rund (2rem)</option>
+            </select>
           </div>
         </div>
       </div>

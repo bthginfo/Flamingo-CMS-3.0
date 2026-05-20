@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { saveDesignSettings } from '../settings-actions';
 import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
+import { usePreview } from '@/components/admin/preview-context';
+import { getDesignCssVars } from '@/lib/design-vars';
 import { getContrastColor, contrastRatio, getContrastLevel } from '@/lib/contrast';
 import { Check, AlertTriangle, RotateCcw } from 'lucide-react';
 
@@ -33,6 +35,16 @@ export function BackgroundForm({ initial }: { initial: DesignData }) {
 
   useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [formJson]);
   useRegisterSave(() => formRef.current?.requestSubmit());
+
+  // Send live CSS vars to preview whenever background colors change
+  const preview = usePreview();
+  useEffect(() => {
+    if (!mounted.current) return;
+    const cssVars = getDesignCssVars(form);
+    if (Object.keys(cssVars).length > 0) {
+      preview.sendLiveData({ cssVars });
+    }
+  }, [formJson]);
 
   function updateField(key: string, value: string) {
     setForm(prev => ({ ...prev, [key]: value }));

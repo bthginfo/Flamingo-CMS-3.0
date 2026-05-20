@@ -41,7 +41,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       if (p.sections) setSections(p.sections);
       if (p.industry) setIndustry(p.industry);
       if (p.styleVariant) setStyleVariant(p.styleVariant);
-      if (p.cssVars) setCssVars(p.cssVars);
+      if (p.cssVars) setCssVars(prev => ({ ...prev, ...p.cssVars }));
       if (p.navItems) setNavItems(p.navItems);
       if (p.navCta !== undefined) setNavCta(p.navCta || undefined);
       if (p.brand) setBrand(p.brand);

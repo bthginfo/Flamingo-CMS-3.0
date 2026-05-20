@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { motion, useInView } from 'framer-motion';
 import { Calendar } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
@@ -16,10 +17,15 @@ export function NewsPreviewSection({ data }: Props) {
   const items = (data.items as NewsItem[]) || [];
   const collectionKey = (data.collectionKey as string) || 'news';
   const linkLabel = (data.linkLabel as string) || 'Alle Beiträge';
-  const linkHref = (data.linkHref as string) || `/${collectionKey}`;
   const linkIcon = (data.linkIcon as string) || '';
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
+
+  // Derive base path for demo routes (e.g. /demo/tourism)
+  const pathname = usePathname();
+  const demoMatch = pathname.match(/^(\/demo\/[^/]+)/);
+  const basePath = demoMatch ? demoMatch[1] : '';
+  const linkHref = (data.linkHref as string) || `${basePath}/${collectionKey}`;
 
   if (items.length === 0) return null;
 
@@ -47,7 +53,7 @@ export function NewsPreviewSection({ data }: Props) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
           >
-            <Link href={`/c/${collectionKey}/${item.slug}`} className="group block">
+            <Link href={`${basePath}/c/${collectionKey}/${item.slug}`} className="group block">
               {item.image && (
                 <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-4">
                   <Image src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
