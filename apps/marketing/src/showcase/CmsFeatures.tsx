@@ -53,7 +53,7 @@ const FEATURES = [
     title: 'Sofort sehen.\nWas du baust.',
     description: 'Jede Änderung wird in Echtzeit in einer Live-Vorschau gerendert — genau so, wie deine Besucher es sehen werden. Desktop, Tablet und Mobile.',
     highlights: ['Echtzeit-Rendering ohne Neuladen', 'Responsive-Vorschau (Desktop/Tablet/Mobile)', 'Design-Varianten live vergleichen', 'Direkt aus dem Editor erreichbar'],
-    demoUrl: `${DEMO_BASE}/demo/admin/live-preview`,
+    demoUrl: `${DEMO_BASE}/live-preview`,
   },
 ];
 

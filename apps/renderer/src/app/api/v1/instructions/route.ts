@@ -44,6 +44,9 @@ export async function GET(req: NextRequest) {
       updateCollectionItem: { method: 'PUT', path: '/api/v1/content/collections/:key/items/:id', description: 'Update a collection item' },
       deleteCollectionItem: { method: 'DELETE', path: '/api/v1/content/collections/:key/items/:id', description: 'Delete a collection item' },
       publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content as snapshot' },
+      socialLinks: { method: 'PUT', path: '/api/v1/content/social-links', description: 'Set social media links: { facebook?: url, instagram?: url, linkedin?: url, youtube?: url, tiktok?: url, xing?: url, google?: url, pinterest?: url, twitter?: url }' },
+      style: { method: 'PUT', path: '/api/v1/content/style', description: 'Set active style variant: { style: "classic"|"modern"|"bold" }' },
+      upload: { method: 'POST', path: '/api/v1/content/upload', description: 'Upload an image (multipart/form-data with "file" field). Returns { url, filename, size }. Use the returned url in bgImage, image fields etc.' },
     },
     restrictions: [
       'Do NOT use section type "freeHtml" or "htmlBlock" — raw HTML is not allowed.',
@@ -115,7 +118,7 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
       - legalContent (headline: "Impressum", blocks mit: Verantwortlicher, Kontaktdaten, Handelsregister, USt-IdNr, Haftungshinweis, Urheberrecht)
    
    f) Datenschutz (slug: "datenschutz"):
-      - legalContent (headline: "Datenschutzerkl�rung", blocks mit: Verantwortlicher, Hosting, Cookies, Kontaktformular, Analyse-Tools, Rechte der Betroffenen)
+      - legalContent (headline: "Datenschutzerklärung", blocks mit: Verantwortlicher, Hosting, Cookies, Kontaktformular, Analyse-Tools, Rechte der Betroffenen)
 
 6. COLLECTIONS — Erstelle MINDESTENS eine Collection für die Kernleistungen:
    - POST /api/v1/content/collections → { key: "leistungen", label: "Leistungen" }
@@ -134,6 +137,30 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
 8. PUBLISH (POST /api/v1/content/publish):
    - IMMER als letzter Schritt aufrufen!
 
+9. SOCIAL LINKS (PUT /api/v1/content/social-links):
+   - Setze passende Social-Media-Profile: { facebook: "url", instagram: "url", google: "url" }
+   - Typisch je Branche: Handwerk (Google, Facebook, Instagram), Restaurant (Instagram, Facebook, Google, TripAdvisor), Hotel (Instagram, Facebook, TripAdvisor, Google), Salon (Instagram, Facebook, Google), Medical (Google, Jameda-Link als google), Tourism (Instagram, Facebook, YouTube), Photography (Instagram, Pinterest, Facebook), Wedding (Instagram)
+
+10. STYLE (PUT /api/v1/content/style):
+    - Wähle den passenden Stil: { style: "classic" } oder "modern" oder "bold"
+    - Empfehlung: Hotels/Restaurants → classic, Handwerk/Medical → modern, Fotografie/Salons → bold
+
+═══════════════════════════════════════════
+BRANCHEN-SPEZIFISCHE EMBEDS & INTEGRATIONEN:
+═══════════════════════════════════════════
+
+Nutze die "videoEmbed" Section für externe Widgets/Embeds:
+- Restaurant: OpenTable (Reservierung), Lieferando, Google Reviews Widget
+- Medical/Arztpraxis: Doctolib (Online-Terminbuchung), Jameda Bewertungen
+- Hotel: Booking.com Widget, HolidayCheck, TripAdvisor Reviews
+- Salon: Treatwell/Shore/Planity (Online-Buchung)
+- Tourismus: Outdooractive (Wanderkarten), Bergfex, Skiresort.de
+- Handwerk: MyHammer Profil, Google Reviews
+- Photography: Flothemes Gallery, Pixieset Client Galleries
+- Wedding: Zankyou, WeddingWire RSVP
+
+Für Reservierungen/Buchungen: Nutze die contact-Section mit formEnabled:true und verweise im Text auf externe Buchungslinks.
+
 ═══════════════════════════════════════════
 CONTENT-REGELN:
 ═══════════════════════════════════════════
@@ -146,7 +173,7 @@ CONTENT-REGELN:
 - CTAs: Immer mit konkretem href zu einer existierenden Seite (z.B. "/kontakt", "/leistungen")
 - ServicesGrid href: Verlinke zu Collection-Detail-Seiten als "/c/leistungen/[slug]"
 - Hero Overlay: Nutze overlayColor (hex) + overlayOpacity (0-1) um das Bild-Overlay zu steuern. Ohne diese Felder wird das Standard-Gradient der Branche verwendet.
-- Bild-Effekte: Nutze imageEffect (parallax, kenBurns) + imageEffectIntensity (subtle/medium/strong) bei hero und collectionHero f�r visuelle Aufwertung. Standard: kein Effekt.
+- Bild-Effekte: Nutze imageEffect (parallax, kenBurns) + imageEffectIntensity (subtle/medium/strong) bei hero und collectionHero für visuelle Aufwertung. Standard: kein Effekt.
 - Google Maps: Nutze eine EIGENE "map" Section (NICHT in contact einbauen!). embedUrl = Google Maps > Teilen > Einbetten > src-URL aus dem iframe kopieren. Kontaktseite typisch: hero + contact (Formular+InfoCards) + map (Google Maps Embed).
 - SECTION-AUSWAHL: In availableSectionTypes sind auch Sections aus ANDEREN Branchen enthalten (markiert mit Kategorie "Andere: ..."). Bevorzuge IMMER die brancheneigenen Sections! Nutze fremde Sections nur, wenn deine Branche keine passende eigene Section hat. Beispiel: Ein Hotel nutzt "roomShowcase" statt "servicesGrid".
 
@@ -241,7 +268,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
   const schemas: Record<string, object> = {
     hero: { fields: { headline: 'string', subline: 'string', badgeText: 'string?', badgeIcon: 'lucide-icon-name?', badgeStarsIcon: 'lucide-icon-name? (leer = keine Sterne)', bgImage: 'url?', bgImageMobile: 'url?', bgColor: 'hex? (alternative bg color if no image)', bgMode: '"image"|"color"|"gradient" (default gradient)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', trustItems: 'string[]?', trustStripColor: 'hex?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string? (CSS object-position, e.g. "center 30%")', bgPositionMobile: 'string?', imageEffect: '"none"|"parallax"|"kenBurns"?', imageEffectIntensity: '"subtle"|"medium"|"strong"?' } },
     richText: { fields: { headline: 'string?', content: 'html-string' } },
-    legalContent: { fields: { headline: 'string', blocks: '{ headline: string, text: string (html) }[] � je ein Block pro Thema (z.B. Verantwortlicher, Kontakt, Hosting, Cookies etc.)' } },
+    legalContent: { fields: { headline: 'string', blocks: '{ headline: string, text: string (html) }[] — je ein Block pro Thema (z.B. Verantwortlicher, Kontakt, Hosting, Cookies etc.)' } },
     freeText: { fields: { content: 'rich-text (Tiptap JSON or HTML)' } },
     videoEmbed: { fields: { headline: 'string?', subline: 'string?', videoUrl: 'youtube/vimeo URL', aspectRatio: '"16:9"|"4:3"|"1:1"?' } },
     textImage: { fields: { headline: 'string', text: 'string (html)', badge: 'string?', image: 'url', imageAlt: 'string?', layout: '"image-right"|"image-left"', items: '{ icon?: lucide-icon-name, title: string, text: string }[]?', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
@@ -272,7 +299,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
       testimonials: { fields: { headline: 'string', badgeText: 'string?', items: '{ quote: string, name: string, context?: string, rating?: 1-5 }[]' } },
       faq: { fields: { headline: 'string', badgeText: 'string?', expandFirst: 'boolean?', items: '{ question: string, answer: string }[]' } },
       ctaBand: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', ctaPrimary: '{ label: string, href: string, icon?: lucide-icon-name }' } },
-      contact: { fields: { headline: 'string', introText: 'string?', badgeText: 'string?', formEnabled: 'boolean (default true)', submitLabel: 'string?', formFields: '{ name: string, type: "text"|"email"|"tel"|"textarea", required?: boolean }[]?', infoCards: '{ icon: lucide-icon-name, label: string, value: string }[] (z.B. Phone/Mail/Adresse/�ffnungszeiten)' } },
+      contact: { fields: { headline: 'string', introText: 'string?', badgeText: 'string?', formEnabled: 'boolean (default true)', submitLabel: 'string?', formFields: '{ name: string, type: "text"|"email"|"tel"|"textarea", required?: boolean }[]?', infoCards: '{ icon: lucide-icon-name, label: string, value: string }[] (z.B. Phone/Mail/Adresse/Öffnungszeiten)' } },
       map: { fields: { headline: 'string?', embedUrl: 'Google Maps Embed-URL (https://www.google.com/maps/embed?pb=...)', height: '"s"|"m"|"l" (default "m")' } },
       team: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', membersHeadline: 'string?', members: '{ name: string, role: string, image?: url, bio?: string }[]', storyHeadline: 'string?', storyText: 'string?', storyImage: 'url?', valuesHeadline: 'string?', values: '{ icon: lucide-icon-name, title: string, text: string }[]?', stats: '{ value: string, label: string }[]?' } },
       textImage: { fields: { headline: 'string', text: 'string (html)', badge: 'string?', image: 'url', imageAlt: 'string?', layout: '"image-right" | "image-left"', items: '{ icon?: lucide-icon-name, title: string, text: string }[]?', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
@@ -313,7 +340,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
     });
   } else if (industry === 'salon') {
     Object.assign(schemas, {
-      serviceMenu: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', ctaPrimary: '{ label: string, href: string }?', categories: '{ title: string, text?: string, image?: url, category?: string, services: string[] (z.B. ["Waschen & Schneiden", "F�rben", "Styling"]), cta?: { label: string, href: string } }[]' } },
+      serviceMenu: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', ctaPrimary: '{ label: string, href: string }?', categories: '{ title: string, text?: string, image?: url, category?: string, services: string[] (z.B. ["Waschen & Schneiden", "Färben", "Styling"]), cta?: { label: string, href: string } }[]' } },
       priceList: { fields: { headline: 'string', subline: 'string?', categories: '{ title: string, items: { name: string, description?: string, durationLabel?: string, priceLabel: string }[] }[]', footnote: 'string?' } },
       packages: { fields: { headline: 'string', subline: 'string?', packages: '{ title: string, text: string, image?: url, priceLabel: string, includes: string[], cta?: { label: string, href: string } }[]' } },
       teamShowcase: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', members: '{ name: string, role: string, bio?: string, image?: url, specialties: string[], bookingCta?: { label: string, href: string } }[]' } },
