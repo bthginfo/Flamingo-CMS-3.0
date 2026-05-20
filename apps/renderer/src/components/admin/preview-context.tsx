@@ -29,12 +29,12 @@ export function usePreview() {
 
 export function PreviewProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [url, setUrlState] = useState('/admin/live-preview');
+  const [url, setUrlState] = useState('/live-preview');
   const [refreshKey, setRefreshKey] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const open = useCallback((previewUrl?: string) => {
-    setUrlState(previewUrl || '/admin/live-preview');
+    setUrlState(previewUrl || '/live-preview');
     setIsOpen(true);
   }, []);
 

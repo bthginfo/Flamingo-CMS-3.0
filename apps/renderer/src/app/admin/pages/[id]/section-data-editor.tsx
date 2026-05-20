@@ -68,7 +68,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
     bgPosition: (data.bgPosition as string) || 'center',
     bgPositionMobile: (data.bgPositionMobile as string) || 'center',
     overlayColor: (data.overlayColor as string) || '#000000',
-    overlayOpacity: (data.overlayOpacity as number) ?? 0,
+    overlayOpacity: (data.overlayOpacity as number) ?? -1,
     trustItems: (data.trustItems as string[]) || [],
     trustStripColor: (data.trustStripColor as string) || '',
     primaryCta: (data.primaryCta as { label: string; href: string }) || { label: '', href: '' },
@@ -116,14 +116,26 @@ function HeroEditor({ data, onChange }: EditorProps) {
                 </div>
               )}
               <div className="grid grid-cols-2 gap-3 mt-3">
-                <label className="block">
-                  <span className="text-xs font-medium text-zinc-600">Overlay-Farbe</span>
-                  <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} />
+                <label className="block col-span-2">
+                  <span className="text-xs font-medium text-zinc-600">Overlay</span>
+                  <div className="flex gap-2 mt-1.5">
+                    <button type="button" onClick={() => setD({ ...d, overlayOpacity: -1, overlayColor: '#000000' })} className={`px-3 py-1.5 text-xs rounded-md transition-colors ${d.overlayOpacity === -1 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Standard</button>
+                    <button type="button" onClick={() => setD({ ...d, overlayOpacity: 0.5 })} className={`px-3 py-1.5 text-xs rounded-md transition-colors ${d.overlayOpacity > 0 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Eigene Farbe</button>
+                    <button type="button" onClick={() => setD({ ...d, overlayOpacity: 0 })} className={`px-3 py-1.5 text-xs rounded-md transition-colors ${d.overlayOpacity === 0 ? 'bg-blue-100 text-blue-700 font-medium' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Kein Overlay</button>
+                  </div>
                 </label>
-                <label className="block">
-                  <span className="text-xs font-medium text-zinc-600">Overlay-Deckkraft ({Math.round(d.overlayOpacity * 100)}%)</span>
-                  <input type="range" min="0" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} />
-                </label>
+                {d.overlayOpacity > 0 && (
+                  <>
+                    <label className="block">
+                      <span className="text-xs font-medium text-zinc-600">Overlay-Farbe</span>
+                      <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} />
+                    </label>
+                    <label className="block">
+                      <span className="text-xs font-medium text-zinc-600">Deckkraft ({Math.round(d.overlayOpacity * 100)}%)</span>
+                      <input type="range" min="0.05" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} />
+                    </label>
+                  </>
+                )}
               </div>
               </>
             )}
@@ -975,7 +987,7 @@ function CollectionHeroEditor({ data, onChange }: EditorProps) {
     category: (data.category as string) || '',
     date: (data.date as string) || '',
     overlayColor: (data.overlayColor as string) || '#000000',
-    overlayOpacity: (data.overlayOpacity as number) ?? 0.5,
+    overlayOpacity: (data.overlayOpacity as number) ?? -1,
     imageEffect: (data.imageEffect as string) || 'none',
     imageEffectIntensity: (data.imageEffectIntensity as string) || 'medium',
   });
@@ -998,16 +1010,26 @@ function CollectionHeroEditor({ data, onChange }: EditorProps) {
               <button key={pos} type="button" onClick={() => setD({ ...d, bgPosition: pos })} className={`w-7 h-7 rounded text-[9px] leading-none transition-colors ${d.bgPosition === pos ? 'bg-blue-500 text-white shadow-sm' : 'hover:bg-zinc-200 text-zinc-400'}`} title={pos}>●</button>
             ))}
           </div>
-          <div className="grid grid-cols-2 gap-3 mt-3">
-          <label className="block">
-            <span className="text-xs font-medium text-zinc-600">Overlay-Farbe</span>
-            <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} />
+          <label className="block col-span-2">
+            <span className="text-xs font-medium text-zinc-600">Overlay</span>
+            <div className="flex gap-2 mt-1.5">
+              <button type="button" onClick={() => setD({ ...d, overlayOpacity: -1, overlayColor: '#000000' })} className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${d.overlayOpacity === -1 ? 'bg-blue-500 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Standard</button>
+              <button type="button" onClick={() => setD({ ...d, overlayOpacity: 0.5 })} className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${d.overlayOpacity > 0 ? 'bg-blue-500 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Eigene Farbe</button>
+              <button type="button" onClick={() => setD({ ...d, overlayOpacity: 0 })} className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${d.overlayOpacity === 0 ? 'bg-blue-500 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Kein Overlay</button>
+            </div>
           </label>
-          <label className="block">
-            <span className="text-xs font-medium text-zinc-600">Overlay-Deckkraft ({Math.round(d.overlayOpacity * 100)}%)</span>
-            <input type="range" min="0" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} />
-          </label>
-        </div>
+          {d.overlayOpacity > 0 && (
+            <div className="grid grid-cols-2 gap-3 mt-2">
+              <label className="block">
+                <span className="text-xs font-medium text-zinc-600">Overlay-Farbe</span>
+                <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} />
+              </label>
+              <label className="block">
+                <span className="text-xs font-medium text-zinc-600">Deckkraft ({Math.round(d.overlayOpacity * 100)}%)</span>
+                <input type="range" min="0.05" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} />
+              </label>
+            </div>
+          )}
         </>
       )}
       <p className="text-xs text-gray-400">Variante &quot;minimal&quot; in den erweiterten Einstellungen für reinen Text-Hero ohne Bild.</p>

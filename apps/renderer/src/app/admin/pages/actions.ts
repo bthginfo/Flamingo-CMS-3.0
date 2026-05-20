@@ -74,11 +74,11 @@ export async function getPageWithSectionsAction(pageId: string) {
   const [pageResult, sectionsResult, tenantResult] = await Promise.all([
     db.select().from(pages).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId))),
     db.select().from(pageSections).where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).orderBy(asc(pageSections.sortOrder)),
-    db.select({ industry: tenants.industry }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1),
+    db.select({ industry: tenants.industry, activeStyle: tenants.activeStyle }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1),
   ]);
   const page = pageResult[0];
   if (!page) return null;
-  return { page, sections: sectionsResult, industry: tenantResult[0]?.industry ?? 'tradesman' };
+  return { page, sections: sectionsResult, industry: tenantResult[0]?.industry ?? 'tradesman', styleVariant: tenantResult[0]?.activeStyle ?? 'classic' };
 }
 
 export async function addSectionAction(pageId: string, type: string) {

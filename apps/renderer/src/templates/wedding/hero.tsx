@@ -35,6 +35,8 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
   const showCountdown = data.showCountdown !== false;
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
+  const overlayColor = (data.overlayColor as string) || '';
+  const overlayOpacity = (data.overlayOpacity as number) ?? -1; // -1 = use default style overlay
   const countdown = useCountdown(date);
   const formattedDate = new Date(date).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -62,11 +64,11 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
             {bgImageMobile && <Image src={bgImageMobile} alt={names} fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority />}
           </ImageEffectWrapper>
           {isBold ? (
-            <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
+            overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
           ) : isModern ? (
-            <div className="absolute inset-0 bg-black/30" />
+            overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-black/30" />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/60 via-brand-dark/40 to-brand-dark/60" />
+            overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/60 via-brand-dark/40 to-brand-dark/60" />
           )}
         </>
       ) : (

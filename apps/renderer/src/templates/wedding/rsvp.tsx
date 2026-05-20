@@ -19,7 +19,7 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
 
   if (submitted) {
     return (
-      <section className={`py-16 md:py-24 px-4 md:px-6 ${isBold ? 'bg-gray-950 text-white' : ''}`}>
+      <section data-theme={isBold ? 'dark' : undefined} className={`py-16 md:py-24 px-4 md:px-6 ${isBold ? 'bg-gray-950 text-white' : ''}`}>
         <div className="max-w-lg mx-auto text-center">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${isBold ? 'bg-brand-accent/20' : 'bg-green-100'}`}>
             <Check className={`w-8 h-8 ${isBold ? 'text-brand-accent' : 'text-green-600'}`} />
@@ -67,7 +67,7 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
 
   if (isBold) {
     return (
-      <section className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+      <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
         <div className="max-w-lg mx-auto">
           <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wide mb-4 break-words">{headline}</h2>

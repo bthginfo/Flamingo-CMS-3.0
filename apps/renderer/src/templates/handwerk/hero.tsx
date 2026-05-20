@@ -26,7 +26,7 @@ export function HeroSection({ data, styleVariant }: Props) {
   const primaryCta = data.primaryCta as { label: string; href: string; icon?: string } | undefined;
   const secondaryCta = data.secondaryCta as { label: string; href: string; icon?: string } | undefined;
   const overlayColor = (data.overlayColor as string) || '';
-  const overlayOpacity = (data.overlayOpacity as number) ?? 0;
+  const overlayOpacity = (data.overlayOpacity as number) ?? -1;
   const bgPosition = (data.bgPosition as string) || 'center';
   const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
@@ -52,7 +52,7 @@ type HeroProps = {
   primaryCta?: { label: string; href: string; icon?: string };
   secondaryCta?: { label: string; href: string; icon?: string };
   overlayColor?: string;
-  overlayOpacity?: number;
+  overlayOpacity: number;
   bgPosition?: string;
   bgPositionMobile?: string;
   trustStripColor?: string;
@@ -85,8 +85,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
             <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
             {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="100vw" />}
           </ImageEffectWrapper>
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/90 via-brand-dark/70 to-brand-dark/50" />
-          {overlayColor && overlayOpacity ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : null}
+          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/90 via-brand-dark/70 to-brand-dark/50" />}
         </>
       ) : bgMode === 'color' && bgColor ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />

@@ -54,7 +54,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
 
   if (isBold) {
     return (
-      <section className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+      <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
         <div className="max-w-5xl mx-auto">
           <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words">{headline}</h2>

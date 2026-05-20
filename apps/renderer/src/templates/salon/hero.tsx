@@ -23,7 +23,7 @@ export function SalonHeroSection({ data, styleVariant }: SectionProps) {
   const bgPosition = (data.bgPosition as string) || 'center';
   const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
   const overlayColor = (data.overlayColor as string) || '';
-  const overlayOpacity = (data.overlayOpacity as number) ?? undefined;
+  const overlayOpacity = (data.overlayOpacity as number) ?? -1;
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
@@ -40,7 +40,7 @@ type HeroProps = {
   bgColor: string; bgMode: string;
   trustItems: string[]; primaryCta: ButtonValue; secondaryCta: ButtonValue;
   bookingHint: string; ratingText: string;
-  overlayColor?: string; overlayOpacity?: number;
+  overlayColor?: string; overlayOpacity: number;
   bgPosition?: string;
   bgPositionMobile?: string;  imageEffect?: ImageEffect;
   imageEffectIntensity?: 'subtle' | 'medium' | 'strong';
@@ -55,11 +55,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
           <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
           {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="100vw" />}
           </ImageEffectWrapper>
-          {overlayColor ? (
-            <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-[#6b2148]/85 via-[#8b3a62]/65 to-[#c0528a]/40" />
-          )}
+          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />) : (<div className="absolute inset-0 bg-gradient-to-br from-[#6b2148]/85 via-[#8b3a62]/65 to-[#c0528a]/40" />)}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
@@ -135,11 +131,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMob
         <>
           <Image src={bgImage} alt="" fill className={`object-cover opacity-30${bgImageMobile ? ' hidden md:block' : ''}`} priority sizes="100vw" />
           {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover opacity-30 md:hidden" priority sizes="100vw" />}
-          {overlayColor ? (
-            <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.5 }} />
-          ) : (
-            <div className="absolute inset-0 bg-black/50" />
-          )}
+          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.5 }} />) : (<div className="absolute inset-0 bg-black/50" />)}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />

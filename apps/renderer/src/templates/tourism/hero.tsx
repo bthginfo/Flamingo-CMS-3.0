@@ -23,7 +23,7 @@ export function TourismHeroSection({ data, styleVariant }: SectionProps) {
   const bgPosition = (data.bgPosition as string) || 'center';
   const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
   const overlayColor = (data.overlayColor as string) || '';
-  const overlayOpacity = (data.overlayOpacity as number) ?? undefined;
+  const overlayOpacity = (data.overlayOpacity as number) ?? -1;
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
@@ -41,7 +41,7 @@ type HeroProps = {
   locationLabel: string; seasonLabel: string; trustItems: string[];
   primaryCta: ButtonValue; secondaryCta: ButtonValue;
   overlayColor?: string;
-  overlayOpacity?: number;
+  overlayOpacity: number;
   bgPosition?: string;
   bgPositionMobile?: string;  imageEffect?: ImageEffect;
   imageEffectIntensity?: 'subtle' | 'medium' | 'strong';
@@ -57,11 +57,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgC
             <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
             {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
           </ImageEffectWrapper>
-          {overlayColor ? (
-            <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-b from-green-900/70 via-green-800/50 to-lime-900/60" />
-          )}
+          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />) : (<div className="absolute inset-0 bg-gradient-to-b from-green-900/70 via-green-800/50 to-lime-900/60" />)}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />

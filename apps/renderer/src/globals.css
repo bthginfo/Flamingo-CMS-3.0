@@ -60,11 +60,11 @@ html {
     box-shadow: var(--style-card-shadow, 0 4px 20px rgba(0,0,0,0.06));
   }
 
-  [data-style] section:nth-child(even) {
+  [data-style] section:nth-child(even):not([data-theme="dark"]) {
     background-color: var(--style-section-bg-alt, #f8fafc);
   }
 
-  [data-style] section:nth-child(odd) {
+  [data-style] section:nth-child(odd):not([data-theme="dark"]) {
     background-color: var(--style-section-bg, #ffffff);
   }
 
@@ -258,16 +258,19 @@ html {
 }
 
 /* Section backgrounds */
-[data-style] section:nth-child(odd) {
+[data-style] section:nth-child(odd):not([data-theme="dark"]) {
   background-color: var(--style-section-bg, #ffffff);
 }
-[data-style] section:nth-child(even) {
+[data-style] section:nth-child(even):not([data-theme="dark"]) {
   background-color: var(--style-section-bg-alt, #f8fafc);
 }
 
 /* Text colors */
 [data-style] {
   color: var(--style-text-primary, #0f172a);
+}
+[data-style] [data-theme="dark"] {
+  color: #ffffff;
 }
 [data-style] .text-gray-500,
 [data-style] .text-gray-600,

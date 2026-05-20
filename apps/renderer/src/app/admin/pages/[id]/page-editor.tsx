@@ -168,7 +168,7 @@ function SectionMetaEditor({ section, onSave }: { section: Section; onSave: (met
   );
 }
 
-export function PageEditor({ page: initialPage, sections: initialSections, industry }: { page: Page; sections: Section[]; industry: string }) {
+export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic' }: { page: Page; sections: Section[]; industry: string; styleVariant?: string }) {
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
   const sectionTypes = getSectionTypesForIndustry(industry);
@@ -190,8 +190,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       const newData = pendingChanges.current.get(sec.id);
       return { ...sec, data: newData ?? sec.data };
     });
-    preview.sendLiveData({ sections: liveSections, industry });
-  }, [sections, preview, industry]);
+    preview.sendLiveData({ sections: liveSections, industry, styleVariant });
+  }, [sections, preview, industry, styleVariant]);
 
   useEffect(() => { sendPreviewData(); }, [sendPreviewData]);
 
@@ -257,9 +257,9 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         const newData = sec.id === sectionId ? data : pendingChanges.current.get(sec.id);
         return { ...sec, data: newData ?? sec.data };
       });
-      preview.sendLiveData({ sections: liveSections, industry });
+      preview.sendLiveData({ sections: liveSections, industry, styleVariant });
     }
-  }, [sections, preview, industry]);
+  }, [sections, preview, industry, styleVariant]);
 
   async function handleSaveAll() {
     setSaving(true);
