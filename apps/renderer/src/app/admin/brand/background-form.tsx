@@ -10,10 +10,10 @@ import { Check, AlertTriangle, RotateCcw } from 'lucide-react';
 type DesignData = Record<string, string>;
 
 const BG_FIELDS = [
-  { key: 'sectionBg', label: 'Section-Hintergrund (ungerade)', description: 'Hintergrund für ungerade Sections (1., 3., 5. …)', default: '#ffffff' },
-  { key: 'sectionBgAlt', label: 'Section-Hintergrund (gerade)', description: 'Hintergrund für gerade Sections (2., 4., 6. …)', default: '#f8fafc' },
-  { key: 'cardBg', label: 'Karten-Hintergrund', description: 'Hintergrund für Cards, Boxen und Container', default: '#ffffff' },
-  { key: 'bgSubtle', label: 'Dezenter Hintergrund', description: 'Für hervorgehobene Bereiche innerhalb einer Section', default: '#f1f5f9' },
+  { key: 'sectionBg', label: 'Section-Hintergrund (ungerade)', description: 'Hero, Services, FAQ, Kontakt u.a. — jede 1., 3., 5. Section auf der Seite. Wenn nicht gesetzt, wird Weiß verwendet.', default: '#ffffff' },
+  { key: 'sectionBgAlt', label: 'Section-Hintergrund (gerade)', description: 'Alternierende Sections (2., 4., 6. …) — erzeugt visuellen Rhythmus. Standard: helles Grau aus den Stil-Vorgaben.', default: '#f8fafc' },
+  { key: 'cardBg', label: 'Karten-Hintergrund', description: 'Leistungs-Karten, Team-Karten, Preis-Boxen, Testimonial-Cards und ähnliche hervorgehobene Elemente.', default: '#ffffff' },
+  { key: 'bgSubtle', label: 'Dezenter Hintergrund', description: 'Feature-Listen, Info-Boxen, Statistik-Bereiche und andere dezent abgehobene Bereiche innerhalb einer Section.', default: '#f1f5f9' },
 ] as const;
 
 const TEXT_OVERRIDE_KEYS: Record<string, string> = {

@@ -125,10 +125,11 @@ export function BrandForm({ initial }: { initial: BrandData }) {
 
       <div className="admin-card p-6 space-y-5">
         <h2 className="font-semibold text-lg">Farbschema</h2>
-        <p className="text-sm text-zinc-500">Diese Farben werden auf Ihrer gesamten Website verwendet.</p>
+        <p className="text-sm text-zinc-500">Ihre Hauptfarben bestimmen das gesamte Erscheinungsbild der Website.</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           <div>
             <label className="admin-label">Primärfarbe</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Buttons, Links, Navigation-Akzente, Badges, aktive Elemente</p>
             <div className="flex items-center gap-3">
               <input type="color" value={form.primaryColor} onChange={e => setForm(f => ({ ...f, primaryColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
               <input className="admin-input" value={form.primaryColor} onChange={e => setForm(f => ({ ...f, primaryColor: e.target.value }))} />
@@ -136,6 +137,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
           </div>
           <div>
             <label className="admin-label">Sekundärfarbe</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Hover-Zustände, sekundäre Buttons, Info-Bereiche</p>
             <div className="flex items-center gap-3">
               <input type="color" value={form.secondaryColor} onChange={e => setForm(f => ({ ...f, secondaryColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
               <input className="admin-input" value={form.secondaryColor} onChange={e => setForm(f => ({ ...f, secondaryColor: e.target.value }))} />
@@ -143,6 +145,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
           </div>
           <div>
             <label className="admin-label">Akzentfarbe</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Call-to-Action-Bereiche, Highlights, Sterne/Bewertungen</p>
             <div className="flex items-center gap-3">
               <input type="color" value={form.accentColor} onChange={e => setForm(f => ({ ...f, accentColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
               <input className="admin-input" value={form.accentColor} onChange={e => setForm(f => ({ ...f, accentColor: e.target.value }))} />
@@ -162,10 +165,11 @@ export function BrandForm({ initial }: { initial: BrandData }) {
 
       <div className="admin-card p-6 space-y-5">
         <h2 className="font-semibold text-lg">Bereichsfarben (optional)</h2>
-        <p className="text-sm text-zinc-500">Standardmäßig wird eine dunklere Abwandlung der Primärfarbe verwendet. Hier können Sie eigene Farben festlegen.</p>
+        <p className="text-sm text-zinc-500">Standardmäßig wird eine dunklere Abwandlung der Primärfarbe verwendet. Hier können Sie eigene Farben für spezifische Bereiche festlegen.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
             <label className="admin-label">Top-Banner Farbe</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Schmaler Balken ganz oben mit Kontaktinfos (Telefon, E-Mail)</p>
             <div className="flex items-center gap-3">
               <input type="color" value={form.topBarColor || form.primaryColor} onChange={e => setForm(f => ({ ...f, topBarColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
               <input className="admin-input flex-1" value={form.topBarColor} onChange={e => setForm(f => ({ ...f, topBarColor: e.target.value }))} placeholder="Leer = Abwandlung Primärfarbe" />
@@ -174,6 +178,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
           </div>
           <div>
             <label className="admin-label">Footer Farbe</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Hintergrund des gesamten Footer-Bereichs am Seitenende</p>
             <div className="flex items-center gap-3">
               <input type="color" value={form.footerColor || form.primaryColor} onChange={e => setForm(f => ({ ...f, footerColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
               <input className="admin-input flex-1" value={form.footerColor} onChange={e => setForm(f => ({ ...f, footerColor: e.target.value }))} placeholder="Leer = Abwandlung Primärfarbe" />
@@ -185,7 +190,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
 
       <div className="admin-card p-6 space-y-5">
         <h2 className="font-semibold text-lg">Schriften</h2>
-        <p className="text-sm text-zinc-500">Wählen Sie Google Fonts oder laden Sie eigene Schrift-Dateien (.woff2, .woff, .ttf) hoch.</p>
+        <p className="text-sm text-zinc-500">Die Überschriften-Schrift wird für alle H1–H6 Titel verwendet, die Fließtext-Schrift für Absätze, Listen und allgemeine Inhalte.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div className="space-y-3">
             <label className="admin-label">Überschriften-Schrift</label>
@@ -255,21 +260,22 @@ export function BrandForm({ initial }: { initial: BrandData }) {
       <details className="admin-card p-6">
         <summary className="font-semibold text-lg cursor-pointer select-none">Erweiterte Farbeinstellungen</summary>
         <div className="space-y-5 mt-5">
-          <p className="text-sm text-zinc-500">Diese Farben überschreiben die Standardwerte. Leer lassen = automatisch abgeleitet.</p>
+          <p className="text-sm text-zinc-500">Überschreiben Sie einzelne Textfarben gezielt. Leer lassen = automatisch von den Hauptfarben abgeleitet.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {([
-              { key: 'headingColor', label: 'Überschriften-Farbe' },
-              { key: 'bodyTextColor', label: 'Fließtext-Farbe' },
-              { key: 'linkColor', label: 'Link-Farbe' },
-              { key: 'linkHoverColor', label: 'Link-Hover-Farbe' },
-              { key: 'navLinkColor', label: 'Navigation-Link-Farbe' },
-              { key: 'footerTextColor', label: 'Footer Text-Farbe' },
-              { key: 'footerLinkColor', label: 'Footer Link-Farbe' },
-              { key: 'btnPrimaryBg', label: 'Button Hintergrund' },
-              { key: 'btnPrimaryText', label: 'Button Textfarbe' },
-            ] as const).map(({ key, label }) => (
+              { key: 'headingColor', label: 'Überschriften-Farbe', hint: 'Alle H1–H6 Titel auf der Website' },
+              { key: 'bodyTextColor', label: 'Fließtext-Farbe', hint: 'Absätze, Listen, allgemeiner Text' },
+              { key: 'linkColor', label: 'Link-Farbe', hint: 'Textlinks im Inhaltsbereich' },
+              { key: 'linkHoverColor', label: 'Link-Hover-Farbe', hint: 'Textlinks beim Überfahren mit der Maus' },
+              { key: 'navLinkColor', label: 'Navigation-Link-Farbe', hint: 'Menüpunkte in der Hauptnavigation' },
+              { key: 'footerTextColor', label: 'Footer Text-Farbe', hint: 'Allgemeiner Text im Footer' },
+              { key: 'footerLinkColor', label: 'Footer Link-Farbe', hint: 'Klickbare Links im Footer' },
+              { key: 'btnPrimaryBg', label: 'Button Hintergrund', hint: 'Primäre Buttons (CTA, Formular-Absenden)' },
+              { key: 'btnPrimaryText', label: 'Button Textfarbe', hint: 'Beschriftung auf primären Buttons' },
+            ] as const).map(({ key, label, hint }) => (
               <div key={key}>
                 <label className="admin-label">{label}</label>
+                <p className="text-xs text-zinc-400 mb-1.5">{hint}</p>
                 <div className="flex items-center gap-3">
                   <input type="color" value={(form as Record<string, string>)[key] || '#000000'} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
                   <input className="admin-input flex-1" value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder="Leer = Standard" />

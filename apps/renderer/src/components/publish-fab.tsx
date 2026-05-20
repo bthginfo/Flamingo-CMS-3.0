@@ -2,15 +2,17 @@
 
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { Rocket, ExternalLink, Save } from 'lucide-react';
+import { Rocket, MonitorPlay, Save } from 'lucide-react';
 import { publishAction } from '@/app/admin/actions/publish';
 import { useSaveState } from '@/components/save-context';
+import { usePreview } from '@/components/admin/preview-context';
 
 export function PublishFab() {
   const pathname = usePathname();
   const [publishing, setPublishing] = useState(false);
   const [published, setPublished] = useState(false);
   const { state: saveState, hasSaveHandler, triggerSave, reset } = useSaveState();
+  const preview = usePreview();
 
   // Page editor and collection item editor have their own FAB bars
   if (/^\/admin\/pages\/[^/]+$/.test(pathname)) return null;
@@ -39,14 +41,14 @@ export function PublishFab() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3" data-tour="publish-fab">
-      <a
-        href={`/preview/?token=${encodeURIComponent(process.env.NEXT_PUBLIC_PREVIEW_SECRET || 'preview')}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-full shadow-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+      <button
+        onClick={() => preview.isOpen ? preview.close() : preview.open('/live-preview')}
+        className={`flex items-center gap-2 px-4 py-3 border rounded-full shadow-lg text-sm font-medium transition-colors ${
+          preview.isOpen ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+        }`}
       >
-        <ExternalLink size={16} /> Vorschau
-      </a>
+        <MonitorPlay size={16} /> Vorschau
+      </button>
       {showSave ? (
         <button
           onClick={triggerSave}
