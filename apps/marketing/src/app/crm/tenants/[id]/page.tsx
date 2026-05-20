@@ -164,7 +164,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
                 <Shield size={14} className="shrink-0" /> Admin öffnen
               </a>
             )}
-            {tenant.slug?.startsWith('demo-') && (() => {
+            {(tenant.isDemo || tenant.slug?.startsWith('demo-')) && (() => {
               const industryMap: Record<string, string> = { tradesman: 'handwerk', hotel: 'hotel', restaurant: 'restaurant', salon: 'salon', tourism: 'tourism', medical: 'medical', wedding: 'wedding', photography: 'photography' };
               const demoKey = industryMap[tenant.industry] || tenant.industry;
               const rendererBase = domains[0] ? `https://${domains[0].domain}` : 'https://flamingo-renderer.vercel.app';
