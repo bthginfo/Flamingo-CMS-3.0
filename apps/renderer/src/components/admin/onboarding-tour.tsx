@@ -94,7 +94,7 @@ export function OnboardingTour() {
   const placement = currentStep.placement || 'right';
 
   // Calculate tooltip position (clamped to viewport)
-  let tooltipStyle: React.CSSProperties = { position: 'fixed', zIndex: 10001 };
+  let tooltipStyle: React.CSSProperties = { position: 'fixed', zIndex: 10002 };
   const tooltipW = 320;
   const tooltipH = 160;
   if (targetRect) {
@@ -131,24 +131,26 @@ export function OnboardingTour() {
 
   return (
     <>
-      {/* Overlay */}
-      <div className="fixed inset-0 z-[10000] pointer-events-none">
-        {/* Dark backdrop with cutout */}
-        <div className="absolute inset-0 bg-black/50 pointer-events-auto" onClick={finish} />
-        {/* Highlight cutout */}
+      {/* Overlay — click to dismiss */}
+      <div className="fixed inset-0 z-[10000]">
+        {/* Invisible click target for dismissal (sits behind the cutout) */}
+        <div className="absolute inset-0 pointer-events-auto" onClick={finish} />
+        {/* Highlight cutout — box-shadow creates the darkened overlay */}
         {targetRect && (
           <div
-            className="absolute rounded-lg ring-4 ring-blue-400/80 bg-transparent pointer-events-none"
+            className="absolute rounded-lg ring-4 ring-blue-400/80 pointer-events-none"
             style={{
               top: targetRect.top - 4,
               left: targetRect.left - 4,
               width: targetRect.width + 8,
               height: targetRect.height + 8,
               boxShadow: '0 0 0 9999px rgba(0,0,0,0.5)',
-              zIndex: 10000,
+              zIndex: 10001,
             }}
           />
         )}
+        {/* Fallback if no target found: full dark overlay */}
+        {!targetRect && <div className="absolute inset-0 bg-black/50 pointer-events-none" />}
       </div>
 
       {/* Tooltip */}
