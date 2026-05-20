@@ -227,6 +227,9 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
     subline: (data.subline as string) || '',
     badgeText: (data.badgeText as string) || '',
     ctaPrimary: (data.ctaPrimary as { label: string; href: string }) || { label: '', href: '' },
+    bgColor: (data.bgColor as string) || '',
+    textColor: (data.textColor as string) || '',
+    accentColor: (data.accentColor as string) || '',
   });
   useReport(d as unknown as Record<string, unknown>, onChange);
 
@@ -236,6 +239,32 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+      <details className="border border-zinc-200 rounded-lg p-3">
+        <summary className="text-xs font-medium text-zinc-500 cursor-pointer">Farben überschreiben (optional)</summary>
+        <div className="grid grid-cols-3 gap-3 mt-3">
+          <div>
+            <label className="admin-label text-[10px]">Hintergrund</label>
+            <div className="flex items-center gap-2">
+              <input type="color" value={d.bgColor || '#1a2035'} onChange={(e) => setD({ ...d, bgColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" />
+              {d.bgColor && <button onClick={() => setD({ ...d, bgColor: '' })} className="text-[10px] text-red-400 hover:text-red-600">×</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label text-[10px]">Text</label>
+            <div className="flex items-center gap-2">
+              <input type="color" value={d.textColor || '#ffffff'} onChange={(e) => setD({ ...d, textColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" />
+              {d.textColor && <button onClick={() => setD({ ...d, textColor: '' })} className="text-[10px] text-red-400 hover:text-red-600">×</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label text-[10px]">Akzent / Button</label>
+            <div className="flex items-center gap-2">
+              <input type="color" value={d.accentColor || '#f39c12'} onChange={(e) => setD({ ...d, accentColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" />
+              {d.accentColor && <button onClick={() => setD({ ...d, accentColor: '' })} className="text-[10px] text-red-400 hover:text-red-600">×</button>}
+            </div>
+          </div>
+        </div>
+      </details>
     </div>
   );
 }

@@ -12,39 +12,49 @@ export function CtaBandSection({ data, styleVariant }: Props) {
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
   const cta = data.ctaPrimary as { label: string; href: string; icon?: string } | undefined;
+  const colors = {
+    bgColor: (data.bgColor as string) || undefined,
+    textColor: (data.textColor as string) || undefined,
+    accentColor: (data.accentColor as string) || undefined,
+  };
 
-  if (styleVariant === 'modern') return <CtaModern headline={headline} subline={subline} badgeText={badgeText} cta={cta} />;
-  if (styleVariant === 'bold') return <CtaBold headline={headline} subline={subline} badgeText={badgeText} cta={cta} />;
-  return <CtaClassic headline={headline} subline={subline} badgeText={badgeText} cta={cta} />;
+  if (styleVariant === 'modern') return <CtaModern headline={headline} subline={subline} badgeText={badgeText} cta={cta} colors={colors} />;
+  if (styleVariant === 'bold') return <CtaBold headline={headline} subline={subline} badgeText={badgeText} cta={cta} colors={colors} />;
+  return <CtaClassic headline={headline} subline={subline} badgeText={badgeText} cta={cta} colors={colors} />;
 }
 
-type CProps = { headline: string; subline: string; badgeText: string; cta?: { label: string; href: string; icon?: string } };
+type ColorOverrides = { bgColor?: string; textColor?: string; accentColor?: string };
+type CProps = { headline: string; subline: string; badgeText: string; cta?: { label: string; href: string; icon?: string }; colors?: ColorOverrides };
 
 /* ─── CLASSIC: Gradient bg, centered, pill cta, floating orbs ─── */
-function CtaClassic({ headline, subline, badgeText, cta }: CProps) {
+function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const bgY = useTransform(scrollYProgress, [0, 1], ['-10%', '10%']);
 
+  const wrapStyle: React.CSSProperties = {};
+  if (colors?.bgColor) wrapStyle.background = colors.bgColor;
+  if (colors?.textColor) wrapStyle.color = colors.textColor;
+
   return (
-    <motion.div ref={ref} initial={{ opacity: 0, scale: 0.98 }} animate={inView ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.7 }} className="relative overflow-hidden rounded-4xl">
-      <motion.div style={{ y: bgY }} className="absolute inset-0 scale-110 bg-hero-gradient" />
+    <motion.div ref={ref} initial={{ opacity: 0, scale: 0.98 }} animate={inView ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.7 }} className="relative overflow-hidden rounded-4xl" style={wrapStyle}>
+      {!colors?.bgColor && <motion.div style={{ y: bgY }} className="absolute inset-0 scale-110 bg-hero-gradient" />}
       <div className="absolute inset-0">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-accent/15 rounded-full blur-[120px] animate-pulse-slow" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] animate-pulse-slow" style={{ backgroundColor: colors?.accentColor ? `${colors.accentColor}26` : 'var(--brand-accent-15, rgba(243,156,18,0.15))' }} />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-white/5 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
       </div>
       <div className="relative z-10 text-center text-white px-6 py-12 md:py-20 sm:py-16 md:py-24 lg:py-32">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
           className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-5 py-2 text-sm mb-8">
-          <Sparkles size={14} className="text-brand-accent" /><span>{badgeText || 'Jetzt Termin sichern'}</span>
+          <Sparkles size={14} style={colors?.accentColor ? { color: colors.accentColor } : undefined} className={!colors?.accentColor ? 'text-brand-accent' : ''} /><span>{badgeText || 'Jetzt Termin sichern'}</span>
         </motion.div>
         <motion.h2 initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 }}
           className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight !leading-[1.1]">{headline}</motion.h2>
         {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="text-lg sm:text-xl opacity-70 mb-10 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         {cta?.label && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }}>
-            <a href={cta.href} className="group inline-flex items-center gap-2.5 bg-brand-accent px-8 py-4 rounded-full font-semibold text-gray-900 hover:shadow-glow-accent hover:-translate-y-0.5 transition-all">
+            <a href={cta.href} style={colors?.accentColor ? { backgroundColor: colors.accentColor } : undefined} className={`group inline-flex items-center gap-2.5 px-8 py-4 rounded-full font-semibold text-gray-900 hover:-translate-y-0.5 transition-all ${!colors?.accentColor ? 'bg-brand-accent hover:shadow-glow-accent' : 'hover:brightness-110'}`}>
               {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
             </a>
           </motion.div>
@@ -55,19 +65,23 @@ function CtaClassic({ headline, subline, badgeText, cta }: CProps) {
 }
 
 /* ─── MODERN: Pure text, large font, underline link, white bg ─── */
-function CtaModern({ headline, subline, cta }: CProps) {
+function CtaModern({ headline, subline, cta, colors }: CProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
+  const wrapStyle: React.CSSProperties = {};
+  if (colors?.bgColor) wrapStyle.background = colors.bgColor;
+  if (colors?.textColor) wrapStyle.color = colors.textColor;
+
   return (
     <motion.div ref={ref} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.8 }}
-      className="text-center py-16 md:py-24 lg:py-32">
-      <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light text-gray-900 tracking-tight !leading-[1.1] max-w-4xl mx-auto">
+      className="text-center py-16 md:py-24 lg:py-32" style={wrapStyle}>
+      <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight !leading-[1.1] max-w-4xl mx-auto" style={colors?.textColor ? { color: colors.textColor } : undefined}>
         {headline}
       </h2>
       {subline && <div className="text-lg text-gray-400 mt-6 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       {cta?.label && (
-        <a href={cta.href} className="group inline-flex items-center gap-3 text-gray-900 font-medium text-lg mt-10 border-b-2 border-gray-900 pb-1 hover:border-brand-accent hover:text-brand-accent transition-colors">
+        <a href={cta.href} style={colors?.accentColor ? { borderColor: colors.accentColor, color: colors.textColor || 'currentColor' } : undefined} className={`group inline-flex items-center gap-3 font-medium text-lg mt-10 border-b-2 pb-1 transition-colors ${!colors?.accentColor ? 'text-gray-900 border-gray-900 hover:border-brand-accent hover:text-brand-accent' : ''}`}>
           {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
         </a>
       )}
@@ -76,20 +90,31 @@ function CtaModern({ headline, subline, cta }: CProps) {
 }
 
 /* ─── BOLD: Full-width accent block, text left, angular ─── */
-function CtaBold({ headline, subline, badgeText, cta }: CProps) {
+function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
+  const wrapStyle: React.CSSProperties = {};
+  if (colors?.bgColor) wrapStyle.background = colors.bgColor;
+  if (colors?.textColor) wrapStyle.color = colors.textColor;
+
+  const badgeStyle: React.CSSProperties = colors?.accentColor
+    ? { backgroundColor: colors.accentColor, color: colors.bgColor || 'var(--brand-dark)' }
+    : {};
+  const ctaStyle: React.CSSProperties = colors?.accentColor
+    ? { backgroundColor: colors.accentColor, color: colors.bgColor || 'var(--brand-dark)' }
+    : {};
+
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}
-      className="bg-brand-dark text-white p-10 lg:p-16 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+      className={`text-white p-10 lg:p-16 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 ${!colors?.bgColor ? 'bg-brand-dark' : ''}`} style={wrapStyle}>
       <div>
-        {badgeText && <span className="inline-block bg-brand-accent text-brand-dark font-bold text-xs uppercase tracking-widest px-3 py-1.5 mb-4">{badgeText}</span>}
+        {badgeText && <span className={`inline-block font-bold text-xs uppercase tracking-widest px-3 py-1.5 mb-4 ${!colors?.accentColor ? 'bg-brand-accent text-brand-dark' : ''}`} style={badgeStyle}>{badgeText}</span>}
         <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tight">{headline}</h2>
         {subline && <div className="text-white/50 mt-3 font-medium max-w-xl rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {cta?.label && (
-        <a href={cta.href} className="inline-flex items-center justify-between lg:justify-center lg:gap-3 bg-brand-accent text-brand-dark font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] shrink-0 w-full lg:w-auto">
+        <a href={cta.href} className={`inline-flex items-center justify-between lg:justify-center lg:gap-3 font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] shrink-0 w-full lg:w-auto ${!colors?.accentColor ? 'bg-brand-accent text-brand-dark' : ''}`} style={ctaStyle}>
           {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} />}
         </a>
       )}

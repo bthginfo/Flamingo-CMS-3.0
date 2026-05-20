@@ -146,6 +146,9 @@ export const ctaBandDataSchema = z.object({
   ctaSecondary: ctaSchema.optional(),
   background: z.enum(['surface', 'gradient', 'image']).default('surface'),
   bgImage: mediaRefSchema.optional(),
+  bgColor: z.string().optional(),
+  textColor: z.string().optional(),
+  accentColor: z.string().optional(),
 });
 
 // ─── 10. Contact / Anfrage ──────────────────────────────────────────
