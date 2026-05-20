@@ -16,13 +16,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       token: process.env.BLOB_READ_WRITE_TOKEN,
       onBeforeGenerateToken: async (pathname) => {
         const session = await getSession();
-        if (!session) throw new Error('Unauthorized — no valid session');
+        const tenantId = session?.tenantId || process.env.FIXED_TENANT_ID;
+        if (!tenantId) {
+          throw new Error('Unauthorized — no valid session and no FIXED_TENANT_ID');
+        }
 
         return {
           allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/avif'],
           maximumSizeInBytes: 10 * 1024 * 1024, // 10MB
           addRandomSuffix: true,
-          tokenPayload: JSON.stringify({ tenantId: session.tenantId }),
+          tokenPayload: JSON.stringify({ tenantId }),
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
@@ -33,10 +36,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json(jsonResponse);
   } catch (error) {
     const message = (error as Error).message;
-    console.error('Upload error:', message);
+    console.error('[Upload] Error:', message);
     return NextResponse.json(
       { error: message },
-      { status: 400 },
+      { status: message.includes('Unauthorized') ? 401 : 400 },
     );
   }
 }
