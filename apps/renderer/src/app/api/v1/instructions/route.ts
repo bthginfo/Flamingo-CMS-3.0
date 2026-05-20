@@ -146,22 +146,6 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
     - Empfehlung: Hotels/Restaurants → classic, Handwerk/Medical → modern, Fotografie/Salons → bold
 
 ═══════════════════════════════════════════
-BRANCHEN-SPEZIFISCHE EMBEDS & INTEGRATIONEN:
-═══════════════════════════════════════════
-
-Nutze die "videoEmbed" Section für externe Widgets/Embeds:
-- Restaurant: OpenTable (Reservierung), Lieferando, Google Reviews Widget
-- Medical/Arztpraxis: Doctolib (Online-Terminbuchung), Jameda Bewertungen
-- Hotel: Booking.com Widget, HolidayCheck, TripAdvisor Reviews
-- Salon: Treatwell/Shore/Planity (Online-Buchung)
-- Tourismus: Outdooractive (Wanderkarten), Bergfex, Skiresort.de
-- Handwerk: MyHammer Profil, Google Reviews
-- Photography: Flothemes Gallery, Pixieset Client Galleries
-- Wedding: Zankyou, WeddingWire RSVP
-
-Für Reservierungen/Buchungen: Nutze die contact-Section mit formEnabled:true und verweise im Text auf externe Buchungslinks.
-
-═══════════════════════════════════════════
 CONTENT-REGELN:
 ═══════════════════════════════════════════
 

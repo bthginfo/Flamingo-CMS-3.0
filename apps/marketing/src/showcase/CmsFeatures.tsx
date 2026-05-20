@@ -105,8 +105,85 @@ function DesktopMockup({ demoUrl }: { demoUrl: string }) {
   );
 }
 
+function SplitPanelMockup() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [mount, setMount] = useState(false);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || mount) return;
+    const obs = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { setMount(true); obs.disconnect(); } }, { rootMargin: '200px' });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [mount]);
+
+  return (
+    <div ref={wrapRef} className="rounded-2xl overflow-hidden border border-slate-200 shadow-2xl bg-white">
+      <div className="bg-slate-900 px-4 py-2.5 flex items-center gap-1.5">
+        <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+        <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+        <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+        <span className="ml-3 text-[10px] text-slate-500 font-mono">flamingo-cms.de/admin — Split-View</span>
+      </div>
+      <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-100 flex">
+        {/* Admin side (left 40%) */}
+        <div className="relative w-[40%] h-full border-r border-slate-200 overflow-hidden">
+          {mount ? (
+            <iframe
+              src={`${DEMO_BASE}/demo/admin/pages?embed=1`}
+              className="absolute top-0 left-0 w-[800px] h-[900px] origin-top-left border-0 pointer-events-none"
+              style={{ transform: 'scale(var(--split-admin-scale, 0.35))' }}
+              loading="lazy"
+              title="CMS Admin Editor"
+              ref={(el) => {
+                if (!el) return;
+                const parent = el.parentElement;
+                if (!parent) return;
+                const ro = new ResizeObserver(() => {
+                  const scale = parent.clientWidth / 800;
+                  parent.style.setProperty('--split-admin-scale', String(scale));
+                });
+                ro.observe(parent);
+              }}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-slate-300 text-xs">Editor…</div>
+          )}
+          <div className="absolute bottom-2 left-2 bg-slate-900/80 text-white text-[9px] px-2 py-0.5 rounded font-medium">Editor</div>
+        </div>
+        {/* Preview side (right 60%) */}
+        <div className="relative w-[60%] h-full overflow-hidden">
+          {mount ? (
+            <iframe
+              src={`${DEMO_BASE}/live-preview`}
+              className="absolute top-0 left-0 w-[1280px] h-[900px] origin-top-left border-0 pointer-events-none"
+              style={{ transform: 'scale(var(--split-preview-scale, 0.5))' }}
+              loading="lazy"
+              title="Live Preview"
+              ref={(el) => {
+                if (!el) return;
+                const parent = el.parentElement;
+                if (!parent) return;
+                const ro = new ResizeObserver(() => {
+                  const scale = parent.clientWidth / 1280;
+                  parent.style.setProperty('--split-preview-scale', String(scale));
+                });
+                ro.observe(parent);
+              }}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-slate-300 text-xs">Preview…</div>
+          )}
+          <div className="absolute bottom-2 right-2 bg-emerald-600/90 text-white text-[9px] px-2 py-0.5 rounded font-medium">Live-Vorschau</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function FeatureBlock({ feature, index }: { feature: typeof FEATURES[0]; index: number }) {
   const isReversed = index % 2 === 1;
+  const isLivePreview = feature.badge === 'Live-Vorschau';
 
   return (
     <section className="py-20 md:py-28">
@@ -133,7 +210,7 @@ function FeatureBlock({ feature, index }: { feature: typeof FEATURES[0]; index: 
         {/* Mockup side */}
         <div className={`reveal ${isReversed ? 'lg:col-start-1' : ''}`}>
           <div className="relative">
-            <DesktopMockup demoUrl={feature.demoUrl} />
+            {isLivePreview ? <SplitPanelMockup /> : <DesktopMockup demoUrl={feature.demoUrl} />}
             <div className="absolute -inset-6 -z-10 bg-gradient-to-br from-[var(--accent-color)]/20 to-transparent rounded-3xl blur-2xl" />
           </div>
         </div>
