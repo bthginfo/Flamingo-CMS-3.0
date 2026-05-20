@@ -6,6 +6,7 @@ import {
   Plus, Pencil, Trash2, Eye, EyeOff, GripVertical, Upload, ArrowUpDown, Globe, Mail,
   Rocket, BookOpen,
 } from 'lucide-react';
+import { RestartTourButton } from '@/components/admin/onboarding-tour';
 
 type SectionProps = { title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean; color?: string };
 
@@ -59,6 +60,9 @@ export default function HelpPage() {
           </div>
           <h1 className="text-3xl font-bold text-zinc-900">Hilfe & Anleitung</h1>
           <p className="text-zinc-500 mt-2 max-w-lg">Alles was du brauchst, um deine Website zu erstellen und zu verwalten — Schritt für Schritt erklärt.</p>
+          <div className="mt-4">
+            <RestartTourButton />
+          </div>
         </div>
       </div>
 

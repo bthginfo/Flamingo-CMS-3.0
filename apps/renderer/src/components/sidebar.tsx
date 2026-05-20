@@ -14,14 +14,14 @@ import { MonitorPlay } from 'lucide-react';
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/pages', label: 'Seiten', icon: FileText },
+  { href: '/admin/pages', label: 'Seiten', icon: FileText, tour: 'sidebar-pages' },
   { href: '/admin/collections', label: 'Collections', icon: FolderOpen },
   { href: '/admin/news', label: 'News & Blog', icon: Newspaper },
-  { href: '/admin/media', label: 'Mediathek', icon: ImageIcon },
+  { href: '/admin/media', label: 'Mediathek', icon: ImageIcon, tour: 'sidebar-media' },
   { href: '/admin/inbox', label: 'Posteingang', icon: Inbox },
   { href: '/admin/rsvp', label: 'RSVP-Gäste', icon: Heart, industry: 'wedding' },
-  { href: '/admin/navigation', label: 'Navigation & Footer', icon: Navigation },
-  { href: '/admin/brand', label: 'Marke & Design', icon: Palette },
+  { href: '/admin/navigation', label: 'Navigation & Footer', icon: Navigation, tour: 'sidebar-nav' },
+  { href: '/admin/brand', label: 'Marke & Design', icon: Palette, tour: 'sidebar-brand' },
   { href: '/admin/contact', label: 'Kontakt & Zeiten', icon: Phone },
   { href: '/admin/social', label: 'Social Media', icon: Share2 },
   { href: '/admin/seo', label: 'SEO & Sichtbarkeit', icon: Search },
@@ -88,7 +88,7 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
           {filteredNav.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
             return (
-              <Link key={item.href} href={item.href} onClick={() => setOpen(false)}
+              <Link key={item.href} href={item.href} onClick={() => setOpen(false)} data-tour={item.tour}
                 className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${isActive ? 'bg-white/10 text-white font-medium' : 'text-sidebar-muted hover:text-white hover:bg-white/5'}`}>
                 <item.icon size={18} className={isActive ? 'text-sidebar-active' : ''} />
                 {item.label}
@@ -126,7 +126,7 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
           {filteredNav.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
             return (
-              <Link key={item.href} href={item.href} title={collapsed ? item.label : undefined}
+              <Link key={item.href} href={item.href} title={collapsed ? item.label : undefined} data-tour={item.tour}
                 className={`flex items-center gap-3 rounded-lg text-sm transition-colors ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'} ${isActive ? 'bg-white/10 text-white font-medium' : 'text-sidebar-muted hover:text-white hover:bg-white/5'}`}>
                 <item.icon size={18} className={`shrink-0 ${isActive ? 'text-sidebar-active' : ''}`} />
                 {!collapsed && item.label}

@@ -64,10 +64,11 @@ type Page = {
   type: string;
 };
 
-function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVisible, onChangeData, onSaveMeta }: {
+function SortableSection({ section, industry, sectionTypes, styleVariant, onDelete, onToggleVisible, onChangeData, onSaveMeta }: {
   section: Section;
   industry: string;
   sectionTypes: SectionTypeDefinition[];
+  styleVariant: string;
   onDelete: () => void;
   onToggleVisible: () => void;
   onChangeData: (data: Record<string, unknown>) => void;
@@ -108,7 +109,7 @@ function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVi
           <IndustrySectionDataEditor industry={industry} type={section.type} data={section.data} onChange={stableOnChange} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
-            <SectionMetaEditor section={section} onSave={onSaveMeta} />
+            <SectionMetaEditor section={section} styleVariant={styleVariant} onSave={onSaveMeta} />
           </details>
         </div>
       )}
@@ -116,7 +117,7 @@ function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVi
   );
 }
 
-function SectionMetaEditor({ section, onSave }: { section: Section; onSave: (meta: Record<string, unknown>) => void }) {
+function SectionMetaEditor({ section, styleVariant, onSave }: { section: Section; styleVariant: string; onSave: (meta: Record<string, unknown>) => void }) {
   const [meta, setMeta] = useState({
     titleInternal: section.titleInternal || '',
     variant: section.variant || '',
@@ -132,10 +133,17 @@ function SectionMetaEditor({ section, onSave }: { section: Section; onSave: (met
         <span className="text-gray-600 text-xs">Interner Titel</span>
         <input className="admin-input mt-1" value={meta.titleInternal} onChange={(e) => setMeta({ ...meta, titleInternal: e.target.value })} />
       </label>
-      <label className="block">
-        <span className="text-gray-600 text-xs">Variante</span>
-        <input className="admin-input mt-1" value={meta.variant} onChange={(e) => setMeta({ ...meta, variant: e.target.value })} />
-      </label>
+      {styleVariant === 'individual' && (
+        <label className="block">
+          <span className="text-gray-600 text-xs">Stil dieser Sektion</span>
+          <select className="admin-input mt-1" value={meta.variant} onChange={(e) => setMeta({ ...meta, variant: e.target.value })}>
+            <option value="">Standard (Classic)</option>
+            <option value="classic">Classic</option>
+            <option value="modern">Modern</option>
+            <option value="bold">Bold</option>
+          </select>
+        </label>
+      )}
       <label className="block">
         <span className="text-gray-600 text-xs">Container</span>
         <select className="admin-input mt-1" value={meta.container} onChange={(e) => setMeta({ ...meta, container: e.target.value })}>
@@ -353,6 +361,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
               section={section}
               industry={industry}
               sectionTypes={sectionTypes}
+              styleVariant={styleVariant}
               onDelete={() => handleDeleteSection(section.id)}
               onToggleVisible={() => handleToggleVisible(section.id)}
               onChangeData={(data) => handleSectionChange(section.id, data)}

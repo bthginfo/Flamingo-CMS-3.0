@@ -115,7 +115,7 @@ export function TemplateGallery() {
   return (
     <main id="main" className="min-h-screen">
       {/* Hero */}
-      <section className="relative py-24 md:py-32 overflow-hidden">
+      <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--bg-color)] to-white" />
         <div className="container-x relative">
           <div className="max-w-3xl mx-auto text-center">

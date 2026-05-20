@@ -3,6 +3,7 @@ import { Sidebar } from '@/components/sidebar';
 import { cookies } from 'next/headers';
 import { DemoBanner } from '@/components/demo-banner';
 import { PublishFab } from '@/components/publish-fab';
+import { OnboardingTour } from '@/components/admin/onboarding-tour';
 import { SaveProvider } from '@/components/save-context';
 import { PreviewProvider } from '@/components/admin/preview-context';
 import { Toaster } from 'sonner';
@@ -45,6 +46,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         </div>
       </main>
       <PublishFab />
+      <OnboardingTour />
       <Toaster position="top-right" richColors closeButton />
     </div>
     </PreviewProvider>

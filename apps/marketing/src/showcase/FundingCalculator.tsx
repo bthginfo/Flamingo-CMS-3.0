@@ -70,7 +70,7 @@ export function FundingCalculatorPage() {
   }
 
   return (
-    <section className="py-24 md:py-32">
+    <section className="pt-32 pb-24 md:pt-40 md:pb-32">
       <div className="container-x max-w-4xl">
         {/* Header */}
         <div className="text-center mb-16 reveal">

@@ -11,6 +11,7 @@ const STYLE_OPTIONS: Record<string, { label: string; description: string; previe
     { label: 'Klassisch', description: 'Vertrauenswürdig & professionell – runde Formen, sanfte Schatten, warme Akzente', preview: 'classic' },
     { label: 'Modern', description: 'Minimalistisch & clean – subtile Kanten, flaches Design, viel Weißraum', preview: 'modern' },
     { label: 'Bold', description: 'Kräftig & dynamisch – harte Kanten, starke Kontraste, uppercase Headlines', preview: 'bold' },
+    { label: 'Individuell', description: 'Volle Kontrolle – Stil pro Sektion frei wählbar (Classic, Modern oder Bold)', preview: 'individual' },
   ],
 };
 
@@ -35,13 +36,13 @@ export function StyleSwitcher({ industry, activeStyle }: { industry: string; act
     }
   }
 
-  const styleKeys = ['classic', 'modern', 'bold'];
+  const styleKeys = ['classic', 'modern', 'bold', 'individual'];
 
   return (
     <div className="admin-card p-6 mb-8">
       <h2 className="font-semibold text-lg mb-1">Website-Stil</h2>
       <p className="text-sm text-zinc-500 mb-5">Wählen Sie das Design Ihrer Website. Alle Stile verwenden Ihre Inhalte und Farben.</p>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {options.map((opt, i) => {
           const key = styleKeys[i];
           const isActive = current === key;
@@ -82,6 +83,13 @@ export function StyleSwitcher({ industry, activeStyle }: { industry: string; act
                     <div className="w-8 h-8 rounded-none bg-zinc-800" />
                     <div className="w-8 h-8 rounded-none bg-zinc-600" />
                     <div className="w-8 h-8 rounded-none bg-zinc-400" />
+                  </>
+                )}
+                {key === 'individual' && (
+                  <>
+                    <div className="w-8 h-8 rounded-xl bg-zinc-200" />
+                    <div className="w-8 h-8 rounded bg-zinc-400" />
+                    <div className="w-8 h-8 rounded-none bg-zinc-800" />
                   </>
                 )}
               </div>
