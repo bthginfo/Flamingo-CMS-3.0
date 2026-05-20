@@ -163,28 +163,121 @@ export function BrandForm({ initial }: { initial: BrandData }) {
         </div>
       </div>
 
+      {/* ─── Texte & Links ─── */}
       <div className="admin-card p-6 space-y-5">
-        <h2 className="font-semibold text-lg">Bereichsfarben (optional)</h2>
-        <p className="text-sm text-zinc-500">Standardmäßig wird eine dunklere Abwandlung der Primärfarbe verwendet. Hier können Sie eigene Farben für spezifische Bereiche festlegen.</p>
+        <h2 className="font-semibold text-lg">Texte & Links</h2>
+        <p className="text-sm text-zinc-500">Farben für Textinhalte auf der Website. Leer lassen = automatisch aus dem Farbschema abgeleitet.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {([
+            { key: 'headingColor', label: 'Überschriften', hint: 'Alle H1–H6 Titel, Section-Überschriften' },
+            { key: 'bodyTextColor', label: 'Fließtext', hint: 'Absätze, Listen, Beschreibungen' },
+            { key: 'linkColor', label: 'Links', hint: 'Klickbare Textlinks im Inhaltsbereich' },
+            { key: 'linkHoverColor', label: 'Links (Hover)', hint: 'Farbe beim Überfahren mit der Maus' },
+          ] as { key: keyof typeof form; label: string; hint: string }[]).map(({ key, label, hint }) => (
+            <div key={key}>
+              <label className="admin-label">{label}</label>
+              <p className="text-xs text-zinc-400 mb-1.5">{hint}</p>
+              <div className="flex items-center gap-3">
+                <input type="color" value={(form as Record<string, string>)[key] || '#000000'} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+                <input className="admin-input flex-1" value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder="Leer = Standard" />
+                {(form as Record<string, string>)[key] && <button type="button" onClick={() => setForm(f => ({ ...f, [key]: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ─── Navigation & Header ─── */}
+      <div className="admin-card p-6 space-y-5">
+        <h2 className="font-semibold text-lg">Navigation & Header</h2>
+        <p className="text-sm text-zinc-500">Farben für die Hauptnavigation und den Info-Balken am oberen Seitenrand.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <label className="admin-label">Top-Banner Farbe</label>
-            <p className="text-xs text-zinc-400 mb-1.5">Schmaler Balken ganz oben mit Kontaktinfos (Telefon, E-Mail)</p>
+            <label className="admin-label">Navigations-Links</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Menüpunkte in der Hauptnavigation</p>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.navLinkColor || '#000000'} onChange={e => setForm(f => ({ ...f, navLinkColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.navLinkColor} onChange={e => setForm(f => ({ ...f, navLinkColor: e.target.value }))} placeholder="Leer = Standard" />
+              {form.navLinkColor && <button type="button" onClick={() => setForm(f => ({ ...f, navLinkColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Top-Banner Hintergrund</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Schmaler Info-Balken ganz oben (Telefon, E-Mail, Öffnungszeiten)</p>
             <div className="flex items-center gap-3">
               <input type="color" value={form.topBarColor || form.primaryColor} onChange={e => setForm(f => ({ ...f, topBarColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
-              <input className="admin-input flex-1" value={form.topBarColor} onChange={e => setForm(f => ({ ...f, topBarColor: e.target.value }))} placeholder="Leer = Abwandlung Primärfarbe" />
+              <input className="admin-input flex-1" value={form.topBarColor} onChange={e => setForm(f => ({ ...f, topBarColor: e.target.value }))} placeholder="Leer = dunkle Primärfarbe" />
               {form.topBarColor && <button type="button" onClick={() => setForm(f => ({ ...f, topBarColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* ─── Footer ─── */}
+      <div className="admin-card p-6 space-y-5">
+        <h2 className="font-semibold text-lg">Footer</h2>
+        <p className="text-sm text-zinc-500">Farben für den gesamten Footer-Bereich am Seitenende.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
           <div>
-            <label className="admin-label">Footer Farbe</label>
-            <p className="text-xs text-zinc-400 mb-1.5">Hintergrund des gesamten Footer-Bereichs am Seitenende</p>
+            <label className="admin-label">Hintergrund</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Hintergrundfläche des Footers</p>
             <div className="flex items-center gap-3">
               <input type="color" value={form.footerColor || form.primaryColor} onChange={e => setForm(f => ({ ...f, footerColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
-              <input className="admin-input flex-1" value={form.footerColor} onChange={e => setForm(f => ({ ...f, footerColor: e.target.value }))} placeholder="Leer = Abwandlung Primärfarbe" />
+              <input className="admin-input flex-1" value={form.footerColor} onChange={e => setForm(f => ({ ...f, footerColor: e.target.value }))} placeholder="Leer = dunkle Primärfarbe" />
               {form.footerColor && <button type="button" onClick={() => setForm(f => ({ ...f, footerColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
             </div>
           </div>
+          <div>
+            <label className="admin-label">Text</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Fließtext, Adressen, Öffnungszeiten im Footer</p>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.footerTextColor || '#ffffff'} onChange={e => setForm(f => ({ ...f, footerTextColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.footerTextColor} onChange={e => setForm(f => ({ ...f, footerTextColor: e.target.value }))} placeholder="Leer = Weiß" />
+              {form.footerTextColor && <button type="button" onClick={() => setForm(f => ({ ...f, footerTextColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Links</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Klickbare Links im Footer (Navigation, Legal)</p>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.footerLinkColor || '#ffffff'} onChange={e => setForm(f => ({ ...f, footerLinkColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.footerLinkColor} onChange={e => setForm(f => ({ ...f, footerLinkColor: e.target.value }))} placeholder="Leer = Weiß" />
+              {form.footerLinkColor && <button type="button" onClick={() => setForm(f => ({ ...f, footerLinkColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Buttons ─── */}
+      <div className="admin-card p-6 space-y-5">
+        <h2 className="font-semibold text-lg">Buttons</h2>
+        <p className="text-sm text-zinc-500">Farben für primäre Buttons (Call-to-Action, Formular-Absenden, Kontakt-Buttons).</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label className="admin-label">Hintergrund</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Hintergrundfarbe aller primären Buttons</p>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.btnPrimaryBg || form.primaryColor} onChange={e => setForm(f => ({ ...f, btnPrimaryBg: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.btnPrimaryBg} onChange={e => setForm(f => ({ ...f, btnPrimaryBg: e.target.value }))} placeholder="Leer = Primärfarbe" />
+              {form.btnPrimaryBg && <button type="button" onClick={() => setForm(f => ({ ...f, btnPrimaryBg: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Textfarbe</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Beschriftung auf primären Buttons</p>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.btnPrimaryText || '#ffffff'} onChange={e => setForm(f => ({ ...f, btnPrimaryText: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.btnPrimaryText} onChange={e => setForm(f => ({ ...f, btnPrimaryText: e.target.value }))} placeholder="Leer = Weiß" />
+              {form.btnPrimaryText && <button type="button" onClick={() => setForm(f => ({ ...f, btnPrimaryText: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+        </div>
+        {/* Button preview */}
+        <div className="pt-4 border-t border-admin-border">
+          <p className="text-xs text-zinc-500 mb-2">Vorschau:</p>
+          <button type="button" className="px-5 py-2.5 rounded-lg text-sm font-medium" style={{ backgroundColor: form.btnPrimaryBg || form.primaryColor, color: form.btnPrimaryText || '#ffffff' }}>
+            Beispiel-Button
+          </button>
         </div>
       </div>
 
@@ -257,35 +350,6 @@ export function BrandForm({ initial }: { initial: BrandData }) {
         </div>
       </div>
 
-      <details className="admin-card p-6">
-        <summary className="font-semibold text-lg cursor-pointer select-none">Erweiterte Farbeinstellungen</summary>
-        <div className="space-y-5 mt-5">
-          <p className="text-sm text-zinc-500">Überschreiben Sie einzelne Textfarben gezielt. Leer lassen = automatisch von den Hauptfarben abgeleitet.</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {([
-              { key: 'headingColor', label: 'Überschriften-Farbe', hint: 'Alle H1–H6 Titel auf der Website' },
-              { key: 'bodyTextColor', label: 'Fließtext-Farbe', hint: 'Absätze, Listen, allgemeiner Text' },
-              { key: 'linkColor', label: 'Link-Farbe', hint: 'Textlinks im Inhaltsbereich' },
-              { key: 'linkHoverColor', label: 'Link-Hover-Farbe', hint: 'Textlinks beim Überfahren mit der Maus' },
-              { key: 'navLinkColor', label: 'Navigation-Link-Farbe', hint: 'Menüpunkte in der Hauptnavigation' },
-              { key: 'footerTextColor', label: 'Footer Text-Farbe', hint: 'Allgemeiner Text im Footer' },
-              { key: 'footerLinkColor', label: 'Footer Link-Farbe', hint: 'Klickbare Links im Footer' },
-              { key: 'btnPrimaryBg', label: 'Button Hintergrund', hint: 'Primäre Buttons (CTA, Formular-Absenden)' },
-              { key: 'btnPrimaryText', label: 'Button Textfarbe', hint: 'Beschriftung auf primären Buttons' },
-            ] as const).map(({ key, label, hint }) => (
-              <div key={key}>
-                <label className="admin-label">{label}</label>
-                <p className="text-xs text-zinc-400 mb-1.5">{hint}</p>
-                <div className="flex items-center gap-3">
-                  <input type="color" value={(form as Record<string, string>)[key] || '#000000'} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
-                  <input className="admin-input flex-1" value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder="Leer = Standard" />
-                  {(form as Record<string, string>)[key] && <button type="button" onClick={() => setForm(f => ({ ...f, [key]: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </details>
     </form>
   );
 }
