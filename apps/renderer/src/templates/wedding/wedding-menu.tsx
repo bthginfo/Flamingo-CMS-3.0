@@ -88,28 +88,28 @@ function Modern({ badge, headline, courses, note }: P) {
 
 function Bold({ badge, headline, courses, note }: P) {
   return (
-    <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+    <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-4xl mx-auto">
         <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
         <div className="grid md:grid-cols-2 gap-8">
           {courses.map((course, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-white/10 p-6">
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900 p-6">
               <h3 className="text-brand-accent font-bold uppercase tracking-wider text-sm mb-5 flex items-center gap-2">
                 <UtensilsCrossed className="w-4 h-4" /> {course.title}
               </h3>
               <div className="space-y-4">
                 {course.items.map((item, j) => (
                   <div key={j}>
-                    <span className="font-bold text-white">{item.name}</span>
-                    {item.description && <div className="text-white/50 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
+                    <span className="font-bold text-gray-900">{item.name}</span>
+                    {item.description && <div className="text-gray-500 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
                   </div>
                 ))}
               </div>
             </motion.div>
           ))}
         </div>
-        {note && <p className="text-white/40 text-sm mt-12 text-center italic">{note}</p>}
+        {note && <p className="text-gray-400 text-sm mt-12 text-center italic">{note}</p>}
       </div>
     </section>
   );

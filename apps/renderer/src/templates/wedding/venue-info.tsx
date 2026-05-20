@@ -48,7 +48,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
 
   if (isBold) {
     return (
-      <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+      <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
           <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
@@ -56,14 +56,14 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
             {image && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative aspect-[4/3]">
                 <Image src={image} alt={headline} fill className="object-cover" />
-                <div className="absolute inset-0 border-2 border-white/20" />
+                <div className="absolute inset-0 border-2 border-gray-300" />
               </motion.div>
             )}
             <div className={image ? '' : 'md:col-span-2'}>
-              {description && <div className="text-white/70 text-lg leading-relaxed mb-8 rt-content" dangerouslySetInnerHTML={{ __html: description }} />}
+              {description && <div className="text-gray-700 text-lg leading-relaxed mb-8 rt-content" dangerouslySetInnerHTML={{ __html: description }} />}
               <div className="space-y-4 border-l-4 border-brand-accent pl-6">
-                {address && <p className="text-white/80 flex items-center gap-2"><MapPin className="w-4 h-4 text-brand-accent" />{address}</p>}
-                {contact && <p className="text-white/80 flex items-center gap-2"><Phone className="w-4 h-4 text-brand-accent" />{contact}</p>}
+                {address && <p className="text-gray-700 flex items-center gap-2"><MapPin className="w-4 h-4 text-brand-accent" />{address}</p>}
+                {contact && <p className="text-gray-700 flex items-center gap-2"><Phone className="w-4 h-4 text-brand-accent" />{contact}</p>}
               </div>
               {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-brand-accent text-black font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-opacity"><MapPin className="w-4 h-4" /> Route planen</a>}
             </div>
@@ -154,7 +154,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
 
   if (isBold) {
     return (
-      <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+      <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
           <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
@@ -163,10 +163,10 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
               {directions.map((d, i) => {
                 const Icon = dirIcons[(d.icon || 'car').toLowerCase()] || Car;
                 return (
-                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-white/10 p-6">
+                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900 p-6">
                     <Icon className="w-6 h-6 text-brand-accent mb-3" />
-                    <h3 className="font-bold text-white mb-2">{d.title}</h3>
-                    <div className="text-white/60 text-sm rt-content" dangerouslySetInnerHTML={{ __html: d.text }} />
+                    <h3 className="font-bold text-gray-900 mb-2">{d.title}</h3>
+                    <div className="text-gray-600 text-sm rt-content" dangerouslySetInnerHTML={{ __html: d.text }} />
                   </motion.div>
                 );
               })}
@@ -175,11 +175,11 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
           {accommodations.length > 0 && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {accommodations.map((a, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-white/10 overflow-hidden">
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900 overflow-hidden">
                   {a.image && <div className="relative h-40"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <div className="p-5">
-                    <h4 className="font-bold text-white">{a.name}</h4>
-                    {a.description && <div className="text-white/60 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: a.description }} />}
+                    <h4 className="font-bold text-gray-900">{a.name}</h4>
+                    {a.description && <div className="text-gray-600 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: a.description }} />}
                     {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-brand-accent text-sm font-bold mt-3 inline-block hover:opacity-70">Details →</a>}
                   </div>
                 </motion.div>

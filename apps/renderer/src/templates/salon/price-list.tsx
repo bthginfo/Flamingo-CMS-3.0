@@ -39,7 +39,7 @@ function PriceClassic({ headline, subline, badgeText, categories, footnote, ctaP
             <div className="mt-5 divide-y divide-[var(--brand-primary)]/20">
               {asList<PriceItem>(cat.items).map((item, ii) => (
                 <div key={`${item.name}-${ii}`} className="py-4">
-                  <div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="font-semibold text-gray-900">{item.name || ''}</p>{item.description && <div className="mt-1 text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}</div>{item.priceLabel && <p className="shrink-0 whitespace-nowrap font-bold text-gray-900">{item.priceLabel}</p>}</div>
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-4"><div className="min-w-0"><p className="font-semibold text-gray-900">{item.name || ''}</p>{item.description && <div className="mt-1 text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}</div>{item.priceLabel && <p className="shrink-0 whitespace-nowrap font-bold text-gray-900">{item.priceLabel}</p>}</div>
                   <div className="mt-2 flex flex-wrap gap-3 text-xs text-gray-600">{item.durationLabel && <span>{item.durationLabel}</span>}{item.note && <span>{item.note}</span>}{item.cta?.label && <a href={item.cta.href || '#'} className="font-semibold text-gray-900">{item.cta.label}</a>}</div>
                 </div>
               ))}
@@ -69,7 +69,7 @@ function PriceModern({ headline, subline, badgeText, categories, footnote, ctaPr
             <div className="mt-5 divide-y divide-black/10">
               {asList<PriceItem>(cat.items).map((item, ii) => (
                 <div key={`${item.name}-${ii}`} className="py-4">
-                  <div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="font-light text-gray-900">{item.name || ''}</p>{item.description && <div className="mt-1 text-sm font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}</div>{item.priceLabel && <p className="shrink-0 whitespace-nowrap font-light text-gray-900">{item.priceLabel}</p>}</div>
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-4"><div className="min-w-0"><p className="font-light text-gray-900">{item.name || ''}</p>{item.description && <div className="mt-1 text-sm font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}</div>{item.priceLabel && <p className="shrink-0 whitespace-nowrap font-light text-gray-900">{item.priceLabel}</p>}</div>
                   <div className="mt-2 flex flex-wrap gap-3 text-xs font-light text-gray-600">{item.durationLabel && <span>{item.durationLabel}</span>}{item.note && <span>{item.note}</span>}{item.cta?.label && <a href={item.cta.href || '#'} className="border-b border-brand-accent pb-1 text-gray-900">{item.cta.label}</a>}</div>
                 </div>
               ))}
@@ -99,7 +99,7 @@ function PriceBold({ headline, subline, badgeText, categories, footnote, ctaPrim
             <div className="mt-5 divide-y-2 divide-[#111827]">
               {asList<PriceItem>(cat.items).map((item, ii) => (
                 <div key={`${item.name}-${ii}`} className="py-4">
-                  <div className="flex items-start justify-between gap-4"><div className="min-w-0"><p className="font-black uppercase text-white">{item.name || ''}</p>{item.description && <div className="mt-1 text-sm text-white/60 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}</div>{item.priceLabel && <p className="shrink-0 whitespace-nowrap font-black text-brand-accent">{item.priceLabel}</p>}</div>
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-4"><div className="min-w-0"><p className="font-black uppercase text-white">{item.name || ''}</p>{item.description && <div className="mt-1 text-sm text-white/60 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}</div>{item.priceLabel && <p className="shrink-0 whitespace-nowrap font-black text-brand-accent">{item.priceLabel}</p>}</div>
                   <div className="mt-2 flex flex-wrap gap-3 text-xs font-bold text-white/50">{item.durationLabel && <span>{item.durationLabel}</span>}{item.note && <span>{item.note}</span>}{item.cta?.label && <a href={item.cta.href || '#'} className="font-black uppercase text-brand-accent">{item.cta.label}</a>}</div>
                 </div>
               ))}

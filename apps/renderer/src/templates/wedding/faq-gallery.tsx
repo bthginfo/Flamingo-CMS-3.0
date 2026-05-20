@@ -32,7 +32,7 @@ export function WeddingFaqSection({ data, styleVariant }: Props) {
 
   if (isBold) {
     return (
-      <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+      <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-3xl mx-auto">
           <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
@@ -80,12 +80,12 @@ function FaqItem({ question, answer, index, variant }: { question: string; answe
 
   if (variant === 'bold') {
     return (
-      <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-white/10">
+      <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900">
         <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between p-5 text-left">
-          <span className="font-bold text-white">{question}</span>
+          <span className="font-bold text-gray-900">{question}</span>
           <ChevronDown className={`w-5 h-5 text-brand-accent transition-transform ${open ? 'rotate-180' : ''}`} />
         </button>
-        {open && <div className="px-5 pb-5 text-white/60 text-sm leading-relaxed">{answer}</div>}
+        {open && <div className="px-5 pb-5 text-gray-500 text-sm leading-relaxed">{answer}</div>}
       </motion.div>
     );
   }
@@ -128,7 +128,7 @@ export function WeddingGallerySection({ data, styleVariant }: Props) {
 
   if (isBold) {
     return (
-      <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+      <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
           <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
@@ -136,7 +136,7 @@ export function WeddingGallerySection({ data, styleVariant }: Props) {
             {images.map((img, i) => (
               <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative break-inside-avoid overflow-hidden">
                 <Image src={img.src} alt={img.alt || ''} width={600} height={800} className="w-full h-auto object-cover" />
-                <div className="absolute inset-0 border border-white/10" />
+                <div className="absolute inset-0 border border-gray-200" />
               </motion.div>
             ))}
           </div>

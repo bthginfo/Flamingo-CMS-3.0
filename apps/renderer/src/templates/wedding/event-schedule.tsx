@@ -86,7 +86,7 @@ function ScheduleModern({ badge, headline, events }: P) {
 
 function ScheduleBold({ badge, headline, events }: P) {
   return (
-    <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+    <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-5xl mx-auto">
         <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-16 break-words">{headline}</h2>
@@ -94,14 +94,14 @@ function ScheduleBold({ badge, headline, events }: P) {
           {events.map((event, i) => {
             const Icon = ICONS[(event.icon || 'heart').toLowerCase()] || Heart;
             return (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="border border-white/10 p-6 hover:border-brand-accent/50 transition-colors">
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="border-2 border-gray-900 p-6 hover:border-brand-accent/50 transition-colors">
                 <div className="flex items-center gap-3 mb-3">
                   <Icon className="w-5 h-5 text-brand-accent" />
                   <span className="text-brand-accent font-bold text-sm">{event.time}</span>
                 </div>
-                <h3 className="text-xl font-bold">{event.title}</h3>
-                {event.description && <div className="text-white/60 text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
-                {event.location && <p className="text-xs text-white/40 mt-3 uppercase tracking-wider flex items-center gap-1"><MapPin className="w-3 h-3" />{event.location}</p>}
+                <h3 className="text-xl font-bold text-gray-900">{event.title}</h3>
+                {event.description && <div className="text-gray-600 text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
+                {event.location && <p className="text-xs text-gray-400 mt-3 uppercase tracking-wider flex items-center gap-1"><MapPin className="w-3 h-3" />{event.location}</p>}
               </motion.div>
             );
           })}

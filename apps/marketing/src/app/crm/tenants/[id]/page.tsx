@@ -164,6 +164,20 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
                 <Shield size={14} className="shrink-0" /> Admin öffnen
               </a>
             )}
+            {tenant.slug?.startsWith('demo-') && (() => {
+              const industryMap: Record<string, string> = { tradesman: 'handwerk', hotel: 'hotel', restaurant: 'restaurant', salon: 'salon', tourism: 'tourism', medical: 'medical', wedding: 'wedding', photography: 'photography' };
+              const demoKey = industryMap[tenant.industry] || tenant.industry;
+              return (
+                <>
+                  <a href="https://www.flamingomedia.online/demo/admin" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800">
+                    <Cloud size={14} className="shrink-0" /> Demo Admin
+                  </a>
+                  <a href={`https://www.flamingomedia.online/demo/${demoKey}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800">
+                    <Globe size={14} className="shrink-0" /> Demo Frontend ({demoKey})
+                  </a>
+                </>
+              );
+            })()}
           </div>
         </div>
       </div>

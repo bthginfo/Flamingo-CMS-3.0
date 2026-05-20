@@ -317,6 +317,7 @@ function ShowcaseShell() {
 
   const NAV = [
     { to: '/templates', label: 'Templates' },
+    { to: '/cms', label: 'CMS' },
     { to: '/foerderrechner', label: 'Förderrechner' },
     { to: '/prozess', label: 'Ablauf' },
     { to: '/preise', label: 'Preise' },
@@ -894,14 +895,14 @@ type DeviceItem = {
   image?: string; // static image fallback instead of iframe
 };
 
-const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'https://flamingo-renderer.vercel.app';
+const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'https://www.flamingomedia.online';
 
-const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://flamingo-renderer.vercel.app';
+const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://www.flamingomedia.online';
 
 const DEVICE_ITEMS: DeviceItem[] = [
   {
     kind: 'laptop',
-    src: `${RENDERER_URL}/demo/tradesman`,
+    src: `${RENDERER_URL}/demo/handwerk`,
     label: 'Handwerk · Home',
     caption: 'Handwerk-Template auf dem Desktop',
   },
@@ -913,7 +914,7 @@ const DEVICE_ITEMS: DeviceItem[] = [
   },
   {
     kind: 'phone',
-    src: `${RENDERER_URL}/demo/tradesman/leistungen`,
+    src: `${RENDERER_URL}/demo/handwerk/leistungen`,
     label: 'Handwerk · Leistungen',
     caption: 'Mobile zuerst gedacht',
   },

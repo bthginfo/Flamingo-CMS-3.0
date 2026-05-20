@@ -63,8 +63,8 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`relative p-6 md:p-8 border ${pkg.highlighted ? 'border-brand-accent' : 'border-white/10'}`}>
                 {pkg.highlighted && <span className="absolute -top-3 left-6 bg-brand-accent text-black text-[10px] font-bold px-3 py-1">BELIEBT</span>}
                 <h3 className="text-xl font-bold text-white">{pkg.name}</h3>
-                {pkg.price && <p className="text-3xl font-black text-brand-accent mt-3">{pkg.price}{pkg.priceNote && <span className="text-sm text-white/50 ml-1">{pkg.priceNote}</span>}</p>}
-                {pkg.description && <div className="text-white/60 text-sm mt-3" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
+                {pkg.price && <p className="text-3xl font-black text-brand-accent mt-3">{pkg.price}{pkg.priceNote && <span className="text-sm text-white/70 ml-1">{pkg.priceNote}</span>}</p>}
+                {pkg.description && <div className="text-white/80 text-sm mt-3" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
                 <ul className="mt-6 space-y-2">
                   {pkg.features.map((f, j) => (
                     <li key={j} className="flex items-start gap-2 text-sm">

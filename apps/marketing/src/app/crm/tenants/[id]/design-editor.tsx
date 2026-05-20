@@ -24,6 +24,10 @@ const EXTENDED_COLORS = [
   { key: 'badgeText', label: 'Badge Text', desc: 'Badge-Textfarbe', cssVar: '--style-badge-text' },
   { key: 'brand', label: 'Brand', desc: 'Markenfarbe / Logo-Farbe', cssVar: '--style-brand' },
   { key: 'dividerColor', label: 'Divider', desc: 'Trennlinien', cssVar: '--style-divider-color' },
+  { key: 'textMuted', label: 'Text Muted', desc: 'Gedämpfter Text (z.B. Labels)', cssVar: '--style-text-muted' },
+  { key: 'bgSubtle', label: 'BG Subtle', desc: 'Dezenter Hintergrund', cssVar: '--style-bg-subtle' },
+  { key: 'borderStrong', label: 'Border Strong', desc: 'Starke Rahmenfarbe', cssVar: '--style-border-strong' },
+  { key: 'borderLight', label: 'Border Light', desc: 'Leichte Rahmenfarbe', cssVar: '--style-border-light' },
 ] as const;
 
 function normalizeHex(v: string): string {

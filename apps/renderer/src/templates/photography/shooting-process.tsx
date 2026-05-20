@@ -64,7 +64,7 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
                     <Icon className="w-5 h-5 text-brand-accent" />
                   </div>
                   <h3 className="font-bold text-white mb-2">{step.title}</h3>
-                  <div className="text-white/60 text-sm rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />
+                  <div className="text-white/80 text-sm rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />
                 </motion.div>
               );
             })}

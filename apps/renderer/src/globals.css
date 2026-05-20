@@ -272,6 +272,45 @@ html {
 [data-style] [data-theme="dark"] {
   color: #ffffff;
 }
+[data-style] [data-theme="dark"] .text-gray-900,
+[data-style] [data-theme="dark"] .text-gray-800,
+[data-style] [data-theme="dark"] .text-gray-700 {
+  color: #ffffff;
+}
+[data-style] [data-theme="dark"] .text-gray-500,
+[data-style] [data-theme="dark"] .text-gray-600 {
+  color: rgba(255,255,255,0.7);
+}
+[data-style] [data-theme="dark"] .text-gray-400,
+[data-style] [data-theme="dark"] .text-gray-300 {
+  color: rgba(255,255,255,0.5);
+}
+[data-style] [data-theme="dark"] .border-gray-900,
+[data-style] [data-theme="dark"] .border-gray-800 {
+  border-color: rgba(255,255,255,0.2);
+}
+[data-style] [data-theme="dark"] .border-gray-200,
+[data-style] [data-theme="dark"] .border-gray-100 {
+  border-color: rgba(255,255,255,0.1);
+}
+[data-style] [data-theme="dark"] .bg-white:not(section) {
+  background-color: rgba(255,255,255,0.05);
+}
+[data-style] [data-theme="dark"] .bg-gray-50,
+[data-style] [data-theme="dark"] .bg-gray-100 {
+  background-color: rgba(255,255,255,0.05);
+}
+[data-style] .text-gray-900,
+[data-style] .text-gray-800,
+[data-style] .text-gray-700,
+[data-style] .text-zinc-900,
+[data-style] .text-zinc-800,
+[data-style] .text-zinc-700,
+[data-style] .text-slate-900,
+[data-style] .text-slate-800,
+[data-style] .text-slate-700 {
+  color: var(--style-text-primary, #0f172a);
+}
 [data-style] .text-gray-500,
 [data-style] .text-gray-600,
 [data-style] .text-zinc-500,
@@ -279,6 +318,38 @@ html {
 [data-style] .text-slate-500,
 [data-style] .text-slate-600 {
   color: var(--style-text-secondary, #64748b);
+}
+[data-style] .text-gray-400,
+[data-style] .text-gray-300,
+[data-style] .text-zinc-400,
+[data-style] .text-slate-400 {
+  color: var(--style-text-muted, #94a3b8);
+}
+
+/* Border color overrides */
+[data-style] .border-gray-900,
+[data-style] .border-gray-800 {
+  border-color: var(--style-border-strong, #1a1a1a);
+}
+[data-style] .border-gray-200,
+[data-style] .border-gray-100,
+[data-style] .border-zinc-200,
+[data-style] .border-slate-200 {
+  border-color: var(--style-border-light, rgba(0,0,0,0.06));
+}
+[data-style] .divide-gray-200 > * + *,
+[data-style] .divide-gray-100 > * + * {
+  border-color: var(--style-border-light, rgba(0,0,0,0.06));
+}
+
+/* Background overrides */
+[data-style] .bg-white:not(section) {
+  background-color: var(--style-card-bg, #ffffff);
+}
+[data-style] .bg-gray-50,
+[data-style] .bg-gray-100,
+[data-style] .bg-slate-50 {
+  background-color: var(--style-bg-subtle, #f8fafc);
 }
 
 /* Badge overrides — only target the dedicated .section-badge class */
@@ -323,7 +394,8 @@ html {
 @layer base {
   .rt-content p + p { margin-top: 0.5em; }
   .rt-content a { text-decoration: underline; text-underline-offset: 2px; }
-  .rt-content strong { font-weight: 600; }
+  .rt-content strong { font-weight: 700; }
+  [data-theme="dark"] .rt-content strong { color: rgba(255, 255, 255, 1); }
 }
 
 /* Advanced brand color overrides are applied via inline styles in components */

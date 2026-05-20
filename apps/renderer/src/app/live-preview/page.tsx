@@ -26,12 +26,16 @@ export default async function LivePreviewPage() {
   const designToCssVar: Record<string, string> = {
     textPrimary: '--style-text-primary',
     textSecondary: '--style-text-secondary',
+    textMuted: '--style-text-muted',
     sectionBg: '--style-section-bg',
     sectionBgAlt: '--style-section-bg-alt',
     cardBg: '--style-card-bg',
+    bgSubtle: '--style-bg-subtle',
     badgeBg: '--style-badge-bg',
     badgeText: '--style-badge-text',
     brand: '--style-brand',
+    borderStrong: '--style-border-strong',
+    borderLight: '--style-border-light',
     dividerColor: '--style-divider-color',
   };
   if (brand.primaryColor) designOverrides['--style-brand'] = brand.primaryColor;

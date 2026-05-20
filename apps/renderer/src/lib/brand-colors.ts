@@ -50,8 +50,6 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   vars['--style-badge-border'] = `${normalizedPrimary}28`;
   vars['--style-badge-text'] = normalizedPrimary;
   vars['--style-accent-glow'] = `0 0 30px ${normalizedPrimary}33`;
-  vars['--style-section-bg-alt'] = lighten(normalizedPrimary, 0.95);
-  vars['--style-section-bg'] = lighten(normalizedPrimary, 0.99);
 
   if (brand.footerLinkColor) vars['--brand-footer-link'] = brand.footerLinkColor;
   if (brand.footerTextColor) vars['--brand-footer-text'] = brand.footerTextColor;

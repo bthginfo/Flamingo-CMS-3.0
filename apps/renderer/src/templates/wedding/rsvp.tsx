@@ -19,13 +19,13 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
 
   if (submitted) {
     return (
-      <section data-theme={isBold ? 'dark' : undefined} className={`py-16 md:py-24 px-4 md:px-6 ${isBold ? 'bg-gray-950 text-white' : ''}`}>
+      <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-lg mx-auto text-center">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${isBold ? 'bg-brand-accent/20' : 'bg-green-100'}`}>
             <Check className={`w-8 h-8 ${isBold ? 'text-brand-accent' : 'text-green-600'}`} />
           </motion.div>
-          <h2 className={`text-2xl font-semibold ${isBold ? 'text-white' : 'text-gray-900'}`}>Vielen Dank!</h2>
-          <p className={`mt-3 ${isBold ? 'text-white/60' : 'text-gray-600'}`}>Wir haben eure Antwort erhalten und freuen uns auf euch.</p>
+          <h2 className="text-2xl font-semibold text-gray-900">Vielen Dank!</h2>
+          <p className={`mt-3 ${isBold ? 'text-gray-500' : 'text-gray-600'}`}>Wir haben eure Antwort erhalten und freuen uns auf euch.</p>
         </div>
       </section>
     );
@@ -67,28 +67,28 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
 
   if (isBold) {
     return (
-      <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+      <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-lg mx-auto">
           <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wide mb-4 break-words">{headline}</h2>
-          {subline && <p className="text-white/60 mb-2">{subline}</p>}
+          {subline && <p className="text-gray-500 mb-2">{subline}</p>}
           {deadlineStr && <p className="text-brand-accent text-sm font-bold mb-10">Bis {deadlineStr}</p>}
-          <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-5 border border-white/10 p-8">
+          <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="space-y-5 border-2 border-gray-900 p-8">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-white/60 mb-2">Name(n)</label>
-              <input type="text" required className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-white/30 outline-none focus:border-brand-accent" placeholder="Vor- und Nachname" />
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Name(n)</label>
+              <input type="text" required className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 text-gray-900 placeholder-gray-400 outline-none focus:border-brand-accent" placeholder="Vor- und Nachname" />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-white/60 mb-2">Anzahl Personen</label>
-              <input type="number" min={1} max={10} defaultValue={1} className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white outline-none focus:border-brand-accent" />
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Anzahl Personen</label>
+              <input type="number" min={1} max={10} defaultValue={1} className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 text-gray-900 outline-none focus:border-brand-accent" />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-white/60 mb-2">Essenswünsche / Allergien</label>
-              <textarea rows={3} className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-white/30 outline-none focus:border-brand-accent resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Essenswünsche / Allergien</label>
+              <textarea rows={3} className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 text-gray-900 placeholder-gray-400 outline-none focus:border-brand-accent resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-white/60 mb-2">Nachricht (optional)</label>
-              <textarea rows={2} className="w-full px-4 py-3 bg-white/5 border border-white/10 text-white placeholder-white/30 outline-none focus:border-brand-accent resize-none" placeholder="Eure Nachricht an uns..." />
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Nachricht (optional)</label>
+              <textarea rows={2} className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 text-gray-900 placeholder-gray-400 outline-none focus:border-brand-accent resize-none" placeholder="Eure Nachricht an uns..." />
             </div>
             <button type="submit" className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-brand-accent text-black font-bold uppercase tracking-wider hover:opacity-90 transition-opacity">
               <Send className="w-4 h-4" /> Zusagen

@@ -70,8 +70,8 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
               </motion.div>
             )}
             <div className={image ? 'md:col-span-3' : 'md:col-span-5 max-w-3xl'}>
-              {intro && <div className="text-white/70 text-lg leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
-              {story && <div className="text-white/50 leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
+              {intro && <div className="text-white/90 text-lg leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
+              {story && <div className="text-white/80 leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
               {facts.length > 0 && (
                 <ul className="mt-8 space-y-2">
                   {facts.map((fact, i) => <li key={i} className="flex items-start gap-2 text-white/70 text-sm"><span className="text-brand-accent">—</span>{fact}</li>)}
@@ -82,7 +82,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                   {values.map((v, i) => (
                     <div key={i} className="border border-white/10 p-4">
                       <h4 className="font-bold text-brand-accent text-sm">{v.title}</h4>
-                      <div className="text-white/60 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
+                      <div className="text-white/80 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                     </div>
                   ))}
                 </div>

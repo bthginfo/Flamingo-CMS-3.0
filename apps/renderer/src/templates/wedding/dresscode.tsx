@@ -77,22 +77,22 @@ function Modern({ badge, headline, text, colors, hints }: P) {
 
 function Bold({ badge, headline, text, colors, hints }: P) {
   return (
-    <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+    <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-4xl mx-auto text-center">
         <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words">{headline}</h2>
-        {text && <div className="text-white/70 text-lg leading-relaxed mb-10 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+        {text && <div className="text-gray-600 text-lg leading-relaxed mb-10 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {colors.length > 0 && (
           <div className="flex items-center justify-center gap-4 mb-10">
             {colors.map((color, i) => (
-              <motion.div key={i} initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="w-16 h-16 border-2 border-white/20" style={{ backgroundColor: color }} title={color} />
+              <motion.div key={i} initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="w-16 h-16 border-2 border-gray-300" style={{ backgroundColor: color }} title={color} />
             ))}
           </div>
         )}
         {hints.length > 0 && (
           <div className="grid sm:grid-cols-2 gap-4 text-left max-w-lg mx-auto mt-8">
             {hints.map((hint, i) => (
-              <div key={i} className="flex items-start gap-3 text-white/80 text-sm border border-white/10 p-4">
+              <div key={i} className="flex items-start gap-3 text-gray-700 text-sm border-2 border-gray-200 p-4">
                 <Shirt className="w-4 h-4 text-brand-accent mt-0.5 shrink-0" />
                 <span>{hint}</span>
               </div>

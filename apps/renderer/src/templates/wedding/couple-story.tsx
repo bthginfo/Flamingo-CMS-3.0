@@ -82,25 +82,25 @@ function Modern({ badge, headline, story, image, milestones }: P) {
 
 function Bold({ badge, headline, story, image, milestones }: P) {
   return (
-    <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+    <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-6xl mx-auto">
-        <span className="inline-block bg-white/10 border border-white/20 text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
+        <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
         <div className="grid md:grid-cols-2 gap-8 items-start">
           {image && (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative aspect-[3/4]">
               <Image src={image} alt={headline} fill className="object-cover" />
-              <div className="absolute inset-0 border-2 border-white/20" />
+              <div className="absolute inset-0 border-2 border-gray-300" />
             </motion.div>
           )}
           <div className={image ? '' : 'md:col-span-2'}>
-            {story && <p className="text-white/70 text-lg leading-relaxed mb-10">{story}</p>}
+            {story && <p className="text-gray-600 text-lg leading-relaxed mb-10">{story}</p>}
             {milestones.length > 0 && (
               <div className="space-y-6">
                 {milestones.map((m, i) => (
                   <motion.div key={i} initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-l-4 border-brand-accent pl-5">
                     <span className="text-xs font-bold uppercase tracking-widest text-brand-accent">{m.date}</span>
-                    <div className="text-white/80 mt-2 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />
+                    <div className="text-gray-700 mt-2 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />
                   </motion.div>
                 ))}
               </div>

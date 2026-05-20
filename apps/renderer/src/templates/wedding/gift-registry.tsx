@@ -54,19 +54,19 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
 
   if (isBold) {
     return (
-      <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+      <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
           <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words">{headline}</h2>
-          {text && <div className="text-white/60 text-lg mb-12 max-w-2xl rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+          {text && <div className="text-gray-600 text-lg mb-12 max-w-2xl rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <div className="grid sm:grid-cols-2 gap-4 mb-12">
               {items.map((item, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-white/10 p-6 flex items-start gap-4">
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900 p-6 flex items-start gap-4">
                   <Gift className="w-5 h-5 text-brand-accent shrink-0 mt-0.5" />
                   <div className="flex-1">
-                    <h3 className="font-bold text-white">{item.title}</h3>
-                    {item.description && <p className="text-white/50 text-sm mt-1">{item.description}</p>}
+                    <h3 className="font-bold text-gray-900">{item.title}</h3>
+                    {item.description && <p className="text-gray-500 text-sm mt-1">{item.description}</p>}
                     {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand-accent text-sm font-bold mt-2 hover:opacity-70"><ExternalLink className="w-3 h-3" />Ansehen</a>}
                   </div>
                 </motion.div>
@@ -74,13 +74,13 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
             </div>
           )}
           {bankDetails && (
-            <div className="border border-white/10 p-8">
+            <div className="border-2 border-gray-900 p-8">
               <p className="text-brand-accent font-bold mb-4">Bankverbindung</p>
-              <div className="text-white/70 text-sm space-y-1">
+              <div className="text-gray-600 text-sm space-y-1">
                 {bankDetails.holder && <p>Kontoinhaber: {bankDetails.holder}</p>}
                 {bankDetails.iban && <p>IBAN: {bankDetails.iban}</p>}
                 {bankDetails.bic && <p>BIC: {bankDetails.bic}</p>}
-                {bankDetails.note && <p className="mt-3 text-white/50 italic">{bankDetails.note}</p>}
+                {bankDetails.note && <p className="mt-3 text-gray-400 italic">{bankDetails.note}</p>}
               </div>
             </div>
           )}
