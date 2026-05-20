@@ -130,13 +130,17 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
               className={`group relative aspect-square rounded-xl overflow-hidden border-2 cursor-pointer transition-all ${selected?.id === asset.id ? 'border-admin-accent shadow-lg ring-2 ring-admin-accent/30' : 'border-transparent hover:border-zinc-200'}`}
               onClick={() => setSelected(asset)}
             >
-              <Image
-                src={asset.blobUrl}
-                alt={asset.alt || asset.filename}
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
-              />
+              {asset.mimeType === 'image/svg+xml' ? (
+                <img src={asset.blobUrl} alt={asset.alt || asset.filename} className="absolute inset-0 w-full h-full object-cover" />
+              ) : (
+                <Image
+                  src={asset.blobUrl}
+                  alt={asset.alt || asset.filename}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                />
+              )}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <p className="text-white text-xs truncate">{asset.filename}</p>
@@ -164,7 +168,11 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
         <div className="admin-card p-6">
           <div className="flex items-start gap-6">
             <div className="relative w-32 h-32 rounded-xl overflow-hidden shrink-0">
-              <Image src={selected.blobUrl} alt={selected.alt || ''} fill className="object-cover" sizes="128px" />
+              {selected.mimeType === 'image/svg+xml' ? (
+                <img src={selected.blobUrl} alt={selected.alt || ''} className="absolute inset-0 w-full h-full object-cover" />
+              ) : (
+                <Image src={selected.blobUrl} alt={selected.alt || ''} fill className="object-cover" sizes="128px" />
+              )}
             </div>
             <div className="flex-1 space-y-3 min-w-0">
               <div className="flex items-center justify-between">
