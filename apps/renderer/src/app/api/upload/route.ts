@@ -5,6 +5,10 @@ import { getSession } from '@/lib/session';
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
 
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return NextResponse.json({ error: 'Blob storage not configured (BLOB_READ_WRITE_TOKEN missing)' }, { status: 500 });
+  }
+
   try {
     const jsonResponse = await handleUpload({
       body,
@@ -12,7 +16,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       token: process.env.BLOB_READ_WRITE_TOKEN,
       onBeforeGenerateToken: async (pathname) => {
         const session = await getSession();
-        if (!session) throw new Error('Unauthorized');
+        if (!session) throw new Error('Unauthorized — no valid session');
 
         return {
           allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/avif'],

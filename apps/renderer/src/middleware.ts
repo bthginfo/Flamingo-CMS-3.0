@@ -19,7 +19,7 @@ export function middleware(request: NextRequest) {
     clean.searchParams.delete('_demo');
     const response = NextResponse.redirect(clean);
     response.cookies.set(getSessionCookieName(), demoToken, {
-      path: '/admin',
+      path: '/',
       httpOnly: true,
       sameSite: 'none',
       secure: true,
