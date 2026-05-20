@@ -38,8 +38,10 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
     setUploading(true);
     try {
       for (const file of fileArray) {
+        const isSvg = file.type === 'image/svg+xml';
         const optimized = await resizeImage(file, 1920, 0.85);
-        const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, {
+        const uploadName = isSvg ? file.name : file.name.replace(/\.[^.]+$/, '.webp');
+        const blob = await upload(uploadName, optimized, {
           access: 'public',
           handleUploadUrl: '/api/upload',
         });
@@ -47,8 +49,8 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
         const record = await saveMediaRecord({
           blobUrl: blob.url,
           pathname: blob.pathname,
-          filename: optimized.name,
-          mimeType: optimized.type || 'image/webp',
+          filename: uploadName,
+          mimeType: isSvg ? 'image/svg+xml' : (optimized.type || 'image/webp'),
           size: optimized.size,
         });
 
