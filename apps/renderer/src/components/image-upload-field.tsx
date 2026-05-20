@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 
 /** Resize image to maxWidth and convert to WebP. Returns original if SVG or already small. */
 export async function resizeImage(file: File, maxWidth: number, quality: number): Promise<File> {
-  if (file.type === 'image/svg+xml') return file;
+  if (file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg')) return file;
   if (file.size < 200 * 1024) return file; // Skip if under 200KB
 
   return new Promise((resolve) => {

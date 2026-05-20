@@ -38,8 +38,8 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
     setUploading(true);
     try {
       for (const file of fileArray) {
-        const isSvg = file.type === 'image/svg+xml';
-        const optimized = await resizeImage(file, 1920, 0.85);
+        const isSvg = file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg');
+        const optimized = isSvg ? file : await resizeImage(file, 1920, 0.85);
         const uploadName = isSvg ? file.name : file.name.replace(/\.[^.]+$/, '.webp');
         const blob = await upload(uploadName, optimized, {
           access: 'public',
@@ -132,7 +132,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
               className={`group relative aspect-square rounded-xl overflow-hidden border-2 cursor-pointer transition-all ${selected?.id === asset.id ? 'border-admin-accent shadow-lg ring-2 ring-admin-accent/30' : 'border-transparent hover:border-zinc-200'}`}
               onClick={() => setSelected(asset)}
             >
-              {asset.mimeType === 'image/svg+xml' ? (
+              {(asset.mimeType === 'image/svg+xml' || asset.filename?.toLowerCase().endsWith('.svg') || asset.blobUrl?.toLowerCase().includes('.svg')) ? (
                 <img src={asset.blobUrl} alt={asset.alt || asset.filename} className="absolute inset-0 w-full h-full object-cover" />
               ) : (
                 <Image
@@ -170,7 +170,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
         <div className="admin-card p-6">
           <div className="flex items-start gap-6">
             <div className="relative w-32 h-32 rounded-xl overflow-hidden shrink-0">
-              {selected.mimeType === 'image/svg+xml' ? (
+              {(selected.mimeType === 'image/svg+xml' || selected.filename?.toLowerCase().endsWith('.svg') || selected.blobUrl?.toLowerCase().includes('.svg')) ? (
                 <img src={selected.blobUrl} alt={selected.alt || ''} className="absolute inset-0 w-full h-full object-cover" />
               ) : (
                 <Image src={selected.blobUrl} alt={selected.alt || ''} fill className="object-cover" sizes="128px" />
