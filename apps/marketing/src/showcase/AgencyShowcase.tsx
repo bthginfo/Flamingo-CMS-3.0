@@ -367,32 +367,38 @@ function ShowcaseShell() {
             : 'bg-transparent'
         }`}
       >
-        <div className="container-x flex items-center justify-between py-4">
-          <Link to="/" className="flex items-center leading-none group" aria-label={AGENCY.fullName}>
-            <img
-              src={AGENCY.logoFullBesideSrc}
-              alt={AGENCY.name}
-              className="h-11 md:h-14 w-auto transition-transform group-hover:scale-[1.03]"
-            />
-          </Link>
-          <nav className="hidden md:flex items-center gap-1">
+        <div className="container-x">
+          {/* Row 1: Logo + CTAs */}
+          <div className="flex items-center justify-between py-3">
+            <Link to="/" className="flex items-center leading-none group" aria-label={AGENCY.fullName}>
+              <img
+                src={AGENCY.logoFullBesideSrc}
+                alt={AGENCY.name}
+                className="h-10 md:h-12 w-auto transition-transform group-hover:scale-[1.03]"
+              />
+            </Link>
+            <div className="hidden md:flex items-center gap-2">
+              <Link to="/kontakt" className="btn-accent !py-2 !px-5 text-sm">
+                Beratung <span aria-hidden>→</span>
+              </Link>
+              <Link to="/demo" className="rounded-full border border-white/30 px-5 py-2 text-sm font-medium text-white transition hover:bg-white/10">
+                Demo testen
+              </Link>
+            </div>
+          </div>
+          {/* Row 2: Nav links */}
+          <nav className="hidden md:flex items-center justify-center gap-1 -mt-1 pb-2">
             {NAV.map((n) => (
               <NavLink
                 key={n.to}
                 to={n.to}
                 className={({ isActive }) =>
-                  `link-underline px-4 py-2 text-sm font-medium transition-colors text-white/85 hover:text-white ${isActive ? 'is-active' : ''}`
+                  `link-underline px-3 py-1.5 text-[13px] font-medium transition-colors text-white/80 hover:text-white ${isActive ? 'is-active' : ''}`
                 }
               >
                 {n.label}
               </NavLink>
             ))}
-            <Link to="/kontakt" className="ml-4 btn-accent !py-2.5 !px-5 text-sm">
-              Beratung <span aria-hidden>→</span>
-            </Link>
-            <Link to="/demo" className="ml-2 rounded-full border border-white/30 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/10">
-              Demo testen
-            </Link>
           </nav>
           <button
             onClick={() => setMobile(true)}
