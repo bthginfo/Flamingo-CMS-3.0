@@ -2059,14 +2059,14 @@ function Pricing() {
     },
     {
       name: 'Mit Content Kit (Foto + Video)',
-      price: '3.180 €',
+      price: '2.400 €',
       sub: 'einmalig',
       monthly: '+ 29 € / Monat Hosting & Pflege',
       featured: true,
       badge: 'Content Kit',
       features: [
         'Alles aus „Template"',
-        '2 Drehtage bei Dir vor Ort',
+        '1 Drehtag bei Dir vor Ort',
         'Teamfotos bis 20 Personen (Einzel + Gruppe)',
         'Location komplett: Räume, Atmosphäre, Details',
         'Food-, Produkt- und Servicemomente inklusive',
