@@ -19,6 +19,7 @@ const INDUSTRY_MAP: Record<string, string> = {
   consulting: 'consulting',
   realestate: 'realestate',
   cafe: 'cafe',
+  tattoo: 'tattoo',
   showcase: 'tradesman',
 };
 

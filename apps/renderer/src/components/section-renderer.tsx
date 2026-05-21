@@ -49,7 +49,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   }
 
   // Hero and CTA band are full-bleed — skip spacing/container
-  const isFullBleed = section.type === 'hero' || section.type === 'collectionHero' || section.type === 'noticeBanner';
+  const isFullBleed = section.type === 'hero' || section.type === 'collectionHero' || section.type === 'noticeBanner' || section.type === 'atmosphereGallery';
 
   if (isFullBleed) {
     return (

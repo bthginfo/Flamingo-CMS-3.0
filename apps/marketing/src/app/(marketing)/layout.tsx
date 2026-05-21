@@ -249,6 +249,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 <ul className="space-y-2">
                   <li><Link href="/impressum" className="hover:text-accent">Impressum</Link></li>
                   <li><Link href="/datenschutz" className="hover:text-accent">Datenschutz</Link></li>
+                  <li><Link href="/agb" className="hover:text-accent">AGB</Link></li>
                 </ul>
               </div>
             </div>
