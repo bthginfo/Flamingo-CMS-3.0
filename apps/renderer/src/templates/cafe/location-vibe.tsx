@@ -14,6 +14,7 @@ export function LocationVibeSection({ data }: Props) {
   const description = (data.description as string) || '';
   const hours = (data.hours as HoursItem[]) || [];
   const mapImage = (data.mapImage as string) || '';
+  const mapEmbed = (data.mapEmbed as string) || '';
   const vibeText = (data.vibeText as string) || '';
 
   const ref = useRef(null);
@@ -53,13 +54,24 @@ export function LocationVibeSection({ data }: Props) {
             )}
           </motion.div>
 
-          {mapImage && (
+          {(mapEmbed || mapImage) && (
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               className="rounded-xl overflow-hidden shadow-md aspect-[4/3]"
             >
-              <img src={mapImage} alt="Standort" className="w-full h-full object-cover" />
+              {mapEmbed ? (
+                <iframe
+                  src={mapEmbed}
+                  className="w-full h-full border-0"
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Google Maps"
+                />
+              ) : (
+                <img src={mapImage} alt="Standort" className="w-full h-full object-cover" />
+              )}
             </motion.div>
           )}
         </div>

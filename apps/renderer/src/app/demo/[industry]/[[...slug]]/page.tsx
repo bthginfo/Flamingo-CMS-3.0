@@ -47,9 +47,16 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
   const dbIndustry = INDUSTRY_MAP[industry];
   if (!dbIndustry) return notFound();
 
-  // Static demo pages take priority — they are curated and always complete
-  const staticSite = getDemoSite(industry);
-  if (staticSite) {
+  // Resolve demo tenant from DB
+  const SLUG_MAP: Record<string, string> = { showcase: 'demo-showcase' };
+  const tenantId = SLUG_MAP[industry]
+    ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
+    : await resolveDemoTenant(dbIndustry);
+
+  // Fallback to static demo pages if no DB tenant exists
+  if (!tenantId) {
+    const staticSite = getDemoSite(industry);
+    if (!staticSite) return notFound();
     const targetSlug = slug?.join('/') || '';
     const page = staticSite.pages.find(p =>
       p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
@@ -75,14 +82,6 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
       />
     );
   }
-
-  // For industries without static data (e.g. showcase), resolve from DB
-  const SLUG_MAP: Record<string, string> = { showcase: 'demo-showcase' };
-  const tenantId = SLUG_MAP[industry]
-    ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
-    : await resolveDemoTenant(dbIndustry);
-
-  if (!tenantId) return notFound();
 
   const [snapshot, tenantStyle, navData, footerData, brandData] = await Promise.all([
     getActiveSnapshot(tenantId),
