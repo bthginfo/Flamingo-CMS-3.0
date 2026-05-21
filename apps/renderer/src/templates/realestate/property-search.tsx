@@ -38,11 +38,11 @@ export function PropertySearchSection({ data }: Props) {
           <div className="grid md:grid-cols-3 gap-4">
             <div>
               <label className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5 block">Ort / PLZ</label>
-              <input type="text" placeholder="z.B. Köln, 50667" className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none" readOnly />
+              <input type="text" placeholder="z.B. Köln, 50667" className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none" />
             </div>
             <div>
               <label className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5 block">Typ</label>
-              <select className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-700 appearance-none bg-white" disabled>
+              <select className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-700 appearance-none bg-white">
                 <option>Alle Typen</option>
                 <option>Wohnung</option>
                 <option>Haus</option>
@@ -52,7 +52,7 @@ export function PropertySearchSection({ data }: Props) {
             </div>
             <div>
               <label className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5 block">Preis bis</label>
-              <select className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-700 appearance-none bg-white" disabled>
+              <select className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-700 appearance-none bg-white">
                 <option>Keine Begrenzung</option>
                 <option>250.000 €</option>
                 <option>500.000 €</option>

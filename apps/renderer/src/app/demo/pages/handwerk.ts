@@ -63,6 +63,18 @@ export const handwerkSite: DemoSite = {
           },
         },
         {
+          ...B, id: 'hw-stats', type: 'statsCounter',
+          data: {
+            headline: 'Zahlen & Fakten',
+            stats: [
+              { value: 2500, suffix: '+', label: 'Zufriedene Kunden' },
+              { value: 35, suffix: ' Jahre', label: 'Erfahrung' },
+              { value: 18, suffix: '', label: 'Mitarbeiter' },
+              { value: 4.9, suffix: '★', label: 'Google-Bewertung' },
+            ],
+          },
+        },
+        {
           ...B, id: 'hw-cta-home', type: 'ctaBand',
           data: {
             headline: 'Projekt besprechen?',

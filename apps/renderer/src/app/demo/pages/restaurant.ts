@@ -78,6 +78,18 @@ export const restaurantSite: DemoSite = {
             timeHint: 'Wir empfehlen eine Reservierung mindestens 2 Tage im Voraus, besonders für Freitag und Samstag.',
           },
         },
+        {
+          ...B, id: 'rs-stats', type: 'statsCounter',
+          data: {
+            headline: 'La Trattoria in Zahlen',
+            stats: [
+              { value: 15, suffix: ' Jahre', label: 'In Innsbruck' },
+              { value: 4.8, suffix: '★', label: 'Google-Bewertung' },
+              { value: 120, suffix: '', label: 'Sitzplätze' },
+              { value: 850, suffix: '+', label: 'Bewertungen' },
+            ],
+          },
+        },
       ],
     },
     {

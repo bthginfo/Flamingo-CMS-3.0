@@ -92,7 +92,7 @@ function applyShowcasePalette() {
 }
 
 /* ─── Template metadata ────────────────────────────────────────────── */
-const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting', {
+const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe', {
   label: string;
   tagline: string;
   description: string;
@@ -172,9 +172,25 @@ const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     accent: '#1a2744',
     bullets: ['Fachgebiete-Grid & Honorarübersicht', 'Partner & Team', 'Erfolgsbilanz & Mandantenstimmen', 'Fachbeiträge & Erstberatung'],
   },
+  realestate: {
+    label: 'Immobilien',
+    tagline: 'Makler · Hausverwaltung · Bewertung',
+    description: 'Objekt-Showcase, Suchfilter, Marktbericht, Makler-Team, Bewertungs-CTA, verkaufte Referenzen und Standort-Highlight.',
+    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1400&q=80',
+    accent: '#1e3a5f',
+    bullets: ['Objekt-Showcase & Suchfilter', 'Marktbericht & Statistiken', 'Makler-Team & Bewertungs-CTA', 'Verkaufte Referenzen & Kontakt'],
+  },
+  cafe: {
+    label: 'Café & Bar',
+    tagline: 'Coffee · Cocktails · Bistro',
+    description: 'Getränke- & Speisekarte, Atmosphäre-Galerie, Tagesangebote, Event-Kalender, Location-Vibe und Kontakt.',
+    image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1400&q=80',
+    accent: '#8b4513',
+    bullets: ['Getränkekarte & Food-Menü', 'Atmosphäre-Galerie & Daily Specials', 'Event-Kalender', 'Location & Kontakt'],
+  },
 };
 
-const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting', { classic: string; modern: string; bold: string }> = {
+const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe', { classic: string; modern: string; bold: string }> = {
   handwerk: {
     classic: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80',
@@ -219,6 +235,16 @@ const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     classic: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1400&q=80',
+  },
+  realestate: {
+    classic: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80',
+  },
+  cafe: {
+    classic: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1400&q=80',
   },
 };
 

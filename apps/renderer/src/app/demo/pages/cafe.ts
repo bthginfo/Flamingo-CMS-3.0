@@ -266,10 +266,13 @@ export const cafeSite: DemoSite = {
           ...SECTION, id: 'cf-about-team', type: 'team',
           data: {
             headline: 'Das Team',
+            subline: 'Die Menschen hinter dem Tresen — mit Leidenschaft für Kaffee, gutes Essen und lange Abende.',
             members: [
-              { name: 'Max Röstner', role: 'Gründer & Head Barista', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' },
-              { name: 'Lena Kaffee', role: 'Bar-Managerin', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80' },
-              { name: 'Tom Brauer', role: 'Küche & Patisserie', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80' },
+              { name: 'Max Röstner', role: 'Gründer & Head Barista', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80', bio: 'SCA-zertifiziert, 10 Jahre Erfahrung. Hat die eigene Röstung aufgebaut und reist jedes Jahr zu den Plantagen.' },
+              { name: 'Lena Kaffee', role: 'Bar-Managerin & Mixologin', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80', bio: 'Entwickelt unsere saisonale Cocktailkarte und hat die Espresso-Martini-Rezeptur perfektioniert.' },
+              { name: 'Tom Brauer', role: 'Küche & Patisserie', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80', bio: 'Gelernt im Tantris, dann Streetfood in Melbourne. Jetzt macht er die besten Sandwiches der Stadt.' },
+              { name: 'Mia Chen', role: 'Barista & Latte-Art-Champion', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80', bio: 'München Latte Art Champion 2024. Ihre Rosetta hat es auf Instagram viral geschafft.' },
+              { name: 'Jonas Feld', role: 'Röstmeister', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80', bio: 'Unsere Bohnen werden von Jonas in Kleinchargen im Hinterhof geröstet — jeden Dienstag frisch.' },
             ],
           },
         },
@@ -282,18 +285,47 @@ export const cafeSite: DemoSite = {
         {
           ...HERO, id: 'cf-contact-hero', type: 'hero',
           data: {
-            headline: 'Kontakt',
-            subline: 'Fragen, Reservierungen oder Event-Anfragen? Meld dich!',
+            headline: 'Besuch uns',
+            subline: 'Fragen, Reservierungen oder Event-Anfragen? Wir freuen uns auf dich.',
             bgImage: 'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=1600&q=80',
+            primaryCta: { label: 'Route planen', href: 'https://maps.google.com/?q=Wörthstraße+23+München' },
+          },
+        },
+        {
+          ...SECTION, id: 'cf-hours', type: 'openingHours',
+          data: {
+            headline: 'Öffnungszeiten',
+            subline: 'Café tagsüber, Bar am Abend',
+            hours: [
+              { days: 'Montag – Freitag', time: '7:30 – 23:00' },
+              { days: 'Samstag', time: '9:00 – 01:00' },
+              { days: 'Sonntag', time: '9:00 – 22:00' },
+            ],
+            note: 'Bar & Cocktails täglich ab 18 Uhr · Küche bis 21:30',
           },
         },
         {
           ...SECTION, id: 'cf-contact', type: 'contact',
           data: {
             headline: 'Schreib uns',
+            subline: 'Für Reservierungen (Brunch & Events) am besten per Mail.',
             phone: '+49 89 2345 6789',
             email: 'hello@roestwerk-muenchen.de',
-            address: 'Wörthstraße 23, 81667 München',
+            address: 'Wörthstraße 23, 81667 München-Haidhausen',
+            mapEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2662.5!2d11.59!3d48.13',
+            socialLinks: [
+              { platform: 'Instagram', url: 'https://instagram.com/roestwerk_muc', label: '@roestwerk_muc' },
+              { platform: 'Facebook', url: 'https://facebook.com/roestwerk', label: 'Röstwerk München' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'cf-contact-cta', type: 'ctaBand',
+          data: {
+            headline: 'Event bei uns feiern?',
+            text: 'Wir vermieten den Raum für private Events — Geburtstage, Firmen-Offsite oder Barista-Workshops. Sonntags ab 22 Uhr oder montags ganztags.',
+            ctaLabel: 'Anfrage senden',
+            ctaHref: 'mailto:events@roestwerk-muenchen.de',
           },
         },
         {
@@ -306,6 +338,7 @@ export const cafeSite: DemoSite = {
               { question: 'Sind Hunde erlaubt?', answer: 'Ja! Wasser steht bereit. Wir bitten nur darum, dass es bei einem Hund pro Tisch bleibt.' },
               { question: 'Gibt es vegane Optionen?', answer: 'Etwa die Hälfte unserer Speisen ist vegan oder kann vegan zubereitet werden. Hafermilch und andere Pflanzendrinks berechnen wir nicht extra.' },
               { question: 'Kann man den Raum für private Events mieten?', answer: 'Ja, sonntags ab 22 Uhr oder montags ganztags. Schreib uns für ein individuelles Angebot.' },
+              { question: 'Woher kommen eure Bohnen?', answer: 'Wir importieren direkt von Farmen in Äthiopien, Kolumbien und Guatemala. Jonas röstet jede Woche frisch in unserer Mikrorösterei im Hinterhof.' },
             ],
           },
         },

@@ -94,6 +94,27 @@ export const realestateSite: DemoSite = {
             ],
           },
         },
+        {
+          ...SECTION, id: 're-stats', type: 'statsCounter',
+          data: {
+            headline: 'Unsere Bilanz',
+            stats: [
+              { value: 1120, suffix: '+', label: 'Vermittelte Objekte' },
+              { value: 98, suffix: '%', label: 'Kundenzufriedenheit' },
+              { value: 12, suffix: ' Tage', label: 'Ø Vermarktungsdauer' },
+              { value: 25, suffix: ' Jahre', label: 'Erfahrung in Köln' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 're-cta-home', type: 'ctaBand',
+          data: {
+            headline: 'Immobilie verkaufen? Kostenlose Erstberatung.',
+            text: 'Lassen Sie sich unverbindlich beraten — wir analysieren den Markt für Ihre Immobilie und zeigen Ihnen den optimalen Verkaufsweg.',
+            ctaLabel: 'Beratungstermin vereinbaren',
+            ctaHref: '/demo/realestate/kontakt',
+          },
+        },
       ],
     },
     {
