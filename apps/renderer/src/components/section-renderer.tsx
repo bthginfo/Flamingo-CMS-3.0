@@ -69,7 +69,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
 
   if (isFullBleed) {
     return (
-      <section id={section.anchorId ?? undefined}>
+      <section id={section.anchorId ?? undefined} data-theme="dark">
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
         </SectionErrorBoundary>
