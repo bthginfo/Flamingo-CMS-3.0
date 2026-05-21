@@ -259,6 +259,11 @@ function getSectionSchemas(industry: string): Record<string, object> {
     textImage: { fields: { headline: 'string', text: 'string (html)', badge: 'string?', image: 'url', imageAlt: 'string?', layout: '"image-right"|"image-left"', items: '{ icon?: lucide-icon-name, title: string, text: string }[]?', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
     collectionHero: { fields: { headline: 'string', subline: 'string?', bgImage: 'url?', category: 'string?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string?', imageEffect: '"none"|"parallax"|"kenBurns"?', imageEffectIntensity: '"subtle"|"medium"|"strong"?' } },
     noticeBanner: { fields: { headline: 'string', subline: 'string?', text: 'string? (html)', bgColor: 'hex?', textColor: 'hex? (default white)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
+    statsCounter: { fields: { headline: 'string', subline: 'string?', stats: '{ value: number, suffix?: string, label: string }[] (4 items recommended, scroll-triggered animated counters)' } },
+    bentoGrid: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text: string, icon?: lucide-icon-name, image?: url, span?: "1"|"2" }[] (asymmetric grid with hover spotlight)' } },
+    testimonialMarquee: { fields: { headline: 'string?', items: '{ quote: string, name: string, role?: string, image?: url, rating?: 1-5 }[] (min 6 items, auto-scrolling in 2 rows)' } },
+    featureShowcase: { fields: { headline: 'string', subline: 'string?', image: 'url', features: '{ icon?: lucide-icon-name, title: string, text: string }[]', ctaPrimary: '{ label: string, href: string }?' } },
+    logoMarquee: { fields: { headline: 'string?', logos: '{ src: url, alt: string, href?: url }[] (min 6 logos, auto-scrolling)' } },
   };
 
   if (industry === 'wedding') {

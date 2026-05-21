@@ -1,8 +1,8 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Search } from 'lucide-react';
+import { Search, ChevronDown } from 'lucide-react';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -13,6 +13,7 @@ export function PropertySearchSection({ data }: Props) {
 
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
+  const [activeCategory, setActiveCategory] = useState(0);
 
   return (
     <section ref={ref} className="py-16 md:py-20" style={bgColor ? { backgroundColor: bgColor } : undefined}>
@@ -29,7 +30,7 @@ export function PropertySearchSection({ data }: Props) {
         >
           <div className="flex gap-2 mb-6">
             {categories.map((cat, i) => (
-              <button key={i} className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${i === 0 ? 'bg-brand-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+              <button key={i} onClick={() => setActiveCategory(i)} className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all cursor-pointer ${i === activeCategory ? 'bg-brand-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
                 {cat}
               </button>
             ))}
@@ -38,31 +39,37 @@ export function PropertySearchSection({ data }: Props) {
           <div className="grid md:grid-cols-3 gap-4">
             <div>
               <label className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5 block">Ort / PLZ</label>
-              <input type="text" placeholder="z.B. Köln, 50667" className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none" />
+              <input type="text" placeholder="z.B. Köln, 50667" className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-colors" />
             </div>
             <div>
               <label className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5 block">Typ</label>
-              <select className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-700 appearance-none bg-white">
-                <option>Alle Typen</option>
-                <option>Wohnung</option>
-                <option>Haus</option>
-                <option>Grundstück</option>
-                <option>Gewerbe</option>
-              </select>
+              <div className="relative">
+                <select className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-700 appearance-none bg-white cursor-pointer focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-colors">
+                  <option>Alle Typen</option>
+                  <option>Wohnung</option>
+                  <option>Haus</option>
+                  <option>Grundstück</option>
+                  <option>Gewerbe</option>
+                </select>
+                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              </div>
             </div>
             <div>
               <label className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1.5 block">Preis bis</label>
-              <select className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-700 appearance-none bg-white">
-                <option>Keine Begrenzung</option>
-                <option>250.000 €</option>
-                <option>500.000 €</option>
-                <option>750.000 €</option>
-                <option>1.000.000 €</option>
-              </select>
+              <div className="relative">
+                <select className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-700 appearance-none bg-white cursor-pointer focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-colors">
+                  <option>Keine Begrenzung</option>
+                  <option>250.000 €</option>
+                  <option>500.000 €</option>
+                  <option>750.000 €</option>
+                  <option>1.000.000 €</option>
+                </select>
+                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              </div>
             </div>
           </div>
 
-          <button className="mt-6 w-full md:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-brand-primary text-white font-semibold rounded-lg hover:bg-brand-dark transition-colors">
+          <button className="mt-6 w-full md:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-brand-primary text-white font-semibold rounded-lg hover:bg-brand-dark transition-colors cursor-pointer">
             <Search size={18} />
             Immobilien suchen
           </button>
