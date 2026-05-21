@@ -4,17 +4,17 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from '@/lib/nav-compat';
 
 const DEMO_LINKS: Record<string, string> = {
-  tradesman: '/demo/handwerk',
-  restaurant: '/demo/restaurant',
-  salon: '/demo/salon',
-  hotel: '/demo/hotel',
-  tourism: '/demo/tourism',
-  medical: '/demo/medical',
-  wedding: '/demo/wedding',
-  photography: '/demo/photography',
-  consulting: '/demo/consulting',
-  realestate: '/demo/realestate',
-  cafe: '/demo/cafe',
+  tradesman: 'https://demo.flamingomedia.online/demo/handwerk',
+  restaurant: 'https://demo.flamingomedia.online/demo/restaurant',
+  salon: 'https://demo.flamingomedia.online/demo/salon',
+  hotel: 'https://demo.flamingomedia.online/demo/hotel',
+  tourism: 'https://demo.flamingomedia.online/demo/tourism',
+  medical: 'https://demo.flamingomedia.online/demo/medical',
+  wedding: 'https://demo.flamingomedia.online/demo/wedding',
+  photography: 'https://demo.flamingomedia.online/demo/photography',
+  consulting: 'https://demo.flamingomedia.online/demo/consulting',
+  realestate: 'https://demo.flamingomedia.online/demo/realestate',
+  cafe: 'https://demo.flamingomedia.online/demo/cafe',
 };
 
 const TEMPLATES = [
