@@ -88,7 +88,18 @@ export function useHeaderContrast(initialDark: boolean): boolean {
   useEffect(() => {
     // Small delay to ensure DOM is rendered
     const timer = setTimeout(analyze, 100);
-    return () => clearTimeout(timer);
+
+    // Re-analyze when the hero section changes (e.g. style switch replaces the hero DOM)
+    const main = document.querySelector('main');
+    const firstSection = main?.querySelector('section');
+    if (!firstSection) return () => clearTimeout(timer);
+
+    const observer = new MutationObserver(() => {
+      setTimeout(analyze, 150);
+    });
+    observer.observe(firstSection, { childList: true, subtree: false, attributes: true, attributeFilter: ['class', 'style'] });
+
+    return () => { clearTimeout(timer); observer.disconnect(); };
   }, [analyze]);
 
   return isDark;
