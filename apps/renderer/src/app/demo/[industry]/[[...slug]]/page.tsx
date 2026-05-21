@@ -3,6 +3,8 @@ import { resolveDemoTenant, resolveDemoTenantBySlug, getActiveSnapshot } from '@
 import type { SnapshotSection } from '@/lib/snapshot';
 import { getTenantStyle, getTenantNav, getTenantFooter, getTenantBrand } from '@/lib/tenant-data';
 import { DemoPageShell } from '../../demo-page-shell';
+import { getDemoSite } from '../../pages';
+import { getDemoSiteData, type IndustryKey } from '../../demo-data';
 
 // Map URL keys to DB industry enum values
 const INDUSTRY_MAP: Record<string, string> = {
@@ -14,6 +16,7 @@ const INDUSTRY_MAP: Record<string, string> = {
   medical: 'medical',
   wedding: 'wedding',
   photography: 'photography',
+  consulting: 'consulting',
   showcase: 'tradesman',
 };
 
@@ -46,7 +49,36 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
   const tenantId = SLUG_MAP[industry]
     ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
     : await resolveDemoTenant(dbIndustry);
-  if (!tenantId) return notFound();
+
+  // Fallback to static demo pages if no DB tenant exists
+  if (!tenantId) {
+    const staticSite = getDemoSite(industry);
+    if (!staticSite) return notFound();
+    const targetSlug = slug?.join('/') || '';
+    const page = staticSite.pages.find(p =>
+      p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
+    );
+    if (!page) return notFound();
+    const siteData = getDemoSiteData(industry as IndustryKey);
+    const demoPrefix = `/demo/${industry}`;
+    return (
+      <DemoPageShell
+        sections={prefixSections(page.sections.filter(s => s.visible) as SnapshotSection[], demoPrefix)}
+        industry={staticSite.industry}
+        industryKey={industry}
+        defaultStyle={staticSite.defaultStyle}
+        siteData={{
+          navItems: siteData.navItems,
+          cta: siteData.cta,
+          brand: siteData.brand,
+          contact: siteData.contact,
+          socialLinks: siteData.socialLinks,
+          footer: siteData.footer,
+        }}
+        darkBg={page.sections[0]?.type === 'hero'}
+      />
+    );
+  }
 
   const [snapshot, tenantStyle, navData, footerData, brandData] = await Promise.all([
     getActiveSnapshot(tenantId),

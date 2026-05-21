@@ -92,7 +92,7 @@ function applyShowcasePalette() {
 }
 
 /* ─── Template metadata ────────────────────────────────────────────── */
-const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography', {
+const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting', {
   label: string;
   tagline: string;
   description: string;
@@ -164,9 +164,17 @@ const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     accent: '#9c7c5c',
     bullets: ['Masonry-Portfolio mit Lightbox', 'Service-Pakete & Preise', 'Shooting-Ablauf Timeline', 'Bewertungen & Kontakt'],
   },
+  consulting: {
+    label: 'Kanzlei & Beratung',
+    tagline: 'Anwälte · Kanzleien · Consulting',
+    description: 'Rechtsgebiete-Übersicht, Anwaltsteam, Erfolgsbilanz, Honorartransparenz, Fachpublikationen und Erstberatungsformular.',
+    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1400&q=80',
+    accent: '#1a2744',
+    bullets: ['Rechtsgebiete-Grid & Honorarübersicht', 'Anwälte & Partner', 'Erfolgsbilanz & Mandantenstimmen', 'Fachbeiträge & Erstberatung'],
+  },
 };
 
-const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography', { classic: string; modern: string; bold: string }> = {
+const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting', { classic: string; modern: string; bold: string }> = {
   handwerk: {
     classic: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80',
@@ -207,12 +215,17 @@ const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     modern: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=1400&q=80',
   },
+  consulting: {
+    classic: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1400&q=80',
+  },
 };
 
 /* ─── Coming-soon branches ───────────────────────────────────────── */
-type ExtraBranchKey = 'consulting' | 'fitness';
+type ExtraBranchKey = 'fitness';
 type BranchKey = TemplateKey | ExtraBranchKey;
-const EXTRA_KEYS: ExtraBranchKey[] = ['consulting', 'fitness'];
+const EXTRA_KEYS: ExtraBranchKey[] = ['fitness'];
 const isExtraKey = (k: string | undefined): k is ExtraBranchKey =>
   !!k && (EXTRA_KEYS as string[]).includes(k);
 
@@ -226,14 +239,6 @@ const EXTRA_BRANCHES: Record<ExtraBranchKey, {
   accent: string;
   bullets: string[];
 }> = {
-  consulting: {
-    label: 'Beratung & Kanzlei',
-    tagline: 'Consulting · Steuer · Recht',
-    description: 'Seriöser Auftritt mit klarer Hierarchie, Team-Profilen und durchgängigem Stil.',
-    image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=80',
-    accent: '#1e3a8a',
-    bullets: ['Team- & Expertise-Profile', 'Beratungs-Prozess in Schritten', 'Termin-Anfrage mit Vorab-Briefing', 'Stimmen, Referenzen & Vertrauen'],
-  },
   fitness: {
     label: 'Studios & Coaching',
     tagline: 'Fitness · Yoga · Personal',
