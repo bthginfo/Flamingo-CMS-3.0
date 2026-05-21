@@ -38,8 +38,6 @@ export function DemoFab({ currentIndustry, currentStyle, onStyleChange }: DemoFa
   // On desktop, open by default
   useEffect(() => {
     if (window.innerWidth >= 768) setOpen(true);
-    const timer = setTimeout(() => setShowTooltip(false), 5000);
-    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
