@@ -10,6 +10,11 @@ const FULL_BLEED_TYPES = new Set([
   'photographerAbout', 'shootingProcess', 'marketReport', 'valuationCta',
   'eventSchedule', 'faqGallery', 'giftRegistry', 'rsvp', 'venueInfo',
   'dailySpecials', 'servicePackages', 'ctaBand', 'headerBanner',
+  'bookingStrip', 'statsCounter', 'socialProofBar', 'uspStrip',
+  'testimonialMarquee', 'logoMarquee', 'featureShowcase', 'caseResults',
+  'map', 'stats', 'coupleStory', 'dresscode', 'weddingMenu',
+  'roomShowcase', 'wellness', 'ambience', 'signatureDishes',
+  'portfolioGallery', 'bentoGrid', 'locationVibe',
 ]);
 
 export default async function SectionPreviewPage({ searchParams }: { searchParams: Promise<{ type?: string; industry?: string; style?: string }> }) {
