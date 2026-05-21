@@ -36,7 +36,7 @@ export function ConsultingHeroSection({ data }: Props) {
         <div className="absolute bottom-0 left-0 w-96 h-96 border border-white/10 rounded-full -translate-x-1/2 translate-y-1/2" />
       </div>
 
-      <div className="container-x relative z-10 py-24">
+      <div className="max-w-7xl mx-auto px-6 relative z-10 py-24">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -47,7 +47,7 @@ export function ConsultingHeroSection({ data }: Props) {
             {headline}
           </h1>
           {subline && (
-            <p className="text-lg md:text-xl text-white/80 mt-6 max-w-2xl leading-relaxed">
+            <p className="text-lg md:text-xl text-white/80 mt-6 max-w-2xl mx-auto leading-relaxed">
               {subline}
             </p>
           )}
