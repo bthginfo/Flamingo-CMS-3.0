@@ -173,6 +173,7 @@ import {
   CafeContactSection,
   CafeFaqSection,
   CafeTestimonialsSection,
+  CafeTeamSection,
 } from './cafe';
 import {
   TattooHeroSection,
@@ -460,7 +461,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     newsGrid: NewsPreviewSection,
     collectionHero: CollectionHeroSection,
     galleryGrid: GalleryGridSection,
-    team: TeamSection,
+    team: CafeTeamSection,
   },
   tattoo: {
     hero: TattooHeroSection,

@@ -8,3 +8,4 @@ export { LocationVibeSection } from './location-vibe';
 export { CafeContactSection } from './contact';
 export { CafeFaqSection } from './faq';
 export { CafeTestimonialsSection } from './testimonials';
+export { CafeTeamSection } from './team';
