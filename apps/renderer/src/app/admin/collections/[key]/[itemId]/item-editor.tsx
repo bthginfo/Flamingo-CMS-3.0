@@ -337,6 +337,7 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
               sectionTypes={sectionTypes}
               onSelect={handleAddSection}
               onClose={() => setShowAddMenu(false)}
+              industry={industry}
             />
           )}
         </div>

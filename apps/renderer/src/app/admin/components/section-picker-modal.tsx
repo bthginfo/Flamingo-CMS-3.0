@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, X, FileText, Megaphone, Star, Image, Mail, Users, Wrench, MoreHorizontal, Layers } from 'lucide-react';
+import { Search, X, FileText, Megaphone, Star, Image, Mail, Users, Wrench, MoreHorizontal, Layers, Eye } from 'lucide-react';
 import type { SectionTypeDefinition } from '../pages/[id]/section-types';
+import { SectionPreviewButton } from './section-preview-button';
 
 const CATEGORY_META: Record<string, { icon: typeof FileText; color: string; description: string }> = {
   'Inhalt': { icon: FileText, color: 'text-blue-600 bg-blue-50', description: 'Texte, Bilder & eingebettete Inhalte' },
@@ -21,7 +22,7 @@ function getCategoryMeta(cat: string) {
   return { icon: Layers, color: 'text-teal-600 bg-teal-50', description: 'Sektionen aus anderen Branchen' };
 }
 
-export function SectionPickerModal({ sectionTypes, onSelect, onClose }: { sectionTypes: SectionTypeDefinition[]; onSelect: (type: string) => void; onClose: () => void }) {
+export function SectionPickerModal({ sectionTypes, onSelect, onClose, industry, styleVariant }: { sectionTypes: SectionTypeDefinition[]; onSelect: (type: string) => void; onClose: () => void; industry?: string; styleVariant?: string }) {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -114,14 +115,20 @@ export function SectionPickerModal({ sectionTypes, onSelect, onClose }: { sectio
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {items.map(st => (
-                    <button
-                      key={st.type}
-                      onClick={() => onSelect(st.type)}
-                      className="text-left p-3 rounded-lg border border-gray-100 hover:border-blue-300 hover:bg-blue-50/50 transition-all group"
-                    >
-                      <div className="font-medium text-sm text-gray-900 group-hover:text-blue-700 transition-colors">{st.label}</div>
-                      <div className="text-xs text-gray-400 mt-0.5 line-clamp-2">{st.description}</div>
-                    </button>
+                    <div key={st.type} className="relative flex items-stretch rounded-lg border border-gray-100 hover:border-blue-300 hover:bg-blue-50/50 transition-all group">
+                      <button
+                        onClick={() => onSelect(st.type)}
+                        className="text-left p-3 flex-1 min-w-0"
+                      >
+                        <div className="font-medium text-sm text-gray-900 group-hover:text-blue-700 transition-colors">{st.label}</div>
+                        <div className="text-xs text-gray-400 mt-0.5 line-clamp-2">{st.description}</div>
+                      </button>
+                      {industry && (
+                        <div className="flex items-center pr-2">
+                          <SectionPreviewButton sectionType={st.type} industry={industry} style={styleVariant || 'classic'} />
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
