@@ -142,7 +142,33 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
     envVars.push({ key: 'ADMIN_JWT_SECRET', value: generated, target: ['production', 'preview'], type: 'encrypted' });
   }
 
-  await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', envVars);
+  try {
+    await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', envVars);
+  } catch (err) {
+    const msg = (err as Error).message || '';
+    // If some vars already exist, update them individually
+    if (msg.includes('ENV_CONFLICT') || msg.includes('already exists')) {
+      for (const envVar of envVars) {
+        try {
+          await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', [envVar]);
+        } catch (innerErr) {
+          const innerMsg = (innerErr as Error).message || '';
+          if (innerMsg.includes('ENV_CONFLICT') || innerMsg.includes('already exists')) {
+            // Fetch existing env var ID and update it
+            const existing = await vercelFetch(`/v9/projects/${projectId}/env`) as { envs: Array<{ id: string; key: string }> };
+            const found = existing.envs?.find((e) => e.key === envVar.key);
+            if (found) {
+              await vercelFetch(`/v9/projects/${projectId}/env/${found.id}`, 'PATCH', { value: envVar.value, target: envVar.target, type: envVar.type });
+            }
+          } else {
+            console.warn(`Failed to set env var ${envVar.key}:`, innerMsg);
+          }
+        }
+      }
+    } else {
+      throw err;
+    }
+  }
 
   // Connect shared Blob store to the new project (provides BLOB_READ_WRITE_TOKEN automatically)
   const blobStoreId = process.env.VERCEL_BLOB_STORE_ID;
