@@ -11,7 +11,15 @@ export type SectionTypeDefinition = {
  */
 const ALL_SECTIONS: SectionTypeDefinition[] = [
   // ─── Hero & Einstieg ───────────────────────────────────────────────
-  { type: 'hero', label: 'Hero', description: 'Fullscreen-Banner mit Bild, Headline und CTA — die erste Sektion jeder Seite.', category: 'Hero & Einstieg' },
+  { type: 'hero', label: 'Hero (automatisch)', description: 'Wählt automatisch den Hero-Stil passend zur Branche deines Templates.', category: 'Hero & Einstieg' },
+  { type: 'heroHandwerk', label: 'Hero — Handwerk', description: 'Kräftiger Fullscreen-Hero mit Badge, Trust-Items und dualem CTA. Ideal für Dienstleister.', category: 'Hero & Einstieg' },
+  { type: 'heroRestaurant', label: 'Hero — Restaurant', description: 'Atmosphärischer Hero mit warmem Overlay, Reservation-CTA und Öffnungszeiten-Hinweis.', category: 'Hero & Einstieg' },
+  { type: 'heroHotel', label: 'Hero — Hotel', description: 'Eleganter Hero mit sanftem Parallax-Effekt und Buchungs-CTA.', category: 'Hero & Einstieg' },
+  { type: 'heroTourism', label: 'Hero — Tourismus', description: 'Weitwinkel-Landschafts-Hero mit Saison-Badge und Erlebnis-CTA.', category: 'Hero & Einstieg' },
+  { type: 'heroSalon', label: 'Hero — Salon & Beauty', description: 'Stylischer Hero mit Duotone-Effekt und Buchungs-CTA.', category: 'Hero & Einstieg' },
+  { type: 'heroMedical', label: 'Hero — Arztpraxis', description: 'Vertrauenswürdiger Hero mit Notfall-Hinweis und Termin-CTA.', category: 'Hero & Einstieg' },
+  { type: 'heroWedding', label: 'Hero — Hochzeit', description: 'Romantischer Hero mit Datum, Countdown und Save-the-Date-Feeling.', category: 'Hero & Einstieg' },
+  { type: 'heroConsulting', label: 'Hero — Kanzlei & Beratung', description: 'Seriöser, zentrierter Hero mit Trust-Items und Erstberatungs-CTA.', category: 'Hero & Einstieg' },
   { type: 'collectionHero', label: 'Artikel-Hero', description: 'Kompakter Hero für Blog-/Artikelseiten mit Kategorie und Datum.', category: 'Hero & Einstieg' },
   { type: 'headerBanner', label: 'Hinweis-Leiste', description: 'Schmale Leiste ganz oben für Aktionen, Urlaub oder wichtige Infos.', category: 'Hero & Einstieg' },
   { type: 'noticeBanner', label: 'Hinweis-Banner', description: 'Auffälliger, farbiger Banner für temporäre Ankündigungen (Urlaub, Sale etc.).', category: 'Hero & Einstieg' },
@@ -78,9 +86,11 @@ const ALL_SECTIONS: SectionTypeDefinition[] = [
   { type: 'openingHours', label: 'Öffnungszeiten', description: 'Tage, Uhrzeiten, Küchenzeiten, Ruhetage und Feiertags-Hinweis.', category: 'Gastronomie & Hotellerie' },
   { type: 'ambience', label: 'Ambiente / Räumlichkeiten', description: 'Atmosphäre mit Bildern und Highlights — Restaurant, Hotel, Eventlocation.', category: 'Gastronomie & Hotellerie' },
   { type: 'events', label: 'Events & Veranstaltungen', description: 'Wiederkehrende Events mit Datum, Preis und Buchungs-CTA.', category: 'Gastronomie & Hotellerie' },
+  { type: 'story', label: 'Geschichte / Über uns', description: 'Bildstarke Vorstellung mit Text — automatisch im Stil der Branche.', category: 'Gastronomie & Hotellerie' },
   { type: 'hotelDining', label: 'Restaurant & Bar (Hotel)', description: 'Frühstück, Halbpension, Bar-Angebot im Hotelkontext.', category: 'Gastronomie & Hotellerie' },
   { type: 'bookingStrip', label: 'Buchungsleiste', description: 'Kompakte Buchungsmaske: Anreise, Abreise, Gäste, Buchen-Button.', category: 'Gastronomie & Hotellerie' },
   { type: 'roomShowcase', label: 'Zimmer-Showcase', description: 'Zimmerkategorien mit Bildern, Ausstattung, Preisen und CTA.', category: 'Gastronomie & Hotellerie' },
+  { type: 'amenities', label: 'Ausstattung & Services', description: 'Feature-Grid für Hotelausstattung, Services und Annehmlichkeiten.', category: 'Gastronomie & Hotellerie' },
   { type: 'wellness', label: 'Wellness & Spa', description: 'Treatments, Spa-Bereich und Wellness-Highlights.', category: 'Gastronomie & Hotellerie' },
   { type: 'eventSpaces', label: 'Tagungsräume / Events', description: 'Räume mit Kapazitäten, Technik und Anfrage-CTA.', category: 'Gastronomie & Hotellerie' },
   { type: 'weddingMenu', label: 'Hochzeitsmenü', description: 'Mehrgängiges Menü für die Hochzeitsfeier.', category: 'Gastronomie & Hotellerie' },

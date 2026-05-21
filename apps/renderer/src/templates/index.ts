@@ -379,6 +379,15 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
 
 // Shared/generic sections available to ALL templates
 const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
+  // Hero variants — 'hero' auto-selects per industry, these allow explicit cross-industry use
+  heroHandwerk: HeroSection,
+  heroRestaurant: RestaurantHeroSection,
+  heroHotel: HotelHeroSection,
+  heroTourism: TourismHeroSection,
+  heroSalon: SalonHeroSection,
+  heroMedical: MedicalHeroSection,
+  heroWedding: WeddingHeroSection,
+  heroConsulting: ConsultingHeroSection,
   uspStrip: UspStripSection,
   servicesGrid: ServicesGridSection,
   processSteps: ProcessStepsSection,
@@ -412,6 +421,8 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   comparisonTable: ComparisonTableSection,
   socialProofBar: SocialProofBarSection,
   timeline: TimelineSection,
+  story: TextImageSection,
+  amenities: AmenitiesSection,
 };
 
 // Merge ALL industry templates as ultimate fallback so foreign sections render
