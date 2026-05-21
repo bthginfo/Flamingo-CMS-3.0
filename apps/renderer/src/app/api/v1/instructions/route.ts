@@ -139,7 +139,7 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
 
 9. SOCIAL LINKS (PUT /api/v1/content/social-links):
    - Setze passende Social-Media-Profile: { facebook: "url", instagram: "url", google: "url" }
-   - Typisch je Branche: Handwerk (Google, Facebook, Instagram), Restaurant (Instagram, Facebook, Google, TripAdvisor), Hotel (Instagram, Facebook, TripAdvisor, Google), Salon (Instagram, Facebook, Google), Medical (Google, Jameda-Link als google), Tourism (Instagram, Facebook, YouTube), Photography (Instagram, Pinterest, Facebook), Wedding (Instagram)
+   - Typisch je Branche: Handwerk (Google, Facebook, Instagram), Restaurant (Instagram, Facebook, Google, TripAdvisor), Hotel (Instagram, Facebook, TripAdvisor, Google), Salon (Instagram, Facebook, Google), Medical (Google, Jameda-Link als google), Tourism (Instagram, Facebook, YouTube), Photography (Instagram, Pinterest, Facebook), Wedding (Instagram), Consulting (LinkedIn, Google), Realestate (LinkedIn, Instagram, Google), Cafe (Instagram, Facebook, Google)
 
 10. STYLE (PUT /api/v1/content/style):
     - Wähle den passenden Stil: { style: "classic" } oder "modern" oder "bold"
@@ -390,6 +390,33 @@ function getSectionSchemas(industry: string): Record<string, object> {
       team: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', members: '{ name: string, role?: string, specialization?: string, image?: url, phone?: string, email?: string }[]' } },
       testimonials: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', items: '{ quote: string, name: string, context?: string, rating?: 1-5 }[]' } },
       faq: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', items: '{ question: string, answer: string }[]' } },
+      contact: { fields: { headline: 'string', subline: 'string?', phone: 'string?', email: 'string?', address: 'string?', hours: 'string[]?' } },
+    });
+  } else if (industry === 'realestate') {
+    Object.assign(schemas, {
+      heroRealestate: { fields: { headline: 'string', subline: 'string?', ctaLabel: 'string?', ctaHref: 'string?', bgImage: 'url?' } },
+      propertyShowcase: { fields: { headline: 'string', subline: 'string?', properties: '{ title: string, price: string, size?: string, rooms?: number, image?: url, href?: string, badge?: string }[]' } },
+      propertySearch: { fields: { headline: 'string', subline: 'string?', filters: '{ type: string[], location: string[], priceRange?: string }?' } },
+      marketReport: { fields: { headline: 'string', subline: 'string?', stats: '{ label: string, value: string, trend?: up|down|stable }[]', text: 'string (html)?' } },
+      agentTeam: { fields: { headline: 'string', subline: 'string?', members: '{ name: string, role?: string, image?: url, phone?: string, email?: string }[]' } },
+      valuationCta: { fields: { headline: 'string', subline: 'string?', ctaLabel: 'string?', ctaHref: 'string?', bgImage: 'url?' } },
+      referencesSold: { fields: { headline: 'string', subline: 'string?', properties: '{ title: string, location?: string, soldPrice?: string, image?: url }[]' } },
+      locationHighlight: { fields: { headline: 'string', subline: 'string?', text: 'string (html)', image: 'url?', features: 'string[]?' } },
+      testimonials: { fields: { headline: 'string', subline: 'string?', items: '{ quote: string, name: string, context?: string, rating?: 1-5 }[]' } },
+      faq: { fields: { headline: 'string', subline: 'string?', items: '{ question: string, answer: string }[]' } },
+      contact: { fields: { headline: 'string', subline: 'string?', phone: 'string?', email: 'string?', address: 'string?', hours: 'string[]?' } },
+    });
+  } else if (industry === 'cafe') {
+    Object.assign(schemas, {
+      heroCafe: { fields: { headline: 'string', subline: 'string?', ctaLabel: 'string?', ctaHref: 'string?', bgImage: 'url?' } },
+      drinkMenu: { fields: { headline: 'string', subline: 'string?', categories: '{ name: string, items: { name: string, description?: string, price: string }[] }[]' } },
+      foodMenu: { fields: { headline: 'string', subline: 'string?', items: '{ name: string, description?: string, price: string, image?: url, tags?: string[] }[]' } },
+      atmosphereGallery: { fields: { headline: 'string', subline: 'string?', images: '{ src: url, alt?: string }[]' } },
+      dailySpecials: { fields: { headline: 'string', subline: 'string?', specials: '{ day?: string, title: string, description?: string, price?: string }[]' } },
+      eventCalendar: { fields: { headline: 'string', subline: 'string?', events: '{ title: string, date: string, time?: string, description?: string, image?: url }[]' } },
+      locationVibe: { fields: { headline: 'string', subline: 'string?', text: 'string (html)', image: 'url?', features: 'string[]?' } },
+      testimonials: { fields: { headline: 'string', subline: 'string?', items: '{ quote: string, name: string, context?: string, rating?: 1-5 }[]' } },
+      faq: { fields: { headline: 'string', subline: 'string?', items: '{ question: string, answer: string }[]' } },
       contact: { fields: { headline: 'string', subline: 'string?', phone: 'string?', email: 'string?', address: 'string?', hours: 'string[]?' } },
     });
   }

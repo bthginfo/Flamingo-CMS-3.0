@@ -1,6 +1,6 @@
 import type { NavItem, NavCta, FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 
-export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'showcase';
+export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'showcase';
 
 export interface DemoSiteData {
   navItems: NavItem[];
@@ -187,6 +187,44 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
       columns: [
         { title: 'Rechtsgebiete', items: [{ text: 'Arbeitsrecht', href: '/demo/consulting/rechtsgebiete' }, { text: 'Familienrecht', href: '/demo/consulting/rechtsgebiete' }, { text: 'Mietrecht', href: '/demo/consulting/rechtsgebiete' }, { text: 'Handelsrecht', href: '/demo/consulting/rechtsgebiete' }] },
         { title: 'Kanzlei', items: [{ text: 'Über uns', href: '/demo/consulting/ueber-uns' }, { text: 'Team', href: '/demo/consulting/team' }, { text: 'Aktuelles', href: '/demo/consulting/aktuelles' }, { text: 'Kontakt', href: '/demo/consulting/kontakt' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    },
+  },
+  realestate: {
+    brand: { companyName: 'Rheinblick Immobilien', tagline: 'Ihr Premiumpartner für Kauf, Verkauf & Bewertung in Köln', primaryColor: '#1e3a5f' },
+    contact: { phone: '+49 221 9876 100', email: 'info@rheinblick-immobilien.de', address: 'Rheinuferstraße 12, 50676 Köln' },
+    socialLinks: { linkedin: '#', instagram: '#' },
+    navItems: [
+      { label: 'Kaufen', href: '/demo/realestate/kaufen' },
+      { label: 'Bewertung', href: '/demo/realestate/bewertung' },
+      { label: 'Über uns', href: '/demo/realestate/ueber-uns' },
+      { label: 'Kontakt', href: '/demo/realestate/kontakt' },
+    ],
+    cta: { label: 'Bewertung anfordern', href: '/demo/realestate/bewertung' },
+    footer: {
+      columns: [
+        { title: 'Immobilien', items: [{ text: 'Kaufen', href: '/demo/realestate/kaufen' }, { text: 'Bewertung', href: '/demo/realestate/bewertung' }] },
+        { title: 'Unternehmen', items: [{ text: 'Über uns', href: '/demo/realestate/ueber-uns' }, { text: 'Kontakt', href: '/demo/realestate/kontakt' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    },
+  },
+  cafe: {
+    brand: { companyName: 'Röstwerk', tagline: 'Third-Wave-Coffee & Craft-Bar in München-Haidhausen', primaryColor: '#8b4513' },
+    contact: { phone: '+49 89 2345 6789', email: 'hello@roestwerk-muenchen.de', address: 'Wörthstraße 23, 81667 München' },
+    socialLinks: { instagram: '#' },
+    navItems: [
+      { label: 'Karte', href: '/demo/cafe/karte' },
+      { label: 'Events', href: '/demo/cafe/events' },
+      { label: 'Über uns', href: '/demo/cafe/ueber-uns' },
+      { label: 'Kontakt', href: '/demo/cafe/kontakt' },
+    ],
+    cta: { label: 'Reservieren', href: '/demo/cafe/kontakt' },
+    footer: {
+      columns: [
+        { title: 'Röstwerk', items: [{ text: 'Karte', href: '/demo/cafe/karte' }, { text: 'Events', href: '/demo/cafe/events' }, { text: 'Über uns', href: '/demo/cafe/ueber-uns' }] },
+        { title: 'Besuch', items: [{ text: 'Kontakt', href: '/demo/cafe/kontakt' }] },
       ],
       legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
     },

@@ -8,6 +8,8 @@ import { weddingSite } from './wedding-v2';
 import { photographySite } from './photography';
 import { consultingSite } from './consulting';
 import { showcaseSite } from './showcase';
+import { realestateSite } from './realestate';
+import { cafeSite } from './cafe';
 import type { DemoSite } from './types';
 
 export type { DemoSite, DemoPage } from './types';
@@ -23,6 +25,8 @@ const SITES: Record<string, DemoSite> = {
   photography: photographySite,
   consulting: consultingSite,
   showcase: showcaseSite,
+  realestate: realestateSite,
+  cafe: cafeSite,
 };
 
 export function getDemoSite(industryKey: string): DemoSite | undefined {

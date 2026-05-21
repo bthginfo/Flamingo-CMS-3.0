@@ -13,6 +13,8 @@ const DEMO_LINKS: Record<string, string> = {
   wedding: '/demo/wedding',
   photography: '/demo/photography',
   consulting: '/demo/consulting',
+  realestate: '/demo/realestate',
+  cafe: '/demo/cafe',
 };
 
 const TEMPLATES = [
@@ -104,6 +106,26 @@ const TEMPLATES = [
     image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80',
     color: '#1a2744',
     features: ['Rechtsgebiete-Grid', 'Anwälte & Partner', 'Erfolgsbilanz', 'Honorar-Übersicht', 'Fachbeiträge', 'Kontakt mit Erstberatung'],
+    status: 'live' as const,
+  },
+  {
+    key: 'realestate',
+    name: 'Immobilien',
+    tagline: 'Makler, Hausverwaltung & Bewertung',
+    description: 'Objekt-Showcase, Suchfilter, Marktbericht, Makler-Team, Bewertungs-CTA, verkaufte Referenzen und Kontakt.',
+    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
+    color: '#1e3a5f',
+    features: ['Objekt-Showcase & Suche', 'Marktbericht & Statistiken', 'Makler-Team', 'Bewertungs-CTA', 'Verkaufte Referenzen', 'Kontakt mit Karte'],
+    status: 'live' as const,
+  },
+  {
+    key: 'cafe',
+    name: 'Café & Bar',
+    tagline: 'Coffee-Shops, Bars & Bistros',
+    description: 'Getränke- & Speisekarte, Atmosphäre-Galerie, Tagesangebote, Event-Kalender, Location-Vibe und Kontakt.',
+    image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80',
+    color: '#8b4513',
+    features: ['Getränkekarte & Food-Menü', 'Atmosphäre-Galerie', 'Tagesangebote', 'Event-Kalender', 'Location & Vibe', 'Kontakt mit Öffnungszeiten'],
     status: 'live' as const,
   },
 ];

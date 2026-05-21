@@ -5,153 +5,297 @@ export type SectionTypeDefinition = {
   category?: string;
 };
 
-/**
- * Unified section catalog — all sections are available to all templates.
- * Grouped thematically for easy discovery in the picker modal.
- */
-const ALL_SECTIONS: SectionTypeDefinition[] = [
-  // ─── Hero & Einstieg ───────────────────────────────────────────────
-  { type: 'hero', label: 'Hero (automatisch)', description: 'Wählt automatisch den Hero-Stil passend zur Branche deines Templates.', category: 'Hero & Einstieg' },
-  { type: 'heroHandwerk', label: 'Hero — Handwerk', description: 'Kräftiger Fullscreen-Hero mit Badge, Trust-Items und dualem CTA. Ideal für Dienstleister.', category: 'Hero & Einstieg' },
-  { type: 'heroRestaurant', label: 'Hero — Restaurant', description: 'Atmosphärischer Hero mit warmem Overlay, Reservation-CTA und Öffnungszeiten-Hinweis.', category: 'Hero & Einstieg' },
-  { type: 'heroHotel', label: 'Hero — Hotel', description: 'Eleganter Hero mit sanftem Parallax-Effekt und Buchungs-CTA.', category: 'Hero & Einstieg' },
-  { type: 'heroTourism', label: 'Hero — Tourismus', description: 'Weitwinkel-Landschafts-Hero mit Saison-Badge und Erlebnis-CTA.', category: 'Hero & Einstieg' },
-  { type: 'heroSalon', label: 'Hero — Salon & Beauty', description: 'Stylischer Hero mit Duotone-Effekt und Buchungs-CTA.', category: 'Hero & Einstieg' },
-  { type: 'heroMedical', label: 'Hero — Arztpraxis', description: 'Vertrauenswürdiger Hero mit Notfall-Hinweis und Termin-CTA.', category: 'Hero & Einstieg' },
-  { type: 'heroWedding', label: 'Hero — Hochzeit', description: 'Romantischer Hero mit Datum, Countdown und Save-the-Date-Feeling.', category: 'Hero & Einstieg' },
-  { type: 'heroConsulting', label: 'Hero — Kanzlei & Beratung', description: 'Seriöser, zentrierter Hero mit Trust-Items und Erstberatungs-CTA.', category: 'Hero & Einstieg' },
-  { type: 'collectionHero', label: 'Artikel-Hero', description: 'Kompakter Hero für Blog-/Artikelseiten mit Kategorie und Datum.', category: 'Hero & Einstieg' },
-  { type: 'headerBanner', label: 'Hinweis-Leiste', description: 'Schmale Leiste ganz oben für Aktionen, Urlaub oder wichtige Infos.', category: 'Hero & Einstieg' },
-  { type: 'noticeBanner', label: 'Hinweis-Banner', description: 'Auffälliger, farbiger Banner für temporäre Ankündigungen (Urlaub, Sale etc.).', category: 'Hero & Einstieg' },
-
-  // ─── Inhalt & Text ─────────────────────────────────────────────────
-  { type: 'textImage', label: 'Text & Bild', description: 'Zweispalter mit Fließtext und Bild — vielseitig für Über-uns, Geschichte etc.', category: 'Inhalt & Text' },
-  { type: 'freeText', label: 'Freitext', description: 'Formatierter Textblock mit WYSIWYG-Editor, für beliebige Inhalte.', category: 'Inhalt & Text' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code — ideal für Impressum, Datenschutz, AGB.', category: 'Inhalt & Text' },
-  { type: 'legalContent', label: 'Rechtliche Inhalte', description: 'Strukturierte Paragraphen für Impressum & Datenschutz (SEO-optimiert).', category: 'Inhalt & Text' },
-  { type: 'timeline', label: 'Zeitleiste', description: 'Chronologischer Verlauf — z.B. Firmengeschichte oder Projekt-Meilensteine.', category: 'Inhalt & Text' },
-
-  // ─── Leistungen & Angebote ─────────────────────────────────────────
-  { type: 'servicesGrid', label: 'Leistungs-Grid', description: 'Kacheln mit Icon, Bild und Text — für Leistungen, Behandlungen, Angebote.', category: 'Leistungen & Angebote' },
-  { type: 'serviceDetail', label: 'Leistungs-Detail', description: 'Ausführliche Einzelbeschreibung einer Leistung mit USPs und CTA.', category: 'Leistungen & Angebote' },
-  { type: 'servicePackages', label: 'Pakete & Preise', description: 'Preistabelle mit Paketen, Features und Highlight-Option — für Fotografen, Berater etc.', category: 'Leistungen & Angebote' },
-  { type: 'processSteps', label: 'Ablauf / Prozess', description: 'Schritte-Timeline: Anfrage → Beratung → Umsetzung → Ergebnis.', category: 'Leistungen & Angebote' },
-  { type: 'priceList', label: 'Preisliste', description: 'Kategorisierte Preis-/Behandlungsliste mit Dauer und Hinweisen.', category: 'Leistungen & Angebote' },
-  { type: 'comparisonTable', label: 'Vergleichstabelle', description: 'Optionen/Pakete nebeneinander vergleichen (Checkmarks, Preise).', category: 'Leistungen & Angebote' },
-  { type: 'practiceAreas', label: 'Fachgebiete / Bereiche', description: 'Grid mit Fachbereichen und Icons — für Kanzleien, Praxen, Agenturen.', category: 'Leistungen & Angebote' },
-  { type: 'feeTable', label: 'Honorar / Kosten', description: 'Transparente Kostenübersicht mit verschiedenen Preismodellen.', category: 'Leistungen & Angebote' },
-
-  // ─── Marketing & CTA ───────────────────────────────────────────────
-  { type: 'ctaBand', label: 'CTA-Band', description: 'Farbiger Call-to-Action-Streifen mit Headline und Button — ideal zwischen Sektionen.', category: 'Marketing & CTA' },
-  { type: 'ctaLinks', label: 'CTA-Links', description: 'Mehrere Button-Links nebeneinander zu Unterseiten oder Aktionen.', category: 'Marketing & CTA' },
-  { type: 'uspStrip', label: 'USP-Leiste', description: 'Kompakte Reihe mit Stärken/Alleinstellungsmerkmalen (Icon + Kurztext).', category: 'Marketing & CTA' },
-  { type: 'stats', label: 'Zahlen & Fakten', description: 'Animierte Statistik-Counter (z.B. "500+ Projekte", "20 Jahre").', category: 'Marketing & CTA' },
-  { type: 'caseResults', label: 'Erfolgsbilanz', description: 'Kennzahlen und Erfolge prominent darstellen — für Kanzleien, Agenturen.', category: 'Marketing & CTA' },
-  { type: 'logoCloud', label: 'Logo-Cloud', description: 'Partner-, Kunden- oder Zertifikats-Logos in einer Reihe.', category: 'Marketing & CTA' },
-  { type: 'bookingCta', label: 'Buchungs-CTA', description: 'Prominenter Buchungsaufruf mit Online-Link, Telefon und WhatsApp.', category: 'Marketing & CTA' },
-  { type: 'offers', label: 'Angebote / Specials', description: 'Saisonale Pakete, Arrangements oder Aktionsangebote.', category: 'Marketing & CTA' },
-
-  // ─── Social Proof ──────────────────────────────────────────────────
-  { type: 'testimonials', label: 'Bewertungen / Stimmen', description: 'Kundenstimmen mit Zitat, Name, Kontext und Sterne-Rating.', category: 'Social Proof' },
-  { type: 'faq', label: 'FAQ', description: 'Aufklappbare Fragen & Antworten — senkt Rückfragen, stärkt SEO.', category: 'Social Proof' },
-  { type: 'socialProofBar', label: 'Social-Proof-Leiste', description: 'Kompakte Zeile mit Rating-Badge, Anzahl Bewertungen, Auszeichnungen.', category: 'Social Proof' },
-  { type: 'certifications', label: 'Zertifikate & Auszeichnungen', description: 'Qualifikationen, Mitgliedschaften und Qualitätsstandards zeigen.', category: 'Social Proof' },
-
-  // ─── Team & Personen ───────────────────────────────────────────────
-  { type: 'team', label: 'Team-Grid', description: 'Mitarbeiter mit Foto, Rolle und Kontaktinfo — universell einsetzbar.', category: 'Team & Personen' },
-  { type: 'doctorTeam', label: 'Ärzteteam', description: 'Ärzte mit Fachgebiet, Sprachen und Lebenslauf — für Praxen.', category: 'Team & Personen' },
-  { type: 'practiceTeam', label: 'Praxisteam / Empfang', description: 'MFA, Assistenz und Empfangsteam vorstellen.', category: 'Team & Personen' },
-  { type: 'teamShowcase', label: 'Team-Showcase (Salon)', description: 'Stylisten/Experten mit Spezialisierung und Buchungsoption.', category: 'Team & Personen' },
-  { type: 'photographerAbout', label: 'Über mich (Personal Brand)', description: 'Persönliche Vorstellung mit Geschichte, Werten und Bild — für Solo-Selbstständige.', category: 'Team & Personen' },
-  { type: 'weddingParty', label: 'Trauzeugen / Brautjungfern', description: 'Personen der Hochzeitsgesellschaft vorstellen.', category: 'Team & Personen' },
-
-  // ─── Medien & Galerie ──────────────────────────────────────────────
-  { type: 'galleryGrid', label: 'Bildergalerie', description: 'Responsive Grid mit Lightbox — für Projekte, Räume, Ergebnisse.', category: 'Medien & Galerie' },
-  { type: 'gallery', label: 'Galerie (mit Kategorien)', description: 'Galerie mit Filterkategorien und Captions — Hotels, Salons, Praxen.', category: 'Medien & Galerie' },
-  { type: 'portfolioGallery', label: 'Portfolio-Galerie', description: 'Filterbare Masonry-Galerie — ideal für Fotografen und Kreative.', category: 'Medien & Galerie' },
-  { type: 'portfolio', label: 'Referenzprojekte', description: 'Projekt-Karten mit Bild, Beschreibung und Tags.', category: 'Medien & Galerie' },
-  { type: 'beforeAfter', label: 'Vorher / Nachher', description: 'Bildpaare für Transformationen — Salon, Handwerk, Renovierung.', category: 'Medien & Galerie' },
-  { type: 'videoEmbed', label: 'Video', description: 'YouTube- oder Vimeo-Video einbetten mit optionalem Text.', category: 'Medien & Galerie' },
-  { type: 'practiceGallery', label: 'Praxis-/Raumgalerie', description: 'Räume und Ausstattung zeigen — für Praxen, Studios, Hotels.', category: 'Medien & Galerie' },
-
-  // ─── News & Publikationen ──────────────────────────────────────────
-  { type: 'newsPreview', label: 'News-Vorschau', description: 'Die neuesten 3 Beiträge als Teaser-Karten auf der Startseite.', category: 'News & Publikationen' },
-  { type: 'newsGrid', label: 'News-Grid', description: 'Alle Beiträge als Grid — für die News-Übersichtsseite.', category: 'News & Publikationen' },
-  { type: 'publications', label: 'Fachartikel / Blog', description: 'Publikationen mit Datum, Kategorie und Bild — für Experten-Positionierung.', category: 'News & Publikationen' },
-
-  // ─── Gastronomie & Hotellerie ──────────────────────────────────────
-  { type: 'menu', label: 'Speisekarte', description: 'Vollständige Menükarte mit Kategorien, Preisen, Allergenen und Tags.', category: 'Gastronomie & Hotellerie' },
-  { type: 'signatureDishes', label: 'Signature-Gerichte', description: 'Empfehlungen des Hauses als große Bildkarten mit Beschreibung.', category: 'Gastronomie & Hotellerie' },
-  { type: 'reservation', label: 'Reservierung', description: 'Reservierungs-CTA mit Hinweistext, Telefon und Buchungslink.', category: 'Gastronomie & Hotellerie' },
-  { type: 'openingHours', label: 'Öffnungszeiten', description: 'Tage, Uhrzeiten, Küchenzeiten, Ruhetage und Feiertags-Hinweis.', category: 'Gastronomie & Hotellerie' },
-  { type: 'ambience', label: 'Ambiente / Räumlichkeiten', description: 'Atmosphäre mit Bildern und Highlights — Restaurant, Hotel, Eventlocation.', category: 'Gastronomie & Hotellerie' },
-  { type: 'events', label: 'Events & Veranstaltungen', description: 'Wiederkehrende Events mit Datum, Preis und Buchungs-CTA.', category: 'Gastronomie & Hotellerie' },
-  { type: 'story', label: 'Geschichte / Über uns', description: 'Bildstarke Vorstellung mit Text — automatisch im Stil der Branche.', category: 'Gastronomie & Hotellerie' },
-  { type: 'hotelDining', label: 'Restaurant & Bar (Hotel)', description: 'Frühstück, Halbpension, Bar-Angebot im Hotelkontext.', category: 'Gastronomie & Hotellerie' },
-  { type: 'bookingStrip', label: 'Buchungsleiste', description: 'Kompakte Buchungsmaske: Anreise, Abreise, Gäste, Buchen-Button.', category: 'Gastronomie & Hotellerie' },
-  { type: 'roomShowcase', label: 'Zimmer-Showcase', description: 'Zimmerkategorien mit Bildern, Ausstattung, Preisen und CTA.', category: 'Gastronomie & Hotellerie' },
-  { type: 'amenities', label: 'Ausstattung & Services', description: 'Feature-Grid für Hotelausstattung, Services und Annehmlichkeiten.', category: 'Gastronomie & Hotellerie' },
-  { type: 'wellness', label: 'Wellness & Spa', description: 'Treatments, Spa-Bereich und Wellness-Highlights.', category: 'Gastronomie & Hotellerie' },
-  { type: 'eventSpaces', label: 'Tagungsräume / Events', description: 'Räume mit Kapazitäten, Technik und Anfrage-CTA.', category: 'Gastronomie & Hotellerie' },
-  { type: 'weddingMenu', label: 'Hochzeitsmenü', description: 'Mehrgängiges Menü für die Hochzeitsfeier.', category: 'Gastronomie & Hotellerie' },
-
-  // ─── Tourismus & Erlebnisse ────────────────────────────────────────
-  { type: 'destinationHighlights', label: 'Destination-Highlights', description: 'Top-Orte und Naturattraktionen einer Region.', category: 'Tourismus & Erlebnisse' },
-  { type: 'experienceGrid', label: 'Erlebnisse / Aktivitäten', description: 'Aktivitäten mit Dauer, Schwierigkeit und Preis.', category: 'Tourismus & Erlebnisse' },
-  { type: 'seasonTeaser', label: 'Saison-Teaser', description: 'Saisonale Highlights und Angebote nach Jahreszeit.', category: 'Tourismus & Erlebnisse' },
-  { type: 'eventsCalendar', label: 'Veranstaltungskalender', description: 'Events mit Datum, Ort, Kategorie und Ticketpreis.', category: 'Tourismus & Erlebnisse' },
-  { type: 'placesMap', label: 'Orte & Karte', description: 'Interaktive Karte mit POIs, Distanzen und Adressen.', category: 'Tourismus & Erlebnisse' },
-  { type: 'sightseeingList', label: 'Sehenswürdigkeiten', description: 'Museen, Aussichtspunkte und Attraktionen als Liste.', category: 'Tourismus & Erlebnisse' },
-  { type: 'tourRoutes', label: 'Routen & Touren', description: 'Wander-/Radrouten mit Länge, Dauer und Schwierigkeit.', category: 'Tourismus & Erlebnisse' },
-  { type: 'accommodationGrid', label: 'Unterkünfte', description: 'Hotels, Pensionen und Ferienwohnungen einer Region.', category: 'Tourismus & Erlebnisse' },
-  { type: 'downloadGuides', label: 'Downloads / Karten', description: 'PDF-Guides, Wanderkarten und Broschüren zum Herunterladen.', category: 'Tourismus & Erlebnisse' },
-
-  // ─── Medizin & Gesundheit ──────────────────────────────────────────
-  { type: 'serviceOverview', label: 'Leistungsübersicht (Praxis)', description: 'Behandlungen, Sprechstunden und Spezialisierungen einer Praxis.', category: 'Medizin & Gesundheit' },
-  { type: 'treatmentDetail', label: 'Behandlungs-Detail', description: 'Einzelne Behandlung mit Ablauf, Dauer und Hinweisen.', category: 'Medizin & Gesundheit' },
-  { type: 'diagnostics', label: 'Diagnostik', description: 'Untersuchungsmethoden und deren Nutzen für Patienten.', category: 'Medizin & Gesundheit' },
-  { type: 'patientInfo', label: 'Patienten-Info', description: 'Was mitbringen, wie vorbereiten, Ablauf beim Erstbesuch.', category: 'Medizin & Gesundheit' },
-  { type: 'insuranceInfo', label: 'Kassen & Privat', description: 'Welche Versicherungen akzeptiert werden, IGeL-Leistungen.', category: 'Medizin & Gesundheit' },
-  { type: 'downloadForms', label: 'Formulare / Downloads', description: 'Anamnesebogen, Einwilligungen und Infoblätter.', category: 'Medizin & Gesundheit' },
-  { type: 'emergencyInfo', label: 'Notfall-Hinweise', description: 'Akutfall-Infos, Bereitschaftsdienst-Telefon, ärztlicher Notdienst.', category: 'Medizin & Gesundheit' },
-  { type: 'appointmentCta', label: 'Termin-CTA', description: 'Online-Terminbuchung mit Telefon-Fallback und Rückrufbitte.', category: 'Medizin & Gesundheit' },
-  { type: 'equipmentHighlights', label: 'Ausstattung / Geräte', description: 'Medizinische Geräte und Technik mit Patientennutzen.', category: 'Medizin & Gesundheit' },
-  { type: 'valuesGrid', label: 'Praxis-Werte', description: 'Haltung und Versorgungsanspruch der Praxis kommunizieren.', category: 'Medizin & Gesundheit' },
-
-  // ─── Salon & Beauty ────────────────────────────────────────────────
-  { type: 'serviceMenu', label: 'Service-Menü (Salon)', description: 'Behandlungskategorien mit Beschreibung und Preisspanne.', category: 'Salon & Beauty' },
-  { type: 'packages', label: 'Pakete & Specials (Salon)', description: 'Kombi-Angebote, Gutscheine und saisonale Specials.', category: 'Salon & Beauty' },
-  { type: 'expertiseGrid', label: 'Expertise / Marken', description: 'Zertifizierungen, verwendete Marken und Skills.', category: 'Salon & Beauty' },
-
-  // ─── Hochzeit ──────────────────────────────────────────────────────
-  { type: 'coupleStory', label: 'Unsere Geschichte', description: 'Timeline mit Kennenlernen, Verlobung und Meilensteinen.', category: 'Hochzeit' },
-  { type: 'eventSchedule', label: 'Tagesablauf', description: 'Zeitplan des Hochzeitstags mit Icons und Orten.', category: 'Hochzeit' },
-  { type: 'venueInfo', label: 'Location-Info', description: 'Veranstaltungsort mit Bildern, Karte und Beschreibung.', category: 'Hochzeit' },
-  { type: 'travelInfo', label: 'Anreise & Hotels', description: 'Anfahrtsbeschreibung und Hotelempfehlungen für Gäste.', category: 'Hochzeit' },
-  { type: 'giftRegistry', label: 'Geschenkewünsche', description: 'Wunschliste oder Bankverbindung für Geldgeschenke.', category: 'Hochzeit' },
-  { type: 'dresscode', label: 'Dresscode', description: "Kleidungsempfehlung mit Farbpalette und Do's/Don'ts.", category: 'Hochzeit' },
-  { type: 'rsvp', label: 'RSVP / Zusage', description: 'Anmelde-Formular für Hochzeitsgäste.', category: 'Hochzeit' },
-
-  // ─── Fotografie ────────────────────────────────────────────────────
-  { type: 'shootingProcess', label: 'Shooting-Ablauf', description: 'Schritte vom Kennenlernen über den Shooting-Tag bis zur Galerie.', category: 'Fotografie' },
-
-  // ─── Kontakt & Standort ────────────────────────────────────────────
-  { type: 'contact', label: 'Kontaktformular', description: 'Standard-Kontaktformular mit Nachricht, E-Mail und optionalen Feldern.', category: 'Kontakt & Standort' },
-  { type: 'locationContact', label: 'Kontakt & Anfahrt', description: 'Adresse, Karte, Öffnungszeiten und Kontaktformular kombiniert.', category: 'Kontakt & Standort' },
-  { type: 'tourismContact', label: 'Tourismus-Kontakt', description: 'Tourismusbüro mit Öffnungszeiten, Formular und Info-Material.', category: 'Kontakt & Standort' },
-  { type: 'map', label: 'Karte', description: 'Google Maps Einbettung mit Standortmarker.', category: 'Kontakt & Standort' },
-  { type: 'location', label: 'Lage & Anreise', description: 'Adresse, Anfahrtsbeschreibung (Auto/Bahn/Flug) und Umgebungsinfos.', category: 'Kontakt & Standort' },
-  { type: 'visitorInfo', label: 'Besucher-Info', description: 'Parken, ÖPNV, Barrierefreiheit und praktische Hinweise.', category: 'Kontakt & Standort' },
-
-  // ─── Einbettungen & Extras ─────────────────────────────────────────
-  { type: 'embed', label: 'Embed / Integration', description: 'Externe Widgets einbinden: Buchungstool, Bewertungsportal, Kalender.', category: 'Einbettungen & Extras' },
+// Shared sections available to all templates
+const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild', category: 'Inhalt' },
+  { type: 'freeText', label: 'Freitext', description: 'Formatierter Text mit Editor', category: 'Inhalt' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)', category: 'Inhalt' },
+  { type: 'legalContent', label: 'Rechtliche Inhalte', description: 'Strukturierte Abschnitte für Impressum / Datenschutz', category: 'Inhalt' },
+  { type: 'videoEmbed', label: 'Video', description: 'YouTube / Vimeo Video einbetten', category: 'Inhalt' },
+  { type: 'embed', label: 'Embed / Integration', description: 'Externe Dienste einbinden (Buchung, Bewertungen, Karten, etc.)', category: 'Inhalt' },
+  { type: 'headerBanner', label: 'Header-Banner', description: 'Obere Hinweisleiste', category: 'Inhalt' },
+  { type: 'ctaBand', label: 'CTA-Band', description: 'Call-to-Action Banner', category: 'Marketing' },
+  { type: 'ctaLinks', label: 'CTA-Links', description: 'Button-Links zu Unterseiten', category: 'Marketing' },
+  { type: 'uspStrip', label: 'USP-Leiste', description: 'Einzigartige Verkaufsargumente', category: 'Marketing' },
+  { type: 'stats', label: 'Zahlen & Fakten', description: 'Animierte Statistik-Zähler', category: 'Marketing' },
+  { type: 'logoCloud', label: 'Logo-Cloud', description: 'Partner- & Zertifikats-Logos', category: 'Marketing' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen', category: 'Social Proof' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen', category: 'Social Proof' },
+  { type: 'galleryGrid', label: 'Galerie', description: 'Bildergalerie mit Lightbox', category: 'Medien' },
+  { type: 'newsPreview', label: 'News-Vorschau', description: 'Aktuelle Beiträge (News/Blog)', category: 'Medien' },
+  { type: 'newsGrid', label: 'News-Grid', description: 'News-Beiträge als Grid', category: 'Medien' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular', category: 'Kontakt' },
+  { type: 'map', label: 'Karte', description: 'Google Maps Einbettung', category: 'Kontakt' },
+  { type: 'team', label: 'Team', description: 'Team-Mitglieder', category: 'Team & Personen' },
+  { type: 'servicesGrid', label: 'Leistungen', description: 'Leistungs-Grid', category: 'Leistungen' },
+  { type: 'processSteps', label: 'Ablauf', description: 'Prozess-Schritte Timeline', category: 'Leistungen' },
+  { type: 'serviceDetail', label: 'Leistungs-Detail', description: 'Detaillierte Leistungsbeschreibung', category: 'Leistungen' },
+  { type: 'portfolio', label: 'Portfolio', description: 'Referenzprojekte-Galerie', category: 'Medien' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten', category: 'Inhalt' },
+  { type: 'servicePackages', label: 'Pakete & Preise', description: 'Leistungspakete mit Features und Preisen', category: 'Leistungen' },
+  { type: 'noticeBanner', label: 'Hinweisbanner', description: 'Auffälliges Banner für wichtige Hinweise (Urlaub, Aktionen etc.)', category: 'Marketing' },
+  { type: 'comparisonTable', label: 'Vergleichstabelle', description: 'Pakete/Optionen im Vergleich darstellen', category: 'Marketing' },
+  { type: 'socialProofBar', label: 'Social-Proof-Leiste', description: 'Kennzahlen, Bewertungen & Partner kompakt', category: 'Social Proof' },
+  { type: 'timeline', label: 'Zeitleiste', description: 'Chronologischer Verlauf (Geschichte, Meilensteine)', category: 'Inhalt' },
 ];
 
-/**
- * Returns all available section types with thematic categories.
- * All sections work with all templates — the industry parameter is kept
- * for API compatibility but no longer filters the list.
- */
-export function getSectionTypesForIndustry(_industry: string): SectionTypeDefinition[] {
-  return ALL_SECTIONS;
+export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Hero', description: 'Hauptbanner der Seite' },
+  { type: 'uspStrip', label: 'USP-Leiste', description: 'Einzigartige Verkaufsargumente' },
+  { type: 'servicesGrid', label: 'Leistungen', description: 'Leistungs-Grid' },
+  { type: 'processSteps', label: 'Ablauf', description: 'Prozess-Schritte Timeline' },
+  { type: 'ctaLinks', label: 'CTA-Links', description: 'Button-Links zu Unterseiten' },
+  { type: 'newsPreview', label: 'News-Vorschau', description: 'Aktuelle Beiträge (News/Blog)' },
+  { type: 'newsGrid', label: 'News-Grid', description: 'News-Beiträge als Grid' },
+  { type: 'stats', label: 'Zahlen & Fakten', description: 'Animierte Statistik-Zähler' },
+  { type: 'logoCloud', label: 'Logo-Cloud', description: 'Partner- & Zertifikats-Logos' },
+  { type: 'galleryGrid', label: 'Galerie', description: 'Bildergalerie mit Lightbox' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen' },
+  { type: 'ctaBand', label: 'CTA-Band', description: 'Call-to-Action Banner' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular' },
+  { type: 'map', label: 'Karte', description: 'Google Maps Einbettung' },
+  { type: 'serviceDetail', label: 'Leistungs-Detail', description: 'Detaillierte Leistungsbeschreibung' },
+  { type: 'portfolio', label: 'Portfolio', description: 'Referenzprojekte-Galerie' },
+  { type: 'team', label: 'Team', description: 'Team-Mitglieder' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'headerBanner', label: 'Header-Banner', description: 'Obere Hinweisleiste' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const RESTAURANT_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Restaurant-Hero', description: 'Atmosphäre, Küche und Reservierungs-CTA' },
+  { type: 'menu', label: 'Speisekarte', description: 'Kategorien, Gerichte, Preise, Allergene und Detail-Links' },
+  { type: 'signatureDishes', label: 'Signature-Gerichte', description: 'Empfehlungen des Hauses mit Bildern und CTAs' },
+  { type: 'reservation', label: 'Reservierung', description: 'Reservierungs-CTA, Formular-Hinweise und Buchungslink' },
+  { type: 'openingHours', label: 'Öffnungszeiten', description: 'Restaurantzeiten, Küchenzeiten und Hinweise' },
+  { type: 'ambience', label: 'Ambiente', description: 'Atmosphäre, Bilder und Highlights' },
+  { type: 'events', label: 'Events', description: 'Themenabende, Feiern und Buchungs-CTAs' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const HOTEL_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Hotel-Hero', description: 'Hotelpositionierung, Bild und Buchungs-CTA' },
+  { type: 'bookingStrip', label: 'Buchungsleiste', description: 'Anreise, Abreise, Gäste und Direktbuchung' },
+  { type: 'roomShowcase', label: 'Zimmer', description: 'Zimmerkategorien, Preise, Features und CTAs' },
+  { type: 'offers', label: 'Angebote', description: 'Arrangements, Saisonpakete und Specials' },
+  { type: 'amenities', label: 'Ausstattung', description: 'Services, Features und Hotelausstattung' },
+  { type: 'wellness', label: 'Wellness', description: 'Spa, Treatments und Wellness-Highlights' },
+  { type: 'location', label: 'Lage', description: 'Adresse, Anreise, Karte und Umgebung' },
+  { type: 'hotelDining', label: 'Restaurant & Bar', description: 'Frühstück, Restaurant, Bar und Genuss' },
+  { type: 'eventSpaces', label: 'Events & Tagungen', description: 'Räume, Kapazitäten und Anfrage-CTA' },
+  { type: 'gallery', label: 'Galerie', description: 'Hotelbilder mit Kategorien und Captions' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Gästestimmen, Rating und Quelle' },
+  { type: 'faq', label: 'FAQ', description: 'Check-in, Parken, Buchung, Storno' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular, Infokarten und Route' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const TOURISM_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Tourismus-Hero', description: 'Destination, Saison, Region und Erlebnis-CTA' },
+  { type: 'destinationHighlights', label: 'Destination-Highlights', description: 'Top-Orte, Naturpunkte und Highlights' },
+  { type: 'experienceGrid', label: 'Erlebnisse', description: 'Aktivitäten, Dauer, Zielgruppe und CTAs' },
+  { type: 'seasonTeaser', label: 'Saison-Teaser', description: 'Jahreszeiten und saisonale Angebote' },
+  { type: 'eventsCalendar', label: 'Veranstaltungen', description: 'Events mit Datum, Ort, Kategorie und Preis' },
+  { type: 'placesMap', label: 'Orte & Karte', description: 'Karte, Orte, Distanzen und Adressen' },
+  { type: 'sightseeingList', label: 'Sehenswürdigkeiten', description: 'Museen, Aussichtspunkte und Attraktionen' },
+  { type: 'tourRoutes', label: 'Routen & Touren', description: 'Routen mit Länge, Dauer und Schwierigkeit' },
+  { type: 'accommodationGrid', label: 'Unterkünfte', description: 'Hotels, Pensionen, Camping und Ferienwohnungen' },
+  { type: 'visitorInfo', label: 'Besucherinfo', description: 'Anreise, Parken, ÖPNV und Barrierefreiheit' },
+  { type: 'downloadGuides', label: 'Downloads', description: 'Karten, Broschüren und PDF-Guides' },
+  { type: 'gallery', label: 'Galerie', description: 'Destinationsbilder mit Kategorien und Captions' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen fuer Besucher' },
+  { type: 'tourismContact', label: 'Tourismus-Kontakt', description: 'Tourismusbuero, Formular, Infokarten und CTAs' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const SALON_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Salon-Hero', description: 'Positionierung, Mood-Bild und Buchungs-CTA' },
+  { type: 'serviceMenu', label: 'Service-Menue', description: 'Service-Kategorien und Behandlungen' },
+  { type: 'priceList', label: 'Preisliste', description: 'Kategorien, Preise, Dauer und Hinweise' },
+  { type: 'treatmentDetail', label: 'Behandlungsdetails', description: 'Ablauf, Ergebnis und Pflegehinweise' },
+  { type: 'packages', label: 'Pakete & Specials', description: 'Pakete, Gutscheine und saisonale Angebote' },
+  { type: 'teamShowcase', label: 'Team', description: 'Teammitglieder, Rollen und Spezialgebiete' },
+  { type: 'expertiseGrid', label: 'Expertise', description: 'Skills, Zertifikate und Marken' },
+  { type: 'beforeAfter', label: 'Vorher/Nachher', description: 'Transformationen mit Bildpaaren' },
+  { type: 'gallery', label: 'Galerie', description: 'Salon- und Arbeitsbilder' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen und Ratings' },
+  { type: 'openingHours', label: 'Öffnungszeiten', description: 'Tage, Zeiten und Buchungshinweise' },
+  { type: 'bookingCta', label: 'Buchungs-CTA', description: 'Onlinebuchung, Telefon, WhatsApp und Hinweise' },
+  { type: 'locationContact', label: 'Kontakt & Standort', description: 'Adresse, Karte, Formular und CTAs' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const MEDICAL_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Praxis-Hero', description: 'Fachrichtung, Vertrauen, Termin-CTA und Akuthinweis' },
+  { type: 'serviceOverview', label: 'Leistungen', description: 'Behandlungen, Sprechstunden und Schwerpunkte' },
+  { type: 'treatmentDetail', label: 'Behandlungsdetails', description: 'Ablauf, Voraussetzungen und Hinweise je Behandlung' },
+  { type: 'diagnostics', label: 'Diagnostik', description: 'Untersuchungen, Methoden und Patientennutzen' },
+  { type: 'doctorTeam', label: 'Ärzteteam', description: 'Ärztinnen, Ärzte, Fachgebiete und Sprachen' },
+  { type: 'practiceTeam', label: 'Praxisteam', description: 'MFA, Assistenz, Empfang und Rollen' },
+  { type: 'certifications', label: 'Zertifikate', description: 'Qualifikationen, Mitgliedschaften und Standards' },
+  { type: 'patientInfo', label: 'Patienteninfo', description: 'Vorbereitung, Ablauf, Mitbringen und Hinweise' },
+  { type: 'insuranceInfo', label: 'Kassen & Privat', description: 'Versicherungsarten, Leistungen und Abrechnungshinweise' },
+  { type: 'downloadForms', label: 'Downloads', description: 'Formulare, Anamneseboegen und Dateien' },
+  { type: 'appointmentCta', label: 'Termin-CTA', description: 'Online-Termin, Telefon, Rueckruf und Hinweise' },
+  { type: 'openingHours', label: 'Sprechzeiten', description: 'Öffnungszeiten, Akutsprechstunde und Urlaubsnotiz' },
+  { type: 'emergencyInfo', label: 'Notfallhinweise', description: 'Akutfall, Bereitschaftsdienst und Telefonnummern' },
+  { type: 'practiceGallery', label: 'Praxis-Galerie', description: 'Räume, Empfang, Behandlung und Diagnostik' },
+  { type: 'equipmentHighlights', label: 'Ausstattung', description: 'Geraete, Technik und medizinische Vorteile' },
+  { type: 'valuesGrid', label: 'Praxiswerte', description: 'Haltung, Betreuung und Versorgungsanspruch' },
+  { type: 'locationContact', label: 'Kontakt & Anfahrt', description: 'Adresse, Karte, Formular und Kontaktkarten' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Patientenfragen' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const WEDDING_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Wedding-Hero', description: 'Paarnamen, Datum, Countdown und Hochzeitsbild' },
+  { type: 'coupleStory', label: 'Unsere Geschichte', description: 'Timeline mit Meilensteinen des Paares' },
+  { type: 'eventSchedule', label: 'Tagesablauf', description: 'Zeitplan des Hochzeitstags' },
+  { type: 'venueInfo', label: 'Location', description: 'Veranstaltungsort mit Karte und Infos' },
+  { type: 'travelInfo', label: 'Anreise & Hotels', description: 'Anfahrt und Übernachtungsempfehlungen' },
+  { type: 'weddingParty', label: 'Trauzeugen', description: 'Trauzeugen und Brautjungfern' },
+  { type: 'giftRegistry', label: 'Geschenke', description: 'Geschenkewünsche und Bankverbindung' },
+  { type: 'dresscode', label: 'Dresscode', description: 'Kleidungsempfehlungen und Farbpalette' },
+  { type: 'rsvp', label: 'Zusage (RSVP)', description: 'Anmeldeformular für Gäste' },
+  { type: 'weddingMenu', label: 'Menü', description: 'Hochzeitsmenü mit Gängen' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen der Gäste' },
+  { type: 'gallery', label: 'Galerie', description: 'Fotos vom Paar / Engagement-Shooting' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const PHOTOGRAPHY_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Hero', description: 'Fullscreen-Hero mit Bild und CTA' },
+  { type: 'portfolioGallery', label: 'Portfolio-Galerie', description: 'Filterbare Masonry-Galerie mit Lightbox' },
+  { type: 'servicesGrid', label: 'Leistungen', description: 'Leistungs-Grid mit Links zu Detail-Seiten' },
+  { type: 'servicePackages', label: 'Pakete & Preise', description: 'Shooting-Pakete mit Features und Preisen' },
+  { type: 'photographerAbout', label: 'Über mich', description: 'Persönliche Vorstellung mit Bild und Story' },
+  { type: 'shootingProcess', label: 'Ablauf', description: 'Schritte vom Kennenlernen bis zur Übergabe' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen und Ratings' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular' },
+  { type: 'ctaBand', label: 'CTA-Band', description: 'Call-to-Action Banner' },
+  { type: 'uspStrip', label: 'USP-Leiste', description: 'Einzigartige Verkaufsargumente' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
+  { type: 'newsPreview', label: 'News-Vorschau', description: 'Aktuelle Beiträge' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const CONSULTING_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Kanzlei-Hero', description: 'Seriöser Hero mit Vertrauenselementen und Erstberatungs-CTA' },
+  { type: 'practiceAreas', label: 'Rechtsgebiete', description: 'Grid mit Fachbereichen, Icons und Beschreibungen' },
+  { type: 'caseResults', label: 'Erfolgsbilanz', description: 'Animierte Statistiken (gewonnene Fälle, Zufriedenheit etc.)' },
+  { type: 'feeTable', label: 'Honorar-Übersicht', description: 'Transparente Kostenübersicht mit Preismodellen' },
+  { type: 'publications', label: 'Fachbeiträge', description: 'Blog/News für juristische Fachartikel und Neuigkeiten' },
+  { type: 'team', label: 'Anwälte & Team', description: 'Partner, Associates und Mitarbeiter mit Fachgebiet' },
+  { type: 'testimonials', label: 'Mandantenstimmen', description: 'Bewertungen und Erfahrungsberichte von Mandanten' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Rechtsfragen und Kanzlei-FAQs' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular mit Rechtsgebiet-Auswahl und Sprechzeiten' },
+  { type: 'processSteps', label: 'Beratungsablauf', description: 'Erstgespräch → Strategie → Umsetzung → Abschluss' },
+  { type: 'ctaBand', label: 'CTA-Band', description: 'Call-to-Action für Erstberatung' },
+  { type: 'stats', label: 'Zahlen & Fakten', description: 'Animierte Kennzahlen der Kanzlei' },
+  { type: 'map', label: 'Karte', description: 'Standort der Kanzlei' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt (z.B. Kanzleigeschichte)' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const REALESTATE_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Immobilien-Hero', description: 'Premium-Hero mit Overlay, Trust-Elementen und Such-CTA' },
+  { type: 'propertyShowcase', label: 'Immobilien-Showcase', description: 'Karten mit Bild, Preis, Fläche, Zimmer und Lage' },
+  { type: 'propertySearch', label: 'Immobiliensuche', description: 'Suchformular mit Filtern (Typ, Ort, Preis)' },
+  { type: 'marketReport', label: 'Marktbericht', description: 'Regionale Marktdaten, Statistiken und Trends' },
+  { type: 'agentTeam', label: 'Makler-Team', description: 'Makler mit Foto, Spezialisierung und Kontakt' },
+  { type: 'valuationCta', label: 'Bewertungs-CTA', description: '"Was ist Ihre Immobilie wert?" — Bewertungsanfrage' },
+  { type: 'referencesSold', label: 'Erfolgreich vermittelt', description: 'Verkaufte Objekte mit Sold-Badge und Statistiken' },
+  { type: 'locationHighlight', label: 'Lage & Umgebung', description: 'Standort-Infos mit POIs (ÖPNV, Schulen, Einkaufen)' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular mit Rückruf-Option' },
+  { type: 'faq', label: 'FAQ', description: 'Fragen zu Kauf, Verkauf, Bewertung und Provision' },
+  { type: 'testimonials', label: 'Kundenstimmen', description: 'Bewertungen von Käufern und Verkäufern' },
+  { type: 'stats', label: 'Zahlen & Fakten', description: 'Vermittelte Objekte, Erfahrung, Vermarktungszeit' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt (z.B. Über uns, Philosophie)' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const CAFE_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Café-Hero', description: 'Stimmungsvoller Hero mit Öffnungszeiten-Hinweis' },
+  { type: 'drinkMenu', label: 'Getränkekarte', description: 'Kaffee, Cocktails, Wein — Kategorien mit Preisen' },
+  { type: 'foodMenu', label: 'Speisekarte', description: 'Kuchen, Snacks, Bowls — Karten mit Bild und Preis' },
+  { type: 'atmosphereGallery', label: 'Atmosphäre-Galerie', description: 'Masonry-Grid mit Stimmungsbildern' },
+  { type: 'dailySpecials', label: 'Wochenkarte', description: 'Tagesangebote mit Tag-Badge und Preis' },
+  { type: 'cafeEventCalendar', label: 'Events', description: 'Live-Musik, Quiz-Night, Weinprobe mit Datum' },
+  { type: 'locationVibe', label: 'Standort & Vibes', description: 'Adresse, Öffnungszeiten und Vibe-Text im Split-Layout' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontakt-Buttons (Telefon, E-Mail, Adresse)' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen (Reservierung, Hunde, WLAN etc.)' },
+  { type: 'testimonials', label: 'Gästestimmen', description: 'Google-Reviews und Bewertungen' },
+  { type: 'team', label: 'Team', description: 'Barista-Team und Köche' },
+  { type: 'galleryGrid', label: 'Galerie', description: 'Bildergalerie mit Lightbox' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt (z.B. Story, Philosophie)' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
+  tradesman: TRADESMAN_SECTION_TYPES,
+  photography: PHOTOGRAPHY_SECTION_TYPES,
+  consulting: CONSULTING_SECTION_TYPES,
+  wedding: WEDDING_SECTION_TYPES,
+  medical: MEDICAL_SECTION_TYPES,
+  salon: SALON_SECTION_TYPES,
+  tourism: TOURISM_SECTION_TYPES,
+  hotel: HOTEL_SECTION_TYPES,
+  restaurant: RESTAURANT_SECTION_TYPES,
+  realestate: REALESTATE_SECTION_TYPES,
+  cafe: CAFE_SECTION_TYPES,
+};
+
+const INDUSTRY_LABELS: Record<string, string> = {
+  tradesman: 'Handwerk',
+  photography: 'Fotografie',
+  consulting: 'Kanzlei & Beratung',
+  wedding: 'Hochzeit',
+  medical: 'Medizin',
+  salon: 'Salon',
+  tourism: 'Tourismus',
+  hotel: 'Hotel',
+  restaurant: 'Restaurant',
+  realestate: 'Immobilien',
+  cafe: 'Café & Bar',
+};
+
+export function getSectionTypesForIndustry(industry: string): SectionTypeDefinition[] {
+  const specific = ALL_INDUSTRY_SECTIONS[industry] ?? TRADESMAN_SECTION_TYPES;
+
+  // Merge: industry-specific first, then shared (skip duplicates)
+  const types = new Set(specific.map(s => s.type));
+  const shared = SHARED_SECTION_TYPES.filter(s => !types.has(s.type));
+
+  // Collect foreign sections from other industries
+  const foreign: SectionTypeDefinition[] = [];
+  for (const [key, sections] of Object.entries(ALL_INDUSTRY_SECTIONS)) {
+    if (key === industry) continue;
+    for (const s of sections) {
+      if (!types.has(s.type) && !shared.some(sh => sh.type === s.type) && !foreign.some(f => f.type === s.type)) {
+        foreign.push({ ...s, category: `Andere: ${INDUSTRY_LABELS[key] || key}` });
+      }
+    }
+  }
+
+  return [...specific, ...shared, ...foreign];
 }
