@@ -100,10 +100,13 @@ async function main() {
       key: 'projects',
       label: 'Projekte / Referenzen',
       schema: { fields: ['title', 'slug', 'excerpt', 'body', 'image', 'duration', 'year', 'stats'] },
+      settings: { pageSlug: 'referenzen' },
     }).returning();
     console.log('  ✅ Collection "projects" created');
   } else {
-    console.log('  ℹ️  Collection "projects" already exists');
+    // Update settings to ensure pageSlug is set
+    await db.update(schema.collections).set({ settings: { pageSlug: 'referenzen' } }).where(eq(schema.collections.id, projCol.id));
+    console.log('  ℹ️  Collection "projects" already exists, updated settings');
   }
 
   // Upsert project items

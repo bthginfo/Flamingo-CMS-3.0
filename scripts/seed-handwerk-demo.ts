@@ -40,6 +40,7 @@ async function main() {
 
 async function seedContent(tenantId: string) {
   // ── Clean existing data ────────────────────────────────────────
+  await db.delete(schema.publishHistory).where(eq(schema.publishHistory.tenantId, tenantId));
   await db.delete(schema.publishedSnapshots).where(eq(schema.publishedSnapshots.tenantId, tenantId));
   await db.delete(schema.pageSections).where(eq(schema.pageSections.tenantId, tenantId));
   await db.delete(schema.pages).where(eq(schema.pages.tenantId, tenantId));

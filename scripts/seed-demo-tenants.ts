@@ -17,6 +17,9 @@ import { hotelSite } from '../apps/renderer/src/app/demo/pages/hotel';
 import { salonSite } from '../apps/renderer/src/app/demo/pages/salon';
 import { tourismSite } from '../apps/renderer/src/app/demo/pages/tourism';
 import { medicalSite } from '../apps/renderer/src/app/demo/pages/medical';
+import { consultingSite } from '../apps/renderer/src/app/demo/pages/consulting';
+import { photographySite } from '../apps/renderer/src/app/demo/pages/photography';
+import { weddingSite } from '../apps/renderer/src/app/demo/pages/wedding';
 
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) { console.error('DATABASE_URL not set'); process.exit(1); }
@@ -199,6 +202,95 @@ const DEMO_TENANTS: DemoTenantConfig[] = [
       sections: p.sections.map(s => ({
         ...s,
         data: rewriteDemoHrefs(s.data as Record<string, unknown>, '/demo/medical'),
+      })),
+    })),
+  },
+  {
+    slug: 'demo-consulting',
+    name: 'Kanzlei Bergmann & Partner',
+    industry: 'consulting',
+    activeStyle: 'classic',
+    brand: { companyName: 'Kanzlei Bergmann & Partner', tagline: 'Ihre Experten für Arbeits-, Familien- und Wirtschaftsrecht', primaryColor: '#1a2744' },
+    contact: { phone: '+49 30 2589 4400', email: 'kanzlei@bergmann-partner.de', address: 'Friedrichstraße 78, 10117 Berlin' },
+    socialLinks: { linkedin: '#' },
+    navItems: [
+      { label: 'Rechtsgebiete', href: '/rechtsgebiete' },
+      { label: 'Team', href: '/team' },
+      { label: 'Über uns', href: '/ueber-uns' },
+      { label: 'Aktuelles', href: '/aktuelles' },
+      { label: 'Kontakt', href: '/kontakt' },
+    ],
+    navCta: { label: 'Erstberatung', href: '/kontakt' },
+    footerColumns: [
+      { title: 'Rechtsgebiete', items: [{ text: 'Arbeitsrecht', href: '/rechtsgebiete' }, { text: 'Familienrecht', href: '/rechtsgebiete' }, { text: 'Mietrecht', href: '/rechtsgebiete' }, { text: 'Handelsrecht', href: '/rechtsgebiete' }] },
+      { title: 'Kanzlei', items: [{ text: 'Über uns', href: '/ueber-uns' }, { text: 'Team', href: '/team' }, { text: 'Aktuelles', href: '/aktuelles' }, { text: 'Kontakt', href: '/kontakt' }] },
+    ],
+    footerLegalLinks: [{ label: 'Impressum', href: '/impressum' }, { label: 'Datenschutz', href: '/datenschutz' }],
+    footerCta: { label: 'Erstberatung vereinbaren', href: '/kontakt' },
+    pages: consultingSite.pages.map(p => ({
+      ...p,
+      sections: p.sections.map(s => ({
+        ...s,
+        data: rewriteDemoHrefs(s.data as Record<string, unknown>, '/demo/consulting'),
+      })),
+    })),
+  },
+  {
+    slug: 'demo-photography',
+    name: 'Lisa Fotografie',
+    industry: 'photography',
+    activeStyle: 'classic',
+    brand: { companyName: 'Lisa Fotografie', tagline: 'Emotionale Momentaufnahmen – Hochzeiten, Paare & Portraits', primaryColor: '#9c7c5c' },
+    contact: { phone: '+49 171 1234567', email: 'hello@lisa-fotografie.de', address: 'Mainstraße 8, 55116 Mainz' },
+    socialLinks: { instagram: '#' },
+    navItems: [
+      { label: 'Portfolio', href: '/portfolio' },
+      { label: 'Leistungen', href: '/leistungen' },
+      { label: 'Über mich', href: '/ueber-mich' },
+      { label: 'FAQ', href: '/faq' },
+      { label: 'Kontakt', href: '/kontakt' },
+    ],
+    navCta: { label: 'Anfragen', href: '/kontakt' },
+    footerColumns: [
+      { title: 'Fotografie', items: [{ text: 'Hochzeiten', href: '/leistungen' }, { text: 'Paare', href: '/leistungen' }, { text: 'Portfolio', href: '/portfolio' }] },
+      { title: 'Mehr', items: [{ text: 'FAQ', href: '/faq' }, { text: 'Über mich', href: '/ueber-mich' }, { text: 'Kontakt', href: '/kontakt' }] },
+    ],
+    footerLegalLinks: [{ label: 'Impressum', href: '/impressum' }, { label: 'Datenschutz', href: '/datenschutz' }],
+    footerCta: { label: 'Jetzt anfragen', href: '/kontakt' },
+    pages: photographySite.pages.map(p => ({
+      ...p,
+      sections: p.sections.map(s => ({
+        ...s,
+        data: rewriteDemoHrefs(s.data as Record<string, unknown>, '/demo/photography'),
+      })),
+    })),
+  },
+  {
+    slug: 'demo-wedding',
+    name: 'Anna & Sebastian',
+    industry: 'wedding',
+    activeStyle: 'classic',
+    brand: { companyName: 'Anna & Sebastian', tagline: 'Unsere Hochzeit – 14. September 2025, Salzburg', primaryColor: '#9f7048' },
+    contact: { phone: '', email: 'hochzeit@anna-sebastian.at', address: 'Schloss Mirabell, 5020 Salzburg' },
+    socialLinks: { instagram: '#' },
+    navItems: [
+      { label: 'Unsere Geschichte', href: '/unsere-geschichte' },
+      { label: 'Ablauf', href: '/ablauf' },
+      { label: 'Location', href: '/location' },
+      { label: 'Anreise', href: '/anreise' },
+      { label: 'RSVP', href: '/rsvp' },
+    ],
+    navCta: { label: 'Zusagen', href: '/rsvp' },
+    footerColumns: [
+      { title: 'Infos', items: [{ text: 'Unsere Geschichte', href: '/unsere-geschichte' }, { text: 'Ablauf', href: '/ablauf' }, { text: 'Location', href: '/location' }] },
+      { title: 'Gäste', items: [{ text: 'Anreise & Hotels', href: '/anreise' }, { text: 'RSVP', href: '/rsvp' }] },
+    ],
+    footerLegalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    pages: weddingSite.pages.map(p => ({
+      ...p,
+      sections: p.sections.map(s => ({
+        ...s,
+        data: rewriteDemoHrefs(s.data as Record<string, unknown>, '/demo/wedding'),
       })),
     })),
   },
