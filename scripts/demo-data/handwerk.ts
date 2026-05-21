@@ -82,12 +82,12 @@ export const HANDWERK_CONFIG = {
           headline: 'Aktuelle Projekte',
           subline: 'Einblicke in unsere Arbeit',
           badgeText: 'Referenzen',
-          items: [
+          projects: [
             { title: 'Luxusbad Ehrenfeld', category: 'Badsanierung', image: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80', description: 'Komplettumbau auf 18 m² mit freistehender Badewanne und Rainshower.' },
             { title: 'Wärmepumpe Porz', category: 'Heizung', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80', description: 'Effiziente Luft-Wasser-Wärmepumpe für ein Einfamilienhaus.' },
             { title: 'Sanitär Bürokomplex', category: 'Sanitär', image: 'https://images.unsplash.com/photo-1585058178215-33108215e3c8?w=800&q=80', description: 'Neuverlegung für 3 Etagen inkl. barrierefreier WC-Anlagen.' },
           ],
-          ctaPrimary: { label: 'Alle Projekte ansehen', href: '/projekte' },
+          ctaLabel: 'Alle Projekte ansehen', ctaHref: '/projekte',
         }},
         { type: 'testimonials', sortOrder: 5, data: {
           headline: 'Das sagen unsere Kunden',
@@ -165,7 +165,7 @@ export const HANDWERK_CONFIG = {
         }},
         { type: 'portfolio', sortOrder: 1, data: {
           headline: 'Ausgewählte Projekte',
-          items: [
+          projects: [
             { title: 'Designbad Marienburg', category: 'Badsanierung', image: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80', description: 'Luxusbad mit Dampfdusche, freistehender Wanne und intelligenter Lichtsteuerung.' },
             { title: 'Heizungstausch MFH Sülz', category: 'Heizung', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80', description: 'Austausch alter Ölheizung gegen Luft-Wasser-Wärmepumpe für 8 Parteien.' },
             { title: 'Rohrsanierung Altbau', category: 'Sanitär', image: 'https://images.unsplash.com/photo-1585058178215-33108215e3c8?w=800&q=80', description: 'Kompletterneuerung der Steigleitungen ohne Aufbrechen – minimalinvasiv.' },
@@ -234,15 +234,18 @@ export const HANDWERK_CONFIG = {
         { type: 'contact', sortOrder: 1, data: {
           headline: 'Schreiben Sie uns',
           subline: 'Wir melden uns innerhalb von 24 Stunden bei Ihnen.',
-          showPhone: true,
-          showEmail: true,
-          showAddress: true,
+          badgeText: 'Kontakt',
+          formEnabled: true,
+          infoCards: [
+            { icon: 'phone', label: 'Telefon', value: '+49 221 987 654' },
+            { icon: 'mail', label: 'E-Mail', value: 'info@mueller-soehne.de' },
+            { icon: 'map-pin', label: 'Standort', value: 'Handwerkerstraße 12, 50667 Köln' },
+            { icon: 'clock', label: 'Öffnungszeiten', value: 'Mo–Fr 07:30–17:00, Sa 09:00–13:00' },
+          ],
         }},
         { type: 'map', sortOrder: 2, data: {
           headline: 'So finden Sie uns',
-          lat: 50.9375,
-          lng: 6.9603,
-          zoom: 15,
+          embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2513.5!2d6.9603!3d50.9375!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bf25a5369be9e7%3A0x1',
         }},
         { type: 'faq', sortOrder: 3, data: {
           headline: 'Häufige Fragen',

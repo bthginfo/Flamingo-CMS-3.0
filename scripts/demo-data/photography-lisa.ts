@@ -29,20 +29,20 @@ export const PHOTOGRAPHY_LISA_CONFIG = {
   footerColumns: [
     {
       title: 'Leistungen',
-      links: [
-        { label: 'Hochzeitsreportage', href: '/leistungen' },
-        { label: 'Paarshooting', href: '/leistungen' },
-        { label: 'Babybauch', href: '/leistungen' },
-        { label: 'Portrait', href: '/leistungen' },
+      items: [
+        { text: 'Hochzeitsreportage', href: '/leistungen' },
+        { text: 'Paarshooting', href: '/leistungen' },
+        { text: 'Babybauch', href: '/leistungen' },
+        { text: 'Portrait', href: '/leistungen' },
       ],
     },
     {
       title: 'Infos',
-      links: [
-        { label: 'Über mich', href: '/ueber-mich' },
-        { label: 'FAQ', href: '/faq' },
-        { label: 'Portfolio', href: '/portfolio' },
-        { label: 'Kontakt', href: '/kontakt' },
+      items: [
+        { text: 'Über mich', href: '/ueber-mich' },
+        { text: 'FAQ', href: '/faq' },
+        { text: 'Portfolio', href: '/portfolio' },
+        { text: 'Kontakt', href: '/kontakt' },
       ],
     },
   ],
@@ -539,6 +539,13 @@ export const PHOTOGRAPHY_LISA_CONFIG = {
             headline: 'Schreibt mir',
             subline: 'Ich freue mich auf eure Nachricht und melde mich innerhalb von 24 Stunden.',
             badgeText: 'Kontakt',
+            infoCards: [
+              { icon: 'phone', label: 'Telefon', value: '+49 611 234 5678' },
+              { icon: 'mail', label: 'E-Mail', value: 'hello@lisa-berg.de' },
+              { icon: 'mapPin', label: 'Studio', value: 'Marktplatz 7, 65183 Wiesbaden' },
+            ],
+            formEnabled: true,
+            submitLabel: 'Nachricht senden',
           },
         },
         {

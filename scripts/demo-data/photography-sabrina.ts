@@ -337,7 +337,13 @@ export const SABRINA_CONFIG = {
           headline: 'Schreibt mir',
           subline: 'Füllt das Formular aus und ich melde mich innerhalb von 24 Stunden bei euch. Alternativ erreicht ihr mich auch per Mail oder Telefon.',
           badgeText: 'Kontakt',
-          showMap: true,
+          infoCards: [
+            { icon: 'phone', label: 'Telefon', value: '+49 160 2583248' },
+            { icon: 'mail', label: 'E-Mail', value: 'mail@sabrinafeistphotography.de' },
+            { icon: 'mapPin', label: 'Standort', value: 'Mainz, Rhein-Main-Gebiet' },
+          ],
+          formEnabled: true,
+          submitLabel: 'Nachricht senden',
         }},
         { type: 'textImage', sortOrder: 2, data: {
           headline: 'So erreicht ihr mich',

@@ -30,16 +30,16 @@ export const REALESTATE_CONFIG = {
   footerColumns: [
     {
       title: 'Immobilien',
-      links: [
-        { label: 'Kaufen', href: '/kaufen' },
-        { label: 'Bewertung', href: '/bewertung' },
+      items: [
+        { text: 'Kaufen', href: '/kaufen' },
+        { text: 'Bewertung', href: '/bewertung' },
       ],
     },
     {
       title: 'Unternehmen',
-      links: [
-        { label: 'Über uns', href: '/ueber-uns' },
-        { label: 'Kontakt', href: '/kontakt' },
+      items: [
+        { text: 'Über uns', href: '/ueber-uns' },
+        { text: 'Kontakt', href: '/kontakt' },
       ],
     },
   ],
@@ -146,9 +146,9 @@ export const REALESTATE_CONFIG = {
             visible: true, container: 'default', spacingTop: 'l', spacingBottom: 'l', anchorId: null, variant: null,
             headline: 'Das sagen unsere Kunden',
             testimonials: [
-              { text: 'Herr Rheinberg hat unser Haus in nur 12 Tagen über dem Angebotspreis verkauft. Die Vermarktungsstrategie war perfekt.', name: 'Familie Schneider', role: 'Verkäufer, Rodenkirchen', stars: 5 },
-              { text: 'Von der Suche bis zum Notar wurden wir erstklassig betreut. Die Expertise für den Kölner Markt ist einzigartig.', name: 'Dr. Michael Weber', role: 'Käufer, Belgisches Viertel', stars: 5 },
-              { text: 'Professionelle Bewertung, ehrliche Beratung und ein tadelloser Verkaufsprozess. Absolute Empfehlung!', name: 'Ingrid & Hans Müller', role: 'Verkäufer, Lindenthal', stars: 5 },
+              { quote: 'Herr Rheinberg hat unser Haus in nur 12 Tagen über dem Angebotspreis verkauft. Die Vermarktungsstrategie war perfekt.', name: 'Familie Schneider', role: 'Verkäufer, Rodenkirchen', stars: 5 },
+              { quote: 'Von der Suche bis zum Notar wurden wir erstklassig betreut. Die Expertise für den Kölner Markt ist einzigartig.', name: 'Dr. Michael Weber', role: 'Käufer, Belgisches Viertel', stars: 5 },
+              { quote: 'Professionelle Bewertung, ehrliche Beratung und ein tadelloser Verkaufsprozess. Absolute Empfehlung!', name: 'Ingrid & Hans Müller', role: 'Verkäufer, Lindenthal', stars: 5 },
             ],
           },
         },
@@ -292,9 +292,9 @@ export const REALESTATE_CONFIG = {
             visible: true, container: 'default', spacingTop: 'l', spacingBottom: 'l', anchorId: null, variant: null,
             headline: 'Das sagen unsere Verkäufer',
             testimonials: [
-              { text: 'Die Bewertung war punktgenau — unser Haus wurde sogar über dem geschätzten Preis verkauft.', name: 'Karin Hoffmann', role: 'Verkäuferin, Köln-Sülz', stars: 5 },
-              { text: 'Sehr professionelle Einschätzung mit nachvollziehbarer Begründung. Wir haben uns sofort gut aufgehoben gefühlt.', name: 'Peter & Anja Krause', role: 'Verkäufer, Köln-Ehrenfeld', stars: 5 },
-              { text: 'Innerhalb von zwei Tagen hatten wir eine fundierte Bewertung in der Hand. Top Service!', name: 'Dieter Lenz', role: 'Verkäufer, Hürth', stars: 5 },
+              { quote: 'Die Bewertung war punktgenau — unser Haus wurde sogar über dem geschätzten Preis verkauft.', name: 'Karin Hoffmann', role: 'Verkäuferin, Köln-Sülz', stars: 5 },
+              { quote: 'Sehr professionelle Einschätzung mit nachvollziehbarer Begründung. Wir haben uns sofort gut aufgehoben gefühlt.', name: 'Peter & Anja Krause', role: 'Verkäufer, Köln-Ehrenfeld', stars: 5 },
+              { quote: 'Innerhalb von zwei Tagen hatten wir eine fundierte Bewertung in der Hand. Top Service!', name: 'Dieter Lenz', role: 'Verkäufer, Hürth', stars: 5 },
             ],
           },
         },

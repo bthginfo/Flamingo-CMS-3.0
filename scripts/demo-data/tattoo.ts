@@ -84,10 +84,10 @@ export const TATTOO_CONFIG = {
         { type: 'testimonials', sortOrder: 4, data: {
           headline: 'Was unsere Kunden sagen',
           items: [
-            { text: 'Lena hat mein botanisches Sleeve perfekt umgesetzt. Jede Linie sitzt, jedes Detail stimmt. Absolute Empfehlung!', name: 'Anna K.', context: 'Fineline Sleeve', rating: 5 },
-            { text: 'Studio ist super sauber, Atmosphäre entspannt und Marco hat das Geometric-Piece in einer Session durchgezogen. Krass.', name: 'Tim R.', context: 'Blackwork Chest', rating: 5 },
-            { text: 'Yuki hat meinen Koi-Fisch Entwurf noch besser gemacht als ich mir vorgestellt habe. Traditionelle Kunst auf höchstem Niveau.', name: 'Lisa M.', context: 'Japanese Half-Sleeve', rating: 5 },
-            { text: 'Walk-in Flash Day war großartig! Spontan ein Motiv genommen und nach 30 Min fertig. Fair, schnell, perfekt.', name: 'Max B.', context: 'Flash Tattoo', rating: 5 },
+            { quote: 'Lena hat mein botanisches Sleeve perfekt umgesetzt. Jede Linie sitzt, jedes Detail stimmt. Absolute Empfehlung!', name: 'Anna K.', context: 'Fineline Sleeve', rating: 5 },
+            { quote: 'Studio ist super sauber, Atmosphäre entspannt und Marco hat das Geometric-Piece in einer Session durchgezogen. Krass.', name: 'Tim R.', context: 'Blackwork Chest', rating: 5 },
+            { quote: 'Yuki hat meinen Koi-Fisch Entwurf noch besser gemacht als ich mir vorgestellt habe. Traditionelle Kunst auf höchstem Niveau.', name: 'Lisa M.', context: 'Japanese Half-Sleeve', rating: 5 },
+            { quote: 'Walk-in Flash Day war großartig! Spontan ein Motiv genommen und nach 30 Min fertig. Fair, schnell, perfekt.', name: 'Max B.', context: 'Flash Tattoo', rating: 5 },
           ],
         }},
         { type: 'faq', sortOrder: 5, data: {
@@ -141,8 +141,8 @@ export const TATTOO_CONFIG = {
         { type: 'testimonials', sortOrder: 3, data: {
           headline: 'Kundenstimmen zu Lena',
           items: [
-            { text: 'Mein Wildblumen-Sleeve ist ein Traum. Jede Linie perfekt!', name: 'Sophie A.', context: 'Botanical Sleeve', rating: 5 },
-            { text: 'Lena hat sich so viel Zeit für den Entwurf genommen. Ergebnis besser als erhofft.', name: 'Nina K.', context: 'Fineline Script', rating: 5 },
+            { quote: 'Mein Wildblumen-Sleeve ist ein Traum. Jede Linie perfekt!', name: 'Sophie A.', context: 'Botanical Sleeve', rating: 5 },
+            { quote: 'Lena hat sich so viel Zeit für den Entwurf genommen. Ergebnis besser als erhofft.', name: 'Nina K.', context: 'Fineline Script', rating: 5 },
           ],
         }},
         { type: 'socialProofBar', sortOrder: 4, data: {
@@ -205,9 +205,9 @@ export const TATTOO_CONFIG = {
         { type: 'testimonials', sortOrder: 4, data: {
           headline: 'Unsere Kunden',
           items: [
-            { text: 'Am besten Studio in Berlin! Super sauber, Artists mega talentiert.', name: 'Leon M.', context: 'Google Review', rating: 5 },
-            { text: 'Yuki hat meinen Drachen vom Entwurf zur Realität gebracht. Wahnsinn.', name: 'Mia S.', context: 'Japanese Half-Sleeve', rating: 5 },
-            { text: 'Walk-in Flash Day war perfekt organisiert. In 30 Min fertig, super Ergebnis.', name: 'Felix T.', context: 'Flash Tattoo', rating: 5 },
+            { quote: 'Am besten Studio in Berlin! Super sauber, Artists mega talentiert.', name: 'Leon M.', context: 'Google Review', rating: 5 },
+            { quote: 'Yuki hat meinen Drachen vom Entwurf zur Realität gebracht. Wahnsinn.', name: 'Mia S.', context: 'Japanese Half-Sleeve', rating: 5 },
+            { quote: 'Walk-in Flash Day war perfekt organisiert. In 30 Min fertig, super Ergebnis.', name: 'Felix T.', context: 'Flash Tattoo', rating: 5 },
           ],
         }},
         { type: 'tattooBookingCta', sortOrder: 5, data: {
@@ -330,8 +330,8 @@ export const TATTOO_CONFIG = {
         { type: 'testimonials', sortOrder: 4, data: {
           headline: 'Heilungs-Erfahrungen',
           items: [
-            { text: 'Hab mich genau an den Guide gehalten — nach 2 Wochen war alles perfekt verheilt.', name: 'Laura B.', context: 'Fineline Arm', rating: 5 },
-            { text: 'Der kostenlose Touch-up hat den kleinen blassen Spot perfekt korrigiert.', name: 'Jan P.', context: 'Blackwork Rücken', rating: 5 },
+            { quote: 'Hab mich genau an den Guide gehalten — nach 2 Wochen war alles perfekt verheilt.', name: 'Laura B.', context: 'Fineline Arm', rating: 5 },
+            { quote: 'Der kostenlose Touch-up hat den kleinen blassen Spot perfekt korrigiert.', name: 'Jan P.', context: 'Blackwork Rücken', rating: 5 },
           ],
         }},
         { type: 'tattooBookingCta', sortOrder: 5, data: {
@@ -380,8 +380,8 @@ export const TATTOO_CONFIG = {
         { type: 'testimonials', sortOrder: 5, data: {
           headline: 'Das sagen unsere Kunden',
           items: [
-            { text: 'Schnelle Antwort, fairer Preis, mega Ergebnis. Komme definitiv wieder!', name: 'Marie K.', context: 'Custom Piece', rating: 5 },
-            { text: 'Die Beratung war super entspannt und Marco hat sofort verstanden was ich will.', name: 'David L.', context: 'Geometric Back', rating: 5 },
+            { quote: 'Schnelle Antwort, fairer Preis, mega Ergebnis. Komme definitiv wieder!', name: 'Marie K.', context: 'Custom Piece', rating: 5 },
+            { quote: 'Die Beratung war super entspannt und Marco hat sofort verstanden was ich will.', name: 'David L.', context: 'Geometric Back', rating: 5 },
           ],
         }},
       ],

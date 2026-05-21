@@ -37,12 +37,12 @@ export const WEDDING_CONFIG = {
     {
       slug: 'startseite', title: 'Startseite', sections: [
         { type: 'hero', sortOrder: 0, data: {
-          headline: 'Anna & Sebastian',
-          subline: 'Wir heiraten! Feiert mit uns den schönsten Tag unseres Lebens am 14. September 2025 in Salzburg.',
-          badgeText: 'Save the Date',
+          names: 'Anna & Sebastian',
+          date: '2025-09-14',
+          venue: 'Schloss Mirabell, Salzburg',
+          subline: 'Wir heiraten! Feiert mit uns den schönsten Tag unseres Lebens.',
           bgImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1800&q=85',
-          primaryCta: { label: 'Jetzt zusagen', href: '/rsvp' },
-          secondaryCta: { label: 'Unsere Geschichte', href: '/unsere-geschichte' },
+          showCountdown: true,
         }},
         { type: 'coupleStory', sortOrder: 1, data: {
           headline: 'Wie alles begann',
@@ -84,10 +84,12 @@ export const WEDDING_CONFIG = {
     {
       slug: 'unsere-geschichte', title: 'Unsere Geschichte', sections: [
         { type: 'hero', sortOrder: 0, data: {
-          headline: 'Unsere Geschichte',
-          subline: 'Von einem zufälligen Kaffee zu dem Tag, an dem wir „Ja" sagen.',
-          badgeText: 'Love Story',
+          names: 'Anna & Sebastian',
+          date: '2025-09-14',
+          venue: 'Schloss Mirabell, Salzburg',
+          subline: 'Von einem zufälligen Kaffee zu dem Tag, an dem wir „Ja“ sagen.',
           bgImage: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1800&q=85',
+          showCountdown: false,
         }},
         { type: 'coupleStory', sortOrder: 1, data: {
           headline: 'Die ganze Geschichte',
@@ -106,10 +108,12 @@ export const WEDDING_CONFIG = {
     {
       slug: 'ablauf', title: 'Ablauf', sections: [
         { type: 'hero', sortOrder: 0, data: {
-          headline: 'Der Tagesablauf',
+          names: 'Anna & Sebastian',
+          date: '2025-09-14',
+          venue: 'Schloss Mirabell, Salzburg',
           subline: 'Alles, was Ihr über den 14. September wissen müsst.',
-          badgeText: 'Programm',
           bgImage: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1800&q=85',
+          showCountdown: true,
         }},
         { type: 'eventSchedule', sortOrder: 1, data: {
           headline: 'Zeitplan',
@@ -126,9 +130,9 @@ export const WEDDING_CONFIG = {
         }},
         { type: 'dresscode', sortOrder: 2, data: {
           headline: 'Dresscode',
-          description: 'Festlich elegant. Wir freuen uns über gedeckte, warme Erdtöne – passend zum herbstlichen Ambiente. Bitte kein Weiß oder Creme.',
-          menSuggestion: 'Dunkler Anzug, Krawatte optional',
-          womenSuggestion: 'Langes oder knielanges Kleid, festlicher Jumpsuit',
+          text: 'Festlich elegant. Wir freuen uns über gedeckte, warme Erdtöne – passend zum herbstlichen Ambiente. Bitte kein Weiß oder Creme.',
+          colors: ['#8B4513', '#556B2F', '#2F4F4F', '#800020', '#DAA520'],
+          hints: ['Dunkler Anzug, Krawatte optional', 'Langes oder knielanges Kleid', 'Festlicher Jumpsuit', 'Bequeme Schuhe für die Tanzfläche'],
         }},
         { type: 'faq', sortOrder: 3, data: {
           headline: 'Häufige Fragen',
@@ -145,10 +149,12 @@ export const WEDDING_CONFIG = {
     {
       slug: 'location', title: 'Location', sections: [
         { type: 'hero', sortOrder: 0, data: {
-          headline: 'Schloss Mirabell',
+          names: 'Anna & Sebastian',
+          date: '2025-09-14',
+          venue: 'Schloss Mirabell, Salzburg',
           subline: 'Einer der schönsten Orte Salzburgs – und bald der Ort unserer Trauung.',
-          badgeText: 'Location',
           bgImage: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=1800&q=85',
+          showCountdown: false,
         }},
         { type: 'venueInfo', sortOrder: 1, data: {
           headline: 'Der Marmorsaal',
@@ -167,9 +173,7 @@ export const WEDDING_CONFIG = {
         }},
         { type: 'map', sortOrder: 3, data: {
           headline: 'Anfahrt',
-          lat: 47.8054,
-          lng: 13.0427,
-          zoom: 15,
+          embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2665.8!2d13.0427!3d47.8054!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47769a2b0e4b6eaf%3A0x0!2sSalzburg!5e0!3m2!1sde!2sde!4v1',
         }},
       ],
     },
@@ -177,10 +181,12 @@ export const WEDDING_CONFIG = {
     {
       slug: 'anreise', title: 'Anreise & Hotels', sections: [
         { type: 'hero', sortOrder: 0, data: {
-          headline: 'Anreise & Übernachtung',
+          names: 'Anna & Sebastian',
+          date: '2025-09-14',
+          venue: 'Schloss Mirabell, Salzburg',
           subline: 'Tipps für Eure Anreise und unsere Hotelempfehlungen.',
-          badgeText: 'Praktisch',
           bgImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=85',
+          showCountdown: false,
         }},
         { type: 'travelInfo', sortOrder: 1, data: {
           headline: 'So kommt Ihr zu uns',
@@ -202,10 +208,12 @@ export const WEDDING_CONFIG = {
     {
       slug: 'rsvp', title: 'RSVP', sections: [
         { type: 'hero', sortOrder: 0, data: {
-          headline: 'Sagt uns Bescheid!',
+          names: 'Anna & Sebastian',
+          date: '2025-09-14',
+          venue: 'Schloss Mirabell, Salzburg',
           subline: 'Bitte antwortet bis zum 1. Juli 2025.',
-          badgeText: 'RSVP',
           bgImage: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1800&q=85',
+          showCountdown: true,
         }},
         { type: 'rsvp', sortOrder: 1, data: {
           headline: 'Eure Zusage',

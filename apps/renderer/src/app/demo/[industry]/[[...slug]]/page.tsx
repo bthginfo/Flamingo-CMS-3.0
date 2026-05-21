@@ -116,11 +116,11 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
         contact: brandData.contact,
         socialLinks: brandData.socialLinks,
         footer: footerData ? {
-          columns: footerData.columns.map(col => ({
+          columns: (footerData.columns || []).map(col => ({
             ...col,
-            items: col.items.map(item => ({ ...item, href: item.href && !item.href.startsWith('/demo/') ? `${demoPrefix}${item.href}` : item.href })),
+            items: (col.items || []).map(item => ({ ...item, href: item.href && !item.href.startsWith('/demo/') ? `${demoPrefix}${item.href}` : item.href })),
           })),
-          legalLinks: footerData.legalLinks.map(l => ({ ...l, href: l.href.startsWith('/demo/') ? l.href : `${demoPrefix}${l.href}` })),
+          legalLinks: (footerData.legalLinks || []).map(l => ({ ...l, href: l.href?.startsWith('/demo/') ? l.href : `${demoPrefix}${l.href}` })),
         } : { columns: [], legalLinks: [] },
       }}
       darkBg={firstIsHero}

@@ -90,10 +90,10 @@ export const CAFE_CONFIG = {
         }},
         { type: 'testimonials', sortOrder: 4, data: {
           headline: 'Was unsere Gäste sagen',
-          items: [
-            { text: 'Bester Flat White der Stadt. Die eigene Röstung schmeckt man — und die Atmosphäre ist unschlagbar.', name: 'Laura M.', context: 'Google Review', rating: 5 },
-            { text: 'Perfekt zum Arbeiten tagsüber, perfekt zum Ausgehen abends. Die Espresso Martinis sind ein Traum!', name: 'Felix K.', context: 'Google Review', rating: 5 },
-            { text: 'Das Brunch-Buffet am Samstag ist ein Muss. Kommt früh, es wird voll! Qualität top.', name: 'Sophie & Tim', context: 'TripAdvisor', rating: 5 },
+          testimonials: [
+            { text: 'Bester Flat White der Stadt. Die eigene Röstung schmeckt man — und die Atmosphäre ist unschlagbar.', name: 'Laura M.', source: 'Google Review', stars: 5 },
+            { text: 'Perfekt zum Arbeiten tagsüber, perfekt zum Ausgehen abends. Die Espresso Martinis sind ein Traum!', name: 'Felix K.', source: 'Google Review', stars: 5 },
+            { text: 'Das Brunch-Buffet am Samstag ist ein Muss. Kommt früh, es wird voll! Qualität top.', name: 'Sophie & Tim', source: 'TripAdvisor', stars: 5 },
           ],
         }},
         { type: 'locationVibe', sortOrder: 5, data: {
@@ -206,10 +206,10 @@ export const CAFE_CONFIG = {
         }},
         { type: 'testimonials', sortOrder: 2, data: {
           headline: 'Stimmen von Event-Besuchern',
-          items: [
-            { text: 'Der Latte-Art-Workshop war mega — ich kann jetzt tatsächlich Herzen gießen!', name: 'Lisa R.', context: 'Google', rating: 5 },
-            { text: 'Pub Quiz immer donnerstags ist unser fester Termin. Super Stimmung, faire Fragen.', name: 'Team Nerdfighters', context: 'Google', rating: 5 },
-            { text: 'Die Naturwein-Tastings sind absolut auf Sommelierniveau. Und der Käse dazu!', name: 'Marco J.', context: 'Instagram', rating: 5 },
+          testimonials: [
+            { text: 'Der Latte-Art-Workshop war mega — ich kann jetzt tatsächlich Herzen gießen!', name: 'Lisa R.', source: 'Google', stars: 5 },
+            { text: 'Pub Quiz immer donnerstags ist unser fester Termin. Super Stimmung, faire Fragen.', name: 'Team Nerdfighters', source: 'Google', stars: 5 },
+            { text: 'Die Naturwein-Tastings sind absolut auf Sommelierniveau. Und der Käse dazu!', name: 'Marco J.', source: 'Instagram', stars: 5 },
           ],
         }},
         { type: 'ctaBand', sortOrder: 3, data: {
