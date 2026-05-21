@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-
 import { Menu, X, Phone, Mail, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { useHeaderContrast } from '@/hooks/use-header-contrast';
 import type { NavItem, NavCta, BrandData, ContactData } from '@/lib/tenant-data';
 
 export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/' }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string }) {
@@ -15,6 +16,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
   const pathname = usePathname();
+  const isHeroDark = useHeaderContrast(darkBg);
 
   // Close mobile menu on route change
   useEffect(() => { setMobileOpen(false); }, [pathname]);
@@ -70,12 +72,12 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
           'transition-all duration-500',
           scrolled
             ? 'backdrop-blur-2xl shadow-lg border-b border-gray-100/50'
-            : darkBg ? 'bg-gradient-to-b from-black/70 via-black/30 to-transparent' : 'backdrop-blur-sm shadow-sm',
+            : isHeroDark ? 'bg-gradient-to-b from-black/70 via-black/30 to-transparent' : 'backdrop-blur-sm shadow-sm',
         )}
-        style={(scrolled || !darkBg) ? { backgroundColor: brand.navBgColor || 'rgba(255,255,255,0.8)' } : undefined}
+        style={(scrolled || (!isHeroDark)) ? { backgroundColor: brand.navBgColor || 'rgba(255,255,255,0.8)' } : undefined}
         >
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-[72px]">
-            <Link href={homeHref} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || !darkBg) ? brand.primaryColor : 'white' }}>
+            <Link href={homeHref} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || (!isHeroDark)) ? brand.primaryColor : 'white' }}>
               {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
                 <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto object-contain" />
               )}
@@ -91,7 +93,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                   href={item.href}
                   className={cn(
                     'text-[13px] font-medium tracking-wide uppercase transition-colors duration-300 hover:text-brand-accent',
-                    (scrolled || !darkBg) ? 'text-gray-600' : 'text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]',
+                    (scrolled || (!isHeroDark)) ? 'text-gray-600' : 'text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]',
                   )}
                 >
                   {item.label}
@@ -101,7 +103,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                 href={cta?.href || '/kontakt'}
                 className={cn(
                   'inline-flex items-center gap-2 text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-300',
-                  (scrolled || !darkBg)
+                  (scrolled || (!isHeroDark))
                     ? 'bg-brand-primary text-white hover:bg-brand-dark shadow-md hover:shadow-lg'
                     : 'bg-white/10 text-white border border-white/25 hover:bg-white/20 backdrop-blur-sm',
                 )}
@@ -116,7 +118,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
               aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
               className={cn(
                 'md:hidden p-2 rounded-lg transition-colors',
-                (scrolled || !darkBg) ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10',
+                (scrolled || (!isHeroDark)) ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10',
               )}
             >
               {mobileOpen ? <X size={24} /> : <Menu size={24} />}
