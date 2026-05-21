@@ -12,6 +12,9 @@ const INDUSTRIES = [
   { key: 'tourism', label: 'Tourismus' },
   { key: 'wedding', label: 'Hochzeit' },
   { key: 'photography', label: 'Fotografie' },
+  { key: 'consulting', label: 'Kanzlei & Beratung' },
+  { key: 'realestate', label: 'Immobilien' },
+  { key: 'cafe', label: 'Café & Bar' },
   { key: 'showcase', label: '📦 Sektionen-Demo' },
 ] as const;
 
@@ -28,8 +31,16 @@ interface DemoFabProps {
 }
 
 export function DemoFab({ currentIndustry, currentStyle, onStyleChange }: DemoFabProps) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(true);
   const panelRef = useRef<HTMLDivElement>(null);
+
+  // On desktop, open by default
+  useEffect(() => {
+    if (window.innerWidth >= 768) setOpen(true);
+    const timer = setTimeout(() => setShowTooltip(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -126,8 +137,14 @@ export function DemoFab({ currentIndustry, currentStyle, onStyleChange }: DemoFa
       )}
 
       {/* FAB button */}
+      {!open && showTooltip && (
+        <div className="absolute bottom-16 right-0 md:hidden bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg animate-in fade-in slide-in-from-bottom-1">
+          Branche & Stil wechseln
+          <div className="absolute -bottom-1 right-5 w-2 h-2 bg-gray-900 rotate-45" />
+        </div>
+      )}
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => { setOpen(o => !o); setShowTooltip(false); }}
         className="h-14 w-14 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 text-white shadow-lg shadow-pink-500/25 hover:shadow-xl hover:shadow-pink-500/30 hover:scale-105 transition-all flex items-center justify-center"
         aria-label="Demo-Optionen"
       >
