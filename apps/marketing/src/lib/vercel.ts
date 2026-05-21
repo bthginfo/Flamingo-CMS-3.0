@@ -87,7 +87,7 @@ export async function checkDomainStatus(domain: string): Promise<{ configured: b
 }
 
 /** Create a standalone Vercel project for a tenant. */
-export async function createStandaloneProject(slug: string, tenantId: string): Promise<{ projectId: string; projectUrl: string }> {
+export async function createStandaloneProject(slug: string, tenantId: string): Promise<{ projectId: string; projectUrl: string; blobConnected: boolean }> {
   const projectName = `flamingo-${slug}`;
 
   // Validate required env vars upfront
