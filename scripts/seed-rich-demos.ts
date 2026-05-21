@@ -17,6 +17,7 @@ import { TOURISM_CONFIG } from './demo-data/tourism';
 import { MEDICAL_CONFIG } from './demo-data/medical';
 import { HANDWERK_CONFIG } from './demo-data/handwerk';
 import { WEDDING_CONFIG } from './demo-data/wedding';
+import { TATTOO_CONFIG } from './demo-data/tattoo';
 
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) { console.error('DATABASE_URL not set'); process.exit(1); }
@@ -26,7 +27,7 @@ const db = drizzle(sql, { schema });
 
 const DEMO_PASSWORD_HASH = '$2a$12$HMKCVT2eAmQj0huq6SUShOGHQOVNO4FWi4teS8IbQvrrymkpRjVHK'; // demo2024
 
-const ALL_CONFIGS = [RESTAURANT_CONFIG, HOTEL_CONFIG, SALON_CONFIG, TOURISM_CONFIG, MEDICAL_CONFIG, HANDWERK_CONFIG, WEDDING_CONFIG];
+const ALL_CONFIGS = [RESTAURANT_CONFIG, HOTEL_CONFIG, SALON_CONFIG, TOURISM_CONFIG, MEDICAL_CONFIG, HANDWERK_CONFIG, WEDDING_CONFIG, TATTOO_CONFIG];
 
 async function seedTenant(config: typeof RESTAURANT_CONFIG) {
   console.log(`\n🔧 Seeding ${config.name} (${config.industry})…`);
