@@ -4,17 +4,17 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from '@/lib/nav-compat';
 
 const DEMO_LINKS: Record<string, string> = {
-  tradesman: 'https://demo.flamingomedia.online/demo/handwerk',
-  restaurant: 'https://demo.flamingomedia.online/demo/restaurant',
-  salon: 'https://demo.flamingomedia.online/demo/salon',
-  hotel: 'https://demo.flamingomedia.online/demo/hotel',
-  tourism: 'https://demo.flamingomedia.online/demo/tourism',
-  medical: 'https://demo.flamingomedia.online/demo/medical',
-  wedding: 'https://demo.flamingomedia.online/demo/wedding',
-  photography: 'https://demo.flamingomedia.online/demo/photography',
-  consulting: 'https://demo.flamingomedia.online/demo/consulting',
-  realestate: 'https://demo.flamingomedia.online/demo/realestate',
-  cafe: 'https://demo.flamingomedia.online/demo/cafe',
+  tradesman: 'https://www.demo.flamingomedia.online/demo/handwerk',
+  restaurant: 'https://www.demo.flamingomedia.online/demo/restaurant',
+  salon: 'https://www.demo.flamingomedia.online/demo/salon',
+  hotel: 'https://www.demo.flamingomedia.online/demo/hotel',
+  tourism: 'https://www.demo.flamingomedia.online/demo/tourism',
+  medical: 'https://www.demo.flamingomedia.online/demo/medical',
+  wedding: 'https://www.demo.flamingomedia.online/demo/wedding',
+  photography: 'https://www.demo.flamingomedia.online/demo/photography',
+  consulting: 'https://www.demo.flamingomedia.online/demo/consulting',
+  realestate: 'https://www.demo.flamingomedia.online/demo/realestate',
+  cafe: 'https://www.demo.flamingomedia.online/demo/cafe',
 };
 
 const TEMPLATES = [

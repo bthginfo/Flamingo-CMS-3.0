@@ -514,17 +514,17 @@ function ShowcaseFooter() {
           <div>
             <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Branchen</p>
             <ul className="space-y-2">
-              <li><a href="https://demo.flamingomedia.online/demo/handwerk" className="hover:text-accent">Handwerk</a></li>
-              <li><a href="https://demo.flamingomedia.online/demo/restaurant" className="hover:text-accent">Restaurant</a></li>
-              <li><a href="https://demo.flamingomedia.online/demo/hotel" className="hover:text-accent">Hotel</a></li>
-              <li><a href="https://demo.flamingomedia.online/demo/salon" className="hover:text-accent">Salon &amp; Beauty</a></li>
-              <li><a href="https://demo.flamingomedia.online/demo/medical" className="hover:text-accent">Arztpraxis</a></li>
-              <li><a href="https://demo.flamingomedia.online/demo/tourism" className="hover:text-accent">Tourismus</a></li>
-              <li><a href="https://demo.flamingomedia.online/demo/wedding" className="hover:text-accent">Hochzeit</a></li>
-              <li><a href="https://demo.flamingomedia.online/demo/photography" className="hover:text-accent">Fotografie</a></li>
-              <li><a href="https://demo.flamingomedia.online/demo/consulting" className="hover:text-accent">Kanzlei &amp; Beratung</a></li>
-              <li><a href="https://demo.flamingomedia.online/demo/realestate" className="hover:text-accent">Immobilien</a></li>
-              <li><a href="https://demo.flamingomedia.online/demo/cafe" className="hover:text-accent">Café</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/handwerk" className="hover:text-accent">Handwerk</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/restaurant" className="hover:text-accent">Restaurant</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/hotel" className="hover:text-accent">Hotel</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/salon" className="hover:text-accent">Salon &amp; Beauty</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/medical" className="hover:text-accent">Arztpraxis</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/tourism" className="hover:text-accent">Tourismus</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/wedding" className="hover:text-accent">Hochzeit</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/photography" className="hover:text-accent">Fotografie</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/consulting" className="hover:text-accent">Kanzlei &amp; Beratung</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/realestate" className="hover:text-accent">Immobilien</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/cafe" className="hover:text-accent">Café</a></li>
             </ul>
           </div>
           <div>
@@ -818,7 +818,7 @@ function ServicesSection() {
   );
 }
 
-const DEMO_BASE = 'https://demo.flamingomedia.online';
+const DEMO_BASE = 'https://www.demo.flamingomedia.online';
 
 function TemplatesPreviewSection() {
   return (
@@ -931,9 +931,9 @@ type DeviceItem = {
   image?: string; // static image fallback instead of iframe
 };
 
-const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'https://demo.flamingomedia.online';
+const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'https://www.demo.flamingomedia.online';
 
-const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://demo.flamingomedia.online';
+const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://www.demo.flamingomedia.online';
 
 const DEVICE_ITEMS: DeviceItem[] = [
   {
