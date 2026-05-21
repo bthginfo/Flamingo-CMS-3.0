@@ -47,16 +47,9 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
   const dbIndustry = INDUSTRY_MAP[industry];
   if (!dbIndustry) return notFound();
 
-  // Resolve by slug for special demos (e.g. showcase), otherwise by industry
-  const SLUG_MAP: Record<string, string> = { showcase: 'demo-showcase' };
-  const tenantId = SLUG_MAP[industry]
-    ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
-    : await resolveDemoTenant(dbIndustry);
-
-  // Fallback to static demo pages if no DB tenant exists
-  if (!tenantId) {
-    const staticSite = getDemoSite(industry);
-    if (!staticSite) return notFound();
+  // Static demo pages take priority — they are curated and always complete
+  const staticSite = getDemoSite(industry);
+  if (staticSite) {
     const targetSlug = slug?.join('/') || '';
     const page = staticSite.pages.find(p =>
       p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
@@ -82,6 +75,14 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
       />
     );
   }
+
+  // For industries without static data (e.g. showcase), resolve from DB
+  const SLUG_MAP: Record<string, string> = { showcase: 'demo-showcase' };
+  const tenantId = SLUG_MAP[industry]
+    ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
+    : await resolveDemoTenant(dbIndustry);
+
+  if (!tenantId) return notFound();
 
   const [snapshot, tenantStyle, navData, footerData, brandData] = await Promise.all([
     getActiveSnapshot(tenantId),
@@ -89,37 +90,9 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
-  ]).catch(() => [null, null, null, null, null] as const);
+  ]);
 
-  // If DB data is incomplete, fall back to static demo
-  if (!snapshot || !tenantStyle || !navData || !brandData) {
-    const staticSite = getDemoSite(industry);
-    if (!staticSite) return notFound();
-    const targetSlug = slug?.join('/') || '';
-    const page = staticSite.pages.find(p =>
-      p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
-    );
-    if (!page) return notFound();
-    const siteData = getDemoSiteData(industry as IndustryKey);
-    const demoPrefix = `/demo/${industry}`;
-    return (
-      <DemoPageShell
-        sections={prefixSections(page.sections.filter(s => s.visible) as SnapshotSection[], demoPrefix)}
-        industry={staticSite.industry}
-        industryKey={industry}
-        defaultStyle={staticSite.defaultStyle}
-        siteData={{
-          navItems: siteData.navItems,
-          cta: siteData.cta,
-          brand: siteData.brand,
-          contact: siteData.contact,
-          socialLinks: siteData.socialLinks,
-          footer: siteData.footer,
-        }}
-        darkBg={page.sections[0]?.type === 'hero'}
-      />
-    );
-  }
+  if (!snapshot || !tenantStyle || !navData || !brandData) return notFound();
 
   const targetSlug = slug?.join('/') || '';
   const page = snapshot.pages.find(p =>
