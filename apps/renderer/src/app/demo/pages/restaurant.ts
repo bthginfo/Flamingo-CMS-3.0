@@ -90,6 +90,63 @@ export const restaurantSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, id: 'rs-home-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Was unsere Gäste sagen',
+            items: [
+              { quote: 'Die beste italienische Küche außerhalb Italiens. Wir kommen seit 10 Jahren hierher.', author: 'Familie Huber', role: 'Stammgäste' },
+              { quote: 'Marco und sein Team haben unsere Hochzeitsfeier unvergesslich gemacht. Grazie mille!', author: 'Julia & Markus', role: 'Hochzeitsgäste 2024' },
+              { quote: 'Authentisch, herzlich, perfekt. Die Tagliatelle al Tartufo sind ein Gedicht!', author: 'Michael R.', role: 'TripAdvisor' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'rs-home-team', type: 'team',
+          data: {
+            headline: 'Unser Team',
+            subline: 'Die Menschen hinter dem Genuss',
+            members: [
+              { name: 'Marco Dal Maestro', role: 'Küchenchef & Inhaber', image: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&q=80' },
+              { name: 'Elena Dal Maestro', role: 'Geschäftsführung & Service', image: 'https://images.unsplash.com/photo-1594744803329-e58b31239f85?w=400&q=80' },
+              { name: 'Luca Dal Maestro', role: 'Sous-Chef', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80' },
+              { name: 'Andrea Rossi', role: 'Sommelier', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'rs-home-hours', type: 'openingHours',
+          data: {
+            headline: 'Öffnungszeiten',
+            days: [
+              { label: 'Dienstag — Samstag', hours: '11:30 — 14:30 & 17:30 — 23:00 Uhr' },
+              { label: 'Sonntag', hours: '11:30 — 22:00 Uhr' },
+              { label: 'Montag', hours: '', closed: true, note: 'Ruhetag' },
+            ],
+            kitchenHoursHeadline: 'Küchenzeiten',
+            kitchenHoursText: 'Warme Küche bis 30 Min. vor Schluss.',
+          },
+        },
+        {
+          ...B, id: 'rs-home-faq', type: 'faq',
+          data: {
+            headline: 'Häufige Fragen',
+            items: [
+              { question: 'Muss ich reservieren?', answer: 'Wir empfehlen eine Reservierung, besonders Fr/Sa ab 19 Uhr. Für Lunch unter der Woche kommen Sie gerne spontan.' },
+              { question: 'Gibt es vegetarische Optionen?', answer: 'Ja! Unsere Karte hat zahlreiche vegetarische Pasta- und Risotto-Gerichte. Auf Wunsch auch vegan.' },
+              { question: 'Haben Sie eine Terrasse?', answer: 'Ja, von Mai bis September mit Blick auf die Nordkette — ca. 40 Plätze.' },
+              { question: 'Bieten Sie Catering an?', answer: 'Ja, für Events bis 100 Personen in Innsbruck und Umgebung.' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'rs-home-cta', type: 'ctaBand',
+          data: {
+            headline: 'Buon Appetito!',
+            subline: 'Reservieren Sie jetzt und erleben Sie authentische italienische Küche.',
+            ctaPrimary: { label: 'Tisch reservieren', href: '/demo/restaurant/reservierung' },
+          },
+        },
       ],
     },
     {
@@ -297,6 +354,18 @@ export const restaurantSite: DemoSite = {
         },
         {
           ...B,
+          id: 'rs-menu-testimonials',
+          type: 'testimonials',
+          data: {
+            headline: 'Stimmen zur Karte',
+            items: [
+              { quote: 'Die beste Pasta außerhalb Italiens. Der Tartufo-Gang war ein Traum.', author: 'Andreas W.', role: 'Google-Bewertung' },
+              { quote: 'Auch für Vegetarier ein Gedicht — das Risotto ai funghi ist unübertroffen.', author: 'Sabine L.', role: 'TripAdvisor' },
+            ],
+          },
+        },
+        {
+          ...B,
           id: 'rs-menu-cta',
           type: 'ctaBand',
           data: {
@@ -361,6 +430,19 @@ export const restaurantSite: DemoSite = {
               { quote: 'Das Ambiente im Gewölbekeller ist einzigartig — man fühlt sich wie in einer echten italienischen Trattoria.', author: 'Sarah M.', role: 'Stammgast seit 2015' },
               { quote: 'Die Terrasse mit Blick auf die Nordkette ist der perfekte Ort für ein Sommerabendessen.', author: 'Thomas K.', role: 'Google-Bewertung' },
               { quote: 'Unser Private Dining im Weinkeller war unvergesslich. Perfekt für unseren Hochzeitstag!', author: 'Anna & Stefan', role: 'Private Dining Gäste' },
+            ],
+          },
+        },
+        {
+          ...B,
+          id: 'rs-amb-stats',
+          type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '120', label: 'Sitzplätze innen' },
+              { value: '40', label: 'Terrassenplätze' },
+              { value: '12', label: 'Private Dining' },
+              { value: '15. Jh.', label: 'Gewölbekeller' },
             ],
           },
         },
@@ -655,6 +737,19 @@ export const restaurantSite: DemoSite = {
           data: {
             headline: 'Über unsere Bilder',
             text: '<p>Unsere Food-Fotografie stammt von der Innsbrucker Fotografin Lisa Berger, die seit 2019 unsere Gerichte und Events begleitet. Die Bilder zeigen echte Gerichte aus unserer Küche — keine Requisiten, kein Styling-Trick.</p>',
+          },
+        },
+        {
+          ...B,
+          id: 'rs-gal-stats',
+          type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '200+', label: 'Fotos im Archiv' },
+              { value: '4', label: 'Bereiche' },
+              { value: '25+', label: 'Jahre Geschichte' },
+              { value: '4.8 ★', label: 'Bewertung' },
+            ],
           },
         },
         {

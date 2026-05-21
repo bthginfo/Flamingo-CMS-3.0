@@ -75,6 +75,31 @@ export const handwerkSite: DemoSite = {
           },
         },
         {
+          ...B, id: 'hw-process-home', type: 'processSteps',
+          data: {
+            headline: 'So arbeiten wir',
+            subline: 'Vom Anruf bis zur sauberen Übergabe.',
+            badgeText: 'Ablauf',
+            items: [
+              { title: 'Anfrage', text: 'Telefonisch oder per Formular — wir melden uns innerhalb eines Werktags.' },
+              { title: 'Vor-Ort-Beratung', text: 'Kostenloser Besichtigungstermin mit Aufmass.' },
+              { title: 'Festpreisangebot', text: 'Transparentes Angebot ohne versteckte Kosten.' },
+              { title: 'Umsetzung & Abnahme', text: 'Termingerecht durch eigene Meister — mit 5 Jahren Garantie.' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'hw-faq-home', type: 'faq',
+          data: {
+            headline: 'Häufige Fragen',
+            items: [
+              { question: 'Wie schnell bekomme ich einen Termin?', answer: 'Standard innerhalb von 48h. Notdienst rund um die Uhr.' },
+              { question: 'Was kostet eine Badsanierung?', answer: 'Komplettbad ab ca. 12.000 €. Festpreisangebot nach kostenlosem Aufmass.' },
+              { question: 'Gibt es Fördermittel für Heizungstausch?', answer: 'Ja — bis zu 40% Zuschuss über BAFA/KfW. Wir übernehmen die Antragstellung.' },
+            ],
+          },
+        },
+        {
           ...B, id: 'hw-cta-home', type: 'ctaBand',
           data: {
             headline: 'Projekt besprechen?',

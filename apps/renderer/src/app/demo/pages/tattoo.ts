@@ -140,6 +140,27 @@ export const tattooSite: DemoSite = {
           },
         },
         {
+          ...SECTION, id: 'tt-artist-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Kundenstimmen zu Lena',
+            items: [
+              { quote: 'Mein Wildblumen-Sleeve ist ein Traum. Jede Linie perfekt!', name: 'Sophie A.', context: 'Botanical Sleeve', rating: 5 },
+              { quote: 'Lena hat sich so viel Zeit für den Entwurf genommen. Ergebnis besser als erhofft.', name: 'Nina K.', context: 'Fineline Script', rating: 5 },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-artist-stats', type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '8', label: 'Jahre Erfahrung' },
+              { value: '2.000+', label: 'Tattoos gestochen' },
+              { value: '4.9 ★', label: 'Bewertung' },
+              { value: '3-4', label: 'Wochen Wartezeit' },
+            ],
+          },
+        },
+        {
           ...SECTION, id: 'tt-artist-cta', type: 'tattooBookingCta',
           data: {
             headline: 'Termin bei Lena anfragen',
@@ -189,6 +210,29 @@ export const tattooSite: DemoSite = {
               { alt: 'Hamburg Ink Days' },
               { alt: 'Best of Fineline Award 2024' },
               { alt: 'Vienna Ink Festival' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-gal-stats', type: 'statsCounter',
+          data: {
+            headline: 'INK DISTRICT in Zahlen',
+            stats: [
+              { value: 3000, suffix: '+', label: 'Gestochene Tattoos' },
+              { value: 4, suffix: '', label: 'Artists' },
+              { value: 8, suffix: '+', label: 'Tattoo-Stile' },
+              { value: 50, suffix: '+', label: 'Flash-Motive' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-gal-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Unsere Kunden',
+            items: [
+              { quote: 'Am besten Studio in Berlin! Super sauber, Artists mega talentiert.', name: 'Leon M.', context: 'Google Review', rating: 5 },
+              { quote: 'Yuki hat meinen Drachen vom Entwurf zur Realität gebracht. Wahnsinn.', name: 'Mia S.', context: 'Japanese Half-Sleeve', rating: 5 },
+              { quote: 'Walk-in Flash Day war perfekt organisiert. In 30 Min fertig, super Ergebnis.', name: 'Felix T.', context: 'Flash Tattoo', rating: 5 },
             ],
           },
         },
@@ -264,6 +308,33 @@ export const tattooSite: DemoSite = {
             ],
           },
         },
+        {
+          ...SECTION, id: 'tt-leist-social', type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '120–150 €', label: 'Stundensatz' },
+              { value: 'ab 80 €', label: 'Flash-Motive' },
+              { value: 'Gratis', label: 'Beratung' },
+              { value: 'Gratis', label: 'Touch-up (3 Mo.)' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-leist-text', type: 'textImage',
+          data: {
+            headline: 'Qualität hat ihren Preis',
+            text: '<p>Wir verwenden ausschließlich vegane, EU-zertifizierte Farben und arbeiten nach höchsten Hygienestandards. Jede Nadel ist steril verpackt und wird nach einmaliger Verwendung entsorgt.</p><p>Unsere Preise spiegeln die Qualität der Materialien, die Erfahrung unserer Artists und die individuelle Beratung wider.</p>',
+            image: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=800&q=80',
+          },
+        },
+        {
+          ...SECTION, id: 'tt-leist-cta', type: 'ctaBand',
+          data: {
+            headline: 'Bereit für Dein Tattoo?',
+            subline: 'Schick uns Deine Idee — Kostenvoranschlag innerhalb 48h.',
+            ctaPrimary: { label: 'Terminanfrage', href: '/kontakt' },
+          },
+        },
       ],
     },
     {
@@ -303,6 +374,24 @@ export const tattooSite: DemoSite = {
               { question: 'Tattoo in die Sonne?', answer: 'Frisch: nein. Nach Heilung immer SPF 50+.' },
               { question: 'Tattoo schält sich — normal?', answer: 'Ja! Teil der Heilung. Weiter eincremen, nicht abziehen.' },
               { question: 'Wann Touch-up?', answer: 'Falls nach 4-6 Wochen Linien blass sind. Bei uns 3 Monate kostenlos.' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-pflege-products', type: 'textImage',
+          data: {
+            headline: 'Empfohlene Pflegeprodukte',
+            text: '<p><strong>Bepanthen Wund- und Heilsalbe</strong> — der Klassiker für Tattoo-Pflege.</p><p><strong>TattooMed After Tattoo</strong> — speziell für frische Tattoos entwickelt.</p><p><strong>Ab der 3. Woche:</strong> SPF 50+ Sonnencreme auf geheilte Tattoos für langfristige Farbbrillanz.</p><p>Vermeide Vaseline und parfümierte Cremes in den ersten 2 Wochen!</p>',
+            image: 'https://images.unsplash.com/photo-1612875926365-1a078b4ea5c7?w=800&q=80',
+          },
+        },
+        {
+          ...SECTION, id: 'tt-pflege-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Heilungs-Erfahrungen',
+            items: [
+              { quote: 'Hab mich genau an den Guide gehalten — nach 2 Wochen war alles perfekt verheilt.', name: 'Laura B.', context: 'Fineline Arm', rating: 5 },
+              { quote: 'Der kostenlose Touch-up hat den kleinen blassen Spot perfekt korrigiert.', name: 'Jan P.', context: 'Blackwork Rücken', rating: 5 },
             ],
           },
         },
@@ -352,6 +441,28 @@ export const tattooSite: DemoSite = {
               { value: '4.9 ★', label: 'Google Bewertung' },
               { value: '3.000+', label: 'Gestochene Tattoos' },
               { value: '4', label: 'Artists' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-contact-faq', type: 'faq',
+          data: {
+            headline: 'Fragen zum Termin',
+            items: [
+              { question: 'Wie lange dauert die Antwort?', answer: 'Wir antworten innerhalb von 48 Stunden mit einem Kostenvoranschlag und Terminvorschlägen.' },
+              { question: 'Was passiert bei der Beratung?', answer: 'Wir besprechen Motiv, Größe, Platzierung und Stil. Dauer ca. 15 Minuten, kostenlos.' },
+              { question: 'Kann ich mein eigenes Motiv mitbringen?', answer: 'Klar! Referenzbilder helfen uns, Deine Vorstellung optimal umzusetzen.' },
+              { question: 'Was kostet eine Stornierung?', answer: 'Absagen bis 48h vorher sind kostenlos. Danach verfällt die Anzahlung (50 €).' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-contact-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Das sagen unsere Kunden',
+            items: [
+              { quote: 'Schnelle Antwort, fairer Preis, mega Ergebnis. Komme definitiv wieder!', name: 'Marie K.', context: 'Custom Piece', rating: 5 },
+              { quote: 'Die Beratung war super entspannt und Marco hat sofort verstanden was ich will.', name: 'David L.', context: 'Geometric Back', rating: 5 },
             ],
           },
         },

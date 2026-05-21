@@ -112,6 +112,25 @@ export const weddingSite: DemoSite = {
             imagePosition: 'right',
           },
         },
+        {
+          ...B, id: 'w-story-stats', type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '8', label: 'Jahre zusammen' },
+              { value: '12', label: 'Länder bereist' },
+              { value: '1', label: 'Antrag auf 2.334m' },
+              { value: '∞', label: 'Gemeinsame Abenteuer' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'w-story-cta', type: 'ctaBand',
+          data: {
+            headline: 'Feiert mit uns!',
+            subline: 'Am 12. September 2026 auf Schloss Ambras.',
+            ctaPrimary: { label: 'Zur RSVP', href: '/demo/wedding/rsvp' },
+          },
+        },
       ],
     },
     {
@@ -154,6 +173,24 @@ export const weddingSite: DemoSite = {
               { name: 'Hotel Grauer Bär ⭐⭐⭐⭐', distance: '3 km', specialRate: 'Stichwort „Hochzeit Anna & Max"' },
               { name: 'STAGE 12 ⭐⭐⭐⭐', distance: '4 km', specialRate: 'Code ANNAMAX2026 → 15%' },
               { name: 'Nala Individuell Hotel ⭐⭐⭐⭐', distance: '3.5 km', specialRate: '' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'w-loc-shuttle', type: 'richText',
+          data: {
+            headline: '🚌 Shuttle-Service',
+            text: '<p>Wir organisieren einen kostenlosen Pendelbus zwischen den Hotels und dem Schloss:</p><ul><li><strong>Hinfahrt:</strong> Ab 16:30 Uhr, alle 30 Min.</li><li><strong>Rückfahrt:</strong> Stündlich 22:00–02:00 Uhr.</li></ul><p>Haltestellen: Hotel Grauer Bär → STAGE 12 → Nala → Schloss Ambras</p><p>Wer später bleiben möchte: Taxi-Nummern liegen am Empfang aus.</p>',
+          },
+        },
+        {
+          ...B, id: 'w-loc-faq', type: 'faq',
+          data: {
+            headline: 'Fragen zur Anreise',
+            items: [
+              { question: 'Wo kann ich parken?', answer: 'Kostenfreie Parkplätze direkt am Schloss (ca. 80 Plätze). Bitte folgt der Beschilderung.' },
+              { question: 'Kann ich ein Taxi bestellen?', answer: 'Ja — Taxi Innsbruck: +43 512 5311. Oder nutzt den kostenlosen Shuttle.' },
+              { question: 'Gibt es eine Ladestation für E-Autos?', answer: 'Ja, 2 Ladestationen (Typ 2, 22 kW) auf dem Schlossparkplatz.' },
             ],
           },
         },
@@ -239,6 +276,21 @@ export const weddingSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, id: 'w-team-text', type: 'richText',
+          data: {
+            headline: 'Ansprechpartner am großen Tag',
+            text: '<p>Falls ihr Fragen habt oder am Hochzeitstag Hilfe braucht, wendet euch an unsere Trauzeugen:</p><p><strong>Lisa:</strong> +43 650 123 4567 (Alles rund um die Braut)<br/><strong>Thomas:</strong> +43 660 987 6543 (Überraschungen & Logistik)</p>',
+          },
+        },
+        {
+          ...B, id: 'w-team-cta', type: 'ctaBand',
+          data: {
+            headline: 'Noch nicht zugesagt?',
+            subline: 'Wir freuen uns auf eure RSVP!',
+            ctaPrimary: { label: 'Jetzt zusagen', href: '/demo/wedding/rsvp' },
+          },
+        },
       ],
     },
     {
@@ -267,6 +319,24 @@ export const weddingSite: DemoSite = {
             bankInfo: { holder: 'Anna Berger & Maximilian Hofer', iban: 'AT12 3456 7890 1234 5678', bic: 'BKAUATWW', note: 'Verwendungszweck: Hochzeitsgeschenk' },
           },
         },
+        {
+          ...B, id: 'w-gifts-text', type: 'textImage',
+          data: {
+            headline: 'Unser Japan-Abenteuer',
+            text: '<p>Nach der Hochzeit geht es für 3 Wochen nach Japan: Tokio, Kyoto, Osaka und Hakone. Wir träumen von Tempeln, Onsen, Ramen und dem Blick auf den Fuji.</p><p>Jeder Beitrag hilft uns, diesen Traum wahr werden zu lassen. Wir sind schon wahnsinnig aufgeregt!</p>',
+            image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80',
+          },
+        },
+        {
+          ...B, id: 'w-gifts-faq', type: 'faq',
+          data: {
+            headline: 'Fragen zu Geschenken',
+            items: [
+              { question: 'Muss ich etwas schenken?', answer: 'Nein! Eure Anwesenheit ist uns das Wichtigste. Wer mag, kann zur Reisekasse beitragen.' },
+              { question: 'Kann ich auch nach der Hochzeit überweisen?', answer: 'Klar, das Konto läuft nicht weg. 😊' },
+            ],
+          },
+        },
       ],
     },
     {
@@ -291,6 +361,23 @@ export const weddingSite: DemoSite = {
             showSongWish: true,
             showDietary: true,
             showAllergies: true,
+          },
+        },
+        {
+          ...B, id: 'w-rsvp-info', type: 'richText',
+          data: {
+            headline: 'Wichtige Infos zur Zusage',
+            text: '<p><strong>Deadline:</strong> Bitte bis spätestens 1. Juli 2026 zusagen.</p><p><strong>Plus-One:</strong> Wenn auf eurer Einladung ein +1 steht, gebt den Namen bitte im Formular an.</p><p><strong>Kinder:</strong> Herzlich willkommen! Bitte separat anmelden für die Kinderbetreeung.</p><p><strong>Vegetarisch/Vegan:</strong> Bitte bei den Ernährungswünschen angeben — die Küche kann alles!</p>',
+          },
+        },
+        {
+          ...B, id: 'w-rsvp-faq', type: 'faq',
+          data: {
+            headline: 'RSVP-Fragen',
+            items: [
+              { question: 'Ich kann doch nicht kommen — was tun?', answer: 'Sag uns bitte so früh wie möglich Bescheid. Formular nochmal ausfüllen oder kurze Nachricht an Lisa.' },
+              { question: 'Kann ich später noch Gäste hinzufügen?', answer: 'Bitte meldet euch bis 1. Juli — danach sind die Plätze fix vergeben.' },
+            ],
           },
         },
       ],
@@ -324,6 +411,21 @@ export const weddingSite: DemoSite = {
               { question: 'Überraschung geplant?', answer: 'Bitte bei Trauzeugin Lisa melden.' },
               { question: 'WLAN?', answer: 'Ja, im Festsaal. Aber tanzen > scrollen.' },
             ],
+          },
+        },
+        {
+          ...B, id: 'w-faq-contact', type: 'richText',
+          data: {
+            headline: 'Noch Fragen?',
+            text: '<p>Ihr erreicht uns jederzeit per Nachricht oder Anruf:</p><p><strong>Anna:</strong> +43 650 234 5678<br/><strong>Max:</strong> +43 660 876 5432</p><p>Oder schreibt uns auf WhatsApp — wir antworten schnell! 💌</p>',
+          },
+        },
+        {
+          ...B, id: 'w-faq-cta', type: 'ctaBand',
+          data: {
+            headline: 'Bereit für den 12. September?',
+            subline: 'Wir können es kaum erwarten, mit euch zu feiern!',
+            ctaPrimary: { label: 'Jetzt zusagen', href: '/demo/wedding/rsvp' },
           },
         },
       ],
