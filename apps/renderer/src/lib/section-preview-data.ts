@@ -36,10 +36,10 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   },
   uspStrip: {
     items: [
-      { icon: 'shield', text: '10 Jahre Erfahrung' },
-      { icon: 'clock', text: 'Schnelle Reaktionszeit' },
-      { icon: 'star', text: 'Top-Bewertungen' },
-      { icon: 'award', text: 'Zertifiziert' },
+      { icon: 'shield', title: '10 Jahre', text: 'Erfahrung in der Branche' },
+      { icon: 'clock', title: 'Schnell', text: 'Reaktionszeit unter 24h' },
+      { icon: 'star', title: 'Top-Bewertungen', text: '4.9 Sterne auf Google' },
+      { icon: 'award', title: 'Zertifiziert', text: 'Nach DIN ISO 9001' },
     ],
   },
   servicesGrid: {
@@ -107,7 +107,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   },
   map: {
     headline: 'So finden Sie uns',
-    embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2428.4!2d13.404954!3d52.520008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1',
+    embedUrl: 'https://www.openstreetmap.org/export/embed.html?bbox=13.3%2C52.45%2C13.5%2C52.55&layer=mapnik',
     height: 'm',
   },
   statsCounter: {
@@ -209,9 +209,9 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     subline: 'Was wir für Sie tun können.',
     badgeText: 'Top-Service',
     items: [
-      { title: 'Erstberatung', description: 'Kostenlose Analyse Ihrer Situation.', icon: 'messageCircle' },
-      { title: 'Planung', description: 'Detaillierter Plan mit Zeitrahmen.', icon: 'clipboard' },
-      { title: 'Umsetzung', description: 'Professionelle Ausführung.', icon: 'wrench' },
+      { title: 'Erstberatung', text: 'Kostenlose Analyse Ihrer Situation und individuelle Empfehlungen.', icon: 'messageCircle', features: ['Bedarfsanalyse', 'Kosteneinschätzung'] },
+      { title: 'Planung', text: 'Detaillierter Plan mit klarem Zeitrahmen und transparenter Kalkulation.', icon: 'clipboard', features: ['Terminplan', 'Festpreisangebot'] },
+      { title: 'Umsetzung', text: 'Professionelle Ausführung durch unser erfahrenes Fachteam.', icon: 'wrench', features: ['Qualitätskontrolle', 'Abnahme'] },
     ],
   },
   headerBanner: {
@@ -331,9 +331,9 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     headline: 'Preise & Konditionen',
     subline: 'Transparent und fair.',
     items: [
-      { label: 'Stundensatz', value: '120 €/h', description: 'Für alle Stile' },
-      { label: 'Mindestpreis', value: '80 €', description: 'Auch für kleine Motive' },
-      { label: 'Beratung', value: 'Kostenlos', description: 'Unverbindliches Erstgespräch' },
+      { label: 'Stundensatz', value: '120 €/h', note: 'Für alle Stile' },
+      { label: 'Mindestpreis', value: '80 €', note: 'Auch für kleine Motive' },
+      { label: 'Beratung', value: 'Kostenlos', note: 'Unverbindliches Erstgespräch' },
     ],
     notes: ['Anzahlung von 50€ bei Terminbuchung', 'Preise inkl. MwSt.'],
   },
@@ -515,7 +515,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     headline: 'Lage & Anreise',
     badgeText: 'Standort',
     addressText: 'Seestraße 1, 83700 Rottach-Egern',
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2428.4!2d13.404954!3d52.520008',
+    mapEmbedUrl: 'https://www.openstreetmap.org/export/embed.html?bbox=13.3%2C52.45%2C13.5%2C52.55&layer=mapnik',
     transportItems: [
       { mode: 'Auto', text: 'A8 Ausfahrt Holzkirchen, dann 20 Min.' },
       { mode: 'Bahn', text: 'München Hbf → Rottach-Egern (1h)' },
@@ -575,7 +575,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
   placesMap: {
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2428.4!2d13.404954!3d52.520008',
+    mapEmbedUrl: 'https://www.openstreetmap.org/export/embed.html?bbox=13.3%2C52.45%2C13.5%2C52.55&layer=mapnik',
     places: [
       { name: 'Tourist-Info', address: 'Hauptstraße 1', category: 'Service' },
       { name: 'Bergbahn', address: 'Talstation 5', category: 'Aktivität' },
@@ -810,7 +810,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     description: 'Unser Fest findet im wunderschönen Schloss Hohenstein statt.',
     image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80',
     address: 'Schlossweg 1, 83700 Rottach-Egern',
-    mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2428.4!2d13.404954!3d52.520008',
+    mapUrl: 'https://www.openstreetmap.org/export/embed.html?bbox=13.3%2C52.45%2C13.5%2C52.55&layer=mapnik',
   },
   travelInfo: {
     badge: 'Anreise',

@@ -45,6 +45,7 @@ export default async function SectionPreviewPage({ searchParams }: { searchParam
       <body className="bg-white" style={styleCssVars as React.CSSProperties}>
         <div data-style={style}>
           <main>
+            {type === 'uspStrip' && <div className="h-24" />}
             {isFullBleed ? (
               <Component data={data} variant={null} styleVariant={style} />
             ) : (
