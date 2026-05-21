@@ -166,11 +166,11 @@ const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
   },
   consulting: {
     label: 'Kanzlei & Beratung',
-    tagline: 'Anwälte · Kanzleien · Consulting',
-    description: 'Rechtsgebiete-Übersicht, Anwaltsteam, Erfolgsbilanz, Honorartransparenz, Fachpublikationen und Erstberatungsformular.',
+    tagline: 'Anwälte · Steuerberater · Unternehmensberater',
+    description: 'Fachgebiete, Teamvorstellung, Erfolgsbilanz, transparente Honorarmodelle, Fachpublikationen und Erstberatungsformular — für Kanzleien, Steuerberater und Beratungsfirmen.',
     image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1400&q=80',
     accent: '#1a2744',
-    bullets: ['Rechtsgebiete-Grid & Honorarübersicht', 'Anwälte & Partner', 'Erfolgsbilanz & Mandantenstimmen', 'Fachbeiträge & Erstberatung'],
+    bullets: ['Fachgebiete-Grid & Honorarübersicht', 'Partner & Team', 'Erfolgsbilanz & Mandantenstimmen', 'Fachbeiträge & Erstberatung'],
   },
 };
 

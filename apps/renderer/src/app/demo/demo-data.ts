@@ -37,15 +37,17 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
     socialLinks: { instagram: '#', facebook: '#' },
     navItems: [
       { label: 'Speisekarte', href: '/demo/restaurant/speisekarte' },
+      { label: 'Über uns', href: '/demo/restaurant/ueber-uns' },
       { label: 'Ambiente', href: '/demo/restaurant/ambiente' },
       { label: 'Events', href: '/demo/restaurant/events' },
+      { label: 'Galerie', href: '/demo/restaurant/galerie' },
       { label: 'Reservierung', href: '/demo/restaurant/reservierung' },
     ],
     cta: { label: 'Tisch reservieren', href: '/demo/restaurant/reservierung' },
     footer: {
       columns: [
         { title: 'Küche', items: [{ text: 'Speisekarte', href: '/demo/restaurant/speisekarte' }, { text: 'Empfehlungen', href: '/demo/restaurant' }, { text: 'Events', href: '/demo/restaurant/events' }] },
-        { title: 'Besuch', items: [{ text: 'Reservierung', href: '/demo/restaurant/reservierung' }, { text: 'Ambiente', href: '/demo/restaurant/ambiente' }, { text: 'Kontakt', href: '/demo/restaurant/reservierung' }] },
+        { title: 'Besuch', items: [{ text: 'Reservierung', href: '/demo/restaurant/reservierung' }, { text: 'Über uns', href: '/demo/restaurant/ueber-uns' }, { text: 'Galerie', href: '/demo/restaurant/galerie' }] },
       ],
       legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
     },

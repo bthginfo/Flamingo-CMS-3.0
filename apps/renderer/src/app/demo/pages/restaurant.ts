@@ -434,5 +434,106 @@ export const restaurantSite: DemoSite = {
         },
       ],
     },
+    {
+      slug: 'ueber-uns',
+      title: 'Über uns',
+      sections: [
+        {
+          ...HERO,
+          id: 'rs-about-hero',
+          type: 'hero',
+          data: {
+            headline: 'Unsere Geschichte',
+            subline: 'Seit 1998 bringen wir authentischen italienischen Genuss nach Innsbruck',
+            bgImage: 'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=1800&q=85',
+          },
+        },
+        {
+          ...B,
+          id: 'rs-about-story',
+          type: 'textImage',
+          data: {
+            headline: 'Famiglia Dal Maestro',
+            text: '<p>Als Marco Dal Maestro 1998 die Türen seiner Trattoria in der Innsbrucker Altstadt öffnete, hatte er eine Vision: Den Geschmack seiner Heimat Kampanien in die Alpen bringen — ohne Kompromisse.</p><p>Heute führt er das Restaurant gemeinsam mit seiner Frau Elena und Sohn Luca. Die Rezepte stammen von Nonna Maria, die Zutaten kommen wöchentlich direkt aus Italien. Was sich nie geändert hat: die Leidenschaft für ehrliche, handgemachte Küche.</p>',
+            image: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=900&q=80',
+            imagePosition: 'right',
+          },
+        },
+        {
+          ...B,
+          id: 'rs-about-team',
+          type: 'team',
+          data: {
+            headline: 'Unser Team',
+            subline: 'Die Menschen hinter dem Genuss',
+            members: [
+              { name: 'Marco Dal Maestro', role: 'Küchenchef & Inhaber', specialization: 'Klassische italienische Küche, Pasta fresca', image: 'https://images.unsplash.com/photo-1583394293214-28ez960e8a71?w=400&q=80' },
+              { name: 'Elena Dal Maestro', role: 'Geschäftsführung & Service', specialization: 'Gastgeberin, Weinauswahl, Events', image: 'https://images.unsplash.com/photo-1594744803329-e58b31239f85?w=400&q=80' },
+              { name: 'Luca Dal Maestro', role: 'Sous-Chef', specialization: 'Moderne Interpretationen, Desserts', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80' },
+              { name: 'Andrea Rossi', role: 'Sommelier', specialization: 'Italienische Weine, Weinbegleitung, Degustationen', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' },
+            ],
+          },
+        },
+        {
+          ...B,
+          id: 'rs-about-values',
+          type: 'uspStrip',
+          data: {
+            items: [
+              { icon: 'leaf', title: 'Frische Zutaten', text: 'Wöchentliche Lieferung direkt aus Kampanien und vom Tiroler Bauernmarkt.' },
+              { icon: 'cookie', title: 'Alles handgemacht', text: 'Pasta, Brot und Desserts — täglich frisch in unserer offenen Küche.' },
+              { icon: 'grape', title: '120+ italienische Weine', text: 'Kuratiert von unserem Sommelier Andrea — von Südtirol bis Sizilien.' },
+              { icon: 'heart', title: 'Familienbetrieb', text: 'Drei Generationen Leidenschaft für authentische italienische Küche.' },
+            ],
+          },
+        },
+      ],
+    },
+    {
+      slug: 'galerie',
+      title: 'Galerie',
+      sections: [
+        {
+          ...HERO,
+          id: 'rs-gal-hero',
+          type: 'hero',
+          data: {
+            headline: 'Galerie',
+            subline: 'Einblicke in Küche, Räume und Genussmomente',
+            bgImage: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=85',
+          },
+        },
+        {
+          ...B,
+          id: 'rs-gallery',
+          type: 'gallery',
+          data: {
+            headline: 'Bilder aus der Trattoria',
+            categories: ['Restaurant', 'Gerichte', 'Events', 'Terrasse'],
+            images: [
+              { src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80', alt: 'Hauptsaal mit Gewölbe', category: 'Restaurant' },
+              { src: 'https://images.unsplash.com/photo-1559329007-40df8a9345d8?w=600&q=80', alt: 'Gedeckter Tisch im Weinkeller', category: 'Restaurant' },
+              { src: 'https://images.unsplash.com/photo-1550966871-3ed3cdb51f3a?w=600&q=80', alt: 'Bar-Bereich', category: 'Restaurant' },
+              { src: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80', alt: 'Osso Buco alla Milanese', category: 'Gerichte' },
+              { src: 'https://images.unsplash.com/photo-1556761223-4c4282c73f77?w=600&q=80', alt: 'Tagliatelle al Tartufo', category: 'Gerichte' },
+              { src: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=600&q=80', alt: 'Tiramisù della Casa', category: 'Gerichte' },
+              { src: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=80', alt: 'Wein & Pasta Abend', category: 'Events' },
+              { src: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&q=80', alt: 'Kochkurs Pasta', category: 'Events' },
+              { src: 'https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=600&q=80', alt: 'Sonnenterrasse', category: 'Terrasse' },
+            ],
+          },
+        },
+        {
+          ...B,
+          id: 'rs-gal-cta',
+          type: 'ctaBand',
+          data: {
+            headline: 'Lust bekommen?',
+            subline: 'Reservieren Sie jetzt Ihren Tisch und erleben Sie die Trattoria live.',
+            ctaPrimary: { label: 'Tisch reservieren', href: '/demo/restaurant/reservierung' },
+          },
+        },
+      ],
+    },
   ],
 };

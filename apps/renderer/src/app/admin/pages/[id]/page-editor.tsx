@@ -16,31 +16,6 @@ import { PageSeoPanel } from './page-seo-panel';
 import type { PageSeoPanelHandle } from './page-seo-panel';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from './section-types';
 
-const SECTION_TYPES: { type: string; label: string; description: string }[] = [
-  { type: 'hero', label: 'Hero', description: 'Hauptbanner der Seite' },
-  { type: 'uspStrip', label: 'USP-Leiste', description: 'Einzigartige Verkaufsargumente' },
-  { type: 'servicesGrid', label: 'Leistungen', description: 'Leistungs-Grid' },
-  { type: 'processSteps', label: 'Ablauf', description: 'Prozess-Schritte Timeline' },
-  { type: 'ctaLinks', label: 'CTA-Links', description: 'Button-Links zu Unterseiten' },
-  { type: 'newsPreview', label: 'News-Vorschau', description: 'Aktuelle Beiträge (News/Blog)' },
-  { type: 'newsGrid', label: 'News-Grid', description: 'News-Beiträge als Grid' },
-  { type: 'stats', label: 'Zahlen & Fakten', description: 'Animierte Statistik-Zähler' },
-  { type: 'logoCloud', label: 'Logo-Cloud', description: 'Partner- & Zertifikats-Logos' },
-  { type: 'galleryGrid', label: 'Galerie', description: 'Bildergalerie mit Lightbox' },
-  { type: 'projectGallery', label: 'Projekte', description: 'Projekt-Galerie' },
-  { type: 'trust', label: 'Vertrauen', description: 'Zertifikate & Partner' },
-  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen' },
-  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen' },
-  { type: 'ctaBand', label: 'CTA-Band', description: 'Call-to-Action Banner' },
-  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular' },
-  { type: 'map', label: 'Karte', description: 'Google Maps Einbettung' },
-  { type: 'serviceDetail', label: 'Leistungs-Detail', description: 'Detaillierte Leistungsbeschreibung' },
-  { type: 'portfolio', label: 'Portfolio', description: 'Referenzprojekte-Galerie' },
-  { type: 'team', label: 'Team', description: 'Team-Mitglieder' },
-  { type: 'richText', label: 'Freitext / HTML', description: 'Impressum, Datenschutz, AGB etc.' },
-  { type: 'headerBanner', label: 'Header-Banner', description: 'Obere Hinweisleiste' },
-];
-
 type Section = {
   id: string;
   type: string;
@@ -191,14 +166,10 @@ function SectionPickerModal({ sectionTypes, onSelect, onClose }: { sectionTypes:
   const grouped = useMemo(() => {
     const g: Record<string, SectionTypeDefinition[]> = {};
     for (const st of sectionTypes) {
-      const cat = st.category || 'Branchenspezifisch';
+      const cat = st.category || 'Sonstiges';
       (g[cat] ??= []).push(st);
     }
-    return Object.entries(g).sort(([a], [b]) => {
-      const aF = a.startsWith('Andere:') ? 1 : 0;
-      const bF = b.startsWith('Andere:') ? 1 : 0;
-      return aF - bF;
-    });
+    return Object.entries(g);
   }, [sectionTypes]);
 
   const filtered = useMemo(() => {
@@ -244,7 +215,7 @@ function SectionPickerModal({ sectionTypes, onSelect, onClose }: { sectionTypes:
             <button
               key={cat}
               onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${activeCategory === cat ? 'bg-blue-100 text-blue-700' : cat.startsWith('Andere:') ? 'text-amber-600 hover:bg-amber-50' : 'text-gray-500 hover:bg-gray-100'}`}
+              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${activeCategory === cat ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-100'}`}
             >
               {cat}
             </button>
@@ -258,16 +229,16 @@ function SectionPickerModal({ sectionTypes, onSelect, onClose }: { sectionTypes:
           )}
           {filtered.map(([cat, items]) => (
             <div key={cat} className="mb-4">
-              <div className={`text-[10px] font-semibold uppercase tracking-wide mb-2 ${cat.startsWith('Andere:') ? 'text-amber-500' : 'text-gray-400'}`}>{cat}</div>
+              <div className="text-[10px] font-semibold uppercase tracking-wide mb-2 text-gray-400">{cat}</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {items.map(st => (
                   <button
                     key={st.type}
                     onClick={() => onSelect(st.type)}
-                    className={`text-left p-3 rounded-lg border border-gray-100 hover:border-blue-300 hover:bg-blue-50/50 transition-all group ${cat.startsWith('Andere:') ? 'opacity-70 hover:opacity-100' : ''}`}
+                    className="text-left p-3 rounded-lg border border-gray-100 hover:border-blue-300 hover:bg-blue-50/50 transition-all group"
                   >
                     <div className="font-medium text-sm text-gray-900 group-hover:text-blue-700 transition-colors">{st.label}</div>
-                    <div className="text-xs text-gray-400 mt-0.5 line-clamp-1">{st.description}</div>
+                    <div className="text-xs text-gray-400 mt-0.5 line-clamp-2">{st.description}</div>
                   </button>
                 ))}
               </div>
