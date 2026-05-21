@@ -121,7 +121,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
             )}
             {secondaryCta.label && (
               <a href={secondaryCta.href || '#'}
-                className="inline-flex items-center justify-between sm:justify-center sm:gap-2 text-white/80 font-medium hover:text-white transition-colors text-sm w-full sm:w-auto">
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-8 py-4 text-white/90 font-medium hover:text-white hover:border-white/60 transition-all text-sm sm:bg-transparent sm:border-white/20 w-full sm:w-auto">
                 {secondaryCta.label}
                 {secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={14} />}
               </a>
