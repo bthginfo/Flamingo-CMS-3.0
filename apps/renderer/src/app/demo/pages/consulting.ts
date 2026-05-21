@@ -91,7 +91,17 @@ export const consultingSite: DemoSite = {
       title: 'Rechtsgebiete',
       sections: [
         {
-          ...B, id: 'con-areas-page', type: 'practiceAreas', spacingTop: 'xl' as const,
+          ...HERO, id: 'con-hero-areas', type: 'hero',
+          data: {
+            headline: 'Rechtsgebiete',
+            subline: 'In diesen Bereichen beraten und vertreten wir Sie kompetent und engagiert.',
+            bgImage: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1800&q=85',
+            overlayOpacity: 0.8,
+            primaryCta: { label: 'Erstberatung vereinbaren', href: '/demo/consulting/kontakt' },
+          },
+        },
+        {
+          ...B, id: 'con-areas-page', type: 'practiceAreas',
           data: {
             headline: 'Unsere Rechtsgebiete im Überblick',
             subline: 'In diesen Bereichen beraten und vertreten wir Sie.',
@@ -134,7 +144,17 @@ export const consultingSite: DemoSite = {
       title: 'Team',
       sections: [
         {
-          ...B, id: 'con-team-page', type: 'team', spacingTop: 'xl' as const,
+          ...HERO, id: 'con-hero-team', type: 'hero',
+          data: {
+            headline: 'Unser Team',
+            subline: 'Erfahrene Juristen mit persönlichem Einsatz für Ihr Recht.',
+            bgImage: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1800&q=85',
+            overlayOpacity: 0.8,
+            primaryCta: { label: 'Kontakt aufnehmen', href: '/demo/consulting/kontakt' },
+          },
+        },
+        {
+          ...B, id: 'con-team-page', type: 'team',
           data: {
             headline: 'Unsere Anwälte & Mitarbeiter',
             subline: 'Ein erfahrenes Team — persönlich, kompetent, engagiert.',
@@ -153,7 +173,17 @@ export const consultingSite: DemoSite = {
       title: 'Über uns',
       sections: [
         {
-          ...B, id: 'con-story', type: 'textImage', spacingTop: 'xl' as const,
+          ...HERO, id: 'con-hero-about', type: 'hero',
+          data: {
+            headline: 'Über unsere Kanzlei',
+            subline: 'Tradition, Kompetenz und persönliche Betreuung seit 2004.',
+            bgImage: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1800&q=85',
+            overlayOpacity: 0.8,
+            primaryCta: { label: 'Erstberatung vereinbaren', href: '/demo/consulting/kontakt' },
+          },
+        },
+        {
+          ...B, id: 'con-story', type: 'textImage',
           data: {
             headline: 'Kanzlei mit Tradition und Weitblick',
             text: '<p>Die Kanzlei Bergmann & Partner wurde 2004 von Dr. Thomas Bergmann in Berlin gegründet. Was als Ein-Mann-Kanzlei begann, ist heute ein Team aus vier Juristen, die sich auf die Bereiche Arbeitsrecht, Familienrecht, Mietrecht und Wirtschaftsrecht spezialisiert haben.</p><p>Unsere Philosophie: Rechtliche Exzellenz gepaart mit persönlicher Betreuung. Jeder Mandant erhält einen festen Ansprechpartner und transparente Kommunikation in jeder Phase seines Falls.</p>',
@@ -193,7 +223,16 @@ export const consultingSite: DemoSite = {
       title: 'Aktuelles',
       sections: [
         {
-          ...B, id: 'con-publications', type: 'publications', spacingTop: 'xl' as const,
+          ...HERO, id: 'con-hero-news', type: 'hero',
+          data: {
+            headline: 'Aktuelles & Fachbeiträge',
+            subline: 'Aktuelle Entwicklungen aus der Rechtsprechung, verständlich aufbereitet.',
+            bgImage: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1800&q=85',
+            overlayOpacity: 0.8,
+          },
+        },
+        {
+          ...B, id: 'con-publications', type: 'publications',
           data: {
             headline: 'Fachbeiträge & Neuigkeiten',
             subline: 'Aktuelle Entwicklungen aus der Rechtsprechung, verständlich aufbereitet.',
@@ -212,7 +251,17 @@ export const consultingSite: DemoSite = {
       title: 'Kontakt',
       sections: [
         {
-          ...B, id: 'con-contact', type: 'contact', spacingTop: 'xl' as const,
+          ...HERO, id: 'con-hero-contact', type: 'hero',
+          data: {
+            headline: 'Kontakt & Erstberatung',
+            subline: 'Schildern Sie uns Ihr Anliegen — wir melden uns innerhalb von 24 Stunden.',
+            bgImage: 'https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1800&q=85',
+            overlayOpacity: 0.8,
+            primaryCta: { label: 'Jetzt anrufen', href: 'tel:+493025894400' },
+          },
+        },
+        {
+          ...B, id: 'con-contact', type: 'contact',
           data: {
             headline: 'Kontakt & Erstberatung',
             subline: 'Schildern Sie uns Ihr Anliegen — wir melden uns innerhalb von 24 Stunden.',

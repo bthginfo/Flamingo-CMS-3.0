@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import type { NavItem, NavCta, BrandData, ContactData } from '@/lib/tenant-data';
 
-export function SiteHeader({ navItems, brand, contact, darkBg = true, cta }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null }) {
+export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/' }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -75,7 +75,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta }: { n
         style={(scrolled || !darkBg) ? { backgroundColor: brand.navBgColor || 'rgba(255,255,255,0.8)' } : undefined}
         >
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-[72px]">
-            <Link href="/" className="flex items-center gap-2 font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || !darkBg) ? brand.primaryColor : 'white' }}>
+            <Link href={homeHref} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || !darkBg) ? brand.primaryColor : 'white' }}>
               {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
                 <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto object-contain" />
               )}
@@ -136,7 +136,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta }: { n
             >
               {/* Close button */}
               <div className="flex items-center justify-between h-[72px] px-6">
-                <Link href="/" className="flex items-center gap-2 font-display font-bold text-xl tracking-tight" style={{ color: brand.primaryColor }}>
+                <Link href={homeHref} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight" style={{ color: brand.primaryColor }}>
                   {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
                     <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto object-contain" />
                   )}

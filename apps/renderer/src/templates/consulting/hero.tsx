@@ -41,7 +41,7 @@ export function ConsultingHeroSection({ data }: Props) {
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="max-w-3xl"
+          className="max-w-3xl mx-auto text-center"
         >
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-tight tracking-tight">
             {headline}
@@ -51,7 +51,7 @@ export function ConsultingHeroSection({ data }: Props) {
               {subline}
             </p>
           )}
-          <div className="flex flex-wrap gap-4 mt-10">
+          <div className="flex flex-wrap justify-center gap-4 mt-10">
             {primaryCta && (
               <a href={primaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                 <DynamicIcon name="phone" size={18} />
@@ -65,7 +65,7 @@ export function ConsultingHeroSection({ data }: Props) {
             )}
           </div>
           {trustItems.length > 0 && (
-            <div className="flex flex-wrap gap-6 mt-12 pt-8 border-t border-white/20">
+            <div className="flex flex-wrap justify-center gap-6 mt-12 pt-8 border-t border-white/20">
               {trustItems.map((item, i) => (
                 <div key={i} className="flex items-center gap-2 text-white/70 text-sm">
                   <DynamicIcon name="check-circle" size={16} className="text-amber-500" />

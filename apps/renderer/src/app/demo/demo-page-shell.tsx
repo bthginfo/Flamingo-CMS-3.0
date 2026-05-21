@@ -31,7 +31,7 @@ export function DemoPageShell({ sections, industry, industryKey, defaultStyle, s
 
   return (
     <div data-style={style} style={{ ...styleCssVars, ...brandCssVars } as React.CSSProperties}>
-      <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={darkBg} cta={cta} />
+      <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={darkBg} cta={cta} homeHref={`/demo/${industryKey}`} />
       <main>
         {sections.map((section) => (
           <SectionRenderer key={section.id} section={section} styleVariant={style} industry={industry} />
