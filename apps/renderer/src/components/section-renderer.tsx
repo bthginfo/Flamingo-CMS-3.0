@@ -65,11 +65,16 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
     // Generic
     'servicePackages',
   ]);
+
+  // Full-bleed sections that have LIGHT backgrounds (don't apply data-theme="dark")
+  const FULL_BLEED_LIGHT = new Set(['dailySpecials', 'servicePackages']);
+
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);
 
   if (isFullBleed) {
+    const isDark = !FULL_BLEED_LIGHT.has(section.type);
     return (
-      <section id={section.anchorId ?? undefined} data-theme="dark">
+      <section id={section.anchorId ?? undefined} {...(isDark ? { 'data-theme': 'dark' } : {})}>
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
         </SectionErrorBoundary>
