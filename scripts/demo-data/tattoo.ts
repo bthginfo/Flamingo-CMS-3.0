@@ -221,7 +221,13 @@ export const TATTOO_CONFIG = {
     /* ─── Leistungen & Preise ─── */
     {
       slug: 'leistungen', title: 'Leistungen & Preise', sections: [
-        { type: 'servicesGrid', sortOrder: 0, data: {
+        { type: 'hero', sortOrder: 0, data: {
+          headline: 'Leistungen & Preise',
+          subline: 'Custom Tattoos, Cover-ups, Flash Art und Piercing — transparent und fair.',
+          bgImage: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=1600&q=80',
+          overlayOpacity: 0.75,
+        }},
+        { type: 'servicesGrid', sortOrder: 1, data: {
           headline: 'Unsere Leistungen',
           services: [
             { title: 'Custom Tattoo', description: 'Individuell entworfenes Motiv nach Deinen Wünschen.', icon: 'pen' },
@@ -232,7 +238,7 @@ export const TATTOO_CONFIG = {
             { title: 'Piercing', description: 'Professionelles Piercing mit hochwertigen Materialien.', icon: 'circle' },
           ],
         }},
-        { type: 'pricingInfo', sortOrder: 1, data: {
+        { type: 'pricingInfo', sortOrder: 2, data: {
           headline: 'Preise & Konditionen',
           subline: 'Transparent und fair — keine versteckten Kosten.',
           items: [
@@ -249,7 +255,7 @@ export const TATTOO_CONFIG = {
             'Bei Absage < 48h vor Termin verfällt die Anzahlung.',
           ],
         }},
-        { type: 'processSteps', sortOrder: 2, data: {
+        { type: 'processSteps', sortOrder: 3, data: {
           headline: 'Dein Weg zum Tattoo',
           steps: [
             { title: 'Anfrage', description: 'Beschreib uns Dein Wunschmotiv über das Formular.' },
@@ -258,7 +264,7 @@ export const TATTOO_CONFIG = {
             { title: 'Nachsorge', description: 'Pflege-Guide und kostenloser Touch-up.' },
           ],
         }},
-        { type: 'faq', sortOrder: 3, data: {
+        { type: 'faq', sortOrder: 4, data: {
           headline: 'Fragen zu Preisen',
           items: [
             { question: 'Wieso kein fixer Preis vorab?', answer: 'Jedes Tattoo ist individuell. Nach der Beratung geben wir einen realistischen Kostenrahmen.' },
@@ -266,7 +272,7 @@ export const TATTOO_CONFIG = {
             { question: 'Kartenzahlung?', answer: 'Ja — EC, Visa, Mastercard und Apple/Google Pay.' },
           ],
         }},
-        { type: 'socialProofBar', sortOrder: 4, data: {
+        { type: 'socialProofBar', sortOrder: 5, data: {
           items: [
             { value: '120–150 €', label: 'Stundensatz' },
             { value: 'ab 80 €', label: 'Flash-Motive' },
@@ -274,12 +280,12 @@ export const TATTOO_CONFIG = {
             { value: 'Gratis', label: 'Touch-up (3 Mo.)' },
           ],
         }},
-        { type: 'textImage', sortOrder: 5, data: {
+        { type: 'textImage', sortOrder: 6, data: {
           headline: 'Qualität hat ihren Preis',
           text: '<p>Wir verwenden ausschließlich vegane, EU-zertifizierte Farben und arbeiten nach höchsten Hygienestandards. Jede Nadel ist steril verpackt und wird nach einmaliger Verwendung entsorgt.</p><p>Unsere Preise spiegeln die Qualität der Materialien, die Erfahrung unserer Artists und die individuelle Beratung wider.</p>',
           image: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=800&q=80',
         }},
-        { type: 'ctaBand', sortOrder: 6, data: {
+        { type: 'ctaBand', sortOrder: 7, data: {
           headline: 'Bereit für Dein Tattoo?',
           subline: 'Schick uns Deine Idee — Kostenvoranschlag innerhalb 48h.',
           ctaPrimary: { label: 'Terminanfrage', href: '/kontakt' },
@@ -347,6 +353,7 @@ export const TATTOO_CONFIG = {
         { type: 'map', sortOrder: 1, data: {
           headline: 'Hier findest Du uns',
           address: 'Oranienstraße 42, 10999 Berlin',
+          embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2428.4!2d13.4198!3d52.4988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a84e37c693ef83%3A0x0!2sOranienstra%C3%9Fe+42%2C+10999+Berlin!5e0!3m2!1sde!2sde!4v1',
         }},
         { type: 'textImage', sortOrder: 2, data: {
           headline: 'Öffnungszeiten & Walk-ins',

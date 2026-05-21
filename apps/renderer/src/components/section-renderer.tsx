@@ -48,8 +48,24 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
     );
   }
 
-  // Hero and CTA band are full-bleed — skip spacing/container
-  const isFullBleed = section.type === 'hero' || section.type === 'collectionHero' || section.type === 'noticeBanner' || section.type === 'atmosphereGallery';
+  // Full-bleed sections render their own background/padding — skip wrapper spacing/container
+  const FULL_BLEED_TYPES = new Set([
+    'hero', 'collectionHero', 'noticeBanner', 'atmosphereGallery',
+    // Tattoo
+    'styleGallery', 'artistGrid', 'artistHero', 'tattooBookingCta',
+    'aftercareSteps', 'pricingInfo', 'tattooBooking', 'flashDayBanner',
+    // Photography
+    'photographerAbout', 'shootingProcess',
+    // Real estate
+    'marketReport', 'valuationCta',
+    // Wedding
+    'eventSchedule', 'faqGallery', 'giftRegistry', 'rsvp', 'venueInfo',
+    // Cafe
+    'dailySpecials',
+    // Generic
+    'servicePackages',
+  ]);
+  const isFullBleed = FULL_BLEED_TYPES.has(section.type);
 
   if (isFullBleed) {
     return (
