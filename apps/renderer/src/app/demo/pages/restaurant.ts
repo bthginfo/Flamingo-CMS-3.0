@@ -467,7 +467,7 @@ export const restaurantSite: DemoSite = {
             headline: 'Unser Team',
             subline: 'Die Menschen hinter dem Genuss',
             members: [
-              { name: 'Marco Dal Maestro', role: 'Küchenchef & Inhaber', specialization: 'Klassische italienische Küche, Pasta fresca', image: 'https://images.unsplash.com/photo-1583394293214-28ez960e8a71?w=400&q=80' },
+              { name: 'Marco Dal Maestro', role: 'Küchenchef & Inhaber', specialization: 'Klassische italienische Küche, Pasta fresca', image: 'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=400&q=80' },
               { name: 'Elena Dal Maestro', role: 'Geschäftsführung & Service', specialization: 'Gastgeberin, Weinauswahl, Events', image: 'https://images.unsplash.com/photo-1594744803329-e58b31239f85?w=400&q=80' },
               { name: 'Luca Dal Maestro', role: 'Sous-Chef', specialization: 'Moderne Interpretationen, Desserts', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80' },
               { name: 'Andrea Rossi', role: 'Sommelier', specialization: 'Italienische Weine, Weinbegleitung, Degustationen', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' },

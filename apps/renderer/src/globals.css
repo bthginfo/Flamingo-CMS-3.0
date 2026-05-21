@@ -34,6 +34,8 @@ html {
   h1, h2, h3, h4, h5, h6 {
     letter-spacing: var(--style-heading-tracking, -0.025em);
     text-wrap: balance;
+    overflow-wrap: break-word;
+    word-break: break-word;
     font-weight: var(--style-heading-weight, 700);
     text-transform: var(--style-heading-transform, none);
     font-family: var(--style-heading-font, var(--font-outfit));

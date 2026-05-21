@@ -37,6 +37,11 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'comparisonTable', label: 'Vergleichstabelle', description: 'Pakete/Optionen im Vergleich darstellen', category: 'Marketing' },
   { type: 'socialProofBar', label: 'Social-Proof-Leiste', description: 'Kennzahlen, Bewertungen & Partner kompakt', category: 'Social Proof' },
   { type: 'timeline', label: 'Zeitleiste', description: 'Chronologischer Verlauf (Geschichte, Meilensteine)', category: 'Inhalt' },
+  { type: 'statsCounter', label: 'Animierte Zahlen', description: 'Scroll-getriggerte Zähler mit dunklem Hintergrund & Gradient', category: 'Marketing' },
+  { type: 'bentoGrid', label: 'Bento-Grid', description: 'Asymmetrisches Feature-Grid mit Hover-Spotlight', category: 'Inhalt' },
+  { type: 'testimonialMarquee', label: 'Bewertungs-Marquee', description: 'Endlos-scrollende Bewertungskarten in 2 Reihen', category: 'Social Proof' },
+  { type: 'featureShowcase', label: 'Feature-Showcase', description: 'Großbild mit Parallax + Feature-Liste + CTA', category: 'Marketing' },
+  { type: 'logoMarquee', label: 'Logo-Marquee', description: 'Endlos-scrollende Partner/Kunden-Logos', category: 'Social Proof' },
 ];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [

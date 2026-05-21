@@ -24,6 +24,11 @@ import { NoticeBannerSection } from './shared/notice-banner';
 import { ComparisonTableSection } from './shared/comparison-table';
 import { SocialProofBarSection } from './shared/social-proof-bar';
 import { TimelineSection } from './shared/timeline';
+import { StatsCounterSection } from './shared/stats-counter';
+import { BentoGridSection } from './shared/bento-grid';
+import { TestimonialMarqueeSection } from './shared/testimonial-marquee';
+import { FeatureShowcaseSection } from './shared/feature-showcase';
+import { LogoMarqueeSection } from './shared/logo-marquee';
 import { HeaderBannerSection } from './handwerk/header-banner';
 import { CollectionHeroSection } from './handwerk/collection-hero';
 import { TextImageSection } from './handwerk/text-image';
@@ -494,6 +499,11 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   comparisonTable: ComparisonTableSection,
   socialProofBar: SocialProofBarSection,
   timeline: TimelineSection,
+  statsCounter: StatsCounterSection,
+  bentoGrid: BentoGridSection,
+  testimonialMarquee: TestimonialMarqueeSection,
+  featureShowcase: FeatureShowcaseSection,
+  logoMarquee: LogoMarqueeSection,
   story: TextImageSection,
   amenities: AmenitiesSection,
 };
