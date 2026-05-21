@@ -14,8 +14,7 @@ const INDUSTRIES = [
   { key: 'photography', label: 'Fotografie' },
   { key: 'consulting', label: 'Kanzlei & Beratung' },
   { key: 'realestate', label: 'Immobilien' },
-  { key: 'cafe', label: 'Café & Bar' },
-  { key: 'showcase', label: '📦 Sektionen-Demo' },
+  { key: 'cafe', label: 'Café & Bar' },  { key: 'tattoo', label: 'Tattoo Studio' },  { key: 'showcase', label: '📦 Sektionen-Demo' },
 ] as const;
 
 const STYLES = [

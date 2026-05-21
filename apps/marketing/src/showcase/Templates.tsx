@@ -15,6 +15,7 @@ const DEMO_LINKS: Record<string, string> = {
   consulting: 'https://www.demo.flamingomedia.online/demo/consulting',
   realestate: 'https://www.demo.flamingomedia.online/demo/realestate',
   cafe: 'https://www.demo.flamingomedia.online/demo/cafe',
+  tattoo: 'https://www.demo.flamingomedia.online/demo/tattoo',
 };
 
 const TEMPLATES = [
@@ -126,6 +127,16 @@ const TEMPLATES = [
     image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80',
     color: '#8b4513',
     features: ['Getränkekarte & Food-Menü', 'Atmosphäre-Galerie', 'Tagesangebote', 'Event-Kalender', 'Location & Vibe', 'Kontakt mit Öffnungszeiten'],
+    status: 'live' as const,
+  },
+  {
+    key: 'tattoo',
+    name: 'Tattoo Studio',
+    tagline: 'Tattoo · Piercing · Flash Art',
+    description: 'Artist-Portfolio, Style-Galerie, Terminanfrage-Formular, Flash-Day-Banner, Pflege-Guide und Preisübersicht.',
+    image: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=800&q=80',
+    color: '#1a1a2e',
+    features: ['Artist-Grid & Profile', 'Style-Galerie mit Filter', 'Booking-Formular', 'Flash-Day-Banner', 'Aftercare-Guide', 'Pricing-Info'],
     status: 'live' as const,
   },
 ];

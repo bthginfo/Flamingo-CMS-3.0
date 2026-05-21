@@ -174,6 +174,17 @@ import {
   CafeFaqSection,
   CafeTestimonialsSection,
 } from './cafe';
+import {
+  TattooHeroSection,
+  StyleGallerySection,
+  ArtistGridSection,
+  ArtistHeroSection,
+  TattooBookingCtaSection,
+  PricingInfoSection,
+  TattooBookingSection,
+  FlashDayBannerSection,
+  AftercarStepsSection,
+} from './tattoo';
 
 export type TemplateComponent = React.FC<SectionProps>;
 
@@ -451,6 +462,31 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     galleryGrid: GalleryGridSection,
     team: TeamSection,
   },
+  tattoo: {
+    hero: TattooHeroSection,
+    styleGallery: StyleGallerySection,
+    artistGrid: ArtistGridSection,
+    artistHero: ArtistHeroSection,
+    tattooBookingCta: TattooBookingCtaSection,
+    pricingInfo: PricingInfoSection,
+    tattooBooking: TattooBookingSection,
+    flashDayBanner: FlashDayBannerSection,
+    aftercareSteps: AftercarStepsSection,
+    galleryGrid: GalleryGridSection,
+    testimonials: TestimonialsSection,
+    faq: FaqSection,
+    processSteps: ProcessStepsSection,
+    team: TeamSection,
+    uspStrip: UspStripSection,
+    ctaBand: CtaBandSection,
+    textImage: TextImageSection,
+    richText: RichTextSection,
+    legalContent: LegalContentSection,
+    videoEmbed: VideoEmbedSection,
+    newsPreview: NewsPreviewSection,
+    newsGrid: NewsPreviewSection,
+    collectionHero: CollectionHeroSection,
+  },
 };
 
 // Shared/generic sections available to ALL templates
@@ -466,6 +502,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   heroConsulting: ConsultingHeroSection,
   heroRealestate: RealestateHeroSection,
   heroCafe: CafeHeroSection,
+  heroTattoo: TattooHeroSection,
   uspStrip: UspStripSection,
   servicesGrid: ServicesGridSection,
   processSteps: ProcessStepsSection,

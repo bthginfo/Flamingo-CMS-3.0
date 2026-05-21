@@ -256,6 +256,26 @@ export const CAFE_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
+export const TATTOO_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Tattoo-Hero', description: 'Dark Hero mit Neon-Akzent und Booking-CTA' },
+  { type: 'styleGallery', label: 'Stil-Galerie', description: 'Filterbares Masonry-Grid nach Tattoo-Stilen' },
+  { type: 'artistGrid', label: 'Künstler', description: 'Artist-Karten mit Bild, Stilen und Links' },
+  { type: 'artistHero', label: 'Künstler-Detail', description: 'Profil-Header für einzelne Artists' },
+  { type: 'tattooBookingCta', label: 'Termin-CTA', description: 'Buchungs-CTA mit Kurzinfos' },
+  { type: 'pricingInfo', label: 'Preisübersicht', description: 'Stundensatz, Mindestpreis, Konditionen' },
+  { type: 'tattooBooking', label: 'Terminanfrage', description: 'Formular mit Motiv, Stelle, Referenzbild' },
+  { type: 'flashDayBanner', label: 'Flash Day', description: 'Ankündigung für Flash-Day Events' },
+  { type: 'aftercareSteps', label: 'Pflegeanleitung', description: 'Schritt-für-Schritt Nachsorge' },
+  { type: 'galleryGrid', label: 'Galerie', description: 'Bildergalerie mit Lightbox' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen (Pflege, Schmerz, Preise)' },
+  { type: 'processSteps', label: 'Ablauf', description: 'Beratung → Entwurf → Session → Nachsorge' },
+  { type: 'team', label: 'Team', description: 'Studio-Team' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
 const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   tradesman: TRADESMAN_SECTION_TYPES,
   photography: PHOTOGRAPHY_SECTION_TYPES,
@@ -268,6 +288,7 @@ const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   restaurant: RESTAURANT_SECTION_TYPES,
   realestate: REALESTATE_SECTION_TYPES,
   cafe: CAFE_SECTION_TYPES,
+  tattoo: TATTOO_SECTION_TYPES,
 };
 
 const INDUSTRY_LABELS: Record<string, string> = {
@@ -282,6 +303,7 @@ const INDUSTRY_LABELS: Record<string, string> = {
   restaurant: 'Restaurant',
   realestate: 'Immobilien',
   cafe: 'Café & Bar',
+  tattoo: 'Tattoo Studio',
 };
 
 export function getSectionTypesForIndustry(industry: string): SectionTypeDefinition[] {

@@ -1,6 +1,6 @@
 import type { NavItem, NavCta, FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 
-export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'showcase';
+export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'showcase';
 
 export interface DemoSiteData {
   navItems: NavItem[];
@@ -225,6 +225,26 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
       columns: [
         { title: 'Röstwerk', items: [{ text: 'Karte', href: '/demo/cafe/karte' }, { text: 'Events', href: '/demo/cafe/events' }, { text: 'Über uns', href: '/demo/cafe/ueber-uns' }] },
         { title: 'Besuch', items: [{ text: 'Kontakt', href: '/demo/cafe/kontakt' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    },
+  },
+  tattoo: {
+    brand: { companyName: 'INK DISTRICT', tagline: 'Tattoo Studio Berlin — Custom Ink & Flash', primaryColor: '#dc2626' },
+    contact: { phone: '+49 30 555 1234', email: 'booking@inkdistrict.de', address: 'Oranienstraße 42, 10999 Berlin' },
+    socialLinks: { instagram: '#', facebook: '#' },
+    navItems: [
+      { label: 'Künstler', href: '/demo/tattoo/kuenstler' },
+      { label: 'Galerie', href: '/demo/tattoo/galerie' },
+      { label: 'Leistungen & Preise', href: '/demo/tattoo/leistungen' },
+      { label: 'Pflege', href: '/demo/tattoo/pflege' },
+      { label: 'Kontakt', href: '/demo/tattoo/kontakt' },
+    ],
+    cta: { label: 'Termin anfragen', href: '/demo/tattoo/kontakt' },
+    footer: {
+      columns: [
+        { title: 'Studio', items: [{ text: 'Künstler', href: '/demo/tattoo/kuenstler' }, { text: 'Galerie', href: '/demo/tattoo/galerie' }, { text: 'Flash Designs', href: '/demo/tattoo/galerie' }] },
+        { title: 'Info', items: [{ text: 'Preise', href: '/demo/tattoo/leistungen' }, { text: 'Pflege-Guide', href: '/demo/tattoo/pflege' }, { text: 'Kontakt', href: '/demo/tattoo/kontakt' }] },
       ],
       legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
     },

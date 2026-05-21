@@ -1,0 +1,361 @@
+import type { DemoSite } from './types';
+import { B as SECTION, HERO } from './types';
+
+export const tattooSite: DemoSite = {
+  industry: 'tattoo',
+  industryKey: 'tattoo',
+  defaultStyle: 'classic',
+  pages: [
+    {
+      slug: '',
+      title: 'Startseite',
+      sections: [
+        {
+          ...HERO, id: 'tt-hero', type: 'hero',
+          data: {
+            headline: 'INK DISTRICT',
+            subline: 'Custom Tattoos & Flash Art in Berlin-Kreuzberg. Vier Artists, ein Studio — Dein Motiv.',
+            bgImage: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=1600&q=80',
+            badgeText: 'Walk-ins willkommen',
+            overlayOpacity: 0.65,
+            primaryCta: { label: 'Termin anfragen', href: '/kontakt' },
+            secondaryCta: { label: 'Galerie ansehen', href: '/galerie' },
+          },
+        },
+        {
+          ...SECTION, id: 'tt-styles', type: 'styleGallery',
+          data: {
+            headline: 'Unsere Stile',
+            subline: 'Von Fineline bis Blackwork — wir decken ein breites Spektrum ab.',
+            styles: [
+              { name: 'Fineline', image: 'https://images.unsplash.com/photo-1590246814883-57c511e9682d?w=600&q=80', description: 'Feine Linien, minimalistische Motive' },
+              { name: 'Blackwork', image: 'https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=600&q=80', description: 'Großflächige schwarze Flächen und Muster' },
+              { name: 'Neo-Traditional', image: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=600&q=80', description: 'Farbe, Kontrast und moderne Interpretationen' },
+              { name: 'Geometric', image: 'https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80', description: 'Symmetrie, Dotwork und Mandala-Patterns' },
+              { name: 'Fineline', image: 'https://images.unsplash.com/photo-1612875926365-1a078b4ea5c7?w=600&q=80', description: 'Script und botanische Elemente' },
+              { name: 'Japanese', image: 'https://images.unsplash.com/photo-1581783898382-80f51ef77f73?w=600&q=80', description: 'Traditionelle japanische Motive und Irezumi' },
+              { name: 'Blackwork', image: 'https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=600&q=80', description: 'Ornamental und Tribal-Einflüsse' },
+              { name: 'Neo-Traditional', image: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&q=80', description: 'Illustrative Portraits und Blumen' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-artists', type: 'artistGrid',
+          data: {
+            headline: 'Unsere Künstler',
+            subline: 'Vier Artists mit eigenem Stil — finde Deinen Match.',
+            artists: [
+              { name: 'Lena Mauer', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80', styles: ['Fineline', 'Botanical', 'Minimalist'], bio: 'Spezialisiert auf filigrane Linienarbeit und botanische Motive.', instagram: 'lena.ink', href: '/kuenstler' },
+              { name: 'Marco Di Salvo', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80', styles: ['Blackwork', 'Geometric', 'Dotwork'], bio: 'Große schwarze Flächen und geometrische Präzision.', instagram: 'marco.nero', href: '/kuenstler' },
+              { name: 'Yuki Tanaka', image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80', styles: ['Japanese', 'Irezumi', 'Traditional'], bio: 'Japanische Tradition trifft moderne Interpretation.', instagram: 'yuki.irezumi', href: '/kuenstler' },
+              { name: 'Sarah Krebs', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80', styles: ['Neo-Traditional', 'Color', 'Illustrative'], bio: 'Farbenfrohe Illustrationen und Neo-Traditional.', instagram: 'sarah.ink.art', href: '/kuenstler' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-flash', type: 'flashDayBanner',
+          data: {
+            headline: 'Summer Flash Day',
+            date: '28. Juni 2026',
+            description: 'Über 50 Flash-Motive ab 80 € — First come, first served. Kein Termin nötig.',
+            ctaLabel: 'Motive ansehen',
+            ctaHref: '/galerie',
+            bgColor: '#dc2626',
+          },
+        },
+        {
+          ...SECTION, id: 'tt-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Was unsere Kunden sagen',
+            items: [
+              { text: 'Lena hat mein botanisches Sleeve perfekt umgesetzt. Jede Linie sitzt, jedes Detail stimmt. Absolute Empfehlung!', name: 'Anna K.', context: 'Fineline Sleeve', rating: 5 },
+              { text: 'Studio ist super sauber, Atmosphäre entspannt und Marco hat das Geometric-Piece in einer Session durchgezogen. Krass.', name: 'Tim R.', context: 'Blackwork Chest', rating: 5 },
+              { text: 'Yuki hat meinen Koi-Fisch Entwurf noch besser gemacht als ich mir vorgestellt habe. Traditionelle Kunst auf höchstem Niveau.', name: 'Lisa M.', context: 'Japanese Half-Sleeve', rating: 5 },
+              { text: 'Walk-in Flash Day war großartig! Spontan ein Motiv genommen und nach 30 Min fertig. Fair, schnell, perfekt.', name: 'Max B.', context: 'Flash Tattoo', rating: 5 },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-faq', type: 'faq',
+          data: {
+            headline: 'Häufige Fragen',
+            items: [
+              { question: 'Wie läuft eine Terminanfrage ab?', answer: 'Du schickst uns Deine Idee über das Formular (Motiv, Größe, Stelle, ggf. Referenzbilder). Wir antworten innerhalb von 48h mit einem Kostenvoranschlag und Terminvorschlägen.' },
+              { question: 'Was kostet ein Tattoo?', answer: 'Unser Stundensatz liegt bei 120–150 € je nach Artist. Minimum sind 80 €. Flash-Motive haben Festpreise ab 80 €.' },
+              { question: 'Wie pflege ich mein frisches Tattoo?', answer: 'Folie 3–4 Stunden drauf lassen, dann vorsichtig waschen und dünn eincremen. Kein Pool, keine Sonne für 2 Wochen.' },
+              { question: 'Kann ich Walk-in kommen?', answer: 'Für Flash-Motive und kleine Pieces: ja, je nach Verfügbarkeit. Für Custom-Arbeiten immer mit Termin.' },
+              { question: 'Was muss ich zum Termin mitbringen?', answer: 'Personalausweis (Mindestalter 18), bequeme Kleidung und etwas gegessen haben. Kein Alkohol 24h vorher.' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-cta', type: 'tattooBookingCta',
+          data: {
+            headline: 'Bereit für Dein nächstes Tattoo?',
+            subline: 'Beschreib uns Dein Motiv — wir kümmern uns um den Rest.',
+            ctaLabel: 'Terminanfrage starten',
+            ctaHref: '/kontakt',
+            hints: ['Antwort innerhalb 48h', 'Kostenvoranschlag gratis', 'Individuelle Beratung'],
+          },
+        },
+      ],
+    },
+    {
+      slug: 'kuenstler',
+      title: 'Künstler',
+      sections: [
+        {
+          ...SECTION, id: 'tt-artist-hero', type: 'artistHero',
+          data: {
+            name: 'Lena "Fineline" Mauer',
+            image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&q=80',
+            bio: 'Seit 8 Jahren steche ich feine Linien, botanische Motive und minimalistische Designs. Meine Arbeit lebt von Präzision und Reduktion — weniger ist mehr.',
+            styles: ['Fineline', 'Botanical', 'Minimalist', 'Script'],
+            instagram: 'lena.ink',
+            experience: '8 Jahre Erfahrung · Über 2.000 Tattoos',
+          },
+        },
+        {
+          ...SECTION, id: 'tt-artist-gallery', type: 'galleryGrid',
+          data: {
+            headline: 'Lenas Arbeiten',
+            images: [
+              { src: 'https://images.unsplash.com/photo-1590246814883-57c511e9682d?w=600&q=80', alt: 'Fineline Botanical' },
+              { src: 'https://images.unsplash.com/photo-1612875926365-1a078b4ea5c7?w=600&q=80', alt: 'Script Tattoo' },
+              { src: 'https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80', alt: 'Geometric Fineline' },
+              { src: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=600&q=80', alt: 'Floral Piece' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-artist-process', type: 'processSteps',
+          data: {
+            headline: 'So arbeite ich',
+            steps: [
+              { title: 'Beratung', description: 'Wir besprechen Dein Motiv, Stil, Größe und Platzierung.' },
+              { title: 'Entwurf', description: 'Ich erstelle eine Zeichnung — Änderungen inklusive.' },
+              { title: 'Session', description: 'Stencil aufbringen, letzte Anpassungen, dann geht\u0027s los.' },
+              { title: 'Nachsorge', description: 'Pflege-Guide und Touch-up bei Bedarf kostenlos.' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-artist-cta', type: 'tattooBookingCta',
+          data: {
+            headline: 'Termin bei Lena anfragen',
+            subline: 'Schick mir Deine Idee — ich entwerfe Dein individuelles Motiv.',
+            ctaLabel: 'Anfrage an Lena',
+            ctaHref: '/kontakt',
+            hints: ['Wartezeit ca. 3–4 Wochen', 'Custom-Entwurf inklusive'],
+          },
+        },
+      ],
+    },
+    {
+      slug: 'galerie',
+      title: 'Galerie',
+      sections: [
+        {
+          ...HERO, id: 'tt-gal-hero', type: 'hero',
+          data: {
+            headline: 'Unsere Arbeiten',
+            subline: 'Über 500 gestochene Motive — hier eine Auswahl.',
+            bgImage: 'https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=1600&q=80',
+            overlayOpacity: 0.7,
+          },
+        },
+        {
+          ...SECTION, id: 'tt-gal-grid', type: 'styleGallery',
+          data: {
+            headline: 'Portfolio',
+            styles: [
+              { name: 'Fineline', image: 'https://images.unsplash.com/photo-1590246814883-57c511e9682d?w=600&q=80' },
+              { name: 'Blackwork', image: 'https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=600&q=80' },
+              { name: 'Japanese', image: 'https://images.unsplash.com/photo-1581783898382-80f51ef77f73?w=600&q=80' },
+              { name: 'Neo-Traditional', image: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=600&q=80' },
+              { name: 'Geometric', image: 'https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80' },
+              { name: 'Fineline', image: 'https://images.unsplash.com/photo-1612875926365-1a078b4ea5c7?w=600&q=80' },
+              { name: 'Blackwork', image: 'https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=600&q=80' },
+              { name: 'Neo-Traditional', image: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&q=80' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-gal-logos', type: 'logoMarquee',
+          data: {
+            headline: 'Conventions & Auszeichnungen',
+            logos: [
+              { alt: 'Berlin Tattoo Convention 2025' },
+              { alt: 'Hamburg Ink Days' },
+              { alt: 'Best of Fineline Award 2024' },
+              { alt: 'Vienna Ink Festival' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-gal-cta', type: 'tattooBookingCta',
+          data: {
+            headline: 'Gefällt Dir was Du siehst?',
+            subline: 'Lass uns Dein Motiv besprechen.',
+            ctaLabel: 'Termin anfragen',
+            ctaHref: '/kontakt',
+          },
+        },
+      ],
+    },
+    {
+      slug: 'leistungen',
+      title: 'Leistungen & Preise',
+      sections: [
+        {
+          ...SECTION, id: 'tt-srv', type: 'servicesGrid',
+          data: {
+            headline: 'Unsere Leistungen',
+            services: [
+              { title: 'Custom Tattoo', description: 'Individuell entworfenes Motiv nach Deinen Wünschen.', icon: 'pen' },
+              { title: 'Cover-up', description: 'Alte Tattoos überarbeiten und in neue Kunstwerke verwandeln.', icon: 'layers' },
+              { title: 'Flash Tattoo', description: 'Fertige Motive aus unserer Sammlung — sofort stechbar.', icon: 'zap' },
+              { title: 'Beratung', description: 'Unverbindliches Erstgespräch zu Motiv und Machbarkeit.', icon: 'messageCircle' },
+              { title: 'Touch-up', description: 'Kostenlose Nacharbeit innerhalb 3 Monaten.', icon: 'refreshCw' },
+              { title: 'Piercing', description: 'Professionelles Piercing mit hochwertigen Materialien.', icon: 'circle' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-prices', type: 'pricingInfo',
+          data: {
+            headline: 'Preise & Konditionen',
+            subline: 'Transparent und fair — keine versteckten Kosten.',
+            items: [
+              { label: 'Stundensatz', value: '120–150 €', note: 'je nach Artist' },
+              { label: 'Minimum', value: '80 €', note: 'für kleine Motive' },
+              { label: 'Flash ab', value: '80 €', note: 'Festpreis je Motiv' },
+              { label: 'Anzahlung', value: '50 €', note: 'wird verrechnet' },
+              { label: 'Beratung', value: 'Gratis', note: '15 Min vor Ort' },
+              { label: 'Touch-up', value: 'Gratis', note: 'innerhalb 3 Monate' },
+            ],
+            notes: [
+              'Alle Preise inkl. MwSt.',
+              'Anzahlung von 50 € bei Terminbuchung (wird verrechnet).',
+              'Bei Absage < 48h vor Termin verfällt die Anzahlung.',
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-process', type: 'processSteps',
+          data: {
+            headline: 'Dein Weg zum Tattoo',
+            steps: [
+              { title: 'Anfrage', description: 'Beschreib uns Dein Wunschmotiv über das Formular.' },
+              { title: 'Beratung & Entwurf', description: 'Details besprechen, individuelle Zeichnung erstellen.' },
+              { title: 'Session', description: 'Stencil, letzte Änderungen, dann gehts los.' },
+              { title: 'Nachsorge', description: 'Pflege-Guide und kostenloser Touch-up.' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-price-faq', type: 'faq',
+          data: {
+            headline: 'Fragen zu Preisen',
+            items: [
+              { question: 'Wieso kein fixer Preis vorab?', answer: 'Jedes Tattoo ist individuell. Nach der Beratung geben wir einen realistischen Kostenrahmen.' },
+              { question: 'Ratenzahlung möglich?', answer: 'Für Projekte ab 500 € bieten wir Ratenzahlung an.' },
+              { question: 'Kartenzahlung?', answer: 'Ja — EC, Visa, Mastercard und Apple/Google Pay.' },
+            ],
+          },
+        },
+      ],
+    },
+    {
+      slug: 'pflege',
+      title: 'Pflege-Guide',
+      sections: [
+        {
+          ...HERO, id: 'tt-pflege-hero', type: 'hero',
+          data: {
+            headline: 'Tattoo-Pflege',
+            subline: 'Damit Dein neues Tattoo perfekt abheilt.',
+            bgImage: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=1600&q=80',
+            overlayOpacity: 0.75,
+          },
+        },
+        {
+          ...SECTION, id: 'tt-aftercare', type: 'aftercareSteps',
+          data: {
+            headline: 'Die ersten 14 Tage',
+            subline: 'Befolge diese Schritte für ein perfektes Ergebnis.',
+            steps: [
+              { title: 'Folie entfernen (nach 3-4h)', description: 'Vorsichtig abziehen, Hände vorher gründlich waschen.' },
+              { title: 'Sanft reinigen', description: 'Lauwarm mit pH-neutraler Seife abtupfen. Nicht rubbeln!' },
+              { title: 'Dünn eincremen', description: 'Bepanthen oder Tattoo-Creme. Weniger ist mehr.' },
+              { title: '3x täglich wiederholen', description: 'Waschen und eincremen für 10-14 Tage.' },
+              { title: 'Nicht kratzen!', description: 'Jucken ist normal. Niemals Schorf abziehen.' },
+              { title: 'Sonne & Wasser meiden', description: 'Kein Pool, keine Sauna, keine direkte Sonne für 2 Wochen.' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-pflege-faq', type: 'faq',
+          data: {
+            headline: 'Pflege-FAQ',
+            items: [
+              { question: 'Wann wieder Sport?', answer: 'Leichten Sport nach 3-4 Tagen, intensiv nach 2 Wochen.' },
+              { question: 'Tattoo in die Sonne?', answer: 'Frisch: nein. Nach Heilung immer SPF 50+.' },
+              { question: 'Tattoo schält sich — normal?', answer: 'Ja! Teil der Heilung. Weiter eincremen, nicht abziehen.' },
+              { question: 'Wann Touch-up?', answer: 'Falls nach 4-6 Wochen Linien blass sind. Bei uns 3 Monate kostenlos.' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-pflege-cta', type: 'tattooBookingCta',
+          data: {
+            headline: 'Fragen zur Pflege?',
+            subline: 'Schreib uns jederzeit.',
+            ctaLabel: 'Nachricht senden',
+            ctaHref: '/kontakt',
+          },
+        },
+      ],
+    },
+    {
+      slug: 'kontakt',
+      title: 'Kontakt',
+      sections: [
+        {
+          ...SECTION, id: 'tt-booking', type: 'tattooBooking',
+          data: {
+            headline: 'Terminanfrage',
+            subline: 'Beschreib uns Dein Wunschmotiv — wir melden uns innerhalb von 48h.',
+            artists: ['Lena Mauer', 'Marco Di Salvo', 'Yuki Tanaka', 'Sarah Krebs'],
+          },
+        },
+        {
+          ...SECTION, id: 'tt-map', type: 'map',
+          data: {
+            headline: 'Hier findest Du uns',
+            address: 'Oranienstraße 42, 10999 Berlin',
+          },
+        },
+        {
+          ...SECTION, id: 'tt-hours', type: 'textImage',
+          data: {
+            headline: 'Öffnungszeiten & Walk-ins',
+            text: '<p><strong>Di–Fr:</strong> 11:00–19:00<br><strong>Sa:</strong> 12:00–18:00<br><strong>So–Mo:</strong> Geschlossen</p><p>Walk-ins für Flash-Motive je nach Verfügbarkeit. Für Custom immer vorab anfragen.</p><p><strong>Mindestalter:</strong> 18 Jahre (Ausweis mitbringen)</p>',
+            image: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=800&q=80',
+          },
+        },
+        {
+          ...SECTION, id: 'tt-social', type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '12.4k', label: 'Instagram Follower' },
+              { value: '4.9 ★', label: 'Google Bewertung' },
+              { value: '3.000+', label: 'Gestochene Tattoos' },
+              { value: '4', label: 'Artists' },
+            ],
+          },
+        },
+      ],
+    },
+  ],
+};

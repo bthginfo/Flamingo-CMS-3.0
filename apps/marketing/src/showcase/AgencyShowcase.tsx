@@ -757,11 +757,11 @@ function ServicesSection() {
             </div>
             <h3 className="font-display text-3xl md:text-5xl leading-[1.05] tracking-tight">Branchen-Templates</h3>
             <p className="mt-6 text-base md:text-lg text-muted leading-relaxed max-w-xl">
-              Elf Branchen live — Restaurant, Salon, Hotel, Tourismus, Arztpraxis, Handwerk, Hochzeit, Fotografie, Kanzlei, Immobilien und Café.
+              Zwölf Branchen live — Restaurant, Salon, Hotel, Tourismus, Arztpraxis, Handwerk, Hochzeit, Fotografie, Kanzlei, Immobilien, Café und Tattoo Studio.
               Live-Vorschau im Browser, Farbschema in Sekunden.
             </p>
             <div className="mt-8 flex flex-wrap gap-2">
-              {['Restaurant', 'Salon', 'Hotel', 'Tourismus', 'Handwerk', 'Arztpraxis', 'Hochzeit', 'Fotografie', 'Kanzlei', 'Immobilien', 'Café'].map((b) => (
+              {['Restaurant', 'Salon', 'Hotel', 'Tourismus', 'Handwerk', 'Arztpraxis', 'Hochzeit', 'Fotografie', 'Kanzlei', 'Immobilien', 'Café', 'Tattoo'].map((b) => (
                 <span key={b} className="hidden md:inline-block text-[11px] font-mono uppercase tracking-widest border border-line rounded-full px-2.5 py-1 text-muted">{b}</span>
               ))}
             </div>

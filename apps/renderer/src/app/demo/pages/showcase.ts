@@ -255,6 +255,22 @@ export const showcaseSite: DemoSite = {
           },
         },
         {
+          ...B, id: 'sc-tattoo', type: 'servicesGrid',
+          data: {
+            headline: '🖋️ Tattoo Studio',
+            subline: 'Für Tattoo-Studios, Piercer und Ink-Artists.',
+            badgeText: 'Tattoo',
+            manualCards: [
+              { title: 'Artist-Grid', text: 'Künstler mit Stilen, Bio und Instagram.', icon: 'users', mediaType: 'icon', href: '/demo/tattoo' },
+              { title: 'Style-Galerie', text: 'Masonry-Grid mit Stil-Filter.', icon: 'image', mediaType: 'icon', href: '/demo/tattoo/galerie' },
+              { title: 'Booking-Formular', text: 'Terminanfrage mit Motiv-Upload.', icon: 'calendar', mediaType: 'icon', href: '/demo/tattoo/kontakt' },
+              { title: 'Flash-Day-Banner', text: 'Event-Ankündigung für Walk-in-Tage.', icon: 'zap', mediaType: 'icon', href: '/demo/tattoo' },
+              { title: 'Aftercare-Guide', text: 'Pflege-Schritte nach dem Stechen.', icon: 'heart', mediaType: 'icon', href: '/demo/tattoo/pflege' },
+              { title: 'Pricing-Info', text: 'Transparente Preisübersicht.', icon: 'tag', mediaType: 'icon', href: '/demo/tattoo/leistungen' },
+            ],
+          },
+        },
+        {
           ...B, id: 'sc-premium', type: 'servicesGrid',
           data: {
             headline: '✨ Premium-Sektionen',

@@ -10,6 +10,7 @@ import { consultingSite } from './consulting';
 import { showcaseSite } from './showcase';
 import { realestateSite } from './realestate';
 import { cafeSite } from './cafe';
+import { tattooSite } from './tattoo';
 import type { DemoSite } from './types';
 
 export type { DemoSite, DemoPage } from './types';
@@ -27,6 +28,7 @@ const SITES: Record<string, DemoSite> = {
   showcase: showcaseSite,
   realestate: realestateSite,
   cafe: cafeSite,
+  tattoo: tattooSite,
 };
 
 export function getDemoSite(industryKey: string): DemoSite | undefined {
