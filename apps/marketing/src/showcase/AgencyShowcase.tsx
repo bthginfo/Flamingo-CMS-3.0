@@ -1331,10 +1331,10 @@ function AdminPreviewSection() {
               <span className="h-3 w-3 rounded-full bg-rose-400" />
               <span className="h-3 w-3 rounded-full bg-amber-400" />
               <span className="h-3 w-3 rounded-full bg-emerald-400" />
-              <span className="ml-3 text-xs text-slate-400 font-mono">flamingo-cms.de/demo/admin</span>
+              <span className="ml-3 text-xs text-slate-400 font-mono hidden sm:inline">flamingo-cms.de/demo/admin</span>
             </div>
-            <div className="flex">
-              <aside className="w-48 bg-slate-900 p-3 border-r border-slate-800 shrink-0">
+            <div className="flex overflow-x-auto">
+              <aside className="w-48 bg-slate-900 p-3 border-r border-slate-800 shrink-0 hidden md:block">
                 <div className="flex items-center gap-2 px-2 py-2 mb-3">
                   <span className="w-6 h-6 rounded-md bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">F</span>
                   <span className="text-xs text-white font-semibold">Flamingo CMS</span>
