@@ -110,6 +110,7 @@ export async function deleteTenantAction(tenantId: string) {
 }
 
 export async function configureBlobAction(tenantId: string) {
+  const db = getDb();
   const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId));
   if (!tenant) return { success: false, error: 'Tenant nicht gefunden' };
   if (tenant.deploymentMode !== 'standalone') return { success: false, error: 'Nur für Standalone-Tenants verfügbar' };
