@@ -106,8 +106,25 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
   map: {
+    headline: 'So finden Sie uns',
     embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2428.4!2d13.404954!3d52.520008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1',
-    height: '400px',
+    height: 'm',
+  },
+  collectionHero: {
+    headline: 'Neuer Blogbeitrag',
+    subline: 'Alles was Sie über unser neuestes Projekt wissen müssen.',
+    bgImage: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80',
+    category: 'Neuigkeiten',
+    date: '2026-05-20',
+    overlayOpacity: 0.5,
+  },
+  newsGrid: {
+    headline: 'Aktuelle Beiträge',
+    items: [
+      { title: 'Neuer Service verfügbar', excerpt: 'Ab sofort bieten wir auch...', date: '2026-05-15', image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&q=80', href: '#' },
+      { title: 'Auszeichnung erhalten', excerpt: 'Wir freuen uns über...', date: '2026-04-20', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80', href: '#' },
+      { title: 'Teamzuwachs', excerpt: 'Unser Team wächst weiter...', date: '2026-03-10', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=400&q=80', href: '#' },
+    ],
   },
   statsCounter: {
     headline: 'In Zahlen',
