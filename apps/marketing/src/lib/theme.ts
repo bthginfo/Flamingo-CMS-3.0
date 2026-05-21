@@ -96,6 +96,27 @@ export const PRESETS: Record<TemplateKey, ThemePreset[]> = {
     { id: 'mono',       label: 'Mono',           primary: '#111111', primaryFg: '#ffffff', accent: '#111111', surface: '#f5f5f5', bg: '#ffffff', text: '#0a0a0a' },
     { id: 'dark',       label: 'Dark Studio',    primary: '#e7e5e4', primaryFg: '#1c1917', accent: '#a8a29e', surface: '#292524', bg: '#1c1917', text: '#f5f5f4' },
   ],
+  cafe: [
+    { id: 'espresso',   label: 'Espresso',       primary: '#6f4e37', primaryFg: '#fdf8f4', accent: '#d4a373', surface: '#faf5ee', bg: '#ffffff', text: '#1c1712' },
+    { id: 'matcha',     label: 'Matcha',         primary: '#4d7c0f', primaryFg: '#f7fee7', accent: '#a3e635', surface: '#f7fee7', bg: '#ffffff', text: '#1a2010' },
+    { id: 'berry',      label: 'Berry',          primary: '#9f1239', primaryFg: '#fff1f2', accent: '#fb7185', surface: '#fff5f6', bg: '#ffffff', text: '#1f1114' },
+    { id: 'mono',       label: 'Mono',           primary: '#111111', primaryFg: '#ffffff', accent: '#111111', surface: '#f5f5f5', bg: '#ffffff', text: '#0a0a0a' },
+    { id: 'dark-roast', label: 'Dark Roast',     primary: '#d4a373', primaryFg: '#1c1712', accent: '#d4a373', surface: '#292118', bg: '#1c1712', text: '#faf5ee' },
+  ],
+  realestate: [
+    { id: 'navy',       label: 'Navy Trust',     primary: '#1e3a5f', primaryFg: '#f0f4f8', accent: '#60a5fa', surface: '#f1f5f9', bg: '#ffffff', text: '#0f172a' },
+    { id: 'sage',       label: 'Sage Living',    primary: '#4d7c5a', primaryFg: '#f0fdf4', accent: '#86efac', surface: '#f3faf5', bg: '#ffffff', text: '#1a2e20' },
+    { id: 'charcoal',   label: 'Charcoal',       primary: '#374151', primaryFg: '#f9fafb', accent: '#fbbf24', surface: '#f3f4f6', bg: '#ffffff', text: '#111827' },
+    { id: 'mono',       label: 'Mono',           primary: '#111111', primaryFg: '#ffffff', accent: '#111111', surface: '#f5f5f5', bg: '#ffffff', text: '#0a0a0a' },
+    { id: 'midnight',   label: 'Midnight',       primary: '#60a5fa', primaryFg: '#0c1322', accent: '#60a5fa', surface: '#1e293b', bg: '#0f172a', text: '#e2e8f0' },
+  ],
+  tattoo: [
+    { id: 'ink',        label: 'Ink & Bone',     primary: '#1a1a2e', primaryFg: '#f5f5f5', accent: '#e94560', surface: '#f5f5f5', bg: '#ffffff', text: '#1a1a2e' },
+    { id: 'neon',       label: 'Neon',           primary: '#0f0f0f', primaryFg: '#f0f0f0', accent: '#39ff14', surface: '#1a1a1a', bg: '#0f0f0f', text: '#f0f0f0' },
+    { id: 'oldschool',  label: 'Old School',     primary: '#8b0000', primaryFg: '#fff5f5', accent: '#fbbf24', surface: '#fdf8f1', bg: '#ffffff', text: '#1c1210' },
+    { id: 'mono',       label: 'Mono',           primary: '#111111', primaryFg: '#ffffff', accent: '#111111', surface: '#f5f5f5', bg: '#ffffff', text: '#0a0a0a' },
+    { id: 'dark',       label: 'Dark Studio',    primary: '#e94560', primaryFg: '#1a1a2e', accent: '#e94560', surface: '#16213e', bg: '#0f3460', text: '#f5f5f5' },
+  ],
 };
 
 export function applyTheme(p: ThemePreset) {

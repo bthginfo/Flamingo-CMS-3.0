@@ -92,7 +92,7 @@ function applyShowcasePalette() {
 }
 
 /* ─── Template metadata ────────────────────────────────────────────── */
-const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe', {
+const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo', {
   label: string;
   tagline: string;
   description: string;
@@ -188,9 +188,17 @@ const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     accent: '#8b4513',
     bullets: ['Getränkekarte & Food-Menü', 'Atmosphäre-Galerie & Daily Specials', 'Event-Kalender', 'Location & Kontakt'],
   },
+  tattoo: {
+    label: 'Tattoo Studio',
+    tagline: 'Tattoo · Piercing · Flash Art',
+    description: 'Artist-Portfolio, Style-Galerie, Terminanfrage, Flash-Day-Banner, Aftercare-Guide und Preisübersicht.',
+    image: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?auto=format&fit=crop&w=1400&q=80',
+    accent: '#1a1a2e',
+    bullets: ['Artist-Grid & Profile', 'Style-Galerie mit Filter', 'Booking-Formular & Flash-Days', 'Aftercare & Pricing'],
+  },
 };
 
-const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe', { classic: string; modern: string; bold: string }> = {
+const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo', { classic: string; modern: string; bold: string }> = {
   handwerk: {
     classic: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80',
@@ -245,6 +253,11 @@ const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     classic: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1400&q=80',
+  },
+  tattoo: {
+    classic: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1598371839696-5c5bb1fed6e0?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1590246814883-57c511e76ca4?auto=format&fit=crop&w=1400&q=80',
   },
 };
 

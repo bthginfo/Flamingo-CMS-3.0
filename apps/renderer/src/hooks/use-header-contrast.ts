@@ -17,16 +17,23 @@ export function useHeaderContrast(initialDark: boolean): boolean {
     const firstSection = main.querySelector('section');
     if (!firstSection) return;
 
-    // Check if section has a dark background class or inline style (quick heuristic)
-    const computedBg = getComputedStyle(firstSection).backgroundColor;
-    if (computedBg && computedBg !== 'rgba(0, 0, 0, 0)' && computedBg !== 'transparent') {
-      const rgb = computedBg.match(/\d+/g);
-      if (rgb && rgb.length >= 3) {
-        const luminance = (0.299 * +rgb[0] + 0.587 * +rgb[1] + 0.114 * +rgb[2]) / 255;
-        setIsDark(luminance < 0.5);
-        return;
+    // Check if section (or its first child) has a solid background color
+    const checkBg = (el: Element): boolean => {
+      const bg = getComputedStyle(el).backgroundColor;
+      if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
+        const rgb = bg.match(/\d+/g);
+        if (rgb && rgb.length >= 3) {
+          const luminance = (0.299 * +rgb[0] + 0.587 * +rgb[1] + 0.114 * +rgb[2]) / 255;
+          setIsDark(luminance < 0.5);
+          return true;
+        }
       }
-    }
+      return false;
+    };
+    if (checkBg(firstSection)) return;
+    // Also check the first child (hero components often wrap in their own element)
+    const firstChild = firstSection.firstElementChild;
+    if (firstChild && checkBg(firstChild)) return;
 
     // Try to find the hero background image
     const img = firstSection.querySelector('img[sizes="100vw"], img[data-nimg]') as HTMLImageElement | null;
