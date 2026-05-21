@@ -53,12 +53,12 @@ export const TATTOO_CONFIG = {
           headline: 'Unsere Stile',
           subline: 'Von Fineline bis Blackwork — wir decken ein breites Spektrum ab.',
           styles: [
-            { name: 'Fineline', image: 'https://images.unsplash.com/photo-1590246814883-57c511e9682d?w=600&q=80', description: 'Feine Linien, minimalistische Motive' },
+            { name: 'Fineline', image: 'https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?w=600&q=80', description: 'Feine Linien, minimalistische Motive' },
             { name: 'Blackwork', image: 'https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=600&q=80', description: 'Großflächige schwarze Flächen und Muster' },
-            { name: 'Neo-Traditional', image: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=600&q=80', description: 'Farbe, Kontrast und moderne Interpretationen' },
+            { name: 'Neo-Traditional', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=600&q=80', description: 'Farbe, Kontrast und moderne Interpretationen' },
             { name: 'Geometric', image: 'https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80', description: 'Symmetrie, Dotwork und Mandala-Patterns' },
-            { name: 'Script', image: 'https://images.unsplash.com/photo-1612875926365-1a078b4ea5c7?w=600&q=80', description: 'Script und botanische Elemente' },
-            { name: 'Japanese', image: 'https://images.unsplash.com/photo-1581783898382-80f51ef77f73?w=600&q=80', description: 'Traditionelle japanische Motive und Irezumi' },
+            { name: 'Script', image: 'https://images.unsplash.com/photo-1475090169767-40ed8d18f67d?w=600&q=80', description: 'Script und botanische Elemente' },
+            { name: 'Japanese', image: 'https://images.unsplash.com/photo-1595511890410-3b8dc237a537?w=600&q=80', description: 'Traditionelle japanische Motive und Irezumi' },
             { name: 'Ornamental', image: 'https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=600&q=80', description: 'Ornamental und Tribal-Einflüsse' },
             { name: 'Illustrative', image: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&q=80', description: 'Illustrative Portraits und Blumen' },
           ],
@@ -123,10 +123,10 @@ export const TATTOO_CONFIG = {
         { type: 'galleryGrid', sortOrder: 1, data: {
           headline: 'Lenas Arbeiten',
           images: [
-            { src: 'https://images.unsplash.com/photo-1590246814883-57c511e9682d?w=600&q=80', alt: 'Fineline Botanical' },
-            { src: 'https://images.unsplash.com/photo-1612875926365-1a078b4ea5c7?w=600&q=80', alt: 'Script Tattoo' },
+            { src: 'https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?w=600&q=80', alt: 'Fineline Botanical' },
+            { src: 'https://images.unsplash.com/photo-1475090169767-40ed8d18f67d?w=600&q=80', alt: 'Script Tattoo' },
             { src: 'https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80', alt: 'Geometric Fineline' },
-            { src: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=600&q=80', alt: 'Floral Piece' },
+            { src: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=600&q=80', alt: 'Floral Piece' },
           ],
         }},
         { type: 'processSteps', sortOrder: 2, data: {
@@ -174,12 +174,12 @@ export const TATTOO_CONFIG = {
         { type: 'styleGallery', sortOrder: 1, data: {
           headline: 'Portfolio',
           styles: [
-            { name: 'Fineline', image: 'https://images.unsplash.com/photo-1590246814883-57c511e9682d?w=600&q=80' },
+            { name: 'Fineline', image: 'https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?w=600&q=80' },
             { name: 'Blackwork', image: 'https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?w=600&q=80' },
-            { name: 'Japanese', image: 'https://images.unsplash.com/photo-1581783898382-80f51ef77f73?w=600&q=80' },
-            { name: 'Neo-Traditional', image: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=600&q=80' },
+            { name: 'Japanese', image: 'https://images.unsplash.com/photo-1595511890410-3b8dc237a537?w=600&q=80' },
+            { name: 'Neo-Traditional', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=600&q=80' },
             { name: 'Geometric', image: 'https://images.unsplash.com/photo-1562962230-16e4623d36e6?w=600&q=80' },
-            { name: 'Script', image: 'https://images.unsplash.com/photo-1612875926365-1a078b4ea5c7?w=600&q=80' },
+            { name: 'Script', image: 'https://images.unsplash.com/photo-1475090169767-40ed8d18f67d?w=600&q=80' },
             { name: 'Ornamental', image: 'https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=600&q=80' },
             { name: 'Illustrative', image: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=600&q=80' },
           ],
@@ -224,7 +224,7 @@ export const TATTOO_CONFIG = {
         { type: 'hero', sortOrder: 0, data: {
           headline: 'Leistungen & Preise',
           subline: 'Custom Tattoos, Cover-ups, Flash Art und Piercing — transparent und fair.',
-          bgImage: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=1600&q=80',
+          bgImage: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=1600&q=80',
           overlayOpacity: 0.75,
         }},
         { type: 'servicesGrid', sortOrder: 1, data: {
@@ -283,7 +283,7 @@ export const TATTOO_CONFIG = {
         { type: 'textImage', sortOrder: 6, data: {
           headline: 'Qualität hat ihren Preis',
           text: '<p>Wir verwenden ausschließlich vegane, EU-zertifizierte Farben und arbeiten nach höchsten Hygienestandards. Jede Nadel ist steril verpackt und wird nach einmaliger Verwendung entsorgt.</p><p>Unsere Preise spiegeln die Qualität der Materialien, die Erfahrung unserer Artists und die individuelle Beratung wider.</p>',
-          image: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=800&q=80',
+          image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=800&q=80',
         }},
         { type: 'ctaBand', sortOrder: 7, data: {
           headline: 'Bereit für Dein Tattoo?',
@@ -325,7 +325,7 @@ export const TATTOO_CONFIG = {
         { type: 'textImage', sortOrder: 3, data: {
           headline: 'Empfohlene Pflegeprodukte',
           text: '<p><strong>Bepanthen Wund- und Heilsalbe</strong> — der Klassiker für Tattoo-Pflege.</p><p><strong>TattooMed After Tattoo</strong> — speziell für frische Tattoos entwickelt.</p><p><strong>Ab der 3. Woche:</strong> SPF 50+ Sonnencreme auf geheilte Tattoos für langfristige Farbbrillanz.</p><p>Vermeide Vaseline und parfümierte Cremes in den ersten 2 Wochen!</p>',
-          image: 'https://images.unsplash.com/photo-1612875926365-1a078b4ea5c7?w=800&q=80',
+          image: 'https://images.unsplash.com/photo-1475090169767-40ed8d18f67d?w=800&q=80',
         }},
         { type: 'testimonials', sortOrder: 4, data: {
           headline: 'Heilungs-Erfahrungen',
@@ -358,7 +358,7 @@ export const TATTOO_CONFIG = {
         { type: 'textImage', sortOrder: 2, data: {
           headline: 'Öffnungszeiten & Walk-ins',
           text: '<p><strong>Di–Fr:</strong> 11:00–19:00<br><strong>Sa:</strong> 12:00–18:00<br><strong>So–Mo:</strong> Geschlossen</p><p>Walk-ins für Flash-Motive je nach Verfügbarkeit. Für Custom immer vorab anfragen.</p><p><strong>Mindestalter:</strong> 18 Jahre (Ausweis mitbringen)</p>',
-          image: 'https://images.unsplash.com/photo-1598371839696-5c5bb1c1781a?w=800&q=80',
+          image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=800&q=80',
         }},
         { type: 'socialProofBar', sortOrder: 3, data: {
           items: [

@@ -21,7 +21,7 @@ interface DemoPageShellProps {
   children?: React.ReactNode;
 }
 
-export function DemoPageShell({ sections, industry, industryKey, defaultStyle, siteData, darkBg = true, children }: DemoPageShellProps) {
+export function DemoPageShell({ sections, industry, industryKey, defaultStyle, siteData, darkBg, children }: DemoPageShellProps) {
   const [style, setStyle] = useState(defaultStyle);
   const searchParams = useSearchParams();
   const embed = searchParams.get('embed') === '1';
@@ -29,9 +29,18 @@ export function DemoPageShell({ sections, industry, industryKey, defaultStyle, s
   const { navItems, cta, brand, contact, socialLinks, footer } = siteData;
   const brandCssVars = getBrandCssVars(brand);
 
+  // Auto-detect: if first section is a hero with bgImage, nav should be light on dark
+  const resolvedDarkBg = darkBg ?? (() => {
+    const first = sections[0];
+    if (!first) return false;
+    const isHeroType = first.type === 'hero' || first.type.endsWith('Hero') || first.type.startsWith('hero');
+    if (!isHeroType) return false;
+    return !!(first.data?.bgImage);
+  })();
+
   return (
     <div data-style={style} style={{ ...styleCssVars, ...brandCssVars } as React.CSSProperties}>
-      <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={darkBg} cta={cta} homeHref={`/demo/${industryKey}`} />
+      <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={resolvedDarkBg} cta={cta} homeHref={`/demo/${industryKey}`} />
       <main>
         {sections.map((section) => (
           <SectionRenderer key={section.id} section={section} styleVariant={style} industry={industry} />
