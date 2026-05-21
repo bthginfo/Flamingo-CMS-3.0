@@ -1672,6 +1672,166 @@ function TimelineEditor({ data, onChange }: EditorProps) {
   );
 }
 
+// ─── Stats Counter Editor ────────────────────────────────────────
+function StatsCounterEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [badge, setBadge] = useState((data.badge as string) || '');
+  const [stats, setStats] = useState<{ value: string; suffix: string; prefix: string; label: string }[]>(
+    ((data.stats as any[]) || []).map(s => ({ value: String(s.value || ''), suffix: (s.suffix as string) || '', prefix: (s.prefix as string) || '', label: (s.label as string) || '' }))
+  );
+  useReport({ headline, subline, badge, stats: stats.map(s => ({ ...s, value: Number(s.value) || 0 })) }, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Badge" value={badge} onChange={setBadge} />
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      {stats.map((stat, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => setStats(stats.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-3 gap-2">
+            <Field label="Prefix (z.B. +)" value={stat.prefix} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, prefix: v } : s))} />
+            <Field label="Wert (Zahl)" value={stat.value} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, value: v } : s))} />
+            <Field label="Suffix (z.B. %)" value={stat.suffix} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, suffix: v } : s))} />
+          </div>
+          <Field label="Label" value={stat.label} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} />
+        </div>
+      ))}
+      <button onClick={() => setStats([...stats, { value: '', suffix: '', prefix: '', label: '' }])} className="text-sm text-blue-600 hover:underline">+ Stat</button>
+    </div>
+  );
+}
+
+// ─── Bento Grid Editor ───────────────────────────────────────────
+function BentoGridEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [badge, setBadge] = useState((data.badge as string) || '');
+  const [items, setItems] = useState<{ title: string; description: string; icon: string; image: string; span: string }[]>(
+    ((data.items as any[]) || []).map(item => ({ title: (item.title as string) || '', description: (item.description as string) || '', icon: (item.icon as string) || '', image: (item.image as string) || '', span: (item.span as string) || '' }))
+  );
+  useReport({ headline, subline, badge, items: items.map(i => ({ ...i, span: i.span || undefined })) }, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Badge" value={badge} onChange={setBadge} />
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      {items.map((item, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <Field label="Titel" value={item.title} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, title: v } : it))} />
+          <Field label="Beschreibung" value={item.description} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, description: v } : it))} multiline />
+          <IconPickerField label="Icon" value={item.icon} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, icon: v } : it))} />
+          <ImageUploadField label="Bild" value={item.image} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, image: v } : it))} />
+          <div>
+            <label className="text-xs font-medium text-zinc-600">Größe</label>
+            <select className="admin-input mt-1" value={item.span} onChange={e => setItems(items.map((it, idx) => idx === i ? { ...it, span: e.target.value } : it))}>
+              <option value="">Standard</option>
+              <option value="wide">Breit (2 Spalten)</option>
+              <option value="tall">Hoch (2 Reihen)</option>
+              <option value="large">Groß (2×2)</option>
+            </select>
+          </div>
+        </div>
+      ))}
+      <button onClick={() => setItems([...items, { title: '', description: '', icon: '', image: '', span: '' }])} className="text-sm text-blue-600 hover:underline">+ Element</button>
+    </div>
+  );
+}
+
+// ─── Testimonial Marquee Editor ──────────────────────────────────
+function TestimonialMarqueeEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [items, setItems] = useState<{ quote: string; name: string; role: string; image: string; rating: number }[]>(
+    ((data.items as any[]) || []).map(item => ({ quote: (item.quote as string) || '', name: (item.name as string) || '', role: (item.role as string) || '', image: (item.image as string) || '', rating: (item.rating as number) || 5 }))
+  );
+  useReport({ headline, items }, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      {items.map((item, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <Field label="Zitat" value={item.quote} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, quote: v } : it))} multiline />
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="Name" value={item.name} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
+            <Field label="Rolle / Kontext" value={item.role} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, role: v } : it))} />
+          </div>
+          <ImageUploadField label="Bild" value={item.image} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, image: v } : it))} />
+          <div>
+            <label className="text-xs font-medium text-zinc-600">Bewertung</label>
+            <select className="admin-input mt-1" value={item.rating} onChange={e => setItems(items.map((it, idx) => idx === i ? { ...it, rating: Number(e.target.value) } : it))}>
+              {[5, 4, 3, 2, 1].map(r => <option key={r} value={r}>{r} Sterne</option>)}
+            </select>
+          </div>
+        </div>
+      ))}
+      <button onClick={() => setItems([...items, { quote: '', name: '', role: '', image: '', rating: 5 }])} className="text-sm text-blue-600 hover:underline">+ Bewertung</button>
+    </div>
+  );
+}
+
+// ─── Feature Showcase Editor ─────────────────────────────────────
+function FeatureShowcaseEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [badge, setBadge] = useState((data.badge as string) || '');
+  const [text, setText] = useState((data.text as string) || '');
+  const [image, setImage] = useState((data.image as string) || '');
+  const [features, setFeatures] = useState<string[]>((data.features as string[]) || []);
+  const [ctaLabel, setCtaLabel] = useState((data.ctaLabel as string) || '');
+  const [ctaHref, setCtaHref] = useState((data.ctaHref as string) || '');
+  const [reversed, setReversed] = useState(data.reversed === true);
+  useReport({ headline, subline, badge, text, image, features, ctaLabel, ctaHref, reversed }, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Badge" value={badge} onChange={setBadge} />
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label="Text" value={text} onChange={setText} multiline />
+      <ImageUploadField label="Bild" value={image} onChange={setImage} />
+      <div>
+        <label className="text-xs font-medium text-zinc-600">Features (eine pro Zeile)</label>
+        <textarea className="admin-input mt-1 w-full" rows={4} value={features.join('\n')} onChange={e => setFeatures(e.target.value.split('\n'))} />
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <Field label="CTA Label" value={ctaLabel} onChange={setCtaLabel} />
+        <Field label="CTA Link" value={ctaHref} onChange={setCtaHref} />
+      </div>
+      <label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={reversed} onChange={e => setReversed(e.target.checked)} /> Layout spiegeln</label>
+    </div>
+  );
+}
+
+// ─── Logo Marquee Editor ─────────────────────────────────────────
+function LogoMarqueeEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [items, setItems] = useState<{ name: string; image: string }[]>(
+    ((data.items as any[]) || []).map(item => ({ name: (item.name as string) || '', image: (item.image as string) || '' }))
+  );
+  useReport({ headline, subline, items }, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      {items.map((item, i) => (
+        <div key={i} className="border rounded p-3 space-y-2 relative">
+          <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <Field label="Name" value={item.name} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
+          <ImageUploadField label="Logo" value={item.image} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, image: v } : it))} />
+        </div>
+      ))}
+      <button onClick={() => setItems([...items, { name: '', image: '' }])} className="text-sm text-blue-600 hover:underline">+ Logo</button>
+    </div>
+  );
+}
+
 // ─── Editor registry ─────────────────────────────────────────────
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
@@ -1708,4 +1868,9 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   comparisonTable: ComparisonTableEditor,
   socialProofBar: SocialProofBarEditor,
   timeline: TimelineEditor,
+  statsCounter: StatsCounterEditor,
+  bentoGrid: BentoGridEditor,
+  testimonialMarquee: TestimonialMarqueeEditor,
+  featureShowcase: FeatureShowcaseEditor,
+  logoMarquee: LogoMarqueeEditor,
 };
