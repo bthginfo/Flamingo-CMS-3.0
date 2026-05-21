@@ -105,6 +105,31 @@ export const photographySite: DemoSite = {
             ctaPrimary: { label: 'Termin sichern', href: '/demo/photography/kontakt' },
           },
         },
+        {
+          ...B, id: 'ph-stats-home', type: 'statsCounter',
+          data: {
+            headline: 'Meine Arbeit in Zahlen',
+            stats: [
+              { value: 200, suffix: '+', label: 'Hochzeiten begleitet', icon: 'heart' },
+              { value: 9, label: 'Jahre Erfahrung', icon: 'calendar' },
+              { value: 50000, suffix: '+', label: 'Bearbeitete Fotos', icon: 'image' },
+              { value: 5.0, label: 'Sterne Bewertung', icon: 'star' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'ph-logos-home', type: 'logoMarquee',
+          data: {
+            headline: 'Veröffentlicht in',
+            logos: [
+              { name: 'Hochzeitsguide', src: '/logos/hochzeitsguide.svg' },
+              { name: 'Braut & Bräutigam', src: '/logos/braut-braeutigam.svg' },
+              { name: 'Junebug Weddings', src: '/logos/junebug.svg' },
+              { name: 'The Knot', src: '/logos/the-knot.svg' },
+              { name: 'Hochzeitswahn', src: '/logos/hochzeitswahn.svg' },
+            ],
+          },
+        },
       ],
     },
     {
@@ -161,6 +186,25 @@ export const photographySite: DemoSite = {
             headline: 'Euer Termin ist noch frei?',
             subline: 'Sichert euch jetzt euren Wunschtermin — beliebte Monate sind schnell ausgebucht.',
             ctaPrimary: { label: 'Jetzt anfragen', href: '/demo/photography/kontakt' },
+          },
+        },
+        {
+          ...B, id: 'ph-port-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Kundenstimmen zu meinen Fotos',
+            badgeText: 'Kundenfeedback',
+            items: [
+              { quote: 'Die Bilder sind so viel schöner als wir es uns erträumt haben! Jedes Detail wurde eingefangen.', name: 'Katrin & Florian', context: 'Hochzeit Rheingau', rating: 5 },
+              { quote: 'Lisa hat eine besondere Gabe, die richtigen Momente festzuhalten. Wir schauen uns die Fotos jeden Tag an.', name: 'Melanie & Jan', context: 'Paarshooting Mainz', rating: 5 },
+            ],
+          },
+        },
+        {
+          ...B, id: 'ph-port-book', type: 'ctaBand',
+          data: {
+            headline: 'Euer Shooting wartet!',
+            subline: 'Bucht jetzt euer individuelles Fotoshooting und erhaltet einzigartige Erinnerungen.',
+            ctaPrimary: { label: 'Shooting buchen', href: '/demo/photography/kontakt' },
           },
         },
       ],
@@ -253,6 +297,26 @@ export const photographySite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, id: 'ph-leist-faq', type: 'faq',
+          data: {
+            headline: 'Häufige Fragen zu Shootings & Preisen',
+            badgeText: 'FAQ',
+            items: [
+              { question: 'Kann ich das Paket individuell anpassen?', answer: 'Selbstverständlich! Alle Pakete sind flexibel anpassbar. Schreibt mir einfach eure Wünsche.' },
+              { question: 'Wann ist die Bezahlung fällig?', answer: 'Bei Buchung wird eine Anzahlung von 30% fällig, der Rest 2 Wochen vor dem Termin.' },
+              { question: 'Sind Anfahrtskosten enthalten?', answer: 'Im Rhein-Main-Gebiet (30km) ist die Anfahrt inklusive. Darüber hinaus berechne ich 0,35€/km.' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'ph-leist-tips', type: 'richText',
+          data: {
+            headline: 'Vorbereitung auf euer Shooting',
+            badgeText: 'Tipps',
+            content: 'Damit euer Shooting perfekt wird: Tragt Kleidung, in der ihr euch wohlfühlt. Vermeidet große Logos und sehr grelle Muster. Bringt gerne ein zweites Outfit mit. Bei Outdoor-Shootings empfehle ich bequeme Schuhe für den Weg zur Location. Und das Wichtigste: Seid einfach ihr selbst – den Rest mache ich!',
+          },
+        },
       ],
     },
     {
@@ -293,6 +357,27 @@ export const photographySite: DemoSite = {
             ctaHref: '/demo/photography/kontakt',
           },
         },
+        {
+          ...B, id: 'ph-about-stats', type: 'statsCounter',
+          data: {
+            headline: 'Meine Karriere in Zahlen',
+            badgeText: 'Statistiken',
+            items: [
+              { value: '8+', label: 'Jahre Erfahrung' },
+              { value: '200+', label: 'Hochzeiten fotografiert' },
+              { value: '50.000+', label: 'Bearbeitete Fotos' },
+              { value: '100%', label: 'Weiterempfehlungsrate' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'ph-about-cta', type: 'ctaBand',
+          data: {
+            headline: 'Lass uns zusammenarbeiten!',
+            subline: 'Ich freue mich darauf, eure Geschichte in Bildern zu erzählen.',
+            ctaPrimary: { label: 'Jetzt Kontakt aufnehmen', href: '/demo/photography/kontakt' },
+          },
+        },
       ],
     },
     {
@@ -324,6 +409,22 @@ export const photographySite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, id: 'ph-faq-process', type: 'richText',
+          data: {
+            headline: 'Bearbeitung & Lieferung',
+            badgeText: 'Gut zu wissen',
+            content: 'Nach eurem Shooting wähle ich die besten Aufnahmen aus und bearbeite sie sorgfältig in meinem Stil – natürliche Farben, sanfte Hauttöne und stimmungsvolles Licht. Ihr erhaltet eure Galerie als Online-Link zum Teilen mit Familie und Freunden sowie einen hochwertigen USB-Stick in einer handgefertigten Holzbox.',
+          },
+        },
+        {
+          ...B, id: 'ph-faq-cta', type: 'ctaBand',
+          data: {
+            headline: 'Noch Fragen offen?',
+            subline: 'Schreibt mir gerne eine Nachricht – ich beantworte alle eure Fragen persönlich.',
+            ctaPrimary: { label: 'Kontakt aufnehmen', href: '/demo/photography/kontakt' },
+          },
+        },
       ],
     },
     {
@@ -344,6 +445,25 @@ export const photographySite: DemoSite = {
             headline: 'Schreibt mir',
             subline: 'Ich freue mich auf eure Nachricht und melde mich innerhalb von 24 Stunden.',
             badgeText: 'Kontakt',
+          },
+        },
+        {
+          ...B, id: 'ph-contact-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Warum Paare mich lieben',
+            badgeText: 'Kundenstimmen',
+            items: [
+              { quote: 'Von der ersten Nachricht bis zur fertigen Galerie war alles perfekt organisiert. Lisa ist nicht nur talentiert, sondern auch unglaublich herzlich.', name: 'Sophie & Erik', context: 'Hochzeit Wiesbaden', rating: 5 },
+              { quote: 'Wir haben uns sofort wohlgefühlt und das sieht man den Bildern an. Absolute Empfehlung!', name: 'Carla & Ben', context: 'Paarshooting Rheingau', rating: 5 },
+            ],
+          },
+        },
+        {
+          ...B, id: 'ph-contact-location', type: 'richText',
+          data: {
+            headline: 'Studio & Anfahrt',
+            badgeText: 'Location',
+            content: 'Mein Studio befindet sich in Mainz-Bretzenheim, nur 5 Minuten von der A60 entfernt. Kostenlose Parkplätze sind direkt vor der Tür verfügbar. Für Kennenlerngespräche könnt ihr gerne vorbeikommen – oder wir treffen uns gemütlich im Café eurer Wahl.',
           },
         },
       ],

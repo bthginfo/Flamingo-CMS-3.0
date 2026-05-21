@@ -83,6 +83,26 @@ export const weddingSite: DemoSite = {
             deadline: '2026-07-15',
           },
         },
+        {
+          ...B, id: 'w-info', type: 'richText',
+          data: {
+            badge: 'Wichtige Infos',
+            headline: 'Gut zu wissen',
+            text: 'Bitte gebt uns bis zum 15. Juli Bescheid, ob ihr dabei seid. Kinder sind herzlich willkommen! Falls ihr Unverträglichkeiten habt, tragt diese bitte bei der Zusage ein. Und das Wichtigste: Bringt gute Laune und bequeme Tanzschuhe mit! 💃🕺',
+          },
+        },
+        {
+          ...B, id: 'w-stats', type: 'statsCounter',
+          data: {
+            headline: 'Unser großer Tag in Zahlen',
+            stats: [
+              { value: 120, label: 'Gäste eingeladen', icon: 'users' },
+              { value: 7, label: 'Jahre zusammen', icon: 'heart' },
+              { value: 152, label: 'Songs auf der Playlist', icon: 'music' },
+              { value: 1, label: 'unvergesslicher Tag', icon: 'star' },
+            ],
+          },
+        },
       ],
     },
     {
@@ -117,6 +137,26 @@ export const weddingSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, id: 'w-travel-parking', type: 'richText',
+          data: {
+            badge: 'Parken & Taxi',
+            headline: 'Parkplätze & Taxinummern',
+            text: 'Am Schloss stehen euch 80 kostenfreie Parkplätze zur Verfügung. Falls ihr lieber ein Taxi nehmt: Taxi Rheingau (06123 / 45 67 89) und Taxi Wiesbaden (0611 / 33 33 33) sind rund um die Uhr erreichbar. Bitte plant nach der Feier kein eigenes Auto ein – nutzt den Shuttle oder ein Taxi!',
+          },
+        },
+        {
+          ...B, id: 'w-travel-faq', type: 'faq',
+          data: {
+            badge: 'Reise-FAQ',
+            headline: 'Häufige Fragen zur Anreise',
+            items: [
+              { question: 'Gibt es einen Shuttle-Service?', answer: 'Ja! Shuttles fahren ab Eltville Bahnhof um 13:00 und 13:15 Uhr. Rückfahrten um 0:00 und 2:00 Uhr.' },
+              { question: 'Kann ich am Schloss übernachten?', answer: 'Leider nicht direkt am Schloss, aber unsere Hotelempfehlungen sind nur 5–10 Minuten entfernt.' },
+              { question: 'Wie weit ist es vom Flughafen Frankfurt?', answer: 'Ca. 45 Minuten mit dem Auto oder der Bahn (S-Bahn + Regionalbahn).' },
+            ],
+          },
+        },
       ],
     },
     {
@@ -147,6 +187,24 @@ export const weddingSite: DemoSite = {
             note: 'Allergien und Unverträglichkeiten bitte im RSVP-Formular angeben.',
           },
         },
+        {
+          ...B, id: 'w-menu-wine', type: 'richText',
+          data: {
+            badge: 'Weinbegleitung',
+            headline: 'Weine & Unverträglichkeiten',
+            text: 'Zu jedem Gang servieren wir passende Weine aus der Region – selbstverständlich gibt es auch alkoholfreie Alternativen. Bitte gebt Allergien und Unverträglichkeiten (Gluten, Laktose, Nüsse etc.) im RSVP-Formular an. Unser Küchenteam bereitet liebend gern individuelle Alternativen vor.',
+          },
+        },
+        {
+          ...B, id: 'w-menu-cake', type: 'textImage',
+          data: {
+            badge: 'Hochzeitstorte',
+            headline: 'Die Geschichte unserer Torte',
+            text: 'Unsere Konditorin Maria backt seit 20 Jahren Hochzeitstorten mit Leidenschaft. Gemeinsam haben wir eine dreistöckige Torte mit Vanille-Himbeer-Füllung und weißem Schokoladenüberzug kreiert – inspiriert von den Blumen in Annas Brautstrauß.',
+            image: 'https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=800&q=80',
+            imageAlt: 'Hochzeitstorte',
+          },
+        },
       ],
     },
     {
@@ -174,6 +232,23 @@ export const weddingSite: DemoSite = {
               { name: 'Sophie & Klara', role: 'Blumenmädchen', text: 'Unsere Nichten (5 & 7) streuen die Blumen.', image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=200&q=80' },
               { name: 'Ralf Meier', role: 'Zeremonienmeister', text: 'Hält den Laden zusammen und sorgt für den reibungslosen Ablauf.' },
             ],
+          },
+        },
+        {
+          ...B, id: 'w-team-story', type: 'richText',
+          data: {
+            badge: 'Unser Team',
+            headline: 'Wie wir unser Wedding-Team fanden',
+            text: 'Lisa kennt Anna seit dem ersten Unitag – sie war sofort klar als Trauzeugin. Tobias ist nicht nur Max\' Bruder, sondern auch sein bester Freund seit Kindheitstagen. Und unser Zeremonienmeister Ralf? Den haben wir auf einer Hochzeitsmesse kennengelernt und sofort gewusst: Der passt zu uns.',
+          },
+        },
+        {
+          ...B, id: 'w-team-cta', type: 'ctaBand',
+          data: {
+            headline: 'Sagt Hallo!',
+            text: 'Ihr habt Fragen, Wünsche oder wollt einfach Hallo sagen? Wir freuen uns über jede Nachricht von euch.',
+            buttonLabel: 'Schreibt uns',
+            buttonUrl: 'mailto:anna.max.hochzeit@example.com',
           },
         },
       ],
@@ -213,6 +288,26 @@ export const weddingSite: DemoSite = {
             },
           },
         },
+        {
+          ...B, id: 'w-gifts-note', type: 'richText',
+          data: {
+            badge: 'Persönlich',
+            headline: 'Ein Wort zu Geschenken',
+            text: 'Ehrlich gesagt: Euer Kommen ist das größte Geschenk. Wir wissen, dass eine Hochzeit für alle mit Aufwand verbunden ist – Anreise, Outfit, freier Tag. Das allein bedeutet uns schon unglaublich viel. Wer trotzdem etwas beitragen möchte, findet oben ein paar Ideen. Aber bitte fühlt euch zu nichts verpflichtet!',
+          },
+        },
+        {
+          ...B, id: 'w-gifts-faq', type: 'faq',
+          data: {
+            badge: 'Geschenke-FAQ',
+            headline: 'Fragen rund ums Schenken',
+            items: [
+              { question: 'Wohin kann ich Geschenke liefern lassen?', answer: 'Bitte an: Anna Bergmann & Maximilian Schulz, Musterstraße 12, 80333 München.' },
+              { question: 'Kann ich mich mit anderen zusammentun?', answer: 'Klar! Gruppengeschenke sind super. Sprecht euch gerne über unsere WhatsApp-Gruppe ab.' },
+              { question: 'Bis wann sollte ich überweisen?', answer: 'Kein Stress – jederzeit bis zur Hochzeit oder auch danach ist völlig in Ordnung.' },
+            ],
+          },
+        },
       ],
     },
     {
@@ -242,6 +337,23 @@ export const weddingSite: DemoSite = {
               { question: 'Was ist bei Regen?', answer: 'Kein Problem – die Trauung findet dann im verglasten Wintergarten statt. Ebenso schön!' },
               { question: 'Wo kann ich parken?', answer: 'Direkt am Schloss gibt es 80 kostenfreie Parkplätze.' },
             ],
+          },
+        },
+        {
+          ...B, id: 'w-faq-closing', type: 'richText',
+          data: {
+            badge: 'Bis bald!',
+            headline: 'Wir freuen uns auf euch!',
+            text: 'Ihr Lieben, wir können es kaum erwarten, diesen besonderen Tag mit euch zu teilen. Egal ob ihr von nah oder fern anreist – es bedeutet uns die Welt, dass ihr dabei seid. Bis zum 12. September! 💛',
+          },
+        },
+        {
+          ...B, id: 'w-faq-rsvp-cta', type: 'ctaBand',
+          data: {
+            headline: 'Noch nicht zugesagt?',
+            text: 'Bitte meldet euch bis zum 15. Juli 2026 zurück, damit wir alles für euch planen können.',
+            buttonLabel: 'Jetzt zusagen',
+            buttonUrl: '/',
           },
         },
       ],

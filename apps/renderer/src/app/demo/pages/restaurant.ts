@@ -286,6 +286,25 @@ export const restaurantSite: DemoSite = {
           ],
           },
         },
+        {
+          ...B,
+          id: 'rs-menu-seasonal',
+          type: 'richText',
+          data: {
+            headline: 'Saisonale Empfehlungen',
+            text: '<p>Unser Küchenchef Marco wählt jede Woche die besten saisonalen Zutaten vom Tiroler Bauernmarkt und direkt aus Italien. Fragen Sie nach dem Tagesmenü — es lohnt sich immer.</p><p>Aktuell empfehlen wir: Trüffel-Risotto mit frischen Steinpilzen und unsere hausgemachten Pappardelle mit Wildschwein-Ragù.</p>',
+          },
+        },
+        {
+          ...B,
+          id: 'rs-menu-cta',
+          type: 'ctaBand',
+          data: {
+            headline: 'Appetit bekommen?',
+            subline: 'Reservieren Sie jetzt Ihren Tisch und genießen Sie unsere Gerichte frisch aus der Küche.',
+            ctaPrimary: { label: 'Tisch reservieren', href: '/demo/restaurant/reservierung' },
+          },
+        },
       ],
     },
     {
@@ -330,6 +349,29 @@ export const restaurantSite: DemoSite = {
               },
             ],
             ctaPrimary: { label: 'Tisch reservieren', href: '/demo/restaurant/reservierung' },
+          },
+        },
+        {
+          ...B,
+          id: 'rs-amb-testimonials',
+          type: 'testimonials',
+          data: {
+            headline: 'Was unsere Gäste sagen',
+            items: [
+              { quote: 'Das Ambiente im Gewölbekeller ist einzigartig — man fühlt sich wie in einer echten italienischen Trattoria.', author: 'Sarah M.', role: 'Stammgast seit 2015' },
+              { quote: 'Die Terrasse mit Blick auf die Nordkette ist der perfekte Ort für ein Sommerabendessen.', author: 'Thomas K.', role: 'Google-Bewertung' },
+              { quote: 'Unser Private Dining im Weinkeller war unvergesslich. Perfekt für unseren Hochzeitstag!', author: 'Anna & Stefan', role: 'Private Dining Gäste' },
+            ],
+          },
+        },
+        {
+          ...B,
+          id: 'rs-amb-cta',
+          type: 'ctaBand',
+          data: {
+            headline: 'Exklusives Private Dining',
+            subline: 'Reservieren Sie unseren Weinkeller für ein unvergessliches Dinner in privater Atmosphäre.',
+            ctaPrimary: { label: 'Private Dinner buchen', href: '/demo/restaurant/reservierung' },
           },
         },
       ],
@@ -389,6 +431,28 @@ export const restaurantSite: DemoSite = {
           ],
           },
         },
+        {
+          ...B,
+          id: 'rs-evt-faq',
+          type: 'faq',
+          data: {
+            headline: 'Häufige Fragen zu Events',
+            items: [
+              { question: 'Wie weit im Voraus sollte ich ein Event buchen?', answer: 'Wir empfehlen mindestens 4 Wochen Vorlaufzeit für private Events. Für größere Feiern ab 30 Personen planen Sie bitte 6–8 Wochen ein.' },
+              { question: 'Kann ich ein individuelles Menü zusammenstellen?', answer: 'Selbstverständlich! Unser Küchenchef Marco erstellt gerne ein maßgeschneidertes Menü nach Ihren Wünschen und Ernährungsbedürfnissen.' },
+              { question: 'Bieten Sie auch Catering außer Haus an?', answer: 'Ja, wir bieten Catering für Events in Innsbruck und Umgebung an — von kleinen Aperitivi bis zu vollständigen Menüs für bis zu 100 Personen.' },
+            ],
+          },
+        },
+        {
+          ...B,
+          id: 'rs-evt-highlights',
+          type: 'richText',
+          data: {
+            headline: 'Highlights vergangener Events',
+            text: '<p>Von Firmen-Weihnachtsfeiern über Hochzeitsempfänge bis hin zu Weinverkostungen mit renommierten Winzern — in über 25 Jahren haben wir hunderte unvergessliche Abende gestaltet.</p><p>Lassen Sie sich inspirieren und sprechen Sie uns an — gemeinsam planen wir Ihr perfektes Event.</p>',
+          },
+        },
       ],
     },
     {
@@ -442,6 +506,28 @@ export const restaurantSite: DemoSite = {
               href: '/demo/restaurant/reservierung',
             },
             submitLabel: 'Reservierung absenden',
+          },
+        },
+        {
+          ...B,
+          id: 'rs-res-faq',
+          type: 'faq',
+          data: {
+            headline: 'Häufige Fragen zur Reservierung',
+            items: [
+              { question: 'Wie kann ich meine Reservierung stornieren?', answer: 'Bitte informieren Sie uns mindestens 24 Stunden im Voraus per Telefon oder E-Mail. Bei Nichterscheinen kann eine Gebühr von 25 € pro Person anfallen.' },
+              { question: 'Gibt es eine maximale Gruppengröße?', answer: 'Im Hauptsaal können wir Gruppen bis 60 Personen bewirten. Für den Weinkeller sind maximal 12 Personen möglich.' },
+              { question: 'Kann ich einen bestimmten Tisch reservieren?', answer: 'Gerne berücksichtigen wir Ihre Wünsche nach Möglichkeit. Geben Sie Ihre Präferenz einfach bei der Reservierung an.' },
+            ],
+          },
+        },
+        {
+          ...B,
+          id: 'rs-res-groups',
+          type: 'richText',
+          data: {
+            headline: 'Gruppenreservierungen & Private Dining',
+            text: '<p>Für Gruppen ab 8 Personen erstellen wir gerne ein individuelles Menü. Unser Weinkeller bietet Platz für exklusive Dinner mit bis zu 12 Gästen — perfekt für Geburtstage, Jubiläen oder Geschäftsessen.</p><p>Kontaktieren Sie uns für ein unverbindliches Angebot unter <strong>+43 512 123 456</strong> oder per E-Mail.</p>',
           },
         },
       ],
@@ -499,6 +585,33 @@ export const restaurantSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B,
+          id: 'rs-about-stats',
+          type: 'statsCounter',
+          data: {
+            headline: 'Trattoria Dal Maestro in Zahlen',
+            stats: [
+              { value: 25, suffix: '+', label: 'Jahre in Innsbruck' },
+              { value: 12000, suffix: '+', label: 'Zufriedene Gäste pro Jahr' },
+              { value: 120, suffix: '', label: 'Italienische Weine' },
+              { value: 4.8, suffix: '/5', label: 'Durchschnittliche Bewertung' },
+            ],
+          },
+        },
+        {
+          ...B,
+          id: 'rs-about-testimonials',
+          type: 'testimonials',
+          data: {
+            headline: 'Stimmen unserer Gäste',
+            items: [
+              { quote: 'Die beste italienische Küche außerhalb Italiens. Wir kommen seit 10 Jahren hierher und es wird nie langweilig.', author: 'Familie Huber', role: 'Stammgäste' },
+              { quote: 'Marco und sein Team haben unsere Hochzeitsfeier zu einem unvergesslichen Abend gemacht. Grazie mille!', author: 'Julia & Markus', role: 'Hochzeitsgäste 2024' },
+              { quote: 'Authentisch, herzlich, einfach perfekt. Die Tagliatelle al Tartufo sind ein Gedicht!', author: 'Michael R.', role: 'TripAdvisor-Bewertung' },
+            ],
+          },
+        },
       ],
     },
     {
@@ -537,12 +650,21 @@ export const restaurantSite: DemoSite = {
         },
         {
           ...B,
+          id: 'rs-gal-credits',
+          type: 'richText',
+          data: {
+            headline: 'Über unsere Bilder',
+            text: '<p>Unsere Food-Fotografie stammt von der Innsbrucker Fotografin Lisa Berger, die seit 2019 unsere Gerichte und Events begleitet. Die Bilder zeigen echte Gerichte aus unserer Küche — keine Requisiten, kein Styling-Trick.</p>',
+          },
+        },
+        {
+          ...B,
           id: 'rs-gal-cta',
           type: 'ctaBand',
           data: {
             headline: 'Lust bekommen?',
-            subline: 'Reservieren Sie jetzt Ihren Tisch und erleben Sie die Trattoria live.',
-            ctaPrimary: { label: 'Tisch reservieren', href: '/demo/restaurant/reservierung' },
+            subline: 'Besuchen Sie uns und erleben Sie die Trattoria Dal Maestro mit allen Sinnen.',
+            ctaPrimary: { label: 'Besuchen Sie uns', href: '/demo/restaurant/reservierung' },
           },
         },
       ],

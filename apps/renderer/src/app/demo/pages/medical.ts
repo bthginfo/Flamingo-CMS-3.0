@@ -163,6 +163,30 @@ export const medicalSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, type: 'faq', id: 'med-home-faq',
+          data: {
+            headline: 'Häufige Fragen',
+            items: [
+              { question: 'Brauche ich einen Termin für die Akutsprechstunde?', answer: 'Nein, die Akutsprechstunde findet täglich von 8–9 Uhr ohne Termin statt. Kommen Sie einfach vorbei.' },
+              { question: 'Nehmen Sie neue Patienten auf?', answer: 'Ja, wir nehmen laufend neue Patientinnen und Patienten auf – sowohl Kassen- als auch Privatversicherte.' },
+              { question: 'Bieten Sie Videosprechstunden an?', answer: 'Ja, für Folgekonsultationen und Befundbesprechungen bieten wir Videosprechstunden über unser sicheres Portal an.' },
+            ],
+          },
+        },
+        {
+          ...B, type: 'logoMarquee', id: 'med-home-logos',
+          data: {
+            headline: 'Versicherungen & Zertifizierungen',
+            logos: [
+              { name: 'AOK', src: '/logos/aok.svg' },
+              { name: 'Barmer', src: '/logos/barmer.svg' },
+              { name: 'TK', src: '/logos/tk.svg' },
+              { name: 'KV Nordrhein', src: '/logos/kv-nordrhein.svg' },
+              { name: 'QEP Zertifikat', src: '/logos/qep.svg' },
+            ],
+          },
+        },
       ],
     },
 
@@ -334,6 +358,35 @@ export const medicalSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, type: 'faq', id: 'med-leist-faq',
+          data: {
+            headline: 'Häufige Fragen zu unseren Leistungen',
+            subline: 'Antworten auf die wichtigsten Fragen rund um Behandlungen',
+            items: [
+              {
+                question: 'Werden alle Leistungen von der Krankenkasse übernommen?',
+                answer: 'Die meisten unserer Leistungen werden von gesetzlichen und privaten Krankenkassen übernommen. Individuelle Gesundheitsleistungen (IGeL) wie erweiterte Vorsorge oder Reisemedizin sind Selbstzahlerleistungen – wir informieren Sie vorab transparent über die Kosten.',
+              },
+              {
+                question: 'Wie lange dauert ein Check-up?',
+                answer: 'Ein umfassender Gesundheits-Check-up dauert ca. 45–60 Minuten. Bitte erscheinen Sie nüchtern (12 Stunden) und bringen Sie Ihren Impfpass sowie eine Medikamentenliste mit.',
+              },
+              {
+                question: 'Kann ich mehrere Leistungen in einem Termin kombinieren?',
+                answer: 'Ja, viele Untersuchungen lassen sich sinnvoll kombinieren. Bitte teilen Sie uns bei der Terminbuchung mit, welche Leistungen Sie wünschen, damit wir ausreichend Zeit einplanen können.',
+              },
+            ],
+          },
+        },
+        {
+          ...B, type: 'ctaBand', id: 'med-leist-cta',
+          data: {
+            headline: 'Jetzt Termin vereinbaren',
+            text: 'Vereinbaren Sie noch heute Ihren Wunschtermin – online oder telefonisch. Wir freuen uns auf Sie.',
+            cta: { label: 'Termin buchen', href: '/demo/medical/kontakt' },
+          },
+        },
       ],
     },
 
@@ -449,6 +502,21 @@ export const medicalSite: DemoSite = {
                 text: 'Zusatzweiterbildung Palliativmedizin für die Einfühlsame Begleitung von Patienten in der letzten Lebensphase.',
               },
             ],
+          },
+        },
+        {
+          ...B, type: 'richText', id: 'med-team-education',
+          data: {
+            headline: 'Fort- und Weiterbildung',
+            text: 'Unser Team bildet sich kontinuierlich weiter. Regelmäßige Teilnahme an Fachkongressen, zertifizierten Fortbildungen und interdisziplinären Qualitätszirkeln garantiert, dass Sie stets nach dem neuesten Stand der Medizin behandelt werden. Alle Ärztinnen und Ärzte erfüllen die Fortbildungspflicht der Ärztekammer weit über das geforderte Maß hinaus.',
+          },
+        },
+        {
+          ...B, type: 'ctaBand', id: 'med-team-cta',
+          data: {
+            headline: 'Termin bei einem bestimmten Arzt gewünscht?',
+            text: 'Sie möchten gezielt einen Termin bei einer bestimmten Ärztin oder einem bestimmten Arzt? Geben Sie bei der Buchung einfach Ihren Wunscharzt an.',
+            cta: { label: 'Arzttermin wählen', href: '/demo/medical/kontakt' },
           },
         },
       ],
@@ -572,6 +640,37 @@ export const medicalSite: DemoSite = {
             holidayText: 'An gesetzlichen Feiertagen geschlossen. Vertretung siehe Aushang.',
           },
         },
+        {
+          ...B, type: 'richText', id: 'med-pat-insurance-info',
+          data: {
+            headline: 'Abrechnungshinweise',
+            text: 'Bitte bringen Sie zu jedem Quartalsbeginn Ihre elektronische Gesundheitskarte mit. Privatversicherte erhalten eine detaillierte Rechnung nach GOÄ. Bei IGeL-Leistungen informieren wir Sie vorab schriftlich über die Kosten. Ratenzahlung ist nach Absprache möglich.',
+          },
+        },
+        {
+          ...B, type: 'testimonials', id: 'med-pat-testimonials',
+          data: {
+            headline: 'Das sagen unsere Patienten',
+            subline: 'Echte Stimmen aus unserer Praxis',
+            items: [
+              {
+                name: 'Claudia M.',
+                text: 'Ich fühle mich hier bestens aufgehoben. Das ganze Team ist freundlich und die Wartezeiten sind kurz. Besonders die Online-Terminbuchung finde ich super.',
+                rating: 5,
+              },
+              {
+                name: 'Ralf T.',
+                text: 'Endlich eine Praxis, die sich wirklich Zeit nimmt. Dr. Krueger hat meine Diabetes-Einstellung deutlich verbessert. Klare Empfehlung!',
+                rating: 5,
+              },
+              {
+                name: 'Selma K.',
+                text: 'Die Videosprechstunde für Befundbesprechungen spart mir viel Zeit. Modern und unkompliziert – genau so stelle ich mir eine Arztpraxis vor.',
+                rating: 4,
+              },
+            ],
+          },
+        },
       ],
     },
 
@@ -626,6 +725,34 @@ export const medicalSite: DemoSite = {
                 icon: 'alert-circle',
               },
             ],
+          },
+        },
+        {
+          ...B, type: 'faq', id: 'med-notfall-faq',
+          data: {
+            headline: 'Häufige Fragen zum Notfall',
+            subline: 'Was Sie in akuten Situationen wissen sollten',
+            items: [
+              {
+                question: 'Wann sollte ich den Notruf 112 wählen?',
+                answer: 'Bei lebensbedrohlichen Situationen wie Bewusstlosigkeit, starken Brustschmerzen, akuter Atemnot, schweren Blutungen oder Verdacht auf Schlaganfall. Zögern Sie nicht – jede Sekunde zählt.',
+              },
+              {
+                question: 'Was ist der Unterschied zwischen Notaufnahme und Bereitschaftsdienst?',
+                answer: 'Die Notaufnahme (112) ist für lebensbedrohliche Notfälle. Der ärztliche Bereitschaftsdienst (116 117) ist für dringende, aber nicht lebensbedrohliche Beschwerden außerhalb der Praxisöffnungszeiten zuständig.',
+              },
+              {
+                question: 'Kann ich ohne Termin in die Akutsprechstunde kommen?',
+                answer: 'Ja, unsere Akutsprechstunde ist täglich von 08:00 bis 09:00 Uhr ohne Termin zugänglich. Die Behandlung erfolgt nach Dringlichkeit und Reihenfolge.',
+              },
+            ],
+          },
+        },
+        {
+          ...B, type: 'richText', id: 'med-notfall-firstaid',
+          data: {
+            headline: 'Erste-Hilfe-Tipps',
+            text: 'Bewahren Sie Ruhe und sichern Sie die Unfallstelle. Bei Bewusstlosigkeit prüfen Sie die Atmung und bringen die Person in die stabile Seitenlage. Bei Herzstillstand beginnen Sie sofort mit der Herzdruckmassage (30:2). Stillen Sie starke Blutungen durch Druck mit einem sauberen Tuch. Bei Verbrennungen kühlen Sie die betroffene Stelle maximal 10 Minuten mit lauwarmem Wasser. Setzen Sie immer den Notruf 112 ab, wenn Sie unsicher sind.',
           },
         },
       ],
@@ -694,6 +821,39 @@ export const medicalSite: DemoSite = {
                 text: 'Digitales Spirometer für präzise Lungenfunktionsmessungen. Fluss-Volumen-Kurven und Trendanalysen für die Verlaufskontrolle bei Asthma und COPD.',
                 image: 'https://images.unsplash.com/photo-1581093588401-fbb62a02f120?w=900&q=80',
                 icon: 'wind',
+              },
+            ],
+          },
+        },
+        {
+          ...B, type: 'statsCounter', id: 'med-praxis-stats',
+          data: {
+            headline: 'Unsere Praxis in Zahlen',
+            subline: 'Fakten, die für sich sprechen',
+            stats: [
+              { value: '2015', label: 'Gegründet' },
+              { value: '3', label: 'Ärztinnen & Ärzte' },
+              { value: '4', label: 'Med. Fachangestellte' },
+              { value: '340+', label: 'Bewertungen auf Jameda' },
+              { value: '5', label: 'Sprachen im Team' },
+            ],
+          },
+        },
+        {
+          ...B, type: 'testimonials', id: 'med-praxis-testimonials',
+          data: {
+            headline: 'Patienten über unsere Praxis',
+            subline: 'Erfahrungen mit unseren Räumlichkeiten und Ausstattung',
+            items: [
+              {
+                name: 'Heike W.',
+                text: 'Die Praxis ist wunderschön renoviert, hell und modern. Man fühlt sich sofort wohl. Auch die barrierefreie Gestaltung ist vorbildlich.',
+                rating: 5,
+              },
+              {
+                name: 'Marcus S.',
+                text: 'Sehr angenehme Atmosphäre und kurze Wege. Alles unter einem Dach – vom Labor bis zum EKG. Die Parkplätze direkt vor der Tür sind ein echtes Plus.',
+                rating: 5,
               },
             ],
           },
@@ -825,6 +985,36 @@ export const medicalSite: DemoSite = {
                 question: 'Ist die Praxis barrierefrei?',
                 answer:
                   'Ja, unsere Praxis befindet sich im Erdgeschoss und ist vollständig barrierefrei zugänglich. Es gibt eine automatische Eingangstür, breite Flure und eine barrierefreie Toilette. Parkplätze für Menschen mit Behinderung sind direkt vor dem Eingang vorhanden.',
+              },
+            ],
+          },
+        },
+        {
+          ...B, type: 'textImage', id: 'med-kontakt-directions',
+          data: {
+            headline: 'Anfahrt & Wegbeschreibung',
+            text: 'Unsere Praxis liegt zentral am Kölner Stadtpark und ist mit öffentlichen Verkehrsmitteln und dem Auto bestens erreichbar. Mit der Straßenbahnlinie 15 bis Haltestelle „Am Stadtpark" – von dort sind es nur 2 Minuten zu Fuß. Mit dem Auto über die A57, Ausfahrt Köln-Nippes. Kostenlose Parkplätze stehen direkt vor der Praxis zur Verfügung.',
+            image: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?w=900&q=80',
+            imageAlt: 'Stadtplan mit Praxis-Standort am Stadtpark Köln',
+          },
+        },
+        {
+          ...B, type: 'faq', id: 'med-kontakt-appointment-faq',
+          data: {
+            headline: 'Fragen zur Terminvereinbarung',
+            subline: 'Alles rund um Buchung und Terminplanung',
+            items: [
+              {
+                question: 'Kann ich Termine online stornieren oder verschieben?',
+                answer: 'Ja, über unser Online-Buchungsportal können Sie Termine bis 24 Stunden vorher kostenfrei stornieren oder verschieben. Bei kurzfristigen Absagen bitten wir um einen Anruf.',
+              },
+              {
+                question: 'Wie kurzfristig kann ich einen Termin buchen?',
+                answer: 'Online-Termine sind oft schon für den nächsten Werktag verfügbar. Für akute Beschwerden steht Ihnen außerdem täglich unsere offene Akutsprechstunde von 08:00 bis 09:00 Uhr zur Verfügung.',
+              },
+              {
+                question: 'Kann ich für meine Familienangehörigen Termine buchen?',
+                answer: 'Ja, Sie können Termine für Familienmitglieder buchen. Bitte geben Sie bei der Buchung den Namen und das Geburtsdatum der zu behandelnden Person an.',
               },
             ],
           },

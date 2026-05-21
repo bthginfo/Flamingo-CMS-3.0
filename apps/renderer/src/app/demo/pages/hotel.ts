@@ -151,6 +151,31 @@ export const hotelSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, type: 'statsCounter', id: 'ht-home-stats',
+          data: {
+            headline: 'Hotel Alpenblick in Zahlen',
+            stats: [
+              { value: 42, label: 'Zimmer & Suiten', icon: 'bed' },
+              { value: 15, suffix: '+', label: 'Auszeichnungen', icon: 'award' },
+              { value: 30, suffix: '+', label: 'Jahre Gastfreundschaft', icon: 'calendar' },
+              { value: 1200, suffix: '+', label: 'Begeisterte Gäste', icon: 'users' },
+            ],
+          },
+        },
+        {
+          ...B, type: 'logoMarquee', id: 'ht-home-logos',
+          data: {
+            headline: 'Ausgezeichnet & zertifiziert',
+            logos: [
+              { name: 'Superior Hotels', src: '/logos/superior.svg' },
+              { name: 'Relais & Châteaux', src: '/logos/relais.svg' },
+              { name: 'Gault Millau', src: '/logos/gault-millau.svg' },
+              { name: 'Green Globe', src: '/logos/green-globe.svg' },
+              { name: 'Booking.com Award', src: '/logos/booking-award.svg' },
+            ],
+          },
+        },
       ],
     },
 
@@ -338,6 +363,40 @@ export const hotelSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, type: 'testimonials', id: 'ht-rooms-testimonials',
+          data: {
+            headline: 'Was unsere Gäste über die Zimmer sagen',
+            subline: 'Echte Erfahrungen aus verifizierten Aufenthalten',
+            items: [
+              {
+                name: 'Anna & Stefan Gruber',
+                context: 'Junior Suite, Februar 2026',
+                rating: 5,
+                text: 'Die Zirbenholzmöbel und der Kamin haben eine unglaublich warme Atmosphäre geschaffen. Wir haben uns vom ersten Moment an wie zu Hause gefühlt – nur viel luxuriöser.',
+              },
+              {
+                name: 'Michael Brandstätter',
+                context: 'Panorama Suite, Dezember 2025',
+                rating: 5,
+                text: 'Die freistehende Badewanne mit Blick auf die verschneiten Gipfel war das Highlight unseres Aufenthalts. Butler-Service auf höchstem Niveau – diskret und aufmerksam.',
+              },
+              {
+                name: 'Familie Wieser',
+                context: 'Familienzimmer, August 2025',
+                rating: 5,
+                text: 'Perfekt durchdacht für Familien! Die Kinder liebten das Stockbett und die Spielekiste. Endlich ein Hotel, in dem man sich mit Kindern wirklich willkommen fühlt.',
+              },
+            ],
+          },
+        },
+        {
+          ...B, type: 'richText', id: 'ht-rooms-amenities',
+          data: {
+            headline: 'Ausstattung & Annehmlichkeiten',
+            body: '<p>Jedes Zimmer im Hotel Alpenblick ist mit hochwertigen Materialien und durchdachten Details ausgestattet. Genießen Sie:</p><ul><li><strong>Schlafkomfort:</strong> Premium-Boxspringbetten mit hypoallergenen Daunendecken und Kissenmenü (Hart, Mittel, Weich)</li><li><strong>Badezimmer:</strong> Regendusche, Fußbodenheizung, Naturkosmetik-Produkte aus Tiroler Manufaktur</li><li><strong>Technologie:</strong> Smart TV (55"), Bluetooth-Soundbar, USB-Ladestationen an beiden Bettseiten, Highspeed-WLAN</li><li><strong>Genuss:</strong> Nespresso-Maschine, gefüllte Minibar (Softdrinks & regionale Snacks), täglicher Turndown-Service mit Tiroler Praline</li><li><strong>Extras:</strong> Bademantel & Slipper, Yoga-Matte im Schrank, Safe, Verdunkelungsvorhänge</li></ul>',
+          },
+        },
       ],
     },
 
@@ -414,6 +473,27 @@ export const hotelSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, type: 'statsCounter', id: 'ht-well-stats',
+          data: {
+            headline: 'Unser Spa in Zahlen',
+            items: [
+              { value: '800', suffix: 'm²', label: 'Wellness-Fläche' },
+              { value: '12', suffix: '+', label: 'Treatment-Angebote' },
+              { value: '32', suffix: '°C', label: 'Pool-Temperatur ganzjährig' },
+              { value: '4.9', suffix: '/5', label: 'Gästebewertung Spa' },
+            ],
+          },
+        },
+        {
+          ...B, type: 'ctaBand', id: 'ht-well-cta',
+          data: {
+            headline: 'Gönnen Sie sich eine Auszeit',
+            subline: 'Buchen Sie jetzt Ihr persönliches Spa-Treatment und starten Sie erholt in den nächsten Tag.',
+            primaryCta: { label: 'Treatment buchen', href: '/demo/hotel/kontakt' },
+            secondaryCta: { label: 'Spa-Broschüre ansehen', href: '#' },
+          },
+        },
       ],
     },
 
@@ -479,6 +559,40 @@ export const hotelSite: DemoSite = {
                 description: 'Auf unserer Dachterrasse wachsen über 30 Kräutersorten, die direkt in der Küche Verwendung finden.',
               },
             ],
+          },
+        },
+        {
+          ...B, type: 'testimonials', id: 'ht-rest-testimonials',
+          data: {
+            headline: 'Stimmen unserer Gäste',
+            subline: 'Kulinarische Erlebnisse, die in Erinnerung bleiben',
+            items: [
+              {
+                name: 'Elisabeth Moser',
+                context: 'Abendmenü im Januar 2026',
+                rating: 5,
+                text: 'Das 5-Gänge-Menü war ein Gedicht! Besonders das Tiroler Almrind mit Trüffel-Sellerie hat uns sprachlos gemacht. Dazu die perfekte Weinbegleitung vom Sommelier – absolut auf Sterne-Niveau.',
+              },
+              {
+                name: 'Prof. Klaus Hartmann',
+                context: 'Geschäftsessen, März 2026',
+                rating: 5,
+                text: 'Wir haben hier einen wichtigen Kunden zum Dinner eingeladen – die Wahl war perfekt. Diskreter Service, herausragende Küche und der Weinkeller ist beeindruckend. Der Grüne Veltliner Smaragd war eine Offenbarung.',
+              },
+              {
+                name: 'Sophia & Liam Chen',
+                context: 'Hochzeitsdinner, September 2025',
+                rating: 5,
+                text: 'Unser Hochzeitsdinner auf der Terrasse war märchenhaft. Küchenchef Rainer hat ein individuelles Menü kreiert, das unsere Gäste noch Wochen später gelobt haben. Danke für diesen unvergesslichen Abend!',
+              },
+            ],
+          },
+        },
+        {
+          ...B, type: 'richText', id: 'ht-rest-wine',
+          data: {
+            headline: 'Weinkeller & Saisonale Highlights',
+            body: '<p>Unser Weinkeller beherbergt über 200 sorgfältig ausgewählte Positionen – von österreichischen Spitzenweinen über Südtiroler Raritäten bis hin zu internationalen Klassikern. Sommelier Jakob Steiner berät Sie gerne zu jedem Gang.</p><p><strong>Saisonale Highlights:</strong></p><ul><li><strong>Frühling:</strong> Spargelwochen mit Weißburgunder-Begleitung und Bärlauch-Kreationen aus dem Hotelgarten</li><li><strong>Sommer:</strong> BBQ-Abende auf der Panorama-Terrasse mit Gin & Tonic Bar</li><li><strong>Herbst:</strong> Wildwochen mit edlen Rotweinen und hausgemachten Chutneys</li><li><strong>Winter:</strong> Fondue- und Raclette-Abende am offenen Feuer, begleitet von heißem Glühwein nach Hausrezept</li></ul>',
           },
         },
       ],
@@ -575,6 +689,39 @@ export const hotelSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, type: 'faq', id: 'ht-event-planning-faq',
+          data: {
+            headline: 'Event-Planung im Detail',
+            items: [
+              {
+                question: 'Können wir den Raum vorab besichtigen?',
+                answer: 'Selbstverständlich! Wir bieten Ihnen gerne eine persönliche Führung durch unsere Veranstaltungsräume an. Vereinbaren Sie einfach einen Termin mit unserem Event-Team – auch virtuelle Besichtigungen per Video sind möglich.',
+              },
+              {
+                question: 'Gibt es Unterstützung bei der Dekoration?',
+                answer: 'Ja, unser Event-Team arbeitet mit erstklassigen lokalen Floristen und Dekorateuren zusammen. Von der Tischdeko bis zur Raumgestaltung – wir setzen Ihre Vision um oder inspirieren Sie mit bewährten Konzepten.',
+              },
+              {
+                question: 'Sind Outdoor-Events auch bei schlechtem Wetter möglich?',
+                answer: 'Unsere Panorama-Terrasse ist mit Infrarot-Strahlern und einer Überdachungsoption ausgestattet. Zusätzlich halten wir immer einen Indoor-Backup-Plan bereit, damit Ihr Event bei jedem Wetter perfekt wird.',
+              },
+              {
+                question: 'Welche Teambuilding-Aktivitäten bieten Sie an?',
+                answer: 'Von geführten Bergwanderungen über Kochkurse mit unserem Küchenchef bis hin zu Bogenschießen und Rafting – wir organisieren maßgeschneiderte Aktivitäten für jede Gruppengröße. Auch Wellness-Teamevents im Spa sind sehr beliebt.',
+              },
+            ],
+          },
+        },
+        {
+          ...B, type: 'ctaBand', id: 'ht-event-cta',
+          data: {
+            headline: 'Ihr Event in den Alpen – jetzt anfragen',
+            subline: 'Unser Event-Team erstellt Ihnen innerhalb von 24 Stunden ein unverbindliches Angebot, maßgeschneidert auf Ihre Wünsche.',
+            primaryCta: { label: 'Event-Anfrage senden', href: '/demo/hotel/kontakt' },
+            secondaryCta: { label: 'Event-Broschüre herunterladen', href: '#' },
+          },
+        },
       ],
     },
 
@@ -614,6 +761,22 @@ export const hotelSite: DemoSite = {
               { src: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=900&q=80', alt: 'Wanderwege im Sommer', category: 'Natur' },
               { src: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&q=80', alt: 'Sonnenuntergang über den Gipfeln', category: 'Natur' },
             ],
+          },
+        },
+        {
+          ...B, type: 'richText', id: 'ht-gal-about',
+          data: {
+            headline: 'Die Schönheit der Alpen im Wandel der Jahreszeiten',
+            body: '<p>Unsere Galerie zeigt das Hotel Alpenblick und seine Umgebung in allen vier Jahreszeiten. Die Bilder wurden von der renommierten Tiroler Fotografin Magdalena Kirchner eingefangen, die seit über 10 Jahren die Stimmungen rund um Kitzbühel dokumentiert.</p><p><strong>Saisonale Highlights:</strong></p><ul><li><strong>Winter:</strong> Verschneite Gipfel, Pulverschnee auf den Pisten und gemütliche Abende am Kamin</li><li><strong>Frühling:</strong> Blühende Almwiesen, kristallklare Bergbäche und die ersten warmen Sonnenstrahlen auf der Terrasse</li><li><strong>Sommer:</strong> Smaragdgrüne Bergseen, ausgedehnte Wanderungen und laue Abende unter Sternenhimmel</li><li><strong>Herbst:</strong> Goldene Lärchenwälder, Erntedankfeste und die unvergleichliche Fernsicht an klaren Tagen</li></ul>',
+          },
+        },
+        {
+          ...B, type: 'ctaBand', id: 'ht-gal-cta',
+          data: {
+            headline: 'Überzeugt? Erleben Sie es selbst.',
+            subline: 'Buchen Sie jetzt Ihren Aufenthalt im Hotel Alpenblick und erleben Sie alpinen Luxus hautnah.',
+            primaryCta: { label: 'Zimmer buchen', href: '/demo/hotel/zimmer' },
+            secondaryCta: { label: 'Kontakt aufnehmen', href: '/demo/hotel/kontakt' },
           },
         },
       ],
@@ -726,6 +889,40 @@ export const hotelSite: DemoSite = {
               {
                 question: 'Ist das Frühstück im Zimmerpreis enthalten?',
                 answer: 'Ja, unser reichhaltiges Frühstücksbuffet mit Live-Cooking-Station, regionalen Spezialitäten und frisch gepressten Säften ist für alle HausGäste inklusive (Täglich 07:00 – 10:30 Uhr).',
+              },
+            ],
+          },
+        },
+        {
+          ...B, type: 'textImage', id: 'ht-contact-directions',
+          data: {
+            headline: 'Anreise & Orientierung',
+            body: 'Das Hotel Alpenblick liegt nur 500 Meter vom Zentrum Kitzbühels entfernt, eingebettet in die ruhige Südhanglage mit freiem Blick auf die Kitzbüheler Alpen. Ob mit dem Auto über die A12, per Bahn zum nur 1,5 km entfernten Bahnhof oder per Flughafentransfer – wir sorgen dafür, dass Ihre Anreise so entspannt wie Ihr Aufenthalt wird. Unser kostenloser Abholservice vom Bahnhof ist täglich verfügbar.',
+            image: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=900&q=80',
+            imageAlt: 'Panoramastraße nach Kitzbühel mit Blick auf die Alpen',
+            imagePosition: 'right',
+          },
+        },
+        {
+          ...B, type: 'faq', id: 'ht-contact-booking-faq',
+          data: {
+            headline: 'Fragen zur Buchung',
+            items: [
+              {
+                question: 'Kann ich meine Buchung ändern oder upgraden?',
+                answer: 'Ja, änderungen sind bis 48 Stunden vor Anreise kostenlos möglich. Zimmer-Upgrades bieten wir nach Verfügbarkeit an – kontaktieren Sie einfach unsere Rezeption. Direktbucher erhalten bevorzugt Upgrades.',
+              },
+              {
+                question: 'Welche Zahlungsmethoden werden akzeptiert?',
+                answer: 'Wir akzeptieren alle gängigen Kreditkarten (Visa, Mastercard, Amex), EC-Karte, Überweisung und Bar. Bei Direktbuchung über unsere Website ist auch Klarna-Ratenzahlung möglich.',
+              },
+              {
+                question: 'Gibt es Gutscheine oder Geschenkboxen?',
+                answer: 'Ja! Unsere Alpenblick-Gutscheine sind das perfekte Geschenk – erhältlich als Wertgutschein oder für spezifische Packages. Online bestellbar mit Versand per Post oder als stilvolle PDF zum Ausdrucken.',
+              },
+              {
+                question: 'Wie buche ich am besten für eine Gruppe?',
+                answer: 'Für Gruppen ab 5 Zimmern erstellen wir gerne ein individuelles Angebot mit Sonderkonditionen. Kontaktieren Sie unser Reservierungsteam per E-Mail oder Telefon – wir beraten Sie persönlich.',
               },
             ],
           },

@@ -132,6 +132,29 @@ export const tourismSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, id: 'tour-stats-home', type: 'statsCounter',
+          data: {
+            headline: 'Die Region in Zahlen',
+            stats: [
+              { value: 300, suffix: '+', label: 'km Wanderwege', icon: 'map' },
+              { value: 50, suffix: '+', label: 'Gipfel über 2000 m', icon: 'mountain' },
+              { value: 12, label: 'Bergseen', icon: 'droplet' },
+              { value: 170, label: 'km Skipisten', icon: 'snowflake' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'tour-testimonials-home', type: 'testimonials',
+          data: {
+            headline: 'Stimmen unserer Gäste',
+            items: [
+              { quote: 'Die Wanderwege rund um Kirchberg sind traumhaft. Perfekt markiert und für jedes Level etwas dabei.', name: 'Familie Huber', context: 'Sommerurlaub 2025', rating: 5 },
+              { quote: 'Wir kommen seit 10 Jahren zum Skifahren hierher – das Skigebiet und die Gastfreundschaft sind unschlagbar.', name: 'Martin & Claudia S.', context: 'Winterurlaub 2026', rating: 5 },
+              { quote: 'Der Almabtrieb war ein unvergessliches Erlebnis für die ganze Familie. Echte Tiroler Tradition!', name: 'Andrea K.', context: 'Herbstbesuch 2025', rating: 5 },
+            ],
+          },
+        },
       ],
     },
 
@@ -217,6 +240,27 @@ export const tourismSite: DemoSite = {
                 cta: { label: 'Tour buchen', href: '/demo/tourism/kontakt' },
               },
             ],
+          },
+        },
+        {
+          ...B, id: 'tour-exp-testimonials', type: 'testimonials',
+          data: {
+            title: 'Was unsere Gäste sagen',
+            text: 'Echte Erlebnisse und Eindrücke von Besuchern unserer Region.',
+            items: [
+              { name: 'Familie Müller', location: 'München', text: 'Die Sonnenaufgangs-Wanderung war das absolute Highlight unseres Urlaubs. Unvergesslich!', rating: 5 },
+              { name: 'Andrea S.', location: 'Wien', text: 'Die E-Bike Almenrunde ist perfekt für Genießer — tolle Aussichten und gemütliche Hütten zum Einkehren.', rating: 5 },
+              { name: 'Thomas & Julia', location: 'Hamburg', text: 'Paragliding über das Brixental — ein Traum wurde wahr. Super organisiert und absolut sicher.', rating: 5 },
+            ],
+          },
+        },
+        {
+          ...B, id: 'tour-exp-cta', type: 'ctaBand',
+          data: {
+            title: 'Planen Sie Ihr nächstes Abenteuer',
+            text: 'Kontaktieren Sie uns für individuelle Tourenberatung und Buchungen.',
+            primaryCta: { label: 'Reise planen', href: '/demo/tourism/planung' },
+            secondaryCta: { label: 'Kontakt aufnehmen', href: '/demo/tourism/kontakt' },
           },
         },
         {
@@ -397,6 +441,22 @@ export const tourismSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, id: 'tour-places-tips', type: 'richText',
+          data: {
+            title: 'Geheimtipps & Insider-Wissen',
+            text: 'Abseits der bekannten Pfade warten verborgene Schätze: Die kleine Kapelle am Pengelstein mit ihrem Panoramablick, der versteckte Wasserfall im Spertental-Seitengraben oder der Sonnenuntergangs-Spot am Gaisberg. Fragen Sie im Tourismus-Büro nach unserer Geheimtipp-Karte — nur für neugierige Entdecker.',
+          },
+        },
+        {
+          ...B, id: 'tour-places-cta', type: 'ctaBand',
+          data: {
+            title: 'Noch mehr entdecken',
+            text: 'Unsere Region hat unzählige Facetten. Lassen Sie sich inspirieren und planen Sie Ihren nächsten Ausflug.',
+            primaryCta: { label: 'Erlebnisse ansehen', href: '/demo/tourism/erlebnisse' },
+            secondaryCta: { label: 'Galerie besuchen', href: '/demo/tourism/galerie' },
+          },
+        },
       ],
     },
 
@@ -516,6 +576,32 @@ export const tourismSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, id: 'tour-plan-faq', type: 'faq',
+          data: {
+            title: 'Häufige Fragen zur Reiseplanung',
+            text: 'Antworten auf die wichtigsten Fragen für Ihre Urlaubsplanung.',
+            items: [
+              { question: 'Wann ist die beste Reisezeit für Wanderurlaub?', answer: 'Die beste Zeit zum Wandern ist von Juni bis September. Im Hochsommer (Juli/August) sind alle Hütten geöffnet und die Wege schneefrei.' },
+              { question: 'Brauche ich ein Auto vor Ort?', answer: 'Nein, mit der Gästekarte nutzen Sie alle Wanderbusse kostenlos. Im Winter fahren Skibusse im 15-Minuten-Takt zu allen Bergbahnen.' },
+              { question: 'Wie weit im Voraus sollte ich buchen?', answer: 'Für die Hauptsaison (Weihnachten, Februar, Juli/August) empfehlen wir eine Buchung 3–6 Monate im Voraus. In der Nebensaison ist auch kurzfristig Verfügbarkeit gegeben.' },
+              { question: 'Gibt es Pauschalangebote?', answer: 'Ja, viele Unterkünfte bieten Wochen-Pauschalen inkl. Bergbahn-Tickets und geführten Touren. Fragen Sie im Tourismus-Büro nach aktuellen Packages.' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'tour-plan-stats', type: 'statsCounter',
+          data: {
+            title: 'Kirchberg in Zahlen',
+            text: 'Unsere Region auf einen Blick — Fakten, die begeistern.',
+            stats: [
+              { value: 850000, label: 'Übernachtungen pro Jahr' },
+              { value: 300, label: 'km Wanderwege', suffix: '+' },
+              { value: 170, label: 'km Skipisten' },
+              { value: 60, label: 'bewirtschaftete Almen', suffix: '+' },
+            ],
+          },
+        },
       ],
     },
 
@@ -552,6 +638,22 @@ export const tourismSite: DemoSite = {
               { src: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=900&q=80', alt: 'Kitzbühel Altstadt', category: 'Orte' },
               { src: 'https://images.unsplash.com/photo-1512389142860-9c449e58a814?w=900&q=80', alt: 'Adventmarkt Kirchberg', category: 'Orte' },
             ],
+          },
+        },
+        {
+          ...B, id: 'tour-gallery-credits', type: 'richText',
+          data: {
+            title: 'Fotografen & saisonale Highlights',
+            text: 'Unsere Bilder stammen von regionalen Fotografen und begeisterten Gästen. Jede Jahreszeit bietet einzigartige Motive: das goldene Herbstlicht über den Almen, die kristallklare Winterluft am Gipfel, die Blütenpracht im Frühling und die warmen Sommerabende am Bergsee. Wir danken allen Fotografen für ihre atemberaubenden Aufnahmen.',
+          },
+        },
+        {
+          ...B, id: 'tour-gallery-cta', type: 'ctaBand',
+          data: {
+            title: 'Teilen Sie Ihre schönsten Fotos mit uns',
+            text: 'Haben Sie beeindruckende Bilder aus unserer Region? Schicken Sie uns Ihre Aufnahmen — die besten veröffentlichen wir in unserer Galerie.',
+            primaryCta: { label: 'Fotos einsenden', href: '/demo/tourism/kontakt' },
+            secondaryCta: { label: 'Galerie ansehen', href: '#tr-gallery-images' },
           },
         },
       ],
@@ -628,6 +730,26 @@ export const tourismSite: DemoSite = {
                 answer: 'Im Sommer liegen die Temperaturen zwischen 18 und 28 °C, im Winter zwischen -5 und 5 °C. Die beste Wanderzeit ist Juni bis September, die Skisaison dauert von Dezember bis April. Aktuelle Wetterdaten finden Sie auf unserer Website.',
               },
             ],
+          },
+        },
+        {
+          ...B, id: 'tour-contact-faq', type: 'faq',
+          data: {
+            title: 'Besucherinformationen',
+            text: 'Wichtige Fragen rund um Ihren Besuch im Tourismus-Büro.',
+            items: [
+              { question: 'Wo befindet sich das Tourismus-Büro?', answer: 'Unser Büro liegt zentral an der Hauptstraße 8 im Ortszentrum von Kirchberg, direkt neben der Kirche. Kostenlose Parkplätze sind vorhanden.' },
+              { question: 'Kann ich dort auch Tickets und Pässe kaufen?', answer: 'Ja, bei uns erhalten Sie Skipässe, Bergbahn-Tickets, Veranstaltungstickets und die Kirchberg Card. Kartenzahlung ist möglich.' },
+              { question: 'Bieten Sie auch Führungen an?', answer: 'Ja, wir organisieren geführte Ortswanderungen, kulinarische Spaziergänge und Naturerlebnis-Touren. Buchung direkt im Büro oder per Telefon.' },
+              { question: 'Welche Sprachen werden gesprochen?', answer: 'Unser Team spricht Deutsch, Englisch und Niederländisch. Für weitere Sprachen vermitteln wir gerne.' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'tour-contact-office', type: 'richText',
+          data: {
+            title: 'Öffnungszeiten & Services',
+            text: 'Unser Tourismus-Büro ist ganzjährig für Sie da:\n\n• Montag – Freitag: 08:00 – 18:00 Uhr\n• Samstag: 09:00 – 12:00 Uhr\n• Sonn- & Feiertage: geschlossen (Hochsaison: 10:00 – 15:00 Uhr)\n\nUnsere Services: Unterkunftsberatung, Tourenplanung, Ticketverkauf, Gepäckaufbewahrung, kostenlose Wanderkarten, E-Bike-Verleih-Vermittlung und Gruppenorganisation.',
           },
         },
       ],

@@ -131,12 +131,29 @@ export const handwerkSite: DemoSite = {
           },
         },
         {
+          ...B, id: 'hw-leist-faq', type: 'faq',
+          data: {
+            headline: 'Häufige Fragen zu unseren Leistungen',
+            items: [
+              { question: 'Wie lange dauert eine Badsanierung?', answer: 'Ein Standard-Komplettbad (6–12 qm) realisieren wir in 8–12 Arbeitstagen. Größere Projekte besprechen wir individuell.' },
+              { question: 'Welche Heizung empfehlen Sie?', answer: 'Das hängt von Ihrem Gebäude ab. Wärmepumpen eignen sich besonders für gut gedämmte Häuser. Wir beraten Sie ehrlich und unabhängig.' },
+              { question: 'Gibt es eine Gewährleistung?', answer: '5 Jahre auf alle von uns ausgeführten Arbeiten — das ist doppelt so lang wie der gesetzliche Mindeststandard.' },
+            ],
+          },
+        },
+        {
           ...B, id: 'hw-cta-leist', type: 'ctaBand',
           data: {
             headline: 'Interesse geweckt?',
             subline: 'Gemeinsam finden wir die beste Lösung für Ihr Projekt.',
             badgeText: 'Nächster Schritt',
             ctaPrimary: { label: 'Kostenlos anfragen', href: '/demo/handwerk/kontakt' },
+          },
+        },
+        {
+          ...B, id: 'hw-leist-partners', type: 'richText',
+          data: {
+            content: '<h2>Unsere Partner & Marken</h2><p>Wir arbeiten ausschließlich mit bewährten Herstellern: Grohe, Geberit, Viessmann, Vaillant, Kaldewei und Villeroy & Boch. So garantieren wir höchste Qualität und langfristige Ersatzteilverfügbarkeit für Ihr Projekt.</p>',
           },
         },
       ],
@@ -189,12 +206,30 @@ export const handwerkSite: DemoSite = {
           },
         },
         {
+          ...B, id: 'hw-proj-stats', type: 'statsCounter',
+          data: {
+            headline: 'Unsere Projektbilanz',
+            stats: [
+              { value: 850, suffix: '+', label: 'Badsanierungen' },
+              { value: 420, suffix: '+', label: 'Heizungstausch' },
+              { value: 99, suffix: '%', label: 'Termingerecht' },
+              { value: 5, suffix: ' Jahre', label: 'Gewährleistung' },
+            ],
+          },
+        },
+        {
           ...B, id: 'hw-cta-proj', type: 'ctaBand',
           data: {
             headline: 'Ihr Projekt ist das Nächste?',
             subline: 'Lassen Sie sich unverbindlich beraten — Kostenloses Erstgespräch und Festpreisangebot.',
             badgeText: 'Projekt starten',
             ctaPrimary: { label: 'Kontakt aufnehmen', href: '/demo/handwerk/kontakt' },
+          },
+        },
+        {
+          ...B, id: 'hw-proj-text', type: 'richText',
+          data: {
+            content: '<h2>Vorher/Nachher ansehen?</h2><p>Auf Wunsch zeigen wir Ihnen unsere Referenzobjekte persönlich. Nach Absprache mit den Eigentümern können Sie sich fertige Bäder und Heizungsinstallationen vor Ort anschauen — damit Sie genau wissen, was Sie erwartet.</p>',
           },
         },
       ],
@@ -241,6 +276,26 @@ export const handwerkSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, id: 'hw-about-team', type: 'team',
+          data: {
+            headline: 'Unser Team',
+            subline: '18 Mitarbeiter — vom Meister bis zum Auszubildenden.',
+            members: [
+              { name: 'Klaus Müller', role: 'Geschäftsführer & Meister', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80' },
+              { name: 'Stefan Müller', role: 'Betriebsleiter & Meister', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80' },
+              { name: 'Andrea Fischer', role: 'Büroleitung & Disposition', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'hw-about-cta', type: 'ctaBand',
+          data: {
+            headline: 'Teil des Teams werden?',
+            subline: 'Wir suchen Gesellen, Meister und Auszubildende. Bewirb dich jetzt!',
+            ctaPrimary: { label: 'Offene Stellen', href: '/demo/handwerk/kontakt' },
+          },
+        },
       ],
     },
     {
@@ -265,6 +320,22 @@ export const handwerkSite: DemoSite = {
             badgeText: 'Kontaktformular',
             formEnabled: true,
             image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=85',
+          },
+        },
+        {
+          ...B, id: 'hw-contact-hours', type: 'richText',
+          data: {
+            content: '<h2>Erreichbarkeit</h2><p><strong>Büro:</strong> Mo–Fr 7:30–17:00 Uhr<br/><strong>Notdienst:</strong> 24/7 unter 0221-987654<br/><strong>Adresse:</strong> Industriestraße 12, 50996 Köln-Rodenkirchen</p><p>Kostenlose Parkplätze direkt vor der Tür. Auch samstags nach Vereinbarung.</p>',
+          },
+        },
+        {
+          ...B, id: 'hw-contact-faq', type: 'faq',
+          data: {
+            headline: 'Fragen zum Ablauf',
+            items: [
+              { question: 'Wie läuft die Anfrage ab?', answer: 'Füllen Sie das Formular aus oder rufen Sie uns an. Wir vereinbaren einen Vor-Ort-Termin und erstellen ein kostenloses Festpreisangebot.' },
+              { question: 'Muss ich für den Vor-Ort-Termin bezahlen?', answer: 'Nein, der Vor-Ort-Termin inkl. Aufmass und Beratung ist bei uns immer kostenlos und unverbindlich.' },
+            ],
           },
         },
       ],

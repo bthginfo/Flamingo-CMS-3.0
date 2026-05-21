@@ -140,6 +140,29 @@ export const salonSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, type: 'statsCounter', id: 'sal-home-stats',
+          data: {
+            headline: 'Studio Bellezza in Zahlen',
+            stats: [
+              { value: 12, label: 'Stylisten & Experten', icon: 'users' },
+              { value: 850, suffix: '+', label: 'Bewertungen', icon: 'star' },
+              { value: 8, label: 'Jahre in München', icon: 'calendar' },
+              { value: 15000, suffix: '+', label: 'Zufriedene Kunden', icon: 'heart' },
+            ],
+          },
+        },
+        {
+          ...B, type: 'faq', id: 'sal-home-faq',
+          data: {
+            headline: 'Häufige Fragen',
+            items: [
+              { question: 'Muss ich vorab einen Termin buchen?', answer: 'Ja, wir arbeiten ausschließlich nach Termin, um Ihnen Wartezeiten zu ersparen. Buchen Sie bequem online oder per Telefon.' },
+              { question: 'Kann ich meinen Termin kostenlos stornieren?', answer: 'Stornierungen sind bis 24 Stunden vorher kostenfrei möglich. Bei kurzfristigeren Absagen berechnen wir 50 % des Servicepreises.' },
+              { question: 'Bieten Sie auch Gutscheine an?', answer: 'Ja, Geschenkgutscheine sind ab 25 € erhältlich – als elegante Karte im Salon oder als digitaler Gutschein per E-Mail.' },
+            ],
+          },
+        },
       ],
     },
 
@@ -396,6 +419,35 @@ export const salonSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, type: 'faq', id: 'sal-srv-faq',
+          data: {
+            headline: 'Häufige Fragen zu unseren Behandlungen',
+            subline: 'Alles, was Sie vor Ihrem Termin wissen sollten',
+            items: [
+              {
+                question: 'Wie lange dauert eine Balayage-Behandlung?',
+                answer: 'Eine Balayage dauert je nach Haarlänge und gewünschtem Ergebnis zwischen 120 und 180 Minuten. Bei der Erstbehandlung planen wir etwas mehr Zeit für die Beratung ein.',
+              },
+              {
+                question: 'Muss ich mich auf eine Gesichtsbehandlung vorbereiten?',
+                answer: 'Bitte kommen Sie ungeschminkt oder mit wenig Make-up. Vermeiden Sie 48 Stunden vorher starke Peelings oder Retinol-Produkte, damit Ihre Haut optimal auf die Behandlung anspricht.',
+              },
+              {
+                question: 'Kann ich mehrere Treatments an einem Tag kombinieren?',
+                answer: 'Ja, das ist sogar empfehlenswert! Unsere Pakete sind genau dafür konzipiert. Bitte planen Sie ausreichend Zeit ein und informieren Sie uns bei der Buchung über Ihre Wünsche.',
+              },
+            ],
+          },
+        },
+        {
+          ...B, type: 'ctaBand', id: 'sal-srv-cta',
+          data: {
+            headline: 'Bereit für Ihre Verwandlung?',
+            subline: 'Buchen Sie jetzt Ihren Wunschtermin und erleben Sie Premium-Qualität.',
+            primaryCta: { label: 'Jetzt Termin buchen', href: '/demo/salon/kontakt' },
+          },
+        },
       ],
     },
 
@@ -532,6 +584,41 @@ export const salonSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, type: 'richText', id: 'sal-team-training',
+          data: {
+            headline: 'Ausbildung & Zertifizierungen',
+            subline: 'Kontinuierliche Weiterbildung auf höchstem Niveau',
+            content: 'Unser Team investiert jährlich über 200 Stunden in Fortbildungen bei internationalen Marken wie Olaplex, Kerastase, Dermalogica und Wella. Regelmäßige Workshops in Mailand, London und Paris stellen sicher, dass wir immer die neuesten Techniken und Trends beherrschen. Alle unsere Stylisten sind zertifizierte Friseurmeister oder staatlich geprüfte Kosmetikerinnen.',
+          },
+        },
+        {
+          ...B, type: 'testimonials', id: 'sal-team-testimonials',
+          data: {
+            headline: 'Was unsere Kunden über unser Team sagen',
+            subline: 'Persönliche Erfahrungen mit unseren Stylisten',
+            items: [
+              {
+                name: 'Katharina W.',
+                rating: 5,
+                text: 'Sophia hat genau verstanden, was ich mir vorgestellt habe – obwohl ich es selbst kaum in Worte fassen konnte. Das Ergebnis war besser als jedes Pinterest-Bild!',
+                service: 'Balayage bei Sophia',
+              },
+              {
+                name: 'Thomas R.',
+                rating: 5,
+                text: 'Lukas ist der einzige Barber, dem ich meinen Bart anvertraue. Präzise, kreativ und immer ein gutes Gespräch. Männerpflege auf Top-Niveau.',
+                service: 'Bartpflege bei Lukas',
+              },
+              {
+                name: 'Sandra M.',
+                rating: 5,
+                text: 'Nina hat meine Hautprobleme endlich in den Griff bekommen. Nach 3 Hydrafacial-Sitzungen sieht meine Haut aus wie nie zuvor. Absolute Expertin!',
+                service: 'Hydrafacial bei Nina',
+              },
+            ],
+          },
+        },
       ],
     },
 
@@ -609,6 +696,22 @@ export const salonSite: DemoSite = {
               { src: 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=900&q=80', alt: 'Glattes Haar nach Keratin', category: 'Hair' },
               { src: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=900&q=80', alt: 'Braut Getting Ready', category: 'Events' },
             ],
+          },
+        },
+        {
+          ...B, type: 'richText', id: 'sal-gal-transformations',
+          data: {
+            headline: 'Vorher & Nachher – Echte Verwandlungen',
+            subline: 'Jedes Bild erzählt eine Geschichte',
+            content: 'Unsere Vorher-Nachher-Galerie zeigt die beeindruckenden Transformationen unserer Kunden. Von radikalen Farbwechseln über Keratin-Glättungen bis hin zu kompletten Umstylings – jedes Ergebnis ist das Resultat individueller Beratung, jahrelanger Erfahrung und Premium-Produkten. Lassen Sie sich inspirieren und entdecken Sie, was möglich ist.',
+          },
+        },
+        {
+          ...B, type: 'ctaBand', id: 'sal-gal-cta',
+          data: {
+            headline: 'Inspiriert? Buchen Sie Ihren neuen Look!',
+            subline: 'Vereinbaren Sie jetzt einen Beratungstermin und lassen Sie sich von unseren Experten beraten.',
+            primaryCta: { label: 'Termin buchen', href: '/demo/salon/kontakt' },
           },
         },
       ],
@@ -733,6 +836,35 @@ export const salonSite: DemoSite = {
                 answer: 'für Standard-Treatments (Schnitt, Facial, Massage) können wir in der Regel innerhalb von 3–5 Werktagen einen Termin anbieten. für Balayage, Extensions oder Braut-Pakete empfehlen wir eine Buchung 2–4 Wochen im Voraus, da diese Termine sehr gefragt sind.',
               },
             ],
+          },
+        },
+        {
+          ...B, type: 'faq', id: 'sal-contact-faq2',
+          data: {
+            headline: 'Praktische Fragen zu Ihrem Besuch',
+            subline: 'Parken, Stornierung und spontane Besuche',
+            items: [
+              {
+                question: 'Gibt es Parkmöglichkeiten direkt beim Salon?',
+                answer: 'Das Parkhaus MaximilianStraße ist nur 50 Meter entfernt (Einfahrt FalckenbergStraße). Alternativ erreichen Sie uns bequem mit der U4/U5 – Haltestelle Lehel ist 3 Gehminuten entfernt.',
+              },
+              {
+                question: 'Wie ist die Stornierungsregelung?',
+                answer: 'Bitte sagen Sie Ihren Termin mindestens 24 Stunden vorher ab. Bei Absagen unter 24 Stunden berechnen wir 50% des Behandlungspreises. Kostenlose Umbuchung ist jederzeit möglich.',
+              },
+              {
+                question: 'Kann ich auch ohne Termin vorbeikommen?',
+                answer: 'Walk-ins sind bei Verfügbarkeit möglich, besonders für Herrenschnitte und Express-Treatments. Für Farbe, Kosmetik und längere Behandlungen empfehlen wir eine vorherige Buchung.',
+              },
+            ],
+          },
+        },
+        {
+          ...B, type: 'richText', id: 'sal-contact-info',
+          data: {
+            headline: 'Öffnungszeiten & Anfahrt',
+            subline: 'So finden Sie uns im Herzen von München',
+            content: 'Studio Bellezza befindet sich auf der MaximilianStraße 15, 80539 München. Wir haben Dienstag bis Freitag von 09:00 bis 20:00 Uhr und Samstag von 09:00 bis 18:00 Uhr geöffnet. Montag und Sonntag geschlossen. Mit der U-Bahn erreichen Sie uns über die Haltestelle Lehel (U4/U5) in nur 3 Gehminuten. Brauttermine und Sondertermine sind auch außerhalb der regulären Zeiten nach Vereinbarung möglich.',
           },
         },
       ],

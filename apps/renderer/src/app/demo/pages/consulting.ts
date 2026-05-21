@@ -84,6 +84,30 @@ export const consultingSite: DemoSite = {
             ctaPrimary: { label: 'Erstberatung vereinbaren', href: '/demo/consulting/kontakt' },
           },
         },
+        {
+          ...B, id: 'con-logo-marquee', type: 'logoMarquee',
+          data: {
+            headline: 'Bekannt aus & Partner',
+            logos: [
+              { name: 'Handelsblatt', src: '/logos/handelsblatt.svg' },
+              { name: 'JUVE Rechtsmarkt', src: '/logos/juve.svg' },
+              { name: 'Legal Tribune Online', src: '/logos/lto.svg' },
+              { name: 'IHK Berlin', src: '/logos/ihk-berlin.svg' },
+              { name: 'DAV', src: '/logos/dav.svg' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'con-faq-home', type: 'faq',
+          data: {
+            headline: 'Häufige Fragen',
+            items: [
+              { question: 'Was kostet die Erstberatung?', answer: 'Die Erstberatung (30 Min.) ist bei uns kostenlos und unverbindlich.' },
+              { question: 'Wie schnell erhalte ich einen Termin?', answer: 'In dringenden Fällen bieten wir Termine innerhalb von 48 Stunden an.' },
+              { question: 'Arbeiten Sie auch mit Rechtsschutzversicherungen?', answer: 'Ja, wir rechnen direkt mit allen gängigen Rechtsschutzversicherungen ab.' },
+            ],
+          },
+        },
       ],
     },
     {
@@ -130,11 +154,31 @@ export const consultingSite: DemoSite = {
           },
         },
         {
+          ...B, id: 'con-areas-faq', type: 'faq',
+          data: {
+            headline: 'Fragen zu unseren Rechtsgebieten',
+            items: [
+              { question: 'Bearbeiten Sie auch Fälle außerhalb Berlins?', answer: 'Ja, wir vertreten Mandanten bundesweit. Gerichtstermine außerhalb Berlins nehmen wir persönlich oder über Korrespondenzanwälte wahr.' },
+              { question: 'Kann ich den Anwalt wechseln, wenn mein aktueller nicht weiterhilft?', answer: 'Ja, ein Anwaltswechsel ist jederzeit möglich. Wir übernehmen laufende Mandate und sichten die bereits erarbeitete Akte.' },
+            ],
+          },
+        },
+        {
           ...B, id: 'con-cta-areas', type: 'ctaBand',
           data: {
             headline: 'Ihr Fall ist einzigartig',
             subline: 'Lassen Sie uns gemeinsam die beste Strategie besprechen.',
             ctaPrimary: { label: 'Jetzt Termin vereinbaren', href: '/demo/consulting/kontakt' },
+          },
+        },
+        {
+          ...B, id: 'con-areas-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Mandanten über unsere Arbeit',
+            items: [
+              { quote: 'Mein Mietrechtsfall schien aussichtslos — Herr Bauer hat eine Lösung gefunden, an die ich nie gedacht hätte.', name: 'Familie Richter', context: 'Mietrecht', rating: 5 },
+              { quote: 'Dank Frau Weiß konnte ich mich einvernehmlich scheiden lassen. Alles in nur 4 Monaten geregelt.', name: 'Andreas T.', context: 'Familienrecht', rating: 5 },
+            ],
           },
         },
       ],
@@ -164,6 +208,23 @@ export const consultingSite: DemoSite = {
               { name: 'Markus Bauer', role: 'Senior Associate', specialization: 'Miet- & Immobilienrecht', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80', email: 'bauer@bergmann-partner.de' },
               { name: 'Lisa Hartmann', role: 'Rechtsanwaltsfachangestellte', specialization: 'Sekretariat & Mandantenverwaltung', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80', email: 'hartmann@bergmann-partner.de' },
             ],
+          },
+        },
+        {
+          ...B, id: 'con-team-values', type: 'textImage',
+          data: {
+            headline: 'Unsere Arbeitsweise',
+            text: 'Bei Bergmann & Partner steht der Mensch im Mittelpunkt. Wir nehmen uns Zeit für jeden Fall, kommunizieren verständlich und halten Sie über jeden Schritt auf dem Laufenden. Juristische Fachsprache übersetzen wir in klare Worte — damit Sie immer wissen, wo Sie stehen.',
+            image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=80',
+            imagePosition: 'right',
+          },
+        },
+        {
+          ...B, id: 'con-team-cta', type: 'ctaBand',
+          data: {
+            headline: 'Lernen Sie uns persönlich kennen',
+            subline: 'Vereinbaren Sie ein unverbindliches Erstgespräch — telefonisch, per Video oder vor Ort.',
+            ctaPrimary: { label: 'Termin vereinbaren', href: '/demo/consulting/kontakt' },
           },
         },
       ],
@@ -216,6 +277,22 @@ export const consultingSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, id: 'con-about-memberships', type: 'richText',
+          data: {
+            content: '<h2>Mitgliedschaften & Zertifizierungen</h2><p>Unsere Anwälte sind Mitglieder im Deutschen Anwaltverein (DAV), der Rechtsanwaltskammer Berlin und diversen Fachanwaltsvereinigungen. Dr. Bergmann ist zudem zertifizierter Mediator (DGM) und Wirtschaftsmediator.</p>',
+          },
+        },
+        {
+          ...B, id: 'con-about-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Mandanten über die Kanzlei',
+            items: [
+              { quote: 'Professionell, menschlich und immer erreichbar. So stelle ich mir eine Kanzlei vor.', name: 'Dr. Rainer F.', context: 'Gesellschaftsrecht', rating: 5 },
+              { quote: 'Herr Bergmann hat meine Firmengründung begleitet — von der Satzung bis zum Handelsregister alles aus einer Hand.', name: 'Sarah M.', context: 'GmbH-Gründung', rating: 5 },
+            ],
+          },
+        },
       ],
     },
     {
@@ -242,6 +319,20 @@ export const consultingSite: DemoSite = {
               { title: 'Mietpreisbremse: Aktuelle Rechtsprechung', excerpt: 'Der BGH hat entschieden: Vermieter müssen bei Neuvermietung die Mietpreisbremse strikter einhalten. Ein Überblick über die wichtigsten Urteile.', date: '3. Mai 2026', category: 'Mietrecht', image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&q=80' },
               { title: 'GmbH-Gründung: Neue Möglichkeiten durch Online-Verfahren', excerpt: 'Seit 2025 können GmbHs vollständig digital gegründet werden. Wir erklären den Ablauf und worauf Sie achten sollten.', date: '21. April 2026', category: 'Gesellschaftsrecht', image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80' },
             ],
+          },
+        },
+        {
+          ...B, id: 'con-news-newsletter', type: 'richText',
+          data: {
+            content: '<h2>📬 Rechts-Newsletter</h2><p>Monatlich erscheint unser Newsletter mit aktuellen Urteilen, Praxistipps und Veranstaltungshinweisen. Kostenlos, verständlich und abbestellbar. Bereits über 1.200 Abonnenten vertrauen auf unsere Einordnungen zu relevanten Rechtsfragen.</p>',
+          },
+        },
+        {
+          ...B, id: 'con-news-cta', type: 'ctaBand',
+          data: {
+            headline: 'Individuelle Rechtsfrage?',
+            subline: 'Unsere Fachbeiträge ersetzen keine Beratung. Lassen Sie uns Ihren konkreten Fall besprechen.',
+            ctaPrimary: { label: 'Erstberatung buchen', href: '/demo/consulting/kontakt' },
           },
         },
       ],
@@ -282,6 +373,27 @@ export const consultingSite: DemoSite = {
               { question: 'Wie schnell erhalte ich einen Termin?', answer: 'In der Regel innerhalb von 48 Stunden. In dringenden Fällen (z.B. Kündigung erhalten) auch kurzfristiger.' },
               { question: 'Kann ich auch eine Online-Beratung erhalten?', answer: 'Ja, wir bieten Beratung per Video-Call an. Dies eignet sich vor allem für eine Ersteinschätzung oder wenn Sie nicht in Berlin vor Ort sind.' },
               { question: 'In welchen Sprachen beraten Sie?', answer: 'Unsere Kanzlei berät auf Deutsch und Englisch. Für andere Sprachen arbeiten wir mit vereidigten Dolmetschern zusammen.' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'con-contact-directions', type: 'textImage',
+          data: {
+            headline: 'So finden Sie uns',
+            text: 'Unsere Kanzlei liegt direkt an der Friedrichstraße, 3 Minuten vom U-Bahnhof Stadtmitte (U2/U6). Eingang über den Innenhof, 2. OG. Barrierefreier Zugang über den Aufzug im Seiteneingang.\n\nParkplätze sind in der Tiefgarage Friedrichstraße (Einfahrt Mohrenstraße) verfügbar.',
+            image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
+            imagePosition: 'left',
+          },
+        },
+        {
+          ...B, id: 'con-contact-trust', type: 'statsCounter',
+          data: {
+            headline: 'Warum Bergmann & Partner',
+            stats: [
+              { value: 24, suffix: 'h', label: 'Rückmeldung garantiert' },
+              { value: 0, suffix: ' €', label: 'Erstberatung' },
+              { value: 98, suffix: '%', label: 'Weiterempfehlung' },
+              { value: 4.9, suffix: '★', label: 'Google-Bewertung' },
             ],
           },
         },

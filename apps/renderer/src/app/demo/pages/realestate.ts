@@ -148,6 +148,26 @@ export const realestateSite: DemoSite = {
             ],
           },
         },
+        {
+          ...SECTION, id: 're-buy-faq', type: 'faq',
+          data: {
+            headline: 'Häufige Fragen zum Immobilienkauf',
+            items: [
+              { question: 'Wie läuft der Kaufprozess ab?', answer: 'Nach der Besichtigung und Reservierung erstellen wir den Kaufvertragsentwurf. Es folgen Finanzierungsbestätigung, Notartermin und Übergabe — wir begleiten Sie in jedem Schritt.' },
+              { question: 'Welche Nebenkosten fallen beim Kauf an?', answer: 'In NRW rechnen Sie mit ca. 6,5% Grunderwerbsteuer, 1,5% Notar- und Grundbuchkosten sowie ggf. Maklergebühr.' },
+              { question: 'Kann ich vor dem Kauf eine Finanzierung prüfen lassen?', answer: 'Ja, wir arbeiten mit regionalen Finanzierungspartnern zusammen und vermitteln Ihnen gerne eine unverbindliche Vorab-Prüfung.' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 're-buy-cta', type: 'ctaBand',
+          data: {
+            headline: 'Ihre Traumimmobilie wartet',
+            text: 'Vereinbaren Sie jetzt einen persönlichen Besichtigungstermin — wir zeigen Ihnen Ihre Favoriten vor Ort.',
+            ctaLabel: 'Besichtigung vereinbaren',
+            ctaHref: '/demo/realestate/kontakt',
+          },
+        },
       ],
     },
     {
@@ -184,6 +204,29 @@ export const realestateSite: DemoSite = {
               { question: 'Ist die Bewertung wirklich kostenlos?', answer: 'Ja, unsere Erstbewertung ist für Sie völlig kostenlos und unverbindlich. Sie dient als Grundlage für ein mögliches Vermarktungsmandat.' },
               { question: 'Wie genau ist die Bewertung?', answer: 'Unsere Bewertungen weichen im Schnitt weniger als 3% vom späteren Verkaufspreis ab. Wir nutzen aktuelle Vergleichsdaten, Bodenrichtwerte und unsere 20-jährige Marktexpertise.' },
               { question: 'Wie lange dauert die Bewertung?', answer: 'Nach der Besichtigung erhalten Sie innerhalb von 48 Stunden eine ausführliche schriftliche Bewertung mit Preisspanne und Empfehlung.' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 're-val-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Das sagen unsere Verkäufer',
+            testimonials: [
+              { text: 'Die Bewertung war punktgenau — unser Haus wurde sogar über dem geschätzten Preis verkauft.', name: 'Karin Hoffmann', role: 'Verkäuferin, Köln-Sülz', stars: 5 },
+              { text: 'Sehr professionelle Einschätzung mit nachvollziehbarer Begründung. Wir haben uns sofort gut aufgehoben gefühlt.', name: 'Peter & Anja Krause', role: 'Verkäufer, Köln-Ehrenfeld', stars: 5 },
+              { text: 'Innerhalb von zwei Tagen hatten wir eine fundierte Bewertung in der Hand. Top Service!', name: 'Dieter Lenz', role: 'Verkäufer, Hürth', stars: 5 },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 're-val-stats', type: 'statsCounter',
+          data: {
+            headline: 'Unsere Bewertungsbilanz',
+            stats: [
+              { value: 350, suffix: '+', label: 'Bewertungen pro Jahr' },
+              { value: 89, suffix: '%', label: 'Anschließend verkauft' },
+              { value: 21, suffix: ' Tage', label: 'Ø Vermarktungsdauer' },
+              { value: 3, suffix: '%', label: 'Ø Abweichung vom Verkaufspreis' },
             ],
           },
         },
@@ -225,6 +268,22 @@ export const realestateSite: DemoSite = {
             description: 'Der Kölner Immobilienmarkt zeigt sich 2025 stabil mit leichtem Aufwärtstrend. Besonders gefragt sind sanierte Altbauten im linksrheinischen Bereich und Neubauprojekte mit energieeffizientem Standard.',
           },
         },
+        {
+          ...SECTION, id: 're-about-milestones', type: 'richText',
+          data: {
+            headline: 'Meilensteine & Auszeichnungen',
+            text: '**2005** — Gründung durch Thomas Rheinberg in Köln-Bayenthal\n\n**2010** — Aufnahme in den IVD (Immobilienverband Deutschland)\n\n**2014** — Auszeichnung „Bester Makler Köln" durch Capital Magazin (5 Sterne)\n\n**2018** — Erweiterung auf 8 Mitarbeiter und Umzug an den Rheinauhafen\n\n**2021** — 1.000stes erfolgreich vermitteltes Objekt\n\n**2024** — Erneute Bestnote im Capital-Maklerkompass und Aufnahme in den Bellevue Best Property Agent Circle',
+          },
+        },
+        {
+          ...SECTION, id: 're-about-cta', type: 'ctaBand',
+          data: {
+            headline: 'Werden Sie Teil unseres Teams',
+            text: 'Wir suchen engagierte Immobilienprofis, die mit Leidenschaft und Expertise den Kölner Markt gestalten wollen.',
+            ctaLabel: 'Jetzt bewerben',
+            ctaHref: '/demo/realestate/kontakt',
+          },
+        },
       ],
     },
     {
@@ -248,6 +307,24 @@ export const realestateSite: DemoSite = {
             email: 'info@rheinblick-immobilien.de',
             address: 'Rheinuferstraße 12, 50676 Köln',
             hours: 'Mo–Fr: 09:00–18:00 · Sa: nach Vereinbarung',
+          },
+        },
+        {
+          ...SECTION, id: 're-contact-faq', type: 'faq',
+          data: {
+            headline: 'Häufige Fragen zur Kontaktaufnahme',
+            items: [
+              { question: 'Wie schnell erhalte ich eine Rückmeldung?', answer: 'Wir melden uns in der Regel innerhalb von 24 Stunden bei Ihnen — per Telefon oder E-Mail, wie gewünscht.' },
+              { question: 'Bieten Sie auch Abend- oder Wochenendtermine an?', answer: 'Ja, Besichtigungen und Beratungsgespräche sind nach Vereinbarung auch abends und samstags möglich.' },
+              { question: 'Kann ich auch ohne konkretes Anliegen vorbeikommen?', answer: 'Selbstverständlich! Besuchen Sie uns gerne in unserem Büro am Rheinauhafen für ein unverbindliches Kennenlerngespräch.' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 're-contact-hours', type: 'richText',
+          data: {
+            headline: 'Öffnungszeiten & Anfahrt',
+            text: '**Bürozeiten:**\nMontag – Freitag: 09:00 – 18:00 Uhr\nSamstag: nach Vereinbarung\nSonntag & Feiertage: geschlossen\n\n**Anfahrt:**\nUnser Büro befindet sich im Rheinauhafen, Rheinuferstraße 12, 50676 Köln. Parkmöglichkeiten finden Sie im Parkhaus Rheinauhafen (2 Min. Fußweg). Mit der KVB erreichen Sie uns über die Haltestelle Ubierring (Linie 15/16).',
           },
         },
       ],

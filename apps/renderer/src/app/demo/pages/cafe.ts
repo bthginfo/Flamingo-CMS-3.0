@@ -210,6 +210,21 @@ export const cafeSite: DemoSite = {
             ],
           },
         },
+        {
+          ...SECTION, id: 'cf-menu-specials', type: 'richText',
+          data: {
+            content: '<h2>🌱 Gut zu wissen</h2><p>Alle Kaffees auch mit Hafer-, Soja- oder Mandelmilch — ohne Aufpreis. Unsere Kuchen werden täglich frisch im Haus gebacken. Allergene & Inhaltsstoffe gerne auf Nachfrage an der Bar.</p><p><strong>Happy Hour:</strong> Mo–Do 18–19 Uhr alle Cocktails –2 €.</p>',
+          },
+        },
+        {
+          ...SECTION, id: 'cf-menu-cta', type: 'ctaBand',
+          data: {
+            headline: 'Lust auf Catering?',
+            text: 'Wir liefern Kaffee, Kuchen und Fingerfood für eure Firmenevents, Meetings und Feiern ab 15 Personen.',
+            ctaLabel: 'Catering anfragen',
+            ctaHref: '/demo/cafe/kontakt',
+          },
+        },
       ],
     },
     {
@@ -237,6 +252,26 @@ export const cafeSite: DemoSite = {
               { title: 'Jazz Night', date: 'Fr, 6. Juni', time: '20:30', description: 'The Munich Jazz Trio — Standards & Eigenkompositionen.', image: 'https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=600&q=80', category: 'music' },
               { title: 'Cocktail-Kurs', date: 'Sa, 7. Juni', time: '18:00', description: '3 Cocktails selbst mixen. Rezepte zum Mitnehmen. 49 €/Person.', image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&q=80', category: 'wine' },
             ],
+          },
+        },
+        {
+          ...SECTION, id: 'cf-events-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Stimmen von Event-Besuchern',
+            testimonials: [
+              { text: 'Der Latte-Art-Workshop war mega — ich kann jetzt tatsächlich Herzen gießen!', name: 'Lisa R.', source: 'Google', stars: 5 },
+              { text: 'Pub Quiz immer donnerstags ist unser fester Termin. Super Stimmung, faire Fragen.', name: 'Team Nerdfighters', source: 'Google', stars: 5 },
+              { text: 'Die Naturwein-Tastings sind absolut auf Sommelierniveau. Und der Käse dazu!', name: 'Marco J.', source: 'Instagram', stars: 5 },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'cf-events-cta', type: 'ctaBand',
+          data: {
+            headline: 'Eigenes Event planen?',
+            text: 'Ob Firmenfeier, Geburtstag oder Workshop — wir stellen euch ein individuelles Programm zusammen.',
+            ctaLabel: 'Event anfragen',
+            ctaHref: '/demo/cafe/kontakt',
           },
         },
       ],
@@ -273,6 +308,27 @@ export const cafeSite: DemoSite = {
               { name: 'Tom Brauer', role: 'Küche & Patisserie', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80', bio: 'Gelernt im Tantris, dann Streetfood in Melbourne. Jetzt macht er die besten Sandwiches der Stadt.' },
               { name: 'Mia Chen', role: 'Barista & Latte-Art-Champion', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80', bio: 'München Latte Art Champion 2024. Ihre Rosetta hat es auf Instagram viral geschafft.' },
               { name: 'Jonas Feld', role: 'Röstmeister', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80', bio: 'Unsere Bohnen werden von Jonas in Kleinchargen im Hinterhof geröstet — jeden Dienstag frisch.' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'cf-about-values', type: 'textImage',
+          data: {
+            headline: 'Unsere Werte',
+            text: 'Direct Trade statt Fairtrade-Siegel: Wir kennen unsere Farmer persönlich. Jedes Jahr reisen wir nach Äthiopien und Kolumbien, verkosten vor Ort und zahlen über Marktpreis.\n\nNachhaltigkeit heißt bei uns: kompostierbare Becher, Pfandsystem für Mehrweg, Milchalternativen ohne Aufpreis und ein Stromvertrag aus 100% Wasserkraft.',
+            image: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&q=80',
+            imagePosition: 'left',
+          },
+        },
+        {
+          ...SECTION, id: 'cf-about-stats', type: 'statsCounter',
+          data: {
+            headline: 'Röstwerk in Zahlen',
+            stats: [
+              { value: 2019, suffix: '', label: 'Gegründet' },
+              { value: 12, suffix: ' Sorten', label: 'Eigene Röstungen' },
+              { value: 340, suffix: '+', label: 'kg Kaffee/Monat' },
+              { value: 4.9, suffix: '★', label: 'Google-Bewertung' },
             ],
           },
         },
@@ -340,6 +396,22 @@ export const cafeSite: DemoSite = {
               { question: 'Kann man den Raum für private Events mieten?', answer: 'Ja, sonntags ab 22 Uhr oder montags ganztags. Schreib uns für ein individuelles Angebot.' },
               { question: 'Woher kommen eure Bohnen?', answer: 'Wir importieren direkt von Farmen in Äthiopien, Kolumbien und Guatemala. Jonas röstet jede Woche frisch in unserer Mikrorösterei im Hinterhof.' },
             ],
+          },
+        },
+        {
+          ...SECTION, id: 'cf-contact-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Was Gäste sagen',
+            testimonials: [
+              { text: 'Das Röstwerk ist mein mobiles Büro. Bestes WLAN, ruhig tagsüber, und der Kaffee ist Weltklasse.', name: 'Freelancer Paul', source: 'Google', stars: 5 },
+              { text: 'Jeden Sonntag zum Brunch hier. Die Avocado Toasts sind ein Gedicht und das Personal super nett.', name: 'Anna & Leo', source: 'TripAdvisor', stars: 5 },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'cf-contact-instagram', type: 'richText',
+          data: {
+            content: '<h2>Folge uns auf Instagram</h2><p>Tägliche Stories, Latte Art des Tages, Event-Ankündigungen und Behind-the-Scenes aus der Rösterei. <strong>@roestwerk_muc</strong> — über 8.000 Follower können nicht irren. ☕📸</p>',
           },
         },
       ],
