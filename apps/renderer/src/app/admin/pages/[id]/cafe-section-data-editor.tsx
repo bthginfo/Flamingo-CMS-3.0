@@ -45,9 +45,16 @@ function CafeEventCalendarEditor({ data, onChange }: EditorProps) {
 
 // ─── Location Vibe ───────────────────────────────────────────────
 function LocationVibeEditor({ data, onChange }: EditorProps) {
-  const [d, setD] = useState({ headline: str(data.headline), address: str(data.address), description: str(data.description), vibeText: str(data.vibeText), mapImage: str(data.mapImage), hours: arr(data.hours).map(h => ({ day: str(h.day), hours: str(h.hours) })) });
+  const [d, setD] = useState({ headline: str(data.headline), address: str(data.address), description: str(data.description), vibeText: str(data.vibeText), mapEmbed: str(data.mapEmbed), mapImage: str(data.mapImage), hours: arr(data.hours).map(h => ({ day: str(h.day), hours: str(h.hours) })) });
   useReport(d, onChange);
-  return <div className="space-y-3"><Field label="Headline" value={d.headline} onChange={v => setD({ ...d, headline: v })} /><Field label="Adresse" value={d.address} onChange={v => setD({ ...d, address: v })} multiline /><Field label="Beschreibung" value={d.description} onChange={v => setD({ ...d, description: v })} multiline /><Field label="Vibe-Text" value={d.vibeText} onChange={v => setD({ ...d, vibeText: v })} multiline /><ImageUploadField label="Karten-Bild" value={d.mapImage} onChange={v => setD({ ...d, mapImage: v })} /><Repeater items={d.hours} addLabel="+ Öffnungszeit" onAdd={() => setD({ ...d, hours: [...d.hours, { day: '', hours: '' }] })} render={(item, i) => <div className="grid grid-cols-2 gap-2"><Field label="Tag(e)" value={item.day} onChange={v => updateItem(d, setD, 'hours', i, { ...item, day: v })} /><Field label="Zeiten" value={item.hours} onChange={v => updateItem(d, setD, 'hours', i, { ...item, hours: v })} /></div>} /></div>;
+  return <div className="space-y-3"><Field label="Headline" value={d.headline} onChange={v => setD({ ...d, headline: v })} /><Field label="Adresse" value={d.address} onChange={v => setD({ ...d, address: v })} multiline /><Field label="Beschreibung" value={d.description} onChange={v => setD({ ...d, description: v })} multiline /><Field label="Vibe-Text" value={d.vibeText} onChange={v => setD({ ...d, vibeText: v })} multiline /><Field label="Google Maps Embed URL" value={d.mapEmbed} onChange={v => setD({ ...d, mapEmbed: v })} /><ImageUploadField label="Karten-Bild (Fallback)" value={d.mapImage} onChange={v => setD({ ...d, mapImage: v })} /><Repeater items={d.hours} addLabel="+ Öffnungszeit" onAdd={() => setD({ ...d, hours: [...d.hours, { day: '', hours: '' }] })} render={(item, i) => <div className="grid grid-cols-2 gap-2"><Field label="Tag(e)" value={item.day} onChange={v => updateItem(d, setD, 'hours', i, { ...item, day: v })} /><Field label="Zeiten" value={item.hours} onChange={v => updateItem(d, setD, 'hours', i, { ...item, hours: v })} /></div>} /></div>;
+}
+
+// ─── Atmosphere Gallery ──────────────────────────────────────────
+function AtmosphereGalleryEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({ headline: str(data.headline), images: arr(data.images).map(img => ({ src: str(img.src), caption: str(img.caption) })) });
+  useReport(d, onChange);
+  return <div className="space-y-3"><Field label="Headline" value={d.headline} onChange={v => setD({ ...d, headline: v })} /><Repeater items={d.images} addLabel="+ Bild" onAdd={() => setD({ ...d, images: [...d.images, { src: '', caption: '' }] })} render={(item, i) => <div className="space-y-2"><ImageUploadField label="Bild" value={item.src} onChange={v => updateItem(d, setD, 'images', i, { ...item, src: v })} /><Field label="Bildunterschrift" value={item.caption} onChange={v => updateItem(d, setD, 'images', i, { ...item, caption: v })} /></div>} /></div>;
 }
 
 const CAFE_EDITORS: Record<string, React.FC<EditorProps>> = {
@@ -56,6 +63,7 @@ const CAFE_EDITORS: Record<string, React.FC<EditorProps>> = {
   dailySpecials: DailySpecialsEditor,
   cafeEventCalendar: CafeEventCalendarEditor,
   locationVibe: LocationVibeEditor,
+  atmosphereGallery: AtmosphereGalleryEditor,
 };
 
 // Helpers
