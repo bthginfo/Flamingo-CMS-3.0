@@ -1,12 +1,12 @@
 'use client';
 
 import { useTransition } from 'react';
-import { updateTenantAction, deleteTenantAction } from '../actions';
+import { updateTenantAction, deleteTenantAction, configureBlobAction } from '../actions';
 import { toast } from 'sonner';
 import { Power, Pause, Trash2, Eye } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo }: { tenantId: string; currentStatus: string; currentStyle: string; isDemo?: boolean }) {
+export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, deploymentMode }: { tenantId: string; currentStatus: string; currentStyle: string; isDemo?: boolean; deploymentMode?: string }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -60,6 +60,24 @@ export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo }:
       >
         <Trash2 size={14} /> Löschen
       </button>
+      {deploymentMode === 'standalone' && (
+        <button
+          onClick={() => {
+            startTransition(async () => {
+              const result = await configureBlobAction(tenantId);
+              if (result.success) {
+                toast.success('Blob Storage erfolgreich konfiguriert');
+              } else {
+                toast.error(result.error || 'Fehler bei der Blob-Konfiguration');
+              }
+            });
+          }}
+          disabled={pending}
+          className="w-full crm-btn bg-amber-50 text-amber-700 hover:bg-amber-100 active:bg-amber-200 border border-amber-200"
+        >
+          Blob Storage konfigurieren
+        </button>
+      )}
     </div>
   );
 }

@@ -185,6 +185,9 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     try {
       const standaloneResult = await createStandaloneProject(input.slug, tenantId);
       vercelProjectId = standaloneResult.projectId;
+      if (!standaloneResult.blobConnected) {
+        standaloneError = 'Blob Storage konnte nicht automatisch konfiguriert werden. Bitte manuell über CRM konfigurieren.';
+      }
     } catch (err) {
       standaloneError = err instanceof Error ? err.message : 'Unbekannter Fehler';
       console.error('Standalone project creation failed:', standaloneError);

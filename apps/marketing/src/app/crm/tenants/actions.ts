@@ -5,7 +5,7 @@ import { getDb } from '@/lib/db';
 import { tenants, tenantDomains, globalSettings } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { addDomainToRenderer, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject } from '@/lib/vercel';
+import { addDomainToRenderer, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject } from '@/lib/vercel';
 
 export async function createTenantAction(input: ProvisionInput) {
   try {
@@ -106,5 +106,21 @@ export async function deleteTenantAction(tenantId: string) {
 
   revalidatePath('/crm');
   revalidatePath('/crm/tenants');
+  return { success: true };
+}
+
+export async function configureBlobAction(tenantId: string) {
+  const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId));
+  if (!tenant) return { success: false, error: 'Tenant nicht gefunden' };
+  if (tenant.deploymentMode !== 'standalone') return { success: false, error: 'Nur für Standalone-Tenants verfügbar' };
+
+  const projectName = `flamingo-${tenant.slug}`;
+  const result = await configureBlobForProject(projectName);
+
+  if (!result.success) {
+    return { success: false, error: result.error || 'Blob Storage konnte nicht konfiguriert werden' };
+  }
+
+  revalidatePath(`/crm/tenants/${tenantId}`);
   return { success: true };
 }

@@ -175,10 +175,10 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
       ]);
     } catch (err) {
       console.error('Failed to set BLOB_READ_WRITE_TOKEN on standalone project:', (err as Error).message);
-      throw new Error('Blob-Speicher konnte nicht konfiguriert werden. Bitte VERCEL_BLOB_STORE_ID oder BLOB_READ_WRITE_TOKEN setzen.');
+      // Don't throw — allow provisioning to continue; blob can be configured later
     }
   } else if (!blobConnected) {
-    throw new Error('Blob-Speicher konnte nicht konfiguriert werden: BLOB_READ_WRITE_TOKEN fehlt oder ist ein Placeholder. Bild-Uploads werden für diesen Tenant nicht funktionieren!');
+    console.warn('Blob storage not configured for standalone project — BLOB_READ_WRITE_TOKEN missing. Image uploads will not work until configured.');
   }
 
   // Trigger a final production deployment AFTER all env vars (incl. blob token) are set.
@@ -197,7 +197,62 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
     }
   }
 
-  return { projectId: projectId as string, projectUrl: `https://${projectName}.vercel.app` };
+  return { projectId: projectId as string, projectUrl: `https://${projectName}.vercel.app`, blobConnected };
+}
+
+/** Configure Blob storage for an existing standalone project. */
+export async function configureBlobForProject(projectName: string): Promise<{ success: boolean; error?: string }> {
+  // Get project
+  let project: Record<string, unknown>;
+  try {
+    project = await vercelFetch(`/v9/projects/${projectName}`);
+  } catch {
+    return { success: false, error: `Vercel-Projekt "${projectName}" nicht gefunden.` };
+  }
+  const projectId = project.id as string;
+
+  // Try store connection first
+  const blobStoreId = process.env.VERCEL_BLOB_STORE_ID;
+  if (blobStoreId) {
+    try {
+      await vercelFetch(`/v1/storage/stores/${blobStoreId}/connections`, 'POST', {
+        projectId,
+        environments: ['production', 'preview', 'development'],
+      });
+      // Trigger redeploy so the new env vars take effect
+      await triggerProjectDeployment(projectName);
+      return { success: true };
+    } catch (err) {
+      console.warn('Blob store connection failed:', (err as Error).message);
+    }
+  }
+
+  // Fallback: set BLOB_READ_WRITE_TOKEN explicitly
+  const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
+  if (blobToken && !blobToken.startsWith('__PLACEHOLDER')) {
+    try {
+      // Check if already set
+      const envsData = await vercelFetch(`/v9/projects/${projectId}/env`);
+      const envs = (envsData.envs || []) as { id: string; key: string }[];
+      const existing = envs.find((e) => e.key === 'BLOB_READ_WRITE_TOKEN');
+      if (existing) {
+        // Update existing
+        await vercelFetch(`/v9/projects/${projectId}/env/${existing.id}`, 'PATCH', { value: blobToken });
+      } else {
+        // Create new
+        await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', [
+          { key: 'BLOB_READ_WRITE_TOKEN', value: blobToken, target: ['production', 'preview'], type: 'encrypted' },
+        ]);
+      }
+      // Trigger redeploy
+      await triggerProjectDeployment(projectName);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: `Token konnte nicht gesetzt werden: ${(err as Error).message}` };
+    }
+  }
+
+  return { success: false, error: 'Weder VERCEL_BLOB_STORE_ID noch BLOB_READ_WRITE_TOKEN sind auf der Marketing-App konfiguriert.' };
 }
 
 /** Add a domain to a specific Vercel project. */
