@@ -6,7 +6,7 @@ import { tenants, tenantDomains, adminSecrets, globalSettings, navigation, foote
 import { hashPassword } from '@flamingo/auth';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
-import { addDomainToRenderer, createStandaloneProject, addDomainToProject, triggerProjectDeployment } from './vercel';
+import { addDomainToRenderer, createStandaloneProject, addDomainToProject, triggerProjectDeployment, configureBlobForProject } from './vercel';
 
 export type ProvisionInput = {
   name: string;
@@ -186,7 +186,15 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       const standaloneResult = await createStandaloneProject(input.slug, tenantId);
       vercelProjectId = standaloneResult.projectId;
       if (!standaloneResult.blobConnected) {
-        standaloneError = 'Blob Storage konnte nicht automatisch konfiguriert werden. Bitte manuell über CRM konfigurieren.';
+        // Auto-retry blob configuration after 30s delay
+        console.log('  ⏳ Blob nicht verbunden – warte 30s und versuche erneut...');
+        await new Promise(resolve => setTimeout(resolve, 30000));
+        const retryResult = await configureBlobForProject(`flamingo-${input.slug}`);
+        if (!retryResult.success) {
+          standaloneError = 'Blob Storage konnte nicht automatisch konfiguriert werden. Bitte manuell über CRM konfigurieren.';
+        } else {
+          console.log('  ✅ Blob Storage beim Retry erfolgreich konfiguriert');
+        }
       }
     } catch (err) {
       standaloneError = err instanceof Error ? err.message : 'Unbekannter Fehler';
