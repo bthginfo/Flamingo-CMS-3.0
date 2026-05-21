@@ -16,6 +16,7 @@ import { PageSeoPanel } from './page-seo-panel';
 import type { PageSeoPanelHandle } from './page-seo-panel';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from './section-types';
 import { SectionPickerModal } from '../../components/section-picker-modal';
+import { SectionPreviewButton } from '../../components/section-preview-button';
 
 type Section = {
   id: string;
@@ -70,6 +71,7 @@ function SortableSection({ section, industry, sectionTypes, styleVariant, onDele
           {section.titleInternal && <span className="text-xs text-gray-400">({section.titleInternal})</span>}
           {!expanded && <span className="text-[10px] text-zinc-400 ml-1">— Klicken zum Bearbeiten</span>}
         </div>
+        <SectionPreviewButton sectionType={section.type} industry={industry} style={styleVariant !== 'individual' ? styleVariant : (section.variant || 'classic')} />
         <button onClick={onToggleVisible} className="p-1 mr-2" title={section.visible ? 'Ausblenden' : 'Einblenden'}>
           {section.visible ? <Eye size={16} className="text-green-600" /> : <EyeOff size={16} className="text-gray-400" />}
         </button>
