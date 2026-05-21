@@ -514,13 +514,17 @@ function ShowcaseFooter() {
           <div>
             <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Branchen</p>
             <ul className="space-y-2">
-              <li><a href={`${DEMO_BASE}/demo/handwerk`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Handwerk</a></li>
-              <li><a href={`${DEMO_BASE}/demo/restaurant`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Restaurant</a></li>
-              <li><a href={`${DEMO_BASE}/demo/hotel`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Hotel</a></li>
-              <li><a href={`${DEMO_BASE}/demo/salon`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Salon &amp; Beauty</a></li>
-              <li><a href={`${DEMO_BASE}/demo/medical`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Arztpraxis</a></li>
-              <li><a href={`${DEMO_BASE}/demo/tourism`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Tourismus</a></li>
-              <li><a href={`${DEMO_BASE}/demo/wedding`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Hochzeit</a></li>
+              <li><a href="/demo/handwerk" className="hover:text-accent">Handwerk</a></li>
+              <li><a href="/demo/restaurant" className="hover:text-accent">Restaurant</a></li>
+              <li><a href="/demo/hotel" className="hover:text-accent">Hotel</a></li>
+              <li><a href="/demo/salon" className="hover:text-accent">Salon &amp; Beauty</a></li>
+              <li><a href="/demo/medical" className="hover:text-accent">Arztpraxis</a></li>
+              <li><a href="/demo/tourism" className="hover:text-accent">Tourismus</a></li>
+              <li><a href="/demo/wedding" className="hover:text-accent">Hochzeit</a></li>
+              <li><a href="/demo/photography" className="hover:text-accent">Fotografie</a></li>
+              <li><a href="/demo/consulting" className="hover:text-accent">Kanzlei &amp; Beratung</a></li>
+              <li><a href="/demo/realestate" className="hover:text-accent">Immobilien</a></li>
+              <li><a href="/demo/cafe" className="hover:text-accent">Café</a></li>
             </ul>
           </div>
           <div>
@@ -753,11 +757,11 @@ function ServicesSection() {
             </div>
             <h3 className="font-display text-3xl md:text-5xl leading-[1.05] tracking-tight">Branchen-Templates</h3>
             <p className="mt-6 text-base md:text-lg text-muted leading-relaxed max-w-xl">
-              Sechs Branchen live — Restaurant, Salon, Hotel, Tourismus, Arztpraxis und Handwerk.
-              Weitere folgen laufend. Live-Vorschau im Browser, Farbschema in Sekunden.
+              Elf Branchen live — Restaurant, Salon, Hotel, Tourismus, Arztpraxis, Handwerk, Hochzeit, Fotografie, Kanzlei, Immobilien und Café.
+              Live-Vorschau im Browser, Farbschema in Sekunden.
             </p>
-            <div className="mt-8 flex gap-2">
-              {['Restaurant', 'Salon', 'Hotel', 'Tourismus', 'Handwerk', 'Arztpraxis'].map((b) => (
+            <div className="mt-8 flex flex-wrap gap-2">
+              {['Restaurant', 'Salon', 'Hotel', 'Tourismus', 'Handwerk', 'Arztpraxis', 'Hochzeit', 'Fotografie', 'Kanzlei', 'Immobilien', 'Café'].map((b) => (
                 <span key={b} className="hidden md:inline-block text-[11px] font-mono uppercase tracking-widest border border-line rounded-full px-2.5 py-1 text-muted">{b}</span>
               ))}
             </div>
@@ -814,7 +818,7 @@ function ServicesSection() {
   );
 }
 
-const DEMO_BASE = 'https://flamingo-renderer.vercel.app';
+const DEMO_BASE = '';
 
 function TemplatesPreviewSection() {
   return (
@@ -1509,13 +1513,13 @@ function NumbersSection() {
             In <em className="italic-pop">Zahlen.</em>
           </h2>
           <p className="md:col-span-5 text-lg text-muted reveal">
-            Sechs Branchen live, drei Stilrichtungen, über 80 Sections — ein Admin, mit dem Du alles selbst pflegst. Kein Agentur-Ticket nötig.
+            Elf Branchen live, drei Stilrichtungen, über 80 Sections — ein Admin, mit dem Du alles selbst pflegst. Kein Agentur-Ticket nötig.
           </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 md:gap-y-0 reveal-stagger">
           {[
-            { v: 6, s: '+', l: 'Branchen-Templates' },
+            { v: 11, s: '', l: 'Branchen-Templates' },
             { v: 3, s: '', l: 'Stilrichtungen je Branche' },
             { v: 80, s: '+', l: 'Sections kombinierbar' },
             { v: 7, s: ' Tage', l: 'Bis online (Ø)' },
@@ -2045,7 +2049,7 @@ function Pricing() {
       sub: 'einmalig',
       monthly: '+ 29 € / Monat Hosting & Pflege',
       features: [
-        'Eines unserer Branchen-Templates (6 Branchen, 3 Stile)',
+        'Eines unserer Branchen-Templates (11 Branchen, 3 Stile)',
         '6 Farbschemas pro Branche – jederzeit per Klick umstellbar',
         'Admin-Bereich zum selbst pflegen',
         'Hosting & Pflege inklusive',

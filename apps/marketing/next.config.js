@@ -8,7 +8,7 @@ const nextConfig = {
     ],
   },
   async rewrites() {
-    const rendererUrl = process.env.RENDERER_URL || 'https://flamingo-renderer.vercel.app';
+    const rendererUrl = process.env.RENDERER_URL || 'https://demo.flamingomedia.online';
     return [
       {
         source: '/demo/:path*',

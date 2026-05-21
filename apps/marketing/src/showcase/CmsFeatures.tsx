@@ -3,14 +3,14 @@
 import { useState, useRef, useEffect } from 'react';
 import Seo from '@/components/Seo';
 
-const DEMO_BASE = 'https://flamingo-renderer.vercel.app';
+const DEMO_BASE = '';
 
 const FEATURES = [
   {
     badge: 'Seiten & Sektionen',
     title: 'Drag & Drop\nSeiten-Builder',
     description: 'Erstelle beliebig viele Seiten mit vorgefertigten Sektionen. Per Drag & Drop sortieren, ein- und ausblenden — ohne eine Zeile Code.',
-    highlights: ['Über 30 Sektionstypen pro Branche', 'Drag & Drop Reihenfolge', 'Ein-/Ausblenden per Klick', 'Live-Vorschau im Editor'],
+    highlights: ['Über 35 Sektionstypen pro Branche', 'Drag & Drop Reihenfolge', 'Ein-/Ausblenden per Klick', 'Live-Vorschau im Editor'],
     demoUrl: `${DEMO_BASE}/demo/admin/pages`,
   },
   {
@@ -293,7 +293,7 @@ export function CmsFeaturesTeaserSection() {
 
         <div className="grid sm:grid-cols-3 gap-6 mt-14 text-left max-w-4xl mx-auto">
           {[
-            { icon: '🧩', title: '30+ Sektionstypen', desc: 'Hero, Services, Galerie, Testimonials und mehr — per Drag & Drop.' },
+            { icon: '🧩', title: '35+ Sektionstypen', desc: 'Hero, Services, Galerie, Testimonials und mehr — per Drag & Drop.' },
             { icon: '🎨', title: '3 Stile + Individuell', desc: 'Classic, Modern oder Bold — global oder pro Sektion steuerbar.' },
             { icon: '🚀', title: 'Ein-Klick-Publishing', desc: 'Draft-Modus, Vorschau und atomares Veröffentlichen.' },
           ].map(item => (
