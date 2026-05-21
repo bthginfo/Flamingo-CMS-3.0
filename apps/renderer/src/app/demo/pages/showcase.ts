@@ -187,6 +187,92 @@ export const showcaseSite: DemoSite = {
           },
         },
         {
+          ...B, id: 'sc-handwerk', type: 'servicesGrid',
+          data: {
+            headline: '🔧 Handwerk & Meisterbetrieb',
+            subline: 'Für Installateure, Elektriker, Dachdecker und mehr.',
+            badgeText: 'Handwerk',
+            manualCards: [
+              { title: 'Notdienst-Banner', text: 'Auffälliger 24/7-Notdienst-Hinweis.', icon: 'alertTriangle', mediaType: 'icon', href: '/demo/handwerk' },
+              { title: 'Leistungs-Grid', text: 'Alle Gewerke im Überblick.', icon: 'grid3x3', mediaType: 'icon', href: '/demo/handwerk' },
+              { title: 'Prozess-Timeline', text: 'So läuft Ihr Projekt ab.', icon: 'listOrdered', mediaType: 'icon', href: '/demo/handwerk' },
+              { title: 'Referenzen-Portfolio', text: 'Abgeschlossene Projekte als Galerie.', icon: 'image', mediaType: 'icon', href: '/demo/handwerk' },
+              { title: 'Team-Vorstellung', text: 'Meister und Gesellen mit Qualifikationen.', icon: 'users', mediaType: 'icon', href: '/demo/handwerk' },
+              { title: 'Festpreisgarantie', text: 'Trust-Element mit Preisversprechen.', icon: 'shield', mediaType: 'icon', href: '/demo/handwerk' },
+              { title: 'Einzugsgebiet', text: 'Karte mit Einsatzradius.', icon: 'mapPin', mediaType: 'icon', href: '/demo/handwerk' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'sc-consulting', type: 'servicesGrid',
+          data: {
+            headline: '⚖️ Kanzlei & Beratung',
+            subline: 'Für Anwälte, Steuerberater und Unternehmensberater.',
+            badgeText: 'Beratung',
+            manualCards: [
+              { title: 'Fachgebiete', text: 'Rechtsgebiete oder Beratungsfelder im Überblick.', icon: 'scale', mediaType: 'icon', href: '/demo/consulting' },
+              { title: 'Anwalts-Team', text: 'Partner und Associates mit Spezialisierung.', icon: 'users', mediaType: 'icon', href: '/demo/consulting' },
+              { title: 'Erfolgsbilanz', text: 'Kennzahlen und gewonnene Fälle.', icon: 'barChart', mediaType: 'icon', href: '/demo/consulting' },
+              { title: 'Honorarmodelle', text: 'Transparente Kostenübersicht.', icon: 'creditCard', mediaType: 'icon', href: '/demo/consulting' },
+              { title: 'Publikationen', text: 'Fachartikel und Veröffentlichungen.', icon: 'book', mediaType: 'icon', href: '/demo/consulting' },
+              { title: 'Erstberatung-CTA', text: 'Formular zur kostenlosen Erstberatung.', icon: 'mail', mediaType: 'icon', href: '/demo/consulting/kontakt' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'sc-realestate', type: 'servicesGrid',
+          data: {
+            headline: '🏠 Immobilien',
+            subline: 'Für Makler, Hausverwaltungen und Immobilienportale.',
+            badgeText: 'Immobilien',
+            manualCards: [
+              { title: 'Objektsuche', text: 'Filterbare Immobiliensuche.', icon: 'search', mediaType: 'icon', href: '/demo/realestate' },
+              { title: 'Objekt-Showcase', text: 'Hervorgehobene Immobilien als Karussell.', icon: 'image', mediaType: 'icon', href: '/demo/realestate' },
+              { title: 'Wertermittlung-CTA', text: 'Aufruf zur kostenlosen Immobilienbewertung.', icon: 'calculator', mediaType: 'icon', href: '/demo/realestate' },
+              { title: 'Objekt-Grid', text: 'Alle Angebote als Karten-Grid.', icon: 'grid3x3', mediaType: 'icon', href: '/demo/realestate' },
+              { title: 'Makler-Team', text: 'Maklervorstellung mit Kontaktdaten.', icon: 'users', mediaType: 'icon', href: '/demo/realestate' },
+              { title: 'Verkaufte Objekte', text: 'Erfolgreich vermittelte Referenzen.', icon: 'checkCircle', mediaType: 'icon', href: '/demo/realestate' },
+              { title: 'Marktbericht', text: 'Aktuelle Zahlen zum lokalen Immobilienmarkt.', icon: 'barChart', mediaType: 'icon', href: '/demo/realestate' },
+              { title: 'Standort-Highlight', text: 'Lage und Umgebung attraktiv darstellen.', icon: 'mapPin', mediaType: 'icon', href: '/demo/realestate' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'sc-cafe', type: 'servicesGrid',
+          data: {
+            headline: '☕ Café & Bar',
+            subline: 'Für Cafés, Cocktailbars und Bistros.',
+            badgeText: 'Café',
+            manualCards: [
+              { title: 'Getränkekarte', text: 'Kaffee-Spezialitäten, Cocktails und mehr.', icon: 'coffee', mediaType: 'icon', href: '/demo/cafe' },
+              { title: 'Speisekarte', text: 'Snacks, Kuchen und kleine Gerichte.', icon: 'utensilsCrossed', mediaType: 'icon', href: '/demo/cafe' },
+              { title: 'Atmosphäre-Galerie', text: 'Eindrücke des Ambientes.', icon: 'image', mediaType: 'icon', href: '/demo/cafe' },
+              { title: 'Events & Workshops', text: 'Barista-Kurse, Tastings und Veranstaltungen.', icon: 'calendar', mediaType: 'icon', href: '/demo/cafe' },
+              { title: 'Story', text: 'Die Geschichte hinter dem Café.', icon: 'book', mediaType: 'icon', href: '/demo/cafe' },
+              { title: 'Team', text: 'Baristas und Team vorstellen.', icon: 'users', mediaType: 'icon', href: '/demo/cafe' },
+              { title: 'Tagesangebote', text: 'Wechselnde Specials und Happy Hour.', icon: 'tag', mediaType: 'icon', href: '/demo/cafe' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'sc-premium', type: 'servicesGrid',
+          data: {
+            headline: '✨ Premium-Sektionen',
+            subline: 'Hochwertige, animierte Sektionen für besondere Auftritte.',
+            badgeText: 'Premium',
+            manualCards: [
+              { title: 'Animierte Zahlen', text: 'Scroll-getriggerte Zähler mit dunklem Hintergrund & Gradient.', icon: 'barChart', mediaType: 'icon' },
+              { title: 'Bento-Grid', text: 'Asymmetrisches Feature-Grid mit Hover-Spotlight.', icon: 'grid3x3', mediaType: 'icon' },
+              { title: 'Bewertungs-Marquee', text: 'Endlos-scrollende Bewertungskarten in 2 Reihen.', icon: 'star', mediaType: 'icon' },
+              { title: 'Feature-Showcase', text: 'Großbild mit Parallax + Feature-Liste + CTA.', icon: 'sparkles', mediaType: 'icon' },
+              { title: 'Logo-Marquee', text: 'Endlos-scrollende Partner/Kunden-Logos.', icon: 'building', mediaType: 'icon' },
+              { title: 'Vergleichstabelle', text: 'Pakete oder Optionen im Vergleich.', icon: 'columns', mediaType: 'icon' },
+              { title: 'Social-Proof-Leiste', text: 'Kompakte Kennzahlen und Bewertungen.', icon: 'award', mediaType: 'icon' },
+              { title: 'Zeitleiste', text: 'Chronologischer Verlauf mit Meilensteinen.', icon: 'clock', mediaType: 'icon' },
+            ],
+          },
+        },
+        {
           ...B, id: 'sc-realestate', type: 'servicesGrid',
           data: {
             headline: '🏠 Immobilien',
