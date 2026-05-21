@@ -64,7 +64,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
       <div className="max-w-4xl mx-auto px-6">
         {/* Back link */}
         <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
-          <Link href={`${backHrefPrefix}/${collection.key}`} className="inline-flex items-center gap-2 text-sm text-brand-primary hover:underline mb-4 md:mb-8">
+          <Link href={`${backHrefPrefix}/${(collection.settings as Record<string, unknown>)?.pageSlug || collection.key}`} className="inline-flex items-center gap-2 text-sm text-brand-primary hover:underline mb-4 md:mb-8">
             <ArrowLeft size={16} />
             Zurück zu {collection.label}
           </Link>

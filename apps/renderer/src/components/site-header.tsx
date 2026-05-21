@@ -70,7 +70,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
           'transition-all duration-500',
           scrolled
             ? 'backdrop-blur-2xl shadow-lg border-b border-gray-100/50'
-            : darkBg ? 'bg-gradient-to-b from-black/40 to-transparent' : 'backdrop-blur-sm shadow-sm',
+            : darkBg ? 'bg-gradient-to-b from-black/60 to-transparent' : 'backdrop-blur-sm shadow-sm',
         )}
         style={(scrolled || !darkBg) ? { backgroundColor: brand.navBgColor || 'rgba(255,255,255,0.8)' } : undefined}
         >
@@ -91,7 +91,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                   href={item.href}
                   className={cn(
                     'text-[13px] font-medium tracking-wide uppercase transition-colors duration-300 hover:text-brand-accent',
-                    (scrolled || !darkBg) ? 'text-gray-600' : 'text-white/80',
+                    (scrolled || !darkBg) ? 'text-gray-600' : 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]',
                   )}
                 >
                   {item.label}
