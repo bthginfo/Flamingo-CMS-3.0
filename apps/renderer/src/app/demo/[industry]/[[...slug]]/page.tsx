@@ -89,9 +89,37 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
-  ]);
+  ]).catch(() => [null, null, null, null, null] as const);
 
-  if (!snapshot) return notFound();
+  // If DB data is incomplete, fall back to static demo
+  if (!snapshot || !tenantStyle || !navData || !brandData) {
+    const staticSite = getDemoSite(industry);
+    if (!staticSite) return notFound();
+    const targetSlug = slug?.join('/') || '';
+    const page = staticSite.pages.find(p =>
+      p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
+    );
+    if (!page) return notFound();
+    const siteData = getDemoSiteData(industry as IndustryKey);
+    const demoPrefix = `/demo/${industry}`;
+    return (
+      <DemoPageShell
+        sections={prefixSections(page.sections.filter(s => s.visible) as SnapshotSection[], demoPrefix)}
+        industry={staticSite.industry}
+        industryKey={industry}
+        defaultStyle={staticSite.defaultStyle}
+        siteData={{
+          navItems: siteData.navItems,
+          cta: siteData.cta,
+          brand: siteData.brand,
+          contact: siteData.contact,
+          socialLinks: siteData.socialLinks,
+          footer: siteData.footer,
+        }}
+        darkBg={page.sections[0]?.type === 'hero'}
+      />
+    );
+  }
 
   const targetSlug = slug?.join('/') || '';
   const page = snapshot.pages.find(p =>
