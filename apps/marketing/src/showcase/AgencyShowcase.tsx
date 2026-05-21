@@ -801,7 +801,7 @@ function ServicesSection() {
           >
             <div className="flex items-start justify-between">
               <span className="font-mono text-xs text-muted">04</span>
-              <span className="text-[11px] font-mono uppercase tracking-widest text-muted border border-line rounded-full px-2.5 py-1">Per Empfehlung</span>
+              <span className="text-[11px] font-mono uppercase tracking-widest text-muted border border-line rounded-full px-2.5 py-1">Sorglos-Paket</span>
             </div>
             <h3 className="mt-10 font-display text-3xl md:text-4xl leading-[1.05] tracking-tight">Hosting &amp; Pflege</h3>
             <p className="mt-5 text-sm text-muted leading-relaxed">
