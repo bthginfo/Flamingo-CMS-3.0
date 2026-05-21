@@ -363,6 +363,24 @@ export const handwerkSite: DemoSite = {
             ],
           },
         },
+        {
+          ...B, id: 'hw-contact-social', type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '500+', label: 'Projekte umgesetzt' },
+              { value: '100%', label: 'Festpreisgarantie' },
+              { value: '< 24h', label: 'Antwortzeit' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'hw-contact-cta', type: 'ctaBand',
+          data: {
+            headline: 'Jetzt unverbindlich anfragen',
+            subline: 'Kostenloser Vor-Ort-Termin inkl. Aufmaß und Beratung.',
+            ctaPrimary: { label: 'Anfrage senden', href: '#hw-contact-form' },
+          },
+        },
       ],
     },
   ],

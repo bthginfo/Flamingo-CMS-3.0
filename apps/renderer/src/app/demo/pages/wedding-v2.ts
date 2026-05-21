@@ -249,6 +249,25 @@ export const weddingSite: DemoSite = {
             note: 'Abends kann es draußen kühl werden — packt gerne einen Schal ein.',
           },
         },
+        {
+          ...B, id: 'w-ablauf-faq', type: 'faq',
+          data: {
+            headline: 'Fragen zum Ablauf',
+            items: [
+              { question: 'Wann sollte ich da sein?', answer: 'Bitte seid spätestens 13:30 Uhr vor Ort — die Trauung beginnt pünktlich um 14:00 Uhr.' },
+              { question: 'Gibt es Parkmöglichkeiten?', answer: 'Ja, direkt am Schloss gibt es kostenlose Parkplätze für ca. 80 Autos.' },
+              { question: 'Wo findet der Sektempfang statt?', answer: 'Im Schlossgarten — bei Regen im überdachten Arkadenhof.' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'w-ablauf-cta', type: 'ctaBand',
+          data: {
+            headline: 'Noch nicht zugesagt?',
+            subline: 'Wir freuen uns auf eure Rückmeldung bis zum 1. Juli.',
+            ctaPrimary: { label: 'Jetzt RSVP', href: '/demo/wedding/rsvp' },
+          },
+        },
       ],
     },
     {

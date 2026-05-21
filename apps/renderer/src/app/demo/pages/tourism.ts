@@ -656,6 +656,26 @@ export const tourismSite: DemoSite = {
             secondaryCta: { label: 'Galerie ansehen', href: '#tr-gallery-images' },
           },
         },
+        {
+          ...B, id: 'tour-gallery-social', type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '500+', label: 'Fotos in der Galerie' },
+              { value: '4', label: 'Jahreszeiten' },
+              { value: '12', label: 'Fotografen' },
+            ],
+          },
+        },
+        {
+          ...B, id: 'tour-gallery-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Stimmen unserer Besucher',
+            items: [
+              { quote: 'Die Landschaft hier ist atemberaubend — genau wie auf den Fotos!', name: 'Maria S.', context: 'Wanderurlauberin', rating: 5 },
+              { quote: 'Ein Paradies für Fotografen. Wir kommen jeden Herbst wieder.', name: 'Klaus & Ines', context: 'Naturfotografen', rating: 5 },
+            ],
+          },
+        },
       ],
     },
 

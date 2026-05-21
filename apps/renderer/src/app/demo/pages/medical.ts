@@ -755,6 +755,24 @@ export const medicalSite: DemoSite = {
             text: 'Bewahren Sie Ruhe und sichern Sie die Unfallstelle. Bei Bewusstlosigkeit prüfen Sie die Atmung und bringen die Person in die stabile Seitenlage. Bei Herzstillstand beginnen Sie sofort mit der Herzdruckmassage (30:2). Stillen Sie starke Blutungen durch Druck mit einem sauberen Tuch. Bei Verbrennungen kühlen Sie die betroffene Stelle maximal 10 Minuten mit lauwarmem Wasser. Setzen Sie immer den Notruf 112 ab, wenn Sie unsicher sind.',
           },
         },
+        {
+          ...B, type: 'socialProofBar', id: 'med-notfall-social',
+          data: {
+            items: [
+              { value: '112', label: 'Notruf' },
+              { value: '24/7', label: 'Erreichbar' },
+              { value: '< 15 Min', label: 'Eintreffzeit' },
+            ],
+          },
+        },
+        {
+          ...B, type: 'ctaBand', id: 'med-notfall-cta',
+          data: {
+            headline: 'Im Zweifel immer den Notruf wählen',
+            subline: 'Lieber einmal zu viel als einmal zu wenig — die Leitstelle hilft Ihnen weiter.',
+            ctaPrimary: { label: 'Notruf 112', href: 'tel:112' },
+          },
+        },
       ],
     },
 

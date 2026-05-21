@@ -227,6 +227,16 @@ export const consultingSite: DemoSite = {
             ctaPrimary: { label: 'Termin vereinbaren', href: '/demo/consulting/kontakt' },
           },
         },
+        {
+          ...B, id: 'con-team-social', type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '20+', label: 'Anwälte & Berater' },
+              { value: '95%', label: 'Erfolgsquote' },
+              { value: '2.500+', label: 'Mandate bearbeitet' },
+            ],
+          },
+        },
       ],
     },
     {
@@ -333,6 +343,16 @@ export const consultingSite: DemoSite = {
             headline: 'Individuelle Rechtsfrage?',
             subline: 'Unsere Fachbeiträge ersetzen keine Beratung. Lassen Sie uns Ihren konkreten Fall besprechen.',
             ctaPrimary: { label: 'Erstberatung buchen', href: '/demo/consulting/kontakt' },
+          },
+        },
+        {
+          ...B, id: 'con-news-social', type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '50+', label: 'Fachbeiträge' },
+              { value: '12', label: 'Rechtsgebiete' },
+              { value: 'Monatlich', label: 'neue Artikel' },
+            ],
           },
         },
       ],

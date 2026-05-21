@@ -535,6 +535,26 @@ export const restaurantSite: DemoSite = {
             text: '<p>Von Firmen-Weihnachtsfeiern über Hochzeitsempfänge bis hin zu Weinverkostungen mit renommierten Winzern — in über 25 Jahren haben wir hunderte unvergessliche Abende gestaltet.</p><p>Lassen Sie sich inspirieren und sprechen Sie uns an — gemeinsam planen wir Ihr perfektes Event.</p>',
           },
         },
+        {
+          ...B, id: 'rs-evt-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Stimmen unserer Event-Gäste',
+            items: [
+              { quote: 'Unsere Firmenfeier war ein voller Erfolg — die Betreuung war erstklassig!', name: 'Martin K.', context: 'Weihnachtsfeier 2024', rating: 5 },
+              { quote: 'Das Hochzeitsmenü war ein kulinarisches Highlight für alle Gäste.', name: 'Sandra & Jan', context: 'Hochzeit', rating: 5 },
+            ],
+          },
+        },
+        {
+          ...B, id: 'rs-evt-social', type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '300+', label: 'Events pro Jahr' },
+              { value: '100', label: 'Gäste max.' },
+              { value: '25+', label: 'Jahre Erfahrung' },
+            ],
+          },
+        },
       ],
     },
     {

@@ -274,6 +274,26 @@ export const cafeSite: DemoSite = {
             ctaHref: '/demo/cafe/kontakt',
           },
         },
+        {
+          ...SECTION, id: 'cf-events-social', type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '200+', label: 'Events veranstaltet' },
+              { value: '98%', label: 'zufriedene Gäste' },
+              { value: '15+', label: 'Jahre Erfahrung' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 'cf-events-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Das sagen unsere Gäste',
+            items: [
+              { quote: 'Unser Team-Event war ein voller Erfolg — tolles Ambiente, hervorragendes Catering!', name: 'Stefan B.', context: 'Firmenevent', rating: 5 },
+              { quote: 'Die Geburtstagsfeier war perfekt organisiert. Wir kommen wieder!', name: 'Julia M.', context: 'Privatfeier', rating: 5 },
+            ],
+          },
+        },
       ],
     },
     {

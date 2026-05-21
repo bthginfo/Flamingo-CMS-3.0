@@ -494,6 +494,16 @@ export const hotelSite: DemoSite = {
             secondaryCta: { label: 'Spa-Broschüre ansehen', href: '#' },
           },
         },
+        {
+          ...B, type: 'testimonials', id: 'ht-well-testimonials',
+          data: {
+            headline: 'Gästestimmen zum Spa',
+            items: [
+              { quote: 'Die beste Massage meines Lebens — absolut himmlisch!', name: 'Claudia R.', context: 'Wellness-Wochenende', rating: 5 },
+              { quote: 'Pool mit Bergblick — davon träume ich noch heute.', name: 'Andreas M.', context: 'Sommerurlaub', rating: 5 },
+            ],
+          },
+        },
       ],
     },
 
@@ -594,8 +604,15 @@ export const hotelSite: DemoSite = {
             headline: 'Weinkeller & Saisonale Highlights',
             body: '<p>Unser Weinkeller beherbergt über 200 sorgfältig ausgewählte Positionen – von österreichischen Spitzenweinen über Südtiroler Raritäten bis hin zu internationalen Klassikern. Sommelier Jakob Steiner berät Sie gerne zu jedem Gang.</p><p><strong>Saisonale Highlights:</strong></p><ul><li><strong>Frühling:</strong> Spargelwochen mit Weißburgunder-Begleitung und Bärlauch-Kreationen aus dem Hotelgarten</li><li><strong>Sommer:</strong> BBQ-Abende auf der Panorama-Terrasse mit Gin & Tonic Bar</li><li><strong>Herbst:</strong> Wildwochen mit edlen Rotweinen und hausgemachten Chutneys</li><li><strong>Winter:</strong> Fondue- und Raclette-Abende am offenen Feuer, begleitet von heißem Glühwein nach Hausrezept</li></ul>',
           },
-        },
-      ],
+        },        {
+          ...B, type: 'ctaBand', id: 'ht-rest-cta',
+          data: {
+            headline: 'Tisch reservieren',
+            subline: 'Genießen Sie 2-Hauben-Küche mit Blick auf die Kitzbüheler Alpen.',
+            primaryCta: { label: 'Reservierung', href: '/demo/hotel/kontakt' },
+            secondaryCta: { label: 'Speisekarte ansehen', href: '#' },
+          },
+        },      ],
     },
 
     // ─── 5. MEETINGS & EVENTS ──────────────────────────────────
@@ -778,8 +795,16 @@ export const hotelSite: DemoSite = {
             primaryCta: { label: 'Zimmer buchen', href: '/demo/hotel/zimmer' },
             secondaryCta: { label: 'Kontakt aufnehmen', href: '/demo/hotel/kontakt' },
           },
-        },
-      ],
+        },        {
+          ...B, type: 'socialProofBar', id: 'ht-gal-social',
+          data: {
+            items: [
+              { value: '200+', label: 'Fotos' },
+              { value: '4', label: 'Jahreszeiten' },
+              { value: '10+', label: 'Fotografen' },
+            ],
+          },
+        },      ],
     },
 
     // ─── 7. KONTAKT & ANREISE ──────────────────────────────────

@@ -378,6 +378,16 @@ export const photographySite: DemoSite = {
             ctaPrimary: { label: 'Jetzt Kontakt aufnehmen', href: '/demo/photography/kontakt' },
           },
         },
+        {
+          ...B, id: 'ph-about-testimonials', type: 'testimonials',
+          data: {
+            headline: 'Was meine Kunden sagen',
+            items: [
+              { quote: 'Lisa hat unsere Hochzeit so wunderschön festgehalten — wir schauen uns die Fotos täglich an!', name: 'Anna & Max', context: 'Hochzeit 2024', rating: 5 },
+              { quote: 'Professionell, emp athisch und unglaublich talentiert. Absolute Empfehlung!', name: 'Sarah K.', context: 'Portraitshooting', rating: 5 },
+            ],
+          },
+        },
       ],
     },
     {
@@ -465,8 +475,14 @@ export const photographySite: DemoSite = {
             badgeText: 'Location',
             content: 'Mein Studio befindet sich in Mainz-Bretzenheim, nur 5 Minuten von der A60 entfernt. Kostenlose Parkplätze sind direkt vor der Tür verfügbar. Für Kennenlerngespräche könnt ihr gerne vorbeikommen – oder wir treffen uns gemütlich im Café eurer Wahl.',
           },
-        },
-      ],
+        },        {
+          ...B, id: 'ph-contact-cta', type: 'ctaBand',
+          data: {
+            headline: 'Bereit für unvergessliche Bilder?',
+            subline: 'Schreibt mir und erzählt von euren Plänen — ich freu mich auf euch!',
+            ctaPrimary: { label: 'Unverbindlich anfragen', href: '#ph-contact-form' },
+          },
+        },      ],
     },
   ],
 };

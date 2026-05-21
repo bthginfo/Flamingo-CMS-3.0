@@ -327,6 +327,24 @@ export const realestateSite: DemoSite = {
             text: '**Bürozeiten:**\nMontag – Freitag: 09:00 – 18:00 Uhr\nSamstag: nach Vereinbarung\nSonntag & Feiertage: geschlossen\n\n**Anfahrt:**\nUnser Büro befindet sich im Rheinauhafen, Rheinuferstraße 12, 50676 Köln. Parkmöglichkeiten finden Sie im Parkhaus Rheinauhafen (2 Min. Fußweg). Mit der KVB erreichen Sie uns über die Haltestelle Ubierring (Linie 15/16).',
           },
         },
+        {
+          ...SECTION, id: 're-contact-social', type: 'socialProofBar',
+          data: {
+            items: [
+              { value: '500+', label: 'Immobilien vermittelt' },
+              { value: '98%', label: 'Kundenzufriedenheit' },
+              { value: '< 24h', label: 'Antwortzeit' },
+            ],
+          },
+        },
+        {
+          ...SECTION, id: 're-contact-cta', type: 'ctaBand',
+          data: {
+            headline: 'Ihre Immobilie in besten Händen',
+            subline: 'Vereinbaren Sie jetzt einen unverbindlichen Beratungstermin.',
+            ctaPrimary: { label: 'Termin buchen', href: '#re-contact-form' },
+          },
+        },
       ],
     },
   ],
