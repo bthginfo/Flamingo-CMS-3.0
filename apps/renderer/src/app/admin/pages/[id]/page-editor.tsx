@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useTransition, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useTransition, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, ExternalLink, Rocket, MonitorPlay, Search, X } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, ExternalLink, Rocket, MonitorPlay } from 'lucide-react';
 import { usePreview } from '@/components/admin/preview-context';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -15,6 +15,7 @@ import { IndustrySectionDataEditor } from './industry-section-editor';
 import { PageSeoPanel } from './page-seo-panel';
 import type { PageSeoPanelHandle } from './page-seo-panel';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from './section-types';
+import { SectionPickerModal } from '../../components/section-picker-modal';
 
 type Section = {
   id: string;
@@ -151,104 +152,7 @@ function SectionMetaEditor({ section, styleVariant, onSave }: { section: Section
   );
 }
 
-function SectionPickerModal({ sectionTypes, onSelect, onClose }: { sectionTypes: SectionTypeDefinition[]; onSelect: (type: string) => void; onClose: () => void }) {
-  const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => { inputRef.current?.focus(); }, []);
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) { if (e.key === 'Escape') onClose(); }
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [onClose]);
-
-  const grouped = useMemo(() => {
-    const g: Record<string, SectionTypeDefinition[]> = {};
-    for (const st of sectionTypes) {
-      const cat = st.category || 'Sonstiges';
-      (g[cat] ??= []).push(st);
-    }
-    return Object.entries(g);
-  }, [sectionTypes]);
-
-  const filtered = useMemo(() => {
-    const q = search.toLowerCase().trim();
-    return grouped.map(([cat, items]) => {
-      if (activeCategory && cat !== activeCategory) return null;
-      const filtered = q ? items.filter(i => i.label.toLowerCase().includes(q) || i.description.toLowerCase().includes(q) || i.type.toLowerCase().includes(q)) : items;
-      if (filtered.length === 0) return null;
-      return [cat, filtered] as [string, SectionTypeDefinition[]];
-    }).filter(Boolean) as [string, SectionTypeDefinition[]][];
-  }, [grouped, search, activeCategory]);
-
-  const categories = grouped.map(([cat]) => cat);
-
-  return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
-        {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-4 border-b">
-          <Search size={18} className="text-gray-400 shrink-0" />
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Sektion suchen..."
-            className="flex-1 text-sm outline-none bg-transparent"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-          <button onClick={onClose} className="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600">
-            <X size={18} />
-          </button>
-        </div>
-
-        {/* Category tabs */}
-        <div className="flex gap-1.5 px-5 py-2.5 border-b overflow-x-auto scrollbar-hide">
-          <button
-            onClick={() => setActiveCategory(null)}
-            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${!activeCategory ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-100'}`}
-          >
-            Alle
-          </button>
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
-              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${activeCategory === cat ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-100'}`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Section list */}
-        <div className="flex-1 overflow-y-auto px-5 py-3">
-          {filtered.length === 0 && (
-            <div className="text-center py-12 text-gray-400 text-sm">Keine Sektionen gefunden.</div>
-          )}
-          {filtered.map(([cat, items]) => (
-            <div key={cat} className="mb-4">
-              <div className="text-[10px] font-semibold uppercase tracking-wide mb-2 text-gray-400">{cat}</div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {items.map(st => (
-                  <button
-                    key={st.type}
-                    onClick={() => onSelect(st.type)}
-                    className="text-left p-3 rounded-lg border border-gray-100 hover:border-blue-300 hover:bg-blue-50/50 transition-all group"
-                  >
-                    <div className="font-medium text-sm text-gray-900 group-hover:text-blue-700 transition-colors">{st.label}</div>
-                    <div className="text-xs text-gray-400 mt-0.5 line-clamp-2">{st.description}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+// SectionPickerModal is imported from shared component
 
 export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic' }: { page: Page; sections: Section[]; industry: string; styleVariant?: string }) {
   const [page, setPage] = useState(initialPage);

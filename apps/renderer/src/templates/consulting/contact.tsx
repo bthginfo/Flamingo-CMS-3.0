@@ -1,8 +1,9 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
+import { Send, CheckCircle, AlertCircle } from 'lucide-react';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -15,6 +16,8 @@ export function ConsultingContactSection({ data }: Props) {
   const hours = (data.hours as string[]) || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
 
   return (
     <div ref={ref}>
@@ -71,13 +74,42 @@ export function ConsultingContactSection({ data }: Props) {
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.3 }} className="bg-slate-50 rounded-xl p-8 border border-slate-200">
           <h3 className="font-semibold text-slate-900 mb-4">Ihr Anliegen schildern</h3>
-          <form className="space-y-4" onSubmit={e => e.preventDefault()}>
-            <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="Vorname" className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20" />
-              <input type="text" placeholder="Nachname" className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20" />
+          {status === 'success' ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center gap-3">
+              <CheckCircle className="text-green-500" size={40} />
+              <p className="text-lg font-semibold text-gray-900">Vielen Dank!</p>
+              <p className="text-sm text-gray-500">Wir melden uns innerhalb von 24 Stunden bei Ihnen.</p>
+              <button type="button" onClick={() => setStatus('idle')} className="text-sm text-brand-primary hover:underline mt-2">Neue Anfrage</button>
             </div>
-            <input type="email" placeholder="E-Mail" className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20" />
-            <select className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-primary/20">
+          ) : (
+          <form className="space-y-4" onSubmit={async (e) => {
+            e.preventDefault();
+            setStatus('loading');
+            const form = e.currentTarget;
+            const fd = new FormData(form);
+            const payload: Record<string, string> = {
+              name: `${fd.get('firstName') || ''} ${fd.get('lastName') || ''}`.trim(),
+              email: String(fd.get('email') || ''),
+              message: `Rechtsgebiet: ${fd.get('subject') || 'Nicht angegeben'}\n\n${fd.get('message') || ''}`,
+              _page: window.location.pathname,
+            };
+            try {
+              const res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+              if (res.ok) { setStatus('success'); form.reset(); }
+              else { const d = await res.json(); setErrorMsg(d.error || 'Fehler beim Senden.'); setStatus('error'); }
+            } catch { setErrorMsg('Verbindungsfehler.'); setStatus('error'); }
+          }}>
+            {status === 'error' && (
+              <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
+                <AlertCircle size={16} />{errorMsg}
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-4">
+              <input name="firstName" type="text" required placeholder="Vorname" className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20" />
+              <input name="lastName" type="text" required placeholder="Nachname" className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20" />
+            </div>
+            <input name="email" type="email" required placeholder="E-Mail" className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary/20" />
+            <select name="subject" className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-primary/20">
               <option>Rechtsgebiet wählen</option>
               <option>Arbeitsrecht</option>
               <option>Familienrecht</option>
@@ -86,11 +118,13 @@ export function ConsultingContactSection({ data }: Props) {
               <option>Strafrecht</option>
               <option>Sonstiges</option>
             </select>
-            <textarea rows={4} placeholder="Kurze Beschreibung Ihres Anliegens" className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-primary/20" />
-            <button type="submit" className="w-full py-3 bg-brand-primary text-white font-semibold rounded-lg hover:bg-brand-dark transition-colors">
-              Erstberatung anfragen
+            <textarea name="message" rows={4} required placeholder="Kurze Beschreibung Ihres Anliegens" className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-primary/20" />
+            <button type="submit" disabled={status === 'loading'} className="w-full py-3 bg-brand-primary text-white font-semibold rounded-lg hover:bg-brand-dark transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
+              <Send size={16} />
+              {status === 'loading' ? 'Wird gesendet…' : 'Erstberatung anfragen'}
             </button>
           </form>
+          )}
         </motion.div>
       </div>
     </div>

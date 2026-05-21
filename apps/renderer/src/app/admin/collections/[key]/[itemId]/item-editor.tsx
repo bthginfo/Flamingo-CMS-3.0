@@ -12,6 +12,7 @@ import { publishAction } from '@/app/admin/actions/publish';
 import { PageSectionsProvider } from '@/components/button-field';
 import { IndustrySectionDataEditor } from '../../../pages/[id]/industry-section-editor';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from '../../../pages/[id]/section-types';
+import { SectionPickerModal } from '../../../components/section-picker-modal';
 import { ItemSeoPanel } from './item-seo-panel';
 import type { ItemSeoPanelHandle } from './item-seo-panel';
 import { toast } from 'sonner';
@@ -327,31 +328,16 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
         )}
 
         {/* Add Section */}
-        <div className="mt-4 relative">
+        <div className="mt-4">
           <button onClick={() => setShowAddMenu(!showAddMenu)} className="admin-btn-primary w-full flex items-center justify-center gap-2">
             <Plus size={18} /> Sektion hinzufügen
           </button>
           {showAddMenu && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white border rounded-lg shadow-lg max-h-80 overflow-auto z-10">
-              {(() => {
-                const grouped: Record<string, typeof sectionTypes> = {};
-                for (const st of sectionTypes) {
-                  const cat = st.category || 'Branchenspezifisch';
-                  (grouped[cat] ??= []).push(st);
-                }
-                return Object.entries(grouped).map(([cat, items]) => (
-                  <div key={cat}>
-                    <div className="px-4 py-1.5 bg-gray-50 text-[10px] font-semibold text-gray-500 uppercase tracking-wide sticky top-0">{cat}</div>
-                    {items.map((st) => (
-                      <button key={st.type} onClick={() => handleAddSection(st.type)} className="w-full text-left px-4 py-2.5 hover:bg-blue-50 border-b last:border-b-0">
-                        <span className="font-medium text-sm">{st.label}</span>
-                        <span className="text-xs text-gray-500 ml-2">{st.description}</span>
-                      </button>
-                    ))}
-                  </div>
-                ));
-              })()}
-            </div>
+            <SectionPickerModal
+              sectionTypes={sectionTypes}
+              onSelect={handleAddSection}
+              onClose={() => setShowAddMenu(false)}
+            />
           )}
         </div>
 

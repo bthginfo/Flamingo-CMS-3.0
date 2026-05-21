@@ -15,6 +15,20 @@ export function PropertySearchSection({ data }: Props) {
   const inView = useInView(ref, { once: true });
   const [activeCategory, setActiveCategory] = useState(0);
 
+  const [searched, setSearched] = useState(false);
+
+  function handleSearch() {
+    setSearched(true);
+    // Scroll to property showcase section below
+    const section = ref.current as HTMLElement | null;
+    if (section) {
+      const next = section.nextElementSibling;
+      if (next) {
+        next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }
+
   return (
     <section ref={ref} className="py-16 md:py-20" style={bgColor ? { backgroundColor: bgColor } : undefined}>
       <div className="max-w-4xl mx-auto px-6">
@@ -69,9 +83,9 @@ export function PropertySearchSection({ data }: Props) {
             </div>
           </div>
 
-          <button className="mt-6 w-full md:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-brand-primary text-white font-semibold rounded-lg hover:bg-brand-dark transition-colors cursor-pointer">
+          <button onClick={handleSearch} className="mt-6 w-full md:w-auto flex items-center justify-center gap-2 px-8 py-3.5 bg-brand-primary text-white font-semibold rounded-lg hover:bg-brand-dark transition-colors cursor-pointer">
             <Search size={18} />
-            Immobilien suchen
+            {searched ? 'Ergebnisse unten' : 'Immobilien suchen'}
           </button>
         </motion.div>
       </div>
