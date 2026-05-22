@@ -25,20 +25,20 @@ export default async function TenantsPage() {
   function TenantCard({ t }: { t: typeof tenantList[number] }) {
     const tDomains = domainMap.get(t.id) || [];
     return (
-      <Link href={`/crm/tenants/${t.id}`} className="crm-card p-5 hover:border-indigo-300 hover:shadow-sm transition-all group block">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-lg font-bold text-slate-600 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors">
+      <Link href={`/crm/tenants/${t.id}`} className="crm-card p-4 sm:p-5 hover:border-indigo-300 hover:shadow-sm transition-all group block">
+        <div className="flex items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-100 flex items-center justify-center text-base sm:text-lg font-bold text-slate-600 group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors shrink-0">
               {t.name.charAt(0).toUpperCase()}
             </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">{t.name}</h3>
-              <div className="flex items-center gap-3 mt-0.5 text-xs text-slate-400">
+            <div className="min-w-0">
+              <h3 className="font-semibold text-slate-900 truncate">{t.name}</h3>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5 text-xs text-slate-400">
                 <span className="font-mono">{t.slug}</span>
-                <span>·</span>
+                <span className="hidden sm:inline">·</span>
                 <span className="capitalize">{t.industry}</span>
-                <span>·</span>
-                <span>Stil: {t.activeStyle}</span>
+                <span className="hidden sm:inline">·</span>
+                <span className="hidden sm:inline">Stil: {t.activeStyle}</span>
               </div>
               {tDomains.length > 0 && (
                 <div className="flex items-center gap-1.5 mt-1 text-xs text-indigo-600">
@@ -59,13 +59,13 @@ export default async function TenantsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Tenants</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Tenants</h1>
           <p className="text-sm text-slate-500 mt-1">{tenantList.length} Tenant{tenantList.length !== 1 ? 's' : ''} registriert</p>
         </div>
         <Link href="/crm/tenants/new" className="crm-btn-primary">
-          <Plus size={16} /> Neuer Tenant
+          <Plus size={16} /> <span className="hidden sm:inline">Neuer Tenant</span><span className="sm:hidden">Neu</span>
         </Link>
       </div>
 

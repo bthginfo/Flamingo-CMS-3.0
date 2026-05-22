@@ -37,18 +37,18 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
       </Link>
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-2xl font-bold text-slate-600">
+      <div className="flex items-start justify-between mb-6 sm:mb-8">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-xl sm:text-2xl font-bold text-slate-600 shrink-0">
             {tenant.name.charAt(0).toUpperCase()}
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">{tenant.name}</h1>
-            <div className="flex items-center gap-3 mt-1 text-sm text-slate-500">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">{tenant.name}</h1>
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-xs sm:text-sm text-slate-500">
               <span className="font-mono">{tenant.slug}</span>
-              <span>·</span>
+              <span className="hidden sm:inline">·</span>
               <span className="capitalize">{tenant.industry}</span>
-              <span>·</span>
+              <span className="hidden sm:inline">·</span>
               <span className={tenant.status === 'active' ? 'crm-badge-green' : tenant.status === 'provisioning' ? 'crm-badge-amber' : 'crm-badge-red'}>{tenant.status}</span>
               {tenant.deploymentMode === 'standalone' && <span className="crm-badge-amber">Standalone</span>}
             </div>
@@ -56,11 +56,11 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left column */}
-        <div className="col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3 sm:gap-4">
             <div className="crm-card p-4 text-center">
               <FileText size={18} className="mx-auto mb-1.5 text-slate-400" />
               <p className="text-2xl font-bold text-slate-900">{tenantPages.length}</p>

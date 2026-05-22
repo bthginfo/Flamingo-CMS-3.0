@@ -19,13 +19,13 @@ export default async function CrmDashboard() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Dashboard</h1>
           <p className="text-sm text-slate-500 mt-1">Übersicht aller Tenants und Systeme</p>
         </div>
         <Link href="/crm/tenants/new" className="crm-btn-primary">
-          <Plus size={16} /> Neuer Tenant
+          <Plus size={16} /> <span className="hidden sm:inline">Neuer Tenant</span><span className="sm:hidden">Neu</span>
         </Link>
       </div>
 

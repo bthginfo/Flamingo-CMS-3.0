@@ -76,19 +76,19 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Leads</h1>
-        <button onClick={openNew} className="inline-flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">
-          <Plus size={16} /> Neuer Lead
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900">Leads</h1>
+        <button onClick={openNew} className="inline-flex items-center gap-2 bg-indigo-600 text-white px-3 sm:px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">
+          <Plus size={16} /> <span className="hidden sm:inline">Neuer Lead</span><span className="sm:hidden">Neu</span>
         </button>
       </div>
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowForm(false)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 space-y-4" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowForm(false)}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-lg p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold">{editId ? 'Lead bearbeiten' : 'Neuer Lead'}</h2>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="col-span-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="col-span-1 sm:col-span-2">
                 <label className="text-xs font-medium text-slate-500">Firma *</label>
                 <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} />
               </div>
@@ -139,9 +139,10 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
         </div>
       )}
 
-      {/* Table */}
+      {/* Table (desktop) / Cards (mobile) */}
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <table className="w-full text-sm">
+        {/* Desktop table */}
+        <table className="hidden sm:table w-full text-sm">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200 text-left">
               <th className="px-4 py-3 font-medium text-slate-500">Firma</th>
@@ -191,6 +192,44 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
             ))}
           </tbody>
         </table>
+
+        {/* Mobile cards */}
+        <div className="sm:hidden divide-y divide-slate-100">
+          {leads.length === 0 && (
+            <div className="p-10 text-center text-slate-400">Noch keine Leads.</div>
+          )}
+          {leads.map(lead => (
+            <div key={lead.id} className="p-4 space-y-2" onClick={() => openEdit(lead)}>
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-slate-900">{lead.company}</span>
+                <select
+                  value={lead.status}
+                  onClick={e => e.stopPropagation()}
+                  onChange={e => { e.stopPropagation(); handleStatusChange(lead.id, e.target.value as LeadStatus); }}
+                  className={`text-xs font-medium px-2.5 py-1 rounded-full border-0 ${STATUS_COLORS[lead.status]}`}
+                >
+                  <option value="offen">Offen</option>
+                  <option value="kontaktiert">Kontaktiert</option>
+                  <option value="angenommen">Angenommen</option>
+                  <option value="abgelehnt">Abgelehnt</option>
+                </select>
+              </div>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                {lead.location && <span>{lead.location}</span>}
+                {lead.email && <span>{lead.email}</span>}
+                {lead.contact && <span>{lead.contact}</span>}
+              </div>
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-xs text-slate-400">{lead.responsible}</span>
+                <div className="flex items-center gap-3" onClick={e => e.stopPropagation()}>
+                  {lead.websiteOld && <a href={lead.websiteOld.startsWith('http') ? lead.websiteOld : `https://${lead.websiteOld}`} target="_blank" rel="noopener noreferrer" className="text-slate-400"><ExternalLink size={14} /></a>}
+                  {lead.flamingoLink && <a href={lead.flamingoLink.startsWith('http') ? lead.flamingoLink : `https://${lead.flamingoLink}`} target="_blank" rel="noopener noreferrer" className="text-indigo-400"><ExternalLink size={14} /></a>}
+                  <button onClick={() => handleDelete(lead.id)} className="text-slate-300 hover:text-red-500"><Trash2 size={14} /></button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

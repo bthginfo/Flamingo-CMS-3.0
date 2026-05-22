@@ -97,7 +97,7 @@ export default function NewTenantPage() {
         {/* Basic info */}
         <div className="crm-card p-5 space-y-4">
           <h2 className="font-semibold text-slate-900 text-sm uppercase tracking-wide text-slate-500">Grunddaten</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="crm-label">Firmenname *</label>
               <input className="crm-input" value={form.name} onChange={e => handleNameChange(e.target.value)} placeholder="Müller & Söhne GmbH" />
@@ -107,7 +107,7 @@ export default function NewTenantPage() {
               <input className="crm-input font-mono" value={form.slug} onChange={e => setForm(f => ({ ...f, slug: e.target.value }))} placeholder="mueller-soehne" />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="crm-label">Branche *</label>
               <select className="crm-select" value={form.industry} onChange={e => setForm(f => ({ ...f, industry: e.target.value }))}>
@@ -132,7 +132,7 @@ export default function NewTenantPage() {
             <label className="crm-label">Tagline</label>
             <input className="crm-input" value={form.tagline} onChange={e => setForm(f => ({ ...f, tagline: e.target.value }))} placeholder="Ihr Experte für..." />
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="crm-label">Primärfarbe</label>
               <div className="flex items-center gap-2">
@@ -160,7 +160,7 @@ export default function NewTenantPage() {
         {/* Contact */}
         <div className="crm-card p-5 space-y-4">
           <h2 className="font-semibold text-sm uppercase tracking-wide text-slate-500">Kontakt</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="crm-label">Telefon</label>
               <input className="crm-input" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} placeholder="0221 / 98 76 54 0" />
@@ -189,7 +189,7 @@ export default function NewTenantPage() {
         {/* Deployment Mode */}
         <div className="crm-card p-5 space-y-4">
           <h2 className="font-semibold text-sm uppercase tracking-wide text-slate-500">Deployment</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <button
               type="button"
               onClick={() => setForm(f => ({ ...f, deploymentMode: 'shared' }))}
