@@ -296,12 +296,19 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     });
   }
 
+  const colorDebounceRef = useRef<Record<string, NodeJS.Timeout>>({});
+
   function handleSaveColorOverrides(sectionId: string, overrides: Record<string, unknown> | null) {
     setSections(prev => prev.map(s => s.id === sectionId ? { ...s, styleOverrides: overrides } : s));
-    startTransition(async () => {
-      await updateSectionMetaAction(sectionId, { styleOverrides: overrides }, page.id);
-      toast.success('Farben gespeichert');
-    });
+    // Debounce server save + toast per section
+    if (colorDebounceRef.current[sectionId]) clearTimeout(colorDebounceRef.current[sectionId]);
+    colorDebounceRef.current[sectionId] = setTimeout(() => {
+      delete colorDebounceRef.current[sectionId];
+      startTransition(async () => {
+        await updateSectionMetaAction(sectionId, { styleOverrides: overrides }, page.id);
+        toast.success('Farben gespeichert');
+      });
+    }, 600);
   }
 
 

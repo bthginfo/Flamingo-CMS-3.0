@@ -242,10 +242,16 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
     toast.success('Einstellungen übernommen');
   }
 
+  const colorDebounceRef = useRef<Record<string, NodeJS.Timeout>>({});
+
   function handleSaveColorOverrides(sectionId: string, overrides: Record<string, unknown> | null) {
     setSections(prev => prev.map(s => s.id === sectionId ? { ...s, styleOverrides: overrides } : s));
     markDirty();
-    toast.success('Farben übernommen');
+    if (colorDebounceRef.current[sectionId]) clearTimeout(colorDebounceRef.current[sectionId]);
+    colorDebounceRef.current[sectionId] = setTimeout(() => {
+      delete colorDebounceRef.current[sectionId];
+      toast.success('Farben übernommen');
+    }, 600);
   }
 
   async function handleSaveAll() {
