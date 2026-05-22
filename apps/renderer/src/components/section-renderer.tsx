@@ -71,10 +71,15 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
 
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);
 
+  // Per-section color overrides (from CMS) applied as inline CSS vars
+  const overrideStyle = section.styleOverrides
+    ? Object.fromEntries(Object.entries(section.styleOverrides).filter(([, v]) => v)) as React.CSSProperties
+    : undefined;
+
   if (isFullBleed) {
     const isDark = !FULL_BLEED_LIGHT.has(section.type);
     return (
-      <section id={section.anchorId ?? undefined} {...(isDark ? { 'data-theme': 'dark' } : {})}>
+      <section id={section.anchorId ?? undefined} {...(isDark ? { 'data-theme': 'dark' } : {})} style={overrideStyle}>
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
         </SectionErrorBoundary>
@@ -87,7 +92,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   const containerClass = CONTAINER[section.container] ?? CONTAINER.default;
 
   return (
-    <section id={section.anchorId ?? undefined} className={`${spacingClass} ${spacingBottomClass}`}>
+    <section id={section.anchorId ?? undefined} className={`${spacingClass} ${spacingBottomClass}`} style={overrideStyle}>
       <div className={containerClass}>
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />

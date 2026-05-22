@@ -115,7 +115,7 @@ export async function updateSectionAction(sectionId: string, data: Record<string
   return { success: true };
 }
 
-export async function updateSectionMetaAction(sectionId: string, meta: { visible?: boolean; titleInternal?: string; variant?: string; container?: string; spacingTop?: string; spacingBottom?: string; anchorId?: string }, pageId?: string) {
+export async function updateSectionMetaAction(sectionId: string, meta: { visible?: boolean; titleInternal?: string; variant?: string; container?: string; spacingTop?: string; spacingBottom?: string; anchorId?: string; styleOverrides?: Record<string, unknown> | null }, pageId?: string) {
   const session = await requireSession();
   const db = getDb();
   const result = await db.update(pageSections).set({ ...meta, updatedAt: new Date() }).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId))).returning({ id: pageSections.id });

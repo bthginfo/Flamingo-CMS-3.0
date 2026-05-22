@@ -22,6 +22,7 @@ export type SnapshotSection = {
   spacingBottom: string;
   anchorId: string | null;
   data: Record<string, unknown>;
+  styleOverrides?: Record<string, unknown> | null;
 };
 
 export type SnapshotCollectionItem = {
@@ -110,6 +111,7 @@ export async function getDraftSnapshot(tenantId: string): Promise<Snapshot | nul
         spacingBottom: s.spacingBottom,
         anchorId: s.anchorId,
         data: s.data,
+        styleOverrides: s.styleOverrides,
       })),
   }));
 
