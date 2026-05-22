@@ -16,7 +16,7 @@ export function HeroSection({ data, styleVariant }: Props) {
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
   const badgeIcon = (data.badgeIcon as string) || 'Shield';
-  const badgeStarsIcon = (data.badgeStarsIcon as string) || 'Star';
+  const badgeStarsIcon = (data.badgeStarsIcon as string) || '';
   const trustItems = (data.trustItems as string[]) || [];
   const trustStripColor = (data.trustStripColor as string) || '';
   const bgImage = (data.bgImage as string) || '';
@@ -43,7 +43,7 @@ type HeroProps = {
   subline: string;
   badgeText: string;
   badgeIcon: string;
-  badgeStarsIcon: string;
+  badgeStarsIcon: string;  // empty = no stars shown
   trustItems: string[];
   bgImage: string;
   bgImageMobile?: string;
