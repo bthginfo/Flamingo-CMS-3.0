@@ -44,12 +44,13 @@ type Page = {
   type: string;
 };
 
-function SortableSection({ section, industry, sectionTypes, styleVariant, resolvedVars, onDelete, onToggleVisible, onChangeData, onSaveMeta, onSaveColorOverrides }: {
+function SortableSection({ section, industry, sectionTypes, styleVariant, resolvedVars, iframeRef, onDelete, onToggleVisible, onChangeData, onSaveMeta, onSaveColorOverrides }: {
   section: Section;
   industry: string;
   sectionTypes: SectionTypeDefinition[];
   styleVariant: string;
   resolvedVars: Record<string, string>;
+  iframeRef: React.RefObject<HTMLIFrameElement | null>;
   onDelete: () => void;
   onToggleVisible: () => void;
   onChangeData: (data: Record<string, unknown>) => void;
@@ -89,7 +90,7 @@ function SortableSection({ section, industry, sectionTypes, styleVariant, resolv
       {expanded && (
         <div className="p-4">
           <IndustrySectionDataEditor industry={industry} type={section.type} data={section.data} onChange={stableOnChange} />
-          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} resolvedVars={resolvedVars} />
+          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} resolvedVars={resolvedVars} iframeRef={iframeRef} sectionId={section.id} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
             <SectionMetaEditor section={section} styleVariant={styleVariant} onSave={onSaveMeta} />
@@ -357,6 +358,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
               sectionTypes={sectionTypes}
               styleVariant={styleVariant}
               resolvedVars={resolvedVars}
+              iframeRef={preview.iframeRef}
               onDelete={() => handleDeleteSection(section.id)}
               onToggleVisible={() => handleToggleVisible(section.id)}
               onChangeData={(data) => handleSectionChange(section.id, data)}

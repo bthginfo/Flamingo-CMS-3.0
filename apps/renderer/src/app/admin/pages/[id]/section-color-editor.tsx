@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Palette } from 'lucide-react';
 
 type ColorOverrides = Record<string, string>;
@@ -174,13 +174,46 @@ function getFieldsForSection(sectionType: string): ColorFieldKey[] {
   return SECTION_FIELDS[sectionType] || ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor'];
 }
 
-export function SectionColorEditor({ value, onChange, sectionType, resolvedVars }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string; resolvedVars?: Record<string, string> }) {
+export function SectionColorEditor({ value, onChange, sectionType, resolvedVars, iframeRef, sectionId }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string; resolvedVars?: Record<string, string>; iframeRef?: React.RefObject<HTMLIFrameElement | null>; sectionId?: string }) {
   const [open, setOpen] = useState(false);
+  const [computedVars, setComputedVars] = useState<Record<string, string>>({});
   const overrides = value || {};
   const activeCount = Object.values(overrides).filter(Boolean).length;
   const fields = sectionType ? getFieldsForSection(sectionType) : Object.keys(FIELD_DEFS) as ColorFieldKey[];
 
+  // Read computed styles from preview iframe when opened
+  const readComputedStyles = useCallback(() => {
+    if (!iframeRef?.current || !sectionId) return;
+    try {
+      const doc = iframeRef.current.contentDocument;
+      if (!doc) return;
+      const el = doc.querySelector(`[data-section-id="${CSS.escape(sectionId)}"]`);
+      if (!el) return;
+      const styles = getComputedStyle(el);
+      const result: Record<string, string> = {};
+      for (const fieldKey of fields) {
+        const def = FIELD_DEFS[fieldKey];
+        if (!def) continue;
+        const val = styles.getPropertyValue(def.cssVar).trim();
+        if (val) result[def.cssVar] = val;
+      }
+      // Also read common fallback vars
+      const extras = ['--style-text-primary', '--style-text-secondary', '--brand-primary', '--brand-accent', '--brand-dark', '--style-card-bg', '--style-section-bg'];
+      for (const v of extras) {
+        const val = styles.getPropertyValue(v).trim();
+        if (val) result[v] = val;
+      }
+      setComputedVars(result);
+    } catch { /* cross-origin or iframe not ready */ }
+  }, [iframeRef, sectionId, fields]);
+
+  useEffect(() => {
+    if (open) readComputedStyles();
+  }, [open, readComputedStyles]);
+
   const getResolvedColor = (cssVar: string): string | undefined => {
+    // Prefer computed (100% accurate) over static fallback
+    if (computedVars[cssVar]) return computedVars[cssVar];
     if (!resolvedVars) return undefined;
     if (resolvedVars[cssVar]) return resolvedVars[cssVar];
     // Fallback chain for granular vars
@@ -195,7 +228,8 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars 
       '--brand-btn-text': '--brand-dark',
     };
     const fb = fallbacks[cssVar];
-    return fb ? resolvedVars[fb] || undefined : undefined;
+    if (fb) return computedVars[fb] || resolvedVars[fb] || undefined;
+    return undefined;
   };
 
   const handleChange = (key: string, color: string) => {
