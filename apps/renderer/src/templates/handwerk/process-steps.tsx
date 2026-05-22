@@ -27,8 +27,8 @@ function ProcessClassic({ headline, badgeText, steps }: PProps) {
 
   return (
     <div ref={ref} className="relative">
-      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] opacity-40 rounded-4xl" />
-      <div className="relative bg-gradient-to-br from-surface to-white rounded-4xl p-8 sm:p-12 lg:p-20 border border-gray-100/50">
+      <div className="absolute inset-0 bg-[radial-gradient(var(--style-text-muted,#e5e7eb)_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.15] rounded-4xl" />
+      <div className="relative rounded-4xl p-8 sm:p-12 lg:p-20" style={{ background: 'var(--style-card-bg, linear-gradient(to bottom right, var(--surface, #f8fafc), white))', borderColor: 'color-mix(in srgb, var(--style-text-primary, #111) 8%, transparent)', borderWidth: '1px' }}>
         <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-10 md:mb-16">
           {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
           {headline && <h2 className="section-headline">{headline}</h2>}
