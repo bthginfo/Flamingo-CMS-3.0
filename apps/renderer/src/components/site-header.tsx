@@ -79,7 +79,25 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-[72px]">
             <Link href={homeHref} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || (!isHeroDark)) ? (brand.navBrandColor || brand.primaryColor) : 'white' }}>
               {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
-                <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto object-contain" />
+                brand.navLogoColor ? (
+                  <span
+                    className="inline-block h-9 w-[140px]"
+                    style={{
+                      backgroundColor: (scrolled || (!isHeroDark)) ? brand.navLogoColor : 'white',
+                      WebkitMaskImage: `url(${brand.logoUrl})`,
+                      WebkitMaskSize: 'contain',
+                      WebkitMaskRepeat: 'no-repeat',
+                      WebkitMaskPosition: 'left center',
+                      maskImage: `url(${brand.logoUrl})`,
+                      maskSize: 'contain',
+                      maskRepeat: 'no-repeat',
+                      maskPosition: 'left center',
+                    }}
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto object-contain" />
+                )
               )}
               {(brand.logoDisplay === 'logoAndName' || brand.logoDisplay === 'name' || !brand.logoUrl) && (
                 <span>{brand.companyName || 'Firmenname'}</span>
