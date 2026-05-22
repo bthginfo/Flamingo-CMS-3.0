@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { IndustrySectionDataEditor } from './industry-section-editor';
 import { SectionColorEditor } from './section-color-editor';
 import { getStyleCssVars } from '@/lib/styles';
+import { getBrandCssVars } from '@/lib/brand-colors';
 import { PageSeoPanel } from './page-seo-panel';
 import type { PageSeoPanelHandle } from './page-seo-panel';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from './section-types';
@@ -160,11 +161,11 @@ function SectionMetaEditor({ section, styleVariant, onSave }: { section: Section
 
 // SectionPickerModal is imported from shared component
 
-export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic' }: { page: Page; sections: Section[]; industry: string; styleVariant?: string }) {
+export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {} }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string> }) {
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
   const sectionTypes = getSectionTypesForIndustry(industry);
-  const resolvedVars = getStyleCssVars(industry, styleVariant);
+  const resolvedVars = { ...getStyleCssVars(industry, styleVariant), ...getBrandCssVars(brand) };
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);

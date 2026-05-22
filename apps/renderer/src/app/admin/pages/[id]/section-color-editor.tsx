@@ -191,6 +191,8 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars 
       '--style-icon-color': '--brand-primary',
       '--style-border-color': '--style-card-border',
       '--style-divider-color': '--style-card-border',
+      '--brand-btn-bg': '--brand-accent',
+      '--brand-btn-text': '--brand-dark',
     };
     const fb = fallbacks[cssVar];
     return fb ? resolvedVars[fb] || undefined : undefined;
