@@ -18,6 +18,7 @@ type AutoResponse = {
   enabled: boolean;
   subject: string;
   body: string;
+  notificationEmail?: string;
 };
 
 const DEFAULT_FIELDS: FormField[] = [
@@ -144,6 +145,17 @@ export default function ContactFormSettingsPage() {
         <button type="button" onClick={addField} className="mt-4 flex items-center gap-2 text-sm text-brand-primary hover:underline">
           <Plus size={16} /> Feld hinzufügen
         </button>
+      </div>
+
+      {/* Notification Email */}
+      <div className="admin-card p-6 mb-6">
+        <h2 className="font-semibold text-lg mb-4">Benachrichtigungs-E-Mail</h2>
+        <p className="text-zinc-500 text-sm mb-4">An diese Adresse wird eine schön formatierte Benachrichtigung gesendet, wenn jemand das Kontaktformular ausfüllt.</p>
+        <div>
+          <label className="admin-label">E-Mail-Adresse für Benachrichtigungen</label>
+          <input className="admin-input" type="email" value={autoResponse.notificationEmail || ''} onChange={e => setAutoResponse(a => ({ ...a, notificationEmail: e.target.value }))} placeholder="info@ihre-firma.de" />
+          <p className="text-xs text-zinc-400 mt-1">Leer = Benachrichtigung geht an die SMTP-Absenderadresse</p>
+        </div>
       </div>
 
       {/* Auto-Response Settings */}

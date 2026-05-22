@@ -35,7 +35,8 @@ if (!SMTP_ENVS[3].value) {
 }
 
 async function addEnvVar(projectId: string, env: { key: string; value: string }) {
-  const res = await fetch(`https://api.vercel.com/v10/projects/${projectId}/env`, {
+  const teamParam = process.env.VERCEL_TEAM_ID ? `?teamId=${process.env.VERCEL_TEAM_ID}` : '';
+  const res = await fetch(`https://api.vercel.com/v10/projects/${projectId}/env${teamParam}`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${VERCEL_TOKEN}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({

@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
         .limit(1);
 
       const smtp = settings?.smtp as { host: string; port: number; user: string; pass: string; from: string } | null;
-      const autoResponse = settings?.autoResponse as { enabled: boolean; subject: string; body: string } | null;
+      const autoResponse = settings?.autoResponse as { enabled: boolean; subject: string; body: string; notificationEmail?: string } | null;
 
       // Use tenant SMTP if configured, otherwise fall back to platform SMTP from env
       const effectiveSmtp = (smtp?.host && smtp?.user && smtp?.pass && smtp?.from)
@@ -87,27 +87,65 @@ export async function POST(req: NextRequest) {
           auth: { user: effectiveSmtp.user, pass: effectiveSmtp.pass },
         });
 
-        // Build field summary for notification
-        const fieldLines = Object.entries(sanitizedFields)
-          .map(([key, val]) => `${key}: ${val}`)
-          .join('\n');
+        // Build HTML field rows for notification
+        const fieldRows = Object.entries(sanitizedFields)
+          .map(([key, val]) => `<tr><td style="padding:8px 12px;font-weight:600;color:#374151;border-bottom:1px solid #f3f4f6;white-space:nowrap">${key}</td><td style="padding:8px 12px;color:#1f2937;border-bottom:1px solid #f3f4f6">${String(val).replace(/\n/g, '<br>')}</td></tr>`)
+          .join('');
+
+        const notificationHtml = `
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb">
+<div style="max-width:600px;margin:0 auto;padding:32px 16px">
+  <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+    <div style="background:linear-gradient(135deg,#1a5276,#2e86c1);padding:24px 32px">
+      <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:600">Eine neue Anfrage von Ihrem Kontaktformular</h1>
+    </div>
+    <div style="padding:24px 32px">
+      <p style="margin:0 0 16px;color:#6b7280;font-size:14px">Sie haben eine neue Nachricht über Ihre Website erhalten:</p>
+      <table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;background:#f9fafb">${fieldRows}</table>
+      ${_page ? `<p style="margin:16px 0 0;color:#9ca3af;font-size:12px">Gesendet von: ${_page}</p>` : ''}
+    </div>
+    <div style="padding:16px 32px;background:#f9fafb;border-top:1px solid #e5e7eb">
+      <p style="margin:0;color:#9ca3af;font-size:11px">Diese E-Mail wurde automatisch von Ihrem Kontaktformular generiert.</p>
+    </div>
+  </div>
+</div>
+</body></html>`;
+
+        const notificationTo = autoResponse?.notificationEmail || effectiveSmtp.from;
 
         // 1) Notification email to business owner
         await transporter.sendMail({
           from: effectiveSmtp.from,
-          to: effectiveSmtp.from,
-          subject: `Neue Kontaktanfrage von ${name}`,
-          text: `Neue Anfrage über das Kontaktformular:\n\n${fieldLines}\n\nSeite: ${_page || '-'}`,
+          to: notificationTo,
+          subject: `Eine neue Anfrage von Ihrem Kontaktformular`,
+          html: notificationHtml,
         });
 
         // 2) Auto-response email to sender
-        if (autoResponse?.enabled && autoResponse.subject && autoResponse.body) {
-          const responseBody = autoResponse.body.replace(/\{name\}/g, name);
+        if (autoResponse?.enabled && autoResponse.subject && autoResponse.body && email) {
+          const responseBody = autoResponse.body.replace(/\{name\}/g, name || '');
+          const autoResponseHtml = `
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb">
+<div style="max-width:600px;margin:0 auto;padding:32px 16px">
+  <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+    <div style="background:linear-gradient(135deg,#1a5276,#2e86c1);padding:24px 32px">
+      <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:600">${autoResponse.subject}</h1>
+    </div>
+    <div style="padding:24px 32px">
+      <p style="margin:0;color:#374151;font-size:15px;line-height:1.6;white-space:pre-line">${responseBody}</p>
+    </div>
+    <div style="padding:16px 32px;background:#f9fafb;border-top:1px solid #e5e7eb">
+      <p style="margin:0;color:#9ca3af;font-size:11px">Diese E-Mail wurde automatisch versendet. Bitte antworten Sie nicht direkt auf diese Nachricht.</p>
+    </div>
+  </div>
+</div>
+</body></html>`;
+
           await transporter.sendMail({
             from: effectiveSmtp.from,
             to: email,
             subject: autoResponse.subject,
-            text: responseBody,
+            html: autoResponseHtml,
           });
         }
       }
