@@ -171,7 +171,7 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
 };
 
 function getFieldsForSection(sectionType: string): ColorFieldKey[] {
-  return SECTION_FIELDS[sectionType] || ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor'];
+  return SECTION_FIELDS[sectionType] || ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText'];
 }
 
 export function SectionColorEditor({ value, onChange, sectionType, resolvedVars, iframeRef, sectionId }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string; resolvedVars?: Record<string, string>; iframeRef?: React.RefObject<HTMLIFrameElement | null>; sectionId?: string }) {
