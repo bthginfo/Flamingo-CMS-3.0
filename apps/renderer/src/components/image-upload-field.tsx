@@ -92,7 +92,9 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
         resizeImage(file, 1920, 0.85),
         generateBlurDataUrl(file),
       ]);
-      const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, {
+      const isSvg = optimized.type === 'image/svg+xml' || optimized.name.toLowerCase().endsWith('.svg');
+      const uploadName = isSvg ? file.name : file.name.replace(/\.[^.]+$/, '.webp');
+      const blob = await upload(uploadName, optimized, {
         access: 'public',
         handleUploadUrl: '/api/upload',
       });
@@ -101,7 +103,7 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
         blobUrl: blob.url,
         pathname: blob.pathname,
         filename: optimized.name,
-        mimeType: optimized.type || 'image/webp',
+        mimeType: isSvg ? 'image/svg+xml' : (optimized.type || 'image/webp'),
         size: optimized.size,
         blurDataUrl,
       }).catch(() => {}); // non-blocking
