@@ -173,6 +173,8 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
   // Connect shared Blob store to the new project (provides BLOB_READ_WRITE_TOKEN automatically)
   const blobStoreId = process.env.VERCEL_BLOB_STORE_ID;
   let blobConnected = false;
+  const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
+
   if (blobStoreId) {
     try {
       await vercelFetch(`/v1/storage/stores/${blobStoreId}/connections`, 'POST', {
@@ -180,31 +182,38 @@ export async function createStandaloneProject(slug: string, tenantId: string): P
         environments: ['production', 'preview', 'development'],
       });
       blobConnected = true;
-
-      // Wait for env var to propagate (Vercel injects BLOB_READ_WRITE_TOKEN async after store connection)
-      for (let attempt = 0; attempt < 5; attempt++) {
-        const envsData = await vercelFetch(`/v9/projects/${projectId}/env`);
-        const envs = (envsData.envs || []) as { key: string }[];
-        if (envs.some((e) => e.key === 'BLOB_READ_WRITE_TOKEN')) break;
-        await new Promise((r) => setTimeout(r, 1500));
-      }
     } catch (err) {
-      console.warn('Blob store connection failed, falling back to explicit token:', (err as Error).message);
+      console.warn('Blob store connection failed:', (err as Error).message);
     }
   }
-  // Fallback: set BLOB_READ_WRITE_TOKEN explicitly if store connection failed or no store ID
-  const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
-  if (!blobConnected && blobToken && !blobToken.startsWith('__PLACEHOLDER')) {
+
+  // Always also set BLOB_READ_WRITE_TOKEN explicitly as env var for reliability
+  if (blobToken && !blobToken.startsWith('__PLACEHOLDER')) {
     try {
       await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', [
         { key: 'BLOB_READ_WRITE_TOKEN', value: blobToken, target: ['production', 'preview'], type: 'encrypted' },
       ]);
+      blobConnected = true;
     } catch (err) {
-      console.error('Failed to set BLOB_READ_WRITE_TOKEN on standalone project:', (err as Error).message);
-      // Don't throw — allow provisioning to continue; blob can be configured later
+      const msg = (err as Error).message || '';
+      if (msg.includes('ENV_CONFLICT') || msg.includes('already exists')) {
+        // Already set (e.g. by store connection) — update it to ensure correct value
+        try {
+          const envsData = await vercelFetch(`/v9/projects/${projectId}/env`) as { envs: Array<{ id: string; key: string }> };
+          const existing = envsData.envs?.find((e) => e.key === 'BLOB_READ_WRITE_TOKEN');
+          if (existing) {
+            await vercelFetch(`/v9/projects/${projectId}/env/${existing.id}`, 'PATCH', { value: blobToken, target: ['production', 'preview'], type: 'encrypted' });
+          }
+          blobConnected = true;
+        } catch (updateErr) {
+          console.warn('Failed to update BLOB_READ_WRITE_TOKEN:', (updateErr as Error).message);
+        }
+      } else {
+        console.warn('Failed to set BLOB_READ_WRITE_TOKEN:', msg);
+      }
     }
   } else if (!blobConnected) {
-    console.warn('Blob storage not configured for standalone project — BLOB_READ_WRITE_TOKEN missing. Image uploads will not work until configured.');
+    console.warn('Blob storage not configured — neither VERCEL_BLOB_STORE_ID connected nor BLOB_READ_WRITE_TOKEN available.');
   }
 
   // Trigger a final production deployment AFTER all env vars (incl. blob token) are set.
@@ -245,37 +254,37 @@ export async function configureBlobForProject(projectName: string): Promise<{ su
         projectId,
         environments: ['production', 'preview', 'development'],
       });
-      // Trigger redeploy so the new env vars take effect
-      await triggerProjectDeployment(projectName);
-      return { success: true };
     } catch (err) {
       console.warn('Blob store connection failed:', (err as Error).message);
     }
   }
 
-  // Fallback: set BLOB_READ_WRITE_TOKEN explicitly
+  // Always set BLOB_READ_WRITE_TOKEN explicitly for reliability
   const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
   if (blobToken && !blobToken.startsWith('__PLACEHOLDER')) {
     try {
-      // Check if already set
       const envsData = await vercelFetch(`/v9/projects/${projectId}/env`);
       const envs = (envsData.envs || []) as { id: string; key: string }[];
       const existing = envs.find((e) => e.key === 'BLOB_READ_WRITE_TOKEN');
       if (existing) {
-        // Update existing
         await vercelFetch(`/v9/projects/${projectId}/env/${existing.id}`, 'PATCH', { value: blobToken });
       } else {
-        // Create new
         await vercelFetch(`/v10/projects/${projectId}/env`, 'POST', [
           { key: 'BLOB_READ_WRITE_TOKEN', value: blobToken, target: ['production', 'preview'], type: 'encrypted' },
         ]);
       }
-      // Trigger redeploy
-      await triggerProjectDeployment(projectName);
-      return { success: true };
     } catch (err) {
       return { success: false, error: `Token konnte nicht gesetzt werden: ${(err as Error).message}` };
     }
+    // Trigger redeploy
+    await triggerProjectDeployment(projectName);
+    return { success: true };
+  }
+
+  // If store connection worked but no explicit token available, still redeploy
+  if (blobStoreId) {
+    await triggerProjectDeployment(projectName);
+    return { success: true };
   }
 
   return { success: false, error: 'Weder VERCEL_BLOB_STORE_ID noch BLOB_READ_WRITE_TOKEN sind auf der Marketing-App konfiguriert.' };
