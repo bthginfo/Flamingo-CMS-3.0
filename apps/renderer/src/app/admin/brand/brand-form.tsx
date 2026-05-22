@@ -9,7 +9,7 @@ import { usePreview } from '@/components/admin/preview-context';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { ImageUploadField } from '@/components/image-upload-field';
 
-type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; dividerColor?: string; btnRadius?: string; cardRadius?: string };
+type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; dividerColor?: string; btnRadius?: string; cardRadius?: string };
 
 const GOOGLE_FONTS = [
   { value: '', label: 'Standard (Outfit / Inter)' },
@@ -56,6 +56,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     footerTextColor: initial.footerTextColor || '',
     navLinkColor: initial.navLinkColor || '',
     navBgColor: initial.navBgColor || '',
+    navBrandColor: initial.navBrandColor || '',
     headingColor: initial.headingColor || '',
     bodyTextColor: initial.bodyTextColor || '',
     mutedTextColor: initial.mutedTextColor || '',
@@ -243,6 +244,15 @@ export function BrandForm({ initial }: { initial: BrandData }) {
               <input type="color" value={form.navBgColor || '#ffffff'} onChange={e => setForm(f => ({ ...f, navBgColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
               <input className="admin-input flex-1" value={form.navBgColor} onChange={e => setForm(f => ({ ...f, navBgColor: e.target.value }))} placeholder="Leer = Weiß transluzent" />
               {form.navBgColor && <button type="button" onClick={() => setForm(f => ({ ...f, navBgColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Markenname / Logo-Farbe</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Farbe des Firmennamens in der Navigation</p>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.navBrandColor || form.primaryColor} onChange={e => setForm(f => ({ ...f, navBrandColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.navBrandColor} onChange={e => setForm(f => ({ ...f, navBrandColor: e.target.value }))} placeholder="Leer = Primärfarbe" />
+              {form.navBrandColor && <button type="button" onClick={() => setForm(f => ({ ...f, navBrandColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
             </div>
           </div>
           <div>
