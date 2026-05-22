@@ -11,6 +11,7 @@ import { updateItemAction } from '../../actions';
 import { publishAction } from '@/app/admin/actions/publish';
 import { PageSectionsProvider } from '@/components/button-field';
 import { IndustrySectionDataEditor } from '../../../pages/[id]/industry-section-editor';
+import { SectionColorEditor } from '../../../pages/[id]/section-color-editor';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from '../../../pages/[id]/section-types';
 import { SectionPickerModal } from '../../../components/section-picker-modal';
 import { ItemSeoPanel } from './item-seo-panel';
@@ -27,6 +28,7 @@ type Section = {
   spacingBottom: string;
   anchorId: string | null;
   data: Record<string, unknown>;
+  styleOverrides?: Record<string, unknown> | null;
 };
 
 type Item = {
@@ -42,7 +44,7 @@ function generateId() {
   return crypto.randomUUID();
 }
 
-function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVisible, onChangeData, onSaveMeta }: {
+function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVisible, onChangeData, onSaveMeta, onSaveColorOverrides }: {
   section: Section;
   industry: string;
   sectionTypes: SectionTypeDefinition[];
@@ -50,6 +52,7 @@ function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVi
   onToggleVisible: () => void;
   onChangeData: (data: Record<string, unknown>) => void;
   onSaveMeta: (meta: Partial<Section>) => void;
+  onSaveColorOverrides: (overrides: Record<string, unknown> | null) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   // Stabilize onChange ref to prevent useReport re-fires after parent re-render
@@ -83,6 +86,7 @@ function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVi
       {expanded && (
         <div className="p-4">
           <IndustrySectionDataEditor industry={industry} type={section.type} data={section.data} onChange={stableOnChange} />
+          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
             <SectionMetaEditor section={section} onSave={onSaveMeta} />
@@ -238,6 +242,12 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
     toast.success('Einstellungen übernommen');
   }
 
+  function handleSaveColorOverrides(sectionId: string, overrides: Record<string, unknown> | null) {
+    setSections(prev => prev.map(s => s.id === sectionId ? { ...s, styleOverrides: overrides } : s));
+    markDirty();
+    toast.success('Farben übernommen');
+  }
+
   async function handleSaveAll() {
     setSaving(true);
     try {
@@ -316,6 +326,7 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
                 onToggleVisible={() => handleToggleVisible(section.id)}
                 onChangeData={(data) => handleSectionChange(section.id, data)}
                 onSaveMeta={(meta) => handleSaveMeta(section.id, meta)}
+                onSaveColorOverrides={(overrides) => handleSaveColorOverrides(section.id, overrides)}
               />
             ))}
           </SortableContext>

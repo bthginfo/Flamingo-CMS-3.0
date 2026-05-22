@@ -302,12 +302,12 @@ html {
 @layer components {
   .section-headline {
     @apply font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] text-center;
-    color: var(--style-text-primary, inherit);
+    color: var(--style-heading-color, var(--style-text-primary, inherit));
   }
 
   .section-subline {
     @apply text-lg sm:text-xl max-w-2xl mx-auto mt-5 text-center leading-relaxed;
-    color: var(--style-text-secondary, #64748b);
+    color: var(--style-subheading-color, var(--style-text-secondary, #64748b));
   }
 
   .section-badge {
@@ -316,6 +316,35 @@ html {
     background: var(--style-badge-bg, rgba(26, 82, 118, 0.05));
     border: 1px solid var(--style-badge-border, rgba(26, 82, 118, 0.1));
     color: var(--style-badge-text, var(--brand-primary));
+  }
+
+  /* Per-section body text, icons, borders, dividers */
+  [data-style] section[style*="--style-body-color"] .text-gray-500,
+  [data-style] section[style*="--style-body-color"] .text-gray-600,
+  [data-style] section[style*="--style-body-color"] .text-gray-400,
+  [data-style] section[style*="--style-body-color"] .text-slate-500,
+  [data-style] section[style*="--style-body-color"] .text-slate-600,
+  [data-style] section[style*="--style-body-color"] .rt-content {
+    color: var(--style-body-color) !important;
+  }
+
+  [data-style] section[style*="--style-icon-color"] .text-brand-primary svg,
+  [data-style] section[style*="--style-icon-color"] [class*="text-brand-primary"] svg {
+    color: var(--style-icon-color) !important;
+  }
+
+  [data-style] section[style*="--style-border-color"] .border-gray-100,
+  [data-style] section[style*="--style-border-color"] .border-gray-200 {
+    border-color: var(--style-border-color) !important;
+  }
+
+  [data-style] section[style*="--style-divider-color"] .divide-gray-100 > * + *,
+  [data-style] section[style*="--style-divider-color"] .border-b {
+    border-color: var(--style-divider-color) !important;
+  }
+
+  [data-style] section[style*="--style-section-bg"] {
+    background-color: var(--style-section-bg) !important;
   }
 
   .btn-primary {

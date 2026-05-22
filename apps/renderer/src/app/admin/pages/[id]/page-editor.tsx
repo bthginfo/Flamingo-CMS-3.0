@@ -86,7 +86,7 @@ function SortableSection({ section, industry, sectionTypes, styleVariant, onDele
       {expanded && (
         <div className="p-4">
           <IndustrySectionDataEditor industry={industry} type={section.type} data={section.data} onChange={stableOnChange} />
-          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} />
+          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
             <SectionMetaEditor section={section} styleVariant={styleVariant} onSave={onSaveMeta} />
