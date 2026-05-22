@@ -34,7 +34,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
   const hoverItems = cards.map(c => ({
     title: c.title,
     description: c.text || '',
-    icon: c.mediaType === 'image' && c.image ? undefined : (c.icon ? <DynamicIcon name={c.icon} size={24} className="text-brand-primary" /> : undefined),
+    icon: c.mediaType === 'image' && c.image ? undefined : (c.icon ? <DynamicIcon name={c.icon} size={24} style={{ color: 'var(--style-icon-color, var(--brand-primary))' }} /> : undefined),
     image: c.mediaType === 'image' ? c.image : undefined,
     link: c.href || undefined,
   }));
@@ -81,7 +81,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
           const inner = (
             <div className="flex items-start gap-6">
               {card.icon && (
-                <div className="shrink-0 w-10 h-10 flex items-center justify-center text-gray-300 group-hover:text-brand-primary transition-colors">
+                <div className="shrink-0 w-10 h-10 flex items-center justify-center transition-colors" style={{ color: 'var(--style-icon-color, var(--brand-primary))' }}>
                   <DynamicIcon name={card.icon} size={28} />
                 </div>
               )}
@@ -142,7 +142,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
             <>
               {card.icon && (
                 <div className="w-12 h-12 bg-brand-dark flex items-center justify-center mb-4">
-                  <DynamicIcon name={card.icon} size={20} className="text-brand-accent" />
+                  <DynamicIcon name={card.icon} size={20} style={{ color: 'var(--style-icon-color, var(--brand-accent))' }} />
                 </div>
               )}
               <h3 className="font-bold text-base uppercase tracking-wide text-gray-900">{card.title}</h3>

@@ -42,7 +42,7 @@ function ProcessClassic({ headline, badgeText, steps }: PProps) {
               <motion.div key={i} initial={{ opacity: 0, x: -30 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.15 }} className="flex gap-8 md:gap-12 items-start group">
                 <div className="shrink-0 relative z-10">
                   <div className="w-16 h-16 rounded-2xl bg-white shadow-lg border border-gray-100 flex items-center justify-center group-hover:shadow-glow group-hover:scale-110 transition-all">
-                    {step.icon ? <DynamicIcon name={step.icon} size={24} className="text-brand-primary" /> : <span className="font-bold text-brand-primary text-lg">{i + 1}</span>}
+                    {step.icon ? <DynamicIcon name={step.icon} size={24} style={{ color: 'var(--style-icon-color, var(--brand-primary))' }} /> : <span className="font-bold text-lg" style={{ color: 'var(--style-icon-color, var(--brand-primary))' }}>{i + 1}</span>}
                   </div>
                 </div>
                 <div className="pt-3">
