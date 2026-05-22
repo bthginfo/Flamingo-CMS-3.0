@@ -319,35 +319,35 @@ html {
   }
 
   /* Per-section body text, icons, borders, dividers */
-  [data-style] section[style*="--style-body-color"] .text-gray-500,
-  [data-style] section[style*="--style-body-color"] .text-gray-600,
-  [data-style] section[style*="--style-body-color"] .text-gray-400,
-  [data-style] section[style*="--style-body-color"] .text-slate-500,
-  [data-style] section[style*="--style-body-color"] .text-slate-600,
-  [data-style] section[style*="--style-body-color"] .rt-content {
+  section[style*="--style-body-color"] .text-gray-500,
+  section[style*="--style-body-color"] .text-gray-600,
+  section[style*="--style-body-color"] .text-gray-400,
+  section[style*="--style-body-color"] .text-slate-500,
+  section[style*="--style-body-color"] .text-slate-600,
+  section[style*="--style-body-color"] .rt-content {
     color: var(--style-body-color) !important;
   }
 
-  [data-style] section[style*="--style-icon-color"] .text-brand-primary,
-  [data-style] section[style*="--style-icon-color"] .text-brand-accent,
-  [data-style] section[style*="--style-icon-color"] .text-brand-secondary,
-  [data-style] section[style*="--style-icon-color"] [class*="text-brand-primary"],
-  [data-style] section[style*="--style-icon-color"] [class*="text-brand-accent"],
-  [data-style] section[style*="--style-icon-color"] [class*="text-brand-secondary"] {
+  section[style*="--style-icon-color"] .text-brand-primary,
+  section[style*="--style-icon-color"] .text-brand-accent,
+  section[style*="--style-icon-color"] .text-brand-secondary,
+  section[style*="--style-icon-color"] [class*="text-brand-primary"],
+  section[style*="--style-icon-color"] [class*="text-brand-accent"],
+  section[style*="--style-icon-color"] [class*="text-brand-secondary"] {
     color: var(--style-icon-color) !important;
   }
 
-  [data-style] section[style*="--style-border-color"] .border-gray-100,
-  [data-style] section[style*="--style-border-color"] .border-gray-200 {
+  section[style*="--style-border-color"] .border-gray-100,
+  section[style*="--style-border-color"] .border-gray-200 {
     border-color: var(--style-border-color) !important;
   }
 
-  [data-style] section[style*="--style-divider-color"] .divide-gray-100 > * + *,
-  [data-style] section[style*="--style-divider-color"] .border-b {
+  section[style*="--style-divider-color"] .divide-gray-100 > * + *,
+  section[style*="--style-divider-color"] .border-b {
     border-color: var(--style-divider-color) !important;
   }
 
-  [data-style] section[style*="--style-section-bg"] {
+  section[style*="--style-section-bg"] {
     background-color: var(--style-section-bg) !important;
   }
 
