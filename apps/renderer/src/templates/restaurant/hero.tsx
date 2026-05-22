@@ -12,7 +12,7 @@ export function RestaurantHeroSection({ data, styleVariant }: SectionProps) {
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
   const badgeIcon = (data.badgeIcon as string) || 'UtensilsCrossed';
-  const badgeStarsIcon = (data.badgeStarsIcon as string) || 'Star';
+  const badgeStarsIcon = (data.badgeStarsIcon as string) || '';
   const bgImage = (data.bgImage as string) || '';
   const bgImageMobile = (data.bgImageMobile as string) || '';
   const bgColor = (data.bgColor as string) || '';
