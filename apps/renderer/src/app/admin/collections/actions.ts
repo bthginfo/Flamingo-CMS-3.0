@@ -2,7 +2,7 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { collections, collectionItems, tenants } from '@flamingo/db';
+import { collections, collectionItems, tenants, globalSettings } from '@flamingo/db';
 import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -130,6 +130,7 @@ export async function getItemWithIndustryAction(itemId: string) {
   const db = getDb();
   const [item] = await db.select().from(collectionItems).where(and(eq(collectionItems.id, itemId), eq(collectionItems.tenantId, session.tenantId)));
   if (!item) return null;
-  const [tenant] = await db.select({ industry: tenants.industry }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1);
-  return { item, industry: tenant?.industry ?? 'tradesman' };
+  const [tenant] = await db.select({ industry: tenants.industry, activeStyle: tenants.activeStyle }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1);
+  const [brandResult] = await db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1);
+  return { item, industry: tenant?.industry ?? 'tradesman', styleVariant: tenant?.activeStyle ?? 'classic', brand: (brandResult?.brand as Record<string, string>) || {} };
 }

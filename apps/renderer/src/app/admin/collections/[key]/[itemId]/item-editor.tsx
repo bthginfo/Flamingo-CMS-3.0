@@ -16,6 +16,8 @@ import { getSectionTypesForIndustry, type SectionTypeDefinition } from '../../..
 import { SectionPickerModal } from '../../../components/section-picker-modal';
 import { ItemSeoPanel } from './item-seo-panel';
 import type { ItemSeoPanelHandle } from './item-seo-panel';
+import { getStyleCssVars } from '@/lib/styles';
+import { getBrandCssVars } from '@/lib/brand-colors';
 import { toast } from 'sonner';
 
 type Section = {
@@ -44,10 +46,11 @@ function generateId() {
   return crypto.randomUUID();
 }
 
-function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVisible, onChangeData, onSaveMeta, onSaveColorOverrides }: {
+function SortableSection({ section, industry, sectionTypes, resolvedVars, onDelete, onToggleVisible, onChangeData, onSaveMeta, onSaveColorOverrides }: {
   section: Section;
   industry: string;
   sectionTypes: SectionTypeDefinition[];
+  resolvedVars: Record<string, string>;
   onDelete: () => void;
   onToggleVisible: () => void;
   onChangeData: (data: Record<string, unknown>) => void;
@@ -86,7 +89,7 @@ function SortableSection({ section, industry, sectionTypes, onDelete, onToggleVi
       {expanded && (
         <div className="p-4">
           <IndustrySectionDataEditor industry={industry} type={section.type} data={section.data} onChange={stableOnChange} />
-          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} />
+          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} resolvedVars={resolvedVars} sectionId={section.id} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
             <SectionMetaEditor section={section} onSave={onSaveMeta} />
@@ -144,7 +147,7 @@ function SectionMetaEditor({ section, onSave }: { section: Section; onSave: (met
   );
 }
 
-export function ItemEditor({ item: initial, collectionKey, industry }: { item: Item; collectionKey: string; industry: string }) {
+export function ItemEditor({ item: initial, collectionKey, industry, styleVariant = 'classic', brand = {} }: { item: Item; collectionKey: string; industry: string; styleVariant?: string; brand?: Record<string, string> }) {
   const [item, setItem] = useState(initial);
   const [sections, setSections] = useState<Section[]>(
     ((initial.data.sections as Section[]) || []).map(s => ({ ...s, id: s.id || generateId(), visible: s.visible !== false }))
@@ -152,6 +155,7 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
   const previewUrl = `/c/${collectionKey}/${item.slug}`;
   const preview = usePreview();
   const sectionTypes = getSectionTypesForIndustry(industry);
+  const resolvedVars = { ...getStyleCssVars(industry, styleVariant), ...getBrandCssVars(brand) };
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -328,6 +332,7 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
                 section={section}
                 industry={industry}
                 sectionTypes={sectionTypes}
+                resolvedVars={resolvedVars}
                 onDelete={() => handleDeleteSection(section.id)}
                 onToggleVisible={() => handleToggleVisible(section.id)}
                 onChangeData={(data) => handleSectionChange(section.id, data)}
