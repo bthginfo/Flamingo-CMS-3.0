@@ -13,6 +13,7 @@ import { PageSectionsProvider } from '@/components/button-field';
 import { toast } from 'sonner';
 import { IndustrySectionDataEditor } from './industry-section-editor';
 import { SectionColorEditor } from './section-color-editor';
+import { getStyleCssVars } from '@/lib/styles';
 import { PageSeoPanel } from './page-seo-panel';
 import type { PageSeoPanelHandle } from './page-seo-panel';
 import { getSectionTypesForIndustry, type SectionTypeDefinition } from './section-types';
@@ -42,11 +43,12 @@ type Page = {
   type: string;
 };
 
-function SortableSection({ section, industry, sectionTypes, styleVariant, onDelete, onToggleVisible, onChangeData, onSaveMeta, onSaveColorOverrides }: {
+function SortableSection({ section, industry, sectionTypes, styleVariant, resolvedVars, onDelete, onToggleVisible, onChangeData, onSaveMeta, onSaveColorOverrides }: {
   section: Section;
   industry: string;
   sectionTypes: SectionTypeDefinition[];
   styleVariant: string;
+  resolvedVars: Record<string, string>;
   onDelete: () => void;
   onToggleVisible: () => void;
   onChangeData: (data: Record<string, unknown>) => void;
@@ -86,7 +88,7 @@ function SortableSection({ section, industry, sectionTypes, styleVariant, onDele
       {expanded && (
         <div className="p-4">
           <IndustrySectionDataEditor industry={industry} type={section.type} data={section.data} onChange={stableOnChange} />
-          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} />
+          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} resolvedVars={resolvedVars} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
             <SectionMetaEditor section={section} styleVariant={styleVariant} onSave={onSaveMeta} />
@@ -162,6 +164,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
   const sectionTypes = getSectionTypesForIndustry(industry);
+  const resolvedVars = getStyleCssVars(industry, styleVariant);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -352,6 +355,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
               industry={industry}
               sectionTypes={sectionTypes}
               styleVariant={styleVariant}
+              resolvedVars={resolvedVars}
               onDelete={() => handleDeleteSection(section.id)}
               onToggleVisible={() => handleToggleVisible(section.id)}
               onChangeData={(data) => handleSectionChange(section.id, data)}

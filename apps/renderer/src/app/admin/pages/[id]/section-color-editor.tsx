@@ -174,11 +174,27 @@ function getFieldsForSection(sectionType: string): ColorFieldKey[] {
   return SECTION_FIELDS[sectionType] || ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor'];
 }
 
-export function SectionColorEditor({ value, onChange, sectionType }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string }) {
+export function SectionColorEditor({ value, onChange, sectionType, resolvedVars }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string; resolvedVars?: Record<string, string> }) {
   const [open, setOpen] = useState(false);
   const overrides = value || {};
   const activeCount = Object.values(overrides).filter(Boolean).length;
   const fields = sectionType ? getFieldsForSection(sectionType) : Object.keys(FIELD_DEFS) as ColorFieldKey[];
+
+  const getResolvedColor = (cssVar: string): string | undefined => {
+    if (!resolvedVars) return undefined;
+    if (resolvedVars[cssVar]) return resolvedVars[cssVar];
+    // Fallback chain for granular vars
+    const fallbacks: Record<string, string> = {
+      '--style-heading-color': '--style-text-primary',
+      '--style-subheading-color': '--style-text-secondary',
+      '--style-body-color': '--style-text-secondary',
+      '--style-icon-color': '--brand-primary',
+      '--style-border-color': '--style-card-border',
+      '--style-divider-color': '--style-card-border',
+    };
+    const fb = fallbacks[cssVar];
+    return fb ? resolvedVars[fb] || undefined : undefined;
+  };
 
   const handleChange = (key: string, color: string) => {
     const next = { ...overrides, [key]: color };
@@ -202,24 +218,32 @@ export function SectionColorEditor({ value, onChange, sectionType }: { value: Co
         {fields.map((fieldKey) => {
           const def = FIELD_DEFS[fieldKey];
           if (!def) return null;
+          const currentOverride = overrides[def.cssVar] || '';
+          const resolved = getResolvedColor(def.cssVar);
+          const displayColor = currentOverride || resolved || '';
           return (
             <label key={fieldKey} className="block">
               <span className="text-gray-600 text-xs" title={def.description}>{def.label}</span>
               <div className="flex items-center gap-2 mt-1">
-                <input
-                  type="color"
-                  className="w-8 h-8 rounded border border-gray-200 cursor-pointer p-0"
-                  value={overrides[def.cssVar] || '#000000'}
-                  onChange={(e) => handleChange(def.cssVar, e.target.value)}
-                />
+                <div className="relative">
+                  <input
+                    type="color"
+                    className="w-8 h-8 rounded border border-gray-200 cursor-pointer p-0"
+                    value={displayColor || '#000000'}
+                    onChange={(e) => handleChange(def.cssVar, e.target.value)}
+                  />
+                  {!currentOverride && resolved && (
+                    <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full border border-white" style={{ background: resolved }} title={`Aktuell: ${resolved}`} />
+                  )}
+                </div>
                 <input
                   type="text"
                   className="admin-input flex-1 text-xs font-mono"
-                  placeholder="—"
-                  value={overrides[def.cssVar] || ''}
+                  placeholder={resolved || '—'}
+                  value={currentOverride}
                   onChange={(e) => handleChange(def.cssVar, e.target.value)}
                 />
-                {overrides[def.cssVar] && (
+                {currentOverride && (
                   <button type="button" className="text-xs text-red-400 hover:text-red-600" onClick={() => handleClear(def.cssVar)}>✕</button>
                 )}
               </div>
