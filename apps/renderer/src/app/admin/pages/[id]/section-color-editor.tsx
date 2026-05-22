@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Palette } from 'lucide-react';
 
 type ColorOverrides = Record<string, string>;
@@ -177,38 +177,56 @@ function getFieldsForSection(sectionType: string): ColorFieldKey[] {
 export function SectionColorEditor({ value, onChange, sectionType, resolvedVars, iframeRef, sectionId }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string; resolvedVars?: Record<string, string>; iframeRef?: React.RefObject<HTMLIFrameElement | null>; sectionId?: string }) {
   const [open, setOpen] = useState(false);
   const [computedVars, setComputedVars] = useState<Record<string, string>>({});
+  const probeRef = useRef<HTMLDivElement>(null);
   const overrides = value || {};
   const activeCount = Object.values(overrides).filter(Boolean).length;
   const fields = sectionType ? getFieldsForSection(sectionType) : Object.keys(FIELD_DEFS) as ColorFieldKey[];
 
-  // Read computed styles from preview iframe when opened
+  // All CSS vars we need to read
+  const allVarKeys = [
+    ...fields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean),
+    '--style-text-primary', '--style-text-secondary', '--brand-primary', '--brand-accent', '--brand-dark', '--style-card-bg', '--style-section-bg', '--style-card-border', '--style-text-muted', '--style-badge-bg', '--style-badge-text',
+  ];
+
   const readComputedStyles = useCallback(() => {
-    if (!iframeRef?.current || !sectionId) return;
-    try {
-      const doc = iframeRef.current.contentDocument;
-      if (!doc) return;
-      const el = doc.querySelector(`[data-section-id="${CSS.escape(sectionId)}"]`);
-      if (!el) return;
-      const styles = getComputedStyle(el);
-      const result: Record<string, string> = {};
-      for (const fieldKey of fields) {
-        const def = FIELD_DEFS[fieldKey];
-        if (!def) continue;
-        const val = styles.getPropertyValue(def.cssVar).trim();
-        if (val) result[def.cssVar] = val;
-      }
-      // Also read common fallback vars
-      const extras = ['--style-text-primary', '--style-text-secondary', '--brand-primary', '--brand-accent', '--brand-dark', '--style-card-bg', '--style-section-bg'];
-      for (const v of extras) {
+    const result: Record<string, string> = {};
+
+    // Strategy 1: Read from preview iframe (100% accurate)
+    if (iframeRef?.current && sectionId) {
+      try {
+        const doc = iframeRef.current.contentDocument;
+        if (doc) {
+          const el = doc.querySelector(`[data-section-id="${CSS.escape(sectionId)}"]`);
+          if (el) {
+            const styles = getComputedStyle(el);
+            for (const v of allVarKeys) {
+              const val = styles.getPropertyValue(v).trim();
+              if (val) result[v] = val;
+            }
+            if (Object.keys(result).length > 0) { setComputedVars(result); return; }
+          }
+        }
+      } catch { /* iframe not accessible */ }
+    }
+
+    // Strategy 2: Read from local probe element (works without preview)
+    if (probeRef.current) {
+      const styles = getComputedStyle(probeRef.current);
+      for (const v of allVarKeys) {
         const val = styles.getPropertyValue(v).trim();
         if (val) result[v] = val;
       }
-      setComputedVars(result);
-    } catch { /* cross-origin or iframe not ready */ }
-  }, [iframeRef, sectionId, fields]);
+    }
+
+    setComputedVars(result);
+  }, [iframeRef, sectionId, allVarKeys]);
 
   useEffect(() => {
-    if (open) readComputedStyles();
+    if (open) {
+      // Small delay to ensure probe element is rendered with styles
+      const t = setTimeout(readComputedStyles, 50);
+      return () => clearTimeout(t);
+    }
   }, [open, readComputedStyles]);
 
   const getResolvedColor = (cssVar: string): string | undefined => {
@@ -292,6 +310,8 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
           Alle Farb-Overrides entfernen
         </button>
       )}
+      {/* Hidden probe element to read computed CSS vars without needing the preview iframe */}
+      {open && <div ref={probeRef} data-style="" style={resolvedVars as React.CSSProperties} className="hidden" aria-hidden="true" />}
     </details>
   );
 }
