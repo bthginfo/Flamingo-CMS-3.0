@@ -10,7 +10,12 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 
 export function CafeTestimonialsSection({ data }: Props) {
   const headline = (data.headline as string) || 'Was unsere Gäste sagen';
-  const testimonials = (data.testimonials as Testimonial[]) || [];
+  // Support both 'testimonials' array and 'items' array (AI sometimes uses 'items' with quote/rating/context)
+  const rawTestimonials = (data.testimonials as Testimonial[]) || [];
+  const rawItems = (data.items as { name?: string; quote?: string; text?: string; rating?: number; stars?: number; context?: string; source?: string; image?: string }[]) || [];
+  const testimonials: Testimonial[] = rawTestimonials.length > 0
+    ? rawTestimonials
+    : rawItems.map(item => ({ text: item.quote || item.text || '', name: item.name || '', stars: item.stars || item.rating, source: item.context || item.source, image: item.image }));
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
 

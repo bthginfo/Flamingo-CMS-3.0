@@ -63,7 +63,7 @@ export function HoverEffect({
                   <h4 className="font-display font-semibold text-lg mb-2 text-gray-900">{item.title}</h4>
                   <p className="text-gray-500 text-sm leading-relaxed">{item.description}</p>
                   <span className="inline-flex items-center justify-center text-brand-primary text-sm font-medium mt-4">
-                    Mehr erfahren â†’
+                    Mehr erfahren →
                   </span>
                 </div>
               </a>
