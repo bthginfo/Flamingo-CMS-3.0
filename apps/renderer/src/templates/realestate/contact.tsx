@@ -3,6 +3,8 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
+import { DynamicIcon } from '@/components/ui/icon-map';
+import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -13,6 +15,20 @@ export function RealestateContactSection({ data }: Props) {
   const email = (data.email as string) || '';
   const address = (data.address as string) || '';
   const hours = (data.hours as string) || '';
+  const formEnabled = data.formEnabled !== false;
+  const submitLabel = (data.submitLabel as string) || 'Nachricht senden';
+  const formFields = data.formFields as FormFieldDef[] | undefined;
+  const infoCards = data.infoCards as { icon: string; label: string; value: string }[] | undefined;
+
+  // Build contact items from either infoCards or legacy fields
+  const contactItems = infoCards && infoCards.length > 0
+    ? infoCards
+    : [
+        ...(phone ? [{ icon: 'phone', label: 'Telefon', value: phone }] : []),
+        ...(email ? [{ icon: 'mail', label: 'E-Mail', value: email }] : []),
+        ...(address ? [{ icon: 'map-pin', label: 'Adresse', value: address }] : []),
+        ...(hours ? [{ icon: 'clock', label: 'Öffnungszeiten', value: hours }] : []),
+      ];
 
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
@@ -20,56 +36,39 @@ export function RealestateContactSection({ data }: Props) {
   return (
     <section ref={ref} className="py-20 md:py-28">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className={formEnabled ? 'grid lg:grid-cols-2 gap-12' : ''}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
             {subline && <p className="text-lg text-gray-600 mt-4">{subline}</p>}
 
             <div className="mt-8 space-y-4">
-              {phone && (
-                <a href={`tel:${phone}`} className="flex items-center gap-3 text-gray-700 hover:text-brand-primary transition-colors">
-                  <div className="w-10 h-10 bg-brand-primary/10 rounded-lg flex items-center justify-center"><Phone size={18} className="text-brand-primary" /></div>
-                  {phone}
-                </a>
-              )}
-              {email && (
-                <a href={`mailto:${email}`} className="flex items-center gap-3 text-gray-700 hover:text-brand-primary transition-colors">
-                  <div className="w-10 h-10 bg-brand-primary/10 rounded-lg flex items-center justify-center"><Mail size={18} className="text-brand-primary" /></div>
-                  {email}
-                </a>
-              )}
-              {address && (
-                <div className="flex items-center gap-3 text-gray-700">
-                  <div className="w-10 h-10 bg-brand-primary/10 rounded-lg flex items-center justify-center"><MapPin size={18} className="text-brand-primary" /></div>
-                  {address}
+              {contactItems.map((item, i) => (
+                <div key={i} className="flex items-center gap-3 text-gray-700">
+                  <div className="w-10 h-10 bg-brand-primary/10 rounded-lg flex items-center justify-center text-brand-primary">
+                    <DynamicIcon name={item.icon} size={18} />
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-400 uppercase tracking-wider">{item.label}</div>
+                    <div className="text-sm font-medium text-gray-900">{item.value}</div>
+                  </div>
                 </div>
-              )}
-              {hours && (
-                <div className="flex items-center gap-3 text-gray-700">
-                  <div className="w-10 h-10 bg-brand-primary/10 rounded-lg flex items-center justify-center"><Clock size={18} className="text-brand-primary" /></div>
-                  {hours}
-                </div>
-              )}
+              ))}
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.2 }}
-            className="bg-gray-50 rounded-xl p-8 border border-gray-100"
-          >
-            <h3 className="font-semibold text-gray-900 mb-6">Rückruf anfordern</h3>
-            <div className="space-y-4">
-              <input type="text" placeholder="Ihr Name" className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm" readOnly />
-              <input type="email" placeholder="E-Mail-Adresse" className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm" readOnly />
-              <input type="tel" placeholder="Telefonnummer" className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm" readOnly />
-              <textarea placeholder="Ihre Nachricht" rows={3} className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm resize-none" readOnly />
-              <button className="w-full py-3.5 bg-brand-primary text-white font-semibold rounded-lg hover:bg-brand-dark transition-colors">
-                Nachricht senden
-              </button>
-            </div>
-          </motion.div>
+          {formEnabled && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.2 }}
+            >
+              <DynamicContactForm
+                fields={formFields}
+                submitLabel={submitLabel}
+                className="bg-gray-50 rounded-xl p-8 border border-gray-100 space-y-4"
+              />
+            </motion.div>
+          )}
         </div>
       </div>
     </section>
