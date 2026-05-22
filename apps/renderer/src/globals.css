@@ -186,13 +186,76 @@ html {
     background-color: var(--style-section-bg, #171717) !important;
   }
 
-  /* ─── CTA button color overrides — use brand primary ─── */
+  /* ─── CTA / accent button color overrides — use brand primary ─── */
   [data-style] a[class*="bg-amber-"],
   [data-style] button[class*="bg-amber-"],
   [data-style] a[class*="bg-red-6"],
-  [data-style] button[class*="bg-red-6"] {
+  [data-style] button[class*="bg-red-6"],
+  [data-style] a[class*="bg-teal-"],
+  [data-style] button[class*="bg-teal-"],
+  [data-style] a[class*="bg-cyan-"],
+  [data-style] button[class*="bg-cyan-"],
+  [data-style] a[class*="bg-emerald-"],
+  [data-style] button[class*="bg-emerald-"],
+  [data-style] a[class*="bg-green-"],
+  [data-style] button[class*="bg-green-"],
+  [data-style] a[class*="bg-blue-"],
+  [data-style] button[class*="bg-blue-"],
+  [data-style] a[class*="bg-indigo-"],
+  [data-style] button[class*="bg-indigo-"],
+  [data-style] a[class*="bg-purple-"],
+  [data-style] button[class*="bg-purple-"],
+  [data-style] a[class*="bg-rose-"],
+  [data-style] button[class*="bg-rose-"],
+  [data-style] a[class*="bg-orange-"],
+  [data-style] button[class*="bg-orange-"],
+  [data-style] a[class*="bg-sky-"],
+  [data-style] button[class*="bg-sky-"] {
     background-color: var(--brand-btn-bg, var(--brand-primary)) !important;
     color: var(--brand-btn-text, white) !important;
+  }
+
+  /* ─── Accent border buttons (outline style) — use brand primary ─── */
+  [data-style] a[class*="border-teal-"],
+  [data-style] a[class*="border-cyan-"],
+  [data-style] a[class*="border-emerald-"],
+  [data-style] a[class*="border-blue-"],
+  [data-style] a[class*="border-red-"],
+  [data-style] a[class*="border-amber-"] {
+    border-color: var(--brand-primary) !important;
+    color: var(--brand-primary) !important;
+  }
+
+  /* ─── Accent text color overrides ─── */
+  [data-style] .text-teal-700,
+  [data-style] .text-teal-600,
+  [data-style] .text-teal-500,
+  [data-style] .text-cyan-700,
+  [data-style] .text-cyan-600,
+  [data-style] .text-emerald-700,
+  [data-style] .text-emerald-600,
+  [data-style] .text-amber-700,
+  [data-style] .text-amber-600,
+  [data-style] .text-blue-700,
+  [data-style] .text-blue-600,
+  [data-style] .text-indigo-700,
+  [data-style] .text-indigo-600 {
+    color: var(--brand-primary) !important;
+  }
+
+  /* ─── Accent BGs for badges/pills (not buttons) ─── */
+  [data-style] span[class*="bg-teal-50"],
+  [data-style] span[class*="bg-amber-50"],
+  [data-style] span[class*="bg-amber-100"],
+  [data-style] span[class*="bg-emerald-50"],
+  [data-style] span[class*="bg-blue-50"],
+  [data-style] span[class*="bg-cyan-50"],
+  [data-style] span[class*="bg-red-50"],
+  [data-style] div[class*="bg-red-50"],
+  [data-style] div[class*="bg-amber-50"] {
+    background-color: var(--style-badge-bg, rgba(26, 82, 118, 0.05)) !important;
+    border-color: var(--style-badge-border, rgba(26, 82, 118, 0.1)) !important;
+    color: var(--style-badge-text, var(--brand-primary)) !important;
   }
 
   [data-style] .rounded-xl,
