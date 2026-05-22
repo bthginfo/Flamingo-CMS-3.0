@@ -19,7 +19,7 @@ export function BookingCtaSection({ data }: Props) {
             {hints.map((h, i) => <span key={i} className="flex items-center gap-1.5">✓ {h}</span>)}
           </div>
         )}
-        <a href={ctaHref} className="inline-flex items-center justify-center mt-8 px-8 py-4 bg-white text-black font-bold uppercase tracking-wider text-sm hover:bg-white/90 transition-colors">
+        <a href={ctaHref} className="inline-flex items-center justify-center mt-8 px-8 py-4 font-bold uppercase tracking-wider text-sm transition-colors" style={{ background: 'var(--brand-btn-bg, white)', color: 'var(--brand-btn-text, black)' }}>
           {ctaLabel}
         </a>
       </div>
