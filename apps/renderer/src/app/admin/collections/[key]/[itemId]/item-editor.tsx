@@ -243,7 +243,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   function handleSaveMeta(sectionId: string, meta: Partial<Section>) {
     setSections(prev => prev.map(s => s.id === sectionId ? { ...s, ...meta } : s));
     markDirty();
-    toast.success('Einstellungen übernommen');
+    toast.success('Einstellungen übernommen', { id: 'meta-save' });
   }
 
   const colorDebounceRef = useRef<Record<string, NodeJS.Timeout>>({});

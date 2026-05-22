@@ -292,7 +292,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   function handleSaveSectionMeta(sectionId: string, meta: Record<string, unknown>) {
     startTransition(async () => {
       await updateSectionMetaAction(sectionId, meta, page.id);
-      toast.success('Einstellungen gespeichert');
+      toast.success('Einstellungen gespeichert', { id: 'meta-save' });
     });
   }
 
