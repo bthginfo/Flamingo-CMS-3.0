@@ -306,9 +306,9 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       delete colorDebounceRef.current[sectionId];
       startTransition(async () => {
         await updateSectionMetaAction(sectionId, { styleOverrides: overrides }, page.id);
-        toast.success('Farben gespeichert');
+        toast.success('Farben gespeichert', { id: `color-save-${sectionId}` });
       });
-    }, 600);
+    }, 1500);
   }
 
 

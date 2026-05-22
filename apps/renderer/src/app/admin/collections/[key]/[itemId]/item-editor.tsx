@@ -250,8 +250,8 @@ export function ItemEditor({ item: initial, collectionKey, industry }: { item: I
     if (colorDebounceRef.current[sectionId]) clearTimeout(colorDebounceRef.current[sectionId]);
     colorDebounceRef.current[sectionId] = setTimeout(() => {
       delete colorDebounceRef.current[sectionId];
-      toast.success('Farben übernommen');
-    }, 600);
+      toast.success('Farben übernommen', { id: `color-save-${sectionId}` });
+    }, 1500);
   }
 
   async function handleSaveAll() {
