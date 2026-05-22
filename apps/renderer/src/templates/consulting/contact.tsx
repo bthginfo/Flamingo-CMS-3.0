@@ -15,6 +15,7 @@ export function ConsultingContactSection({ data }: Props) {
   const address = (data.address as string) || '';
   const hours = (data.hours as string[]) || [];
   const introText = (data.introText as string) || '';
+  const badgeText = (data.badgeText as string) || '';
   const formEnabled = data.formEnabled !== false;
   const submitLabel = (data.submitLabel as string) || 'Erstberatung anfragen';
   const formFields = data.formFields as FormFieldDef[] | undefined;
@@ -35,6 +36,7 @@ export function ConsultingContactSection({ data }: Props) {
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
+        {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">{badgeText}</p>}
         {headline && <h2 className="section-headline">{headline}</h2>}
         {subline && <p className="section-subline">{subline}</p>}
         {introText && <div className="text-gray-600 mt-4 rt-content max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: introText }} />}

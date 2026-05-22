@@ -18,7 +18,16 @@ export function ValuationCtaSection({ data }: Props) {
   const inView = useInView(ref, { once: true });
 
   return (
-    <section ref={ref} className="py-20 md:py-28 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 relative overflow-hidden">
+    <section ref={ref} className="py-20 md:py-28 relative overflow-hidden">
+      {/* Background image or gradient */}
+      {bgImage ? (
+        <>
+          <img src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-slate-900/80" />
+        </>
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800" />
+      )}
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl" />

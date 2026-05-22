@@ -12,6 +12,7 @@ export function CafeContactSection({ data }: Props) {
   const headline = (data.headline as string) || 'Schreib uns';
   const subline = (data.subline as string) || '';
   const introText = (data.introText as string) || '';
+  const badgeText = (data.badgeText as string) || '';
   const phone = (data.phone as string) || '';
   const email = (data.email as string) || '';
   const address = (data.address as string) || '';
@@ -36,6 +37,7 @@ export function CafeContactSection({ data }: Props) {
     <section ref={ref} className="py-20 md:py-28">
       <div className="max-w-5xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
+          {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">{badgeText}</p>}
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
           {subline && <p className="text-gray-600 mt-3">{subline}</p>}
           {introText && <div className="text-gray-600 mt-4 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}

@@ -50,6 +50,7 @@ export function ReferencesSoldSection({ data }: Props) {
               <div className="absolute bottom-0 left-0 right-0 p-4">
                 <h3 className="text-white font-semibold text-sm">{prop.title}</h3>
                 <p className="text-white/70 text-xs mt-0.5">{prop.location}</p>
+                {prop.price && <p className="text-white font-semibold text-sm mt-1">{prop.price}</p>}
                 {prop.soldIn && <p className="text-emerald-400 text-xs mt-1">Vermittelt in {prop.soldIn}</p>}
               </div>
             </motion.div>
