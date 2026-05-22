@@ -15,6 +15,7 @@ export function RealestateContactSection({ data }: Props) {
   const email = (data.email as string) || '';
   const address = (data.address as string) || '';
   const hours = (data.hours as string) || '';
+  const introText = (data.introText as string) || '';
   const formEnabled = data.formEnabled !== false;
   const submitLabel = (data.submitLabel as string) || 'Nachricht senden';
   const formFields = data.formFields as FormFieldDef[] | undefined;
@@ -40,6 +41,7 @@ export function RealestateContactSection({ data }: Props) {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
             {subline && <p className="text-lg text-gray-600 mt-4">{subline}</p>}
+            {introText && <div className="text-gray-600 mt-4 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
 
             <div className="mt-8 space-y-4">
               {contactItems.map((item, i) => (

@@ -11,6 +11,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 export function CafeContactSection({ data }: Props) {
   const headline = (data.headline as string) || 'Schreib uns';
   const subline = (data.subline as string) || '';
+  const introText = (data.introText as string) || '';
   const phone = (data.phone as string) || '';
   const email = (data.email as string) || '';
   const address = (data.address as string) || '';
@@ -37,6 +38,7 @@ export function CafeContactSection({ data }: Props) {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
           {subline && <p className="text-gray-600 mt-3">{subline}</p>}
+          {introText && <div className="text-gray-600 mt-4 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         </motion.div>
 
         <div className={formEnabled ? 'grid grid-cols-1 lg:grid-cols-5 gap-10' : ''}>
