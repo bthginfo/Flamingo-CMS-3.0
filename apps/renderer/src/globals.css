@@ -42,6 +42,10 @@ html {
   }
 
   /* Style-aware overrides: cards, buttons, sections adapt to active style vars */
+  [data-style] {
+    background-color: var(--style-section-bg, #ffffff);
+  }
+
   [data-style] nav a {
     color: var(--brand-nav-link, inherit);
   }
@@ -50,9 +54,145 @@ html {
     color: var(--brand-link, inherit);
   }
 
+  /* ─── Text color overrides ─── */
+  [data-style] .text-gray-900,
+  [data-style] .text-slate-900,
+  [data-style] .text-zinc-900,
+  [data-style] .text-neutral-900,
+  [data-style] .text-gray-800,
+  [data-style] .text-slate-800,
+  [data-style] .text-zinc-800 {
+    color: var(--style-text-primary, inherit) !important;
+  }
+
+  [data-style] .text-gray-700,
+  [data-style] .text-slate-700,
+  [data-style] .text-zinc-700,
+  [data-style] .text-neutral-700 {
+    color: var(--style-text-primary, inherit) !important;
+  }
+
+  [data-style] .text-gray-600,
+  [data-style] .text-slate-600,
+  [data-style] .text-zinc-600,
+  [data-style] .text-neutral-600 {
+    color: var(--style-text-secondary, #64748b) !important;
+  }
+
   [data-style] .text-gray-500,
-  [data-style] .text-slate-500 {
-    color: var(--style-text-muted, inherit) !important;
+  [data-style] .text-slate-500,
+  [data-style] .text-zinc-500,
+  [data-style] .text-neutral-500 {
+    color: var(--style-text-secondary, #64748b) !important;
+  }
+
+  [data-style] .text-gray-400,
+  [data-style] .text-slate-400,
+  [data-style] .text-zinc-400,
+  [data-style] .text-neutral-400 {
+    color: var(--style-text-muted, var(--style-text-secondary, #9ca3af)) !important;
+  }
+
+  [data-style] .text-gray-300,
+  [data-style] .text-slate-300,
+  [data-style] .text-zinc-300,
+  [data-style] .text-neutral-300 {
+    color: var(--style-text-muted, var(--style-text-secondary, #d1d5db)) !important;
+  }
+
+  [data-style] .text-gray-200,
+  [data-style] .text-zinc-200 {
+    color: var(--style-text-muted, var(--style-text-secondary, #e5e7eb)) !important;
+  }
+
+  /* ─── Background overrides (cards, surfaces) ─── */
+  [data-style] div.bg-white,
+  [data-style] section .bg-white:not(a):not(button):not(span) {
+    background-color: var(--style-card-bg, white) !important;
+  }
+
+  [data-style] .bg-gray-50,
+  [data-style] .bg-slate-50,
+  [data-style] .bg-zinc-50,
+  [data-style] .bg-neutral-50 {
+    background-color: var(--style-section-bg-alt, #f8fafc) !important;
+  }
+
+  [data-style] .bg-gray-100,
+  [data-style] .bg-slate-100,
+  [data-style] .bg-zinc-100 {
+    background-color: var(--style-section-bg-alt, #f1f5f9) !important;
+  }
+
+  [data-style] .bg-gray-200,
+  [data-style] .bg-zinc-200 {
+    background-color: color-mix(in srgb, var(--style-text-primary, #111) 12%, transparent) !important;
+  }
+
+  /* ─── Border color overrides ─── */
+  [data-style] .border-gray-100,
+  [data-style] .border-slate-100,
+  [data-style] .border-zinc-100,
+  [data-style] .border-gray-50,
+  [data-style] .border-slate-50 {
+    border-color: color-mix(in srgb, var(--style-text-primary, #111) 8%, transparent) !important;
+  }
+
+  [data-style] .border-gray-200,
+  [data-style] .border-slate-200,
+  [data-style] .border-zinc-200 {
+    border-color: color-mix(in srgb, var(--style-text-primary, #111) 12%, transparent) !important;
+  }
+
+  [data-style] .border-gray-300,
+  [data-style] .border-slate-300,
+  [data-style] .border-zinc-300 {
+    border-color: color-mix(in srgb, var(--style-text-primary, #111) 20%, transparent) !important;
+  }
+
+  /* ─── Gradient overrides ─── */
+  [data-style] .from-surface,
+  [data-style] [class*="from-surface"] {
+    --tw-gradient-from: var(--style-section-bg-alt, #f8fafc) !important;
+  }
+
+  [data-style] .to-white:not(a):not(button),
+  [data-style] [class*="to-white"]:not(a):not(button) {
+    --tw-gradient-to: var(--style-section-bg, #ffffff) !important;
+  }
+
+  [data-style] [class*="from-gray-50"],
+  [data-style] [class*="from-gray-100"] {
+    --tw-gradient-from: var(--style-section-bg-alt, #f8fafc) !important;
+  }
+
+  [data-style] [class*="to-gray-100"],
+  [data-style] [class*="to-gray-50"] {
+    --tw-gradient-to: var(--style-section-bg-alt, #f1f5f9) !important;
+  }
+
+  /* ─── Hover state overrides ─── */
+  [data-style] .hover\:bg-slate-50:hover,
+  [data-style] .hover\:bg-gray-50:hover,
+  [data-style] [class*="hover:bg-gray-50"]:hover {
+    background-color: var(--style-section-bg-alt, #f8fafc) !important;
+  }
+
+  /* ─── Dark section BG overrides (tattoo etc.) ─── */
+  [data-style] .bg-neutral-900,
+  [data-style] .bg-neutral-950,
+  [data-style] .bg-zinc-900,
+  [data-style] .bg-zinc-950 {
+    background-color: var(--style-section-bg, #171717) !important;
+  }
+
+  /* ─── CTA button color overrides — use brand primary ─── */
+  [data-style] a[class*="bg-amber-"],
+  [data-style] button[class*="bg-amber-"],
+  [data-style] a[class*="bg-red-6"],
+  [data-style] button[class*="bg-red-6"] {
+    background-color: var(--brand-btn-bg, var(--brand-primary)) !important;
+    color: var(--brand-btn-text, white) !important;
   }
 
   [data-style] .rounded-xl,
@@ -99,10 +239,12 @@ html {
 @layer components {
   .section-headline {
     @apply font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] text-center;
+    color: var(--style-text-primary, inherit);
   }
 
   .section-subline {
-    @apply text-lg sm:text-xl text-slate-500 max-w-2xl mx-auto mt-5 text-center leading-relaxed;
+    @apply text-lg sm:text-xl max-w-2xl mx-auto mt-5 text-center leading-relaxed;
+    color: var(--style-text-secondary, #64748b);
   }
 
   .section-badge {

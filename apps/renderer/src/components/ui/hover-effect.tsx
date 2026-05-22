@@ -54,15 +54,15 @@ export function HoverEffect({
                     />
                   </div>
                 )}
-                <div className="p-6">
+                <div className="p-6 text-center">
                   {item.icon && !item.image && (
-                    <div className="mb-4 w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform duration-300 group-hover:scale-110">
+                    <div className="mb-4 w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform duration-300 group-hover:scale-110">
                       {item.icon}
                     </div>
                   )}
                   <h4 className="font-display font-semibold text-lg mb-2 text-gray-900">{item.title}</h4>
                   <p className="text-gray-500 text-sm leading-relaxed">{item.description}</p>
-                  <span className="inline-flex items-center text-brand-primary text-sm font-medium mt-4">
+                  <span className="inline-flex items-center justify-center text-brand-primary text-sm font-medium mt-4">
                     Mehr erfahren →
                   </span>
                 </div>
@@ -80,9 +80,9 @@ export function HoverEffect({
                     />
                   </div>
                 )}
-                <div className="p-6">
+                <div className="p-6 text-center">
                   {item.icon && !item.image && (
-                    <div className="mb-4 w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform duration-300 group-hover:scale-110">
+                    <div className="mb-4 w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform duration-300 group-hover:scale-110">
                       {item.icon}
                     </div>
                   )}
