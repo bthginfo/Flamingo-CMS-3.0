@@ -46,8 +46,15 @@ const STEPS: TourStep[] = [
 ];
 
 function getRect(selector: string): DOMRect | null {
-  const el = document.querySelector(selector);
-  return el?.getBoundingClientRect() ?? null;
+  const elements = document.querySelectorAll(selector);
+  for (const el of elements) {
+    const rect = el.getBoundingClientRect();
+    // Skip elements that are off-screen or invisible
+    if (rect.width > 0 && rect.height > 0 && rect.right > 0 && rect.left < window.innerWidth) {
+      return rect;
+    }
+  }
+  return null;
 }
 
 export function OnboardingTour() {
@@ -70,9 +77,26 @@ export function OnboardingTour() {
 
   useEffect(() => {
     updateRect();
-    window.addEventListener('resize', updateRect);
-    return () => window.removeEventListener('resize', updateRect);
-  }, [updateRect]);
+    // Retry if no rect found (element may not be visible yet)
+    if (active) {
+      const retryTimer = setInterval(() => {
+        const rect = getRect(STEPS[step].target);
+        if (rect) {
+          setTargetRect(rect);
+          clearInterval(retryTimer);
+        }
+      }, 300);
+      const cleanup = setTimeout(() => clearInterval(retryTimer), 3000);
+      window.addEventListener('resize', updateRect);
+      window.addEventListener('scroll', updateRect, true);
+      return () => {
+        clearInterval(retryTimer);
+        clearTimeout(cleanup);
+        window.removeEventListener('resize', updateRect);
+        window.removeEventListener('scroll', updateRect, true);
+      };
+    }
+  }, [updateRect, active, step]);
 
   const finish = useCallback(() => {
     setActive(false);
@@ -80,12 +104,28 @@ export function OnboardingTour() {
   }, []);
 
   const next = () => {
-    if (step < STEPS.length - 1) setStep(step + 1);
-    else finish();
+    if (step < STEPS.length - 1) {
+      const nextStep = step + 1;
+      setStep(nextStep);
+      // Force rect update after DOM settles for new step
+      requestAnimationFrame(() => {
+        const rect = getRect(STEPS[nextStep].target);
+        setTargetRect(rect);
+      });
+    } else {
+      finish();
+    }
   };
 
   const prev = () => {
-    if (step > 0) setStep(step - 1);
+    if (step > 0) {
+      const prevStep = step - 1;
+      setStep(prevStep);
+      requestAnimationFrame(() => {
+        const rect = getRect(STEPS[prevStep].target);
+        setTargetRect(rect);
+      });
+    }
   };
 
   if (!active) return null;
