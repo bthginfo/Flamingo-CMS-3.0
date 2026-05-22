@@ -72,12 +72,19 @@ export async function POST(req: NextRequest) {
       const smtp = settings?.smtp as { host: string; port: number; user: string; pass: string; from: string } | null;
       const autoResponse = settings?.autoResponse as { enabled: boolean; subject: string; body: string } | null;
 
-      if (smtp?.host && smtp?.user && smtp?.pass && smtp?.from) {
+      // Use tenant SMTP if configured, otherwise fall back to platform SMTP from env
+      const effectiveSmtp = (smtp?.host && smtp?.user && smtp?.pass && smtp?.from)
+        ? smtp
+        : (process.env.PLATFORM_SMTP_HOST && process.env.PLATFORM_SMTP_USER && process.env.PLATFORM_SMTP_PASS && process.env.PLATFORM_SMTP_FROM)
+          ? { host: process.env.PLATFORM_SMTP_HOST, port: Number(process.env.PLATFORM_SMTP_PORT) || 587, user: process.env.PLATFORM_SMTP_USER, pass: process.env.PLATFORM_SMTP_PASS, from: process.env.PLATFORM_SMTP_FROM }
+          : null;
+
+      if (effectiveSmtp) {
         const transporter = nodemailer.createTransport({
-          host: smtp.host,
-          port: smtp.port || 587,
-          secure: smtp.port === 465,
-          auth: { user: smtp.user, pass: smtp.pass },
+          host: effectiveSmtp.host,
+          port: effectiveSmtp.port || 587,
+          secure: effectiveSmtp.port === 465,
+          auth: { user: effectiveSmtp.user, pass: effectiveSmtp.pass },
         });
 
         // Build field summary for notification
@@ -87,8 +94,8 @@ export async function POST(req: NextRequest) {
 
         // 1) Notification email to business owner
         await transporter.sendMail({
-          from: smtp.from,
-          to: smtp.from,
+          from: effectiveSmtp.from,
+          to: effectiveSmtp.from,
           subject: `Neue Kontaktanfrage von ${name}`,
           text: `Neue Anfrage über das Kontaktformular:\n\n${fieldLines}\n\nSeite: ${_page || '-'}`,
         });
@@ -97,7 +104,7 @@ export async function POST(req: NextRequest) {
         if (autoResponse?.enabled && autoResponse.subject && autoResponse.body) {
           const responseBody = autoResponse.body.replace(/\{name\}/g, name);
           await transporter.sendMail({
-            from: smtp.from,
+            from: effectiveSmtp.from,
             to: email,
             subject: autoResponse.subject,
             text: responseBody,

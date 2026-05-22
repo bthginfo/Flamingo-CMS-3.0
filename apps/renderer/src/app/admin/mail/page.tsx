@@ -36,6 +36,11 @@ export default function MailPage() {
       <h1 className="text-2xl font-bold mb-1">Mail-Server</h1>
       <p className="text-zinc-500 text-sm mb-8">SMTP-Konfiguration für den Versand von Kontaktformular-Nachrichten.</p>
 
+      <div className="admin-card p-5 mb-6 bg-green-50 border-green-200 space-y-2">
+        <h3 className="font-semibold text-sm text-green-900">💡 Standard-Versand über Flamingo Media</h3>
+        <p className="text-sm text-green-800">Solange hier kein eigener SMTP-Server hinterlegt ist, werden Kontaktformular-Nachrichten automatisch über den Flamingo Media Mailserver (<code className="bg-green-100 px-1 rounded">hello@flamingomedia.online</code>) versendet. Sie können jederzeit Ihren eigenen SMTP-Server eintragen — dieser wird dann bevorzugt verwendet.</p>
+      </div>
+
       <div className="admin-card p-5 mb-6 bg-blue-50 border-blue-200 space-y-2">
         <h3 className="font-semibold text-sm text-blue-900">Wozu brauche ich das?</h3>
         <p className="text-sm text-blue-800">Wenn Besucher Ihr Kontaktformular ausfüllen, wird die Nachricht per E-Mail an Sie gesendet. Dafür benötigt Ihre Website einen Mail-Server (SMTP). Ohne diese Einstellungen funktioniert das Kontaktformular nicht.</p>
