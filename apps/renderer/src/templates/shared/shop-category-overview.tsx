@@ -17,7 +17,8 @@ export function ShopCategoryOverviewSection({ data }: Props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/shop/products')
+    const params = data.tenantId ? `?tenantId=${data.tenantId}` : '';
+    fetch(`/api/shop/products${params}`)
       .then(r => r.json())
       .then(d => setCategories(d.categories || []))
       .finally(() => setLoading(false));

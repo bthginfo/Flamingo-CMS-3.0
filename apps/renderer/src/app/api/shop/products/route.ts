@@ -4,8 +4,11 @@ import { products, productCategories } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function GET(request: NextRequest) {
-  const tenantId = await resolveTenant();
+  const queryTenantId = request.nextUrl.searchParams.get('tenantId');
+  const tenantId = (queryTenantId && UUID_RE.test(queryTenantId) ? queryTenantId : null) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
 
   const { searchParams } = request.nextUrl;

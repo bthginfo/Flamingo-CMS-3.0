@@ -30,6 +30,7 @@ export function ShopFeaturedProductsSection({ data }: Props) {
 
   useEffect(() => {
     let url = '/api/shop/products?limit=' + count;
+    if (data.tenantId) url += '&tenantId=' + data.tenantId;
     if (mode === 'category' && categorySlug) {
       url += '&category=' + encodeURIComponent(categorySlug);
     }
