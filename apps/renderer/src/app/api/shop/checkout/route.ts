@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { orders, products, productVariants, shopSettings, customers, orderStatusHistory } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
+import { sendOrderEmails } from '@/lib/shop-email';
 
 export async function POST(req: NextRequest) {
   const tenantId = await resolveTenant();
@@ -127,6 +128,19 @@ export async function POST(req: NextRequest) {
       if (p && p.trackStock) await db.update(products).set({ stock: Math.max(0, p.stock - item.quantity) }).where(eq(products.id, item.productId));
     }
   }
+
+  // Send order confirmation emails (fire-and-forget)
+  sendOrderEmails(tenantId, {
+    orderNumber,
+    customerName: name,
+    customerEmail: email,
+    items: orderItems,
+    subtotalCents,
+    shippingCents: 0,
+    totalCents,
+    paymentMethod: paymentMethod || '',
+    shippingAddress: street ? { street, city, zip, country, company: company || undefined } : null,
+  }).catch(e => console.error('[Checkout] Email send error:', e));
 
   return NextResponse.json({ success: true, orderNumber, orderId: order.id });
 }
