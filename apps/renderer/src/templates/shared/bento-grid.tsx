@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { DynamicIcon } from '@/components/ui/icon-map';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -56,7 +57,7 @@ export function BentoGridSection({ data }: Props) {
             )}
 
             <div className="relative z-10 flex flex-col h-full justify-end">
-              {item.icon && <span className="text-3xl mb-3">{item.icon}</span>}
+              {item.icon && <div className="text-3xl mb-3 text-[var(--color-primary)]"><DynamicIcon name={item.icon} size={32} /></div>}
               <h3 className="text-lg font-semibold text-zinc-900 mb-1">{item.title}</h3>
               {item.description && <p className="text-sm text-zinc-600 leading-relaxed">{item.description}</p>}
             </div>
