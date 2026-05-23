@@ -4,7 +4,7 @@ import { useState, useTransition, useRef, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, Rocket, MonitorPlay } from 'lucide-react';
 import { usePreview } from '@/components/admin/preview-context';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, TouchSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { updateItemAction } from '../../actions';
@@ -164,7 +164,11 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   const [pending, startTransition] = useTransition();
   const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
   const seoRef = useRef<ItemSeoPanelHandle>(null);
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
   const sectionsRef = useRef(sections);
   sectionsRef.current = sections;
 
