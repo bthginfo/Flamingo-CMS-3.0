@@ -5,24 +5,30 @@ import { motion, useInView } from 'framer-motion';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
-type Stat = { value: number; suffix?: string; prefix?: string; label: string };
+type Stat = { value: number | string; suffix?: string; prefix?: string; label: string };
 
-function AnimatedNumber({ value, prefix, suffix, inView }: { value: number; prefix?: string; suffix?: string; inView: boolean }) {
+function AnimatedNumber({ value, prefix, suffix, inView }: { value: number | string; prefix?: string; suffix?: string; inView: boolean }) {
+  const numericValue = typeof value === 'number' ? value : Number(value);
+  const isNumeric = !isNaN(numericValue) && numericValue !== 0 || value === 0 || value === '0';
   const [display, setDisplay] = useState(0);
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || !isNumeric) return;
     let start = 0;
     const duration = 2000;
     const startTime = performance.now();
     const step = (now: number) => {
       const progress = Math.min((now - startTime) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      start = Math.round(eased * value);
+      start = Math.round(eased * numericValue);
       setDisplay(start);
       if (progress < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
-  }, [inView, value]);
+  }, [inView, numericValue, isNumeric]);
+
+  if (!isNumeric) {
+    return <span>{prefix}{String(value)}{suffix}</span>;
+  }
 
   return (
     <span className="tabular-nums">

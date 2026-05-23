@@ -4,18 +4,24 @@ import { useRef, useEffect } from 'react';
 import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
 
-type StatItem = { value: number; suffix?: string; prefix?: string; label: string; icon?: string };
+type StatItem = { value: number | string; suffix?: string; prefix?: string; label: string; icon?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
-function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number; suffix?: string; prefix?: string }) {
+function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number | string; suffix?: string; prefix?: string }) {
+  const numericValue = typeof value === 'number' ? value : Number(value);
+  const isNumeric = !isNaN(numericValue) && (numericValue !== 0 || value === 0 || value === '0');
   const count = useMotionValue(0);
   const rounded = useTransform(count, (v) => `${prefix}${Math.round(v)}${suffix}`);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
 
   useEffect(() => {
-    if (inView) animate(count, value, { duration: 2, ease: 'easeOut' });
-  }, [inView, count, value]);
+    if (inView && isNumeric) animate(count, numericValue, { duration: 2, ease: 'easeOut' });
+  }, [inView, count, numericValue, isNumeric]);
+
+  if (!isNumeric) {
+    return <span ref={ref}>{prefix}{String(value)}{suffix}</span>;
+  }
 
   return <motion.span ref={ref}>{rounded}</motion.span>;
 }
