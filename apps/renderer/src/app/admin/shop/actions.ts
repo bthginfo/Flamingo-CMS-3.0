@@ -2,7 +2,7 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, pages, pageSections } from '@flamingo/db';
+import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, pages, pageSections } from '@flamingo/db';
 import { eq, and, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
@@ -282,4 +282,42 @@ export async function getOrders() {
   return db.select().from(orders)
     .where(eq(orders.tenantId, tenantId))
     .orderBy(desc(orders.createdAt));
+}
+
+export async function updateOrderStatus(orderId: string, newStatus: string, note?: string) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+
+  const [order] = await db.select().from(orders)
+    .where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
+  if (!order) throw new Error('Order not found');
+
+  const oldStatus = order.status;
+  await db.update(orders)
+    .set({ status: newStatus as typeof order.status, updatedAt: new Date() })
+    .where(eq(orders.id, orderId));
+
+  await db.insert(orderStatusHistory).values({
+    orderId,
+    oldStatus,
+    newStatus,
+    note: note || null,
+  });
+
+  revalidatePath('/admin/shop/orders');
+}
+
+export async function updateOrderTracking(orderId: string, trackingNumber: string, trackingUrl?: string) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+
+  const [order] = await db.select().from(orders)
+    .where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
+  if (!order) throw new Error('Order not found');
+
+  await db.update(orders)
+    .set({ trackingNumber, trackingUrl: trackingUrl || null, updatedAt: new Date() })
+    .where(eq(orders.id, orderId));
+
+  revalidatePath('/admin/shop/orders');
 }
