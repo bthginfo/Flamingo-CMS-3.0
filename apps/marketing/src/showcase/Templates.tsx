@@ -16,6 +16,7 @@ const DEMO_LINKS: Record<string, string> = {
   realestate: 'https://www.demo.flamingomedia.online/demo/realestate',
   cafe: 'https://www.demo.flamingomedia.online/demo/cafe',
   tattoo: 'https://www.demo.flamingomedia.online/demo/tattoo',
+  shop: 'https://www.demo.flamingomedia.online/demo/shop',
 };
 
 const TEMPLATES = [
@@ -137,6 +138,16 @@ const TEMPLATES = [
     image: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=800&q=80',
     color: '#1a1a2e',
     features: ['Artist-Grid & Profile', 'Style-Galerie mit Filter', 'Booking-Formular', 'Flash-Day-Banner', 'Aftercare-Guide', 'Pricing-Info'],
+    status: 'live' as const,
+  },
+  {
+    key: 'shop',
+    name: 'Online-Shop',
+    tagline: 'Weinhandel · Einzelhandel · E-Commerce',
+    description: 'Vollwertiger Online-Shop mit Produktkatalog, Kategorien, Warenkorb, Checkout, Gutscheinen, Versandoptionen und Bestellverwaltung.',
+    image: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=800&q=80',
+    color: '#4a1942',
+    features: ['Produktkatalog & Suche', 'Kategorien-Übersicht', 'Warenkorb & Checkout', 'Gutscheine & Rabatte', 'Versandkonfiguration', 'PDF-Rechnungen'],
     status: 'live' as const,
   },
 ];

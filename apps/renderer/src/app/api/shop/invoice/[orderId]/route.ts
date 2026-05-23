@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { orders, shopSettings } from '@flamingo/db';
+import { orders, shopSettings, invoices } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
@@ -22,7 +22,37 @@ export async function GET(
   const [settings] = await db.select().from(shopSettings)
     .where(eq(shopSettings.tenantId, tenantId)).limit(1);
 
-  const invoiceNumber = `${settings?.invoicePrefix || 'RE'}-${order.orderNumber.split('-').pop()}`;
+  // Check if invoice already exists for this order
+  let [existingInvoice] = await db.select().from(invoices)
+    .where(and(eq(invoices.orderId, orderId), eq(invoices.tenantId, tenantId))).limit(1);
+
+  let invoiceNumber: string;
+
+  if (existingInvoice) {
+    invoiceNumber = existingInvoice.invoiceNumber;
+  } else {
+    // Generate sequential invoice number
+    const prefix = settings?.invoicePrefix || 'RE';
+    const nextNum = settings?.nextInvoiceNumber || 1;
+    const year = new Date().getFullYear();
+    const paddedNum = String(nextNum).padStart(4, '0');
+    invoiceNumber = `${prefix}-${year}-${paddedNum}`;
+
+    // Create invoice record
+    await db.insert(invoices).values({
+      tenantId,
+      orderId,
+      invoiceNumber,
+      amountNetCents: order.subtotalCents - order.taxCents,
+      taxCents: order.taxCents,
+      amountGrossCents: order.totalCents,
+    });
+
+    // Increment invoice counter
+    await db.update(shopSettings)
+      .set({ nextInvoiceNumber: nextNum + 1 })
+      .where(eq(shopSettings.tenantId, tenantId));
+  }
 
   // Build PDF
   const doc = await PDFDocument.create();

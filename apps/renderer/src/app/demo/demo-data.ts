@@ -1,6 +1,6 @@
 import type { NavItem, NavCta, FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 
-export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'showcase';
+export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'showcase';
 
 export interface DemoSiteData {
   navItems: NavItem[];
@@ -247,6 +247,26 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
         { title: 'Info', items: [{ text: 'Preise', href: '/demo/tattoo/leistungen' }, { text: 'Pflege-Guide', href: '/demo/tattoo/pflege' }, { text: 'Kontakt', href: '/demo/tattoo/kontakt' }] },
       ],
       legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    },
+  },
+  shop: {
+    brand: { companyName: 'Vinothek Goldberg', tagline: 'Erlesene Weine aus aller Welt — seit 1962', primaryColor: '#4a1942' },
+    contact: { phone: '+49 221 987 654 32', email: 'info@vinothek-goldberg.de', address: 'Weinstraße 8, 50667 Köln' },
+    socialLinks: { instagram: '#', facebook: '#' },
+    navItems: [
+      { label: 'Weine', href: '/demo/shop/shop' },
+      { label: 'Kategorien', href: '/demo/shop/kategorien' },
+      { label: 'Über uns', href: '/demo/shop/ueber-uns' },
+      { label: 'Kontakt', href: '/demo/shop/kontakt' },
+      { label: 'Warenkorb', href: '/demo/shop/warenkorb' },
+    ],
+    cta: { label: 'Zum Shop', href: '/demo/shop/shop' },
+    footer: {
+      columns: [
+        { title: 'Shop', items: [{ text: 'Alle Weine', href: '/demo/shop/shop' }, { text: 'Kategorien', href: '/demo/shop/kategorien' }] },
+        { title: 'Service', items: [{ text: 'Über uns', href: '/demo/shop/ueber-uns' }, { text: 'Kontakt', href: '/demo/shop/kontakt' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }, { label: 'AGB', href: '#' }],
     },
   },
   showcase: {

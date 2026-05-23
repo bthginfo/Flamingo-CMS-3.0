@@ -676,6 +676,23 @@ export const orderStatusHistory = pgTable('order_status_history', {
   index('order_status_history_order_idx').on(t.orderId),
 ]);
 
+// ─── Inquiries (FlamingoMedia CRM) ──────────────────────────────────
+export const inquiryStatusEnum = pgEnum('inquiry_status', ['neu', 'gelesen', 'beantwortet', 'archiviert']);
+
+export const inquiries = pgTable('inquiries', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: varchar('name', { length: 200 }).notNull(),
+  email: varchar('email', { length: 320 }).notNull(),
+  branche: varchar('branche', { length: 100 }),
+  paket: varchar('paket', { length: 100 }),
+  message: text('message').notNull(),
+  source: varchar('source', { length: 100 }),
+  status: inquiryStatusEnum('status').notNull().default('neu'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('inquiries_status_idx').on(t.status),
+]);
+
 // ─── customers ───────────────────────────────────────────────────────
 export const customers = pgTable('customers', {
   id: uuid('id').primaryKey().defaultRandom(),

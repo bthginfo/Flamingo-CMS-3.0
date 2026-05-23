@@ -19,6 +19,7 @@ import {
 } from '@/components/fx-21st';
 import { ConsentProvider } from '@/lib/consent';
 import { ContactForm } from '@/components/ContactForm';
+import { BRANCHE_OPTIONS, PAKET_OPTIONS } from '@/lib/contact-options';
 import { CookieBanner } from '@/components/CookieBanner';
 import { MouseGlow } from '@/components/MouseGlow';
 import { scrollToTop } from '@/lib/scroll';
@@ -2254,23 +2255,8 @@ function Contact() {
               source="agency-landing"
               tenant="FlamingoMedia"
               fields={['name', 'email', 'branche', 'paket', 'message']}
-              brancheOptions={[
-                'Restaurant / Gastro',
-                'Salon / Beauty',
-                'Handwerk / Service',
-                'Praxis / Ärzte',
-                'Beratung / Kanzlei',
-                'Studio / Coaching',
-                'Hotel / Pension',
-                'Café / Bäckerei',
-                'Andere',
-              ]}
-              paketOptions={[
-                'Template (1.490 €)',
-                'Mit Content Kit (Foto + Video) (3.180 €)',
-                'Custom (auf Anfrage)',
-                'Noch unentschieden',
-              ]}
+              brancheOptions={BRANCHE_OPTIONS}
+              paketOptions={PAKET_OPTIONS}
             />
           </div>
         </div>

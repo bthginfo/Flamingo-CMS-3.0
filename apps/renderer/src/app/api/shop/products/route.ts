@@ -30,6 +30,8 @@ export async function GET() {
       id: productCategories.id,
       name: productCategories.name,
       slug: productCategories.slug,
+      description: productCategories.description,
+      image: productCategories.image,
     })
       .from(productCategories)
       .where(eq(productCategories.tenantId, tenantId)),

@@ -36,6 +36,7 @@ import { ShopCartSection } from './shared/shop-cart';
 import { ShopCheckoutSection } from './shared/shop-checkout';
 import { ShopThankYouSection } from './shared/shop-thank-you';
 import { ShopFeaturedProductsSection } from './shared/shop-featured-products';
+import { ShopCategoryOverviewSection } from './shared/shop-category-overview';
 import { HeaderBannerSection } from './handwerk/header-banner';
 import { CollectionHeroSection } from './handwerk/collection-hero';
 import { TextImageSection } from './handwerk/text-image';
@@ -556,6 +557,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   shopCheckout: ShopCheckoutSection,
   shopThankYou: ShopThankYouSection,
   shopFeaturedProducts: ShopFeaturedProductsSection,
+  shopCategoryOverview: ShopCategoryOverviewSection,
   story: TextImageSection,
   amenities: AmenitiesSection,
 };
