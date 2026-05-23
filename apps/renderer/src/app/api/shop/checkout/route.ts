@@ -167,8 +167,8 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Send order confirmation emails (fire-and-forget) — only for immediate methods (not stripe/paypal which confirm async)
-  if (paymentMethod !== 'stripe' && paymentMethod !== 'paypal') {
+  // Send order confirmation emails (fire-and-forget) — only for immediate methods (not stripe/paypal/sumup which confirm async)
+  if (paymentMethod !== 'stripe' && paymentMethod !== 'paypal' && paymentMethod !== 'sumup') {
     sendOrderEmails(tenantId, {
       orderNumber,
       customerName: name,
@@ -278,6 +278,44 @@ export async function POST(req: NextRequest) {
       }
     } catch (e: any) {
       console.error('[Checkout] PayPal order error:', e);
+    }
+  }
+
+  // If SumUp payment — create SumUp checkout and return redirect URL
+  if (paymentMethod === 'sumup' && settings.sumupApiKey && settings.sumupMerchantCode) {
+    try {
+      const origin = req.headers.get('origin') || req.nextUrl.origin;
+      const baseUrl = settings.sumupMode === 'live'
+        ? 'https://api.sumup.com'
+        : 'https://api.sumup.com'; // SumUp uses same URL, sandbox is account-based
+
+      const checkoutRes = await fetch(`${baseUrl}/v0.1/checkouts`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${settings.sumupApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          checkout_reference: order.id,
+          amount: totalCents / 100,
+          currency: settings.currency,
+          merchant_code: settings.sumupMerchantCode,
+          description: `Bestellung ${orderNumber}`,
+          redirect_url: `${origin}/api/shop/webhook/sumup?orderId=${order.id}&tenantId=${tenantId}`,
+        }),
+      });
+      const checkout = await checkoutRes.json();
+
+      if (checkout.id) {
+        await db.update(orders).set({ paymentId: checkout.id }).where(eq(orders.id, order.id));
+        // SumUp hosted checkout URL
+        const sumupUrl = `https://pay.sumup.com/b2c/v0.1/checkouts/${checkout.id}`;
+        return NextResponse.json({ success: true, orderNumber, orderId: order.id, sumupUrl });
+      } else {
+        console.error('[Checkout] SumUp create error:', checkout);
+      }
+    } catch (e: any) {
+      console.error('[Checkout] SumUp checkout error:', e);
     }
   }
 

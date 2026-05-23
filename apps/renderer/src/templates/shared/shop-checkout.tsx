@@ -126,6 +126,12 @@ export function ShopCheckoutSection({ data }: Props) {
           window.location.href = data.paypalUrl;
           return;
         }
+        // SumUp redirect
+        if (data.sumupUrl) {
+          clearCart();
+          window.location.href = data.sumupUrl;
+          return;
+        }
         clearCart();
         router.push('/bestellung-abgeschlossen');
       }
