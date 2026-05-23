@@ -23,6 +23,9 @@ importers:
       '@flamingo/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@types/nodemailer':
+        specifier: ^8.0.0
+        version: 8.0.0
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
@@ -47,6 +50,9 @@ importers:
       next:
         specifier: ^15.3.0
         version: 15.5.18(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      nodemailer:
+        specifier: ^8.0.7
+        version: 8.0.7
       ogl:
         specifier: ^1.0.11
         version: 1.0.11

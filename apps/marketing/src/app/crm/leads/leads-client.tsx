@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Plus, Trash2, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, Mail } from 'lucide-react';
 import { createLead, updateLead, deleteLead, type Lead } from './actions';
+import { toast } from 'sonner';
 
 type LeadStatus = 'offen' | 'kontaktiert' | 'angenommen' | 'abgelehnt';
 
@@ -73,6 +74,74 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
     });
   }
 
+  // Email modal state
+  const [emailModal, setEmailModal] = useState<{ to: string; subject: string; body: string; leadId: string } | null>(null);
+  const [sendingEmail, setSendingEmail] = useState(false);
+
+  function openEmailModal(lead: Lead) {
+    const firstName = lead.contact?.split(' ')[0] || 'Team';
+    const company = lead.company || '';
+    const defaultBody = `Hallo ${firstName},
+
+wir sind Mario und Julius von Flamingo Media und helfen lokalen Betrieben dabei, schnell und unkompliziert zu einem professionellen Webauftritt zu kommen:
+https://www.flamingomedia.online
+
+Wir sind auf ${company} gestoßen und hatten den Eindruck, dass bei eurem aktuellen Online-Auftritt noch einiges an Potenzial liegt. Gerade für Betriebe wie euren ist die Website oft der erste Kontaktpunkt für neue Kund:innen. Wenn Design, Inhalte, Bilder oder mobile Darstellung nicht sofort überzeugen, gehen leider schnell Anfragen verloren.
+
+Genau dafür haben wir Flamingo Media gebaut: professionelle Website-Templates für lokale Businesses, die deutlich schneller und günstiger umgesetzt werden können als klassische Agenturprojekte, aber trotzdem hochwertig aussehen und individuell angepasst werden.
+
+Kurz gesagt, ihr profitiert von:
+
+• schnellem Start mit passenden Branchen-Templates
+• professionellem Design, angepasst an euren Betrieb
+• einfachem CMS, damit ihr Inhalte selbst ändern könnt
+• optional Foto & Video, falls ihr bessere Bilder für euren Auftritt braucht
+• Hosting & Pflege, damit ihr euch nicht um Technik kümmern müsst
+• Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
+
+Wir bieten grob drei Richtungen an: eine schnelle Template-Website, ein individuelles Custom Design oder Website plus Foto-/Video-Produktion. Mehr Infos und Beispiele findet ihr direkt auf unserer Website:
+https://www.flamingomedia.online
+
+Gerne schicken wir euch auch unser kurzes Pitchdeck mit ein paar Beispielen und dem Ablauf.
+
+Hättet ihr grundsätzlich Interesse an einem kurzen, unverbindlichen Austausch?
+
+Viele Grüße
+Mario & Julius`;
+
+    setEmailModal({
+      to: lead.email || '',
+      subject: `Professioneller Webauftritt für ${company}`,
+      body: defaultBody,
+      leadId: lead.id,
+    });
+  }
+
+  async function handleSendEmail() {
+    if (!emailModal) return;
+    if (!emailModal.to.trim()) { toast.error('Empfänger E-Mail fehlt'); return; }
+    setSendingEmail(true);
+    try {
+      const res = await fetch('/api/send-lead-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: emailModal.to, subject: emailModal.subject, body: emailModal.body }),
+      });
+      if (!res.ok) throw new Error('Send failed');
+      toast.success('E-Mail gesendet!');
+      // Auto-update status to "kontaktiert"
+      const lead = leads.find(l => l.id === emailModal.leadId);
+      if (lead && lead.status === 'offen') {
+        handleStatusChange(lead.id, 'kontaktiert');
+      }
+      setEmailModal(null);
+    } catch {
+      toast.error('E-Mail konnte nicht gesendet werden');
+    } finally {
+      setSendingEmail(false);
+    }
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -141,6 +210,36 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
 
       {/* Table (desktop) / Cards (mobile) */}
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+
+      {/* Email Modal */}
+      {emailModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setEmailModal(null)}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-2xl p-5 sm:p-6 space-y-4 max-h-[95vh] sm:max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <h2 className="text-lg font-semibold flex items-center gap-2"><Mail size={18} className="text-indigo-500" /> E-Mail an Lead</h2>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-medium text-slate-500">Empfänger</label>
+                <input type="email" className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={emailModal.to} onChange={e => setEmailModal({ ...emailModal, to: e.target.value })} placeholder="email@example.com" />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-500">Betreff</label>
+                <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={emailModal.subject} onChange={e => setEmailModal({ ...emailModal, subject: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-500">Nachricht</label>
+                <textarea className="w-full border rounded-lg px-3 py-2 text-sm mt-1 min-h-[300px] resize-y" value={emailModal.body} onChange={e => setEmailModal({ ...emailModal, body: e.target.value })} />
+              </div>
+            </div>
+            <p className="text-xs text-slate-400">Signatur (Mario & Julius, Flamingo Media) wird automatisch eingefügt.</p>
+            <div className="flex justify-end gap-2 pt-2">
+              <button onClick={() => setEmailModal(null)} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Abbrechen</button>
+              <button onClick={handleSendEmail} disabled={sendingEmail} className="px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium disabled:opacity-50 flex items-center gap-2">
+                <Mail size={14} /> {sendingEmail ? 'Sende...' : 'Senden'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
         {/* Desktop table */}
         <table className="hidden sm:table w-full text-sm">
           <thead>
@@ -186,7 +285,10 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
                   </div>
                 </td>
                 <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
-                  <button onClick={() => handleDelete(lead.id)} className="text-slate-300 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => openEmailModal(lead)} className="text-indigo-400 hover:text-indigo-700" title="E-Mail senden"><Mail size={14} /></button>
+                    <button onClick={() => handleDelete(lead.id)} className="text-slate-300 hover:text-red-500 transition-colors"><Trash2 size={14} /></button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -222,6 +324,7 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
               <div className="flex items-center justify-between pt-1">
                 <span className="text-xs text-slate-400">{lead.responsible}</span>
                 <div className="flex items-center gap-3" onClick={e => e.stopPropagation()}>
+                  <button onClick={() => openEmailModal(lead)} className="text-indigo-400 hover:text-indigo-700"><Mail size={14} /></button>
                   {lead.websiteOld && <a href={lead.websiteOld.startsWith('http') ? lead.websiteOld : `https://${lead.websiteOld}`} target="_blank" rel="noopener noreferrer" className="text-slate-400"><ExternalLink size={14} /></a>}
                   {lead.flamingoLink && <a href={lead.flamingoLink.startsWith('http') ? lead.flamingoLink : `https://${lead.flamingoLink}`} target="_blank" rel="noopener noreferrer" className="text-indigo-400"><ExternalLink size={14} /></a>}
                   <button onClick={() => handleDelete(lead.id)} className="text-slate-300 hover:text-red-500"><Trash2 size={14} /></button>
