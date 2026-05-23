@@ -45,12 +45,17 @@ export function ShopProductGridSection({ data }: Props) {
   }, []);
 
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get('kategorie');
+  const kategorieParam = searchParams.get('kategorie');
   const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string | null>(initialCategory);
+  const [activeCategory, setActiveCategory] = useState<string | null>(kategorieParam);
   const [sortBy, setSortBy] = useState<'default' | 'price-asc' | 'price-desc' | 'name'>('default');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
   const [priceFilter, setPriceFilter] = useState<[number, number]>([0, 0]);
+
+  // Sync category filter with URL param changes
+  useEffect(() => {
+    setActiveCategory(kategorieParam);
+  }, [kategorieParam]);
 
   // Set price range from products
   useEffect(() => {

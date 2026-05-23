@@ -13,6 +13,7 @@ export function ShopCategoryOverviewSection({ data }: Props) {
   const subline = (data.subline as string) || '';
   const columns = (data.columns as number) || 3;
   const shopBase = (data.basePath as string) || '/shop';
+  const shopGridPath = (data.shopGridPath as string) || shopBase;
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +38,7 @@ export function ShopCategoryOverviewSection({ data }: Props) {
 
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns >= 3 ? 'lg:grid-cols-3' : ''} ${columns >= 4 ? 'xl:grid-cols-4' : ''} gap-6`}>
         {categories.map(cat => (
-          <Link key={cat.id} href={`${shopBase}?kategorie=${cat.slug}`} className="group">
+          <Link key={cat.id} href={`${shopGridPath}?kategorie=${cat.slug}`} className="group">
             <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-[4/3] bg-zinc-50 relative overflow-hidden">
                 {cat.image ? (

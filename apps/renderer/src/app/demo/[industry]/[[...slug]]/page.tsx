@@ -135,7 +135,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
 
   return (
     <DemoPageShell
-      sections={prefixSections(page.sections.filter(s => s.visible).map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, basePath: demoPrefix } } : s), demoPrefix)}
+      sections={prefixSections(page.sections.filter(s => s.visible).map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}) } } : s), demoPrefix)}
       industry={tenantStyle.industry}
       industryKey={industry}
       defaultStyle={tenantStyle.activeStyle}
