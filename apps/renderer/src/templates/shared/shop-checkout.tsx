@@ -1,15 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '@/components/shop/cart-context';
 import { useRouter } from 'next/navigation';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2, Tag, X } from 'lucide-react';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 function formatPrice(cents: number) {
   return (cents / 100).toFixed(2).replace('.', ',') + ' €';
 }
+
+type ShippingMethod = { id: string; name: string; priceCents: number; freeAboveCents: number | null; estimatedDays: string | null };
+type CouponResult = { valid: boolean; code: string; type: string; discountCents: number; freeShipping: boolean; label: string };
 
 type CheckoutData = {
   email: string;
@@ -35,8 +38,55 @@ export function ShopCheckoutSection({ data }: Props) {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<CheckoutData>({
-    email: '', name: '', phone: '', street: '', city: '', zip: '', country: 'DE', company: '', shippingMethod: 'standard', paymentMethod: 'prepayment', customerNotes: '', couponCode: '',
+    email: '', name: '', phone: '', street: '', city: '', zip: '', country: 'DE', company: '', shippingMethod: '', paymentMethod: 'prepayment', customerNotes: '', couponCode: '',
   });
+  const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>([]);
+  const [coupon, setCoupon] = useState<CouponResult | null>(null);
+  const [couponInput, setCouponInput] = useState('');
+  const [couponError, setCouponError] = useState('');
+
+  // Fetch shipping methods when country changes
+  useEffect(() => {
+    fetch(`/api/shop/shipping?country=${form.country}`)
+      .then(r => r.json())
+      .then(d => {
+        setShippingMethods(d.methods || []);
+        if (d.methods?.length && !form.shippingMethod) {
+          setForm(f => ({ ...f, shippingMethod: d.methods[0].id }));
+        }
+      });
+  }, [form.country]);
+
+  // Calculate shipping cost
+  const selectedShipping = shippingMethods.find(m => m.id === form.shippingMethod);
+  const shippingCents = selectedShipping
+    ? (coupon?.freeShipping || (selectedShipping.freeAboveCents && totalCents >= selectedShipping.freeAboveCents)) ? 0 : selectedShipping.priceCents
+    : 0;
+  const discountCents = coupon?.discountCents || 0;
+  const grandTotal = totalCents + shippingCents - discountCents;
+
+  async function applyCoupon() {
+    setCouponError('');
+    if (!couponInput.trim()) return;
+    const res = await fetch('/api/shop/coupon', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: couponInput, subtotalCents: totalCents }),
+    });
+    const data = await res.json();
+    if (res.ok && data.valid) {
+      setCoupon(data);
+      setForm(f => ({ ...f, couponCode: data.code }));
+    } else {
+      setCouponError(data.error || 'Ungültiger Code');
+    }
+  }
+
+  function removeCoupon() {
+    setCoupon(null);
+    setCouponInput('');
+    setForm(f => ({ ...f, couponCode: '' }));
+  }
 
   function set(key: keyof CheckoutData, value: string) {
     setForm(prev => ({ ...prev, [key]: value }));
@@ -48,7 +98,12 @@ export function ShopCheckoutSection({ data }: Props) {
       const res = await fetch('/api/shop/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, items: items.map(i => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })) }),
+        body: JSON.stringify({
+          ...form,
+          shippingCents,
+          discountCents,
+          items: items.map(i => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })),
+        }),
       });
       if (res.ok) {
         clearCart();
@@ -138,6 +193,28 @@ export function ShopCheckoutSection({ data }: Props) {
                   </select>
                 </div>
               </div>
+
+              {/* Shipping method selection */}
+              {shippingMethods.length > 0 && (
+                <div className="space-y-2">
+                  <label className="block text-xs font-medium text-zinc-500 mb-1">Versandart</label>
+                  {shippingMethods.map(method => {
+                    const isFree = method.freeAboveCents && totalCents >= method.freeAboveCents;
+                    return (
+                      <label key={method.id} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition ${form.shippingMethod === method.id ? 'border-zinc-900 bg-zinc-50' : 'border-zinc-200'}`}>
+                        <div className="flex items-center gap-3">
+                          <input type="radio" name="shipping" value={method.id} checked={form.shippingMethod === method.id} onChange={e => set('shippingMethod', e.target.value)} className="accent-zinc-900" />
+                          <div>
+                            <p className="text-sm font-medium">{method.name}</p>
+                            {method.estimatedDays && <p className="text-xs text-zinc-400">{method.estimatedDays}</p>}
+                          </div>
+                        </div>
+                        <span className="text-sm font-medium">{isFree ? <span className="text-green-600">Kostenlos</span> : formatPrice(method.priceCents)}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
               <div className="flex gap-3">
                 <button onClick={() => setStep(0)} className="px-6 py-3 border border-zinc-200 rounded-xl text-sm">Zurück</button>
                 <button onClick={() => setStep(2)} disabled={!form.street || !form.zip || !form.city} className="px-6 py-3 bg-zinc-900 text-white rounded-xl font-medium hover:bg-zinc-800 transition disabled:opacity-50">
@@ -208,9 +285,34 @@ export function ShopCheckoutSection({ data }: Props) {
               </div>
             ))}
           </div>
-          <div className="border-t pt-3 flex justify-between font-bold">
-            <span>Gesamt</span>
-            <span>{formatPrice(totalCents)}</span>
+          <div className="border-t pt-3 space-y-2 text-sm">
+            <div className="flex justify-between"><span>Zwischensumme</span><span>{formatPrice(totalCents)}</span></div>
+            {shippingCents > 0 && <div className="flex justify-between"><span>Versand</span><span>{formatPrice(shippingCents)}</span></div>}
+            {shippingCents === 0 && selectedShipping && <div className="flex justify-between text-green-600"><span>Versand</span><span>Kostenlos</span></div>}
+            {discountCents > 0 && <div className="flex justify-between text-green-600"><span>Rabatt ({coupon?.label})</span><span>-{formatPrice(discountCents)}</span></div>}
+            <div className="flex justify-between font-bold text-base pt-1 border-t">
+              <span>Gesamt</span>
+              <span>{formatPrice(grandTotal)}</span>
+            </div>
+          </div>
+
+          {/* Coupon code */}
+          <div className="mt-4 pt-4 border-t">
+            {coupon ? (
+              <div className="flex items-center justify-between bg-green-50 rounded-lg px-3 py-2">
+                <div className="flex items-center gap-2">
+                  <Tag size={14} className="text-green-600" />
+                  <span className="text-sm font-medium text-green-700">{coupon.code} ({coupon.label})</span>
+                </div>
+                <button onClick={removeCoupon} className="text-green-600 hover:text-green-800"><X size={14} /></button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <input value={couponInput} onChange={e => { setCouponInput(e.target.value); setCouponError(''); }} placeholder="Gutscheincode" className="flex-1 text-sm border border-zinc-200 rounded-lg px-3 py-2" />
+                <button onClick={applyCoupon} className="text-sm px-3 py-2 bg-zinc-200 rounded-lg hover:bg-zinc-300 font-medium">Einlösen</button>
+              </div>
+            )}
+            {couponError && <p className="text-xs text-red-500 mt-1">{couponError}</p>}
           </div>
         </div>
       </div>

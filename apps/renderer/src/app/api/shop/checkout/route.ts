@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { orders, products, productVariants, shopSettings, customers, orderStatusHistory } from '@flamingo/db';
+import { orders, products, productVariants, shopSettings, customers, orderStatusHistory, coupons } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 import { sendOrderEmails } from '@/lib/shop-email';
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
 
   const body = await req.json();
-  const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items } = body;
+  const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingCents: clientShipping, discountCents: clientDiscount, couponCode } = body;
 
   if (!name || !email || !items?.length) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -62,8 +62,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No valid items' }, { status: 400 });
   }
 
+  const shippingCents = Math.max(0, Math.round(clientShipping || 0));
+  const discountCents = Math.max(0, Math.round(clientDiscount || 0));
   const taxCents = Math.round(subtotalCents * 19 / 119); // 19% included
-  const totalCents = subtotalCents; // Shipping calculated later
+  const totalCents = subtotalCents + shippingCents - discountCents;
+
+  // Validate and increment coupon usage if provided
+  if (couponCode) {
+    const [coupon] = await db.select().from(coupons)
+      .where(and(eq(coupons.tenantId, tenantId), eq(coupons.code, couponCode.toUpperCase()), eq(coupons.active, true)))
+      .limit(1);
+    if (coupon) {
+      await db.update(coupons).set({ usedCount: coupon.usedCount + 1 }).where(eq(coupons.id, coupon.id));
+    }
+  }
 
   // Generate order number
   const orderNumber = `${settings.orderPrefix}-${String(settings.nextOrderNumber).padStart(4, '0')}`;
@@ -79,11 +91,12 @@ export async function POST(req: NextRequest) {
     shippingAddress: { street, city, zip, country, company: company || undefined },
     items: orderItems,
     subtotalCents,
-    shippingCents: 0,
-    discountCents: 0,
+    shippingCents,
+    discountCents,
     taxCents,
     totalCents,
     paymentMethod,
+    couponCode: couponCode || null,
     customerNotes: customerNotes || null,
   }).returning({ id: orders.id });
 
@@ -136,7 +149,7 @@ export async function POST(req: NextRequest) {
     customerEmail: email,
     items: orderItems,
     subtotalCents,
-    shippingCents: 0,
+    shippingCents,
     totalCents,
     paymentMethod: paymentMethod || '',
     shippingAddress: street ? { street, city, zip, country, company: company || undefined } : null,

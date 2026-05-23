@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Package, Truck, CheckCircle, XCircle, Clock, CreditCard, ArrowRight, Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Package, Truck, CheckCircle, XCircle, Clock, CreditCard, ArrowRight, Search, ChevronDown, ChevronUp, FileText } from 'lucide-react';
 import { updateOrderStatus, updateOrderTracking } from '../actions';
 
 type Order = {
@@ -199,6 +199,16 @@ export function OrdersClient({ orders: initialOrders }: { orders: Order[] }) {
                         <p className="text-sm bg-zinc-50 rounded-lg p-2">{order.customerNotes}</p>
                       </div>
                     )}
+
+                    {/* Invoice download */}
+                    <a
+                      href={`/api/shop/invoice/${order.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm px-4 py-2 border border-zinc-200 rounded-lg hover:bg-zinc-50 transition"
+                    >
+                      <FileText size={14} /> Rechnung herunterladen
+                    </a>
 
                     {/* Status change */}
                     <div>

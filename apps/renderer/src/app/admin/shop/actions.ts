@@ -2,7 +2,7 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, pages, pageSections } from '@flamingo/db';
+import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections } from '@flamingo/db';
 import { eq, and, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
@@ -320,4 +320,119 @@ export async function updateOrderTracking(orderId: string, trackingNumber: strin
     .where(eq(orders.id, orderId));
 
   revalidatePath('/admin/shop/orders');
+}
+
+// ─── Shipping ─────────────────────────────────────────────────────────
+
+export async function getShippingZones() {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  const zones = await db.select().from(shippingZones)
+    .where(eq(shippingZones.tenantId, tenantId))
+    .orderBy(shippingZones.sortOrder);
+
+  const methods = await db.select().from(shippingMethods)
+    .where(eq(shippingMethods.tenantId, tenantId));
+
+  return zones.map(z => ({ ...z, methods: methods.filter(m => m.zoneId === z.id) }));
+}
+
+export async function createShippingZone(data: { name: string; countries: string[] }) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  const [zone] = await db.insert(shippingZones).values({ tenantId, ...data }).returning({ id: shippingZones.id });
+  revalidatePath('/admin/shop/shipping');
+  return zone.id;
+}
+
+export async function updateShippingZone(id: string, data: Partial<{ name: string; countries: string[]; sortOrder: number }>) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  await db.update(shippingZones).set(data)
+    .where(and(eq(shippingZones.id, id), eq(shippingZones.tenantId, tenantId)));
+  revalidatePath('/admin/shop/shipping');
+}
+
+export async function deleteShippingZone(id: string) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  await db.delete(shippingZones).where(and(eq(shippingZones.id, id), eq(shippingZones.tenantId, tenantId)));
+  revalidatePath('/admin/shop/shipping');
+}
+
+export async function createShippingMethod(data: { zoneId: string; name: string; priceCents: number; freeAboveCents?: number; estimatedDays?: string }) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  await db.insert(shippingMethods).values({ tenantId, ...data });
+  revalidatePath('/admin/shop/shipping');
+}
+
+export async function updateShippingMethod(id: string, data: Partial<{ name: string; priceCents: number; freeAboveCents: number | null; estimatedDays: string | null; active: boolean }>) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  await db.update(shippingMethods).set(data)
+    .where(and(eq(shippingMethods.id, id), eq(shippingMethods.tenantId, tenantId)));
+  revalidatePath('/admin/shop/shipping');
+}
+
+export async function deleteShippingMethod(id: string) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  await db.delete(shippingMethods).where(and(eq(shippingMethods.id, id), eq(shippingMethods.tenantId, tenantId)));
+  revalidatePath('/admin/shop/shipping');
+}
+
+// ─── Coupons ──────────────────────────────────────────────────────────
+
+export async function getCoupons() {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  return db.select().from(coupons)
+    .where(eq(coupons.tenantId, tenantId))
+    .orderBy(desc(coupons.createdAt));
+}
+
+export async function createCoupon(data: {
+  code: string; type: 'percent' | 'fixed_amount' | 'free_shipping';
+  value: number; minOrderCents?: number; maxUses?: number;
+  maxUsesPerCustomer?: number; validFrom?: string; validUntil?: string;
+}) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  await db.insert(coupons).values({
+    tenantId,
+    code: data.code.toUpperCase(),
+    type: data.type,
+    value: data.value,
+    minOrderCents: data.minOrderCents || null,
+    maxUses: data.maxUses || null,
+    maxUsesPerCustomer: data.maxUsesPerCustomer || null,
+    validFrom: data.validFrom ? new Date(data.validFrom) : null,
+    validUntil: data.validUntil ? new Date(data.validUntil) : null,
+  });
+  revalidatePath('/admin/shop/coupons');
+}
+
+export async function updateCoupon(id: string, data: Partial<{
+  code: string; type: 'percent' | 'fixed_amount' | 'free_shipping';
+  value: number; minOrderCents: number | null; maxUses: number | null;
+  maxUsesPerCustomer: number | null; active: boolean;
+  validFrom: string | null; validUntil: string | null;
+}>) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  const updates: Record<string, unknown> = { ...data };
+  if (data.code) updates.code = data.code.toUpperCase();
+  if (data.validFrom !== undefined) updates.validFrom = data.validFrom ? new Date(data.validFrom) : null;
+  if (data.validUntil !== undefined) updates.validUntil = data.validUntil ? new Date(data.validUntil) : null;
+  await db.update(coupons).set(updates)
+    .where(and(eq(coupons.id, id), eq(coupons.tenantId, tenantId)));
+  revalidatePath('/admin/shop/coupons');
+}
+
+export async function deleteCoupon(id: string) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  await db.delete(coupons).where(and(eq(coupons.id, id), eq(coupons.tenantId, tenantId)));
+  revalidatePath('/admin/shop/coupons');
 }
