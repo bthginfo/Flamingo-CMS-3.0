@@ -128,7 +128,7 @@ function SortableSection({ section, industry, onDelete, onToggleVisible, onChang
   const [expanded, setExpanded] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
-  const sectionTypes = getSectionTypesForIndustry(industry);
+  const sectionTypes = getSectionTypesForIndustry(industry, { hasShop: industry === 'restaurant' });
   const typeInfo = sectionTypes.find(t => t.type === section.type);
 
   return (
@@ -178,7 +178,7 @@ export default function DemoPageEditorPage() {
   const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
 
   const industry = pageData.industry;
-  const sectionTypes = getSectionTypesForIndustry(industry);
+  const sectionTypes = getSectionTypesForIndustry(industry, { hasShop: true });
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),

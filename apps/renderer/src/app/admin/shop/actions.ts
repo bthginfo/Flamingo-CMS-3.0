@@ -3,7 +3,7 @@
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, invoices } from '@flamingo/db';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 async function requireTenant() {
@@ -518,6 +518,16 @@ export async function cancelOrder(orderId: string, reason?: string): Promise<{ c
     newStatus: 'cancelled',
     note: reason ? `Storno: ${reason}` : 'Storno',
   });
+
+  // Restore stock for cancelled items
+  const orderItems = order.items as { productId: string; variantId?: string; quantity: number }[];
+  for (const item of orderItems) {
+    if (item.variantId) {
+      await db.execute(sql`UPDATE product_variants SET stock = stock + ${item.quantity} WHERE id = ${item.variantId}`);
+    } else {
+      await db.execute(sql`UPDATE products SET stock = stock + ${item.quantity} WHERE id = ${item.productId} AND track_stock = true`);
+    }
+  }
 
   // Send cancellation email (fire-and-forget)
   sendCancellationEmail(tenantId, order, creditNoteNumber).catch(e =>

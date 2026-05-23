@@ -3,7 +3,7 @@
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { validateSectionData } from '@/lib/validate-section';
-import { pages, pageSections, tenants, globalSettings } from '@flamingo/db';
+import { pages, pageSections, tenants, globalSettings, tenantAddons } from '@flamingo/db';
 import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -71,15 +71,16 @@ export async function updatePageAction(pageId: string, data: { title?: string; s
 export async function getPageWithSectionsAction(pageId: string) {
   const session = await requireSession();
   const db = getDb();
-  const [pageResult, sectionsResult, tenantResult, brandResult] = await Promise.all([
+  const [pageResult, sectionsResult, tenantResult, brandResult, shopAddonResult] = await Promise.all([
     db.select().from(pages).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId))),
     db.select().from(pageSections).where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).orderBy(asc(pageSections.sortOrder)),
     db.select({ industry: tenants.industry, activeStyle: tenants.activeStyle }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1),
     db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1),
+    db.select({ active: tenantAddons.active }).from(tenantAddons).where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'shop'))).limit(1),
   ]);
   const page = pageResult[0];
   if (!page) return null;
-  return { page, sections: sectionsResult, industry: tenantResult[0]?.industry ?? 'tradesman', styleVariant: tenantResult[0]?.activeStyle ?? 'classic', brand: (brandResult[0]?.brand as Record<string, string>) || {} };
+  return { page, sections: sectionsResult, industry: tenantResult[0]?.industry ?? 'tradesman', styleVariant: tenantResult[0]?.activeStyle ?? 'classic', brand: (brandResult[0]?.brand as Record<string, string>) || {}, hasShop: !!shopAddonResult[0]?.active };
 }
 
 export async function addSectionAction(pageId: string, type: string) {

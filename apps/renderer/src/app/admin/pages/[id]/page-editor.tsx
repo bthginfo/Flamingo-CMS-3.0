@@ -171,10 +171,10 @@ function SectionMetaEditor({ section, styleVariant, onSave }: { section: Section
 
 // SectionPickerModal is imported from shared component
 
-export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {} }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string> }) {
+export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {}, hasShop = false }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean }) {
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
-  const sectionTypes = getSectionTypesForIndustry(industry);
+  const sectionTypes = getSectionTypesForIndustry(industry, { hasShop });
   const resolvedVars = { ...getStyleCssVars(industry, styleVariant), ...getBrandCssVars(brand) };
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [publishing, setPublishing] = useState(false);

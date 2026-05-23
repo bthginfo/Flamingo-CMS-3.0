@@ -312,12 +312,17 @@ const INDUSTRY_LABELS: Record<string, string> = {
   tattoo: 'Tattoo Studio',
 };
 
-export function getSectionTypesForIndustry(industry: string): SectionTypeDefinition[] {
+export function getSectionTypesForIndustry(industry: string, options?: { hasShop?: boolean }): SectionTypeDefinition[] {
   const specific = ALL_INDUSTRY_SECTIONS[industry] ?? TRADESMAN_SECTION_TYPES;
 
   // Merge: industry-specific first, then shared (skip duplicates)
   const types = new Set(specific.map(s => s.type));
-  const shared = SHARED_SECTION_TYPES.filter(s => !types.has(s.type));
+  let shared = SHARED_SECTION_TYPES.filter(s => !types.has(s.type));
+
+  // Hide shop sections if tenant doesn't have shop addon
+  if (!options?.hasShop) {
+    shared = shared.filter(s => s.category !== 'Shop');
+  }
 
   // Collect foreign sections from other industries
   const foreign: SectionTypeDefinition[] = [];

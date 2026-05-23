@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { orders, products, productVariants, shopSettings, customers, orderStatusHistory, coupons } from '@flamingo/db';
-import { eq, and } from 'drizzle-orm';
+import { orders, products, productVariants, shopSettings, customers, orderStatusHistory, coupons, shippingMethods } from '@flamingo/db';
+import { eq, and, sql } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 import { sendOrderEmails } from '@/lib/shop-email';
 import Stripe from 'stripe';
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
 
   const body = await req.json();
-  const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingCents: clientShipping, couponCode } = body;
+  const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingMethod: shippingMethodId, couponCode } = body;
 
   if (!name || !email || !items?.length) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -63,7 +63,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No valid items' }, { status: 400 });
   }
 
-  const shippingCents = Math.max(0, Math.round(clientShipping || 0));
+  // Server-side shipping cost validation
+  let shippingCents = 0;
+  if (shippingMethodId && paymentMethod !== 'pickup') {
+    const [method] = await db.select().from(shippingMethods)
+      .where(and(eq(shippingMethods.id, shippingMethodId), eq(shippingMethods.tenantId, tenantId), eq(shippingMethods.active, true)))
+      .limit(1);
+    if (method) {
+      shippingCents = method.priceCents;
+      if (method.freeAboveCents && subtotalCents >= method.freeAboveCents) {
+        shippingCents = 0;
+      }
+    }
+  }
+
   const taxCents = Math.round(subtotalCents * 19 / 119); // 19% included
 
   // Server-side discount calculation (never trust client discount)
@@ -73,16 +86,23 @@ export async function POST(req: NextRequest) {
       .where(and(eq(coupons.tenantId, tenantId), eq(coupons.code, couponCode.toUpperCase()), eq(coupons.active, true)))
       .limit(1);
     if (coupon) {
-      if (coupon.type === 'percent') {
-        discountCents = Math.round(subtotalCents * coupon.value / 100);
-      } else {
-        discountCents = coupon.value;
+      // Validate expiry and usage limits
+      const now = new Date();
+      const expired = (coupon.validUntil && now > coupon.validUntil) || (coupon.validFrom && now < coupon.validFrom);
+      const maxedOut = coupon.maxUses && coupon.usedCount >= coupon.maxUses;
+      if (!expired && !maxedOut) {
+        if (coupon.type === 'percent') {
+          discountCents = Math.round(subtotalCents * coupon.value / 100);
+        } else {
+          discountCents = coupon.value;
+        }
+        await db.update(coupons).set({ usedCount: coupon.usedCount + 1 }).where(eq(coupons.id, coupon.id));
       }
-      await db.update(coupons).set({ usedCount: coupon.usedCount + 1 }).where(eq(coupons.id, coupon.id));
     }
   }
 
-  const totalCents = subtotalCents + shippingCents - discountCents;
+  // Ensure total never goes negative
+  const totalCents = Math.max(0, subtotalCents + shippingCents - discountCents);
 
   // Generate order number
   const orderNumber = `${settings.orderPrefix}-${String(settings.nextOrderNumber).padStart(4, '0')}`;
@@ -138,14 +158,12 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // Reduce stock for each item
+  // Reduce stock atomically
   for (const item of orderItems) {
     if (item.variantId) {
-      const [v] = await db.select().from(productVariants).where(eq(productVariants.id, item.variantId)).limit(1);
-      if (v) await db.update(productVariants).set({ stock: Math.max(0, v.stock - item.quantity) }).where(eq(productVariants.id, item.variantId));
+      await db.execute(sql`UPDATE product_variants SET stock = GREATEST(0, stock - ${item.quantity}) WHERE id = ${item.variantId}`);
     } else {
-      const [p] = await db.select().from(products).where(eq(products.id, item.productId)).limit(1);
-      if (p && p.trackStock) await db.update(products).set({ stock: Math.max(0, p.stock - item.quantity) }).where(eq(products.id, item.productId));
+      await db.execute(sql`UPDATE products SET stock = GREATEST(0, stock - ${item.quantity}) WHERE id = ${item.productId} AND track_stock = true`);
     }
   }
 

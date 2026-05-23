@@ -58,9 +58,12 @@ export async function GET(req: NextRequest) {
     });
     const captureData = await captureRes.json();
 
-    if (captureData.status === 'COMPLETED') {
-      // Update order to paid
-      await db.update(orders).set({
+    if (captureData.status !== 'COMPLETED') {
+      return NextResponse.redirect(new URL('/checkout?error=payment_failed', req.nextUrl.origin));
+    }
+
+    // Update order to paid
+    await db.update(orders).set({
         status: 'paid',
         paymentStatus: 'paid',
         paymentId: captureData.id,
@@ -86,9 +89,9 @@ export async function GET(req: NextRequest) {
         paymentMethod: 'PayPal',
         shippingAddress: order.shippingAddress as any,
       }).catch(e => console.error('[PayPal] Email error:', e));
-    }
   } catch (e) {
     console.error('[PayPal] Capture error:', e);
+    return NextResponse.redirect(new URL('/checkout?error=payment_failed', req.nextUrl.origin));
   }
 
   // Redirect to success page
