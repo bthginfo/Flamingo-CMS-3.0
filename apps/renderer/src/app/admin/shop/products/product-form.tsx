@@ -55,7 +55,13 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
     if (!data.title.trim()) return;
     setSaving(true);
     const slug = data.slug || slugify(data.title);
-    const payload = { ...data, slug, comparePriceCents: data.comparePriceCents ?? undefined };
+    const payload = {
+      ...data,
+      slug,
+      comparePriceCents: data.comparePriceCents ?? undefined,
+      categoryId: data.categoryId || undefined,
+      weightGrams: data.weightGrams ?? undefined,
+    };
 
     if (isEdit && initial?.id) {
       await updateProduct(initial.id, payload);

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { shippingZones, shippingMethods } from '@flamingo/db';
+import { shippingZones, shippingMethods, shopSettings } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 
@@ -30,6 +30,19 @@ export async function GET(req: NextRequest) {
 
   const filtered = methods.filter(m => zoneIds.includes(m.zoneId));
 
+  // Also return available payment methods
+  const [settings] = await db.select().from(shopSettings)
+    .where(eq(shopSettings.tenantId, tenantId)).limit(1);
+
+  const paymentMethods: string[] = settings?.paymentMethods as string[] || ['prepayment'];
+  // Only include methods that have keys configured
+  const availablePayments = paymentMethods.filter(m => {
+    if (m === 'stripe') return !!settings?.stripeSecretKey;
+    if (m === 'paypal') return !!settings?.paypalClientId && !!settings?.paypalSecret;
+    if (m === 'pickup') return settings?.pickupEnabled;
+    return true; // prepayment always available if listed
+  });
+
   return NextResponse.json({
     methods: filtered.map(m => ({
       id: m.id,
@@ -38,5 +51,6 @@ export async function GET(req: NextRequest) {
       freeAboveCents: m.freeAboveCents,
       estimatedDays: m.estimatedDays,
     })),
+    paymentMethods: availablePayments,
   });
 }

@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     if (!settings.stripeSecretKey || !settings.stripeWebhookSecret) continue;
 
     try {
-      const stripe = new Stripe(settings.stripeSecretKey, { apiVersion: '2024-06-20' });
+      const stripe = new Stripe(settings.stripeSecretKey, { apiVersion: '2026-04-22.dahlia' });
       event = stripe.webhooks.constructEvent(body, signature, settings.stripeWebhookSecret);
       matched = true;
 

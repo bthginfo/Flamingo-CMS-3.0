@@ -21,6 +21,7 @@ const INDUSTRY_MAP: Record<string, string> = {
   cafe: 'cafe',
   tattoo: 'tattoo',
   showcase: 'tradesman',
+  shop: 'restaurant',
 };
 
 /** Recursively prefix internal hrefs in section data with the demo path */
@@ -48,7 +49,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
   if (!dbIndustry) return notFound();
 
   // Resolve demo tenant from DB
-  const SLUG_MAP: Record<string, string> = { showcase: 'demo-showcase' };
+  const SLUG_MAP: Record<string, string> = { showcase: 'demo-showcase', shop: 'demo-shop' };
   const tenantId = SLUG_MAP[industry]
     ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
     : await resolveDemoTenant(dbIndustry);

@@ -1,12 +1,17 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { getDb } from '@/lib/db';
 import { products, productCategories } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const tenantId = await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
+
+  const { searchParams } = request.nextUrl;
+  const limit = Math.min(Number(searchParams.get('limit')) || 100, 100);
+  const categoryFilter = searchParams.get('category') || '';
+  const idsParam = searchParams.get('ids') || '';
 
   const db = getDb();
 
@@ -39,12 +44,23 @@ export async function GET() {
 
   // Map category names onto products
   const catMap = new Map(allCategories.map(c => [c.id, c]));
-  const mapped = allProducts.map(p => ({
+  let mapped = allProducts.map(p => ({
     ...p,
     images: p.images ?? [],
     categoryName: p.categoryId ? catMap.get(p.categoryId)?.name : undefined,
     categorySlug: p.categoryId ? catMap.get(p.categoryId)?.slug : undefined,
   }));
 
-  return NextResponse.json({ products: mapped, categories: allCategories });
+  // Filter by category slug
+  if (categoryFilter) {
+    mapped = mapped.filter(p => p.categorySlug === categoryFilter);
+  }
+
+  // Filter by explicit IDs
+  if (idsParam) {
+    const ids = idsParam.split(',').map(s => s.trim());
+    mapped = mapped.filter(p => ids.includes(p.id));
+  }
+
+  return NextResponse.json({ products: mapped.slice(0, limit), categories: allCategories });
 }

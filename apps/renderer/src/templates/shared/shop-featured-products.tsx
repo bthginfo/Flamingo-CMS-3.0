@@ -21,21 +21,35 @@ function formatPrice(cents: number) {
 
 export function ShopFeaturedProductsSection({ data }: Props) {
   const headline = (data.headline as string) || 'Empfohlene Produkte';
+  const mode = (data.mode as string) || 'latest';
+  const categorySlug = (data.categorySlug as string) || '';
+  const productIds = (data.productIds as string[]) || [];
+  const count = (data.count as number) || 4;
+  const columns = (data.columns as number) || 4;
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetch('/api/shop/products')
+    let url = '/api/shop/products?limit=' + count;
+    if (mode === 'category' && categorySlug) {
+      url += '&category=' + encodeURIComponent(categorySlug);
+    }
+    if (mode === 'manual' && productIds.length) {
+      url += '&ids=' + productIds.join(',');
+    }
+    fetch(url)
       .then(r => r.json())
-      .then(d => setProducts((d.products || []).slice(0, 4)));
-  }, []);
+      .then(d => setProducts((d.products || []).slice(0, count)));
+  }, [mode, categorySlug, count, productIds.join(',')]);
 
   if (products.length === 0) return null;
+
+  const colsClass = columns === 2 ? 'md:grid-cols-2' : columns === 3 ? 'md:grid-cols-3' : 'md:grid-cols-4';
 
   return (
     <section className="py-12 md:py-16">
       <h2 className="text-2xl font-bold mb-8 text-center">{headline}</h2>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-        {products.slice(0, 4).map(product => (
+      <div className={`grid grid-cols-2 ${colsClass} gap-4 md:gap-6`}>
+        {products.map(product => (
           <Link key={product.id} href={`/shop/${product.slug}`} className="group">
             <div className="rounded-2xl border border-zinc-100 overflow-hidden hover:shadow-md transition-shadow">
               <div className="aspect-square bg-zinc-50 overflow-hidden">

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
 
   const body = await req.json();
-  const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingCents: clientShipping, discountCents: clientDiscount, couponCode } = body;
+  const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingCents: clientShipping, couponCode } = body;
 
   if (!name || !email || !items?.length) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -64,19 +64,25 @@ export async function POST(req: NextRequest) {
   }
 
   const shippingCents = Math.max(0, Math.round(clientShipping || 0));
-  const discountCents = Math.max(0, Math.round(clientDiscount || 0));
   const taxCents = Math.round(subtotalCents * 19 / 119); // 19% included
-  const totalCents = subtotalCents + shippingCents - discountCents;
 
-  // Validate and increment coupon usage if provided
+  // Server-side discount calculation (never trust client discount)
+  let discountCents = 0;
   if (couponCode) {
     const [coupon] = await db.select().from(coupons)
       .where(and(eq(coupons.tenantId, tenantId), eq(coupons.code, couponCode.toUpperCase()), eq(coupons.active, true)))
       .limit(1);
     if (coupon) {
+      if (coupon.type === 'percent') {
+        discountCents = Math.round(subtotalCents * coupon.value / 100);
+      } else {
+        discountCents = coupon.value;
+      }
       await db.update(coupons).set({ usedCount: coupon.usedCount + 1 }).where(eq(coupons.id, coupon.id));
     }
   }
+
+  const totalCents = subtotalCents + shippingCents - discountCents;
 
   // Generate order number
   const orderNumber = `${settings.orderPrefix}-${String(settings.nextOrderNumber).padStart(4, '0')}`;
@@ -143,8 +149,8 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Send order confirmation emails (fire-and-forget) — only for non-stripe (stripe sends after webhook)
-  if (paymentMethod !== 'stripe') {
+  // Send order confirmation emails (fire-and-forget) — only for immediate methods (not stripe/paypal which confirm async)
+  if (paymentMethod !== 'stripe' && paymentMethod !== 'paypal') {
     sendOrderEmails(tenantId, {
       orderNumber,
       customerName: name,
@@ -161,7 +167,7 @@ export async function POST(req: NextRequest) {
   // If Stripe payment — create Checkout Session and return URL
   if (paymentMethod === 'stripe' && settings.stripeSecretKey) {
     try {
-      const stripe = new Stripe(settings.stripeSecretKey, { apiVersion: '2024-06-20' });
+      const stripe = new Stripe(settings.stripeSecretKey, { apiVersion: '2026-04-22.dahlia' });
       const origin = req.headers.get('origin') || req.nextUrl.origin;
 
       const session = await stripe.checkout.sessions.create({
@@ -198,6 +204,62 @@ export async function POST(req: NextRequest) {
     } catch (e: any) {
       console.error('[Checkout] Stripe session error:', e);
       return NextResponse.json({ success: true, orderNumber, orderId: order.id, stripeError: e.message });
+    }
+  }
+
+  // If PayPal payment — create PayPal order and return approval URL
+  if (paymentMethod === 'paypal' && settings.paypalClientId && settings.paypalSecret) {
+    try {
+      const origin = req.headers.get('origin') || req.nextUrl.origin;
+      const baseUrl = settings.paypalMode === 'live'
+        ? 'https://api-m.paypal.com'
+        : 'https://api-m.sandbox.paypal.com';
+
+      // Get access token
+      const authRes = await fetch(`${baseUrl}/v1/oauth2/token`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Basic ${Buffer.from(`${settings.paypalClientId}:${settings.paypalSecret}`).toString('base64')}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'grant_type=client_credentials',
+      });
+      const { access_token } = await authRes.json();
+
+      // Create PayPal order
+      const ppOrderRes = await fetch(`${baseUrl}/v2/checkout/orders`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          intent: 'CAPTURE',
+          purchase_units: [{
+            reference_id: order.id,
+            description: `Bestellung ${orderNumber}`,
+            amount: {
+              currency_code: settings.currency,
+              value: (totalCents / 100).toFixed(2),
+            },
+          }],
+          application_context: {
+            return_url: `${origin}/api/shop/webhook/paypal?orderId=${order.id}&tenantId=${tenantId}`,
+            cancel_url: `${origin}/checkout`,
+            brand_name: 'Shop',
+            user_action: 'PAY_NOW',
+          },
+        }),
+      });
+      const ppOrder = await ppOrderRes.json();
+      const approveLink = ppOrder.links?.find((l: { rel: string; href: string }) => l.rel === 'approve')?.href;
+
+      if (approveLink) {
+        await db.update(orders).set({ paymentId: ppOrder.id }).where(eq(orders.id, order.id));
+        return NextResponse.json({ success: true, orderNumber, orderId: order.id, paypalUrl: approveLink });
+      }
+    } catch (e: any) {
+      console.error('[Checkout] PayPal order error:', e);
     }
   }
 

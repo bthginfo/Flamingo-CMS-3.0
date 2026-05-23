@@ -41,11 +41,12 @@ export function ShopCheckoutSection({ data }: Props) {
     email: '', name: '', phone: '', street: '', city: '', zip: '', country: 'DE', company: '', shippingMethod: '', paymentMethod: 'prepayment', customerNotes: '', couponCode: '',
   });
   const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>([]);
+  const [availablePayments, setAvailablePayments] = useState<string[]>(['prepayment']);
   const [coupon, setCoupon] = useState<CouponResult | null>(null);
   const [couponInput, setCouponInput] = useState('');
   const [couponError, setCouponError] = useState('');
 
-  // Fetch shipping methods when country changes
+  // Fetch shipping methods and payment methods when country changes
   useEffect(() => {
     fetch(`/api/shop/shipping?country=${form.country}`)
       .then(r => r.json())
@@ -53,6 +54,12 @@ export function ShopCheckoutSection({ data }: Props) {
         setShippingMethods(d.methods || []);
         if (d.methods?.length && !form.shippingMethod) {
           setForm(f => ({ ...f, shippingMethod: d.methods[0].id }));
+        }
+        if (d.paymentMethods?.length) {
+          setAvailablePayments(d.paymentMethods);
+          if (!d.paymentMethods.includes(form.paymentMethod)) {
+            setForm(f => ({ ...f, paymentMethod: d.paymentMethods[0] }));
+          }
         }
       });
   }, [form.country]);
@@ -111,6 +118,12 @@ export function ShopCheckoutSection({ data }: Props) {
         if (data.stripeUrl) {
           clearCart();
           window.location.href = data.stripeUrl;
+          return;
+        }
+        // PayPal redirect
+        if (data.paypalUrl) {
+          clearCart();
+          window.location.href = data.paypalUrl;
           return;
         }
         clearCart();
@@ -235,7 +248,7 @@ export function ShopCheckoutSection({ data }: Props) {
           {step === 2 && (
             <div className="space-y-4">
               <div className="space-y-3">
-                {['prepayment', 'stripe', 'paypal', 'pickup'].map(method => (
+                {availablePayments.map(method => (
                   <label key={method} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition ${form.paymentMethod === method ? 'border-zinc-900 bg-zinc-50' : 'border-zinc-200'}`}>
                     <input type="radio" name="payment" value={method} checked={form.paymentMethod === method} onChange={e => set('paymentMethod', e.target.value)} className="accent-zinc-900" />
                     <div>

@@ -22,7 +22,7 @@ export default async function ShopProductPage({ params }: { params: Promise<{ sl
     getTenantStyle(tenantId),
   ]);
 
-  const styleCssVars = getStyleCssVars(tenantStyle.activeStyle);
+  const styleCssVars = getStyleCssVars(tenantStyle.industry, tenantStyle.activeStyle);
   const brandCssVars = getBrandCssVars(brand);
   const designOverrides = design ? getDesignCssVars(design) : {};
 

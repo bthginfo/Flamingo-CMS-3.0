@@ -47,12 +47,13 @@ function formatDate(date: Date) {
 }
 
 export function OrdersClient({ orders: initialOrders }: { orders: Order[] }) {
+  const [orders, setOrders] = useState(initialOrders);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
 
-  const filtered = initialOrders.filter(o => {
+  const filtered = orders.filter(o => {
     if (statusFilter !== 'all' && o.status !== statusFilter) return false;
     if (search) {
       const q = search.toLowerCase();
@@ -65,6 +66,7 @@ export function OrdersClient({ orders: initialOrders }: { orders: Order[] }) {
     setUpdating(orderId);
     try {
       await updateOrderStatus(orderId, newStatus);
+      setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
     } finally {
       setUpdating(null);
     }
@@ -74,6 +76,7 @@ export function OrdersClient({ orders: initialOrders }: { orders: Order[] }) {
     setUpdating(orderId);
     try {
       await updateOrderTracking(orderId, trackingNumber, trackingUrl);
+      setOrders(orders.map(o => o.id === orderId ? { ...o, trackingNumber, trackingUrl } : o));
     } finally {
       setUpdating(null);
     }

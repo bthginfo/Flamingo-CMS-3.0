@@ -1895,6 +1895,61 @@ function CollectionListEditor({ data, onChange }: EditorProps) {
   );
 }
 
+// ─── Shop Featured Products Editor ──────────────────────────────
+function ShopFeaturedProductsEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || 'Empfohlene Produkte');
+  const [mode, setMode] = useState<string>((data.mode as string) || 'latest');
+  const [categorySlug, setCategorySlug] = useState((data.categorySlug as string) || '');
+  const [productIds, setProductIds] = useState<string>((data.productIds as string[] || []).join(', '));
+  const [count, setCount] = useState<number>((data.count as number) || 4);
+  const [columns, setColumns] = useState<number>((data.columns as number) || 4);
+
+  useReport({ headline, mode, categorySlug, productIds: productIds.split(',').map(s => s.trim()).filter(Boolean), count, columns }, onChange);
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium mb-1">Überschrift</label>
+        <input className="w-full border rounded px-3 py-2" value={headline} onChange={e => setHeadline(e.target.value)} />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Modus</label>
+        <select className="w-full border rounded px-3 py-2" value={mode} onChange={e => setMode(e.target.value)}>
+          <option value="latest">Neueste Produkte</option>
+          <option value="category">Nach Kategorie</option>
+          <option value="manual">Manuelle Auswahl (IDs)</option>
+        </select>
+      </div>
+      {mode === 'category' && (
+        <div>
+          <label className="block text-sm font-medium mb-1">Kategorie-Slug</label>
+          <input className="w-full border rounded px-3 py-2" value={categorySlug} onChange={e => setCategorySlug(e.target.value)} placeholder="z.B. rotwein" />
+        </div>
+      )}
+      {mode === 'manual' && (
+        <div>
+          <label className="block text-sm font-medium mb-1">Produkt-IDs (komma-getrennt)</label>
+          <input className="w-full border rounded px-3 py-2" value={productIds} onChange={e => setProductIds(e.target.value)} placeholder="id1, id2, id3" />
+        </div>
+      )}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Anzahl</label>
+          <input type="number" className="w-full border rounded px-3 py-2" value={count} onChange={e => setCount(Number(e.target.value))} min={1} max={12} />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Spalten (Desktop)</label>
+          <select className="w-full border rounded px-3 py-2" value={columns} onChange={e => setColumns(Number(e.target.value))}>
+            <option value={2}>2</option>
+            <option value={3}>3</option>
+            <option value={4}>4</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Editor registry ─────────────────────────────────────────────
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
@@ -1937,4 +1992,5 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   featureShowcase: FeatureShowcaseEditor,
   logoMarquee: LogoMarqueeEditor,
   collectionList: CollectionListEditor,
+  shopFeaturedProducts: ShopFeaturedProductsEditor,
 };
