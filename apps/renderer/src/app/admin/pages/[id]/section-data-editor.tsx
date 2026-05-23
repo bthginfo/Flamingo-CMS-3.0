@@ -1832,6 +1832,69 @@ function LogoMarqueeEditor({ data, onChange }: EditorProps) {
   );
 }
 
+// ─── CollectionList Editor ───────────────────────────────────────
+function CollectionListEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    collectionKey: (data.collectionKey as string) || 'news',
+    sortBy: (data.sortBy as string) || 'date-desc',
+    columns: (data.columns as number) || 3,
+    showImage: data.showImage !== false,
+    showDate: data.showDate !== false,
+    showExcerpt: data.showExcerpt !== false,
+    showSortControls: data.showSortControls !== false,
+  });
+  useReport(d, onChange);
+
+  return (
+    <div className="space-y-3">
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} placeholder="z.B. Alle Beiträge" />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <Field label="Collection-Key" value={d.collectionKey} onChange={(v) => setD({ ...d, collectionKey: v })} placeholder="z.B. news, blog, portfolio" />
+      <div className="grid grid-cols-2 gap-3">
+        <label className="block">
+          <span className="text-xs text-gray-600">Standard-Sortierung</span>
+          <select className="admin-input mt-1" value={d.sortBy} onChange={(e) => setD({ ...d, sortBy: e.target.value })}>
+            <option value="date-desc">Neueste zuerst</option>
+            <option value="date-asc">Älteste zuerst</option>
+            <option value="alpha-asc">A → Z</option>
+            <option value="alpha-desc">Z → A</option>
+            <option value="priority">Priorität</option>
+          </select>
+        </label>
+        <label className="block">
+          <span className="text-xs text-gray-600">Spalten</span>
+          <select className="admin-input mt-1" value={d.columns} onChange={(e) => setD({ ...d, columns: parseInt(e.target.value) })}>
+            <option value={2}>2 Spalten</option>
+            <option value={3}>3 Spalten</option>
+            <option value={4}>4 Spalten</option>
+          </select>
+        </label>
+      </div>
+      <div className="flex flex-wrap gap-4 pt-1">
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={d.showImage} onChange={() => setD({ ...d, showImage: !d.showImage })} />
+          Bilder anzeigen
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={d.showDate} onChange={() => setD({ ...d, showDate: !d.showDate })} />
+          Datum anzeigen
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={d.showExcerpt} onChange={() => setD({ ...d, showExcerpt: !d.showExcerpt })} />
+          Auszug anzeigen
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={d.showSortControls} onChange={() => setD({ ...d, showSortControls: !d.showSortControls })} />
+          Sortier-Dropdown anzeigen
+        </label>
+      </div>
+      <p className="text-xs text-gray-400">Die Items werden automatisch aus der verknüpften Collection geladen. Bilder werden aus der Hero-Section der Items gezogen.</p>
+    </div>
+  );
+}
+
 // ─── Editor registry ─────────────────────────────────────────────
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
@@ -1873,4 +1936,5 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   testimonialMarquee: TestimonialMarqueeEditor,
   featureShowcase: FeatureShowcaseEditor,
   logoMarquee: LogoMarqueeEditor,
+  collectionList: CollectionListEditor,
 };

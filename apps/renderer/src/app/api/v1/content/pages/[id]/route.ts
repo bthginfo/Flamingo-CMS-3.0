@@ -61,6 +61,41 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
   return NextResponse.json({ success: true });
 });
 
+export const PATCH = withApiHandlerParams(async (req, auth, params) => {
+  const { id } = params;
+  const body = await req.json();
+  const db = getDb();
+
+  const [page] = await db.select().from(pages).where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId)));
+  if (!page) return NextResponse.json({ error: 'Page not found' }, { status: 404 });
+
+  // Page-level fields
+  const updates: Record<string, unknown> = {};
+  if (body.title) updates.title = body.title;
+  if (body.slug != null) updates.slug = normalizeSlug(body.slug);
+  if (body.visible != null) updates.visible = body.visible;
+  if (Object.keys(updates).length > 0) {
+    await db.update(pages).set(updates).where(and(eq(pages.id, id), eq(pages.tenantId, auth.tenantId)));
+  }
+
+  // Patch individual sections by ID (merge data fields)
+  if (Array.isArray(body.patchSections)) {
+    for (const patch of body.patchSections) {
+      if (!patch.id) continue;
+      const [existing] = await db.select().from(pageSections)
+        .where(and(eq(pageSections.id, patch.id), eq(pageSections.tenantId, auth.tenantId)));
+      if (!existing) continue;
+      const mergedData = { ...(existing.data as Record<string, unknown>), ...(patch.data || {}) };
+      const sectionUpdates: Record<string, unknown> = { data: mergedData };
+      if (patch.visible != null) sectionUpdates.visible = patch.visible;
+      if (patch.variant != null) sectionUpdates.variant = patch.variant;
+      await db.update(pageSections).set(sectionUpdates).where(eq(pageSections.id, patch.id));
+    }
+  }
+
+  return NextResponse.json({ success: true });
+});
+
 export const DELETE = withApiHandlerParams(async (_req, auth, params) => {
   const { id } = params;
   const db = getDb();

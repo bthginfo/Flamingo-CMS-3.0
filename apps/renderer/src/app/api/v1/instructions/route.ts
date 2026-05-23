@@ -41,9 +41,13 @@ export async function GET(req: NextRequest) {
       listCollections: { method: 'GET', path: '/api/v1/content/collections', description: 'List all collections' },
       createCollection: { method: 'POST', path: '/api/v1/content/collections', description: 'Create a new collection (key: lowercase-slug, label: display name). Use for repeating content types like services, rooms, news, team members, etc.' },
       createCollectionItem: { method: 'POST', path: '/api/v1/content/collections/:key/items', description: 'Create a collection item (title, slug, data with sections)' },
-      updateCollectionItem: { method: 'PUT', path: '/api/v1/content/collections/:key/items/:id', description: 'Update a collection item' },
+      updateCollectionItem: { method: 'PUT', path: '/api/v1/content/collections/:key/items/:id', description: 'Update a collection item (full replace of provided fields)' },
+      patchCollectionItem: { method: 'PATCH', path: '/api/v1/content/collections/:key/items/:id', description: 'Partially update a collection item (merges data fields instead of replacing)' },
+      getCollectionItem: { method: 'GET', path: '/api/v1/content/collections/:key/items/:id', description: 'Get a single collection item with all data' },
       deleteCollectionItem: { method: 'DELETE', path: '/api/v1/content/collections/:key/items/:id', description: 'Delete a collection item' },
-      publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content as snapshot' },
+      patchPage: { method: 'PATCH', path: '/api/v1/content/pages/:id', description: 'Partially update a page. Send patchSections: [{id, data: {partial fields}}] to merge section data without full replace.' },
+      publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content. Returns warnings for empty sections or missing images.' },
+      debug: { method: 'GET', path: '/api/v1/content/debug', description: 'Get raw stored data for all pages, sections, collections and items (for debugging)' },
       socialLinks: { method: 'PUT', path: '/api/v1/content/social-links', description: 'Set social media links: { facebook?: url, instagram?: url, linkedin?: url, youtube?: url, tiktok?: url, xing?: url, google?: url, pinterest?: url, twitter?: url }' },
       style: { method: 'PUT', path: '/api/v1/content/style', description: 'Set active style variant: { style: "classic"|"modern"|"bold" }' },
       upload: { method: 'POST', path: '/api/v1/content/upload', description: 'Upload an image (multipart/form-data with "file" field). Returns { url, filename, size }. Use the returned url in bgImage, image fields etc.' },
@@ -125,6 +129,8 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
    - Dann für JEDE Leistung ein Item erstellen (MINDESTENS 4 Items):
      POST /api/v1/content/collections/leistungen/items → { title: "...", slug: "...", data: { sections: [...] } }
    - Jedes Collection-Item braucht sections mit echtem Content (collectionHero + textImage + ctaBand minimum)   - WICHTIG: Jede Section in data.sections MUSS ein "id"-Feld haben (UUID v4 Format, z.B. "a1b2c3d4-e5f6-7890-abcd-ef1234567890"). Ohne ID funktioniert Drag&Drop im Editor nicht!
+   - BILDER: Das Vorschaubild (image) für newsPreview/newsGrid/collectionList wird automatisch aus der ERSTEN hero/collectionHero-Section des Items gezogen (data.sections[0].data.backgroundImage oder .bgImage). Setze dort IMMER ein Bild!
+   - Optional: data.excerpt (string) für Kurzbeschreibung in der Übersicht.
 7. SEO (PUT /api/v1/content/seo):
    - titleTemplate: "%s | ${auth.tenant.name}"
    - defaultTitle: Firmenname oder Slogan (Fallback-Titel)

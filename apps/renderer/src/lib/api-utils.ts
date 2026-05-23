@@ -3,16 +3,24 @@ import { validatePat } from '@/lib/pat-auth';
 
 type AuthResult = Awaited<ReturnType<typeof validatePat>>;
 
+/** Ensures all JSON responses have proper UTF-8 Content-Type */
+function jsonResponse(data: unknown, init?: { status?: number }): NextResponse {
+  return NextResponse.json(data, {
+    ...init,
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
+  });
+}
+
 function handleError(req: NextRequest, err: unknown) {
   const message = err instanceof Error ? err.message : String(err);
   console.error(`[API Error] ${req.method} ${req.nextUrl.pathname}:`, message);
   if (message.includes('Unexpected token') || message.includes('JSON')) {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    return jsonResponse({ error: 'Invalid JSON body' }, { status: 400 });
   }
   if (message.includes('unique') || message.includes('duplicate')) {
-    return NextResponse.json({ error: 'Duplicate entry' }, { status: 409 });
+    return jsonResponse({ error: 'Duplicate entry' }, { status: 409 });
   }
-  return NextResponse.json({ error: message }, { status: 500 });
+  return jsonResponse({ error: message }, { status: 500 });
 }
 
 /**

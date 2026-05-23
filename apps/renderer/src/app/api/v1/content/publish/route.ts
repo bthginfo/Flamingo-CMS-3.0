@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
-import { pages, pageSections } from '@flamingo/db';
-import { eq, asc } from 'drizzle-orm';
+import { pages, pageSections, collections, collectionItems } from '@flamingo/db';
+import { eq, asc, and } from 'drizzle-orm';
 import { revalidatePath, revalidateTag } from 'next/cache';
 
 export async function POST(req: NextRequest) {
@@ -37,6 +37,24 @@ export async function POST(req: NextRequest) {
           warnings.push(`${label}: items array is empty`);
         if ((s.type === 'team' || s.type === 'teamShowcase' || s.type === 'doctorTeam') && (!Array.isArray(data.members || data.doctors) || ((data.members || data.doctors) as any[]).length === 0))
           warnings.push(`${label}: members/doctors array is empty`);
+      }
+    }
+
+    // Check collection items for missing images/excerpts
+    const allCollections = await db.select().from(collections).where(eq(collections.tenantId, auth.tenantId));
+    for (const col of allCollections) {
+      const items = await db.select().from(collectionItems)
+        .where(and(eq(collectionItems.collectionId, col.id), eq(collectionItems.tenantId, auth.tenantId), eq(collectionItems.published, true)));
+      const withoutImage = items.filter(item => {
+        const data = (item.data || {}) as Record<string, unknown>;
+        if (data.image) return false;
+        const sections = data.sections as Array<{ type: string; data: Record<string, unknown> }> | undefined;
+        if (!sections) return true;
+        const hero = sections.find(s => s.type === 'hero' || s.type === 'collectionHero');
+        return !hero?.data?.backgroundImage && !hero?.data?.image;
+      });
+      if (withoutImage.length > 0) {
+        warnings.push(`Collection "${col.label}" (${col.key}): ${withoutImage.length}/${items.length} published items have no image (set backgroundImage in hero section)`);
       }
     }
 
