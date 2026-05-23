@@ -113,6 +113,65 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
       {/* Payment methods */}
       <div className="bg-white rounded-xl border border-zinc-200 p-5 space-y-4">
         <h2 className="font-semibold text-sm text-zinc-700">Zahlungsarten</h2>
+
+        {/* Payment info accordion */}
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 space-y-2">
+          <div className="flex items-start gap-2">
+            <Info size={16} className="text-blue-600 mt-0.5 shrink-0" />
+            <p className="text-sm text-blue-800 font-medium">Welche Zahlungsart ist die richtige für mich?</p>
+          </div>
+          <details className="text-sm text-blue-800 ml-6">
+            <summary className="cursor-pointer font-medium hover:underline">Stripe (Kreditkarte, Apple Pay, Google Pay)</summary>
+            <div className="mt-2 space-y-1 text-blue-700 text-xs leading-relaxed">
+              <p><strong>Empfohlen für:</strong> Alle Shops die Kartenzahlung akzeptieren möchten.</p>
+              <p><strong>Gebühren:</strong> 1,5% + 0,25€ pro Transaktion (EU-Karten). Keine monatliche Grundgebühr.</p>
+              <p><strong>Einrichtung:</strong></p>
+              <ol className="list-decimal ml-4 space-y-0.5">
+                <li>Erstelle ein Konto auf <a href="https://dashboard.stripe.com/register" target="_blank" className="underline">stripe.com</a></li>
+                <li>Verifiziere dein Unternehmen (Ausweisdokument + Handelsregistereintrag)</li>
+                <li>Gehe zu Developers → API Keys</li>
+                <li>Kopiere den Publishable Key (pk_live_...) und Secret Key (sk_live_...)</li>
+                <li>Für Webhooks: Developers → Webhooks → Add Endpoint → URL: <code className="bg-blue-100 px-1 rounded">deine-domain.de/api/shop/stripe-webhook</code></li>
+                <li>Kopiere den Webhook Signing Secret (whsec_...)</li>
+              </ol>
+              <p className="mt-1"><strong>Tipp:</strong> Teste erst im Test-Modus (tk_test_ / sk_test_), bevor du live gehst.</p>
+            </div>
+          </details>
+          <details className="text-sm text-blue-800 ml-6">
+            <summary className="cursor-pointer font-medium hover:underline">PayPal</summary>
+            <div className="mt-2 space-y-1 text-blue-700 text-xs leading-relaxed">
+              <p><strong>Empfohlen für:</strong> Shops mit Kunden die PayPal bevorzugen (sehr verbreitet in DE).</p>
+              <p><strong>Gebühren:</strong> 2,49% + 0,35€ pro Transaktion (im Inland).</p>
+              <p><strong>Einrichtung:</strong></p>
+              <ol className="list-decimal ml-4 space-y-0.5">
+                <li>Erstelle ein PayPal Business-Konto auf <a href="https://www.paypal.com/de/business" target="_blank" className="underline">paypal.com/business</a></li>
+                <li>Gehe zum <a href="https://developer.paypal.com/dashboard/applications" target="_blank" className="underline">Developer Dashboard</a></li>
+                <li>Erstelle eine neue App unter &quot;Apps &amp; Credentials&quot;</li>
+                <li>Kopiere Client ID und Secret</li>
+                <li>Wechsle auf &quot;Live&quot; wenn du bereit bist (oben rechts im Developer Dashboard)</li>
+              </ol>
+              <p className="mt-1"><strong>Tipp:</strong> Starte mit Sandbox zum Testen. Die Credentials sind unterschiedlich für Sandbox/Live!</p>
+            </div>
+          </details>
+          <details className="text-sm text-blue-800 ml-6">
+            <summary className="cursor-pointer font-medium hover:underline">Vorkasse (Banküberweisung)</summary>
+            <div className="mt-2 space-y-1 text-blue-700 text-xs leading-relaxed">
+              <p><strong>Empfohlen für:</strong> Shops die keine Gebühren zahlen möchten oder hochpreisige Artikel verkaufen.</p>
+              <p><strong>Gebühren:</strong> Keine (nur normale Kontoführungsgebühren deiner Bank).</p>
+              <p><strong>So funktioniert es:</strong> Der Kunde bestellt → erhält eine E-Mail mit deinen Bankdaten → überweist den Betrag → du bestätigst den Zahlungseingang manuell → Bestellung wird versendet.</p>
+              <p><strong>Nachteil:</strong> Der Bestellprozess dauert länger, da du den Zahlungseingang manuell prüfen musst.</p>
+            </div>
+          </details>
+          <details className="text-sm text-blue-800 ml-6">
+            <summary className="cursor-pointer font-medium hover:underline">Abholung (Barzahlung vor Ort)</summary>
+            <div className="mt-2 space-y-1 text-blue-700 text-xs leading-relaxed">
+              <p><strong>Empfohlen für:</strong> Lokale Geschäfte mit Laufkundschaft (Bäckerei, Vinothek, etc.).</p>
+              <p><strong>Gebühren:</strong> Keine.</p>
+              <p><strong>So funktioniert es:</strong> Der Kunde bestellt online → kommt zu dir ins Geschäft → bezahlt dort bar oder mit Karte. Du kannst Abholanweisungen (Adresse, Öffnungszeiten) hinterlegen.</p>
+            </div>
+          </details>
+        </div>
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {['stripe', 'paypal', 'prepayment', 'pickup'].map(m => (
             <label key={m} className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition ${data.paymentMethods.includes(m) ? 'border-pink-300 bg-pink-50' : 'border-zinc-200'}`}>

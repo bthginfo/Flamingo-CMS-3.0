@@ -2,7 +2,7 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, invoices, formSubmissions, tenants } from '@flamingo/db';
+import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, invoices, formSubmissions, tenants, promotions } from '@flamingo/db';
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
@@ -676,4 +676,57 @@ async function sendShippedEmail(tenantId: string, order: typeof orders.$inferSel
     subject: `Ihre Bestellung ${order.orderNumber} wurde versendet`,
     html,
   });
+}
+
+// ─── Promotions / Discount Rules ─────────────────────────────────────
+
+export async function getPromotions() {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  return db.select().from(promotions).where(eq(promotions.tenantId, tenantId)).orderBy(desc(promotions.createdAt));
+}
+
+export async function createPromotion(data: {
+  name: string;
+  type: 'free_shipping_above' | 'buy_x_get_discount' | 'bundle_discount' | 'quantity_discount' | 'first_order_discount' | 'spend_x_save_y';
+  conditions: Record<string, unknown>;
+  discountValue: number;
+  discountType: 'percent' | 'fixed';
+  active?: boolean;
+  validFrom?: string | null;
+  validUntil?: string | null;
+  stackable?: boolean;
+}) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  await db.insert(promotions).values({
+    tenantId,
+    name: data.name,
+    type: data.type,
+    conditions: data.conditions,
+    discountValue: data.discountValue,
+    discountType: data.discountType,
+    active: data.active ?? true,
+    validFrom: data.validFrom ? new Date(data.validFrom) : null,
+    validUntil: data.validUntil ? new Date(data.validUntil) : null,
+    stackable: data.stackable ?? false,
+  });
+  revalidatePath('/admin/shop/promotions');
+}
+
+export async function updatePromotion(id: string, data: Partial<{
+  name: string;
+  active: boolean;
+}>) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  await db.update(promotions).set(data).where(and(eq(promotions.id, id), eq(promotions.tenantId, tenantId)));
+  revalidatePath('/admin/shop/promotions');
+}
+
+export async function deletePromotion(id: string) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  await db.delete(promotions).where(and(eq(promotions.id, id), eq(promotions.tenantId, tenantId)));
+  revalidatePath('/admin/shop/promotions');
 }

@@ -4,6 +4,7 @@ import { eq, desc } from 'drizzle-orm';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import { InvoicesClient } from './invoices-client';
+import { ShopBackLink } from '../shop-back-link';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,5 +32,10 @@ export default async function InvoicesPage() {
     .orderBy(desc(invoices.issuedAt))
     .limit(200);
 
-  return <InvoicesClient invoices={allInvoices} />;
+  return (
+    <div>
+      <ShopBackLink />
+      <InvoicesClient invoices={allInvoices} />
+    </div>
+  );
 }

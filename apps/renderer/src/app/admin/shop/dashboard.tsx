@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getProducts, getOrders, getCategories } from './actions';
-import { Package, ShoppingCart, FolderOpen, Settings, Tag, Truck, Receipt } from 'lucide-react';
+import { Package, ShoppingCart, FolderOpen, Settings, Tag, Truck, Receipt, Percent } from 'lucide-react';
 
 export async function ShopDashboard() {
   const [productList, orderList, categoryList] = await Promise.all([
@@ -21,6 +21,7 @@ export async function ShopDashboard() {
     { label: 'Kategorien', href: '/admin/shop/categories', icon: FolderOpen },
     { label: 'Bestellungen', href: '/admin/shop/orders', icon: ShoppingCart },
     { label: 'Rabatte & Coupons', href: '/admin/shop/coupons', icon: Tag },
+    { label: 'Rabattaktionen', href: '/admin/shop/promotions', icon: Percent },
     { label: 'Versand', href: '/admin/shop/shipping', icon: Truck },
     { label: 'Rechnungen', href: '/admin/shop/invoices', icon: Receipt },
     { label: 'Einstellungen', href: '/admin/shop/settings', icon: Settings },
