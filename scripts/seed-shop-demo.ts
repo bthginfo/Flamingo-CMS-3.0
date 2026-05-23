@@ -140,6 +140,7 @@ async function main() {
       images: p.images,
       stock: p.stock,
       status: p.status as 'active',
+      highlights: (p as any).highlights || [],
       sortOrder: i,
     });
   }

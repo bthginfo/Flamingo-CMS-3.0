@@ -130,7 +130,7 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
             onChange={e => set('description', e.target.value)}
             rows={4}
             className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 resize-y"
-            placeholder="Ausführliche Produktbeschreibung (HTML erlaubt)"
+            placeholder="Ausführliche Produktbeschreibung (Absätze mit Enter trennen)"
           />
         </div>
       </div>

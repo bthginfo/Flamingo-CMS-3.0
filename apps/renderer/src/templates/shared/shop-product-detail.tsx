@@ -214,7 +214,7 @@ export function ShopProductDetailSection({ data }: Props) {
       {product.description && (
         <div className="mt-12 pt-8 border-t border-zinc-100">
           <h2 className="text-lg font-semibold mb-4">Beschreibung</h2>
-          <div className="prose prose-sm max-w-none text-zinc-600" dangerouslySetInnerHTML={{ __html: product.description }} />
+          <div className="text-sm text-zinc-600 whitespace-pre-line leading-relaxed">{product.description}</div>
         </div>
       )}
     </section>
