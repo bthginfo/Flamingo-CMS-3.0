@@ -117,6 +117,13 @@ export const PRESETS: Record<TemplateKey, ThemePreset[]> = {
     { id: 'mono',       label: 'Mono',           primary: '#111111', primaryFg: '#ffffff', accent: '#111111', surface: '#f5f5f5', bg: '#ffffff', text: '#0a0a0a' },
     { id: 'dark',       label: 'Dark Studio',    primary: '#e94560', primaryFg: '#1a1a2e', accent: '#e94560', surface: '#16213e', bg: '#0f3460', text: '#f5f5f5' },
   ],
+  shop: [
+    { id: 'fresh',      label: 'Fresh',          primary: '#059669', primaryFg: '#ecfdf5', accent: '#34d399', surface: '#f0fdf4', bg: '#ffffff', text: '#064e3b' },
+    { id: 'elegant',    label: 'Elegant',        primary: '#7c3aed', primaryFg: '#f5f3ff', accent: '#a78bfa', surface: '#faf5ff', bg: '#ffffff', text: '#1e1b4b' },
+    { id: 'warm',       label: 'Warm',           primary: '#dc2626', primaryFg: '#fef2f2', accent: '#f87171', surface: '#fef7f7', bg: '#ffffff', text: '#1f1212' },
+    { id: 'mono',       label: 'Mono',           primary: '#111111', primaryFg: '#ffffff', accent: '#111111', surface: '#f5f5f5', bg: '#ffffff', text: '#0a0a0a' },
+    { id: 'dark',       label: 'Dark Store',     primary: '#fbbf24', primaryFg: '#1c1917', accent: '#fbbf24', surface: '#1c1917', bg: '#0c0a09', text: '#fafaf9' },
+  ],
 };
 
 export function applyTheme(p: ThemePreset) {

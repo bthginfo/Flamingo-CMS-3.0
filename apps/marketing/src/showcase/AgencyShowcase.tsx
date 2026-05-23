@@ -6,6 +6,7 @@ import { NotFound } from './Blog';
 import { TemplateGallery } from './Templates';
 import { FundingCalculatorPage } from './FundingCalculator';
 import CmsFeaturesPage, { CmsFeaturesTeaserSection } from './CmsFeatures';
+import ShopFeaturesPage, { ShopFeaturesTeaserSection } from './ShopFeatures';
 import Seo from '@/components/Seo';
 import {
   Marquee, AnimatedCounter, RotatingWord, ScrollProgress, Accordion, useReveal,
@@ -324,6 +325,7 @@ export default function AgencyShowcase() {
           <Route path="datenschutz" element={<Privacy />} />
           <Route path="foerderrechner" element={<FundingCalculatorPage />} />
           <Route path="cms" element={<CmsFeaturesPage />} />
+          <Route path="shop" element={<ShopFeaturesPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 
@@ -376,6 +378,7 @@ function ShowcaseShell() {
   const NAV = [
     { to: '/templates', label: 'Templates' },
     { to: '/cms', label: 'CMS' },
+    { to: '/shop', label: 'Shop' },
     { to: '/foerderrechner', label: 'Förderrechner' },
     { to: '/prozess', label: 'Ablauf' },
     { to: '/preise', label: 'Preise' },
@@ -605,6 +608,7 @@ function Landing() {
       <ManifestoSection />
       <AdminPreviewSection />
       <CmsFeaturesTeaserSection />
+      <ShopFeaturesTeaserSection />
       <ProcessTimelineSection />
       <ProductionSection />
       <NumbersSection />
@@ -2120,6 +2124,7 @@ function Pricing() {
   ];
 
   const addons = [
+    { t: 'Shop-Addon', p: 'ab 999 €', d: 'Vollwertiger Online-Shop mit Produktkatalog, Warenkorb, Checkout, Stripe & PayPal, Versandverwaltung, Rechnungen & Gutscheine. Inkl. Einrichtung: 1.450 €.' },
     { t: 'Mehrsprachigkeit', p: 'ab 290 €', d: 'DE + EN, weitere Sprachen auf Anfrage. Inkl. Sprach-Switcher.' },
     { t: 'Online-Reservierung', p: 'ab 390 €', d: 'Anbindung an Tools wie Quandoo, OpenTable, Treatwell.' },
     { t: 'Foto-/Video-Nachshooting', p: '890 €', d: '1 Drehtag light für saisonale Updates, neue Produkte oder Teamwechsel (ca. 25 Bilder + 1 Reel).' },
