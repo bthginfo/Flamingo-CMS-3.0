@@ -3,8 +3,8 @@
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FolderOpen, ChevronRight, Plus, Pencil, Trash2, X, Check, Loader2, FileText } from 'lucide-react';
-import { createCollectionAction, updateCollectionAction, deleteCollectionAction, getOrCreateOverviewPageAction } from './actions';
+import { FolderOpen, ChevronRight, Plus, Pencil, Trash2, X, Check, Loader2 } from 'lucide-react';
+import { createCollectionAction, updateCollectionAction, deleteCollectionAction } from './actions';
 import { toast } from 'sonner';
 
 type Collection = { id: string; key: string; label: string };
@@ -41,13 +41,6 @@ export function CollectionsManager({ collections }: { collections: Collection[] 
       await deleteCollectionAction(col.id);
       router.refresh();
       toast.success('Gelöscht');
-    });
-  }
-
-  function handleOverviewPage(col: Collection) {
-    startTransition(async () => {
-      const pageId = await getOrCreateOverviewPageAction(col.key);
-      router.push(`/admin/pages/${pageId}`);
     });
   }
 
@@ -100,7 +93,6 @@ export function CollectionsManager({ collections }: { collections: Collection[] 
               )}
               {editing !== col.id && (
                 <div className="absolute top-3 right-10 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={(e) => { e.preventDefault(); handleOverviewPage(col); }} className="p-1.5 rounded hover:bg-blue-50" title="Übersichtsseite bearbeiten"><FileText size={14} className="text-blue-400" /></button>
                   <button onClick={(e) => { e.preventDefault(); setEditing(col.id); setEditLabel(col.label); }} className="p-1.5 rounded hover:bg-zinc-100" title="Umbenennen"><Pencil size={14} className="text-zinc-400" /></button>
                   <button onClick={(e) => { e.preventDefault(); handleDelete(col); }} className="p-1.5 rounded hover:bg-red-50" title="Löschen"><Trash2 size={14} className="text-red-400" /></button>
                 </div>

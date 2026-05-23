@@ -69,7 +69,7 @@ function SortableSection({ section, industry, sectionTypes, resolvedVars, onDele
   return (
     <div ref={setNodeRef} style={style} className={`admin-card mb-3 p-0 overflow-hidden ${expanded ? 'ring-2 ring-blue-500/20 border-blue-300' : ''} ${isDragging ? 'opacity-50' : !section.visible ? 'opacity-50' : ''}`}>
       <div className={`flex items-center px-4 py-3 border-b cursor-pointer ${expanded ? 'bg-blue-50' : 'bg-gray-50 hover:bg-gray-100'} transition-colors`} onClick={() => setExpanded(!expanded)}>
-        <button {...attributes} {...listeners} className="cursor-grab mr-3 text-gray-400 hover:text-gray-600" onClick={(e) => e.stopPropagation()}>
+        <button {...attributes} {...listeners} className="cursor-grab mr-3 text-gray-400 hover:text-gray-600 touch-none" onClick={(e) => e.stopPropagation()}>
           <GripVertical size={18} />
         </button>
         <div className="flex-1 min-w-0 flex items-center gap-2">

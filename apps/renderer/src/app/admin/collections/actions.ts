@@ -140,12 +140,19 @@ export async function getOrCreateOverviewPageAction(collectionKey: string): Prom
   const session = await requireSession();
   const db = getDb();
 
-  // Check if an overview page already exists for this collection
+  // Check if an overview page already exists for this collection (by type + slug or by type + matching collectionKey in section data)
   const existing = await db.select({ id: pages.id }).from(pages)
     .where(and(eq(pages.tenantId, session.tenantId), eq(pages.type, 'collection_overview'), eq(pages.slug, collectionKey)))
     .limit(1);
 
   if (existing[0]) return existing[0].id;
+
+  // Also check if slug is already taken by a free page — if so, use a suffixed slug
+  const slugTaken = await db.select({ id: pages.id }).from(pages)
+    .where(and(eq(pages.tenantId, session.tenantId), eq(pages.slug, collectionKey)))
+    .limit(1);
+
+  const slug = slugTaken[0] ? `${collectionKey}-uebersicht` : collectionKey;
 
   // Get collection label for the page title
   const [col] = await db.select({ label: collections.label }).from(collections)
@@ -156,7 +163,7 @@ export async function getOrCreateOverviewPageAction(collectionKey: string): Prom
   const [page] = await db.insert(pages).values({
     tenantId: session.tenantId,
     title: `${title} – Übersicht`,
-    slug: collectionKey,
+    slug,
     type: 'collection_overview',
     status: 'draft',
     visible: true,

@@ -1,6 +1,20 @@
-import type { SnapshotSection, SnapshotCollection } from '@/lib/snapshot';
+import type { SnapshotSection, SnapshotCollection, SnapshotCollectionItem } from '@/lib/snapshot';
 import { getIndustryTemplates } from '@/templates';
 import { SectionErrorBoundary } from './section-error-boundary';
+
+/** Extract the best image from a collection item — checks data.image first, then looks into hero section data */
+function extractItemImage(item: SnapshotCollectionItem): string | undefined {
+  if (item.data.image) return item.data.image as string;
+  // Items store sections in data.sections — find the hero and grab its background image
+  const sections = item.data.sections as Array<{ type: string; data: Record<string, unknown> }> | undefined;
+  if (sections) {
+    const hero = sections.find(s => s.type === 'hero' || s.type === 'collectionHero');
+    if (hero?.data) {
+      return (hero.data.backgroundImage as string) || (hero.data.image as string) || undefined;
+    }
+  }
+  return undefined;
+}
 
 const SPACING: Record<string, string> = {
   none: 'py-0',
@@ -32,7 +46,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
           items: col.items.slice(0, 3).map(item => ({
             title: item.title,
             slug: item.slug,
-            image: (item.data.image as string) || undefined,
+            image: extractItemImage(item),
             excerpt: (item.data.excerpt as string) || undefined,
             date: item.createdAt,
           })),
@@ -53,7 +67,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
           items: col.items.map(item => ({
             title: item.title,
             slug: item.slug,
-            image: (item.data.image as string) || undefined,
+            image: extractItemImage(item),
             excerpt: (item.data.excerpt as string) || undefined,
             date: item.createdAt,
             priority: item.priority,
