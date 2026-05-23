@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Monitor, Tablet, Smartphone, ExternalLink } from 'lucide-react';
 
-const ADMIN_URL = '';
+const ADMIN_URL = 'https://www.demo.flamingomedia.online';
 
 export default function DemoPlayground() {
   const [viewport, setViewport] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
