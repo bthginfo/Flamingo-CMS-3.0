@@ -1,18 +1,20 @@
 'use client';
 
-import { ShoppingBag, Check } from 'lucide-react';
-import { activateShopAddon } from './actions';
-import { useRouter } from 'next/navigation';
+import { ShoppingBag, Check, Send } from 'lucide-react';
+import { requestShopAddon } from './actions';
 import { useState } from 'react';
 
 export function ShopPaywall() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [message, setMessage] = useState('');
 
-  async function handleActivate() {
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
     setLoading(true);
-    await activateShopAddon();
-    router.refresh();
+    await requestShopAddon(message);
+    setSent(true);
+    setLoading(false);
   }
 
   const features = [
@@ -63,20 +65,35 @@ export function ShopPaywall() {
         </div>
       </div>
 
-      <button
-        onClick={handleActivate}
-        disabled={loading}
-        className="px-8 py-3 bg-gradient-to-r from-pink-500 to-orange-400 text-white font-semibold rounded-xl hover:opacity-90 transition disabled:opacity-50"
-      >
-        {loading ? 'Wird aktiviert…' : 'Shop-Modul aktivieren'}
-      </button>
-
-      <p className="text-xs text-zinc-400 mt-4">
-        Braucht ihr Hilfe?{' '}
-        <a href="mailto:hello@flamingomedia.online?subject=Shop-Einrichtung%20Anfrage" className="underline hover:text-zinc-600">
-          Flamingo Media kontaktieren →
-        </a>
-      </p>
+      {sent ? (
+        <div className="bg-green-50 border border-green-200 rounded-xl p-6">
+          <Check size={32} className="text-green-500 mx-auto mb-3" />
+          <p className="font-semibold text-green-800">Anfrage gesendet!</p>
+          <p className="text-sm text-green-700 mt-1">
+            Wir melden uns in Kürze bei dir. Du wirst benachrichtigt, sobald das Shop-Modul für dich freigeschaltet ist.
+          </p>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Optionale Nachricht (z.B. gewünschter Umfang, Fragen, Zeitrahmen…)"
+            className="w-full border border-zinc-200 rounded-xl p-4 text-sm resize-none h-24 focus:outline-none focus:ring-2 focus:ring-pink-300"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-pink-500 to-orange-400 text-white font-semibold rounded-xl hover:opacity-90 transition disabled:opacity-50"
+          >
+            <Send size={18} />
+            {loading ? 'Wird gesendet…' : 'Anfrage absenden'}
+          </button>
+          <p className="text-xs text-zinc-400">
+            Das Shop-Modul wird nach Freigabe durch unser Team aktiviert.
+          </p>
+        </form>
+      )}
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, invoices } from '@flamingo/db';
+import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, invoices, formSubmissions, tenants } from '@flamingo/db';
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
@@ -23,6 +23,42 @@ export async function isShopActive(): Promise<boolean> {
   return row?.active ?? false;
 }
 
+export async function requestShopAddon(message?: string): Promise<void> {
+  const tenantId = await requireTenant();
+  const db = getDb();
+
+  // Store as form submission (visible in CRM inbox)
+  const [tenant] = await db.select({ name: tenants.name, slug: tenants.slug }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+
+  await db.insert(formSubmissions).values({
+    tenantId,
+    name: tenant?.name || 'Kunde',
+    email: '',
+    message: `[Shop-Addon Anfrage] ${message || 'Keine Nachricht'}`,
+    page: '/admin/shop',
+  });
+
+  // Send email notification to Flamingo Media
+  try {
+    const nodemailer = await import('nodemailer');
+    const transport = nodemailer.default.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.resend.com',
+      port: Number(process.env.SMTP_PORT) || 465,
+      secure: true,
+      auth: { user: process.env.SMTP_USER || 'resend', pass: process.env.SMTP_PASS || '' },
+    });
+    await transport.sendMail({
+      from: process.env.SMTP_FROM || 'noreply@flamingomedia.online',
+      to: 'hello@flamingomedia.online',
+      subject: `Shop-Addon Anfrage: ${tenant?.name || tenantId}`,
+      text: `Tenant: ${tenant?.name} (${tenant?.slug})\nID: ${tenantId}\n\nNachricht:\n${message || '–'}`,
+    });
+  } catch (e) {
+    console.error('[requestShopAddon] mail error:', e);
+  }
+}
+
+// Keep activateShopAddon for CRM/platform admin use only (not exposed in client UI)
 export async function activateShopAddon(): Promise<void> {
   const tenantId = await requireTenant();
   const db = getDb();
