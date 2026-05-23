@@ -26,6 +26,7 @@ export function ShopFeaturedProductsSection({ data }: Props) {
   const productIds = (data.productIds as string[]) || [];
   const count = (data.count as number) || 4;
   const columns = (data.columns as number) || 4;
+  const basePath = (data.basePath as string) || '';
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -51,7 +52,7 @@ export function ShopFeaturedProductsSection({ data }: Props) {
       <h2 className="text-2xl font-bold mb-8 text-center">{headline}</h2>
       <div className={`grid grid-cols-2 ${colsClass} gap-4 md:gap-6`}>
         {products.map(product => (
-          <Link key={product.id} href={`/shop/${product.slug}`} className="group">
+          <Link key={product.id} href={`${basePath}/shop/${product.slug}`} className="group">
             <div className="rounded-2xl border border-zinc-100 overflow-hidden hover:shadow-md transition-shadow">
               <div className="aspect-square bg-zinc-50 overflow-hidden">
                 {product.images?.[0] ? (

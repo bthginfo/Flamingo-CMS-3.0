@@ -98,15 +98,43 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
   const page = snapshot.pages.find(p =>
     p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
   );
+
+  const demoPrefix = `/demo/${industry}`;
+
+  // If no page found but industry is shop and slug looks like a product, render product detail
+  if (!page && industry === 'shop' && targetSlug && !targetSlug.includes('/')) {
+    return (
+      <DemoPageShell
+        sections={[{ id: 'product-detail', type: 'shopProductDetail', variant: null, visible: true, container: 'default', spacingTop: 'none', spacingBottom: 'none', anchorId: null, data: { _slug: targetSlug, tenantId, basePath: demoPrefix } }]}
+        industry={tenantStyle.industry}
+        industryKey={industry}
+        defaultStyle={tenantStyle.activeStyle}
+        siteData={{
+          navItems: navData.items.map(item => ({ ...item, href: item.href.startsWith('/demo/') ? item.href : `${demoPrefix}${item.href}` })),
+          cta: navData.cta ? { ...navData.cta, href: navData.cta.href.startsWith('/demo/') ? navData.cta.href : `${demoPrefix}${navData.cta.href}` } : { label: '', href: '' },
+          brand: brandData.brand,
+          contact: brandData.contact,
+          socialLinks: brandData.socialLinks,
+          footer: footerData ? {
+            columns: (footerData.columns || []).map(col => ({
+              ...col,
+              items: (col.items || []).map(item => ({ ...item, href: item.href && !item.href.startsWith('/demo/') ? `${demoPrefix}${item.href}` : item.href })),
+            })),
+            legalLinks: (footerData.legalLinks || []).map(l => ({ ...l, href: l.href?.startsWith('/demo/') ? l.href : `${demoPrefix}${l.href}` })),
+          } : { columns: [], legalLinks: [] },
+        }}
+        darkBg={false}
+      />
+    );
+  }
+
   if (!page) return notFound();
 
   const firstIsHero = page.sections[0]?.type === 'hero';
 
-  const demoPrefix = `/demo/${industry}`;
-
   return (
     <DemoPageShell
-      sections={prefixSections(page.sections.filter(s => s.visible).map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId } } : s), demoPrefix)}
+      sections={prefixSections(page.sections.filter(s => s.visible).map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, basePath: demoPrefix } } : s), demoPrefix)}
       industry={tenantStyle.industry}
       industryKey={industry}
       defaultStyle={tenantStyle.activeStyle}

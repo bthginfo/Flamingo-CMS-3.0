@@ -15,6 +15,7 @@ export function ShopProductDetailSection({ data }: Props) {
   const cart = useCart();
   const [fetchedProduct, setFetchedProduct] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
+  const basePath = (data.basePath as string) || '';
 
   // Get slug from data or from URL
   const slug = (data._slug as string) || (typeof window !== 'undefined' ? window.location.pathname.split('/').pop() : null);
@@ -160,7 +161,7 @@ export function ShopProductDetailSection({ data }: Props) {
             <div className="mt-8 prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: product.description }} />
           )}
 
-          <Link href="/shop" className="inline-block mt-6 text-sm text-zinc-500 hover:text-zinc-700">← Zurück zum Shop</Link>
+          <Link href={`${basePath}/shop`} className="inline-block mt-6 text-sm text-zinc-500 hover:text-zinc-700">← Zurück zum Shop</Link>
         </div>
       </div>
     </section>
