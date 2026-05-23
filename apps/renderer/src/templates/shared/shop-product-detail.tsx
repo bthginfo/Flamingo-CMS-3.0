@@ -188,7 +188,8 @@ export function ShopProductDetailSection({ data }: Props) {
             <button
               onClick={handleAdd}
               disabled={outOfStock}
-              className={`flex-1 py-3.5 px-6 rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2 text-sm ${outOfStock ? 'bg-zinc-300 cursor-not-allowed' : added ? 'bg-green-500 scale-[1.02]' : 'bg-zinc-900 hover:bg-zinc-800 hover:scale-[1.01] active:scale-[0.99]'}`}
+              style={{ backgroundColor: outOfStock ? '#d4d4d8' : added ? '#22c55e' : '#18181b', color: '#ffffff' }}
+              className={`flex-1 py-3.5 px-6 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 text-sm ${outOfStock ? 'cursor-not-allowed' : added ? 'scale-[1.02]' : 'hover:opacity-90 hover:scale-[1.01] active:scale-[0.99]'}`}
             >
               {outOfStock ? 'Ausverkauft' : added ? <><Check size={18} /> Hinzugefügt!</> : <><ShoppingBag size={18} /> In den Warenkorb</>}
             </button>
