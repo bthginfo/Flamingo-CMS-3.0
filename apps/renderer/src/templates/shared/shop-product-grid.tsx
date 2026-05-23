@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Search, SlidersHorizontal, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 
@@ -43,8 +44,10 @@ export function ShopProductGridSection({ data }: Props) {
       .finally(() => setLoading(false));
   }, []);
 
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get('kategorie');
   const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>(initialCategory);
   const [sortBy, setSortBy] = useState<'default' | 'price-asc' | 'price-desc' | 'name'>('default');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
   const [priceFilter, setPriceFilter] = useState<[number, number]>([0, 0]);
