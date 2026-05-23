@@ -27,6 +27,7 @@ type ProductData = {
   taxClass: string;
   metaTitle: string;
   metaDescription: string;
+  highlights: string[];
 };
 
 const defaultProduct: ProductData = {
@@ -34,7 +35,7 @@ const defaultProduct: ProductData = {
   priceCents: 0, comparePriceCents: null, sku: '', stock: 0,
   trackStock: true, isDigital: false, categoryId: null,
   status: 'draft', images: [], weightGrams: null, taxClass: 'standard',
-  metaTitle: '', metaDescription: '',
+  metaTitle: '', metaDescription: '', highlights: [],
 };
 
 function slugify(text: string) {
@@ -132,6 +133,24 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
             placeholder="Ausführliche Produktbeschreibung (HTML erlaubt)"
           />
         </div>
+      </div>
+
+      {/* Highlights / Facts */}
+      <div className="bg-white rounded-xl border border-zinc-200 p-5 space-y-4">
+        <h2 className="font-semibold text-sm text-zinc-700">Highlights / Fakten</h2>
+        <p className="text-xs text-zinc-400">Werden auf der Produktdetailseite als Auflistung angezeigt (z.B. &quot;Bio-zertifiziert&quot;, &quot;Handgemacht&quot;).</p>
+        {data.highlights.map((h, i) => (
+          <div key={i} className="flex gap-2">
+            <input
+              value={h}
+              onChange={e => { const arr = [...data.highlights]; arr[i] = e.target.value; set('highlights', arr); }}
+              className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+              placeholder="z.B. Bio-zertifiziert"
+            />
+            <button type="button" onClick={() => set('highlights', data.highlights.filter((_, j) => j !== i))} className="px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg text-sm">×</button>
+          </div>
+        ))}
+        <button type="button" onClick={() => set('highlights', [...data.highlights, ''])} className="text-sm text-pink-600 hover:text-pink-700 font-medium">+ Highlight hinzufügen</button>
       </div>
 
       {/* Pricing & Inventory */}

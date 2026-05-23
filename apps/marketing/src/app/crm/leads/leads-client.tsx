@@ -97,6 +97,7 @@ Kurz gesagt, ihr profitiert von:
 • einfachem CMS, damit ihr Inhalte selbst ändern könnt
 • optional Foto & Video, falls ihr bessere Bilder für euren Auftritt braucht
 • Hosting & Pflege, damit ihr euch nicht um Technik kümmern müsst
+• auf Wunsch auch einem integrierten Onlineshop, direkt in eure Website eingebaut
 • Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
 
 Wir bieten grob drei Richtungen an: eine schnelle Template-Website, ein individuelles Custom Design oder Website plus Foto-/Video-Produktion. Mehr Infos und Beispiele findet ihr direkt auf unserer Website:

@@ -511,6 +511,7 @@ export const products = pgTable('products', {
   taxClass: varchar('tax_class', { length: 50 }).notNull().default('standard'),
   metaTitle: varchar('meta_title', { length: 255 }),
   metaDescription: varchar('meta_description', { length: 500 }),
+  highlights: jsonb('highlights').$type<string[]>().default([]),
   sortOrder: integer('sort_order').notNull().default(0),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

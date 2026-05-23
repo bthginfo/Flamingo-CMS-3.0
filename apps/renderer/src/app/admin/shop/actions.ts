@@ -279,7 +279,7 @@ export async function createProduct(data: {
   stock?: number; trackStock?: boolean; isDigital?: boolean;
   categoryId?: string; status?: 'draft' | 'active' | 'archived';
   images?: string[]; weightGrams?: number; taxClass?: string;
-  metaTitle?: string; metaDescription?: string;
+  metaTitle?: string; metaDescription?: string; highlights?: string[];
 }) {
   const tenantId = await requireTenant();
   const db = getDb();
@@ -295,6 +295,7 @@ export async function updateProduct(id: string, data: Partial<{
   categoryId: string | null; status: 'draft' | 'active' | 'archived';
   images: string[]; weightGrams: number | null; taxClass: string;
   metaTitle: string | null; metaDescription: string | null; sortOrder: number;
+  highlights: string[];
 }>) {
   const tenantId = await requireTenant();
   const db = getDb();
