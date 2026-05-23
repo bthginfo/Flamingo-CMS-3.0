@@ -354,7 +354,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
         )}
 
         {/* Add Section */}
-        <div className="mt-4">
+        <div className="mt-4 pb-24">
           <button onClick={() => setShowAddMenu(!showAddMenu)} className="admin-btn-primary w-full flex items-center justify-center gap-2">
             <Plus size={18} /> Sektion hinzufügen
           </button>

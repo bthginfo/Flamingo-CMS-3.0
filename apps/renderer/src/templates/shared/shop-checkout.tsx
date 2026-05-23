@@ -35,6 +35,18 @@ export function ShopCheckoutSection({ data }: Props) {
   const headline = (data.headline as string) || 'Kasse';
   const router = useRouter();
   const { items, totalCents, clearCart } = useCart();
+  const isDemo = ((data.basePath as string) || '').startsWith('/demo/');
+
+  // Demo mode: show notice instead of checkout
+  if (isDemo) {
+    return (
+      <section className="py-16 text-center">
+        <h2 className="text-2xl font-bold mb-4">{headline}</h2>
+        <p className="text-zinc-500 mb-2">Der Checkout ist in der Demo nicht verfügbar.</p>
+        <p className="text-sm text-zinc-400">In einem echten Shop können Kunden hier ihre Bestellung abschließen — mit Stripe, PayPal, SumUp oder Vorkasse.</p>
+      </section>
+    );
+  }
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<CheckoutData>({

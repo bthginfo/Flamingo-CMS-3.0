@@ -80,9 +80,16 @@ export function ShopCartSection({ data }: Props) {
             <span>Gesamt</span>
             <span>{formatPrice(totalCents)}</span>
           </div>
-          <Link href={`${shopBase.replace(/\/shop$/, '')}/checkout`} className="block w-full text-center py-3 mt-4 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition">
-            {checkoutLabel}
-          </Link>
+          {shopBase.startsWith('/demo/') ? (
+            <div className="mt-4 text-center">
+              <span className="block w-full py-3 bg-zinc-200 text-zinc-500 font-medium rounded-xl cursor-not-allowed">Zur Kasse</span>
+              <p className="text-xs text-zinc-400 mt-2">Checkout ist in der Demo nicht verfügbar</p>
+            </div>
+          ) : (
+            <Link href={`${shopBase.replace(/\/shop$/, '')}/checkout`} className="block w-full text-center py-3 mt-4 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition">
+              {checkoutLabel}
+            </Link>
+          )}
           <Link href={shopBase} className="block w-full text-center py-2 mt-2 text-sm text-zinc-500 hover:text-zinc-700">
             {continueLabel}
           </Link>

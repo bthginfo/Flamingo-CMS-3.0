@@ -396,7 +396,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       )}
 
       {/* Add Section */}
-      <div className="mt-4">
+      <div className="mt-4 pb-24">
         <button onClick={() => setShowAddMenu(true)} className="admin-btn-primary w-full flex items-center justify-center gap-2">
           <Plus size={18} /> Sektion hinzufügen
         </button>
