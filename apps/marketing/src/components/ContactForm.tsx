@@ -28,6 +28,8 @@ export interface ContactFormProps {
   brancheOptions?: string[];
   /** Paket options when the `paket` field is rendered. */
   paketOptions?: string[];
+  /** Add-on checkboxes rendered after the paket field. */
+  addonOptions?: { value: string; label: string }[];
   className?: string;
   /** Visual variant for the submit button. */
   buttonClass?: string;
@@ -90,6 +92,7 @@ export function ContactForm({
   successTitle = 'Vielen Dank.',
   successText = 'Wir melden uns innerhalb von 24 Stunden.',
   defaultPaket = '',
+  addonOptions,
 }: ContactFormProps) {
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
@@ -323,6 +326,18 @@ export function ContactForm({
                 <select name="paket" className={inputCls} defaultValue={defaultPaket || paketOptions[0]}>
                   {paketOptions.map((o) => <option key={o}>{o}</option>)}
                 </select>
+              </Field>
+            )}
+            {addonOptions && addonOptions.length > 0 && (
+              <Field label="Gewünschte Add-ons (optional)">
+                <div className="space-y-2">
+                  {addonOptions.map((a) => (
+                    <label key={a.value} className="flex items-center gap-2.5 cursor-pointer group">
+                      <input type="checkbox" name={`addon_${a.value}`} value="1" className="rounded border-gray-300 text-[var(--brand-color)] focus:ring-[var(--brand-color)]" />
+                      <span className="text-sm group-hover:text-[var(--brand-color)] transition-colors">{a.label}</span>
+                    </label>
+                  ))}
+                </div>
               </Field>
             )}
             {hasLegacy('message') && (

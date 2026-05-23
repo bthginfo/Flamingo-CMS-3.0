@@ -23,8 +23,15 @@ export const BRANCHE_OPTIONS = [
 export const PAKET_OPTIONS = [
   'Template (1.490 €)',
   'Mit Content Kit (Foto + Video) (2.400 €)',
-  'Shop-Addon (999 €)',
-  'Shop-Addon inkl. Einrichtung (1.450 €)',
   'Custom (auf Anfrage)',
   'Noch unentschieden',
+];
+
+export const ADDON_OPTIONS = [
+  { value: 'shop-self', label: 'Shop-Addon (999 €)' },
+  { value: 'shop-setup', label: 'Shop-Addon inkl. Einrichtung (1.450 €)' },
+  { value: 'multilang', label: 'Mehrsprachigkeit (ab 290 €)' },
+  { value: 'reservation', label: 'Online-Reservierung (ab 390 €)' },
+  { value: 'newsletter', label: 'Newsletter-Setup (290 €)' },
+  { value: 'seo-texte', label: 'Texte & SEO (ab 490 €)' },
 ];

@@ -20,7 +20,7 @@ import {
 } from '@/components/fx-21st';
 import { ConsentProvider } from '@/lib/consent';
 import { ContactForm } from '@/components/ContactForm';
-import { BRANCHE_OPTIONS, PAKET_OPTIONS } from '@/lib/contact-options';
+import { BRANCHE_OPTIONS, PAKET_OPTIONS, ADDON_OPTIONS } from '@/lib/contact-options';
 import { CookieBanner } from '@/components/CookieBanner';
 import { MouseGlow } from '@/components/MouseGlow';
 import { scrollToTop } from '@/lib/scroll';
@@ -2277,6 +2277,7 @@ function Contact() {
               fields={['name', 'email', 'branche', 'paket', 'message']}
               brancheOptions={BRANCHE_OPTIONS}
               paketOptions={PAKET_OPTIONS}
+              addonOptions={ADDON_OPTIONS}
             />
           </div>
         </div>
