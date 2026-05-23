@@ -228,7 +228,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} />
       <main>
         {visibleSections.map((section) => (
-          <SectionRenderer key={section.id} section={section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} />
+          <SectionRenderer key={section.id} section={section.type.startsWith('shop') ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} />
         ))}
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />

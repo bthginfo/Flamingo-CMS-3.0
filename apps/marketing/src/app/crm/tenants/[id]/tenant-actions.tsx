@@ -1,12 +1,12 @@
 'use client';
 
 import { useTransition } from 'react';
-import { updateTenantAction, deleteTenantAction, configureBlobAction } from '../actions';
+import { updateTenantAction, deleteTenantAction, configureBlobAction, toggleShopAddonAction } from '../actions';
 import { toast } from 'sonner';
-import { Power, Pause, Trash2, Eye } from 'lucide-react';
+import { Power, Pause, Trash2, Eye, ShoppingBag } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, deploymentMode }: { tenantId: string; currentStatus: string; currentStyle: string; isDemo?: boolean; deploymentMode?: string }) {
+export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, deploymentMode, shopActive }: { tenantId: string; currentStatus: string; currentStyle: string; isDemo?: boolean; deploymentMode?: string; shopActive?: boolean }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -41,6 +41,19 @@ export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, d
         className={`w-full crm-btn ${isDemo ? 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
       >
         <Eye size={14} /> {isDemo ? 'Demo-Flag entfernen' : 'Als Demo markieren'}
+      </button>
+      <button
+        onClick={() => {
+          startTransition(async () => {
+            const result = await toggleShopAddonAction(tenantId, !shopActive);
+            if (result.success) toast.success(shopActive ? 'Shop-Modul deaktiviert' : 'Shop-Modul aktiviert');
+            router.refresh();
+          });
+        }}
+        disabled={pending}
+        className={`w-full crm-btn ${shopActive ? 'bg-pink-50 text-pink-700 hover:bg-pink-100 border border-pink-200' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
+      >
+        <ShoppingBag size={14} /> {shopActive ? 'Shop-Modul deaktivieren' : 'Shop-Modul aktivieren'}
       </button>
       <button
         onClick={() => {

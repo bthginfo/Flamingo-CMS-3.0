@@ -2,8 +2,8 @@
 
 import { provisionTenant, type ProvisionInput } from '@/lib/provisioning';
 import { getDb } from '@/lib/db';
-import { tenants, tenantDomains, globalSettings } from '@flamingo/db';
-import { eq } from 'drizzle-orm';
+import { tenants, tenantDomains, globalSettings, tenantAddons, shopSettings } from '@flamingo/db';
+import { eq, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { addDomainToRenderer, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject } from '@/lib/vercel';
 
@@ -124,4 +124,41 @@ export async function configureBlobAction(tenantId: string) {
 
   revalidatePath(`/crm/tenants/${tenantId}`);
   return { success: true };
+}
+
+export async function toggleShopAddonAction(tenantId: string, activate: boolean) {
+  const db = getDb();
+  const now = new Date();
+
+  const [existing] = await db.select().from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'shop')))
+    .limit(1);
+
+  if (activate) {
+    if (existing) {
+      await db.update(tenantAddons).set({ active: true, activatedAt: now }).where(eq(tenantAddons.id, existing.id));
+    } else {
+      await db.insert(tenantAddons).values({ tenantId, addonKey: 'shop', active: true, activatedAt: now });
+    }
+    // Ensure shop settings exist
+    const [settings] = await db.select().from(shopSettings).where(eq(shopSettings.tenantId, tenantId)).limit(1);
+    if (!settings) {
+      await db.insert(shopSettings).values({ tenantId });
+    }
+  } else {
+    if (existing) {
+      await db.update(tenantAddons).set({ active: false }).where(eq(tenantAddons.id, existing.id));
+    }
+  }
+
+  revalidatePath(`/crm/tenants/${tenantId}`);
+  return { success: true };
+}
+
+export async function getShopAddonStatus(tenantId: string): Promise<boolean> {
+  const db = getDb();
+  const [row] = await db.select().from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'shop')))
+    .limit(1);
+  return row?.active ?? false;
 }

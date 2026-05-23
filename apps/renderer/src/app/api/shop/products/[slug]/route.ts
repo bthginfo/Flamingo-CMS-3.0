@@ -1,15 +1,18 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { getDb } from '@/lib/db';
 import { products, productVariants, variantOptions, productCategories } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function GET(
-  _req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const tenantId = await resolveTenant();
+  const queryTenantId = req.nextUrl.searchParams.get('tenantId');
+  const tenantId = (queryTenantId && UUID_RE.test(queryTenantId) ? queryTenantId : null) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
 
   const db = getDb();

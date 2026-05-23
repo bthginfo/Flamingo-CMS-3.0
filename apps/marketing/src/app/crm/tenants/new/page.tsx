@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { createTenantAction } from '../actions';
+import { createTenantAction, toggleShopAddonAction } from '../actions';
 import { toast } from 'sonner';
 import { ArrowLeft, Rocket, Server, Cloud } from 'lucide-react';
 import Link from 'next/link';
@@ -42,6 +42,7 @@ export default function NewTenantPage() {
     email: '',
     address: '',
     deploymentMode: 'shared' as 'shared' | 'standalone',
+    activateShop: false,
   });
 
   function autoSlug(name: string) {
@@ -72,6 +73,9 @@ export default function NewTenantPage() {
         return;
       }
       if (result.warning) toast.warning(result.warning, { duration: 10000 });
+      if (form.activateShop && result.tenantId) {
+        await toggleShopAddonAction(result.tenantId, true);
+      }
       toast.success(`Tenant "${form.name}" wurde erstellt! Erreichbar unter: ${result.rendererUrl}`);
       router.push(`/crm/tenants/${result.tenantId}`);
     });
@@ -220,6 +224,16 @@ export default function NewTenantPage() {
         </div>
 
         {/* Submit */}
+        <div className="crm-card p-5 space-y-3">
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" checked={form.activateShop} onChange={e => setForm(f => ({ ...f, activateShop: e.target.checked }))} className="rounded border-slate-300" />
+            <div>
+              <span className="text-sm font-medium text-slate-900">Shop-Modul aktivieren</span>
+              <p className="text-xs text-slate-500">Direkt bei Erstellung das Shop-Addon freischalten</p>
+            </div>
+          </label>
+        </div>
+
         <button
           onClick={handleSubmit}
           disabled={pending}

@@ -202,7 +202,7 @@ const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     label: 'Online-Shop',
     tagline: 'Weinhandel · Einzelhandel · E-Commerce',
     description: 'Produktkatalog, Kategorien, Warenkorb, Checkout, Bestellverwaltung, Rechnungen und Versandoptionen — fertig für Stripe & PayPal.',
-    image: 'https://images.unsplash.com/photo-1516594915307-8f71f3a4b147?auto=format&fit=crop&w=1400&q=80',
+    image: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1400&q=80',
     accent: '#7c2d12',
     bullets: ['Produkte & Kategorien mit Varianten', 'Warenkorb & Checkout', 'Bestellverwaltung & Rechnungen', 'Versand, Gutscheine & Storno'],
   },
@@ -270,7 +270,7 @@ const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     bold: 'https://images.unsplash.com/photo-1590246814883-57c511e76ca4?auto=format&fit=crop&w=1400&q=80',
   },
   shop: {
-    classic: 'https://images.unsplash.com/photo-1516594915307-8f71f3a4b147?auto=format&fit=crop&w=1400&q=80',
+    classic: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1400&q=80',
   },

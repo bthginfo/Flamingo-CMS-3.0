@@ -22,13 +22,14 @@ export function ShopProductDetailSection({ data }: Props) {
   useEffect(() => {
     if (data._product || !slug) return;
     setLoading(true);
-    fetch(`/api/shop/products/${encodeURIComponent(slug)}`)
+    const params = data.tenantId ? `?tenantId=${data.tenantId}` : '';
+    fetch(`/api/shop/products/${encodeURIComponent(slug)}${params}`)
       .then(r => r.json())
       .then(d => {
         if (d.product) setFetchedProduct({ ...d.product, variants: d.variants, variantOptions: d.options });
       })
       .finally(() => setLoading(false));
-  }, [slug, data._product]);
+  }, [slug, data._product, data.tenantId]);
 
   const product = (data._product || fetchedProduct) as {
     id: string; title: string; slug: string; description: string;

@@ -36,7 +36,7 @@ export default async function ShopProductPage({ params }: { params: Promise<{ sl
     <div data-style={tenantStyle.activeStyle} className="overflow-x-hidden" style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={false} cta={navData.cta} />
       <main className="max-w-6xl mx-auto px-6">
-        <ShopProductDetailSection data={{ _slug: slug }} />
+        <ShopProductDetailSection data={{ _slug: slug, tenantId }} />
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />
     </div>

@@ -44,6 +44,7 @@ function applyShowcasePalette() {
 
 const NAV = [
   { href: '/templates', label: 'Templates' },
+  { href: '/shop', label: 'Shop-Addon' },
   { href: '/cms', label: 'CMS' },
   { href: '/foerderrechner', label: 'Förderrechner' },
   { href: '/prozess', label: 'Ablauf' },
