@@ -1896,6 +1896,139 @@ function CollectionListEditor({ data, onChange }: EditorProps) {
 }
 
 // ─── Shop Featured Products Editor ──────────────────────────────
+function ShopProductGridEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || 'Unsere Produkte');
+  const [showSearch, setShowSearch] = useState(data.showSearch !== false);
+  const [showCategories, setShowCategories] = useState(data.showCategories !== false);
+  const [showSort, setShowSort] = useState(data.showSort !== false);
+  const [columns, setColumns] = useState<number>((data.columns as number) || 3);
+
+  useReport({ headline, showSearch, showCategories, showSort, columns }, onChange);
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium mb-1">Überschrift</label>
+        <input className="w-full border rounded px-3 py-2" value={headline} onChange={e => setHeadline(e.target.value)} />
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={showSearch} onChange={e => setShowSearch(e.target.checked)} />
+          Suche anzeigen
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={showCategories} onChange={e => setShowCategories(e.target.checked)} />
+          Kategorien anzeigen
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={showSort} onChange={e => setShowSort(e.target.checked)} />
+          Sortierung anzeigen
+        </label>
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Spalten (Desktop)</label>
+        <select className="w-full border rounded px-3 py-2" value={columns} onChange={e => setColumns(Number(e.target.value))}>
+          <option value={2}>2</option>
+          <option value={3}>3</option>
+          <option value={4}>4</option>
+        </select>
+      </div>
+    </div>
+  );
+}
+
+function ShopProductDetailEditor({ data, onChange }: EditorProps) {
+  // This section is mostly automatic (fetches product from URL slug).
+  // No configurable fields needed — display info message.
+  useReport({}, onChange);
+
+  return (
+    <div className="rounded-lg bg-blue-50 border border-blue-200 p-4 flex items-start gap-3">
+      <Info size={18} className="text-blue-500 mt-0.5 shrink-0" />
+      <div className="text-sm text-blue-800">
+        <p className="font-medium mb-1">Automatische Sektion</p>
+        <p>Das Produkt-Detail wird automatisch anhand der URL geladen. Diese Sektion benötigt keine manuelle Konfiguration.</p>
+      </div>
+    </div>
+  );
+}
+
+function ShopCartEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || 'Dein Warenkorb');
+  const [emptyText, setEmptyText] = useState((data.emptyText as string) || 'Dein Warenkorb ist leer.');
+  const [continueShoppingLabel, setContinueShoppingLabel] = useState((data.continueShoppingLabel as string) || 'Weiter einkaufen');
+  const [checkoutLabel, setCheckoutLabel] = useState((data.checkoutLabel as string) || 'Zur Kasse');
+
+  useReport({ headline, emptyText, continueShoppingLabel, checkoutLabel }, onChange);
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium mb-1">Überschrift</label>
+        <input className="w-full border rounded px-3 py-2" value={headline} onChange={e => setHeadline(e.target.value)} />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Text bei leerem Warenkorb</label>
+        <input className="w-full border rounded px-3 py-2" value={emptyText} onChange={e => setEmptyText(e.target.value)} />
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Button: Weiter einkaufen</label>
+          <input className="w-full border rounded px-3 py-2" value={continueShoppingLabel} onChange={e => setContinueShoppingLabel(e.target.value)} />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Button: Zur Kasse</label>
+          <input className="w-full border rounded px-3 py-2" value={checkoutLabel} onChange={e => setCheckoutLabel(e.target.value)} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ShopCheckoutEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || 'Kasse');
+
+  useReport({ headline }, onChange);
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium mb-1">Überschrift</label>
+        <input className="w-full border rounded px-3 py-2" value={headline} onChange={e => setHeadline(e.target.value)} />
+      </div>
+      <div className="rounded-lg bg-blue-50 border border-blue-200 p-4 flex items-start gap-3">
+        <Info size={18} className="text-blue-500 mt-0.5 shrink-0" />
+        <p className="text-sm text-blue-800">Die Checkout-Schritte (Kontakt, Versand, Zahlung, Bestätigung) werden automatisch gesteuert.</p>
+      </div>
+    </div>
+  );
+}
+
+function ShopThankYouEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || 'Vielen Dank für deine Bestellung!');
+  const [subline, setSubline] = useState((data.subline as string) || 'Du erhältst in Kürze eine Bestätigung per E-Mail.');
+  const [continueShoppingLabel, setContinueShoppingLabel] = useState((data.continueShoppingLabel as string) || 'Zurück zum Shop');
+
+  useReport({ headline, subline, continueShoppingLabel }, onChange);
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium mb-1">Überschrift</label>
+        <input className="w-full border rounded px-3 py-2" value={headline} onChange={e => setHeadline(e.target.value)} />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Untertitel</label>
+        <input className="w-full border rounded px-3 py-2" value={subline} onChange={e => setSubline(e.target.value)} />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Button-Text: Zurück zum Shop</label>
+        <input className="w-full border rounded px-3 py-2" value={continueShoppingLabel} onChange={e => setContinueShoppingLabel(e.target.value)} />
+      </div>
+    </div>
+  );
+}
+
 function ShopFeaturedProductsEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || 'Empfohlene Produkte');
   const [mode, setMode] = useState<string>((data.mode as string) || 'latest');
@@ -1993,4 +2126,9 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   logoMarquee: LogoMarqueeEditor,
   collectionList: CollectionListEditor,
   shopFeaturedProducts: ShopFeaturedProductsEditor,
+  shopProductGrid: ShopProductGridEditor,
+  shopProductDetail: ShopProductDetailEditor,
+  shopCart: ShopCartEditor,
+  shopCheckout: ShopCheckoutEditor,
+  shopThankYou: ShopThankYouEditor,
 };

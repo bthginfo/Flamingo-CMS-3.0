@@ -1,9 +1,11 @@
-import { getPagesAction, createPageAction, deletePageAction, ensureDefaultPages } from './actions';
+import { getPagesAction, createPageAction, deletePageAction, ensureDefaultPages, getShopPageStatus, addShopPageAction } from './actions';
 import { PagesList } from './pages-list';
+import { isShopActive } from '@/app/admin/shop/actions';
 
 export default async function PagesPage() {
   await ensureDefaultPages();
-  const pagesList = await getPagesAction();
+  const [pagesList, hasShop] = await Promise.all([getPagesAction(), isShopActive()]);
+  const shopPages = hasShop ? await getShopPageStatus() : undefined;
 
   return (
     <div>
@@ -14,7 +16,7 @@ export default async function PagesPage() {
           <button type="submit" className="admin-btn-primary whitespace-nowrap">+ Erstellen</button>
         </form>
       </div>
-      <PagesList pages={pagesList} deleteAction={deletePageAction} />
+      <PagesList pages={pagesList} deleteAction={deletePageAction} hasShop={hasShop} shopPages={shopPages} addShopPageAction={addShopPageAction} />
     </div>
   );
 }

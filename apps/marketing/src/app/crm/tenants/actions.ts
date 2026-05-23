@@ -2,8 +2,8 @@
 
 import { provisionTenant, type ProvisionInput } from '@/lib/provisioning';
 import { getDb } from '@/lib/db';
-import { tenants, tenantDomains, globalSettings, tenantAddons, shopSettings } from '@flamingo/db';
-import { eq, and } from 'drizzle-orm';
+import { tenants, tenantDomains, globalSettings, tenantAddons, shopSettings, pages, pageSections } from '@flamingo/db';
+import { eq, and, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { addDomainToRenderer, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject } from '@/lib/vercel';
 
@@ -148,6 +148,15 @@ export async function toggleShopAddonAction(tenantId: string, activate: boolean)
   } else {
     if (existing) {
       await db.update(tenantAddons).set({ active: false }).where(eq(tenantAddons.id, existing.id));
+    }
+    // Delete all shop system pages
+    const SHOP_SLUGS = ['shop', 'warenkorb', 'checkout', 'bestellung-abgeschlossen', 'agb', 'widerrufsbelehrung'];
+    const shopPages = await db.select({ id: pages.id }).from(pages)
+      .where(and(eq(pages.tenantId, tenantId), inArray(pages.slug, SHOP_SLUGS)));
+    if (shopPages.length > 0) {
+      const pageIds = shopPages.map(p => p.id);
+      await db.delete(pageSections).where(and(eq(pageSections.tenantId, tenantId), inArray(pageSections.pageId, pageIds)));
+      await db.delete(pages).where(and(eq(pages.tenantId, tenantId), inArray(pages.id, pageIds)));
     }
   }
 

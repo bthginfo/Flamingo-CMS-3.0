@@ -147,3 +147,64 @@ export async function reorderSectionsAction(pageId: string, sectionIds: string[]
   );
   revalidatePath(`/admin/pages/${pageId}`);
 }
+
+// ─── Shop Page Management ─────────────────────────────────────────────
+
+const SHOP_PAGE_DEFS = [
+  { slug: 'shop', title: 'Shop', sortOrder: 50, sections: [{ type: 'shopProductGrid', data: { headline: 'Unsere Produkte', showCategories: true, showSearch: true, showSort: true, columns: 3 } }] },
+  { slug: 'warenkorb', title: 'Warenkorb', sortOrder: 51, sections: [{ type: 'shopCart', data: { headline: 'Dein Warenkorb', emptyText: 'Dein Warenkorb ist leer.', continueShoppingLabel: 'Weiter einkaufen', checkoutLabel: 'Zur Kasse' } }] },
+  { slug: 'checkout', title: 'Checkout', sortOrder: 52, sections: [{ type: 'shopCheckout', data: { headline: 'Kasse' } }] },
+  { slug: 'bestellung-abgeschlossen', title: 'Bestellung abgeschlossen', sortOrder: 53, sections: [{ type: 'shopThankYou', data: { headline: 'Vielen Dank für deine Bestellung!', subline: 'Du erhältst in Kürze eine Bestätigung per E-Mail.', continueShoppingLabel: 'Zurück zum Shop' } }] },
+  { slug: 'agb', title: 'AGB', sortOrder: 54, sections: [{ type: 'legalContent', data: { headline: 'Allgemeine Geschäftsbedingungen', blocks: [] } }] },
+  { slug: 'widerrufsbelehrung', title: 'Widerrufsbelehrung', sortOrder: 55, sections: [{ type: 'legalContent', data: { headline: 'Widerrufsbelehrung', blocks: [] } }] },
+];
+
+export async function getShopPageStatus() {
+  const session = await requireSession();
+  const db = getDb();
+  const existing = await db.select({ slug: pages.slug }).from(pages).where(eq(pages.tenantId, session.tenantId));
+  const slugs = new Set(existing.map(p => p.slug));
+  return SHOP_PAGE_DEFS.map(def => ({ slug: def.slug, title: def.title, exists: slugs.has(def.slug) }));
+}
+
+export async function addShopPageAction(slug: string) {
+  const session = await requireSession();
+  const db = getDb();
+  const def = SHOP_PAGE_DEFS.find(d => d.slug === slug);
+  if (!def) return { error: 'Unbekannte Shop-Seite' };
+
+  // Check not already existing
+  const [existing] = await db.select({ id: pages.id }).from(pages)
+    .where(and(eq(pages.tenantId, session.tenantId), eq(pages.slug, def.slug)))
+    .limit(1);
+  if (existing) return { error: 'Seite existiert bereits' };
+
+  const [page] = await db.insert(pages).values({
+    tenantId: session.tenantId,
+    title: def.title,
+    slug: def.slug,
+    type: 'system',
+    status: 'published',
+    visible: true,
+    sortOrder: def.sortOrder,
+  }).returning({ id: pages.id });
+
+  for (const section of def.sections) {
+    await db.insert(pageSections).values({
+      tenantId: session.tenantId,
+      pageId: page.id,
+      type: section.type,
+      data: section.data,
+      sortOrder: 0,
+      locked: true,
+      titleInternal: `[Shop] ${def.title}`,
+    });
+  }
+
+  revalidatePath('/admin/pages');
+  return { success: true };
+}
+
+export async function isShopPageSlug(slug: string): Promise<boolean> {
+  return SHOP_PAGE_DEFS.some(d => d.slug === slug);
+}
