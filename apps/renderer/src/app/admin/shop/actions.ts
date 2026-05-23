@@ -2,7 +2,7 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections } from '@flamingo/db';
+import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, invoices } from '@flamingo/db';
 import { eq, and, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
@@ -435,4 +435,142 @@ export async function deleteCoupon(id: string) {
   const db = getDb();
   await db.delete(coupons).where(and(eq(coupons.id, id), eq(coupons.tenantId, tenantId)));
   revalidatePath('/admin/shop/coupons');
+}
+
+/**
+ * Cancel an order and generate a Stornorechnung (credit note).
+ * - Sets status to 'cancelled'
+ * - Creates credit note invoice record (negative amounts, referencing original invoice)
+ * - Returns credit note number for PDF generation
+ */
+export async function cancelOrder(orderId: string, reason?: string): Promise<{ creditNoteNumber: string }> {
+  const tenantId = await requireTenant();
+  const db = getDb();
+
+  const [order] = await db.select().from(orders)
+    .where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
+  if (!order) throw new Error('Order not found');
+
+  if (order.status === 'cancelled' || order.status === 'refunded') {
+    throw new Error('Bestellung ist bereits storniert.');
+  }
+
+  // Find original invoice
+  const [originalInvoice] = await db.select().from(invoices)
+    .where(and(eq(invoices.orderId, orderId), eq(invoices.tenantId, tenantId), eq(invoices.type, 'invoice')))
+    .limit(1);
+
+  // Check if credit note already exists
+  const [existingCreditNote] = await db.select().from(invoices)
+    .where(and(eq(invoices.orderId, orderId), eq(invoices.tenantId, tenantId), eq(invoices.type, 'credit_note')))
+    .limit(1);
+
+  if (existingCreditNote) {
+    // Already has a credit note, just update status
+    await db.update(orders)
+      .set({ status: 'cancelled', updatedAt: new Date() })
+      .where(eq(orders.id, orderId));
+    await db.insert(orderStatusHistory).values({ orderId, oldStatus: order.status, newStatus: 'cancelled', note: reason || 'Storno' });
+    revalidatePath('/admin/shop/orders');
+    return { creditNoteNumber: existingCreditNote.invoiceNumber };
+  }
+
+  // Generate credit note number (uses same sequential counter with "ST" prefix)
+  const [settings] = await db.select().from(shopSettings)
+    .where(eq(shopSettings.tenantId, tenantId)).limit(1);
+
+  const prefix = 'ST'; // Stornorechnung prefix
+  const nextNum = settings?.nextInvoiceNumber || 1;
+  const year = new Date().getFullYear();
+  const paddedNum = String(nextNum).padStart(4, '0');
+  const creditNoteNumber = `${prefix}-${year}-${paddedNum}`;
+
+  // Create credit note record (negative amounts)
+  await db.insert(invoices).values({
+    tenantId,
+    orderId,
+    invoiceNumber: creditNoteNumber,
+    type: 'credit_note',
+    amountNetCents: -(order.subtotalCents - order.taxCents),
+    taxCents: -order.taxCents,
+    amountGrossCents: -order.totalCents,
+    refInvoiceNumber: originalInvoice?.invoiceNumber || null,
+  });
+
+  // Increment counter
+  await db.update(shopSettings)
+    .set({ nextInvoiceNumber: nextNum + 1 })
+    .where(eq(shopSettings.tenantId, tenantId));
+
+  // Update order status
+  await db.update(orders)
+    .set({ status: 'cancelled', updatedAt: new Date() })
+    .where(eq(orders.id, orderId));
+
+  await db.insert(orderStatusHistory).values({
+    orderId,
+    oldStatus: order.status,
+    newStatus: 'cancelled',
+    note: reason ? `Storno: ${reason}` : 'Storno',
+  });
+
+  // Send cancellation email (fire-and-forget)
+  sendCancellationEmail(tenantId, order, creditNoteNumber).catch(e =>
+    console.error('[Storno] Email failed:', e)
+  );
+
+  revalidatePath('/admin/shop/orders');
+  return { creditNoteNumber };
+}
+
+async function sendCancellationEmail(tenantId: string, order: typeof orders.$inferSelect, creditNoteNumber: string) {
+  const { sendOrderEmails: _ , ...mod } = await import('@/lib/shop-email');
+  // Use getSmtp from the module's internal — reimport nodemailer directly
+  const nodemailer = (await import('nodemailer')).default;
+  const { globalSettings: gs } = await import('@flamingo/db');
+
+  const db = getDb();
+  const [settings] = await db.select({ smtp: gs.smtp })
+    .from(gs).where(eq(gs.tenantId, tenantId)).limit(1);
+
+  const smtp = settings?.smtp as { host: string; port: number; user: string; pass: string; from: string } | null;
+  const effectiveSmtp = (smtp?.host && smtp?.user && smtp?.pass && smtp?.from)
+    ? smtp
+    : (process.env.PLATFORM_SMTP_HOST && process.env.PLATFORM_SMTP_USER && process.env.PLATFORM_SMTP_PASS && process.env.PLATFORM_SMTP_FROM)
+      ? { host: process.env.PLATFORM_SMTP_HOST, port: Number(process.env.PLATFORM_SMTP_PORT) || 587, user: process.env.PLATFORM_SMTP_USER, pass: process.env.PLATFORM_SMTP_PASS, from: process.env.PLATFORM_SMTP_FROM }
+      : null;
+
+  if (!effectiveSmtp) return;
+
+  const transporter = nodemailer.createTransport({
+    host: effectiveSmtp.host,
+    port: effectiveSmtp.port,
+    secure: effectiveSmtp.port === 465,
+    auth: { user: effectiveSmtp.user, pass: effectiveSmtp.pass },
+  });
+
+  const formatPrice = (c: number) => (c / 100).toFixed(2).replace('.', ',') + ' €';
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb">
+<div style="max-width:600px;margin:0 auto;padding:32px 16px">
+  <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+    <div style="background:linear-gradient(135deg,#991b1b,#dc2626);padding:24px 32px">
+      <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:600">Bestellung storniert</h1>
+      <p style="margin:8px 0 0;color:rgba(255,255,255,0.8);font-size:14px">Stornorechnung: ${creditNoteNumber}</p>
+    </div>
+    <div style="padding:24px 32px">
+      <p style="margin:0 0 16px;color:#374151">Hallo ${order.customerName},</p>
+      <p style="margin:0 0 16px;color:#6b7280;font-size:14px">Ihre Bestellung <strong>${order.orderNumber}</strong> wurde storniert. Anbei die Stornorechnung als Gutschrift über ${formatPrice(order.totalCents)}.</p>
+      <p style="margin:0 0 16px;color:#6b7280;font-size:14px">Der Betrag wird Ihnen in den nächsten 5–10 Werktagen erstattet.</p>
+      <p style="margin:0;color:#6b7280;font-size:13px">Stornorechnung-Nr.: ${creditNoteNumber}</p>
+    </div>
+  </div>
+</div></body></html>`;
+
+  await transporter.sendMail({
+    from: effectiveSmtp.from,
+    to: order.customerEmail,
+    subject: `Stornierung Bestellung ${order.orderNumber} – Gutschrift ${creditNoteNumber}`,
+    html,
+  });
 }

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Package, Truck, CheckCircle, XCircle, Clock, CreditCard, ArrowRight, Search, ChevronDown, ChevronUp, FileText } from 'lucide-react';
-import { updateOrderStatus, updateOrderTracking } from '../actions';
+import { Package, Truck, CheckCircle, XCircle, Clock, CreditCard, ArrowRight, Search, ChevronDown, ChevronUp, FileText, Ban } from 'lucide-react';
+import { updateOrderStatus, updateOrderTracking, cancelOrder } from '../actions';
 
 type Order = {
   id: string;
@@ -228,14 +228,34 @@ export function OrdersClient({ orders: initialOrders }: { orders: Order[] }) {
                             </button>
                           );
                         })}
-                        {order.status !== 'cancelled' && (
+                        {order.status !== 'cancelled' && order.status !== 'refunded' && (
                           <button
-                            onClick={() => handleStatusChange(order.id, 'cancelled')}
+                            onClick={async () => {
+                              if (!confirm('Bestellung wirklich stornieren? Es wird eine Stornorechnung erstellt und der Kunde per E-Mail informiert.')) return;
+                              setUpdating(order.id);
+                              try {
+                                await cancelOrder(order.id);
+                                setOrders(orders.map(o => o.id === order.id ? { ...o, status: 'cancelled' } : o));
+                              } catch (e: any) {
+                                alert(e.message || 'Fehler beim Stornieren');
+                              }
+                              setUpdating(null);
+                            }}
                             disabled={updating === order.id}
                             className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-full border border-red-200 bg-red-50 text-red-700 hover:opacity-80 disabled:opacity-50"
                           >
-                            <XCircle size={10} /> Stornieren
+                            <Ban size={10} /> Stornieren
                           </button>
+                        )}
+                        {order.status === 'cancelled' && (
+                          <a
+                            href={`/api/shop/credit-note/${order.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-full border border-red-200 bg-red-50 text-red-700 hover:opacity-80"
+                          >
+                            <FileText size={10} /> Stornorechnung
+                          </a>
                         )}
                       </div>
                     </div>

@@ -55,7 +55,7 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
     if (!data.title.trim()) return;
     setSaving(true);
     const slug = data.slug || slugify(data.title);
-    const payload = { ...data, slug };
+    const payload = { ...data, slug, comparePriceCents: data.comparePriceCents ?? undefined };
 
     if (isEdit && initial?.id) {
       await updateProduct(initial.id, payload);

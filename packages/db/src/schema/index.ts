@@ -712,15 +712,19 @@ export const customers = pgTable('customers', {
 ]);
 
 // ─── invoices ────────────────────────────────────────────────────────
+export const invoiceTypeEnum = pgEnum('invoice_type', ['invoice', 'credit_note']);
+
 export const invoices = pgTable('invoices', {
   id: uuid('id').primaryKey().defaultRandom(),
   tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
   orderId: uuid('order_id').notNull().references(() => orders.id, { onDelete: 'cascade' }),
   invoiceNumber: varchar('invoice_number', { length: 50 }).notNull(),
+  type: invoiceTypeEnum('type').notNull().default('invoice'),
   pdfUrl: varchar('pdf_url', { length: 500 }),
   amountNetCents: integer('amount_net_cents').notNull(),
   taxCents: integer('tax_cents').notNull(),
   amountGrossCents: integer('amount_gross_cents').notNull(),
+  refInvoiceNumber: varchar('ref_invoice_number', { length: 50 }),
   issuedAt: timestamp('issued_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   uniqueIndex('invoices_tenant_number_idx').on(t.tenantId, t.invoiceNumber),
