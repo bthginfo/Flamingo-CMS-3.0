@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
-import { pages } from '@flamingo/db';
-import { eq } from 'drizzle-orm';
+import { pages, tenantAddons } from '@flamingo/db';
+import { eq, and } from 'drizzle-orm';
 import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
 
 export async function GET(req: NextRequest) {
@@ -11,6 +11,11 @@ export async function GET(req: NextRequest) {
 
   const db = getDb();
   const tenantPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title }).from(pages).where(eq(pages.tenantId, auth.tenantId));
+
+  // Check shop addon status
+  const [shopAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, auth.tenantId), eq(tenantAddons.addonKey, 'shop')));
+  const hasShop = shopAddon?.active === true;
 
   const sectionTypes = getSectionTypesForIndustry(auth.tenant.industry);
   // Exclude HTML-Block (freeHtml) from AI usage
@@ -22,6 +27,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     tenant: auth.tenant,
     tenantId: auth.tenantId,
+    hasShopAddon: hasShop,
     existingPages: tenantPages,
     availableSectionTypes: allowedSectionTypes,
     sectionDataSchemas: getSectionSchemas(auth.tenant.industry),
@@ -51,6 +57,17 @@ export async function GET(req: NextRequest) {
       socialLinks: { method: 'PUT', path: '/api/v1/content/social-links', description: 'Set social media links: { facebook?: url, instagram?: url, linkedin?: url, youtube?: url, tiktok?: url, xing?: url, google?: url, pinterest?: url, twitter?: url }' },
       style: { method: 'PUT', path: '/api/v1/content/style', description: 'Set active style variant: { style: "classic"|"modern"|"bold" }' },
       upload: { method: 'POST', path: '/api/v1/content/upload', description: 'Upload an image (multipart/form-data with "file" field). Returns { url, filename, size }. Use the returned url in bgImage, image fields etc.' },
+      ...(hasShop ? {
+        shopCreateCategory: { method: 'POST', path: '/api/v1/shop/categories', description: 'Create a product category: { name, slug, description?, image? }' },
+        shopUpdateCategory: { method: 'PUT', path: '/api/v1/shop/categories/:id', description: 'Update a product category' },
+        shopDeleteCategory: { method: 'DELETE', path: '/api/v1/shop/categories/:id', description: 'Delete a product category' },
+        shopListCategories: { method: 'GET', path: '/api/v1/shop/categories', description: 'List all product categories' },
+        shopCreateProduct: { method: 'POST', path: '/api/v1/shop/products', description: 'Create a product: { title, slug, categoryId?, description?, shortDescription?, priceCents, comparePriceCents?, images?: url[], stock?, status?: "active"|"draft", highlights?: string[] }' },
+        shopUpdateProduct: { method: 'PUT', path: '/api/v1/shop/products/:id', description: 'Update a product (full replace of provided fields)' },
+        shopDeleteProduct: { method: 'DELETE', path: '/api/v1/shop/products/:id', description: 'Delete a product' },
+        shopListProducts: { method: 'GET', path: '/api/v1/shop/products', description: 'List all products' },
+        shopSettings: { method: 'PUT', path: '/api/v1/shop/settings', description: 'Update shop settings: { currency?, paymentMethods?: string[], pickupEnabled?, pickupInstructions?, notificationEmail?, orderPrefix?, lowStockThreshold? }' },
+      } : {}),
     },
     restrictions: [
       'Do NOT use section type "freeHtml" or "htmlBlock" — raw HTML is not allowed.',
@@ -60,6 +77,7 @@ export async function GET(req: NextRequest) {
       'Every array field (items, services, steps, etc.) MUST have at least 3 entries unless the real business has fewer.',
       'The footer MUST contain columns with items arrays. Each item needs text and optionally href. Never send empty columns or columns without items.',
       'Navigation items MUST link to existing pages using their slug (e.g. href: "/leistungen", NOT href: "/services").',
+      ...(hasShop ? ['This tenant has the SHOP addon active. Include shop pages (slug: "shop", "warenkorb") with shopProductGrid and shopCart sections. Add a "Shop" / "Produkte" link in the navigation. Create product categories and products via the shop endpoints.'] : ['This tenant does NOT have the shop addon. Do NOT create shop pages or use shop section types.']),
     ],
     instructions: `Du bist ein AI-Assistent der eine "${auth.tenant.industry}"-Website für "${auth.tenant.name}" mit deutschsprachigem Content füllt.
 

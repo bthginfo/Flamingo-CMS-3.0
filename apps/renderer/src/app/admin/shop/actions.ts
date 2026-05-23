@@ -200,6 +200,9 @@ export async function saveShopSettings(data: Partial<{
   paypalClientId: string | null;
   paypalSecret: string | null;
   paypalMode: string;
+  sumupApiKey: string | null;
+  sumupMerchantCode: string | null;
+  sumupMode: string;
   orderPrefix: string;
   invoicePrefix: string;
   notificationEmail: string | null;

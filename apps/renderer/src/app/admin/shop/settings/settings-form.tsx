@@ -18,6 +18,9 @@ type Settings = {
   paypalClientId: string | null;
   paypalSecret: string | null;
   paypalMode: string;
+  sumupApiKey: string | null;
+  sumupMerchantCode: string | null;
+  sumupMode: string;
   orderPrefix: string;
   invoicePrefix: string;
   notificationEmail: string | null;
@@ -40,6 +43,9 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
     paypalClientId: initial?.paypalClientId || null,
     paypalSecret: initial?.paypalSecret || null,
     paypalMode: initial?.paypalMode || 'sandbox',
+    sumupApiKey: initial?.sumupApiKey || null,
+    sumupMerchantCode: initial?.sumupMerchantCode || null,
+    sumupMode: initial?.sumupMode || 'sandbox',
     orderPrefix: initial?.orderPrefix || 'FM',
     invoicePrefix: initial?.invoicePrefix || 'RE',
     notificationEmail: initial?.notificationEmail || null,
@@ -154,6 +160,21 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
             </div>
           </details>
           <details className="text-sm text-blue-800 ml-6">
+            <summary className="cursor-pointer font-medium hover:underline">SumUp (Online-Zahlung)</summary>
+            <div className="mt-2 space-y-1 text-blue-700 text-xs leading-relaxed">
+              <p><strong>Empfohlen für:</strong> Shops die bereits SumUp für Kartenzahlung nutzen (z.B. im Geschäft).</p>
+              <p><strong>Gebühren:</strong> 2,5% pro Online-Transaktion. Keine monatliche Gebühr.</p>
+              <p><strong>Einrichtung:</strong></p>
+              <ol className="list-decimal ml-4 space-y-0.5">
+                <li>Melde dich auf <a href="https://me.sumup.com/settings/developer" target="_blank" className="underline">me.sumup.com</a> an</li>
+                <li>Gehe zu Developer Settings → API Keys</li>
+                <li>Erstelle einen neuen API Key (Typ: Secret Key)</li>
+                <li>Notiere deinen Merchant Code (unter Account → Profil)</li>
+              </ol>
+              <p className="mt-1"><strong>Tipp:</strong> Nutze einen Sandbox-Account zum Testen. Erstelle ihn unter Developer Settings → Sandboxes.</p>
+            </div>
+          </details>
+          <details className="text-sm text-blue-800 ml-6">
             <summary className="cursor-pointer font-medium hover:underline">Vorkasse (Banküberweisung)</summary>
             <div className="mt-2 space-y-1 text-blue-700 text-xs leading-relaxed">
               <p><strong>Empfohlen für:</strong> Shops die keine Gebühren zahlen möchten oder hochpreisige Artikel verkaufen.</p>
@@ -173,10 +194,10 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {['stripe', 'paypal', 'prepayment', 'pickup'].map(m => (
+          {['stripe', 'paypal', 'sumup', 'prepayment', 'pickup'].map(m => (
             <label key={m} className={`flex items-center gap-2 p-3 rounded-lg border cursor-pointer transition ${data.paymentMethods.includes(m) ? 'border-pink-300 bg-pink-50' : 'border-zinc-200'}`}>
               <input type="checkbox" checked={data.paymentMethods.includes(m)} onChange={() => togglePayment(m)} className="rounded" />
-              <span className="text-sm font-medium capitalize">{m === 'prepayment' ? 'Vorkasse' : m === 'pickup' ? 'Abholung' : m === 'stripe' ? 'Stripe (Karte)' : 'PayPal'}</span>
+              <span className="text-sm font-medium capitalize">{m === 'prepayment' ? 'Vorkasse' : m === 'pickup' ? 'Abholung' : m === 'stripe' ? 'Stripe (Karte)' : m === 'sumup' ? 'SumUp' : 'PayPal'}</span>
             </label>
           ))}
         </div>
@@ -220,6 +241,31 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
             <div>
               <label className="block text-xs text-zinc-500 mb-1">Modus</label>
               <select value={data.paypalMode} onChange={e => set('paypalMode', e.target.value)} className="px-3 py-2 rounded-lg border border-zinc-200 text-sm bg-white">
+                <option value="sandbox">Sandbox (Test)</option>
+                <option value="live">Live</option>
+              </select>
+            </div>
+          </div>
+        )}
+
+        {/* SumUp config */}
+        {data.paymentMethods.includes('sumup') && (
+          <div className="border-t border-zinc-100 pt-4 space-y-3">
+            <h3 className="text-xs font-semibold text-zinc-500 uppercase">SumUp-Konfiguration</h3>
+            <p className="text-xs text-zinc-400">Erstelle einen API Key auf <a href="https://me.sumup.com/settings/developer" target="_blank" className="underline">developer.sumup.com</a> → Developer Settings → API Keys</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs text-zinc-500 mb-1">API Key</label>
+                <input type="password" value={data.sumupApiKey || ''} onChange={e => set('sumupApiKey', e.target.value || null)} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm font-mono" placeholder="sup_sk_..." />
+              </div>
+              <div>
+                <label className="block text-xs text-zinc-500 mb-1">Merchant Code</label>
+                <input value={data.sumupMerchantCode || ''} onChange={e => set('sumupMerchantCode', e.target.value || null)} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm font-mono" placeholder="MXXXXXXXXX" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-zinc-500 mb-1">Modus</label>
+              <select value={data.sumupMode} onChange={e => set('sumupMode', e.target.value)} className="px-3 py-2 rounded-lg border border-zinc-200 text-sm bg-white">
                 <option value="sandbox">Sandbox (Test)</option>
                 <option value="live">Live</option>
               </select>
