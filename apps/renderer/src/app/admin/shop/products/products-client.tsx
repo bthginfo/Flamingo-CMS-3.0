@@ -14,7 +14,7 @@ type Product = {
   stock: number;
   status: 'draft' | 'active' | 'archived';
   categoryId: string | null;
-  images: string[];
+  images: string[] | null;
 };
 
 type Category = {
