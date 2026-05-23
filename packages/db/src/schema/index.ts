@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, boolean, integer, jsonb, timestamp, uniqueIndex, index, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, text, boolean, integer, jsonb, timestamp, uniqueIndex, index, pgEnum, numeric } from 'drizzle-orm/pg-core';
 
 // ─── Enums ────────────────────────────────────────────────────────────
 export const industryEnum = pgEnum('industry', [
@@ -18,6 +18,14 @@ export const scriptPlacementEnum = pgEnum('script_placement', ['head', 'body_sta
 export const routeEntityTypeEnum = pgEnum('route_entity_type', ['page', 'collection_item']);
 export const routeStatusEnum = pgEnum('route_status', ['active', 'redirect', 'gone']);
 export const actorTypeEnum = pgEnum('actor_type', ['admin', 'system', 'api']);
+
+// ─── Shop Enums ───────────────────────────────────────────────────────
+export const productStatusEnum = pgEnum('product_status', ['draft', 'active', 'archived']);
+export const orderStatusEnum = pgEnum('order_status', ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded']);
+export const couponTypeEnum = pgEnum('coupon_type', ['percent', 'fixed_amount', 'free_shipping']);
+export const couponAppliesToEnum = pgEnum('coupon_applies_to', ['all', 'specific_products', 'specific_categories']);
+export const promotionTypeEnum = pgEnum('promotion_type', ['free_shipping_above', 'buy_x_get_discount', 'bundle_discount', 'quantity_discount', 'first_order_discount', 'spend_x_save_y']);
+export const discountTypeEnum = pgEnum('discount_type', ['percent', 'fixed']);
 
 // ─── 1. tenants ───────────────────────────────────────────────────────
 export const tenants = pgTable('tenants', {
@@ -418,3 +426,297 @@ export const leads = pgTable('leads', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+// ═══════════════════════════════════════════════════════════════════════
+// ─── SHOP ADDON TABLES ───────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════════════
+
+// ─── tenant_addons ───────────────────────────────────────────────────
+export const tenantAddons = pgTable('tenant_addons', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  addonKey: varchar('addon_key', { length: 50 }).notNull(),
+  active: boolean('active').notNull().default(false),
+  activatedAt: timestamp('activated_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('tenant_addons_tenant_key_idx').on(t.tenantId, t.addonKey),
+]);
+
+// ─── shop_settings ───────────────────────────────────────────────────
+export const shopSettings = pgTable('shop_settings', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  currency: varchar('currency', { length: 10 }).notNull().default('EUR'),
+  currencySymbol: varchar('currency_symbol', { length: 5 }).notNull().default('€'),
+  paymentMethods: jsonb('payment_methods').$type<string[]>().default([]),
+  bankDetails: jsonb('bank_details').$type<{ iban: string; bic: string; bankName: string; accountHolder: string } | null>().default(null),
+  pickupEnabled: boolean('pickup_enabled').notNull().default(false),
+  pickupInstructions: text('pickup_instructions'),
+  stripePublicKey: varchar('stripe_public_key', { length: 255 }),
+  stripeSecretKey: varchar('stripe_secret_key', { length: 255 }),
+  stripeWebhookSecret: varchar('stripe_webhook_secret', { length: 255 }),
+  paypalClientId: varchar('paypal_client_id', { length: 255 }),
+  paypalSecret: varchar('paypal_secret', { length: 255 }),
+  paypalMode: varchar('paypal_mode', { length: 10 }).notNull().default('sandbox'),
+  orderPrefix: varchar('order_prefix', { length: 10 }).notNull().default('FM'),
+  invoicePrefix: varchar('invoice_prefix', { length: 10 }).notNull().default('RE'),
+  nextOrderNumber: integer('next_order_number').notNull().default(1),
+  nextInvoiceNumber: integer('next_invoice_number').notNull().default(1),
+  notificationEmail: varchar('notification_email', { length: 255 }),
+  lowStockThreshold: integer('low_stock_threshold').notNull().default(5),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('shop_settings_tenant_idx').on(t.tenantId),
+]);
+
+// ─── product_categories ──────────────────────────────────────────────
+export const productCategories = pgTable('product_categories', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  slug: varchar('slug', { length: 255 }).notNull(),
+  description: text('description'),
+  image: varchar('image', { length: 500 }),
+  parentId: uuid('parent_id'),
+  sortOrder: integer('sort_order').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('product_categories_tenant_slug_idx').on(t.tenantId, t.slug),
+  index('product_categories_tenant_idx').on(t.tenantId),
+]);
+
+// ─── products ────────────────────────────────────────────────────────
+export const products = pgTable('products', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  categoryId: uuid('category_id').references(() => productCategories.id, { onDelete: 'set null' }),
+  title: varchar('title', { length: 255 }).notNull(),
+  slug: varchar('slug', { length: 255 }).notNull(),
+  description: text('description').notNull().default(''),
+  shortDescription: varchar('short_description', { length: 500 }),
+  priceCents: integer('price_cents').notNull(),
+  comparePriceCents: integer('compare_price_cents'),
+  currency: varchar('currency', { length: 10 }).notNull().default('EUR'),
+  sku: varchar('sku', { length: 100 }),
+  stock: integer('stock').notNull().default(0),
+  trackStock: boolean('track_stock').notNull().default(true),
+  isDigital: boolean('is_digital').notNull().default(false),
+  digitalFileUrl: varchar('digital_file_url', { length: 500 }),
+  status: productStatusEnum('status').notNull().default('draft'),
+  images: jsonb('images').$type<string[]>().default([]),
+  weightGrams: integer('weight_grams'),
+  taxClass: varchar('tax_class', { length: 50 }).notNull().default('standard'),
+  metaTitle: varchar('meta_title', { length: 255 }),
+  metaDescription: varchar('meta_description', { length: 500 }),
+  sortOrder: integer('sort_order').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('products_tenant_slug_idx').on(t.tenantId, t.slug),
+  index('products_tenant_idx').on(t.tenantId),
+  index('products_category_idx').on(t.categoryId),
+]);
+
+// ─── product_variants ────────────────────────────────────────────────
+export const productVariants = pgTable('product_variants', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  productId: uuid('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  sku: varchar('sku', { length: 100 }),
+  priceCents: integer('price_cents'),
+  stock: integer('stock').notNull().default(0),
+  attributes: jsonb('attributes').$type<Record<string, string>>().default({}),
+  image: varchar('image', { length: 500 }),
+  sortOrder: integer('sort_order').notNull().default(0),
+}, (t) => [
+  uniqueIndex('product_variants_unique_idx').on(t.tenantId, t.productId, t.name),
+  index('product_variants_product_idx').on(t.productId),
+]);
+
+// ─── variant_options ─────────────────────────────────────────────────
+export const variantOptions = pgTable('variant_options', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  productId: uuid('product_id').notNull().references(() => products.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 100 }).notNull(),
+  values: jsonb('values').$type<string[]>().default([]),
+  sortOrder: integer('sort_order').notNull().default(0),
+}, (t) => [
+  index('variant_options_product_idx').on(t.productId),
+]);
+
+// ─── tax_rates ───────────────────────────────────────────────────────
+export const taxRates = pgTable('tax_rates', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 100 }).notNull(),
+  rate: numeric('rate', { precision: 5, scale: 2 }).notNull(),
+  country: varchar('country', { length: 2 }).notNull().default('DE'),
+  region: varchar('region', { length: 100 }),
+  isDefault: boolean('is_default').notNull().default(false),
+  appliesToShipping: boolean('applies_to_shipping').notNull().default(false),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('tax_rates_tenant_name_country_idx').on(t.tenantId, t.name, t.country),
+]);
+
+// ─── shipping_zones ──────────────────────────────────────────────────
+export const shippingZones = pgTable('shipping_zones', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  countries: jsonb('countries').$type<string[]>().default([]),
+  sortOrder: integer('sort_order').notNull().default(0),
+}, (t) => [
+  index('shipping_zones_tenant_idx').on(t.tenantId),
+]);
+
+// ─── shipping_methods ────────────────────────────────────────────────
+export const shippingMethods = pgTable('shipping_methods', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  zoneId: uuid('zone_id').notNull().references(() => shippingZones.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  priceCents: integer('price_cents').notNull(),
+  freeAboveCents: integer('free_above_cents'),
+  minWeightGrams: integer('min_weight_grams'),
+  maxWeightGrams: integer('max_weight_grams'),
+  estimatedDays: varchar('estimated_days', { length: 50 }),
+  active: boolean('active').notNull().default(true),
+}, (t) => [
+  index('shipping_methods_zone_idx').on(t.zoneId),
+]);
+
+// ─── coupons ─────────────────────────────────────────────────────────
+export const coupons = pgTable('coupons', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  code: varchar('code', { length: 50 }).notNull(),
+  type: couponTypeEnum('type').notNull(),
+  value: integer('value').notNull(),
+  minOrderCents: integer('min_order_cents'),
+  maxUses: integer('max_uses'),
+  usedCount: integer('used_count').notNull().default(0),
+  maxUsesPerCustomer: integer('max_uses_per_customer'),
+  appliesTo: couponAppliesToEnum('applies_to').notNull().default('all'),
+  appliesToIds: jsonb('applies_to_ids').$type<string[]>().default([]),
+  validFrom: timestamp('valid_from', { withTimezone: true }),
+  validUntil: timestamp('valid_until', { withTimezone: true }),
+  active: boolean('active').notNull().default(true),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('coupons_tenant_code_idx').on(t.tenantId, t.code),
+]);
+
+// ─── promotions ──────────────────────────────────────────────────────
+export const promotions = pgTable('promotions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  type: promotionTypeEnum('type').notNull(),
+  conditions: jsonb('conditions').$type<Record<string, unknown>>().default({}),
+  discountValue: integer('discount_value').notNull(),
+  discountType: discountTypeEnum('discount_type').notNull(),
+  active: boolean('active').notNull().default(true),
+  validFrom: timestamp('valid_from', { withTimezone: true }),
+  validUntil: timestamp('valid_until', { withTimezone: true }),
+  stackable: boolean('stackable').notNull().default(false),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('promotions_tenant_idx').on(t.tenantId),
+]);
+
+// ─── orders ──────────────────────────────────────────────────────────
+export const orders = pgTable('orders', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  orderNumber: varchar('order_number', { length: 50 }).notNull(),
+  status: orderStatusEnum('status').notNull().default('pending'),
+  customerEmail: varchar('customer_email', { length: 255 }).notNull(),
+  customerName: varchar('customer_name', { length: 255 }).notNull(),
+  customerPhone: varchar('customer_phone', { length: 50 }),
+  shippingAddress: jsonb('shipping_address').$type<{ street: string; city: string; zip: string; country: string; company?: string }>(),
+  billingAddress: jsonb('billing_address').$type<{ street: string; city: string; zip: string; country: string; company?: string }>(),
+  items: jsonb('items').$type<{ productId: string; variantId?: string; title: string; variantName?: string; quantity: number; priceCents: number; taxRate: number }[]>().notNull().default([]),
+  subtotalCents: integer('subtotal_cents').notNull(),
+  shippingCents: integer('shipping_cents').notNull().default(0),
+  discountCents: integer('discount_cents').notNull().default(0),
+  taxCents: integer('tax_cents').notNull(),
+  totalCents: integer('total_cents').notNull(),
+  paymentMethod: varchar('payment_method', { length: 50 }),
+  paymentId: varchar('payment_id', { length: 255 }),
+  paymentStatus: varchar('payment_status', { length: 50 }),
+  shippingMethod: varchar('shipping_method', { length: 255 }),
+  trackingNumber: varchar('tracking_number', { length: 255 }),
+  trackingUrl: varchar('tracking_url', { length: 500 }),
+  couponCode: varchar('coupon_code', { length: 50 }),
+  notes: text('notes'),
+  customerNotes: text('customer_notes'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('orders_tenant_number_idx').on(t.tenantId, t.orderNumber),
+  index('orders_tenant_idx').on(t.tenantId),
+  index('orders_status_idx').on(t.tenantId, t.status),
+]);
+
+// ─── order_status_history ────────────────────────────────────────────
+export const orderStatusHistory = pgTable('order_status_history', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  orderId: uuid('order_id').notNull().references(() => orders.id, { onDelete: 'cascade' }),
+  oldStatus: varchar('old_status', { length: 50 }),
+  newStatus: varchar('new_status', { length: 50 }).notNull(),
+  note: text('note'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('order_status_history_order_idx').on(t.orderId),
+]);
+
+// ─── customers ───────────────────────────────────────────────────────
+export const customers = pgTable('customers', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  email: varchar('email', { length: 255 }).notNull(),
+  name: varchar('name', { length: 255 }).notNull(),
+  phone: varchar('phone', { length: 50 }),
+  defaultShippingAddress: jsonb('default_shipping_address').$type<{ street: string; city: string; zip: string; country: string; company?: string }>(),
+  defaultBillingAddress: jsonb('default_billing_address').$type<{ street: string; city: string; zip: string; country: string; company?: string }>(),
+  orderCount: integer('order_count').notNull().default(0),
+  totalSpentCents: integer('total_spent_cents').notNull().default(0),
+  firstOrderAt: timestamp('first_order_at', { withTimezone: true }),
+  lastOrderAt: timestamp('last_order_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('customers_tenant_email_idx').on(t.tenantId, t.email),
+]);
+
+// ─── invoices ────────────────────────────────────────────────────────
+export const invoices = pgTable('invoices', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  orderId: uuid('order_id').notNull().references(() => orders.id, { onDelete: 'cascade' }),
+  invoiceNumber: varchar('invoice_number', { length: 50 }).notNull(),
+  pdfUrl: varchar('pdf_url', { length: 500 }),
+  amountNetCents: integer('amount_net_cents').notNull(),
+  taxCents: integer('tax_cents').notNull(),
+  amountGrossCents: integer('amount_gross_cents').notNull(),
+  issuedAt: timestamp('issued_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('invoices_tenant_number_idx').on(t.tenantId, t.invoiceNumber),
+  index('invoices_order_idx').on(t.orderId),
+]);
+
+// ─── email_templates ─────────────────────────────────────────────────
+export const emailTemplates = pgTable('email_templates', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  trigger: varchar('trigger', { length: 50 }).notNull(),
+  subject: varchar('subject', { length: 255 }).notNull(),
+  body: text('body').notNull(),
+  active: boolean('active').notNull().default(true),
+}, (t) => [
+  uniqueIndex('email_templates_tenant_trigger_idx').on(t.tenantId, t.trigger),
+]);

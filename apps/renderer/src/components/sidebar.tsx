@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, FileText, FolderOpen, Newspaper, Navigation,
   Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Heart,
-  Menu, X, ClipboardList, Bot, HelpCircle, ChevronLeft, ChevronRight,
+  Menu, X, ClipboardList, Bot, HelpCircle, ChevronLeft, ChevronRight, ShoppingBag,
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
 import { usePreview } from '@/components/admin/preview-context';
@@ -28,6 +28,7 @@ const NAV = [
   { href: '/admin/scripts', label: 'Skripte & Tracking', icon: Code },
   { href: '/admin/mail', label: 'Mail-Server', icon: Mail },
   { href: '/admin/contact-form', label: 'Kontaktformular', icon: ClipboardList },
+  { href: '/admin/shop', label: 'Shop', icon: ShoppingBag },
   { href: '/admin/legal', label: 'Impressum & Datenschutz', icon: Scale },
   { href: '/admin/security', label: 'Passwort & Zugang', icon: Lock },
   { href: '/admin/ai-api', label: 'KI-API', icon: Bot },
