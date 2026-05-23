@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    // Prevent Next.js from tree-shaking lucide-react's `icons` record
+    // so DynamicIcon can resolve any icon name at runtime
+    optimizePackageImports: [],
+  },
   // Absolute asset prefix so assets load correctly when HTML is served
   // through the marketing site's /demo/* rewrite proxy.
   assetPrefix: process.env.VERCEL_URL

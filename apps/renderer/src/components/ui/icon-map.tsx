@@ -1,4 +1,3 @@
-import * as allLucideIcons from 'lucide-react';
 import { icons, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -12,16 +11,13 @@ function toPascalCase(str: string): string {
 }
 
 function resolveIcon(name: string): LucideIcon | null {
-  const lib = allLucideIcons as unknown as Record<string, unknown>;
-  // 1. Direct export match (PascalCase from icon picker)
-  const direct = lib[name];
-  if (direct && typeof direct === 'object' && 'displayName' in (direct as object)) return direct as LucideIcon;
-  // 2. icons record (different naming scheme in lucide v0.x)
-  const rec = (icons as Record<string, LucideIcon>)[name] || (icons as Record<string, LucideIcon>)[toPascalCase(name)];
-  if (rec) return rec;
-  // 3. Convert kebab to PascalCase and try direct export
-  const pascal = lib[toPascalCase(name)];
-  if (pascal && typeof pascal === 'object' && 'displayName' in (pascal as object)) return pascal as LucideIcon;
+  if (!name) return null;
+  const iconMap = icons as Record<string, LucideIcon>;
+  // 1. Direct match (PascalCase, e.g. "Coffee", "GlassWater")
+  if (iconMap[name]) return iconMap[name];
+  // 2. Try PascalCase conversion (e.g. "glass-water" → "GlassWater")
+  const pascal = toPascalCase(name);
+  if (iconMap[pascal]) return iconMap[pascal];
   return null;
 }
 
