@@ -13,7 +13,7 @@ export function HoverEffect({
   items: {
     title: string;
     description: string;
-    icon?: React.ReactNode;
+    icon?: string | React.ReactNode;
     image?: string;
     link?: string;
   }[];
@@ -58,7 +58,7 @@ export function HoverEffect({
                 <div className="p-6 text-center flex-1 flex flex-col items-center justify-center">
                   {item.icon && !item.image && (
                     <div className="mb-4 w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform duration-300 group-hover:scale-110">
-                      <DynamicIcon name={item.icon} size={24} />
+                      {typeof item.icon === 'string' ? <DynamicIcon name={item.icon} size={24} /> : item.icon}
                     </div>
                   )}
                   <h4 className="font-display font-semibold text-lg mb-2 text-gray-900">{item.title}</h4>
@@ -84,7 +84,7 @@ export function HoverEffect({
                 <div className="p-6 text-center flex-1 flex flex-col items-center justify-center">
                   {item.icon && !item.image && (
                     <div className="mb-4 w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform duration-300 group-hover:scale-110">
-                      <DynamicIcon name={item.icon} size={24} />
+                      {typeof item.icon === 'string' ? <DynamicIcon name={item.icon} size={24} /> : item.icon}
                     </div>
                   )}
                   <h4 className="font-display font-semibold text-lg mb-2 text-gray-900">{item.title}</h4>
