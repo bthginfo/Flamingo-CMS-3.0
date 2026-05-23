@@ -129,6 +129,9 @@ export async function updateSectionMetaAction(sectionId: string, meta: { visible
 export async function deleteSectionAction(sectionId: string, pageId: string) {
   const session = await requireSession();
   const db = getDb();
+  // Prevent deletion of locked sections (shop system sections)
+  const [section] = await db.select({ locked: pageSections.locked }).from(pageSections).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId))).limit(1);
+  if (section?.locked) return;
   await db.delete(pageSections).where(and(eq(pageSections.id, sectionId), eq(pageSections.tenantId, session.tenantId)));
   revalidatePath(`/admin/pages/${pageId}`);
 }

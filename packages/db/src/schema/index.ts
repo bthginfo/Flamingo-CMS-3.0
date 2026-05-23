@@ -138,6 +138,7 @@ export const pageSections = pgTable('page_sections', {
   variant: varchar('variant', { length: 50 }),
   titleInternal: varchar('title_internal', { length: 255 }),
   visible: boolean('visible').notNull().default(true),
+  locked: boolean('locked').notNull().default(false),
   container: varchar('container', { length: 20 }).notNull().default('default'),
   spacingTop: varchar('spacing_top', { length: 10 }).notNull().default('m'),
   spacingBottom: varchar('spacing_bottom', { length: 10 }).notNull().default('m'),

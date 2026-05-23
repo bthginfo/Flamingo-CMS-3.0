@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, ExternalLink, Rocket, MonitorPlay } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, ExternalLink, Rocket, MonitorPlay, Lock } from 'lucide-react';
 import { usePreview } from '@/components/admin/preview-context';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, TouchSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -26,6 +26,7 @@ type Section = {
   variant: string | null;
   titleInternal: string | null;
   visible: boolean;
+  locked: boolean;
   container: string;
   spacingTop: string;
   spacingBottom: string;
@@ -69,9 +70,15 @@ function SortableSection({ section, industry, sectionTypes, styleVariant, resolv
   return (
     <div ref={setNodeRef} style={style} className={`admin-card mb-3 p-0 ${expanded ? 'ring-2 ring-blue-500/20 border-blue-300' : ''}`}>
       <div className={`flex items-center px-4 py-3 border-b cursor-pointer ${expanded ? 'bg-blue-50' : 'bg-gray-50 hover:bg-gray-100'} transition-colors`} onClick={() => setExpanded(!expanded)}>
-        <button {...attributes} {...listeners} className="cursor-grab mr-3 text-gray-400 hover:text-gray-600 touch-none" onClick={(e) => e.stopPropagation()}>
-          <GripVertical size={18} />
-        </button>
+        {!section.locked ? (
+          <button {...attributes} {...listeners} className="cursor-grab mr-3 text-gray-400 hover:text-gray-600 touch-none" onClick={(e) => e.stopPropagation()}>
+            <GripVertical size={18} />
+          </button>
+        ) : (
+          <div className="mr-3 text-amber-500" title="System-Sektion (gesperrt)">
+            <Lock size={16} />
+          </div>
+        )}
         <div className="flex-1 min-w-0 flex items-center gap-2">
           <span className={`font-medium text-sm ${expanded ? 'text-blue-700' : ''}`}>{typeInfo?.label ?? section.type}</span>
           {section.titleInternal && <span className="text-xs text-gray-400">({section.titleInternal})</span>}
@@ -83,9 +90,11 @@ function SortableSection({ section, industry, sectionTypes, styleVariant, resolv
         <button onClick={() => setExpanded(!expanded)} className="p-1 mr-2">
           {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </button>
-        <button onClick={onDelete} className="p-1 text-red-400 hover:text-red-600">
-          <Trash2 size={16} />
-        </button>
+        {!section.locked && (
+          <button onClick={onDelete} className="p-1 text-red-400 hover:text-red-600">
+            <Trash2 size={16} />
+          </button>
+        )}
       </div>
       {expanded && (
         <div className="p-4">

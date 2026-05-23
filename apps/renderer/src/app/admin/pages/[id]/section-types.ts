@@ -42,6 +42,12 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'testimonialMarquee', label: 'Bewertungs-Marquee', description: 'Endlos-scrollende Bewertungskarten in 2 Reihen', category: 'Social Proof' },
   { type: 'featureShowcase', label: 'Feature-Showcase', description: 'Großbild mit Parallax + Feature-Liste + CTA', category: 'Marketing' },
   { type: 'logoMarquee', label: 'Logo-Marquee', description: 'Endlos-scrollende Partner/Kunden-Logos', category: 'Social Proof' },
+  { type: 'shopProductGrid', label: 'Shop: Produkte', description: 'Produktübersicht mit Kategorie-Filter & Suche', category: 'Shop' },
+  { type: 'shopProductDetail', label: 'Shop: Produkt-Detail', description: 'Einzelprodukt mit Galerie, Varianten & Warenkorb', category: 'Shop' },
+  { type: 'shopCart', label: 'Shop: Warenkorb', description: 'Warenkorb-Übersicht mit Mengen & Coupon', category: 'Shop' },
+  { type: 'shopCheckout', label: 'Shop: Checkout', description: 'Multi-Step Kasse (Kontakt, Versand, Zahlung)', category: 'Shop' },
+  { type: 'shopThankYou', label: 'Shop: Danke-Seite', description: 'Bestellbestätigung nach Kauf', category: 'Shop' },
+  { type: 'shopFeaturedProducts', label: 'Shop: Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben', category: 'Shop' },
 ];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
