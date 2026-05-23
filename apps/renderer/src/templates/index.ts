@@ -30,6 +30,12 @@ import { TestimonialMarqueeSection } from './shared/testimonial-marquee';
 import { FeatureShowcaseSection } from './shared/feature-showcase';
 import { LogoMarqueeSection } from './shared/logo-marquee';
 import { CollectionListSection } from './shared/collection-list';
+import { ShopProductGridSection } from './shared/shop-product-grid';
+import { ShopProductDetailSection } from './shared/shop-product-detail';
+import { ShopCartSection } from './shared/shop-cart';
+import { ShopCheckoutSection } from './shared/shop-checkout';
+import { ShopThankYouSection } from './shared/shop-thank-you';
+import { ShopFeaturedProductsSection } from './shared/shop-featured-products';
 import { HeaderBannerSection } from './handwerk/header-banner';
 import { CollectionHeroSection } from './handwerk/collection-hero';
 import { TextImageSection } from './handwerk/text-image';
@@ -544,6 +550,12 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   featureShowcase: FeatureShowcaseSection,
   logoMarquee: LogoMarqueeSection,
   collectionList: CollectionListSection,
+  shopProductGrid: ShopProductGridSection,
+  shopProductDetail: ShopProductDetailSection,
+  shopCart: ShopCartSection,
+  shopCheckout: ShopCheckoutSection,
+  shopThankYou: ShopThankYouSection,
+  shopFeaturedProducts: ShopFeaturedProductsSection,
   story: TextImageSection,
   amenities: AmenitiesSection,
 };

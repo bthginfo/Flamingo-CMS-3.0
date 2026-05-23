@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter, Outfit } from 'next/font/google';
 import { ConsentWrapper } from '@/components/consent-wrapper';
+import { CartProvider } from '@/components/shop/cart-context';
+import { CartDrawer } from '@/components/shop/cart-drawer';
 import '../globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -16,7 +18,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de" className={`${inter.variable} ${outfit.variable}`}>
       <body className="font-sans bg-white text-gray-900 antialiased">
-        <ConsentWrapper>{children}</ConsentWrapper>
+        <CartProvider>
+          <ConsentWrapper>{children}</ConsentWrapper>
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );
