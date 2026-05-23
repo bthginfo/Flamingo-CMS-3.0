@@ -105,7 +105,14 @@ export function ShopCheckoutSection({ data }: Props) {
           items: items.map(i => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })),
         }),
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.success) {
+        // Stripe redirect
+        if (data.stripeUrl) {
+          clearCart();
+          window.location.href = data.stripeUrl;
+          return;
+        }
         clearCart();
         router.push('/bestellung-abgeschlossen');
       }

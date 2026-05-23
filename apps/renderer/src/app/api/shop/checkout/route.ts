@@ -4,6 +4,7 @@ import { orders, products, productVariants, shopSettings, customers, orderStatus
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 import { sendOrderEmails } from '@/lib/shop-email';
+import Stripe from 'stripe';
 
 export async function POST(req: NextRequest) {
   const tenantId = await resolveTenant();
@@ -142,18 +143,63 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Send order confirmation emails (fire-and-forget)
-  sendOrderEmails(tenantId, {
-    orderNumber,
-    customerName: name,
-    customerEmail: email,
-    items: orderItems,
-    subtotalCents,
-    shippingCents,
-    totalCents,
-    paymentMethod: paymentMethod || '',
-    shippingAddress: street ? { street, city, zip, country, company: company || undefined } : null,
-  }).catch(e => console.error('[Checkout] Email send error:', e));
+  // Send order confirmation emails (fire-and-forget) — only for non-stripe (stripe sends after webhook)
+  if (paymentMethod !== 'stripe') {
+    sendOrderEmails(tenantId, {
+      orderNumber,
+      customerName: name,
+      customerEmail: email,
+      items: orderItems,
+      subtotalCents,
+      shippingCents,
+      totalCents,
+      paymentMethod: paymentMethod || '',
+      shippingAddress: street ? { street, city, zip, country, company: company || undefined } : null,
+    }).catch(e => console.error('[Checkout] Email send error:', e));
+  }
+
+  // If Stripe payment — create Checkout Session and return URL
+  if (paymentMethod === 'stripe' && settings.stripeSecretKey) {
+    try {
+      const stripe = new Stripe(settings.stripeSecretKey, { apiVersion: '2024-06-20' });
+      const origin = req.headers.get('origin') || req.nextUrl.origin;
+
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        payment_method_types: ['card'],
+        customer_email: email,
+        metadata: { orderId: order.id, tenantId },
+        line_items: orderItems.map(item => ({
+          price_data: {
+            currency: settings.currency.toLowerCase(),
+            product_data: { name: item.variantName ? `${item.title} (${item.variantName})` : item.title },
+            unit_amount: item.priceCents,
+          },
+          quantity: item.quantity,
+        })).concat(
+          shippingCents > 0 ? [{ price_data: { currency: settings.currency.toLowerCase(), product_data: { name: 'Versand' }, unit_amount: shippingCents }, quantity: 1 }] : []
+        ),
+        ...(discountCents > 0 ? {
+          discounts: [{
+            coupon: (await stripe.coupons.create({
+              amount_off: discountCents,
+              currency: settings.currency.toLowerCase(),
+              duration: 'once',
+            })).id,
+          }],
+        } : {}),
+        success_url: `${origin}/bestellung-abgeschlossen?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/checkout`,
+      });
+
+      await db.update(orders).set({ paymentId: session.id }).where(eq(orders.id, order.id));
+
+      return NextResponse.json({ success: true, orderNumber, orderId: order.id, stripeUrl: session.url });
+    } catch (e: any) {
+      console.error('[Checkout] Stripe session error:', e);
+      return NextResponse.json({ success: true, orderNumber, orderId: order.id, stripeError: e.message });
+    }
+  }
 
   return NextResponse.json({ success: true, orderNumber, orderId: order.id });
 }

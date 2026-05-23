@@ -304,6 +304,11 @@ export async function updateOrderStatus(orderId: string, newStatus: string, note
     note: note || null,
   });
 
+  // Send shipped notification email
+  if (newStatus === 'shipped') {
+    sendShippedEmail(tenantId, order).catch(e => console.error('[Order] Shipped email error:', e));
+  }
+
   revalidatePath('/admin/shop/orders');
 }
 
@@ -571,6 +576,58 @@ async function sendCancellationEmail(tenantId: string, order: typeof orders.$inf
     from: effectiveSmtp.from,
     to: order.customerEmail,
     subject: `Stornierung Bestellung ${order.orderNumber} – Gutschrift ${creditNoteNumber}`,
+    html,
+  });
+}
+
+async function sendShippedEmail(tenantId: string, order: typeof orders.$inferSelect) {
+  const nodemailer = (await import('nodemailer')).default;
+  const { globalSettings: gs } = await import('@flamingo/db');
+
+  const db = getDb();
+  const [settings] = await db.select({ smtp: gs.smtp })
+    .from(gs).where(eq(gs.tenantId, tenantId)).limit(1);
+
+  const smtp = settings?.smtp as { host: string; port: number; user: string; pass: string; from: string } | null;
+  const effectiveSmtp = (smtp?.host && smtp?.user && smtp?.pass && smtp?.from)
+    ? smtp
+    : (process.env.PLATFORM_SMTP_HOST && process.env.PLATFORM_SMTP_USER && process.env.PLATFORM_SMTP_PASS && process.env.PLATFORM_SMTP_FROM)
+      ? { host: process.env.PLATFORM_SMTP_HOST, port: Number(process.env.PLATFORM_SMTP_PORT) || 587, user: process.env.PLATFORM_SMTP_USER, pass: process.env.PLATFORM_SMTP_PASS, from: process.env.PLATFORM_SMTP_FROM }
+      : null;
+
+  if (!effectiveSmtp) return;
+
+  const transporter = nodemailer.createTransport({
+    host: effectiveSmtp.host,
+    port: effectiveSmtp.port,
+    secure: effectiveSmtp.port === 465,
+    auth: { user: effectiveSmtp.user, pass: effectiveSmtp.pass },
+  });
+
+  const trackingHtml = order.trackingNumber
+    ? `<p style="margin:16px 0;font-size:14px;color:#374151"><strong>Sendungsnummer:</strong> ${order.trackingNumber}${order.trackingUrl ? ` — <a href="${order.trackingUrl}" style="color:#2563eb">Sendung verfolgen</a>` : ''}</p>`
+    : '';
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb">
+<div style="max-width:600px;margin:0 auto;padding:32px 16px">
+  <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+    <div style="background:linear-gradient(135deg,#065f46,#059669);padding:24px 32px">
+      <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:600">Ihre Bestellung ist unterwegs! 📦</h1>
+      <p style="margin:8px 0 0;color:rgba(255,255,255,0.8);font-size:14px">Bestellung: ${order.orderNumber}</p>
+    </div>
+    <div style="padding:24px 32px">
+      <p style="margin:0 0 16px;color:#374151">Hallo ${order.customerName},</p>
+      <p style="margin:0 0 16px;color:#6b7280;font-size:14px">Ihre Bestellung <strong>${order.orderNumber}</strong> wurde versendet.</p>
+      ${trackingHtml}
+      <p style="margin:16px 0 0;color:#6b7280;font-size:13px">Bei Fragen antworten Sie einfach auf diese E-Mail.</p>
+    </div>
+  </div>
+</div></body></html>`;
+
+  await transporter.sendMail({
+    from: effectiveSmtp.from,
+    to: order.customerEmail,
+    subject: `Ihre Bestellung ${order.orderNumber} wurde versendet`,
     html,
   });
 }

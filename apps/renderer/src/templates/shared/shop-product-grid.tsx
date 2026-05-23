@@ -44,18 +44,34 @@ export function ShopProductGridSection({ data }: Props) {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'default' | 'price-asc' | 'price-desc' | 'name'>('default');
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
+  const [priceFilter, setPriceFilter] = useState<[number, number]>([0, 0]);
+
+  // Set price range from products
+  useEffect(() => {
+    if (products.length > 0) {
+      const prices = products.map(p => p.priceCents);
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      setPriceRange([min, max]);
+      setPriceFilter([min, max]);
+    }
+  }, [products]);
 
   const filtered = useMemo(() => {
     let items = products.filter(p => p.status === 'active');
     if (search) items = items.filter(p => p.title.toLowerCase().includes(search.toLowerCase()));
     if (activeCategory) items = items.filter(p => p.categorySlug === activeCategory);
+    if (priceFilter[0] > priceRange[0] || priceFilter[1] < priceRange[1]) {
+      items = items.filter(p => p.priceCents >= priceFilter[0] && p.priceCents <= priceFilter[1]);
+    }
     switch (sortBy) {
       case 'price-asc': items.sort((a, b) => a.priceCents - b.priceCents); break;
       case 'price-desc': items.sort((a, b) => b.priceCents - a.priceCents); break;
       case 'name': items.sort((a, b) => a.title.localeCompare(b.title, 'de')); break;
     }
     return items;
-  }, [products, search, activeCategory, sortBy]);
+  }, [products, search, activeCategory, sortBy, priceFilter, priceRange]);
 
   return (
     <section className="py-12 md:py-16">
@@ -85,6 +101,33 @@ export function ShopProductGridSection({ data }: Props) {
           </select>
         </div>
       </div>
+
+      {/* Price filter */}
+      {priceRange[1] > priceRange[0] && (
+        <div className="flex flex-wrap items-center gap-3 mb-6 text-sm">
+          <span className="text-zinc-500">Preis:</span>
+          <span className="text-zinc-700 font-medium">{formatPrice(priceFilter[0])}</span>
+          <input
+            type="range"
+            min={priceRange[0]} max={priceRange[1]} step={100}
+            value={priceFilter[0]}
+            onChange={e => setPriceFilter([Math.min(Number(e.target.value), priceFilter[1]), priceFilter[1]])}
+            className="w-24 sm:w-32 accent-zinc-700"
+          />
+          <span className="text-zinc-400">–</span>
+          <input
+            type="range"
+            min={priceRange[0]} max={priceRange[1]} step={100}
+            value={priceFilter[1]}
+            onChange={e => setPriceFilter([priceFilter[0], Math.max(Number(e.target.value), priceFilter[0])])}
+            className="w-24 sm:w-32 accent-zinc-700"
+          />
+          <span className="text-zinc-700 font-medium">{formatPrice(priceFilter[1])}</span>
+          {(priceFilter[0] > priceRange[0] || priceFilter[1] < priceRange[1]) && (
+            <button onClick={() => setPriceFilter(priceRange)} className="text-xs text-zinc-500 underline">Zurücksetzen</button>
+          )}
+        </div>
+      )}
 
       {/* Category filter */}
       {showCategories && categories.length > 0 && (
