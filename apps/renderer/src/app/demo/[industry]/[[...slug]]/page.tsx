@@ -101,6 +101,33 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
 
   const demoPrefix = `/demo/${industry}`;
 
+  // If no page found but industry is shop and slug is checkout, render checkout with demo flag
+  if (!page && industry === 'shop' && targetSlug === 'checkout') {
+    return (
+      <DemoPageShell
+        sections={[{ id: 'checkout', type: 'shopCheckout', variant: null, visible: true, container: 'default', spacingTop: 'none', spacingBottom: 'none', anchorId: null, data: { tenantId, basePath: demoPrefix } }]}
+        industry={tenantStyle.industry}
+        industryKey={industry}
+        defaultStyle={tenantStyle.activeStyle}
+        siteData={{
+          navItems: navData.items.map(item => ({ ...item, href: item.href.startsWith('/demo/') ? item.href : `${demoPrefix}${item.href}` })),
+          cta: navData.cta ? { ...navData.cta, href: navData.cta.href.startsWith('/demo/') ? navData.cta.href : `${demoPrefix}${navData.cta.href}` } : { label: '', href: '' },
+          brand: brandData.brand,
+          contact: brandData.contact,
+          socialLinks: brandData.socialLinks,
+          footer: footerData ? {
+            columns: (footerData.columns || []).map(col => ({
+              ...col,
+              items: (col.items || []).map(item => ({ ...item, href: item.href && !item.href.startsWith('/demo/') ? `${demoPrefix}${item.href}` : item.href })),
+            })),
+            legalLinks: (footerData.legalLinks || []).map(l => ({ ...l, href: l.href?.startsWith('/demo/') ? l.href : `${demoPrefix}${l.href}` })),
+          } : { columns: [], legalLinks: [] },
+        }}
+        darkBg={false}
+      />
+    );
+  }
+
   // If no page found but industry is shop, treat last slug segment as product slug
   if (!page && industry === 'shop' && targetSlug) {
     const productSlug = targetSlug.includes('/') ? targetSlug.split('/').pop()! : targetSlug;
