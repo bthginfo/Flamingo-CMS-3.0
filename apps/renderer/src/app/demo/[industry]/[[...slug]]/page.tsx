@@ -101,11 +101,12 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
 
   const demoPrefix = `/demo/${industry}`;
 
-  // If no page found but industry is shop and slug looks like a product, render product detail
-  if (!page && industry === 'shop' && targetSlug && !targetSlug.includes('/')) {
+  // If no page found but industry is shop, treat last slug segment as product slug
+  if (!page && industry === 'shop' && targetSlug) {
+    const productSlug = targetSlug.includes('/') ? targetSlug.split('/').pop()! : targetSlug;
     return (
       <DemoPageShell
-        sections={[{ id: 'product-detail', type: 'shopProductDetail', variant: null, visible: true, container: 'default', spacingTop: 'none', spacingBottom: 'none', anchorId: null, data: { _slug: targetSlug, tenantId, basePath: demoPrefix } }]}
+        sections={[{ id: 'product-detail', type: 'shopProductDetail', variant: null, visible: true, container: 'default', spacingTop: 'none', spacingBottom: 'none', anchorId: null, data: { _slug: productSlug, tenantId, basePath: demoPrefix } }]}
         industry={tenantStyle.industry}
         industryKey={industry}
         defaultStyle={tenantStyle.activeStyle}
