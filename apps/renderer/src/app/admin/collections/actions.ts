@@ -2,7 +2,7 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { collections, collectionItems, tenants, globalSettings } from '@flamingo/db';
+import { collections, collectionItems, tenants, globalSettings, pages, pageSections } from '@flamingo/db';
 import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -133,4 +133,44 @@ export async function getItemWithIndustryAction(itemId: string) {
   const [tenant] = await db.select({ industry: tenants.industry, activeStyle: tenants.activeStyle }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1);
   const [brandResult] = await db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1);
   return { item, industry: tenant?.industry ?? 'tradesman', styleVariant: tenant?.activeStyle ?? 'classic', brand: (brandResult?.brand as Record<string, string>) || {} };
+}
+
+// ─── Collection Overview Page ──────────────────────────────────────
+export async function getOrCreateOverviewPageAction(collectionKey: string): Promise<string> {
+  const session = await requireSession();
+  const db = getDb();
+
+  // Check if an overview page already exists for this collection
+  const existing = await db.select({ id: pages.id }).from(pages)
+    .where(and(eq(pages.tenantId, session.tenantId), eq(pages.type, 'collection_overview'), eq(pages.slug, collectionKey)))
+    .limit(1);
+
+  if (existing[0]) return existing[0].id;
+
+  // Get collection label for the page title
+  const [col] = await db.select({ label: collections.label }).from(collections)
+    .where(and(eq(collections.tenantId, session.tenantId), eq(collections.key, collectionKey)));
+  const title = col?.label || collectionKey;
+
+  // Create the overview page
+  const [page] = await db.insert(pages).values({
+    tenantId: session.tenantId,
+    title: `${title} – Übersicht`,
+    slug: collectionKey,
+    type: 'collection_overview',
+    status: 'draft',
+    visible: true,
+  }).returning();
+
+  // Add a default collectionList section
+  await db.insert(pageSections).values({
+    tenantId: session.tenantId,
+    pageId: page.id,
+    type: 'collectionList',
+    data: { headline: title, collectionKey, sortBy: 'date-desc', showImage: true, showDate: true, showExcerpt: true, showSortControls: true, columns: 3 },
+    sortOrder: 0,
+  });
+
+  revalidatePath('/admin/pages');
+  return page.id;
 }

@@ -40,6 +40,29 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
       };
     }
   }
+
+  // Inject collection items into collectionList sections
+  if (section.type === 'collectionList' && collections) {
+    const key = (section.data.collectionKey as string) || '';
+    const col = collections.find(c => c.key === key);
+    if (col) {
+      section = {
+        ...section,
+        data: {
+          ...section.data,
+          items: col.items.map(item => ({
+            title: item.title,
+            slug: item.slug,
+            image: (item.data.image as string) || undefined,
+            excerpt: (item.data.excerpt as string) || undefined,
+            date: item.createdAt,
+            priority: item.priority,
+          })),
+          collectionBasePath: `/c/${key}`,
+        },
+      };
+    }
+  }
   if (!Component) {
     return (
       <div className="py-8 text-center text-gray-400 text-sm">

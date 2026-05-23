@@ -29,6 +29,7 @@ import { BentoGridSection } from './shared/bento-grid';
 import { TestimonialMarqueeSection } from './shared/testimonial-marquee';
 import { FeatureShowcaseSection } from './shared/feature-showcase';
 import { LogoMarqueeSection } from './shared/logo-marquee';
+import { CollectionListSection } from './shared/collection-list';
 import { HeaderBannerSection } from './handwerk/header-banner';
 import { CollectionHeroSection } from './handwerk/collection-hero';
 import { TextImageSection } from './handwerk/text-image';
@@ -542,6 +543,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   testimonialMarquee: TestimonialMarqueeSection,
   featureShowcase: FeatureShowcaseSection,
   logoMarquee: LogoMarqueeSection,
+  collectionList: CollectionListSection,
   story: TextImageSection,
   amenities: AmenitiesSection,
 };

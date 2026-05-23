@@ -279,6 +279,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
     // News / Collection previews
     newsPreview: { fields: { headline: 'string', subline: 'string?', collectionKey: 'string (default "news" — must match collection key)', linkLabel: 'string? (default "Alle Beiträge")', linkHref: 'string? (auto-derived from collectionKey)' } },
     newsGrid: { fields: { /* identical to newsPreview */ headline: 'string', subline: 'string?', collectionKey: 'string (default "news")', linkLabel: 'string?', linkHref: 'string?' } },
+    collectionList: { fields: { headline: 'string?', subline: 'string?', collectionKey: 'string (must match collection key)', sortBy: '"date-desc"|"date-asc"|"alpha-asc"|"alpha-desc"|"priority" (default "date-desc")', columns: '2|3|4 (default 3)', showImage: 'boolean (default true)', showDate: 'boolean (default true)', showExcerpt: 'boolean (default true)', showSortControls: 'boolean (default true)' } },
     // Additional shared sections
     timeline: { fields: { badge: 'string?', headline: 'string', subline: 'string?', entries: '{ year: string, title: string, text: string }[]' } },
     comparisonTable: { fields: { badge: 'string?', headline: 'string', text: 'string?', columns: '{ label: string }[]', rows: '{ feature: string, values: string[] }[]', highlightCol: 'number? (index of highlighted column, -1 for none)' } },
