@@ -276,6 +276,36 @@ function getSectionSchemas(industry: string): Record<string, object> {
     team: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', membersHeadline: 'string?', members: '{ name: string, role: string, image?: url, bio?: string }[]', storyHeadline: 'string?', storyText: 'string?', storyImage: 'url?', valuesHeadline: 'string?', values: '{ icon: lucide-icon-name, title: string, text: string }[]?', stats: '{ value: string, label: string }[]?' } },
     stats: { fields: { headline: 'string?', stats: '{ icon?: lucide-icon-name, value: number|string, suffix?: string, prefix?: string, label: string }[] (value: number for animated counter, or string like "seit 2019" for text facts)' } },
     galleryGrid: { fields: { headline: 'string', subline: 'string?', columns: '2|3|4?', images: '{ src: url, alt: string, caption?: string }[]' } },
+    // News / Collection previews
+    newsPreview: { fields: { headline: 'string', subline: 'string?', collectionKey: 'string (default "news" — must match collection key)', linkLabel: 'string? (default "Alle Beiträge")', linkHref: 'string? (auto-derived from collectionKey)' } },
+    newsGrid: { fields: { /* identical to newsPreview */ headline: 'string', subline: 'string?', collectionKey: 'string (default "news")', linkLabel: 'string?', linkHref: 'string?' } },
+    // Additional shared sections
+    timeline: { fields: { badge: 'string?', headline: 'string', subline: 'string?', entries: '{ year: string, title: string, text: string }[]' } },
+    comparisonTable: { fields: { badge: 'string?', headline: 'string', text: 'string?', columns: '{ label: string }[]', rows: '{ feature: string, values: string[] }[]', highlightCol: 'number? (index of highlighted column, -1 for none)' } },
+    socialProofBar: { fields: { items: '{ value: string, label: string, icon?: lucide-icon-name, logo?: url }[]', bgStyle: '"light"|"dark"|"primary"?' } },
+    logoCloud: { fields: { headline: 'string?', subline: 'string?', logos: '{ src: url, alt: string, href?: url }[]' } },
+    headerBanner: { fields: { items: '{ text: string, link?: string }[]', style: '"warning"|"info"|"neutral"?' } },
+    ctaLinks: { fields: { headline: 'string', subline: 'string?', links: '{ label: string, href: string, icon?: lucide-icon-name, description?: string }[]' } },
+    serviceDetail: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', items: '{ title: string, text: string, image?: url, icon?: lucide-icon-name, mediaType?: "icon"|"image", features?: string[], ctaLabel?: string, ctaHref?: string }[]' } },
+    portfolio: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', projects: '{ title: string, category?: string, description?: string, image: url, href?: string, icon?: lucide-icon-name, stats?: { label: string, value: string }[] }[]', ctaLabel: 'string?', ctaHref: 'string?' } },
+    // Tattoo sections
+    aftercareSteps: { fields: { headline: 'string', subline: 'string?', steps: '{ title: string, description: string }[]' } },
+    artistGrid: { fields: { headline: 'string', subline: 'string?', artists: '{ name: string, image: url, styles: string[], bio?: string, instagram?: string, href?: string }[]' } },
+    artistHero: { fields: { name: 'string', image: 'url', bio: 'string (html)', styles: 'string[]', instagram: 'string?', experience: 'string?' } },
+    styleGallery: { fields: { headline: 'string', subline: 'string?', styles: '{ name: string, image: url, description?: string }[]' } },
+    pricingInfo: { fields: { headline: 'string', subline: 'string?', items: '{ label: string, value: string, note?: string }[]', notes: 'string[]?' } },
+    tattooBooking: { fields: { headline: 'string', subline: 'string?', artists: 'string[]? (dropdown options)' } },
+    tattooBookingCta: { fields: { headline: 'string', subline: 'string?', ctaLabel: 'string?', ctaHref: 'string? (default "#kontakt")', hints: 'string[]?' } },
+    flashDayBanner: { fields: { headline: 'string', date: 'string', description: 'string?', ctaLabel: 'string?', ctaHref: 'string?', bgColor: 'hex?' } },
+    // Medical extras
+    downloadForms: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', items: '{ title: string, text?: string, fileLabel?: string, fileHref?: string, metaLabel?: string }[]' } },
+    practiceGallery: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', images: '{ src: url, alt?: string, caption?: string, category?: string }[]' } },
+    practiceTeam: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', members: '{ name: string, role?: string, bio?: string, image?: url }[]' } },
+    // Tourism extras
+    downloadGuides: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', items: '{ title: string, text?: string, fileLabel?: string, fileHref?: string, metaLabel?: string }[]' } },
+    placesMap: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', mapEmbedUrl: 'string? (iframe embed URL)', places: '{ title: string, text?: string, category?: string, distanceLabel?: string, address?: string, image?: url, cta?: { label: string, href: string } }[]', ctaPrimary: '{ label: string, href: string }?' } },
+    // Cafe extras
+    cafeEventCalendar: { fields: { headline: 'string', subline: 'string?', events: '{ title: string, date: string, time: string, description?: string, image?: url, category?: string }[]' } },
   };
 
   if (industry === 'wedding') {
