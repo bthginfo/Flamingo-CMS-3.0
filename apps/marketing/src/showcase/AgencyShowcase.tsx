@@ -93,7 +93,7 @@ function applyShowcasePalette() {
 }
 
 /* ─── Template metadata ────────────────────────────────────────────── */
-const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo', {
+const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop', {
   label: string;
   tagline: string;
   description: string;
@@ -197,9 +197,17 @@ const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     accent: '#1a1a2e',
     bullets: ['Artist-Grid & Profile', 'Style-Galerie mit Filter', 'Booking-Formular & Flash-Days', 'Aftercare & Pricing'],
   },
+  shop: {
+    label: 'Online-Shop',
+    tagline: 'Weinhandel · Einzelhandel · E-Commerce',
+    description: 'Produktkatalog, Kategorien, Warenkorb, Checkout, Bestellverwaltung, Rechnungen und Versandoptionen — fertig für Stripe & PayPal.',
+    image: 'https://images.unsplash.com/photo-1516594915307-8f71f3a4b147?auto=format&fit=crop&w=1400&q=80',
+    accent: '#7c2d12',
+    bullets: ['Produkte & Kategorien mit Varianten', 'Warenkorb & Checkout', 'Bestellverwaltung & Rechnungen', 'Versand, Gutscheine & Storno'],
+  },
 };
 
-const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo', { classic: string; modern: string; bold: string }> = {
+const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop', { classic: string; modern: string; bold: string }> = {
   handwerk: {
     classic: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80',
@@ -259,6 +267,11 @@ const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     classic: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1598371839696-5c5bb1fed6e0?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1590246814883-57c511e76ca4?auto=format&fit=crop&w=1400&q=80',
+  },
+  shop: {
+    classic: 'https://images.unsplash.com/photo-1516594915307-8f71f3a4b147?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1400&q=80',
   },
 };
 
@@ -539,6 +552,8 @@ function ShowcaseFooter() {
               <li><a href="https://www.demo.flamingomedia.online/demo/consulting" className="hover:text-accent">Kanzlei &amp; Beratung</a></li>
               <li><a href="https://www.demo.flamingomedia.online/demo/realestate" className="hover:text-accent">Immobilien</a></li>
               <li><a href="https://www.demo.flamingomedia.online/demo/cafe" className="hover:text-accent">Café</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/tattoo" className="hover:text-accent">Tattoo Studio</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/shop" className="hover:text-accent">Online-Shop</a></li>
             </ul>
           </div>
           <div>
@@ -771,7 +786,7 @@ function ServicesSection() {
             </div>
             <h3 className="font-display text-3xl md:text-5xl leading-[1.05] tracking-tight">Branchen-Templates</h3>
             <p className="mt-6 text-base md:text-lg text-muted leading-relaxed max-w-xl">
-              Zwölf Branchen live — Restaurant, Salon, Hotel, Tourismus, Arztpraxis, Handwerk, Hochzeit, Fotografie, Kanzlei, Immobilien, Café und Tattoo Studio.
+              Dreizehn Branchen live — Restaurant, Salon, Hotel, Tourismus, Arztpraxis, Handwerk, Hochzeit, Fotografie, Kanzlei, Immobilien, Café, Tattoo Studio und Online-Shop.
               Live-Vorschau im Browser, Farbschema in Sekunden.
             </p>
             <div className="mt-8 flex flex-wrap gap-2">
@@ -1527,13 +1542,13 @@ function NumbersSection() {
             In <em className="italic-pop">Zahlen.</em>
           </h2>
           <p className="md:col-span-5 text-lg text-muted reveal">
-            Elf Branchen live, drei Stilrichtungen, über 80 Sections — ein Admin, mit dem Du alles selbst pflegst. Kein Agentur-Ticket nötig.
+            13 Branchen live, drei Stilrichtungen, über 80 Sections — ein Admin, mit dem Du alles selbst pflegst. Kein Agentur-Ticket nötig.
           </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 md:gap-y-0 reveal-stagger">
           {[
-            { v: 11, s: '', l: 'Branchen-Templates' },
+            { v: 13, s: '', l: 'Branchen-Templates' },
             { v: 3, s: '', l: 'Stilrichtungen je Branche' },
             { v: 80, s: '+', l: 'Sections kombinierbar' },
             { v: 7, s: ' Tage', l: 'Bis online (Ø)' },
@@ -2063,7 +2078,7 @@ function Pricing() {
       sub: 'einmalig',
       monthly: '+ 29 € / Monat Hosting & Pflege',
       features: [
-        'Eines unserer Branchen-Templates (11 Branchen, 3 Stile)',
+        'Eines unserer Branchen-Templates (13 Branchen, 3 Stile)',
         '6 Farbschemas pro Branche – jederzeit per Klick umstellbar',
         'Admin-Bereich zum selbst pflegen',
         'Hosting & Pflege inklusive',
