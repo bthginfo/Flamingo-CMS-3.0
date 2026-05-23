@@ -15,7 +15,7 @@ export function ShopCartSection({ data }: Props) {
   const emptyText = (data.emptyText as string) || 'Dein Warenkorb ist leer.';
   const continueLabel = (data.continueShoppingLabel as string) || 'Weiter einkaufen';
   const checkoutLabel = (data.checkoutLabel as string) || 'Zur Kasse';
-  const basePath = (data.basePath as string) || '';
+  const shopBase = (data.basePath as string) || '/shop';
 
   const { items, totalCents, updateQuantity, removeItem } = useCart();
 
@@ -25,7 +25,7 @@ export function ShopCartSection({ data }: Props) {
         <ShoppingBag size={48} className="mx-auto mb-4 text-zinc-300" />
         <h2 className="text-2xl font-bold mb-2">{headline}</h2>
         <p className="text-zinc-500 mb-6">{emptyText}</p>
-        <Link href={`${basePath}/shop`} className="inline-block px-6 py-3 bg-zinc-900 text-white rounded-xl font-medium hover:bg-zinc-800 transition">
+        <Link href={shopBase} className="inline-block px-6 py-3 bg-zinc-900 text-white rounded-xl font-medium hover:bg-zinc-800 transition">
           {continueLabel}
         </Link>
       </section>
@@ -45,7 +45,7 @@ export function ShopCartSection({ data }: Props) {
                 {item.image && <img src={item.image} alt="" className="w-full h-full object-cover" />}
               </div>
               <div className="flex-1 min-w-0">
-                <Link href={`${basePath}/shop/${item.slug}`} className="font-medium text-sm hover:underline">{item.title}</Link>
+                <Link href={`${shopBase}/${item.slug}`} className="font-medium text-sm hover:underline">{item.title}</Link>
                 {item.variantName && <p className="text-xs text-zinc-400">{item.variantName}</p>}
                 <p className="font-semibold mt-1">{formatPrice(item.priceCents)}</p>
               </div>
@@ -80,10 +80,10 @@ export function ShopCartSection({ data }: Props) {
             <span>Gesamt</span>
             <span>{formatPrice(totalCents)}</span>
           </div>
-          <Link href={`${basePath}/checkout`} className="block w-full text-center py-3 mt-4 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition">
+          <Link href={`${shopBase.replace(/\/shop$/, '')}/checkout`} className="block w-full text-center py-3 mt-4 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition">
             {checkoutLabel}
           </Link>
-          <Link href={`${basePath}/shop`} className="block w-full text-center py-2 mt-2 text-sm text-zinc-500 hover:text-zinc-700">
+          <Link href={shopBase} className="block w-full text-center py-2 mt-2 text-sm text-zinc-500 hover:text-zinc-700">
             {continueLabel}
           </Link>
         </div>

@@ -29,7 +29,7 @@ export function ShopProductGridSection({ data }: Props) {
   const showSearch = data.showSearch !== false;
   const showCategories = data.showCategories !== false;
   const columns = (data.columns as number) || 3;
-  const basePath = (data.basePath as string) || '';
+  const shopBase = (data.basePath as string) || '/shop';
 
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<{ name: string; slug: string }[]>([]);
@@ -156,7 +156,7 @@ export function ShopProductGridSection({ data }: Props) {
       ) : (
         <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns >= 3 ? 'lg:grid-cols-3' : ''} ${columns >= 4 ? 'xl:grid-cols-4' : ''} gap-6`}>
           {filtered.map(product => (
-            <Link key={product.id} href={`${basePath}/shop/${product.slug}`} className="group">
+            <Link key={product.id} href={`${shopBase}/${product.slug}`} className="group">
               <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="aspect-square bg-zinc-50 relative overflow-hidden">
                   {product.images?.[0] ? (
