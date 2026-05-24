@@ -376,7 +376,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
       openingHours: { fields: { headline: 'string', days: '{ label: string, hours: string }[]' } },
       signatureDishes: { fields: { headline: 'string', dishes: '{ name: string, description: string, image?: url, price?: string }[]' } },
       events: { fields: { headline: 'string', subline: 'string?', events: '{ title: string, text: string, image?: url, dateLabel?: string, cta?: { label: string, href: string } }[]' } },
-      ambience: { fields: { headline: 'string', subline: 'string?', text: 'string?', images: '{ src: url, alt?: string }[]', cta: '{ label: string, href: string }?' } },
+      ambience: { fields: { headline: 'string', subline: 'string? (html allowed)', badgeText: 'string?', imagePrimary: 'url (main large image)', imageSecondary: 'url? (smaller square image)', imageTertiary: 'url? (smaller square image)', highlights: '{ title: string, text?: string (html), icon?: lucide-icon-name }[]', ctaPrimary: '{ label: string, href: string }?' } },
       story: { fields: { headline: 'string', subline: 'string?', text: 'string (html)', image: 'url?', founderName: 'string?', founderRole: 'string?', ctaPrimary: '{ label: string, href: string }?' } },
       testimonials: { fields: { headline: 'string', items: '{ quote: string, name: string, context?: string, rating?: 1-5 }[]' } },
       faq: { fields: { headline: 'string', items: '{ question: string, answer: string }[]' } },
