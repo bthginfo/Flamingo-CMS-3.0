@@ -27,7 +27,7 @@ export function TextGenerateEffect({
         { duration, delay: stagger(0.08) },
       );
     }
-  }, [isInView, animate, duration, filter]);
+  }, [isInView, animate, duration, filter, words]);
 
   return (
     <div className={cn('font-display font-bold', className)}>
