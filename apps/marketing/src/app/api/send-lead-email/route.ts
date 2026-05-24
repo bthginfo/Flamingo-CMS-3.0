@@ -26,7 +26,7 @@ function buildEmailHtml(subject: string, body: string): string {
 <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
   <!-- Header -->
   <tr><td style="background:linear-gradient(135deg,#6366f1,#ec4899);padding:32px 40px;">
-    <img src="https://www.flamingomedia.online/flamingo-logo-white.png" alt="Flamingo Media" width="140" style="display:block;margin-bottom:8px;" />
+    <img src="https://www.flamingomedia.online/brand/flamingo-full-beside.png" alt="Flamingo Media" width="160" style="display:block;margin-bottom:8px;" />
     <h1 style="color:#ffffff;font-size:20px;font-weight:600;margin:0;">${subject}</h1>
   </td></tr>
   <!-- Body -->
@@ -41,7 +41,7 @@ function buildEmailHtml(subject: string, body: string): string {
     <span style="color:#aaa;">hello@flamingomedia.online</span>
   </td></tr>
 </table>
-<p style="text-align:center;color:#aaa;font-size:11px;margin-top:20px;">© ${new Date().getFullYear()} Flamingo Media. Alle Rechte vorbehalten.</p>
+<p style="text-align:center;color:#aaa;font-size:11px;margin-top:20px;">&copy; ${new Date().getFullYear()} Flamingo Media. Alle Rechte vorbehalten.</p>
 </td></tr>
 </table>
 </body>
@@ -58,12 +58,18 @@ export async function POST(req: NextRequest) {
 
     const html = buildEmailHtml(subject, body);
     const transporter = getTransporter();
+    const fromAddress = process.env.SMTP_FROM || process.env.SMTP_USER || process.env.PLATFORM_SMTP_FROM || process.env.PLATFORM_SMTP_USER;
 
     await transporter.sendMail({
-      from: `"Flamingo Media" <${process.env.SMTP_FROM || process.env.SMTP_USER || process.env.PLATFORM_SMTP_FROM || process.env.PLATFORM_SMTP_USER}>`,
+      from: `"Mario & Julius - Flamingo Media" <${fromAddress}>`,
+      replyTo: `"Flamingo Media" <${fromAddress}>`,
       to,
       subject,
+      text: body,
       html,
+      headers: {
+        'X-Mailer': 'Flamingo Media CRM',
+      },
     });
 
     return NextResponse.json({ success: true });
