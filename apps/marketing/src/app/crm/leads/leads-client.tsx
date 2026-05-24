@@ -384,7 +384,10 @@ Flamingo Media`;
               </div>
               <div>
                 <label className="text-xs font-medium text-slate-500">Ort</label>
-                <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} />
+                <input list="location-options" className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} />
+                <datalist id="location-options">
+                  {locations.map(l => <option key={l} value={l} />)}
+                </datalist>
               </div>
               <div>
                 <label className="text-xs font-medium text-slate-500">Branche</label>
