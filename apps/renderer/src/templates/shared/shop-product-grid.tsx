@@ -84,8 +84,9 @@ export function ShopProductGridSection({ data }: Props) {
   }, [products, search, activeCategory, sortBy, priceFilter, priceRange]);
 
   return (
-    <section className="py-12 md:py-16">
-      <h2 className="text-3xl font-bold mb-8 text-center">{headline}</h2>
+    <section className="py-16 md:py-24 px-4 md:px-6">
+      <div className="max-w-7xl mx-auto">
+      <h2 className="text-3xl md:text-4xl font-bold mb-10 text-center">{headline}</h2>
 
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
@@ -97,13 +98,13 @@ export function ShopProductGridSection({ data }: Props) {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Produkt suchen…"
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-300"
+              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-300 focus:bg-white transition"
             />
           </div>
         )}
         <div className="flex items-center gap-2">
           <SlidersHorizontal size={14} className="text-zinc-400" />
-          <select value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)} className="text-sm border border-zinc-200 rounded-lg px-3 py-2 bg-white">
+          <select value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)} className="text-sm border border-zinc-200 rounded-lg px-3 py-2.5 bg-zinc-50">
             <option value="default">Standard</option>
             <option value="price-asc">Preis aufsteigend</option>
             <option value="price-desc">Preis absteigend</option>
@@ -162,29 +163,29 @@ export function ShopProductGridSection({ data }: Props) {
           <p>Keine Produkte gefunden.</p>
         </div>
       ) : (
-        <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns >= 3 ? 'lg:grid-cols-3' : ''} ${columns >= 4 ? 'xl:grid-cols-4' : ''} gap-6`}>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns >= 3 ? 'lg:grid-cols-3' : ''} ${columns >= 4 ? 'xl:grid-cols-4' : ''} gap-6 md:gap-8`}>
           {filtered.map(product => (
             <Link key={product.id} href={`${shopBase}/${product.slug}`} className="group">
-              <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="aspect-square bg-zinc-50 relative overflow-hidden">
+              <div className="rounded-2xl border border-zinc-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white">
+                <div className="aspect-[4/5] bg-zinc-50 relative overflow-hidden">
                   {product.images?.[0] ? (
-                    <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <ShoppingBag size={40} className="text-zinc-200" />
                     </div>
                   )}
                   {product.stock === 0 && (
-                    <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">Ausverkauft</div>
+                    <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">Ausverkauft</div>
                   )}
                   {product.comparePriceCents && (
-                    <div className="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Sale</div>
+                    <div className="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">Sale</div>
                   )}
                 </div>
-                <div className="p-4">
-                  {product.categoryName && <p className="text-xs text-zinc-400 mb-1">{product.categoryName}</p>}
-                  <h3 className="font-semibold text-sm group-hover:text-zinc-600 transition">{product.title}</h3>
-                  {product.shortDescription && <p className="text-xs text-zinc-500 mt-1 line-clamp-2">{product.shortDescription}</p>}
+                <div className="p-5">
+                  {product.categoryName && <p className="text-xs text-zinc-400 uppercase tracking-wide mb-1">{product.categoryName}</p>}
+                  <h3 className="font-semibold group-hover:text-zinc-600 transition">{product.title}</h3>
+                  {product.shortDescription && <p className="text-sm text-zinc-500 mt-1.5 line-clamp-2">{product.shortDescription}</p>}
                   <div className="flex items-center gap-2 mt-3">
                     <span className="font-bold text-lg">{formatPrice(product.priceCents)}</span>
                     {product.comparePriceCents && (
@@ -197,6 +198,7 @@ export function ShopProductGridSection({ data }: Props) {
           ))}
         </div>
       )}
+      </div>
     </section>
   );
 }
