@@ -56,6 +56,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'to, subject und body sind erforderlich' }, { status: 400 });
     }
 
+    const cleanTo = to.trim().replace(/[<>]/g, '');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanTo)) {
+      return NextResponse.json({ error: `Ungültige E-Mail-Adresse: "${to}"` }, { status: 400 });
+    }
+
     const html = buildEmailHtml(subject, body);
     const transporter = getTransporter();
     const fromAddress = process.env.SMTP_FROM || process.env.SMTP_USER || process.env.PLATFORM_SMTP_FROM || process.env.PLATFORM_SMTP_USER;
@@ -63,7 +68,7 @@ export async function POST(req: NextRequest) {
     await transporter.sendMail({
       from: `"Mario & Julius - Flamingo Media" <${fromAddress}>`,
       replyTo: `"Flamingo Media" <${fromAddress}>`,
-      to,
+      to: cleanTo,
       subject,
       text: body,
       html,
