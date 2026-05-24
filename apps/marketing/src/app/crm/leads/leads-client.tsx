@@ -524,7 +524,8 @@ Flamingo Media`;
         </div>
       )}
         {/* Desktop table */}
-        <table className="hidden sm:table w-full text-sm">
+        <div className="hidden sm:block overflow-x-auto">
+        <table className="w-full text-sm min-w-[900px]">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200 text-left">
               <th className="px-4 py-3 font-medium text-slate-500">Firma</th>
@@ -532,8 +533,8 @@ Flamingo Media`;
               <th className="px-4 py-3 font-medium text-slate-500">E-Mail</th>
               <th className="px-4 py-3 font-medium text-slate-500">Status</th>
               <th className="px-4 py-3 font-medium text-slate-500">Branche</th>
-              <th className="px-4 py-3 font-medium text-slate-500">Ansprechpartner</th>
-              <th className="px-4 py-3 font-medium text-slate-500">Verantwortlich</th>
+              <th className="px-4 py-3 font-medium text-slate-500 hidden lg:table-cell">Ansprechpartner</th>
+              <th className="px-4 py-3 font-medium text-slate-500 hidden lg:table-cell">Verantwortlich</th>
               <th className="px-4 py-3 font-medium text-slate-500">Links</th>
               <th className="px-4 py-3 font-medium text-slate-500 w-10"></th>
             </tr>
@@ -561,8 +562,8 @@ Flamingo Media`;
                   </select>
                 </td>
                 <td className="px-4 py-3 text-slate-600">{lead.industry}</td>
-                <td className="px-4 py-3 text-slate-600">{[lead.anrede, lead.contactFirstName, lead.contactLastName].filter(Boolean).join(' ') || lead.contact}</td>
-                <td className="px-4 py-3 text-slate-600">{lead.responsible}</td>
+                <td className="px-4 py-3 text-slate-600 hidden lg:table-cell">{[lead.anrede, lead.contactFirstName, lead.contactLastName].filter(Boolean).join(' ') || lead.contact}</td>
+                <td className="px-4 py-3 text-slate-600 hidden lg:table-cell">{lead.responsible}</td>
                 <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
                   <div className="flex items-center gap-2">
                     {lead.websiteOld && <a href={lead.websiteOld.startsWith('http') ? lead.websiteOld : `https://${lead.websiteOld}`} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-slate-700"><ExternalLink size={14} /></a>}
@@ -579,6 +580,7 @@ Flamingo Media`;
             ))}
           </tbody>
         </table>
+        </div>
 
         {/* Mobile cards */}
         <div className="sm:hidden divide-y divide-slate-100">
