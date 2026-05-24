@@ -396,6 +396,24 @@ export const rsvpResponses = pgTable('rsvp_responses', {
   index('rsvp_responses_tenant_idx').on(t.tenantId),
 ]);
 
+// ─── Reservations (Restaurant/General) ───────────────────────────────
+export const reservations = pgTable('reservations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }),
+  phone: varchar('phone', { length: 50 }),
+  date: varchar('date', { length: 20 }).notNull(),
+  time: varchar('time', { length: 10 }),
+  guests: integer('guests').notNull().default(2),
+  message: text('message'),
+  status: varchar('status', { length: 20 }).notNull().default('pending'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('reservations_tenant_idx').on(t.tenantId),
+]);
+
 // ─── Tenant API Tokens (PAT for AI content fill) ─────────────────────
 export const tenantApiTokens = pgTable('tenant_api_tokens', {
   id: uuid('id').primaryKey().defaultRandom(),

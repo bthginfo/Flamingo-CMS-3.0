@@ -5,21 +5,21 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, FileText, FolderOpen, Newspaper, Navigation,
-  Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Heart,
+  Palette, Phone, Share2, Search, Code, Mail, Scale, Lock, LogOut, ImageIcon, Inbox, Zap,
   Menu, X, ClipboardList, Bot, HelpCircle, ChevronLeft, ChevronRight, ShoppingBag,
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
 import { usePreview } from '@/components/admin/preview-context';
 import { MonitorPlay } from 'lucide-react';
 
-const NAV = [
+const NAV: { href: string; label: string; icon: typeof LayoutDashboard; tour?: string; industry?: string }[] = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/pages', label: 'Seiten', icon: FileText, tour: 'sidebar-pages' },
   { href: '/admin/collections', label: 'Collections', icon: FolderOpen },
   { href: '/admin/news', label: 'News & Blog', icon: Newspaper },
   { href: '/admin/media', label: 'Mediathek', icon: ImageIcon, tour: 'sidebar-media' },
   { href: '/admin/inbox', label: 'Posteingang', icon: Inbox },
-  { href: '/admin/rsvp', label: 'RSVP-Gäste', icon: Heart, industry: 'wedding' },
+  { href: '/admin/functions', label: 'Funktionen', icon: Zap },
   { href: '/admin/navigation', label: 'Navigation & Footer', icon: Navigation, tour: 'sidebar-nav' },
   { href: '/admin/brand', label: 'Marke & Design', icon: Palette, tour: 'sidebar-brand' },
   { href: '/admin/contact', label: 'Kontakt & Zeiten', icon: Phone },

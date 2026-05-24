@@ -268,6 +268,14 @@ Slugs dürfen NIEMALS mit "/" beginnen. Slug = nur Pfadteil, z.B. "kontakt", "ue
 
 WICHTIG — Collections statt Unterseiten:
 Für wiederkehrende Inhalte (Leistungen, Zimmer, News, Team, Referenzen, Behandlungen) IMMER Collections verwenden.
+
+WICHTIG — Interaktive Sections:
+Folgende Sections speichern echte Nutzerdaten in der Datenbank:
+- reservation (Restaurant): Echtes Reservierungsformular → Daten landen unter Admin > Funktionen > Reservierungen
+- rsvp (Wedding): Echtes RSVP-Formular → Admin > Funktionen > RSVP-Gäste
+- contact mit formEnabled:true (Alle): Kontaktformular → Admin > Posteingang
+- bookingStrip (Hotel): KEIN Formular, nur CTA-Link zu externer Buchungsplattform (submitCta.href)
+- propertySearch (Realestate): KEIN Suchformular, zeigt Kategorie-Karten die zu Collections verlinken
 Workflow: 1) POST /collections → { key, label }  2) POST /collections/:key/items für jeden Eintrag  3) Auf Übersichtsseiten servicesGrid mit href="/c/:key/:slug" nutzen`,
   });
 }
@@ -372,7 +380,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
   } else if (industry === 'restaurant') {
     Object.assign(schemas, {
       menu: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', introText: 'string?', footnote: 'string?', ctaPrimary: '{ label: string, href: string }?', categories: '{ title: string, description?: string, items: { name: string, description?: string, price?: string, image?: url, allergens?: string[], tags?: string[], highlighted?: boolean, vegetarian?: boolean, vegan?: boolean, spicy?: boolean }[] }[]' } },
-      reservation: { fields: { headline: 'string', text: 'string?', cta: '{ label: string, href: string }?' } },
+      reservation: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', introText: 'string? (html)', formEnabled: 'boolean (default true — shows real reservation form)', submitLabel: 'string? (default "Anfrage senden")', phoneCta: '{ label: string, href: string }? (e.g. { label: "Anrufen", href: "tel:+49..." })', externalBookingCta: '{ label: string, href: string }? (external booking link)', partySizeOptions: 'string[]? (e.g. ["1-2","3-4","5-6","7+"])', timeHint: 'string? (e.g. "Di–Sa 18:00–22:00")', policyText: 'string? (cancellation note)', image: 'image-path?' } },
       openingHours: { fields: { headline: 'string', days: '{ label: string, hours: string }[]' } },
       signatureDishes: { fields: { headline: 'string', dishes: '{ name: string, description: string, image?: url, price?: string }[]' } },
       events: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', fallbackText: 'string?', events: '{ title: string, description: string, image?: url, dateLabel?: string, timeLabel?: string, priceLabel?: string, cta?: { label: string, href: string } }[]' } },
@@ -385,7 +393,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
     });
   } else if (industry === 'hotel') {
     Object.assign(schemas, {
-      bookingStrip: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', submitCta: '{ label: string, href: string }', bookingNote: 'string?' } },
+      bookingStrip: { fields: { headline: 'string', subline: 'string? (html)', badgeText: 'string?', submitCta: '{ label: string, href: string } (link to external booking platform)', secondaryCta: '{ label: string, href: string }?', bookingNote: 'string? (e.g. "Bestpreisgarantie bei Direktbuchung")', trustItems: '{ icon?: lucide-icon-name, text: string }[]? (e.g. [{ icon: "shield", text: "Kostenlose Stornierung" }])' } },
       roomShowcase: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', footerText: 'string?', rooms: '{ name: string, description: string, image: url, priceLabel: string, sizeLabel?: string, occupancyLabel?: string, bedLabel?: string, features: string[], detailCta?: { label: string, href: string }, bookingCta?: { label: string, href: string }, highlighted?: boolean, galleryImages?: url[] }[]' } },
       amenities: { fields: { headline: 'string', subline: 'string?', items: '{ icon: lucide-icon-name, title: string, text: string, image?: url }[]', ctaPrimary: '{ label: string, href: string }?' } },
       wellness: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', introText: 'string?', imagePrimary: 'url?', imageSecondary: 'url?', treatments: '{ title: string, text: string, durationLabel?: string, priceLabel?: string, image?: url, cta?: { label: string, href: string } }[]', features: '{ icon: lucide-icon-name, title: string, text: string }[]?', ctaPrimary: '{ label: string, href: string }?' } },
@@ -472,7 +480,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
     Object.assign(schemas, {
       heroRealestate: { fields: { headline: 'string', subline: 'string?', bgImage: 'url?', overlayOpacity: 'number? (0-1)', primaryCta: '{ label: string, href: string }?', secondaryCta: '{ label: string, href: string }?', trustItems: 'string[]? (e.g. ["500+ vermittelte Objekte"])', imageEffect: 'string? (none|zoom|parallax)' } },
       propertyShowcase: { fields: { headline: 'string', subline: 'string?', properties: '{ title: string, price: string, size: string, rooms: string, location: string, image: url, href?: string, badge?: string }[]' } },
-      propertySearch: { fields: { headline: 'string', categories: 'string[]? (e.g. ["Kaufen","Mieten"])', bgColor: 'string?' } },
+      propertySearch: { fields: { headline: 'string', subline: 'string?', categories: '(string | { label: string, href?: string, count?: string })[] (e.g. ["Kaufen","Mieten","Gewerbe"] or [{ label: "Wohnungen", href: "/c/objekte", count: "12 Objekte" }])', collectionKey: 'string? (default "objekte" — links to this collection)', ctaLabel: 'string?', ctaHref: 'string?', bgColor: 'string?' } },
       marketReport: { fields: { headline: 'string', subline: 'string?', region: 'string?', stats: '{ label: string, value: string, trend?: string (up|down|stable) }[]', description: 'string? (html)' } },
       agentTeam: { fields: { headline: 'string', subline: 'string?', agents: '{ name: string, role: string, image: url, specialization: string, phone?: string, email?: string, soldCount?: string }[]' } },
       valuationCta: { fields: { headline: 'string', subline: 'string?', ctaLabel: 'string?', ctaHref: 'string?', bgImage: 'url?', stats: '{ label: string, value: string }[]?' } },

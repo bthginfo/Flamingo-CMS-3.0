@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { CalendarDays, Phone } from 'lucide-react';
+import { CalendarDays, Phone, CheckCircle, AlertCircle } from 'lucide-react';
 import { asButton, asList, type SectionProps } from './types';
 
 type ReservationViewProps = {
@@ -41,6 +42,79 @@ export function ReservationSection({ data, styleVariant }: SectionProps) {
   return <ReservationClassic {...props} />;
 }
 
+function ReservationForm({ submitLabel, dark }: { submitLabel: string; dark?: boolean }) {
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus('loading');
+    setErrorMsg('');
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const payload = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      phone: formData.get('phone'),
+      date: formData.get('date'),
+      time: formData.get('time'),
+      guests: Number(formData.get('guests')) || 2,
+      message: formData.get('message'),
+    };
+    try {
+      const res = await fetch('/api/reservation', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Fehler beim Senden.');
+      }
+      setStatus('success');
+      form.reset();
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Unbekannter Fehler');
+      setStatus('error');
+    }
+  }
+
+  if (status === 'success') {
+    return (
+      <div className={`flex flex-col items-center gap-3 rounded-xl p-8 text-center ${dark ? 'text-white' : 'text-gray-900'}`}>
+        <CheckCircle size={40} className="text-green-500" />
+        <p className="text-lg font-semibold">Anfrage gesendet!</p>
+        <p className={`text-sm ${dark ? 'text-white/70' : 'text-gray-500'}`}>Wir melden uns zeitnah bei Ihnen.</p>
+      </div>
+    );
+  }
+
+  const inputClass = dark
+    ? 'w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/50 outline-none focus:border-white/40'
+    : 'w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/10';
+
+  return (
+    <form onSubmit={handleSubmit} className="grid gap-3">
+      <input name="name" type="text" required placeholder="Ihr Name *" className={inputClass} />
+      <div className="grid grid-cols-2 gap-3">
+        <input name="email" type="email" placeholder="E-Mail" className={inputClass} />
+        <input name="phone" type="tel" placeholder="Telefon" className={inputClass} />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <input name="date" type="date" required className={inputClass} />
+        <input name="time" type="time" className={inputClass} />
+      </div>
+      <div>
+        <label className={`text-xs font-medium ${dark ? 'text-white/60' : 'text-gray-500'}`}>Personen</label>
+        <input name="guests" type="number" min={1} max={20} defaultValue={2} className={inputClass} />
+      </div>
+      <textarea name="message" rows={2} placeholder="Anmerkungen (optional)" className={inputClass} />
+      {status === 'error' && (
+        <p className="flex items-center gap-2 text-sm text-red-500"><AlertCircle size={14} />{errorMsg}</p>
+      )}
+      <button type="submit" disabled={status === 'loading'} className={`mt-1 rounded-lg px-5 py-3 font-semibold shadow-md transition-all disabled:opacity-60 ${dark ? 'bg-white text-gray-900 hover:bg-gray-100' : 'bg-brand-primary text-white hover:opacity-90'}`}>
+        {status === 'loading' ? 'Wird gesendet...' : submitLabel}
+      </button>
+    </form>
+  );
+}
+
 function ReservationClassic(props: ReservationViewProps) {
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="grid gap-8 lg:grid-cols-[1fr_0.8fr]">
@@ -58,14 +132,7 @@ function ReservationClassic(props: ReservationViewProps) {
       </div>
       <div className="overflow-hidden rounded-xl border border-black/10 bg-white p-5 shadow-lg">
         {props.image && <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-xl"><Image src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {props.formEnabled && (
-          <form className="grid gap-3">
-            <input className="admin-input" placeholder={(props.partySizeOptions[0] as string) || 'Name'} readOnly />
-            <input className="admin-input" placeholder={(props.partySizeOptions[1] as string) || 'Personen'} readOnly />
-            <input className="admin-input" placeholder={(props.partySizeOptions[2] as string) || 'Datum und Uhrzeit'} readOnly />
-            <button type="button" className="rounded-full bg-brand-primary px-5 py-3 font-semibold text-white shadow-md">{props.submitLabel}</button>
-          </form>
-        )}
+        {props.formEnabled && <ReservationForm submitLabel={props.submitLabel} />}
       </div>
     </motion.div>
   );
@@ -89,14 +156,7 @@ function ReservationModern(props: ReservationViewProps) {
       </div>
       <div className="border border-black/5 p-6">
         {props.image && <div className="relative mb-6 aspect-[4/3] overflow-hidden border border-black/5"><Image src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {props.formEnabled && (
-          <form className="grid gap-4">
-            <input className="admin-input" placeholder={(props.partySizeOptions[0] as string) || 'Name'} readOnly />
-            <input className="admin-input" placeholder={(props.partySizeOptions[1] as string) || 'Personen'} readOnly />
-            <input className="admin-input" placeholder={(props.partySizeOptions[2] as string) || 'Datum und Uhrzeit'} readOnly />
-            <button type="button" className="border-b-2 border-[#111827] bg-transparent py-3 font-medium text-gray-900">{props.submitLabel}</button>
-          </form>
-        )}
+        {props.formEnabled && <ReservationForm submitLabel={props.submitLabel} />}
       </div>
     </div>
   );
@@ -121,14 +181,7 @@ function ReservationBold(props: ReservationViewProps) {
         </div>
         <div className="border-2 border-white/20 p-5 shadow-[4px_4px_0_rgba(255,255,255,0.15)]">
           {props.image && <div className="relative mb-5 aspect-[4/3] overflow-hidden border-2 border-white/20"><Image src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-          {props.formEnabled && (
-            <form className="grid gap-3">
-              <input className="admin-input" placeholder={(props.partySizeOptions[0] as string) || 'Name'} readOnly />
-              <input className="admin-input" placeholder={(props.partySizeOptions[1] as string) || 'Personen'} readOnly />
-              <input className="admin-input" placeholder={(props.partySizeOptions[2] as string) || 'Datum und Uhrzeit'} readOnly />
-              <button type="button" className="rounded-none border-2 border-white bg-white px-5 py-3 font-black uppercase text-gray-900">{props.submitLabel}</button>
-            </form>
-          )}
+          {props.formEnabled && <ReservationForm submitLabel={props.submitLabel} dark />}
         </div>
       </div>
     </div>
