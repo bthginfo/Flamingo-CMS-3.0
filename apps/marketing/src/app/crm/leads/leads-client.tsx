@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Plus, Trash2, ExternalLink, Mail } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, Mail, Search, X } from 'lucide-react';
 import { createLead, updateLead, deleteLead, type Lead } from './actions';
 import { toast } from 'sonner';
 
@@ -19,6 +19,23 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [search, setSearch] = useState('');
+  const [filterStatus, setFilterStatus] = useState<LeadStatus | ''>('');
+  const [filterIndustry, setFilterIndustry] = useState('');
+
+  const industries = [...new Set(leads.map(l => l.industry).filter(Boolean))] as string[];
+
+  const filtered = leads.filter(lead => {
+    if (filterStatus && lead.status !== filterStatus) return false;
+    if (filterIndustry && lead.industry !== filterIndustry) return false;
+    if (search) {
+      const q = search.toLowerCase();
+      const match = [lead.company, lead.email, lead.location, lead.industry, lead.contactFirstName, lead.contactLastName, lead.contact]
+        .filter(Boolean).join(' ').toLowerCase();
+      if (!match.includes(q)) return false;
+    }
+    return true;
+  });
 
   const [form, setForm] = useState({
     company: '', email: '', status: 'offen' as LeadStatus, location: '', websiteOld: '', flamingoLink: '', contact: '', contactFirstName: '', contactLastName: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '', industry: '',
@@ -310,6 +327,38 @@ Flamingo Media`;
         </button>
       </div>
 
+      {/* Search & Filters */}
+      <div className="flex flex-wrap items-center gap-3 mb-4">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Suchen..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-full pl-9 pr-8 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200"
+          />
+          {search && <button onClick={() => setSearch('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"><X size={14} /></button>}
+        </div>
+        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value as LeadStatus | '')} className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200">
+          <option value="">Alle Status</option>
+          <option value="offen">Offen</option>
+          <option value="kontaktiert">Kontaktiert</option>
+          <option value="angenommen">Angenommen</option>
+          <option value="abgelehnt">Abgelehnt</option>
+        </select>
+        {industries.length > 0 && (
+          <select value={filterIndustry} onChange={e => setFilterIndustry(e.target.value)} className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200">
+            <option value="">Alle Branchen</option>
+            {industries.map(i => <option key={i} value={i}>{i}</option>)}
+          </select>
+        )}
+        {(search || filterStatus || filterIndustry) && (
+          <button onClick={() => { setSearch(''); setFilterStatus(''); setFilterIndustry(''); }} className="text-xs text-slate-500 hover:text-slate-700 underline">Filter zurücksetzen</button>
+        )}
+        <span className="text-xs text-slate-400 ml-auto">{filtered.length} von {leads.length}</span>
+      </div>
+
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setShowForm(false)}>
@@ -475,10 +524,10 @@ Flamingo Media`;
             </tr>
           </thead>
           <tbody>
-            {leads.length === 0 && (
-              <tr><td colSpan={9} className="px-4 py-12 text-center text-slate-400">Noch keine Leads. Klicke &quot;Neuer Lead&quot; um einen anzulegen.</td></tr>
+            {filtered.length === 0 && (
+              <tr><td colSpan={9} className="px-4 py-12 text-center text-slate-400">{leads.length === 0 ? 'Noch keine Leads. Klicke "Neuer Lead" um einen anzulegen.' : 'Keine Ergebnisse für diese Filter.'}</td></tr>
             )}
-            {leads.map(lead => (
+            {filtered.map(lead => (
               <tr key={lead.id} className="border-b border-slate-100 hover:bg-slate-50/50 cursor-pointer" onClick={() => openEdit(lead)}>
                 <td className="px-4 py-3 font-medium text-slate-900">{lead.company}</td>
                 <td className="px-4 py-3 text-slate-500">{lead.location}</td>
