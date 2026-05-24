@@ -99,12 +99,14 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
     'eventSchedule', 'faqGallery', 'giftRegistry', 'rsvp', 'venueInfo',
     // Cafe
     'dailySpecials',
+    // USP strip (uses negative margin for hero overlap)
+    'uspStrip',
     // Generic
     'servicePackages',
   ]);
 
   // Full-bleed sections that have LIGHT backgrounds (don't apply data-theme="dark")
-  const FULL_BLEED_LIGHT = new Set(['dailySpecials', 'servicePackages']);
+  const FULL_BLEED_LIGHT = new Set(['dailySpecials', 'servicePackages', 'uspStrip']);
 
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);
 
