@@ -18,6 +18,12 @@ function resolveIcon(name: string): LucideIcon | null {
   // 2. Try PascalCase conversion (e.g. "glass-water" → "GlassWater")
   const pascal = toPascalCase(name);
   if (iconMap[pascal]) return iconMap[pascal];
+  // 3. Try reversed word order (e.g. "check-circle" → "CircleCheck" for newer lucide versions)
+  const parts = name.split(/[-_\s]+/);
+  if (parts.length === 2) {
+    const reversed = parts[1].charAt(0).toUpperCase() + parts[1].slice(1) + parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+    if (iconMap[reversed]) return iconMap[reversed];
+  }
   return null;
 }
 
