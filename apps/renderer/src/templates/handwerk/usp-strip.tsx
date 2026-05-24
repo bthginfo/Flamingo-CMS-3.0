@@ -35,7 +35,7 @@ export function UspStripSection({ data }: Props) {
   const inView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <div ref={ref} className="-mt-20 relative z-20">
+    <div ref={ref} className="-mt-20 relative z-20 max-w-6xl mx-auto px-4">
       <div className="bg-white rounded-3xl shadow-xl border border-gray-100/50 p-2">
         <div className={cn(
           'grid grid-cols-1 sm:grid-cols-2 gap-px bg-gray-100 rounded-2xl overflow-hidden',

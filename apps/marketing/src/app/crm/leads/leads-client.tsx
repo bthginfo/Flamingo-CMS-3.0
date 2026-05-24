@@ -14,18 +14,18 @@ const STATUS_COLORS: Record<LeadStatus, string> = {
   abgelehnt: 'bg-red-100 text-red-800',
 };
 
-export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
+export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[]; leadTenants: { id: string; name: string; slug: string }[] }) {
   const [leads, setLeads] = useState(initialLeads);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const [form, setForm] = useState({
-    company: '', email: '', status: 'offen' as LeadStatus, location: '', websiteOld: '', flamingoLink: '', contact: '', responsible: 'Julius',
+    company: '', email: '', status: 'offen' as LeadStatus, location: '', websiteOld: '', flamingoLink: '', contact: '', responsible: 'Julius', tenantId: '',
   });
 
   function openNew() {
-    setForm({ company: '', email: '', status: 'offen', location: '', websiteOld: '', flamingoLink: '', contact: '', responsible: 'Julius' });
+    setForm({ company: '', email: '', status: 'offen', location: '', websiteOld: '', flamingoLink: '', contact: '', responsible: 'Julius', tenantId: '' });
     setEditId(null);
     setShowForm(true);
   }
@@ -40,6 +40,7 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
       flamingoLink: lead.flamingoLink || '',
       contact: lead.contact || '',
       responsible: lead.responsible || 'Julius',
+      tenantId: lead.tenantId || '',
     });
     setEditId(lead.id);
     setShowForm(true);
@@ -48,11 +49,12 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
   function handleSave() {
     if (!form.company.trim()) return;
     startTransition(async () => {
+      const payload = { ...form, tenantId: form.tenantId || null };
       if (editId) {
-        const updated = await updateLead(editId, form);
+        const updated = await updateLead(editId, payload);
         setLeads(leads.map(l => l.id === editId ? updated : l));
       } else {
-        const created = await createLead(form);
+        const created = await createLead(payload);
         setLeads([created, ...leads]);
       }
       setShowForm(false);
@@ -77,16 +79,18 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
   // Email modal state
   const [emailModal, setEmailModal] = useState<{ to: string; subject: string; body: string; leadId: string } | null>(null);
   const [sendingEmail, setSendingEmail] = useState(false);
-  const [emailVariant, setEmailVariant] = useState<'hat-website' | 'keine-website'>('hat-website');
+  const [emailVariant, setEmailVariant] = useState<'hat-website' | 'keine-website' | 'demo-seite'>('hat-website');
   const [emailTone, setEmailTone] = useState<'locker' | 'förmlich'>('locker');
 
-  function getEmailBody(lead: Lead, variant: 'hat-website' | 'keine-website', tone: 'locker' | 'förmlich') {
-    const firstName = lead.contact?.split(' ')[0] || 'Team';
+  function getEmailBody(lead: Lead, variant: 'hat-website' | 'keine-website' | 'demo-seite', tone: 'locker' | 'förmlich') {
+    const firstName = lead.contact?.split(' ')[0] || '';
+    const lastName = lead.contact?.split(' ').slice(1).join(' ') || '';
     const company = lead.company || '';
     const du = tone === 'locker';
+    const greeting = du ? `Hallo ${firstName || 'zusammen'}` : `Sehr geehrte/r ${lastName ? `Herr/Frau ${lastName}` : firstName || 'Damen und Herren'}`;
 
     if (variant === 'hat-website' && du) {
-      return `Hallo ${firstName},
+      return `${greeting},
 
 wir sind Mario & Julius von Flamingo Media — wir bauen Websites für lokale Betriebe, die nicht nur gut aussehen, sondern die man auch komplett selbst steuern kann, ohne Technik-Kenntnisse.
 
@@ -114,7 +118,7 @@ Flamingo Media`;
     }
 
     if (variant === 'hat-website' && !du) {
-      return `Sehr geehrte/r ${firstName},
+      return `${greeting},
 
 wir sind Mario & Julius von Flamingo Media — wir erstellen Websites für lokale Unternehmen, die nicht nur professionell aussehen, sondern die Sie auch komplett eigenständig verwalten können, ohne technisches Vorwissen.
 
@@ -142,7 +146,7 @@ Flamingo Media`;
     }
 
     if (variant === 'keine-website' && du) {
-      return `Hallo ${firstName},
+      return `${greeting},
 
 wir sind Mario & Julius von Flamingo Media — wir helfen lokalen Betrieben dabei, schnell und unkompliziert eine professionelle Website zu bekommen, die sie komplett selbst verwalten können.
 
@@ -168,8 +172,57 @@ Mario & Julius
 Flamingo Media`;
     }
 
+    if (variant === 'demo-seite') {
+      const linkedTenant = leadTenants.find(t => t.id === lead.tenantId);
+      const siteUrl = linkedTenant ? `https://${linkedTenant.slug}.flamingo-cms.app` : '[LINK ZUR SEITE]';
+      const adminUrl = linkedTenant ? `https://${linkedTenant.slug}.flamingo-cms.app/admin` : '[LINK ZUM ADMIN]';
+      const pw = 'flamingo2025';
+
+      if (du) {
+        return `${greeting},
+
+wir haben mal was für euch vorbereitet: eine Beispiel-Website für ${company}, die zeigt, wie euer Auftritt mit Flamingo Media aussehen könnte.
+
+Hier könnt ihr sie euch live anschauen:
+${siteUrl}
+
+Natürlich sind die Inhalte nur exemplarisch befüllt — nicht alles wird 100 % stimmen. Aber ihr seht direkt, wie das Ganze wirkt und was alles möglich ist.
+
+Das Beste: Ihr könnt euch auch selbst im Admin-Bereich einloggen und alles ausprobieren — Texte ändern, Bilder tauschen, Farben anpassen, neue Abschnitte hinzufügen. Alles per Drag & Drop, kein Code nötig, funktioniert sogar vom Handy:
+
+Admin: ${adminUrl}
+Passwort: ${pw}
+
+Einfach mal reinschauen und rumspielen. Falls euch gefällt was ihr seht, können wir gerne kurz quatschen, wie wir das Ganze mit euren echten Inhalten finalisieren.
+
+Viele Grüße
+Mario & Julius
+Flamingo Media`;
+      } else {
+        return `${greeting},
+
+wir haben etwas für Sie vorbereitet: eine Beispiel-Website für ${company}, die zeigt, wie Ihr Auftritt mit Flamingo Media aussehen könnte.
+
+Hier können Sie sie sich live anschauen:
+${siteUrl}
+
+Die Inhalte sind exemplarisch befüllt — nicht alles wird 100 % korrekt sein. Aber Sie sehen direkt, wie das Ganze wirkt und was alles möglich ist.
+
+Das Besondere: Sie können sich auch selbst im Admin-Bereich einloggen und alles ausprobieren — Texte ändern, Bilder tauschen, Farben anpassen, neue Abschnitte hinzufügen. Alles per Drag & Drop, ohne Code, funktioniert sogar vom Smartphone:
+
+Admin: ${adminUrl}
+Passwort: ${pw}
+
+Schauen Sie gerne mal rein und probieren Sie es aus. Falls Ihnen gefällt was Sie sehen, können wir gerne kurz besprechen, wie wir das Ganze mit Ihren echten Inhalten finalisieren.
+
+Mit freundlichen Grüßen
+Mario & Julius
+Flamingo Media`;
+      }
+    }
+
     // keine-website + förmlich
-    return `Sehr geehrte/r ${firstName},
+    return `${greeting},
 
 wir sind Mario & Julius von Flamingo Media — wir helfen lokalen Unternehmen dabei, schnell und unkompliziert eine professionelle Website aufzubauen, die sie komplett eigenständig verwalten können.
 
@@ -286,6 +339,13 @@ Flamingo Media`;
                   <option value="Mario">Mario</option>
                 </select>
               </div>
+              <div>
+                <label className="text-xs font-medium text-slate-500">Verknüpfter Tenant (Lead)</label>
+                <select className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.tenantId} onChange={e => setForm({ ...form, tenantId: e.target.value })}>
+                  <option value="">— Keiner —</option>
+                  {leadTenants.map(t => <option key={t.id} value={t.id}>{t.name} ({t.slug})</option>)}
+                </select>
+              </div>
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <button onClick={() => setShowForm(false)} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">Abbrechen</button>
@@ -318,6 +378,11 @@ Flamingo Media`;
                   onClick={() => { setEmailVariant('keine-website'); const lead = leads.find(l => l.id === emailModal.leadId); if (lead) setEmailModal({ ...emailModal, body: getEmailBody(lead, 'keine-website', emailTone) }); }}
                   className={`px-2.5 py-1 rounded-full font-medium transition ${emailVariant === 'keine-website' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
                 >Keine Website</button>
+                <button
+                  type="button"
+                  onClick={() => { setEmailVariant('demo-seite'); const lead = leads.find(l => l.id === emailModal.leadId); if (lead) setEmailModal({ ...emailModal, body: getEmailBody(lead, 'demo-seite', emailTone) }); }}
+                  className={`px-2.5 py-1 rounded-full font-medium transition ${emailVariant === 'demo-seite' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                >Demo-Seite</button>
               </div>
               <div className="flex items-center gap-1.5 text-xs">
                 <span className="text-slate-500">Ton:</span>

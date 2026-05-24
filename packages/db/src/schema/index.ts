@@ -443,6 +443,7 @@ export const leads = pgTable('leads', {
   flamingoLink: varchar('flamingo_link', { length: 500 }),
   contact: varchar('contact', { length: 255 }),
   responsible: varchar('responsible', { length: 100 }),
+  tenantId: uuid('tenant_id').references(() => tenants.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
