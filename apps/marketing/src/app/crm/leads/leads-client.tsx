@@ -22,12 +22,15 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState<LeadStatus | ''>('');
   const [filterIndustry, setFilterIndustry] = useState('');
+  const [filterLocation, setFilterLocation] = useState('');
 
   const industries = [...new Set(leads.map(l => l.industry).filter(Boolean))] as string[];
+  const locations = [...new Set(leads.map(l => l.location).filter(Boolean))] as string[];
 
   const filtered = leads.filter(lead => {
     if (filterStatus && lead.status !== filterStatus) return false;
     if (filterIndustry && lead.industry !== filterIndustry) return false;
+    if (filterLocation && lead.location !== filterLocation) return false;
     if (search) {
       const q = search.toLowerCase();
       const match = [lead.company, lead.email, lead.location, lead.industry, lead.contactFirstName, lead.contactLastName, lead.contact]
@@ -353,8 +356,14 @@ Flamingo Media`;
             {industries.map(i => <option key={i} value={i}>{i}</option>)}
           </select>
         )}
-        {(search || filterStatus || filterIndustry) && (
-          <button onClick={() => { setSearch(''); setFilterStatus(''); setFilterIndustry(''); }} className="text-xs text-slate-500 hover:text-slate-700 underline">Filter zurücksetzen</button>
+        {locations.length > 0 && (
+          <select value={filterLocation} onChange={e => setFilterLocation(e.target.value)} className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200">
+            <option value="">Alle Orte</option>
+            {locations.map(l => <option key={l} value={l}>{l}</option>)}
+          </select>
+        )}
+        {(search || filterStatus || filterIndustry || filterLocation) && (
+          <button onClick={() => { setSearch(''); setFilterStatus(''); setFilterIndustry(''); setFilterLocation(''); }} className="text-xs text-slate-500 hover:text-slate-700 underline">Filter zurücksetzen</button>
         )}
         <span className="text-xs text-slate-400 ml-auto">{filtered.length} von {leads.length}</span>
       </div>
@@ -379,7 +388,10 @@ Flamingo Media`;
               </div>
               <div>
                 <label className="text-xs font-medium text-slate-500">Branche</label>
-                <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="z.B. Gastronomie, Handwerk..." value={form.industry} onChange={e => setForm({ ...form, industry: e.target.value })} />
+                <input list="industry-options" className="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="z.B. Gastronomie, Handwerk..." value={form.industry} onChange={e => setForm({ ...form, industry: e.target.value })} />
+                <datalist id="industry-options">
+                  {industries.map(i => <option key={i} value={i} />)}
+                </datalist>
               </div>
               <div>
                 <label className="text-xs font-medium text-slate-500">Vorname</label>
