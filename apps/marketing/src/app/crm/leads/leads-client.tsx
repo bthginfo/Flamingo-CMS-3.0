@@ -21,11 +21,11 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
   const [isPending, startTransition] = useTransition();
 
   const [form, setForm] = useState({
-    company: '', email: '', status: 'offen' as LeadStatus, location: '', websiteOld: '', flamingoLink: '', contact: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '',
+    company: '', email: '', status: 'offen' as LeadStatus, location: '', websiteOld: '', flamingoLink: '', contact: '', contactFirstName: '', contactLastName: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '',
   });
 
   function openNew() {
-    setForm({ company: '', email: '', status: 'offen', location: '', websiteOld: '', flamingoLink: '', contact: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '' });
+    setForm({ company: '', email: '', status: 'offen', location: '', websiteOld: '', flamingoLink: '', contact: '', contactFirstName: '', contactLastName: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '' });
     setEditId(null);
     setShowForm(true);
   }
@@ -39,6 +39,8 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
       websiteOld: lead.websiteOld || '',
       flamingoLink: lead.flamingoLink || '',
       contact: lead.contact || '',
+      contactFirstName: lead.contactFirstName || '',
+      contactLastName: lead.contactLastName || '',
       anrede: lead.anrede || '',
       responsible: lead.responsible || 'Julius',
       tenantId: lead.tenantId || '',
@@ -85,8 +87,8 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
   const [emailTone, setEmailTone] = useState<'locker' | 'förmlich'>('locker');
 
   function getEmailBody(lead: Lead, variant: 'hat-website' | 'keine-website' | 'demo-seite', tone: 'locker' | 'förmlich') {
-    const firstName = lead.contact?.split(' ')[0] || '';
-    const lastName = lead.contact?.split(' ').slice(1).join(' ') || '';
+    const firstName = lead.contactFirstName || lead.contact?.split(' ')[0] || '';
+    const lastName = lead.contactLastName || lead.contact?.split(' ').slice(1).join(' ') || '';
     const company = lead.company || '';
     const du = tone === 'locker';
     const anrede = lead.anrede || '';
@@ -326,8 +328,12 @@ Flamingo Media`;
                 <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} />
               </div>
               <div>
-                <label className="text-xs font-medium text-slate-500">Ansprechpartner</label>
-                <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.contact} onChange={e => setForm({ ...form, contact: e.target.value })} />
+                <label className="text-xs font-medium text-slate-500">Vorname</label>
+                <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.contactFirstName} onChange={e => setForm({ ...form, contactFirstName: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-500">Nachname</label>
+                <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.contactLastName} onChange={e => setForm({ ...form, contactLastName: e.target.value })} />
               </div>
               <div>
                 <label className="text-xs font-medium text-slate-500">Anrede</label>

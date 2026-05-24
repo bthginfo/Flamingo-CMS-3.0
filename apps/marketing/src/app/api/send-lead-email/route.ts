@@ -2,15 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
 function getTransporter() {
-  const host = process.env.PLATFORM_SMTP_HOST;
-  const user = process.env.PLATFORM_SMTP_USER;
-  const pass = process.env.PLATFORM_SMTP_PASS;
+  const host = process.env.SMTP_HOST || process.env.PLATFORM_SMTP_HOST;
+  const user = process.env.SMTP_USER || process.env.PLATFORM_SMTP_USER;
+  const pass = process.env.SMTP_PASS || process.env.PLATFORM_SMTP_PASS;
   if (!host || !user || !pass) {
-    throw new Error('SMTP-Konfiguration fehlt (PLATFORM_SMTP_HOST/USER/PASS)');
+    throw new Error('SMTP-Konfiguration fehlt (SMTP_HOST/USER/PASS)');
   }
   return nodemailer.createTransport({
     host,
-    port: Number(process.env.PLATFORM_SMTP_PORT) || 587,
+    port: Number(process.env.SMTP_PORT || process.env.PLATFORM_SMTP_PORT) || 587,
     secure: false,
     auth: { user, pass },
   });
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     const transporter = getTransporter();
 
     await transporter.sendMail({
-      from: `"Flamingo Media" <${process.env.PLATFORM_SMTP_FROM || process.env.PLATFORM_SMTP_USER}>`,
+      from: `"Flamingo Media" <${process.env.SMTP_FROM || process.env.SMTP_USER || process.env.PLATFORM_SMTP_FROM || process.env.PLATFORM_SMTP_USER}>`,
       to,
       subject,
       html,
