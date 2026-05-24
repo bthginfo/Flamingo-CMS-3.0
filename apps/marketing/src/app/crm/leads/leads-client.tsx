@@ -91,24 +91,26 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
 wir sind Mario und Julius von Flamingo Media und helfen lokalen Betrieben dabei, schnell und unkompliziert zu einem professionellen Webauftritt zu kommen:
 https://www.flamingomedia.online
 
-Wir sind auf ${company} gestoßen und hatten den Eindruck, dass bei eurem aktuellen Online-Auftritt noch einiges an Potenzial liegt. Gerade für Betriebe wie euren ist die Website oft der erste Kontaktpunkt für neue Kund:innen. Wenn Design, Inhalte, Bilder oder mobile Darstellung nicht sofort überzeugen, gehen leider schnell Anfragen verloren.
+Wir sind auf ${company} gestoßen und hatten den Eindruck, dass bei eurem aktuellen Online-Auftritt noch einiges an Potenzial liegt. Gerade für Betriebe wie euren ist die Website oft der erste Kontaktpunkt für neue Kund:innen. Wenn Design, Inhalte oder die mobile Darstellung nicht sofort überzeugen, gehen schnell Anfragen verloren.
 
-Genau dafür haben wir Flamingo Media gebaut: professionelle Website-Templates für lokale Businesses, die deutlich schneller und günstiger umgesetzt werden können als klassische Agenturprojekte, aber trotzdem hochwertig aussehen und individuell angepasst werden.
+Genau dafür haben wir Flamingo Media gebaut: ein modernes CMS (Content-Management-System) speziell für lokale Betriebe — mit professionellen Templates, die schneller und günstiger stehen als klassische Agenturprojekte, aber trotzdem hochwertig aussehen und komplett individuell angepasst werden.
 
-Kurz gesagt, ihr profitiert von:
+Das Besondere an unserem System:
 
-• schnellem Start mit passenden Branchen-Templates
-• professionellem Design, angepasst an euren Betrieb
-• einfachem CMS, damit ihr Inhalte selbst ändern könnt
-• optional Foto & Video, falls ihr bessere Bilder für euren Auftritt braucht
-• Hosting & Pflege, damit ihr euch nicht um Technik kümmern müsst
-• auf Wunsch auch einem integrierten Onlineshop, direkt in eure Website eingebaut
+• Komplett ohne Code anpassbar — ihr ändert Texte, Bilder, Farben und Layouts einfach per Drag & Drop
+• Bearbeitung vom Smartphone — Inhalte könnt ihr jederzeit und überall direkt vom Handy ändern
+• KI-Unterstützung eingebaut — automatische Textvorschläge, SEO-Optimierung und smarte Bildbearbeitung
+• Integrierter Onlineshop — Produkte verkaufen direkt über eure Website, ohne extra Plattform
+• SEO & Google-Sichtbarkeit — automatisch optimiert, damit neue Kund:innen euch über Google finden
+• Branchen-Templates — speziell auf euren Betriebstyp zugeschnitten (Handwerk, Gastro, Einzelhandel, etc.)
+• Hosting & Pflege inklusive — kein Technik-Stress, alles läuft stabil und schnell
+• optional Foto & Video — professionelles Bildmaterial direkt bei euch vor Ort
 • Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
 
-Wir bieten grob drei Richtungen an: eine schnelle Template-Website, ein individuelles Custom Design oder Website plus Foto-/Video-Produktion. Mehr Infos und Beispiele findet ihr direkt auf unserer Website:
+Mehr Infos, Live-Demos und Beispiele findet ihr auf:
 https://www.flamingomedia.online
 
-Gerne schicken wir euch auch unser kurzes Pitchdeck mit ein paar Beispielen und dem Ablauf.
+Gerne schicken wir euch auch unser kurzes Pitchdeck mit Beispielen und dem Ablauf.
 
 Hättet ihr grundsätzlich Interesse an einem kurzen, unverbindlichen Austausch?
 
@@ -122,21 +124,23 @@ Mario & Julius`;
 wir sind Mario und Julius von Flamingo Media und unterstützen lokale Unternehmen dabei, schnell und unkompliziert einen professionellen Webauftritt aufzubauen:
 https://www.flamingomedia.online
 
-Wir sind auf ${company} aufmerksam geworden und hatten den Eindruck, dass bei Ihrem aktuellen Online-Auftritt noch Potenzial besteht. Gerade für Betriebe wie Ihren ist die Website häufig der erste Kontaktpunkt für neue Kund:innen. Wenn Design, Inhalte, Bilder oder die mobile Darstellung nicht sofort überzeugen, gehen leider schnell Anfragen verloren.
+Wir sind auf ${company} aufmerksam geworden und hatten den Eindruck, dass bei Ihrem aktuellen Online-Auftritt noch Potenzial besteht. Gerade für Betriebe wie Ihren ist die Website häufig der erste Kontaktpunkt für neue Kund:innen. Wenn Design, Inhalte oder die mobile Darstellung nicht sofort überzeugen, gehen schnell Anfragen verloren.
 
-Genau dafür haben wir Flamingo Media entwickelt: professionelle Website-Templates für lokale Unternehmen, die deutlich schneller und günstiger umgesetzt werden können als klassische Agenturprojekte — und trotzdem hochwertig wirken und individuell anpassbar sind.
+Genau dafür haben wir Flamingo Media entwickelt: ein modernes CMS (Content-Management-System) speziell für lokale Unternehmen — mit professionellen Templates, die schneller und günstiger umgesetzt werden als klassische Agenturprojekte, und trotzdem hochwertig wirken und individuell anpassbar sind.
 
-Sie profitieren von:
+Das Besondere an unserem System:
 
-• schnellem Start mit passenden Branchen-Templates
-• professionellem Design, angepasst an Ihr Unternehmen
-• einfachem CMS, damit Sie Inhalte eigenständig pflegen können
-• optional Foto & Video, falls Sie besseres Bildmaterial benötigen
-• Hosting & Pflege, damit Sie sich nicht um Technik kümmern müssen
-• auf Wunsch einem integrierten Onlineshop, direkt in Ihre Website eingebaut
+• Komplett ohne Code anpassbar — Texte, Bilder, Farben und Layouts ändern Sie einfach per Drag & Drop
+• Bearbeitung vom Smartphone — Inhalte können Sie jederzeit und überall direkt vom Handy ändern
+• KI-Unterstützung eingebaut — automatische Textvorschläge, SEO-Optimierung und smarte Bildbearbeitung
+• Integrierter Onlineshop — Produkte verkaufen direkt über Ihre Website, ohne extra Plattform
+• SEO & Google-Sichtbarkeit — automatisch optimiert, damit neue Kund:innen Sie über Google finden
+• Branchen-Templates — speziell auf Ihren Betriebstyp zugeschnitten (Handwerk, Gastro, Einzelhandel, etc.)
+• Hosting & Pflege inklusive — kein Technik-Aufwand, alles läuft stabil und schnell
+• optional Foto & Video — professionelles Bildmaterial direkt bei Ihnen vor Ort
 • Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
 
-Wir bieten drei Richtungen an: eine schnelle Template-Website, ein individuelles Custom Design oder Website plus Foto-/Video-Produktion. Mehr Informationen und Beispiele finden Sie direkt auf unserer Website:
+Weitere Informationen, Live-Demos und Beispiele finden Sie auf:
 https://www.flamingomedia.online
 
 Gerne senden wir Ihnen auch unser kurzes Pitchdeck mit Beispielen und dem Ablauf.
@@ -161,19 +165,21 @@ Eine eigene Website bedeutet für euch:
 • professioneller Ersteindruck, der Vertrauen schafft
 • weniger Rückfragen, weil alle wichtigen Infos online stehen
 
-Genau dafür haben wir Flamingo Media gebaut: professionelle Website-Templates für lokale Businesses, die deutlich schneller und günstiger umgesetzt werden können als klassische Agenturprojekte — in vielen Fällen ist eure Seite innerhalb von 7–10 Tagen online.
+Genau dafür haben wir Flamingo Media gebaut: ein modernes CMS speziell für lokale Betriebe — in vielen Fällen ist eure Seite innerhalb von 7–10 Tagen online.
 
-Kurz gesagt, ihr profitiert von:
+Das Besondere — ihr könnt alles selbst steuern, ohne Technik-Kenntnisse:
 
-• schnellem Start mit passenden Branchen-Templates
-• professionellem Design, angepasst an euren Betrieb
-• einfachem CMS, damit ihr Inhalte selbst ändern könnt
-• optional Foto & Video, falls ihr Bilder für den Auftritt braucht
+• Komplett ohne Code anpassbar — Texte, Bilder, Farben und Layouts per Drag & Drop ändern
+• Bearbeitung vom Smartphone — Inhalte jederzeit und überall direkt vom Handy ändern
+• KI-Unterstützung — automatische Textvorschläge, SEO-Optimierung und smarte Bildbearbeitung
+• Integrierter Onlineshop — Produkte verkaufen direkt über die Website, ohne extra Plattform
+• SEO & Google-Sichtbarkeit — automatisch optimiert, damit neue Kund:innen euch finden
+• Branchen-Templates — speziell auf euren Betriebstyp zugeschnitten
 • Hosting & Pflege inklusive — kein Technik-Stress
-• auf Wunsch einem integrierten Onlineshop
+• optional Foto & Video — professionelles Bildmaterial direkt bei euch vor Ort
 • Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
 
-Mehr Infos und Beispiele findet ihr direkt auf unserer Website:
+Mehr Infos, Live-Demos und Beispiele findet ihr auf:
 https://www.flamingomedia.online
 
 Hättet ihr grundsätzlich Interesse an einem kurzen, unverbindlichen Austausch? Wir zeigen euch gerne, wie schnell und günstig so ein Auftritt stehen kann.
@@ -196,19 +202,21 @@ Eine eigene Website bietet Ihnen:
 • einen professionellen Ersteindruck, der Vertrauen schafft
 • weniger Rückfragen, weil alle wichtigen Informationen online stehen
 
-Genau dafür haben wir Flamingo Media entwickelt: professionelle Website-Templates für lokale Unternehmen, die deutlich schneller und günstiger umgesetzt werden können als klassische Agenturprojekte — in vielen Fällen ist Ihre Seite innerhalb von 7–10 Tagen online.
+Genau dafür haben wir Flamingo Media entwickelt: ein modernes CMS speziell für lokale Unternehmen — in vielen Fällen ist Ihre Seite innerhalb von 7–10 Tagen online.
 
-Sie profitieren von:
+Das Besondere — Sie steuern alles selbst, ohne Technik-Kenntnisse:
 
-• schnellem Start mit passenden Branchen-Templates
-• professionellem Design, angepasst an Ihr Unternehmen
-• einfachem CMS, damit Sie Inhalte eigenständig pflegen können
-• optional Foto & Video, falls Sie Bildmaterial benötigen
+• Komplett ohne Code anpassbar — Texte, Bilder, Farben und Layouts per Drag & Drop ändern
+• Bearbeitung vom Smartphone — Inhalte jederzeit und überall direkt vom Handy ändern
+• KI-Unterstützung — automatische Textvorschläge, SEO-Optimierung und smarte Bildbearbeitung
+• Integrierter Onlineshop — Produkte verkaufen direkt über die Website, ohne extra Plattform
+• SEO & Google-Sichtbarkeit — automatisch optimiert, damit neue Kund:innen Sie finden
+• Branchen-Templates — speziell auf Ihren Betriebstyp zugeschnitten
 • Hosting & Pflege inklusive — kein Technik-Aufwand
-• auf Wunsch einem integrierten Onlineshop
+• optional Foto & Video — professionelles Bildmaterial direkt bei Ihnen vor Ort
 • Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
 
-Weitere Informationen und Beispiele finden Sie auf unserer Website:
+Weitere Informationen, Live-Demos und Beispiele finden Sie auf:
 https://www.flamingomedia.online
 
 Hätten Sie grundsätzlich Interesse an einem kurzen, unverbindlichen Gespräch? Wir zeigen Ihnen gerne, wie schnell und unkompliziert ein professioneller Webauftritt entstehen kann.
