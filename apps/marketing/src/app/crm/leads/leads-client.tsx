@@ -99,7 +99,6 @@ Das Besondere an unserem System:
 
 • Komplett ohne Code anpassbar — ihr ändert Texte, Bilder, Farben und Layouts einfach per Drag & Drop
 • Bearbeitung vom Smartphone — Inhalte könnt ihr jederzeit und überall direkt vom Handy ändern
-• KI-Unterstützung eingebaut — automatische Textvorschläge, SEO-Optimierung und smarte Bildbearbeitung
 • Integrierter Onlineshop — Produkte verkaufen direkt über eure Website, ohne extra Plattform
 • SEO & Google-Sichtbarkeit — automatisch optimiert, damit neue Kund:innen euch über Google finden
 • Branchen-Templates — speziell auf euren Betriebstyp zugeschnitten (Handwerk, Gastro, Einzelhandel, etc.)
@@ -132,7 +131,6 @@ Das Besondere an unserem System:
 
 • Komplett ohne Code anpassbar — Texte, Bilder, Farben und Layouts ändern Sie einfach per Drag & Drop
 • Bearbeitung vom Smartphone — Inhalte können Sie jederzeit und überall direkt vom Handy ändern
-• KI-Unterstützung eingebaut — automatische Textvorschläge, SEO-Optimierung und smarte Bildbearbeitung
 • Integrierter Onlineshop — Produkte verkaufen direkt über Ihre Website, ohne extra Plattform
 • SEO & Google-Sichtbarkeit — automatisch optimiert, damit neue Kund:innen Sie über Google finden
 • Branchen-Templates — speziell auf Ihren Betriebstyp zugeschnitten (Handwerk, Gastro, Einzelhandel, etc.)
@@ -171,7 +169,6 @@ Das Besondere — ihr könnt alles selbst steuern, ohne Technik-Kenntnisse:
 
 • Komplett ohne Code anpassbar — Texte, Bilder, Farben und Layouts per Drag & Drop ändern
 • Bearbeitung vom Smartphone — Inhalte jederzeit und überall direkt vom Handy ändern
-• KI-Unterstützung — automatische Textvorschläge, SEO-Optimierung und smarte Bildbearbeitung
 • Integrierter Onlineshop — Produkte verkaufen direkt über die Website, ohne extra Plattform
 • SEO & Google-Sichtbarkeit — automatisch optimiert, damit neue Kund:innen euch finden
 • Branchen-Templates — speziell auf euren Betriebstyp zugeschnitten
@@ -208,7 +205,6 @@ Das Besondere — Sie steuern alles selbst, ohne Technik-Kenntnisse:
 
 • Komplett ohne Code anpassbar — Texte, Bilder, Farben und Layouts per Drag & Drop ändern
 • Bearbeitung vom Smartphone — Inhalte jederzeit und überall direkt vom Handy ändern
-• KI-Unterstützung — automatische Textvorschläge, SEO-Optimierung und smarte Bildbearbeitung
 • Integrierter Onlineshop — Produkte verkaufen direkt über die Website, ohne extra Plattform
 • SEO & Google-Sichtbarkeit — automatisch optimiert, damit neue Kund:innen Sie finden
 • Branchen-Templates — speziell auf Ihren Betriebstyp zugeschnitten
