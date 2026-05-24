@@ -77,11 +77,16 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
   // Email modal state
   const [emailModal, setEmailModal] = useState<{ to: string; subject: string; body: string; leadId: string } | null>(null);
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [emailVariant, setEmailVariant] = useState<'hat-website' | 'keine-website'>('hat-website');
+  const [emailTone, setEmailTone] = useState<'locker' | 'förmlich'>('locker');
 
-  function openEmailModal(lead: Lead) {
+  function getEmailBody(lead: Lead, variant: 'hat-website' | 'keine-website', tone: 'locker' | 'förmlich') {
     const firstName = lead.contact?.split(' ')[0] || 'Team';
     const company = lead.company || '';
-    const defaultBody = `Hallo ${firstName},
+    const du = tone === 'locker';
+
+    if (variant === 'hat-website' && du) {
+      return `Hallo ${firstName},
 
 wir sind Mario und Julius von Flamingo Media und helfen lokalen Betrieben dabei, schnell und unkompliziert zu einem professionellen Webauftritt zu kommen:
 https://www.flamingomedia.online
@@ -109,11 +114,116 @@ Hättet ihr grundsätzlich Interesse an einem kurzen, unverbindlichen Austausch?
 
 Viele Grüße
 Mario & Julius`;
+    }
 
+    if (variant === 'hat-website' && !du) {
+      return `Sehr geehrte/r ${firstName},
+
+wir sind Mario und Julius von Flamingo Media und unterstützen lokale Unternehmen dabei, schnell und unkompliziert einen professionellen Webauftritt aufzubauen:
+https://www.flamingomedia.online
+
+Wir sind auf ${company} aufmerksam geworden und hatten den Eindruck, dass bei Ihrem aktuellen Online-Auftritt noch Potenzial besteht. Gerade für Betriebe wie Ihren ist die Website häufig der erste Kontaktpunkt für neue Kund:innen. Wenn Design, Inhalte, Bilder oder die mobile Darstellung nicht sofort überzeugen, gehen leider schnell Anfragen verloren.
+
+Genau dafür haben wir Flamingo Media entwickelt: professionelle Website-Templates für lokale Unternehmen, die deutlich schneller und günstiger umgesetzt werden können als klassische Agenturprojekte — und trotzdem hochwertig wirken und individuell anpassbar sind.
+
+Sie profitieren von:
+
+• schnellem Start mit passenden Branchen-Templates
+• professionellem Design, angepasst an Ihr Unternehmen
+• einfachem CMS, damit Sie Inhalte eigenständig pflegen können
+• optional Foto & Video, falls Sie besseres Bildmaterial benötigen
+• Hosting & Pflege, damit Sie sich nicht um Technik kümmern müssen
+• auf Wunsch einem integrierten Onlineshop, direkt in Ihre Website eingebaut
+• Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
+
+Wir bieten drei Richtungen an: eine schnelle Template-Website, ein individuelles Custom Design oder Website plus Foto-/Video-Produktion. Mehr Informationen und Beispiele finden Sie direkt auf unserer Website:
+https://www.flamingomedia.online
+
+Gerne senden wir Ihnen auch unser kurzes Pitchdeck mit Beispielen und dem Ablauf.
+
+Hätten Sie grundsätzlich Interesse an einem kurzen, unverbindlichen Gespräch?
+
+Mit freundlichen Grüßen
+Mario & Julius`;
+    }
+
+    if (variant === 'keine-website' && du) {
+      return `Hallo ${firstName},
+
+wir sind Mario und Julius von Flamingo Media und helfen lokalen Betrieben dabei, schnell und unkompliziert einen professionellen Webauftritt zu bekommen:
+https://www.flamingomedia.online
+
+Wir sind auf ${company} aufmerksam geworden — und uns ist aufgefallen, dass ihr aktuell noch keine eigene Website habt. Das ist nicht ungewöhnlich, aber gerade heute ist ein professioneller Online-Auftritt oft der entscheidende Faktor, ob Kund:innen euch finden und kontaktieren oder zur Konkurrenz gehen.
+
+Eine eigene Website bedeutet für euch:
+• rund um die Uhr sichtbar für neue Kund:innen (nicht nur über Social Media)
+• sofort bei Google auffindbar mit Leistungen, Öffnungszeiten und Kontakt
+• professioneller Ersteindruck, der Vertrauen schafft
+• weniger Rückfragen, weil alle wichtigen Infos online stehen
+
+Genau dafür haben wir Flamingo Media gebaut: professionelle Website-Templates für lokale Businesses, die deutlich schneller und günstiger umgesetzt werden können als klassische Agenturprojekte — in vielen Fällen ist eure Seite innerhalb von 7–10 Tagen online.
+
+Kurz gesagt, ihr profitiert von:
+
+• schnellem Start mit passenden Branchen-Templates
+• professionellem Design, angepasst an euren Betrieb
+• einfachem CMS, damit ihr Inhalte selbst ändern könnt
+• optional Foto & Video, falls ihr Bilder für den Auftritt braucht
+• Hosting & Pflege inklusive — kein Technik-Stress
+• auf Wunsch einem integrierten Onlineshop
+• Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
+
+Mehr Infos und Beispiele findet ihr direkt auf unserer Website:
+https://www.flamingomedia.online
+
+Hättet ihr grundsätzlich Interesse an einem kurzen, unverbindlichen Austausch? Wir zeigen euch gerne, wie schnell und günstig so ein Auftritt stehen kann.
+
+Viele Grüße
+Mario & Julius`;
+    }
+
+    // keine-website + förmlich
+    return `Sehr geehrte/r ${firstName},
+
+wir sind Mario und Julius von Flamingo Media und unterstützen lokale Unternehmen dabei, schnell und professionell online sichtbar zu werden:
+https://www.flamingomedia.online
+
+Wir sind auf ${company} aufmerksam geworden — und uns ist aufgefallen, dass Sie aktuell noch über keine eigene Website verfügen. Gerade heute ist ein professioneller Online-Auftritt häufig der entscheidende Faktor, ob neue Kund:innen Sie finden und kontaktieren — oder zur Konkurrenz gehen.
+
+Eine eigene Website bietet Ihnen:
+• Sichtbarkeit rund um die Uhr — nicht nur über Social Media
+• Auffindbarkeit bei Google mit Leistungen, Öffnungszeiten und Kontakt
+• einen professionellen Ersteindruck, der Vertrauen schafft
+• weniger Rückfragen, weil alle wichtigen Informationen online stehen
+
+Genau dafür haben wir Flamingo Media entwickelt: professionelle Website-Templates für lokale Unternehmen, die deutlich schneller und günstiger umgesetzt werden können als klassische Agenturprojekte — in vielen Fällen ist Ihre Seite innerhalb von 7–10 Tagen online.
+
+Sie profitieren von:
+
+• schnellem Start mit passenden Branchen-Templates
+• professionellem Design, angepasst an Ihr Unternehmen
+• einfachem CMS, damit Sie Inhalte eigenständig pflegen können
+• optional Foto & Video, falls Sie Bildmaterial benötigen
+• Hosting & Pflege inklusive — kein Technik-Aufwand
+• auf Wunsch einem integrierten Onlineshop
+• Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
+
+Weitere Informationen und Beispiele finden Sie auf unserer Website:
+https://www.flamingomedia.online
+
+Hätten Sie grundsätzlich Interesse an einem kurzen, unverbindlichen Gespräch? Wir zeigen Ihnen gerne, wie schnell und unkompliziert ein professioneller Webauftritt entstehen kann.
+
+Mit freundlichen Grüßen
+Mario & Julius`;
+  }
+
+  function openEmailModal(lead: Lead) {
+    const company = lead.company || '';
+    const body = getEmailBody(lead, emailVariant, emailTone);
     setEmailModal({
       to: lead.email || '',
       subject: `Professioneller Webauftritt für ${company}`,
-      body: defaultBody,
+      body,
       leadId: lead.id,
     });
   }
@@ -217,6 +327,34 @@ Mario & Julius`;
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={() => setEmailModal(null)}>
           <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-2xl p-5 sm:p-6 space-y-4 max-h-[95vh] sm:max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold flex items-center gap-2"><Mail size={18} className="text-indigo-500" /> E-Mail an Lead</h2>
+            <div className="flex flex-wrap gap-3">
+              <div className="flex items-center gap-1.5 text-xs">
+                <span className="text-slate-500">Typ:</span>
+                <button
+                  type="button"
+                  onClick={() => { setEmailVariant('hat-website'); const lead = leads.find(l => l.id === emailModal.leadId); if (lead) setEmailModal({ ...emailModal, body: getEmailBody(lead, 'hat-website', emailTone) }); }}
+                  className={`px-2.5 py-1 rounded-full font-medium transition ${emailVariant === 'hat-website' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                >Hat Website</button>
+                <button
+                  type="button"
+                  onClick={() => { setEmailVariant('keine-website'); const lead = leads.find(l => l.id === emailModal.leadId); if (lead) setEmailModal({ ...emailModal, body: getEmailBody(lead, 'keine-website', emailTone) }); }}
+                  className={`px-2.5 py-1 rounded-full font-medium transition ${emailVariant === 'keine-website' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                >Keine Website</button>
+              </div>
+              <div className="flex items-center gap-1.5 text-xs">
+                <span className="text-slate-500">Ton:</span>
+                <button
+                  type="button"
+                  onClick={() => { setEmailTone('locker'); const lead = leads.find(l => l.id === emailModal.leadId); if (lead) setEmailModal({ ...emailModal, body: getEmailBody(lead, emailVariant, 'locker') }); }}
+                  className={`px-2.5 py-1 rounded-full font-medium transition ${emailTone === 'locker' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                >Locker (Du)</button>
+                <button
+                  type="button"
+                  onClick={() => { setEmailTone('förmlich'); const lead = leads.find(l => l.id === emailModal.leadId); if (lead) setEmailModal({ ...emailModal, body: getEmailBody(lead, emailVariant, 'förmlich') }); }}
+                  className={`px-2.5 py-1 rounded-full font-medium transition ${emailTone === 'förmlich' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                >Förmlich (Sie)</button>
+              </div>
+            </div>
             <div className="space-y-3">
               <div>
                 <label className="text-xs font-medium text-slate-500">Empfänger</label>
