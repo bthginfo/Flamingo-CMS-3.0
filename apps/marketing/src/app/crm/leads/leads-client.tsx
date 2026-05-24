@@ -108,7 +108,7 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
     if (variant === 'hat-website' && du) {
       return `${greeting},
 
-wir sind Mario & Julius von Flamingo Media — wir bauen Websites für lokale Betriebe, die nicht nur gut aussehen, sondern die man auch komplett selbst steuern kann, ohne Technik-Kenntnisse.
+wir sind Mario & Julius von Flamingo Media (https://www.flamingomedia.online) — wir bauen Websites für lokale Betriebe, die nicht nur gut aussehen, sondern die man auch komplett selbst steuern kann, ohne Technik-Kenntnisse.
 
 Wir haben uns den Online-Auftritt von ${company} angeschaut und sehen da noch einiges an Potenzial. Gerade auf dem Handy und bei Google-Sichtbarkeit geht aktuell einiges verloren — und genau das sind die Stellen, wo neue Kund:innen abspringen.
 
@@ -124,7 +124,7 @@ Was wir anders machen als klassische Agenturen:
 → Hosting, Pflege & Updates komplett inklusive
 
 Am besten schaut ihr euch einfach mal unsere Live-Demos an — da seht ihr direkt, wie das Ganze aussieht und funktioniert:
-https://www.flamingomedia.online
+https://www.flamingomedia.online/templates
 
 Falls euch gefällt was ihr seht, können wir gerne kurz quatschen, wie so ein Projekt für ${company} aussehen würde.
 
@@ -136,7 +136,7 @@ Flamingo Media`;
     if (variant === 'hat-website' && !du) {
       return `${greeting},
 
-wir sind Mario & Julius von Flamingo Media — wir erstellen Websites für lokale Unternehmen, die nicht nur professionell aussehen, sondern die Sie auch komplett eigenständig verwalten können, ohne technisches Vorwissen.
+wir sind Mario & Julius von Flamingo Media (https://www.flamingomedia.online) — wir erstellen Websites für lokale Unternehmen, die nicht nur professionell aussehen, sondern die Sie auch komplett eigenständig verwalten können, ohne technisches Vorwissen.
 
 Wir haben uns den Online-Auftritt von ${company} angesehen und sehen dort noch Potenzial. Gerade bei der mobilen Darstellung und Google-Sichtbarkeit gehen aktuell Anfragen verloren — und das sind genau die Stellen, an denen neue Kund:innen abspringen.
 
@@ -151,8 +151,8 @@ Was uns von klassischen Agenturen unterscheidet:
 → Google-optimiert ab Tag 1 — damit neue Kund:innen Sie finden
 → Hosting, Pflege & Updates komplett inklusive
 
-Am besten verschaffen Sie sich selbst einen Eindruck — auf unserer Website finden Sie Live-Demos und Beispiele aus verschiedenen Branchen:
-https://www.flamingomedia.online
+Am besten verschaffen Sie sich selbst einen Eindruck — hier finden Sie Live-Demos und Beispiele aus verschiedenen Branchen:
+https://www.flamingomedia.online/templates
 
 Falls Ihnen gefällt was Sie sehen, können wir gerne kurz besprechen, wie ein Projekt für ${company} aussehen würde.
 
@@ -164,7 +164,7 @@ Flamingo Media`;
     if (variant === 'keine-website' && du) {
       return `${greeting},
 
-wir sind Mario & Julius von Flamingo Media — wir helfen lokalen Betrieben dabei, schnell und unkompliziert eine professionelle Website zu bekommen, die sie komplett selbst verwalten können.
+wir sind Mario & Julius von Flamingo Media (https://www.flamingomedia.online) — wir helfen lokalen Betrieben dabei, schnell und unkompliziert eine professionelle Website zu bekommen, die sie komplett selbst verwalten können.
 
 Wir sind auf ${company} aufmerksam geworden und haben gesehen, dass ihr aktuell noch keinen eigenen Webauftritt habt. Verständlich — Website-Projekte waren bisher teuer, langwierig und man war immer auf Agenturen angewiesen. Aber genau das haben wir geändert.
 
@@ -179,7 +179,7 @@ Was ihr bei uns bekommt:
 → Hosting, Pflege & Updates komplett inklusive — null Technik-Aufwand
 
 Am besten schaut ihr euch direkt unsere Live-Demos an — da seht ihr in 2 Minuten, wie das Ganze aussieht und wie einfach es funktioniert:
-https://www.flamingomedia.online
+https://www.flamingomedia.online/templates
 
 Falls euch gefällt was ihr seht, können wir gerne kurz quatschen, wie so ein Projekt bei euch aussehen würde.
 
@@ -240,7 +240,7 @@ Flamingo Media`;
     // keine-website + förmlich
     return `${greeting},
 
-wir sind Mario & Julius von Flamingo Media — wir helfen lokalen Unternehmen dabei, schnell und unkompliziert eine professionelle Website aufzubauen, die sie komplett eigenständig verwalten können.
+wir sind Mario & Julius von Flamingo Media (https://www.flamingomedia.online) — wir helfen lokalen Unternehmen dabei, schnell und unkompliziert eine professionelle Website aufzubauen, die sie komplett eigenständig verwalten können.
 
 Wir sind auf ${company} aufmerksam geworden und haben festgestellt, dass Sie aktuell noch über keinen eigenen Webauftritt verfügen. Verständlich — Website-Projekte waren bisher teuer, langwierig und man war auf Agenturen angewiesen. Genau das haben wir geändert.
 
@@ -254,8 +254,8 @@ Was Sie bei uns erhalten:
 → Integrierter Onlineshop möglich — falls Sie Produkte verkaufen möchten
 → Hosting, Pflege & Updates komplett inklusive — kein Technik-Aufwand
 
-Am besten verschaffen Sie sich selbst einen Eindruck — auf unserer Website finden Sie Live-Demos und Beispiele aus verschiedenen Branchen:
-https://www.flamingomedia.online
+Am besten verschaffen Sie sich selbst einen Eindruck — hier finden Sie Live-Demos und Beispiele aus verschiedenen Branchen:
+https://www.flamingomedia.online/templates
 
 Falls Ihnen gefällt was Sie sehen, können wir gerne kurz besprechen, wie ein Projekt für ${company} aussehen würde.
 
