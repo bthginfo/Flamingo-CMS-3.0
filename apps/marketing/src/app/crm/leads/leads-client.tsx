@@ -490,7 +490,7 @@ Flamingo Media`;
                     <option value="abgelehnt">Abgelehnt</option>
                   </select>
                 </td>
-                <td className="px-4 py-3 text-slate-600">{lead.contact}</td>
+                <td className="px-4 py-3 text-slate-600">{[lead.anrede, lead.contactFirstName, lead.contactLastName].filter(Boolean).join(' ') || lead.contact}</td>
                 <td className="px-4 py-3 text-slate-600">{lead.responsible}</td>
                 <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
                   <div className="flex items-center gap-2">
@@ -533,7 +533,7 @@ Flamingo Media`;
               <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
                 {lead.location && <span>{lead.location}</span>}
                 {lead.email && <span>{lead.email}</span>}
-                {lead.contact && <span>{lead.contact}</span>}
+                {(lead.contactFirstName || lead.contactLastName || lead.contact) && <span>{[lead.anrede, lead.contactFirstName, lead.contactLastName].filter(Boolean).join(' ') || lead.contact}</span>}
               </div>
               <div className="flex items-center justify-between pt-1">
                 <span className="text-xs text-slate-400">{lead.responsible}</span>
