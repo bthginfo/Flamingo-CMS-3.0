@@ -180,8 +180,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
       return { ...sec, data: newData ?? sec.data };
     });
     preview.sendLiveData({ sections: liveSections, industry });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [preview.isOpen, industry]);
+  }, [preview.isOpen, preview.sendLiveData, industry]);
 
   // Re-send on sections array change (add/remove/reorder/toggle)
   useEffect(() => { sendPreviewData(); }, [sections, sendPreviewData]);

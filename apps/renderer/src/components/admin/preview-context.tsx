@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useMemo } from 'react';
 
 type PreviewContextValue = {
   isOpen: boolean;
@@ -53,8 +53,10 @@ export function PreviewProvider({ children, tenantId }: { children: React.ReactN
     );
   }, []);
 
+  const value = useMemo(() => ({ isOpen, url, refreshKey, open, close, refresh, setUrl, sendLiveData, iframeRef }), [isOpen, url, refreshKey, open, close, refresh, setUrl, sendLiveData]);
+
   return (
-    <PreviewContext.Provider value={{ isOpen, url, refreshKey, open, close, refresh, setUrl, sendLiveData, iframeRef }}>
+    <PreviewContext.Provider value={value}>
       {children}
     </PreviewContext.Provider>
   );

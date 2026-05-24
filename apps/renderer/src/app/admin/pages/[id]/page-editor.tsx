@@ -192,16 +192,19 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   );
 
   // Live preview sync
+  const sectionsRef = useRef(sections);
+  sectionsRef.current = sections;
+
   const sendPreviewData = useCallback(() => {
     if (!preview.isOpen) return;
-    const liveSections = sections.map(sec => {
+    const liveSections = sectionsRef.current.map(sec => {
       const newData = pendingChanges.current.get(sec.id);
       return { ...sec, data: newData ?? sec.data };
     });
     preview.sendLiveData({ sections: liveSections, industry, styleVariant });
-  }, [sections, preview, industry, styleVariant]);
+  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant]);
 
-  useEffect(() => { sendPreviewData(); }, [sendPreviewData]);
+  useEffect(() => { sendPreviewData(); }, [sections, sendPreviewData]);
 
   useEffect(() => {
     function onMsg(e: MessageEvent) {
@@ -261,13 +264,13 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     setHasDirty(true);
     setSaved(false);
     if (preview.isOpen) {
-      const liveSections = sections.map(sec => {
+      const liveSections = sectionsRef.current.map(sec => {
         const newData = sec.id === sectionId ? data : pendingChanges.current.get(sec.id);
         return { ...sec, data: newData ?? sec.data };
       });
       preview.sendLiveData({ sections: liveSections, industry, styleVariant });
     }
-  }, [sections, preview, industry, styleVariant]);
+  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant]);
 
   async function handleSaveAll() {
     setSaving(true);
