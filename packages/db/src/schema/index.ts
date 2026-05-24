@@ -442,8 +442,10 @@ export const leads = pgTable('leads', {
   websiteOld: varchar('website_old', { length: 500 }),
   flamingoLink: varchar('flamingo_link', { length: 500 }),
   contact: varchar('contact', { length: 255 }),
+  anrede: varchar('anrede', { length: 10 }),
   responsible: varchar('responsible', { length: 100 }),
   tenantId: uuid('tenant_id').references(() => tenants.id, { onDelete: 'set null' }),
+  adminPassword: varchar('admin_password', { length: 100 }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

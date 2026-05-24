@@ -21,11 +21,11 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
   const [isPending, startTransition] = useTransition();
 
   const [form, setForm] = useState({
-    company: '', email: '', status: 'offen' as LeadStatus, location: '', websiteOld: '', flamingoLink: '', contact: '', responsible: 'Julius', tenantId: '',
+    company: '', email: '', status: 'offen' as LeadStatus, location: '', websiteOld: '', flamingoLink: '', contact: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '',
   });
 
   function openNew() {
-    setForm({ company: '', email: '', status: 'offen', location: '', websiteOld: '', flamingoLink: '', contact: '', responsible: 'Julius', tenantId: '' });
+    setForm({ company: '', email: '', status: 'offen', location: '', websiteOld: '', flamingoLink: '', contact: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '' });
     setEditId(null);
     setShowForm(true);
   }
@@ -39,8 +39,10 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
       websiteOld: lead.websiteOld || '',
       flamingoLink: lead.flamingoLink || '',
       contact: lead.contact || '',
+      anrede: lead.anrede || '',
       responsible: lead.responsible || 'Julius',
       tenantId: lead.tenantId || '',
+      adminPassword: lead.adminPassword || '',
     });
     setEditId(lead.id);
     setShowForm(true);
@@ -87,7 +89,19 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
     const lastName = lead.contact?.split(' ').slice(1).join(' ') || '';
     const company = lead.company || '';
     const du = tone === 'locker';
-    const greeting = du ? `Hallo ${firstName || 'zusammen'}` : `Sehr geehrte/r ${lastName ? `Herr/Frau ${lastName}` : firstName || 'Damen und Herren'}`;
+    const anrede = lead.anrede || '';
+    let greeting: string;
+    if (du) {
+      greeting = firstName ? `Hallo ${firstName}` : 'Hallo zusammen';
+    } else {
+      if (lastName && anrede) {
+        greeting = `Sehr geehrte${anrede === 'Frau' ? '' : 'r'} ${anrede} ${lastName}`;
+      } else if (lastName) {
+        greeting = `Sehr geehrte/r Herr/Frau ${lastName}`;
+      } else {
+        greeting = 'Sehr geehrte Damen und Herren';
+      }
+    }
 
     if (variant === 'hat-website' && du) {
       return `${greeting},
@@ -176,7 +190,7 @@ Flamingo Media`;
       const linkedTenant = leadTenants.find(t => t.id === lead.tenantId);
       const siteUrl = linkedTenant ? `https://${linkedTenant.slug}.flamingo-cms.app` : '[LINK ZUR SEITE]';
       const adminUrl = linkedTenant ? `https://${linkedTenant.slug}.flamingo-cms.app/admin` : '[LINK ZUM ADMIN]';
-      const pw = 'flamingo2025';
+      const pw = lead.adminPassword || 'flamingo2025';
 
       if (du) {
         return `${greeting},
@@ -314,6 +328,18 @@ Flamingo Media`;
               <div>
                 <label className="text-xs font-medium text-slate-500">Ansprechpartner</label>
                 <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.contact} onChange={e => setForm({ ...form, contact: e.target.value })} />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-500">Anrede</label>
+                <select className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.anrede} onChange={e => setForm({ ...form, anrede: e.target.value })}>
+                  <option value="">—</option>
+                  <option value="Herr">Herr</option>
+                  <option value="Frau">Frau</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-slate-500">Admin-Passwort (Lead)</label>
+                <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.adminPassword} onChange={e => setForm({ ...form, adminPassword: e.target.value })} placeholder="z.B. flamingo2025" />
               </div>
               <div>
                 <label className="text-xs font-medium text-slate-500">Webseite (alt)</label>
