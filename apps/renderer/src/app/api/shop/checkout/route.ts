@@ -11,13 +11,24 @@ export async function POST(req: NextRequest) {
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
 
   const body = await req.json();
-  const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingMethod: shippingMethodId, couponCode } = body;
+  const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingMethod: shippingMethodId, couponCode, idempotencyKey } = body;
 
   if (!name || !email || !items?.length) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
   const db = getDb();
+
+  // Idempotency: reject duplicate submissions
+  if (idempotencyKey) {
+    const [existing] = await db.select({ id: orders.id, orderNumber: orders.orderNumber })
+      .from(orders)
+      .where(and(eq(orders.tenantId, tenantId), eq(orders.idempotencyKey, idempotencyKey)))
+      .limit(1);
+    if (existing) {
+      return NextResponse.json({ success: true, orderNumber: existing.orderNumber, orderId: existing.id, duplicate: true });
+    }
+  }
 
   // Get shop settings for order number
   const [settings] = await db.select().from(shopSettings).where(eq(shopSettings.tenantId, tenantId)).limit(1);
@@ -35,6 +46,8 @@ export async function POST(req: NextRequest) {
 
     let priceCents = product.priceCents;
     let variantName: string | undefined;
+    let availableStock = product.stock;
+    let trackStock = product.trackStock;
 
     if (item.variantId) {
       const [variant] = await db.select().from(productVariants)
@@ -43,10 +56,23 @@ export async function POST(req: NextRequest) {
       if (variant) {
         priceCents = variant.priceCents ?? product.priceCents;
         variantName = variant.name;
+        availableStock = variant.stock ?? product.stock;
+        trackStock = true; // variants always track
       }
     }
 
     const quantity = Math.max(1, Math.min(item.quantity, 100));
+
+    // Stock validation: reject if insufficient stock
+    if (trackStock && availableStock < quantity) {
+      return NextResponse.json({
+        error: `Nicht genügend Bestand für "${product.title}"${variantName ? ` (${variantName})` : ''}. Verfügbar: ${availableStock}`,
+        outOfStock: true,
+        productId: product.id,
+        available: availableStock,
+      }, { status: 400 });
+    }
+
     orderItems.push({
       productId: product.id,
       variantId: item.variantId || undefined,
@@ -81,6 +107,7 @@ export async function POST(req: NextRequest) {
 
   // Server-side discount calculation (never trust client discount)
   let discountCents = 0;
+  let appliedCouponId: string | null = null;
   if (couponCode) {
     const [coupon] = await db.select().from(coupons)
       .where(and(eq(coupons.tenantId, tenantId), eq(coupons.code, couponCode.toUpperCase()), eq(coupons.active, true)))
@@ -96,7 +123,16 @@ export async function POST(req: NextRequest) {
         } else {
           discountCents = coupon.value;
         }
-        await db.update(coupons).set({ usedCount: coupon.usedCount + 1 }).where(eq(coupons.id, coupon.id));
+        // Atomic increment with max-uses guard (prevents race condition)
+        const result = await db.execute(
+          sql`UPDATE coupons SET used_count = used_count + 1 WHERE id = ${coupon.id} AND (max_uses IS NULL OR used_count < max_uses) RETURNING id`
+        );
+        if (!result.rows?.length) {
+          // Race: coupon was maxed out between check and increment
+          discountCents = 0;
+        } else {
+          appliedCouponId = coupon.id;
+        }
       }
     }
   }
@@ -125,6 +161,7 @@ export async function POST(req: NextRequest) {
     paymentMethod,
     couponCode: couponCode || null,
     customerNotes: customerNotes || null,
+    idempotencyKey: idempotencyKey || null,
   }).returning({ id: orders.id });
 
   // Increment order number
@@ -221,7 +258,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, orderNumber, orderId: order.id, stripeUrl: session.url });
     } catch (e: any) {
       console.error('[Checkout] Stripe session error:', e);
-      return NextResponse.json({ success: true, orderNumber, orderId: order.id, stripeError: e.message });
+      // Cancel the order since payment couldn't be initiated
+      await db.update(orders).set({ status: 'cancelled' }).where(eq(orders.id, order.id));
+      return NextResponse.json({ error: 'Zahlung konnte nicht gestartet werden. Bitte versuchen Sie es erneut.', stripeError: e.message }, { status: 502 });
     }
   }
 

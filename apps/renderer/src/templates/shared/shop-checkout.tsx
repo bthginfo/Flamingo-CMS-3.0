@@ -114,18 +114,24 @@ export function ShopCheckoutSection({ data }: Props) {
   async function handleSubmit() {
     setLoading(true);
     try {
+      const idempotencyKey = crypto.randomUUID();
       const res = await fetch('/api/shop/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
+          idempotencyKey,
           shippingCents,
           discountCents,
           items: items.map(i => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity })),
         }),
       });
       const data = await res.json();
-      if (res.ok && data.success) {
+      if (!res.ok) {
+        alert(data.error || 'Bestellung fehlgeschlagen. Bitte versuchen Sie es erneut.');
+        return;
+      }
+      if (data.success) {
         // Stripe redirect
         if (data.stripeUrl) {
           clearCart();

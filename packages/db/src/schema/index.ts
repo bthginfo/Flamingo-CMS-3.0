@@ -678,12 +678,14 @@ export const orders = pgTable('orders', {
   couponCode: varchar('coupon_code', { length: 50 }),
   notes: text('notes'),
   customerNotes: text('customer_notes'),
+  idempotencyKey: varchar('idempotency_key', { length: 100 }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   uniqueIndex('orders_tenant_number_idx').on(t.tenantId, t.orderNumber),
   index('orders_tenant_idx').on(t.tenantId),
   index('orders_status_idx').on(t.tenantId, t.status),
+  uniqueIndex('orders_idempotency_idx').on(t.tenantId, t.idempotencyKey),
 ]);
 
 // ─── order_status_history ────────────────────────────────────────────
