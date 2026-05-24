@@ -448,6 +448,7 @@ export const leads = pgTable('leads', {
   responsible: varchar('responsible', { length: 100 }),
   tenantId: uuid('tenant_id').references(() => tenants.id, { onDelete: 'set null' }),
   adminPassword: varchar('admin_password', { length: 100 }),
+  industry: varchar('industry', { length: 200 }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

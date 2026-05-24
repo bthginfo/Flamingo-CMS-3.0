@@ -21,11 +21,11 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
   const [isPending, startTransition] = useTransition();
 
   const [form, setForm] = useState({
-    company: '', email: '', status: 'offen' as LeadStatus, location: '', websiteOld: '', flamingoLink: '', contact: '', contactFirstName: '', contactLastName: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '',
+    company: '', email: '', status: 'offen' as LeadStatus, location: '', websiteOld: '', flamingoLink: '', contact: '', contactFirstName: '', contactLastName: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '', industry: '',
   });
 
   function openNew() {
-    setForm({ company: '', email: '', status: 'offen', location: '', websiteOld: '', flamingoLink: '', contact: '', contactFirstName: '', contactLastName: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '' });
+    setForm({ company: '', email: '', status: 'offen', location: '', websiteOld: '', flamingoLink: '', contact: '', contactFirstName: '', contactLastName: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '', industry: '' });
     setEditId(null);
     setShowForm(true);
   }
@@ -45,6 +45,7 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
       responsible: lead.responsible || 'Julius',
       tenantId: lead.tenantId || '',
       adminPassword: lead.adminPassword || '',
+      industry: lead.industry || '',
     });
     setEditId(lead.id);
     setShowForm(true);
@@ -328,6 +329,10 @@ Flamingo Media`;
                 <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} />
               </div>
               <div>
+                <label className="text-xs font-medium text-slate-500">Branche</label>
+                <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" placeholder="z.B. Gastronomie, Handwerk..." value={form.industry} onChange={e => setForm({ ...form, industry: e.target.value })} />
+              </div>
+              <div>
                 <label className="text-xs font-medium text-slate-500">Vorname</label>
                 <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.contactFirstName} onChange={e => setForm({ ...form, contactFirstName: e.target.value })} />
               </div>
@@ -462,6 +467,7 @@ Flamingo Media`;
               <th className="px-4 py-3 font-medium text-slate-500">Ort</th>
               <th className="px-4 py-3 font-medium text-slate-500">E-Mail</th>
               <th className="px-4 py-3 font-medium text-slate-500">Status</th>
+              <th className="px-4 py-3 font-medium text-slate-500">Branche</th>
               <th className="px-4 py-3 font-medium text-slate-500">Ansprechpartner</th>
               <th className="px-4 py-3 font-medium text-slate-500">Verantwortlich</th>
               <th className="px-4 py-3 font-medium text-slate-500">Links</th>
@@ -470,7 +476,7 @@ Flamingo Media`;
           </thead>
           <tbody>
             {leads.length === 0 && (
-              <tr><td colSpan={8} className="px-4 py-12 text-center text-slate-400">Noch keine Leads. Klicke &quot;Neuer Lead&quot; um einen anzulegen.</td></tr>
+              <tr><td colSpan={9} className="px-4 py-12 text-center text-slate-400">Noch keine Leads. Klicke &quot;Neuer Lead&quot; um einen anzulegen.</td></tr>
             )}
             {leads.map(lead => (
               <tr key={lead.id} className="border-b border-slate-100 hover:bg-slate-50/50 cursor-pointer" onClick={() => openEdit(lead)}>
@@ -490,6 +496,7 @@ Flamingo Media`;
                     <option value="abgelehnt">Abgelehnt</option>
                   </select>
                 </td>
+                <td className="px-4 py-3 text-slate-600">{lead.industry}</td>
                 <td className="px-4 py-3 text-slate-600">{[lead.anrede, lead.contactFirstName, lead.contactLastName].filter(Boolean).join(' ') || lead.contact}</td>
                 <td className="px-4 py-3 text-slate-600">{lead.responsible}</td>
                 <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
