@@ -88,137 +88,133 @@ export function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
     if (variant === 'hat-website' && du) {
       return `Hallo ${firstName},
 
-wir sind Mario und Julius von Flamingo Media und helfen lokalen Betrieben dabei, schnell und unkompliziert zu einem professionellen Webauftritt zu kommen:
+kurze Frage: Wisst ihr, wie viele Anfragen ${company} aktuell über die Website verliert?
+
+Wir haben uns euren Online-Auftritt angeschaut — und ehrlich gesagt: Da bleibt gerade einiges an Umsatz auf der Strecke. Langsame Ladezeiten, veraltetes Design oder fehlende mobile Optimierung kosten lokale Betriebe im Schnitt 30–50 % ihrer potenziellen Neukund:innen.
+
+Wir sind Mario & Julius von Flamingo Media. Wir bauen Websites speziell für lokale Betriebe — und zwar so, dass sie in 7–10 Tagen stehen und ab 1.450 € starten.
+
+Was uns von klassischen Agenturen unterscheidet:
+
+→ Fertig in 7–10 Tagen (nicht Wochen oder Monate)
+→ Ab 1.450 € statt 5.000–15.000 € bei Agenturen
+→ Ihr ändert alles selbst — Texte, Bilder, Farben — ohne Code, per Drag & Drop
+→ Funktioniert vom Handy — Inhalte direkt vom Smartphone bearbeiten
+→ Google-optimiert ab Tag 1 — damit Kund:innen euch auch finden
+→ Auf Wunsch mit integriertem Onlineshop
+→ Hosting, Updates & Pflege? Läuft alles bei uns
+
+Über 30 lokale Betriebe nutzen unser System bereits — vom Handwerker bis zur Vinothek.
+
+Hier könnt ihr euch Live-Beispiele anschauen:
 https://www.flamingomedia.online
 
-Wir sind auf ${company} gestoßen und hatten den Eindruck, dass bei eurem aktuellen Online-Auftritt noch einiges an Potenzial liegt. Gerade für Betriebe wie euren ist die Website oft der erste Kontaktpunkt für neue Kund:innen. Wenn Design, Inhalte oder die mobile Darstellung nicht sofort überzeugen, gehen schnell Anfragen verloren.
+Mein Vorschlag: Ich schick euch 2–3 Beispiele von Betrieben aus eurer Branche, damit ihr seht, was möglich ist. Kein Verkaufsgespräch, einfach nur Inspiration.
 
-Genau dafür haben wir Flamingo Media gebaut: ein modernes CMS (Content-Management-System) speziell für lokale Betriebe — mit professionellen Templates, die schneller und günstiger stehen als klassische Agenturprojekte, aber trotzdem hochwertig aussehen und komplett individuell angepasst werden.
-
-Das Besondere an unserem System:
-
-• Komplett ohne Code anpassbar — ihr ändert Texte, Bilder, Farben und Layouts einfach per Drag & Drop
-• Bearbeitung vom Smartphone — Inhalte könnt ihr jederzeit und überall direkt vom Handy ändern
-• Integrierter Onlineshop — Produkte verkaufen direkt über eure Website, ohne extra Plattform
-• SEO & Google-Sichtbarkeit — automatisch optimiert, damit neue Kund:innen euch über Google finden
-• Branchen-Templates — speziell auf euren Betriebstyp zugeschnitten (Handwerk, Gastro, Einzelhandel, etc.)
-• Hosting & Pflege inklusive — kein Technik-Stress, alles läuft stabil und schnell
-• optional Foto & Video — professionelles Bildmaterial direkt bei euch vor Ort
-• Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
-
-Mehr Infos, Live-Demos und Beispiele findet ihr auf:
-https://www.flamingomedia.online
-
-Gerne schicken wir euch auch unser kurzes Pitchdeck mit Beispielen und dem Ablauf.
-
-Hättet ihr grundsätzlich Interesse an einem kurzen, unverbindlichen Austausch?
+Soll ich?
 
 Viele Grüße
-Mario & Julius`;
+Mario & Julius
+Flamingo Media`;
     }
 
     if (variant === 'hat-website' && !du) {
       return `Sehr geehrte/r ${firstName},
 
-wir sind Mario und Julius von Flamingo Media und unterstützen lokale Unternehmen dabei, schnell und unkompliziert einen professionellen Webauftritt aufzubauen:
+eine kurze Frage: Wissen Sie, wie viele potenzielle Kund:innen ${company} aktuell über die Website verliert?
+
+Wir haben uns Ihren Online-Auftritt angesehen — und sehen deutliches Potenzial. Veraltetes Design, langsame Ladezeiten oder fehlende mobile Optimierung kosten lokale Unternehmen erfahrungsgemäß 30–50 % ihrer Neukundenanfragen.
+
+Wir sind Mario & Julius von Flamingo Media. Wir erstellen Websites speziell für lokale Unternehmen — professionell, schnell und deutlich günstiger als klassische Agenturen.
+
+Was uns unterscheidet:
+
+→ Fertig in 7–10 Tagen (nicht Wochen oder Monate)
+→ Ab 1.450 € statt 5.000–15.000 € bei Agenturen
+→ Sie ändern alles selbst — Texte, Bilder, Farben — ohne Code, per Drag & Drop
+→ Bearbeitung vom Smartphone — Inhalte direkt vom Handy aktualisieren
+→ Google-optimiert ab Tag 1 — damit Kund:innen Sie auch finden
+→ Auf Wunsch mit integriertem Onlineshop
+→ Hosting, Updates & Pflege inklusive
+
+Über 30 lokale Unternehmen vertrauen bereits auf unser System.
+
+Live-Beispiele finden Sie hier:
 https://www.flamingomedia.online
 
-Wir sind auf ${company} aufmerksam geworden und hatten den Eindruck, dass bei Ihrem aktuellen Online-Auftritt noch Potenzial besteht. Gerade für Betriebe wie Ihren ist die Website häufig der erste Kontaktpunkt für neue Kund:innen. Wenn Design, Inhalte oder die mobile Darstellung nicht sofort überzeugen, gehen schnell Anfragen verloren.
+Mein Vorschlag: Ich sende Ihnen 2–3 Beispiele von Unternehmen aus Ihrer Branche — kein Verkaufsgespräch, einfach nur als Inspiration.
 
-Genau dafür haben wir Flamingo Media entwickelt: ein modernes CMS (Content-Management-System) speziell für lokale Unternehmen — mit professionellen Templates, die schneller und günstiger umgesetzt werden als klassische Agenturprojekte, und trotzdem hochwertig wirken und individuell anpassbar sind.
-
-Das Besondere an unserem System:
-
-• Komplett ohne Code anpassbar — Texte, Bilder, Farben und Layouts ändern Sie einfach per Drag & Drop
-• Bearbeitung vom Smartphone — Inhalte können Sie jederzeit und überall direkt vom Handy ändern
-• Integrierter Onlineshop — Produkte verkaufen direkt über Ihre Website, ohne extra Plattform
-• SEO & Google-Sichtbarkeit — automatisch optimiert, damit neue Kund:innen Sie über Google finden
-• Branchen-Templates — speziell auf Ihren Betriebstyp zugeschnitten (Handwerk, Gastro, Einzelhandel, etc.)
-• Hosting & Pflege inklusive — kein Technik-Aufwand, alles läuft stabil und schnell
-• optional Foto & Video — professionelles Bildmaterial direkt bei Ihnen vor Ort
-• Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
-
-Weitere Informationen, Live-Demos und Beispiele finden Sie auf:
-https://www.flamingomedia.online
-
-Gerne senden wir Ihnen auch unser kurzes Pitchdeck mit Beispielen und dem Ablauf.
-
-Hätten Sie grundsätzlich Interesse an einem kurzen, unverbindlichen Gespräch?
+Hätten Sie Interesse?
 
 Mit freundlichen Grüßen
-Mario & Julius`;
+Mario & Julius
+Flamingo Media`;
     }
 
     if (variant === 'keine-website' && du) {
       return `Hallo ${firstName},
 
-wir sind Mario und Julius von Flamingo Media und helfen lokalen Betrieben dabei, schnell und unkompliziert einen professionellen Webauftritt zu bekommen:
+kurze Frage: Wie finden neue Kund:innen aktuell zu ${company}?
+
+Ohne eigene Website seid ihr für alle unsichtbar, die bei Google nach eurer Leistung suchen — und das sind heute über 80 % der Leute, bevor sie irgendwo anfragen oder hingehen. Das heißt: Eure Konkurrenz bekommt gerade die Anfragen, die eigentlich euch gehören.
+
+Wir sind Mario & Julius von Flamingo Media. Wir bringen lokale Betriebe in 7–10 Tagen online — professionell, modern und ab 1.450 €.
+
+Was ihr dafür bekommt:
+
+→ Professionelle Website in 7–10 Tagen online
+→ Ab 1.450 € — ein Bruchteil von klassischen Agenturpreisen
+→ Ihr ändert alles selbst — Texte, Bilder, Farben — komplett ohne Code
+→ Bearbeitung direkt vom Handy — jederzeit, überall
+→ Sofort bei Google sichtbar mit euren Leistungen und Kontaktdaten
+→ Auf Wunsch mit Onlineshop
+→ Hosting & Pflege? Komplett bei uns — kein Technik-Stress
+
+Über 30 lokale Betriebe nutzen unser System bereits.
+
+Schaut euch hier Live-Beispiele an:
 https://www.flamingomedia.online
 
-Wir sind auf ${company} aufmerksam geworden — und uns ist aufgefallen, dass ihr aktuell noch keine eigene Website habt. Das ist nicht ungewöhnlich, aber gerade heute ist ein professioneller Online-Auftritt oft der entscheidende Faktor, ob Kund:innen euch finden und kontaktieren oder zur Konkurrenz gehen.
+Mein Vorschlag: Ich schick euch ein kurzes Beispiel, wie eure Website aussehen könnte — unverbindlich und kostenlos. Dauert 2 Minuten zum Anschauen.
 
-Eine eigene Website bedeutet für euch:
-• rund um die Uhr sichtbar für neue Kund:innen (nicht nur über Social Media)
-• sofort bei Google auffindbar mit Leistungen, Öffnungszeiten und Kontakt
-• professioneller Ersteindruck, der Vertrauen schafft
-• weniger Rückfragen, weil alle wichtigen Infos online stehen
-
-Genau dafür haben wir Flamingo Media gebaut: ein modernes CMS speziell für lokale Betriebe — in vielen Fällen ist eure Seite innerhalb von 7–10 Tagen online.
-
-Das Besondere — ihr könnt alles selbst steuern, ohne Technik-Kenntnisse:
-
-• Komplett ohne Code anpassbar — Texte, Bilder, Farben und Layouts per Drag & Drop ändern
-• Bearbeitung vom Smartphone — Inhalte jederzeit und überall direkt vom Handy ändern
-• Integrierter Onlineshop — Produkte verkaufen direkt über die Website, ohne extra Plattform
-• SEO & Google-Sichtbarkeit — automatisch optimiert, damit neue Kund:innen euch finden
-• Branchen-Templates — speziell auf euren Betriebstyp zugeschnitten
-• Hosting & Pflege inklusive — kein Technik-Stress
-• optional Foto & Video — professionelles Bildmaterial direkt bei euch vor Ort
-• Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
-
-Mehr Infos, Live-Demos und Beispiele findet ihr auf:
-https://www.flamingomedia.online
-
-Hättet ihr grundsätzlich Interesse an einem kurzen, unverbindlichen Austausch? Wir zeigen euch gerne, wie schnell und günstig so ein Auftritt stehen kann.
+Interesse?
 
 Viele Grüße
-Mario & Julius`;
+Mario & Julius
+Flamingo Media`;
     }
 
     // keine-website + förmlich
     return `Sehr geehrte/r ${firstName},
 
-wir sind Mario und Julius von Flamingo Media und unterstützen lokale Unternehmen dabei, schnell und professionell online sichtbar zu werden:
+eine kurze Frage: Wie finden neue Kund:innen aktuell zu ${company}?
+
+Ohne eigene Website sind Sie für alle unsichtbar, die bei Google nach Ihrer Leistung suchen — und das sind heute über 80 % der Menschen, bevor sie anfragen oder ein Geschäft besuchen. Das bedeutet: Ihre Konkurrenz erhält gerade die Anfragen, die eigentlich Ihnen gehören.
+
+Wir sind Mario & Julius von Flamingo Media. Wir bringen lokale Unternehmen in 7–10 Tagen professionell online — ab 1.450 €.
+
+Was Sie dafür erhalten:
+
+→ Professionelle Website in 7–10 Tagen online
+→ Ab 1.450 € — ein Bruchteil klassischer Agenturpreise
+→ Sie ändern alles selbst — Texte, Bilder, Farben — komplett ohne Code
+→ Bearbeitung direkt vom Handy — jederzeit, überall
+→ Sofort bei Google sichtbar mit Ihren Leistungen und Kontaktdaten
+→ Auf Wunsch mit integriertem Onlineshop
+→ Hosting & Pflege komplett inklusive — kein Technik-Aufwand
+
+Über 30 lokale Unternehmen vertrauen bereits auf unser System.
+
+Live-Beispiele finden Sie hier:
 https://www.flamingomedia.online
 
-Wir sind auf ${company} aufmerksam geworden — und uns ist aufgefallen, dass Sie aktuell noch über keine eigene Website verfügen. Gerade heute ist ein professioneller Online-Auftritt häufig der entscheidende Faktor, ob neue Kund:innen Sie finden und kontaktieren — oder zur Konkurrenz gehen.
+Mein Vorschlag: Ich sende Ihnen ein kurzes Beispiel, wie Ihre Website aussehen könnte — unverbindlich und kostenlos. Dauert 2 Minuten zum Anschauen.
 
-Eine eigene Website bietet Ihnen:
-• Sichtbarkeit rund um die Uhr — nicht nur über Social Media
-• Auffindbarkeit bei Google mit Leistungen, Öffnungszeiten und Kontakt
-• einen professionellen Ersteindruck, der Vertrauen schafft
-• weniger Rückfragen, weil alle wichtigen Informationen online stehen
-
-Genau dafür haben wir Flamingo Media entwickelt: ein modernes CMS speziell für lokale Unternehmen — in vielen Fällen ist Ihre Seite innerhalb von 7–10 Tagen online.
-
-Das Besondere — Sie steuern alles selbst, ohne Technik-Kenntnisse:
-
-• Komplett ohne Code anpassbar — Texte, Bilder, Farben und Layouts per Drag & Drop ändern
-• Bearbeitung vom Smartphone — Inhalte jederzeit und überall direkt vom Handy ändern
-• Integrierter Onlineshop — Produkte verkaufen direkt über die Website, ohne extra Plattform
-• SEO & Google-Sichtbarkeit — automatisch optimiert, damit neue Kund:innen Sie finden
-• Branchen-Templates — speziell auf Ihren Betriebstyp zugeschnitten
-• Hosting & Pflege inklusive — kein Technik-Aufwand
-• optional Foto & Video — professionelles Bildmaterial direkt bei Ihnen vor Ort
-• Beratung zu Fördermöglichkeiten, z. B. in Tirol oder Bayern
-
-Weitere Informationen, Live-Demos und Beispiele finden Sie auf:
-https://www.flamingomedia.online
-
-Hätten Sie grundsätzlich Interesse an einem kurzen, unverbindlichen Gespräch? Wir zeigen Ihnen gerne, wie schnell und unkompliziert ein professioneller Webauftritt entstehen kann.
+Hätten Sie Interesse?
 
 Mit freundlichen Grüßen
-Mario & Julius`;
+Mario & Julius
+Flamingo Media`;
   }
 
   function openEmailModal(lead: Lead) {
