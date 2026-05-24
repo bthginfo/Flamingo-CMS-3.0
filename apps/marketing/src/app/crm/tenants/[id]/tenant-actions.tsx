@@ -3,10 +3,10 @@
 import { useTransition } from 'react';
 import { updateTenantAction, deleteTenantAction, configureBlobAction, toggleShopAddonAction } from '../actions';
 import { toast } from 'sonner';
-import { Power, Pause, Trash2, Eye, ShoppingBag } from 'lucide-react';
+import { Power, Pause, Trash2, Eye, ShoppingBag, UserCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, deploymentMode, shopActive }: { tenantId: string; currentStatus: string; currentStyle: string; isDemo?: boolean; deploymentMode?: string; shopActive?: boolean }) {
+export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, isLead, deploymentMode, shopActive }: { tenantId: string; currentStatus: string; currentStyle: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: string; shopActive?: boolean }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -22,6 +22,13 @@ export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, d
     startTransition(async () => {
       await updateTenantAction(tenantId, { isDemo: !isDemo });
       toast.success(isDemo ? 'Demo-Flag entfernt' : 'Als Demo markiert');
+    });
+  }
+
+  function toggleLead() {
+    startTransition(async () => {
+      await updateTenantAction(tenantId, { isLead: !isLead });
+      toast.success(isLead ? 'Lead-Flag entfernt' : 'Als Lead-Seite markiert');
     });
   }
 
@@ -41,6 +48,13 @@ export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, d
         className={`w-full crm-btn ${isDemo ? 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
       >
         <Eye size={14} /> {isDemo ? 'Demo-Flag entfernen' : 'Als Demo markieren'}
+      </button>
+      <button
+        onClick={toggleLead}
+        disabled={pending}
+        className={`w-full crm-btn ${isLead ? 'bg-amber-50 text-amber-700 hover:bg-amber-100' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
+      >
+        <UserCheck size={14} /> {isLead ? 'Lead-Flag entfernen' : 'Als Lead-Seite markieren'}
       </button>
       <button
         onClick={() => {

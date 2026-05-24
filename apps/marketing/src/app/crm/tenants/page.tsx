@@ -19,7 +19,8 @@ export default async function TenantsPage() {
     domainMap.set(d.tenantId, list);
   }
 
-  const liveTenants = tenantList.filter(t => !t.isDemo);
+  const liveTenants = tenantList.filter(t => !t.isDemo && !t.isLead);
+  const leadTenants = tenantList.filter(t => t.isLead);
   const demoTenants = tenantList.filter(t => t.isDemo);
 
   function TenantCard({ t }: { t: typeof tenantList[number] }) {
@@ -86,6 +87,14 @@ export default async function TenantsPage() {
                 {liveTenants.map(t => <TenantCard key={t.id} t={t} />)}
               </div>
             </div>
+          )}
+
+          {leadTenants.length > 0 && (
+            <TenantAccordion label={`Seiten für Leads (${leadTenants.length})`}>
+              <div className="grid gap-4">
+                {leadTenants.map(t => <TenantCard key={t.id} t={t} />)}
+              </div>
+            </TenantAccordion>
           )}
 
           {demoTenants.length > 0 && (

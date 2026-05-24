@@ -20,7 +20,7 @@ export async function createTenantAction(input: ProvisionInput) {
   }
 }
 
-export async function updateTenantAction(tenantId: string, data: { name?: string; status?: 'active' | 'suspended'; activeStyle?: string; isDemo?: boolean }) {
+export async function updateTenantAction(tenantId: string, data: { name?: string; status?: 'active' | 'suspended'; activeStyle?: string; isDemo?: boolean; isLead?: boolean }) {
   const db = getDb();
   await db.update(tenants)
     .set({ ...data, updatedAt: new Date() })

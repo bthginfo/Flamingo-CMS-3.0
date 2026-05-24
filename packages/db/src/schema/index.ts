@@ -36,6 +36,7 @@ export const tenants = pgTable('tenants', {
   activeStyle: varchar('active_style', { length: 50 }).notNull().default('classic'),
   status: tenantStatusEnum('status').notNull().default('active'),
   isDemo: boolean('is_demo').notNull().default(false),
+  isLead: boolean('is_lead').notNull().default(false),
   deploymentMode: deploymentModeEnum('deployment_mode').notNull().default('shared'),
   vercelProjectId: varchar('vercel_project_id', { length: 255 }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
