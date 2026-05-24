@@ -3,6 +3,7 @@
 import { useCart, type CartItem } from './cart-context';
 import { ShoppingBag, X, Plus, Minus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 function formatPrice(cents: number) {
   return (cents / 100).toFixed(2).replace('.', ',') + ' €';
@@ -10,6 +11,8 @@ function formatPrice(cents: number) {
 
 export function CartDrawer() {
   const { items, totalItems, totalCents, isOpen, setIsOpen, updateQuantity, removeItem } = useCart();
+  const pathname = usePathname();
+  const isDemo = pathname.startsWith('/demo/');
 
   if (!isOpen) return null;
 
@@ -44,13 +47,20 @@ export function CartDrawer() {
               <span>Gesamt</span>
               <span>{formatPrice(totalCents)}</span>
             </div>
-            <Link
-              href="/checkout"
-              onClick={() => setIsOpen(false)}
-              className="block w-full text-center py-3 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition"
-            >
-              Zur Kasse
-            </Link>
+            {isDemo ? (
+              <div className="text-center">
+                <span className="block w-full py-3 bg-zinc-200 text-zinc-500 font-medium rounded-xl cursor-not-allowed">Zur Kasse</span>
+                <p className="text-xs text-zinc-400 mt-1">Checkout ist in der Demo nicht verfügbar</p>
+              </div>
+            ) : (
+              <Link
+                href="/checkout"
+                onClick={() => setIsOpen(false)}
+                className="block w-full text-center py-3 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition"
+              >
+                Zur Kasse
+              </Link>
+            )}
             <Link
               href="/warenkorb"
               onClick={() => setIsOpen(false)}
