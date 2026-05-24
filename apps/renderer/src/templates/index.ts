@@ -29,6 +29,9 @@ import { BentoGridSection } from './shared/bento-grid';
 import { TestimonialMarqueeSection } from './shared/testimonial-marquee';
 import { FeatureShowcaseSection } from './shared/feature-showcase';
 import { LogoMarqueeSection } from './shared/logo-marquee';
+import { VerticalTimelineSection } from './shared/vertical-timeline';
+import { BeforeAfterSliderSection } from './shared/before-after-slider';
+import { HorizontalScrollShowcaseSection } from './shared/horizontal-scroll-showcase';
 import { CollectionListSection } from './shared/collection-list';
 import { ShopProductGridSection } from './shared/shop-product-grid';
 import { ShopProductDetailSection } from './shared/shop-product-detail';
@@ -560,6 +563,9 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   shopCategoryOverview: ShopCategoryOverviewSection,
   story: TextImageSection,
   amenities: AmenitiesSection,
+  verticalTimeline: VerticalTimelineSection,
+  beforeAfterSlider: BeforeAfterSliderSection,
+  horizontalScrollShowcase: HorizontalScrollShowcaseSection,
 };
 
 // Merge ALL industry templates as ultimate fallback so foreign sections render

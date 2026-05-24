@@ -335,6 +335,54 @@ export const showcaseSite: DemoSite = {
               { title: 'Bewertungs-Marquee', text: 'Endlos-scrollende Bewertungskarten in 2 Reihen.', icon: 'star', mediaType: 'icon' },
               { title: 'Feature-Showcase', text: 'Großbild mit Parallax + Feature-Liste + CTA.', icon: 'sparkles', mediaType: 'icon' },
               { title: 'Logo-Marquee', text: 'Endlos-scrollende Partner/Kunden-Logos.', icon: 'building', mediaType: 'icon' },
+              { title: 'Prozess-Timeline', text: 'Vertikale Scroll-Timeline mit animierter Progress-Linie.', icon: 'gitBranch', mediaType: 'icon' },
+              { title: 'Vorher/Nachher-Slider', text: 'Draggbarer Vergleichs-Slider für zwei Bilder.', icon: 'columns', mediaType: 'icon' },
+              { title: 'Horizontal-Scroll Showcase', text: 'Sticky Fullscreen-Panels die per Scroll horizontal gleiten.', icon: 'arrowRight', mediaType: 'icon' },
+            ],
+          },
+        },
+        // Live-Demo: Vertical Timeline
+        {
+          ...B, id: 'sc-vertical-timeline', type: 'verticalTimeline',
+          data: {
+            headline: 'Ihr Weg zur neuen Website',
+            subline: 'In wenigen Schritten von der Idee zur fertigen Seite.',
+            accentColor: '#6366f1',
+            steps: [
+              { number: '01', timeLabel: 'Tag 1', title: 'Erstgespräch', text: 'Wir lernen Ihren Betrieb und Ihre Ziele kennen.', checkmarks: ['Branche & Wettbewerb', 'Ziele definieren', 'Stil-Auswahl'] },
+              { number: '02', timeLabel: 'Tag 2–3', title: 'Konzept & Planung', text: 'Struktur, Inhalte und Design werden festgelegt.', checkmarks: ['Seitenstruktur', 'Inhalte sammeln', 'Farbschema'] },
+              { number: '03', timeLabel: 'Tag 4–7', title: 'Aufbau', text: 'Wir richten alles ein und befüllen Ihre Website.', checkmarks: ['Template-Setup', 'Bilder optimieren', 'SEO-Texte'] },
+              { number: '04', timeLabel: 'Tag 8', title: 'Review & Launch', text: 'Sie prüfen, geben frei — wir schalten live.', checkmarks: ['Preview-Link', 'Feedback-Runde', 'Domain verbinden'] },
+            ],
+          },
+        },
+        // Live-Demo: Before/After Slider
+        {
+          ...B, id: 'sc-before-after', type: 'beforeAfterSlider',
+          data: {
+            headline: 'Vorher & Nachher',
+            subline: 'Ziehen Sie den Slider um den Unterschied zu sehen.',
+            handleColor: '#6366f1',
+            slides: [
+              { imageBefore: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80', imageAfter: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80', labelBefore: 'Vorher', labelAfter: 'Nachher', caption: 'Komplette Badsanierung in 2 Wochen.' },
+              { imageBefore: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&q=80', imageAfter: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200&q=80', labelBefore: 'Alt', labelAfter: 'Neu', caption: 'Wohnzimmer-Renovierung mit neuer Raumaufteilung.' },
+            ],
+          },
+        },
+        // Live-Demo: Horizontal Scroll Showcase
+        {
+          ...B, id: 'sc-horizontal-scroll', type: 'horizontalScrollShowcase',
+          data: {
+            headline: 'Unsere Projekte',
+            subline: 'Scrollen Sie durch unsere Referenzen.',
+            bgColor: '#09090b',
+            textColor: '#ffffff',
+            dotColor: '#6366f1',
+            panels: [
+              { image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=85', title: 'Büro-Umbau München', text: 'Moderne Arbeitsräume auf 400m² — Planung bis Schlüsselübergabe in 6 Wochen.', ctaLabel: 'Projekt ansehen', ctaHref: '#' },
+              { image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=85', title: 'Villa Seebruck', text: 'Energetische Sanierung eines historischen Hauses am Chiemsee.', ctaLabel: 'Projekt ansehen', ctaHref: '#' },
+              { image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=85', title: 'Restaurant Goldberg', text: 'Gastro-Konzept mit offener Küche, Bar und Lounge-Bereich.', ctaLabel: 'Projekt ansehen', ctaHref: '#' },
+              { image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1600&q=85', title: 'Penthouse Schwabing', text: 'Luxury Loft mit Dachterrasse und Alpenpanorama.', ctaLabel: 'Projekt ansehen', ctaHref: '#' },
             ],
           },
         },

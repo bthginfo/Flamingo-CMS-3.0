@@ -997,4 +997,35 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Supermarkt', distance: '200m', category: 'Einkaufen' },
     ],
   },
+  verticalTimeline: {
+    headline: 'So läuft Ihr Projekt ab',
+    subline: 'Klare Schritte von der Anfrage bis zur Fertigstellung.',
+    accentColor: '#6366f1',
+    steps: [
+      { number: '01', timeLabel: 'Tag 1', title: 'Erstgespräch', text: 'Wir besprechen Ihre Wünsche und beraten Sie kostenfrei.', checkmarks: ['Bedarfsanalyse', 'Budgetrahmen', 'Zeitplanung'] },
+      { number: '02', timeLabel: 'Tag 2–4', title: 'Planung & Angebot', text: 'Detaillierter Plan mit verbindlichem Festpreisangebot.', checkmarks: ['3D-Vorschau', 'Materialauswahl', 'Festpreis'] },
+      { number: '03', timeLabel: 'Tag 5–12', title: 'Umsetzung', text: 'Unser Team setzt Ihr Projekt professionell um.', checkmarks: ['Termingerecht', 'Sauber & ordentlich', 'Tägliche Updates'] },
+      { number: '04', timeLabel: 'Tag 13', title: 'Abnahme & Übergabe', text: 'Gemeinsame Prüfung und Übergabe mit Garantie.', checkmarks: ['Qualitätsprüfung', '5 Jahre Garantie', 'Nachbetreuung'] },
+    ],
+  },
+  beforeAfterSlider: {
+    headline: 'Der Unterschied',
+    subline: 'Ziehen Sie am Slider um das Ergebnis zu sehen.',
+    handleColor: '#18181b',
+    slides: [
+      { imageBefore: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80', imageAfter: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80', labelBefore: 'Vorher', labelAfter: 'Nachher', caption: 'Komplette Badsanierung — Vorher/Nachher-Vergleich.' },
+    ],
+  },
+  horizontalScrollShowcase: {
+    headline: 'Referenzen',
+    subline: 'Scrollen Sie durch unsere Projekte.',
+    bgColor: '#09090b',
+    textColor: '#ffffff',
+    dotColor: '#6366f1',
+    panels: [
+      { image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=85', title: 'Projekt Alpha', text: 'Modernes Bürokonzept auf 400m².', ctaLabel: 'Details', ctaHref: '#' },
+      { image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=85', title: 'Projekt Beta', text: 'Energetische Sanierung mit Förderung.', ctaLabel: 'Details', ctaHref: '#' },
+      { image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=85', title: 'Projekt Gamma', text: 'Restaurant-Umbau mit offenem Konzept.', ctaLabel: 'Details', ctaHref: '#' },
+    ],
+  },
 };

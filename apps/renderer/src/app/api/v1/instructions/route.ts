@@ -331,6 +331,10 @@ function getSectionSchemas(industry: string): Record<string, object> {
     placesMap: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', mapEmbedUrl: 'string? (iframe embed URL)', places: '{ title: string, text?: string, category?: string, distanceLabel?: string, address?: string, image?: url, cta?: { label: string, href: string } }[]', ctaPrimary: '{ label: string, href: string }?' } },
     // Cafe extras
     cafeEventCalendar: { fields: { headline: 'string', subline: 'string?', events: '{ title: string, date: string, time: string, description?: string, image?: url, category?: string }[]' } },
+    // Premium interactive sections
+    verticalTimeline: { fields: { headline: 'string?', subline: 'string?', steps: '{ number?: string, timeLabel?: string, title: string, text?: string, checkmarks?: string[] }[]', accentColor: 'hex?', lineColor: 'hex?', bgColor: 'hex?', textColor: 'hex?' } },
+    beforeAfterSlider: { fields: { headline: 'string?', subline: 'string?', slides: '{ imageBefore: url, imageAfter: url, labelBefore?: string, labelAfter?: string, caption?: string }[]', handleColor: 'hex?', bgColor: 'hex?', textColor: 'hex?', aspectRatio: '"16/9"|"4/3"|"1/1"?' } },
+    horizontalScrollShowcase: { fields: { headline: 'string?', subline: 'string?', panels: '{ image: url, title: string, text?: string, ctaLabel?: string, ctaHref?: string, overlayColor?: "rgba()" }[]', bgColor: 'hex?', textColor: 'hex?', dotColor: 'hex?', panelHeight: '"full"|"compact"?' } },
   };
 
   if (industry === 'wedding') {

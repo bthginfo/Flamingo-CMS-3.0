@@ -48,6 +48,9 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'shopCheckout', label: 'Shop: Checkout', description: 'Multi-Step Kasse (Kontakt, Versand, Zahlung)', category: 'Shop' },
   { type: 'shopThankYou', label: 'Shop: Danke-Seite', description: 'Bestellbestätigung nach Kauf', category: 'Shop' },
   { type: 'shopFeaturedProducts', label: 'Shop: Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben', category: 'Shop' },
+  { type: 'verticalTimeline', label: 'Prozess-Timeline', description: 'Vertikale Scroll-Timeline mit nummerierten Steps und Progress-Linie', category: 'Inhalt' },
+  { type: 'beforeAfterSlider', label: 'Vorher/Nachher-Slider', description: 'Draggbarer Vergleichs-Slider für zwei Bilder', category: 'Medien' },
+  { type: 'horizontalScrollShowcase', label: 'Horizontal-Scroll Showcase', description: 'Sticky Fullscreen-Panels die per Scroll horizontal gleiten', category: 'Marketing' },
 ];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
