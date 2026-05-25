@@ -1,8 +1,11 @@
-import { getShopSettings } from '../actions';
+import { getShopSettings, ensureShopPages } from '../actions';
 import { ShopSettingsForm } from './settings-form';
 import { ShopBackLink } from '../shop-back-link';
+import { getSession } from '@/lib/session';
 
 export default async function ShopSettingsPage() {
+  const session = await getSession();
+  if (session) await ensureShopPages(session.tenantId);
   const settings = await getShopSettings();
   return (
     <div>

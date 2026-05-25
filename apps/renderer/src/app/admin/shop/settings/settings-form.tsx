@@ -101,7 +101,7 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
           <div>
             <label className="block text-xs font-medium text-zinc-500 mb-1">Rechnungs-Prefix</label>
             <input value={data.invoicePrefix} onChange={e => set('invoicePrefix', e.target.value)} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" />
-            <p className="text-xs text-zinc-400 mt-1">Format: {data.invoicePrefix}-{new Date().getFullYear()}-0001</p>
+            <p className="text-xs text-zinc-400 mt-1">Format: {data.invoicePrefix}-2025-0001</p>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
