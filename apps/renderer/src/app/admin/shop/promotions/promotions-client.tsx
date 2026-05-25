@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Trash2, Zap, Truck, ShoppingBag, Package, Star, Gift } from 'lucide-react';
 import { createPromotion, updatePromotion, deletePromotion } from '../actions';
 import { useRouter } from 'next/navigation';
@@ -35,6 +35,8 @@ export function PromotionsClient({ promotions: initial }: { promotions: Promotio
   const router = useRouter();
   const [promotions, setPromotions] = useState(initial);
   const [showForm, setShowForm] = useState(false);
+
+  useEffect(() => { setPromotions(initial); }, [initial]);
   const [saving, setSaving] = useState(false);
 
   // Form state

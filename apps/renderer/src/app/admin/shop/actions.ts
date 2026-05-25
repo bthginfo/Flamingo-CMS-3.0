@@ -447,6 +447,8 @@ export async function createCoupon(data: {
   code: string; type: 'percent' | 'fixed_amount' | 'free_shipping';
   value: number; minOrderCents?: number; maxUses?: number;
   maxUsesPerCustomer?: number; validFrom?: string; validUntil?: string;
+  appliesTo?: 'all' | 'specific_products' | 'specific_categories';
+  appliesToIds?: string[];
 }) {
   const tenantId = await requireTenant();
   const db = getDb();
@@ -460,6 +462,8 @@ export async function createCoupon(data: {
     maxUsesPerCustomer: data.maxUsesPerCustomer || null,
     validFrom: data.validFrom ? new Date(data.validFrom) : null,
     validUntil: data.validUntil ? new Date(data.validUntil) : null,
+    appliesTo: data.appliesTo || 'all',
+    appliesToIds: data.appliesToIds || [],
   });
   revalidatePath('/admin/shop/coupons');
 }
