@@ -21,12 +21,18 @@ export function FooterForm({ initial, i18n }: { initial: any; i18n?: I18nConfig 
 
   function getColumnsForLocale(locale: string): FooterColumn[] {
     const cols = initial?.columns;
-    if (cols?._localized) return cols[locale] || cols._default || [];
+    if (cols?._localized) {
+      const res = cols[locale] || cols._default || [];
+      return Array.isArray(res) ? res : [];
+    }
     return Array.isArray(cols) ? cols : [];
   }
   function getLegalForLocale(locale: string): { label: string; href: string }[] {
     const ll = initial?.legalLinks;
-    if (ll?._localized) return ll[locale] || ll._default || [];
+    if (ll?._localized) {
+      const res = ll[locale] || ll._default || [];
+      return Array.isArray(res) ? res : [];
+    }
     return Array.isArray(ll) ? ll : [];
   }
 
@@ -41,8 +47,8 @@ export function FooterForm({ initial, i18n }: { initial: any; i18n?: I18nConfig 
     return { [defaultLocale]: { columns: Array.isArray(initial?.columns) ? initial.columns : [], legalLinks: Array.isArray(initial?.legalLinks) ? initial.legalLinks : [] } };
   });
 
-  const columns = localeData[activeLocale]?.columns || [];
-  const legalLinks = localeData[activeLocale]?.legalLinks || [];
+  const columns = Array.isArray(localeData[activeLocale]?.columns) ? localeData[activeLocale].columns : [];
+  const legalLinks = Array.isArray(localeData[activeLocale]?.legalLinks) ? localeData[activeLocale].legalLinks : [];
 
   const setColumns = (val: FooterColumn[]) => {
     setLocaleData(prev => ({ ...prev, [activeLocale]: { ...prev[activeLocale], columns: val } }));
@@ -112,11 +118,11 @@ export function FooterForm({ initial, i18n }: { initial: any; i18n?: I18nConfig 
                 <Trash2 size={14} /> Spalte entfernen
               </button>
             </div>
-            {col.items.map((item, ii) => (
+            {(col.items || []).map((item, ii) => (
               <div key={ii} className="flex items-center gap-2">
-                <input className="admin-input flex-1 bg-white" value={item.text} onChange={e => { const items = [...col.items]; items[ii] = { ...items[ii], text: e.target.value }; updateColumn(ci, { ...col, items }); }} placeholder="Text" />
-                <input className="admin-input w-40 bg-white" value={item.href || ''} onChange={e => { const items = [...col.items]; items[ii] = { ...items[ii], href: e.target.value || undefined }; updateColumn(ci, { ...col, items }); }} placeholder="Link (optional)" />
-                <button type="button" onClick={() => updateColumn(ci, { ...col, items: col.items.filter((_, j) => j !== ii) })} className="text-red-400 hover:text-red-600 p-1">
+                <input className="admin-input flex-1 bg-white" value={item.text} onChange={e => { const items = [...(col.items || [])]; items[ii] = { ...items[ii], text: e.target.value }; updateColumn(ci, { ...col, items }); }} placeholder="Text" />
+                <input className="admin-input w-40 bg-white" value={item.href || ''} onChange={e => { const items = [...(col.items || [])]; items[ii] = { ...items[ii], href: e.target.value || undefined }; updateColumn(ci, { ...col, items }); }} placeholder="Link (optional)" />
+                <button type="button" onClick={() => updateColumn(ci, { ...col, items: (col.items || []).filter((_, j) => j !== ii) })} className="text-red-400 hover:text-red-600 p-1">
                   <Trash2 size={14} />
                 </button>
               </div>

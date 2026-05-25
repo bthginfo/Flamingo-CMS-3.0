@@ -18,7 +18,8 @@ export function NavigationForm({ initial, initialCta, i18n }: { initial: any; in
   // Resolve initial items/cta per locale
   function getItemsForLocale(locale: string): NavItem[] {
     if (isLocalized) {
-      return initial[locale] || initial._default || [];
+      const res = initial[locale] || initial._default || [];
+      return Array.isArray(res) ? res : [];
     }
     return Array.isArray(initial) ? initial : [];
   }
@@ -44,7 +45,7 @@ export function NavigationForm({ initial, initialCta, i18n }: { initial: any; in
     return { [defaultLocale]: { items: items.length > 0 ? items : [{ label: '', href: '/', type: 'link' }], cta: initialCta || { label: 'Termin vereinbaren', href: '/kontakt' } } };
   });
 
-  const items = localeData[activeLocale]?.items || [];
+  const items = Array.isArray(localeData[activeLocale]?.items) ? localeData[activeLocale].items : [];
   const cta = localeData[activeLocale]?.cta || { label: '', href: '' };
 
   const setItems = (newItems: NavItem[] | ((prev: NavItem[]) => NavItem[])) => {
