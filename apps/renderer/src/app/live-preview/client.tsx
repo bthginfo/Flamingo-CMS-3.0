@@ -33,6 +33,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
   const [socialLinks, setSocialLinks] = useState(initialData.socialLinks || {});
   const [collections, setCollections] = useState<SnapshotCollection[]>([]);
   const [fontsUrl, setFontsUrl] = useState(initialData.fontsUrl || null);
+  const [locale, setLocale] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     function handleMessage(e: MessageEvent) {
@@ -50,6 +51,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       if (p.socialLinks) setSocialLinks(p.socialLinks);
       if (p.collections) setCollections(p.collections);
       if (p.fontsUrl !== undefined) setFontsUrl(p.fontsUrl);
+      if (p.locale !== undefined) setLocale(p.locale);
     }
     window.addEventListener('message', handleMessage);
     window.parent?.postMessage({ type: 'flamingo-live-preview-ready' }, '*');
@@ -85,7 +87,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
             </div>
           )}
           {visibleSections.map((section) => (
-            <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} />
+            <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} locale={locale} />
           ))}
         </main>
         {footer && (
