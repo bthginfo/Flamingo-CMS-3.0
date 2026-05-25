@@ -84,7 +84,7 @@ function SortableSection({ section, industry, sectionTypes, styleVariant, resolv
         <div className="flex-1 min-w-0 flex items-center gap-2">
           <span className={`font-medium text-sm ${expanded ? 'text-blue-700' : ''}`}>{typeInfo?.label ?? section.type}</span>
           {section.titleInternal && <span className="text-xs text-gray-400">({section.titleInternal})</span>}
-          {!expanded && <span className="text-[10px] text-zinc-400 ml-1">â€” Klicken zum Bearbeiten</span>}
+          {!expanded && <span className="text-[10px] text-zinc-400 ml-1">— Klicken zum Bearbeiten</span>}
         </div>
         <button onClick={onToggleVisible} className="p-1 mr-2" title={section.visible ? 'Ausblenden' : 'Einblenden'}>
           {section.visible ? <Eye size={16} className="text-green-600" /> : <EyeOff size={16} className="text-gray-400" />}
@@ -155,13 +155,13 @@ function SectionMetaEditor({ section, styleVariant, onSave }: { section: Section
       <label className="block">
         <span className="text-gray-600 text-xs">Abstand oben</span>
         <select className="admin-input mt-1" value={meta.spacingTop} onChange={(e) => setMeta({ ...meta, spacingTop: e.target.value })}>
-          <option value="none">Kein</option><option value="s">Klein</option><option value="m">Mittel</option><option value="l">GroÃŸ</option><option value="xl">Extra GroÃŸ</option>
+          <option value="none">Kein</option><option value="s">Klein</option><option value="m">Mittel</option><option value="l">Groß</option><option value="xl">Extra Groß</option>
         </select>
       </label>
       <label className="block">
         <span className="text-gray-600 text-xs">Abstand unten</span>
         <select className="admin-input mt-1" value={meta.spacingBottom} onChange={(e) => setMeta({ ...meta, spacingBottom: e.target.value })}>
-          <option value="none">Kein</option><option value="s">Klein</option><option value="m">Mittel</option><option value="l">GroÃŸ</option><option value="xl">Extra GroÃŸ</option>
+          <option value="none">Kein</option><option value="s">Klein</option><option value="m">Mittel</option><option value="l">Groß</option><option value="xl">Extra Groß</option>
         </select>
       </label>
       <div className="col-span-2">
@@ -239,16 +239,16 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     startTransition(async () => {
       const section = await addSectionAction(page.id, type);
       if (section) setSections(prev => [...prev, section as Section]);
-      toast.success('Sektion hinzugefÃ¼gt');
+      toast.success('Sektion hinzugefügt');
     });
   }
 
   function handleDeleteSection(sectionId: string) {
-    if (!confirm('Sektion wirklich lÃ¶schen?')) return;
+    if (!confirm('Sektion wirklich löschen?')) return;
     setSections(prev => prev.filter(s => s.id !== sectionId));
     startTransition(async () => {
       await deleteSectionAction(sectionId, page.id);
-      toast.success('Sektion gelÃ¶scht');
+      toast.success('Sektion gelöscht');
     });
   }
 
@@ -352,7 +352,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       if ('error' in result) {
         toast.error(result.error);
       } else {
-        toast.success('Ã„nderungen verÃ¶ffentlicht');
+        toast.success('Änderungen veröffentlicht');
         setSaved(false);
       }
     } finally {
@@ -423,14 +423,14 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
 
       {sections.length === 0 && (
         <div className="admin-card text-center py-12 text-gray-400">
-          Noch keine Sektionen. FÃ¼ge unten eine hinzu.
+          Noch keine Sektionen. Füge unten eine hinzu.
         </div>
       )}
 
       {/* Add Section */}
       <div className="mt-4 pb-24">
         <button onClick={() => setShowAddMenu(true)} className="admin-btn-primary w-full flex items-center justify-center gap-2">
-          <Plus size={18} /> Sektion hinzufÃ¼gen
+          <Plus size={18} /> Sektion hinzufügen
         </button>
         {showAddMenu && (
           <SectionPickerModal
@@ -457,7 +457,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
             disabled={saving}
             className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            <Save size={16} /> {saving ? 'Speichertâ€¦' : 'Speichern'}
+            <Save size={16} /> {saving ? 'Speichert…' : 'Speichern'}
           </button>
         ) : (
           <button
@@ -465,7 +465,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
             disabled={publishing}
             className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            <Rocket size={16} /> {publishing ? 'Wird verÃ¶ffentlichtâ€¦' : 'VerÃ¶ffentlichen'}
+            <Rocket size={16} /> {publishing ? 'Wird veröffentlicht…' : 'Veröffentlichen'}
           </button>
         )}
       </div>
