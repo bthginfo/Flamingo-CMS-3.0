@@ -20,7 +20,7 @@ export async function createTenantAction(input: ProvisionInput) {
   }
 }
 
-export async function updateTenantAction(tenantId: string, data: { name?: string; status?: 'active' | 'suspended'; activeStyle?: string; isDemo?: boolean; isLead?: boolean; industry?: 'tradesman' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'consulting' | 'medical' | 'fitness' | 'wedding' | 'cafe' | 'bar' | 'photography' | 'realestate' | 'tattoo' | 'ecommerce' }) {
+export async function updateTenantAction(tenantId: string, data: { name?: string; status?: 'active' | 'suspended'; activeStyle?: string; isDemo?: boolean; isLead?: boolean; industry?: 'tradesman' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'consulting' | 'medical' | 'fitness' | 'wedding' | 'cafe' | 'bar' | 'photography' | 'realestate' | 'tattoo' | 'ecommerce' | 'retail' }) {
   const db = getDb();
   await db.update(tenants)
     .set({ ...data, updatedAt: new Date() })
