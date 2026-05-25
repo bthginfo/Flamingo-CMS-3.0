@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Globe, FileText, Layers, ExternalLink, Shield, Server, Cloud } from 'lucide-react';
 import { TenantActions } from './tenant-actions';
+import { IndustrySelect } from './industry-select';
 import { DomainManager } from './domain-manager';
 import { DesignEditor } from './design-editor';
 import { PatManager } from './pat-manager';
@@ -49,7 +50,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1 text-xs sm:text-sm text-slate-500">
               <span className="font-mono">{tenant.slug}</span>
               <span className="hidden sm:inline">·</span>
-              <span className="capitalize">{tenant.industry}</span>
+              <IndustrySelect tenantId={tenant.id} currentIndustry={tenant.industry} />
               <span className="hidden sm:inline">·</span>
               <span className={tenant.status === 'active' ? 'crm-badge-green' : tenant.status === 'provisioning' ? 'crm-badge-amber' : 'crm-badge-red'}>{tenant.status}</span>
               {tenant.deploymentMode === 'standalone' && <span className="crm-badge-amber">Standalone</span>}
