@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import { withApiHandler } from '@/lib/api-utils';
 
 export const PUT = withApiHandler(async (req, auth) => {
-  const { columns, legalLinks, cta } = await req.json();
+  const { columns, legalLinks, cta, locale } = await req.json();
   const db = getDb();
 
   // Validate columns have items
@@ -20,10 +20,34 @@ export const PUT = withApiHandler(async (req, auth) => {
   }
 
   const [existing] = await db.select().from(footer).where(eq(footer.tenantId, auth.tenantId));
-  if (existing) {
-    await db.update(footer).set({ columns: columns || [], legalLinks: legalLinks || [], cta: cta || {} }).where(eq(footer.tenantId, auth.tenantId));
+
+  if (locale) {
+    // Localized mode
+    const currentCols = (existing?.columns || []) as unknown as Record<string, unknown>;
+    const currentLegal = (existing?.legalLinks || []) as unknown as Record<string, unknown>;
+    const currentCta = (existing?.cta || {}) as Record<string, unknown>;
+
+    const newCols = currentCols._localized
+      ? { ...currentCols, [locale]: columns || [] }
+      : { _localized: true, [locale]: columns || [], ...(existing ? { _default: existing.columns } : {}) };
+    const newLegal = currentLegal._localized
+      ? { ...currentLegal, [locale]: legalLinks || [] }
+      : { _localized: true, [locale]: legalLinks || [], ...(existing ? { _default: existing.legalLinks } : {}) };
+    const newCta = currentCta._localized
+      ? { ...currentCta, [locale]: cta || {} }
+      : { _localized: true, [locale]: cta || {}, ...(existing ? { _default: existing.cta } : {}) };
+
+    if (existing) {
+      await db.update(footer).set({ columns: newCols as any, legalLinks: newLegal as any, cta: newCta as any }).where(eq(footer.tenantId, auth.tenantId));
+    } else {
+      await db.insert(footer).values({ tenantId: auth.tenantId, columns: newCols as any, legalLinks: newLegal as any, cta: newCta as any });
+    }
   } else {
-    await db.insert(footer).values({ tenantId: auth.tenantId, columns: columns || [], legalLinks: legalLinks || [], cta: cta || {} });
+    if (existing) {
+      await db.update(footer).set({ columns: columns || [], legalLinks: legalLinks || [], cta: cta || {} }).where(eq(footer.tenantId, auth.tenantId));
+    } else {
+      await db.insert(footer).values({ tenantId: auth.tenantId, columns: columns || [], legalLinks: legalLinks || [], cta: cta || {} });
+    }
   }
 
   return NextResponse.json({ success: true });

@@ -26,21 +26,50 @@ export async function getTenantI18n(tenantId: string): Promise<{ enabled: boolea
   };
 }
 
-export async function getTenantNav(tenantId: string): Promise<{ items: NavItem[]; cta: NavCta | null }> {
+export async function getTenantNav(tenantId: string, locale?: string): Promise<{ items: NavItem[]; cta: NavCta | null }> {
   const db = getDb();
   const [nav] = await db.select().from(navigation).where(eq(navigation.tenantId, tenantId)).limit(1);
-  const cta = nav?.cta as NavCta | undefined;
+  let items = nav?.items as any;
+  let cta = nav?.cta as any;
+  if (items?._localized && locale) {
+    items = items[locale] ?? items._default ?? [];
+  } else if (items?._localized) {
+    items = items._default ?? [];
+  }
+  if (cta?._localized && locale) {
+    cta = cta[locale] ?? cta._default ?? null;
+  } else if (cta?._localized) {
+    cta = cta._default ?? null;
+  }
   return {
-    items: (nav?.items as NavItem[]) || [],
+    items: (items as NavItem[]) || [],
     cta: cta?.label ? cta : null,
   };
 }
 
-export async function getTenantFooter(tenantId: string): Promise<FooterData | null> {
+export async function getTenantFooter(tenantId: string, locale?: string): Promise<FooterData | null> {
   const db = getDb();
   const [f] = await db.select().from(footer).where(eq(footer.tenantId, tenantId)).limit(1);
   if (!f) return null;
-  return { columns: f.columns as FooterColumn[], legalLinks: f.legalLinks as { label: string; href: string }[], cta: (f as any).cta as { label: string; href: string } | null };
+  let columns = f.columns as any;
+  let legalLinks = f.legalLinks as any;
+  let cta = (f as any).cta as any;
+  if (columns?._localized && locale) {
+    columns = columns[locale] ?? columns._default ?? [];
+  } else if (columns?._localized) {
+    columns = columns._default ?? [];
+  }
+  if (legalLinks?._localized && locale) {
+    legalLinks = legalLinks[locale] ?? legalLinks._default ?? [];
+  } else if (legalLinks?._localized) {
+    legalLinks = legalLinks._default ?? [];
+  }
+  if (cta?._localized && locale) {
+    cta = cta[locale] ?? cta._default ?? null;
+  } else if (cta?._localized) {
+    cta = cta._default ?? null;
+  }
+  return { columns: columns as FooterColumn[], legalLinks: legalLinks as { label: string; href: string }[], cta: cta as { label: string; href: string } | null };
 }
 
 export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandData; contact: ContactData; socialLinks: SocialLinks; design: Record<string, string> }> {

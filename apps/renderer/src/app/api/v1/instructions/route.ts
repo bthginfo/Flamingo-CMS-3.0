@@ -114,12 +114,14 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
    - items: Array mit ALLEN Seiten die du erstellst (jede Seite braucht einen Nav-Eintrag)
    - Format: { items: [{ label: "Startseite", href: "/" }, { label: "Leistungen", href: "/leistungen" }, ...], cta: { label: "Jetzt anfragen", href: "/kontakt" } }
    - WICHTIG: href MUSS mit "/" beginnen + den Slug der Seite enthalten
+   - i18n: Optionales "locale" Feld um Navigation pro Sprache zu setzen: { locale: "en", items: [...], cta: {...} }
 
 4. FOOTER (PUT /api/v1/content/footer):
    - columns: MINDESTENS 2-3 Spalten, JEDE mit title UND items-Array
    - cta: { label: "Jetzt anfragen", href: "/kontakt" } (optionaler CTA-Button im Footer)
    - Beispiel: { columns: [{ title: "Leistungen", items: [{ text: "Badezimmer", href: "/c/leistungen/badezimmer" }, ...] }, { title: "Unternehmen", items: [{ text: "Über uns", href: "/ueber-uns" }, { text: "Kontakt", href: "/kontakt" }] }], legalLinks: [{ label: "Impressum", href: "/impressum" }, { label: "Datenschutz", href: "/datenschutz" }], cta: { label: "Termin vereinbaren", href: "/kontakt" } }
    - NIEMALS leere items-Arrays! Jede Spalte braucht mindestens 2 Links.
+   - i18n: Optionales "locale" Feld um Footer pro Sprache zu setzen: { locale: "en", columns: [...], legalLinks: [...], cta: {...} }
 
 5. SEITEN (POST /api/v1/content/pages) — Erstelle ALLE diese Seiten:
    a) Startseite (slug: "startseite") — MINDESTENS 6 Sections:
