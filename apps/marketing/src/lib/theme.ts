@@ -124,6 +124,13 @@ export const PRESETS: Record<TemplateKey, ThemePreset[]> = {
     { id: 'mono',       label: 'Mono',           primary: '#111111', primaryFg: '#ffffff', accent: '#111111', surface: '#f5f5f5', bg: '#ffffff', text: '#0a0a0a' },
     { id: 'dark',       label: 'Dark Store',     primary: '#fbbf24', primaryFg: '#1c1917', accent: '#fbbf24', surface: '#1c1917', bg: '#0c0a09', text: '#fafaf9' },
   ],
+  retail: [
+    { id: 'emerald',    label: 'Emerald',        primary: '#059669', primaryFg: '#ecfdf5', accent: '#10b981', surface: '#f0fdf4', bg: '#ffffff', text: '#14532d' },
+    { id: 'crimson',    label: 'Crimson',        primary: '#dc2626', primaryFg: '#fef2f2', accent: '#f87171', surface: '#fff5f5', bg: '#ffffff', text: '#450a0a' },
+    { id: 'slate',      label: 'Slate',          primary: '#334155', primaryFg: '#f8fafc', accent: '#64748b', surface: '#f1f5f9', bg: '#ffffff', text: '#0f172a' },
+    { id: 'gold',       label: 'Gold',           primary: '#a16207', primaryFg: '#fefce8', accent: '#eab308', surface: '#fefce8', bg: '#ffffff', text: '#422006' },
+    { id: 'dark',       label: 'Dark Retail',    primary: '#10b981', primaryFg: '#0a0a0a', accent: '#34d399', surface: '#1c1917', bg: '#0c0a09', text: '#fafaf9' },
+  ],
 };
 
 export function applyTheme(p: ThemePreset) {
