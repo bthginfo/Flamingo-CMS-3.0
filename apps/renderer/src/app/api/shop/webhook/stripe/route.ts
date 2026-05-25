@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
         const [order] = await db.select().from(orders)
           .where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
 
-        if (order && order.status === 'pending') {
+        if (order && (order.status === 'pending' || order.status === 'awaiting_payment')) {
           await db.update(orders).set({
             status: 'paid',
             paymentStatus: 'paid',
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
 
           await db.insert(orderStatusHistory).values({
             orderId,
-            oldStatus: 'pending',
+            oldStatus: order.status,
             newStatus: 'paid',
             note: 'Stripe payment confirmed',
           });

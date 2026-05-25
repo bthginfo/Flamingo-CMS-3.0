@@ -3,7 +3,7 @@
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { tenantAddons, shopSettings, products, productCategories, productVariants, variantOptions, orders, orderStatusHistory, shippingZones, shippingMethods, coupons, pages, pageSections, invoices, formSubmissions, tenants, promotions } from '@flamingo/db';
-import { eq, and, desc, sql } from 'drizzle-orm';
+import { eq, and, desc, sql, not } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
 async function requireTenant() {
@@ -328,7 +328,7 @@ export async function getOrders() {
   const tenantId = await requireTenant();
   const db = getDb();
   return db.select().from(orders)
-    .where(eq(orders.tenantId, tenantId))
+    .where(and(eq(orders.tenantId, tenantId), not(eq(orders.status, 'awaiting_payment'))))
     .orderBy(desc(orders.createdAt));
 }
 

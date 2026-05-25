@@ -144,10 +144,11 @@ export async function POST(req: NextRequest) {
   const orderNumber = `${settings.orderPrefix}-${String(settings.nextOrderNumber).padStart(4, '0')}`;
 
   // Create order
+  const initialStatus = (paymentMethod === 'stripe' || paymentMethod === 'paypal' || paymentMethod === 'sumup') ? 'awaiting_payment' : paymentMethod === 'pickup' ? 'processing' : 'pending';
   const [order] = await db.insert(orders).values({
     tenantId,
     orderNumber,
-    status: paymentMethod === 'pickup' ? 'processing' : 'pending',
+    status: initialStatus,
     customerEmail: email,
     customerName: name,
     customerPhone: phone || null,
@@ -173,7 +174,7 @@ export async function POST(req: NextRequest) {
   await db.insert(orderStatusHistory).values({
     orderId: order.id,
     oldStatus: null,
-    newStatus: paymentMethod === 'pickup' ? 'processing' : 'pending',
+    newStatus: initialStatus,
   });
 
   // Upsert customer

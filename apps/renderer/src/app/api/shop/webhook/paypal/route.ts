@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
         paymentStatus: 'paid',
         paymentId: captureData.id,
         updatedAt: new Date(),
-      }).where(eq(orders.id, orderId));
+      }).where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
 
       await db.insert(orderStatusHistory).values({
         orderId,
