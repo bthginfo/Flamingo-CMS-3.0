@@ -207,6 +207,7 @@ export async function saveShopSettings(data: Partial<{
   invoicePrefix: string;
   notificationEmail: string | null;
   lowStockThreshold: number;
+  companyInfo: { name: string; street: string; zip: string; city: string; country: string; email?: string; phone?: string; taxId?: string; vatId?: string; registerCourt?: string; registerNumber?: string; ceo?: string } | null;
 }>) {
   const tenantId = await requireTenant();
   const db = getDb();

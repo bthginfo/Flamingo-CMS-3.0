@@ -59,93 +59,163 @@ export async function GET(
   const page = doc.addPage([595, 842]); // A4
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
-  const { height } = page.getSize();
+  const { width, height } = page.getSize();
 
   const black = rgb(0, 0, 0);
   const gray = rgb(0.4, 0.4, 0.4);
+  const lightGray = rgb(0.85, 0.85, 0.85);
+  const accentColor = rgb(0.1, 0.1, 0.1);
 
   let y = height - 50;
+  const marginLeft = 50;
+  const marginRight = 545;
 
-  // Header
-  page.drawText('RECHNUNG', { x: 50, y, font: fontBold, size: 24, color: black });
-  y -= 30;
-  page.drawText(`Rechnungsnummer: ${invoiceNumber}`, { x: 50, y, font, size: 10, color: gray });
-  y -= 15;
-  page.drawText(`Bestellnummer: ${order.orderNumber}`, { x: 50, y, font, size: 10, color: gray });
-  y -= 15;
-  page.drawText(`Datum: ${new Date(order.createdAt).toLocaleDateString('de-DE')}`, { x: 50, y, font, size: 10, color: gray });
-  y -= 40;
+  // ─── Seller info (top right) ───────────────────────
+  const company = (settings as any)?.companyInfo as { name: string; street: string; zip: string; city: string; country: string; email?: string; phone?: string; taxId?: string; vatId?: string; registerCourt?: string; registerNumber?: string; ceo?: string } | null;
 
-  // Customer
-  page.drawText('Rechnungsadresse:', { x: 50, y, font: fontBold, size: 10, color: black });
-  y -= 15;
-  page.drawText(order.customerName, { x: 50, y, font, size: 10, color: black });
-  y -= 13;
+  if (company?.name) {
+    let sy = height - 50;
+    const drawRight = (text: string, f = font, s = 9) => {
+      const tw = f.widthOfTextAtSize(text, s);
+      page.drawText(text, { x: marginRight - tw, y: sy, font: f, size: s, color: black });
+      sy -= 13;
+    };
+    drawRight(company.name, fontBold, 10);
+    drawRight(company.street);
+    drawRight(`${company.zip} ${company.city}`);
+    if (company.phone) drawRight(`Tel: ${company.phone}`);
+    if (company.email) drawRight(company.email);
+  }
+
+  // ─── Title ─────────────────────────────────────────
+  page.drawText('RECHNUNG', { x: marginLeft, y, font: fontBold, size: 22, color: accentColor });
+  y -= 35;
+
+  // Accent line
+  page.drawRectangle({ x: marginLeft, y: y + 8, width: 60, height: 3, color: accentColor });
+  y -= 10;
+
+  // Meta info
+  const metaLines = [
+    ['Rechnungsnr.:', invoiceNumber],
+    ['Bestellnr.:', order.orderNumber],
+    ['Rechnungsdatum:', new Date(order.createdAt).toLocaleDateString('de-DE')],
+    ['Zahlungsart:', order.paymentMethod === 'prepayment' ? 'Vorkasse' : order.paymentMethod === 'paypal' ? 'PayPal' : order.paymentMethod === 'stripe' ? 'Kreditkarte' : order.paymentMethod === 'pickup' ? 'Abholung' : order.paymentMethod || 'Vorkasse'],
+  ];
+  for (const [label, value] of metaLines) {
+    page.drawText(label, { x: marginLeft, y, font: fontBold, size: 9, color: gray });
+    page.drawText(value, { x: marginLeft + 95, y, font, size: 9, color: black });
+    y -= 14;
+  }
+  y -= 20;
+
+  // ─── Sender line (small, above customer address) ───
+  if (company?.name) {
+    page.drawText(`${company.name} · ${company.street} · ${company.zip} ${company.city}`, { x: marginLeft, y, font, size: 7, color: gray });
+    y -= 5;
+    page.drawLine({ start: { x: marginLeft, y }, end: { x: 280, y }, thickness: 0.3, color: lightGray });
+    y -= 12;
+  }
+
+  // ─── Customer address ──────────────────────────────
+  page.drawText('Rechnungsempfänger', { x: marginLeft, y, font: fontBold, size: 8, color: gray });
+  y -= 14;
+  page.drawText(order.customerName, { x: marginLeft, y, font: fontBold, size: 10, color: black });
+  y -= 14;
   if (order.billingAddress || order.shippingAddress) {
     const addr = (order.billingAddress || order.shippingAddress) as { street: string; city: string; zip: string; country: string; company?: string };
-    if (addr.company) { page.drawText(addr.company, { x: 50, y, font, size: 10, color: black }); y -= 13; }
-    page.drawText(addr.street, { x: 50, y, font, size: 10, color: black }); y -= 13;
-    page.drawText(`${addr.zip} ${addr.city}`, { x: 50, y, font, size: 10, color: black }); y -= 13;
+    if (addr.company) { page.drawText(addr.company, { x: marginLeft, y, font, size: 9, color: black }); y -= 13; }
+    page.drawText(addr.street, { x: marginLeft, y, font, size: 9, color: black }); y -= 13;
+    page.drawText(`${addr.zip} ${addr.city}`, { x: marginLeft, y, font, size: 9, color: black }); y -= 13;
   }
-  page.drawText(order.customerEmail, { x: 50, y, font, size: 10, color: gray });
-  y -= 40;
+  page.drawText(order.customerEmail, { x: marginLeft, y, font, size: 9, color: gray });
+  y -= 35;
 
-  // Table header
-  const colX = { pos: 50, qty: 280, price: 360, total: 460 };
-  page.drawText('Artikel', { x: colX.pos, y, font: fontBold, size: 9, color: black });
-  page.drawText('Menge', { x: colX.qty, y, font: fontBold, size: 9, color: black });
-  page.drawText('Einzelpreis', { x: colX.price, y, font: fontBold, size: 9, color: black });
-  page.drawText('Gesamt', { x: colX.total, y, font: fontBold, size: 9, color: black });
-  y -= 5;
-  page.drawLine({ start: { x: 50, y }, end: { x: 545, y }, thickness: 0.5, color: gray });
-  y -= 15;
+  // ─── Items table ───────────────────────────────────
+  const colX = { pos: marginLeft, qty: 310, price: 390, total: 480 };
+
+  // Table header background
+  page.drawRectangle({ x: marginLeft - 5, y: y - 4, width: marginRight - marginLeft + 10, height: 18, color: rgb(0.95, 0.95, 0.95) });
+  page.drawText('Artikel', { x: colX.pos, y, font: fontBold, size: 8, color: gray });
+  page.drawText('Menge', { x: colX.qty, y, font: fontBold, size: 8, color: gray });
+  page.drawText('Einzelpreis', { x: colX.price, y, font: fontBold, size: 8, color: gray });
+  page.drawText('Gesamt', { x: colX.total, y, font: fontBold, size: 8, color: gray });
+  y -= 20;
 
   // Items
   const items = order.items as { title: string; variantName?: string; quantity: number; priceCents: number }[];
   for (const item of items) {
     const title = item.variantName ? `${item.title} (${item.variantName})` : item.title;
-    page.drawText(title.slice(0, 40), { x: colX.pos, y, font, size: 9, color: black });
+    page.drawText(title.slice(0, 45), { x: colX.pos, y, font, size: 9, color: black });
     page.drawText(String(item.quantity), { x: colX.qty, y, font, size: 9, color: black });
     page.drawText(fmtPrice(item.priceCents), { x: colX.price, y, font, size: 9, color: black });
     page.drawText(fmtPrice(item.priceCents * item.quantity), { x: colX.total, y, font, size: 9, color: black });
     y -= 18;
+    // Light separator between items
+    page.drawLine({ start: { x: marginLeft, y: y + 6 }, end: { x: marginRight, y: y + 6 }, thickness: 0.3, color: lightGray });
   }
 
-  // Totals
+  // ─── Totals ────────────────────────────────────────
   y -= 10;
-  page.drawLine({ start: { x: 350, y: y + 8 }, end: { x: 545, y: y + 8 }, thickness: 0.5, color: gray });
-  page.drawText('Zwischensumme:', { x: 350, y, font, size: 9, color: black });
-  page.drawText(fmtPrice(order.subtotalCents), { x: 460, y, font, size: 9, color: black });
+  const totalsX = 380;
+  const totalsValX = 480;
+
+  page.drawText('Zwischensumme', { x: totalsX, y, font, size: 9, color: gray });
+  page.drawText(fmtPrice(order.subtotalCents), { x: totalsValX, y, font, size: 9, color: black });
   y -= 15;
 
   if (order.shippingCents > 0) {
-    page.drawText('Versand:', { x: 350, y, font, size: 9, color: black });
-    page.drawText(fmtPrice(order.shippingCents), { x: 460, y, font, size: 9, color: black });
+    page.drawText('Versand', { x: totalsX, y, font, size: 9, color: gray });
+    page.drawText(fmtPrice(order.shippingCents), { x: totalsValX, y, font, size: 9, color: black });
     y -= 15;
   }
 
   if (order.discountCents > 0) {
-    page.drawText('Rabatt:', { x: 350, y, font, size: 9, color: black });
-    page.drawText(`-${fmtPrice(order.discountCents)}`, { x: 460, y, font, size: 9, color: black });
+    page.drawText('Rabatt', { x: totalsX, y, font, size: 9, color: gray });
+    page.drawText(`-${fmtPrice(order.discountCents)}`, { x: totalsValX, y, font, size: 9, color: black });
     y -= 15;
   }
 
-  // Tax line
   const taxCents = order.taxCents;
-  page.drawText('davon MwSt. 19%:', { x: 350, y, font, size: 9, color: gray });
-  page.drawText(fmtPrice(taxCents), { x: 460, y, font, size: 9, color: gray });
+  page.drawText('inkl. 19% MwSt.', { x: totalsX, y, font, size: 8, color: gray });
+  page.drawText(fmtPrice(taxCents), { x: totalsValX, y, font, size: 8, color: gray });
   y -= 18;
 
-  page.drawText('Gesamtbetrag:', { x: 350, y, font: fontBold, size: 11, color: black });
-  page.drawText(fmtPrice(order.totalCents), { x: 460, y, font: fontBold, size: 11, color: black });
-  y -= 30;
+  // Total line
+  page.drawLine({ start: { x: totalsX - 5, y: y + 6 }, end: { x: marginRight, y: y + 6 }, thickness: 1, color: accentColor });
+  page.drawText('Gesamtbetrag', { x: totalsX, y, font: fontBold, size: 11, color: black });
+  page.drawText(fmtPrice(order.totalCents), { x: totalsValX, y, font: fontBold, size: 11, color: black });
+  y -= 35;
 
-  // Payment info
-  page.drawText(`Zahlungsart: ${order.paymentMethod || 'Vorkasse'}`, { x: 50, y, font, size: 9, color: gray });
-  y -= 30;
+  // ─── Bank details (for Vorkasse) ───────────────────
+  if (order.paymentMethod === 'prepayment' && settings?.bankDetails) {
+    const bd = settings.bankDetails as { iban: string; bic: string; bankName: string; accountHolder: string };
+    page.drawText('Bankverbindung', { x: marginLeft, y, font: fontBold, size: 9, color: black });
+    y -= 14;
+    page.drawText(`Kontoinhaber: ${bd.accountHolder}`, { x: marginLeft, y, font, size: 9, color: black }); y -= 13;
+    page.drawText(`IBAN: ${bd.iban}`, { x: marginLeft, y, font, size: 9, color: black }); y -= 13;
+    page.drawText(`BIC: ${bd.bic}`, { x: marginLeft, y, font, size: 9, color: black }); y -= 13;
+    page.drawText(`Bank: ${bd.bankName}`, { x: marginLeft, y, font, size: 9, color: black }); y -= 13;
+    page.drawText(`Verwendungszweck: ${order.orderNumber}`, { x: marginLeft, y, font: fontBold, size: 9, color: black }); y -= 25;
+  }
 
-  // Footer
-  page.drawText('Vielen Dank für Ihren Einkauf!', { x: 50, y, font, size: 9, color: gray });
+  // ─── Footer ────────────────────────────────────────
+  const footerY = 50;
+  page.drawLine({ start: { x: marginLeft, y: footerY + 15 }, end: { x: marginRight, y: footerY + 15 }, thickness: 0.5, color: lightGray });
+
+  // Footer columns with company legal info
+  const footerParts: string[] = [];
+  if (company?.name) footerParts.push(company.name);
+  if (company?.ceo) footerParts.push(`GF: ${company.ceo}`);
+  if (company?.taxId) footerParts.push(`St.-Nr.: ${company.taxId}`);
+  if (company?.vatId) footerParts.push(`USt-IdNr.: ${company.vatId}`);
+  if (company?.registerCourt && company?.registerNumber) footerParts.push(`${company.registerCourt} ${company.registerNumber}`);
+
+  const footerText = footerParts.join(' · ');
+  page.drawText(footerText.slice(0, 100), { x: marginLeft, y: footerY, font, size: 7, color: gray });
+  if (footerText.length > 100) {
+    page.drawText(footerText.slice(100), { x: marginLeft, y: footerY - 10, font, size: 7, color: gray });
+  }
 
   const pdfBytes = await doc.save();
 

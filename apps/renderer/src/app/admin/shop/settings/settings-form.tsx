@@ -26,6 +26,7 @@ type Settings = {
   invoicePrefix: string;
   notificationEmail: string | null;
   lowStockThreshold: number;
+  companyInfo: { name: string; street: string; zip: string; city: string; country: string; email?: string; phone?: string; taxId?: string; vatId?: string; registerCourt?: string; registerNumber?: string; ceo?: string } | null;
 };
 
 export function ShopSettingsForm({ initial }: { initial: Settings | null | undefined }) {
@@ -51,6 +52,7 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
     invoicePrefix: initial?.invoicePrefix || 'RE',
     notificationEmail: initial?.notificationEmail || null,
     lowStockThreshold: initial?.lowStockThreshold || 5,
+    companyInfo: initial?.companyInfo || null,
   });
 
   function set<K extends keyof Settings>(key: K, value: Settings[K]) {
@@ -119,6 +121,60 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
           <div>
             <label className="block text-xs font-medium text-zinc-500 mb-1">Low-Stock Schwellwert</label>
             <input type="number" min="0" value={data.lowStockThreshold} onChange={e => set('lowStockThreshold', parseInt(e.target.value || '5'))} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" />
+          </div>
+        </div>
+      </div>
+
+      {/* Payment methods */}
+      <div className="bg-white rounded-xl border border-zinc-200 p-5 space-y-4">
+        <h2 className="font-semibold text-sm text-zinc-700">Firmendaten (Rechnungspflichtangaben)</h2>
+        <p className="text-xs text-zinc-400">Diese Daten erscheinen auf jeder Rechnung als Absender.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">Firmenname *</label>
+            <input value={data.companyInfo?.name || ''} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), name: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" placeholder="Meine Firma GmbH" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">Geschäftsführer / Inhaber</label>
+            <input value={data.companyInfo?.ceo || ''} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), ceo: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" placeholder="Max Mustermann" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">Straße *</label>
+            <input value={data.companyInfo?.street || ''} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), street: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" placeholder="Musterstraße 1" />
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <div>
+              <label className="block text-xs font-medium text-zinc-500 mb-1">PLZ *</label>
+              <input value={data.companyInfo?.zip || ''} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), zip: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-xs font-medium text-zinc-500 mb-1">Ort *</label>
+              <input value={data.companyInfo?.city || ''} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), city: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">E-Mail</label>
+            <input value={data.companyInfo?.email || ''} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), email: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" placeholder="rechnung@firma.de" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">Telefon</label>
+            <input value={data.companyInfo?.phone || ''} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), phone: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">Steuernummer</label>
+            <input value={data.companyInfo?.taxId || ''} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), taxId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" placeholder="123/456/78901" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">USt-IdNr.</label>
+            <input value={data.companyInfo?.vatId || ''} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), vatId: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" placeholder="DE123456789" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">Registergericht</label>
+            <input value={data.companyInfo?.registerCourt || ''} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), registerCourt: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" placeholder="Amtsgericht München" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">Registernummer</label>
+            <input value={data.companyInfo?.registerNumber || ''} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), registerNumber: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" placeholder="HRB 12345" />
           </div>
         </div>
       </div>

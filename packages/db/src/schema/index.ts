@@ -21,7 +21,7 @@ export const actorTypeEnum = pgEnum('actor_type', ['admin', 'system', 'api']);
 
 // ─── Shop Enums ───────────────────────────────────────────────────────
 export const productStatusEnum = pgEnum('product_status', ['draft', 'active', 'archived']);
-export const orderStatusEnum = pgEnum('order_status', ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded']);
+export const orderStatusEnum = pgEnum('order_status', ['awaiting_payment', 'pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded']);
 export const couponTypeEnum = pgEnum('coupon_type', ['percent', 'fixed_amount', 'free_shipping']);
 export const couponAppliesToEnum = pgEnum('coupon_applies_to', ['all', 'specific_products', 'specific_categories']);
 export const promotionTypeEnum = pgEnum('promotion_type', ['free_shipping_above', 'buy_x_get_discount', 'bundle_discount', 'quantity_discount', 'first_order_discount', 'spend_x_save_y']);
@@ -501,6 +501,7 @@ export const shopSettings = pgTable('shop_settings', {
   nextInvoiceNumber: integer('next_invoice_number').notNull().default(1),
   notificationEmail: varchar('notification_email', { length: 255 }),
   lowStockThreshold: integer('low_stock_threshold').notNull().default(5),
+  companyInfo: jsonb('company_info').$type<{ name: string; street: string; zip: string; city: string; country: string; email?: string; phone?: string; taxId?: string; vatId?: string; registerCourt?: string; registerNumber?: string; ceo?: string } | null>().default(null),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
