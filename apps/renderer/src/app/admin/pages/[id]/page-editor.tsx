@@ -45,7 +45,7 @@ type Page = {
   type: string;
 };
 
-function SortableSection({ section, industry, sectionTypes, styleVariant, resolvedVars, iframeRef, onDelete, onToggleVisible, onChangeData, onSaveMeta, onSaveColorOverrides }: {
+function SortableSection({ section, industry, sectionTypes, styleVariant, resolvedVars, iframeRef, onDelete, onToggleVisible, onChangeData, onSaveMeta, onSaveColorOverrides, activeLocale, i18n }: {
   section: Section;
   industry: string;
   sectionTypes: SectionTypeDefinition[];
@@ -57,6 +57,8 @@ function SortableSection({ section, industry, sectionTypes, styleVariant, resolv
   onChangeData: (data: Record<string, unknown>) => void;
   onSaveMeta: (meta: Record<string, unknown>) => void;
   onSaveColorOverrides: (overrides: Record<string, unknown> | null) => void;
+  activeLocale?: string;
+  i18n?: { enabled: boolean; locales: string[]; defaultLocale: string };
 }) {
   const [expanded, setExpanded] = useState(false);
   // Stabilize onChange ref to prevent useReport re-fires after parent re-render
@@ -98,7 +100,7 @@ function SortableSection({ section, industry, sectionTypes, styleVariant, resolv
       </div>
       {expanded && (
         <div className="p-4">
-          <IndustrySectionDataEditor industry={industry} type={section.type} data={section.data} onChange={stableOnChange} />
+          <IndustrySectionDataEditor industry={industry} type={section.type} data={i18n?.enabled && section.data._localized ? (section.data[activeLocale || i18n.defaultLocale] as Record<string, unknown> ?? section.data[i18n.defaultLocale] as Record<string, unknown> ?? {}) : section.data} onChange={stableOnChange} />
           <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} resolvedVars={resolvedVars} iframeRef={iframeRef} sectionId={section.id} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
@@ -171,9 +173,10 @@ function SectionMetaEditor({ section, styleVariant, onSave }: { section: Section
 
 // SectionPickerModal is imported from shared component
 
-export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {}, hasShop = false }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean }) {
+export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {}, hasShop = false, i18n }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string } }) {
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
+  const [activeLocale, setActiveLocale] = useState(i18n?.defaultLocale || 'de');
   const sectionTypes = getSectionTypesForIndustry(industry, { hasShop });
   const resolvedVars = { ...getStyleCssVars(industry, styleVariant), ...getBrandCssVars(brand) };
   const [showAddMenu, setShowAddMenu] = useState(false);
@@ -260,17 +263,30 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   }
 
   const handleSectionChange = useCallback((sectionId: string, data: Record<string, unknown>) => {
-    pendingChanges.current.set(sectionId, data);
+    let saveData = data;
+    // If i18n enabled, wrap data into locale structure
+    if (i18n?.enabled) {
+      const section = sectionsRef.current.find(s => s.id === sectionId);
+      const existingData = pendingChanges.current.get(sectionId) ?? section?.data ?? {};
+      const isLocalized = existingData._localized;
+      if (isLocalized) {
+        saveData = { ...existingData, [activeLocale]: data };
+      } else {
+        // Migrate: existing flat data becomes defaultLocale, new data goes to activeLocale
+        saveData = { _localized: true, [i18n.defaultLocale]: existingData, [activeLocale]: data };
+      }
+    }
+    pendingChanges.current.set(sectionId, saveData);
     setHasDirty(true);
     setSaved(false);
     if (preview.isOpen) {
       const liveSections = sectionsRef.current.map(sec => {
-        const newData = sec.id === sectionId ? data : pendingChanges.current.get(sec.id);
+        const newData = sec.id === sectionId ? saveData : pendingChanges.current.get(sec.id);
         return { ...sec, data: newData ?? sec.data };
       });
       preview.sendLiveData({ sections: liveSections, industry, styleVariant });
     }
-  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant]);
+  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, i18n, activeLocale]);
 
   async function handleSaveAll() {
     setSaving(true);
@@ -370,6 +386,17 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         </label>
       </div>
 
+      {/* Locale Tabs (i18n) */}
+      {i18n?.enabled && (
+        <div className="flex items-center gap-1 mb-4 p-1 bg-gray-100 rounded-lg w-fit">
+          {i18n.locales.map(locale => (
+            <button key={locale} onClick={() => setActiveLocale(locale)} className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${activeLocale === locale ? 'bg-white shadow text-blue-700' : 'text-gray-500 hover:text-gray-700'}`}>
+              {locale.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Section List with DnD */}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
@@ -387,6 +414,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
               onChangeData={(data) => handleSectionChange(section.id, data)}
               onSaveMeta={(meta) => handleSaveSectionMeta(section.id, meta)}
               onSaveColorOverrides={(overrides) => handleSaveColorOverrides(section.id, overrides)}
+              activeLocale={activeLocale}
+              i18n={i18n}
             />
           ))}
         </SortableContext>

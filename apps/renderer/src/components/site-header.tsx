@@ -8,9 +8,10 @@ import { Menu, X, Phone, Mail, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useHeaderContrast } from '@/hooks/use-header-contrast';
+import { LanguageSwitcher } from './language-switcher';
 import type { NavItem, NavCta, BrandData, ContactData } from '@/lib/tenant-data';
 
-export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/' }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string }) {
+export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/', i18n }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string; i18n?: { locales: string[]; currentLocale: string; defaultLocale: string; style?: string } }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -129,6 +130,9 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                 {cta?.label || 'Termin vereinbaren'}
                 <ArrowRight size={14} />
               </Link>
+              {i18n && i18n.locales.length > 1 && (
+                <LanguageSwitcher locales={i18n.locales} currentLocale={i18n.currentLocale} defaultLocale={i18n.defaultLocale} style={(i18n.style as 'dropdown' | 'inline') || 'dropdown'} />
+              )}
             </nav>
 
             <button

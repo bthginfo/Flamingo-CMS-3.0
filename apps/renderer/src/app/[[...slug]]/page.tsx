@@ -44,7 +44,7 @@ async function resolvePageData(slug?: string[]) {
     p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
   );
   if (!page || page.visible === false) return null;
-  return { tenantId, snapshot, page, locale };
+  return { tenantId, snapshot, page, locale, i18n: i18n.enabled ? i18n : undefined };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug?: string[] }> }): Promise<Metadata> {
@@ -116,7 +116,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   const result = await resolvePageData(slug);
   if (!result) notFound();
 
-  const { tenantId, snapshot, page, locale } = result;
+  const { tenantId, snapshot, page, locale, i18n } = result;
   const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle, seoGlobal] = await Promise.all([
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
@@ -246,7 +246,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       {bodyFontName && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
       {importantOverrides.length > 0 && <style dangerouslySetInnerHTML={{ __html: importantOverrides.join('\n') }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdList) }} />
-      <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} />
+      <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} i18n={i18n ? { locales: i18n.locales, currentLocale: locale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} />
       <main>
         {visibleSections.map((section) => (
           <SectionRenderer key={section.id} section={section.type.startsWith('shop') ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={locale} />
