@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { orders, shopSettings, invoices } from '@flamingo/db';
+import { orders, shopSettings, invoices, globalSettings } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
@@ -54,6 +54,18 @@ export async function GET(
       .where(eq(shopSettings.tenantId, tenantId));
   }
 
+  // Fetch brand for logo and colors
+  const [gs] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
+  const brand = (gs?.brand as { logoUrl?: string; primaryColor?: string } | null) || {};
+  const logoUrl = brand.logoUrl || null;
+  const primaryColor = brand.primaryColor || null;
+
+  // Parse hex color to rgb
+  function hexToRgb(hex: string) {
+    const h = hex.replace('#', '');
+    return rgb(parseInt(h.slice(0, 2), 16) / 255, parseInt(h.slice(2, 4), 16) / 255, parseInt(h.slice(4, 6), 16) / 255);
+  }
+
   // Build PDF
   const doc = await PDFDocument.create();
   const page = doc.addPage([595, 842]); // A4
@@ -64,11 +76,30 @@ export async function GET(
   const black = rgb(0, 0, 0);
   const gray = rgb(0.4, 0.4, 0.4);
   const lightGray = rgb(0.85, 0.85, 0.85);
-  const accentColor = rgb(0.1, 0.1, 0.1);
+  const accentColor = primaryColor ? hexToRgb(primaryColor) : rgb(0.1, 0.1, 0.1);
 
   let y = height - 50;
   const marginLeft = 50;
   const marginRight = 545;
+
+  // ─── Logo (top left) ───────────────────────────────
+  let logoOffset = 0;
+  if (logoUrl) {
+    try {
+      const logoRes = await fetch(logoUrl);
+      const logoBytes = new Uint8Array(await logoRes.arrayBuffer());
+      const contentType = logoRes.headers.get('content-type') || '';
+      let logoImage;
+      if (contentType.includes('png') || logoUrl.endsWith('.png')) {
+        logoImage = await doc.embedPng(logoBytes);
+      } else {
+        logoImage = await doc.embedJpg(logoBytes);
+      }
+      const logoDims = logoImage.scale(Math.min(120 / logoImage.width, 40 / logoImage.height));
+      page.drawImage(logoImage, { x: marginLeft, y: height - 45 - logoDims.height / 2 + 15, width: logoDims.width, height: logoDims.height });
+      logoOffset = logoDims.width + 15;
+    } catch { /* logo fetch failed, skip */ }
+  }
 
   // ─── Seller info (top right) ───────────────────────
   const company = (settings as any)?.companyInfo as { name: string; street: string; zip: string; city: string; country: string; email?: string; phone?: string; taxId?: string; vatId?: string; registerCourt?: string; registerNumber?: string; ceo?: string } | null;
@@ -182,7 +213,8 @@ export async function GET(
   y -= 18;
 
   // Total line
-  page.drawLine({ start: { x: totalsX - 5, y: y + 6 }, end: { x: marginRight, y: y + 6 }, thickness: 1, color: accentColor });
+  page.drawLine({ start: { x: totalsX - 5, y: y + 14 }, end: { x: marginRight, y: y + 14 }, thickness: 1, color: accentColor });
+  y -= 2;
   page.drawText('Gesamtbetrag', { x: totalsX, y, font: fontBold, size: 11, color: black });
   page.drawText(fmtPrice(order.totalCents), { x: totalsValX, y, font: fontBold, size: 11, color: black });
   y -= 35;

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Zap, Truck, ShoppingBag, Package, Star, Gift } from 'lucide-react';
-import { createPromotion, updatePromotion, deletePromotion } from '../actions';
+import { createPromotion, updatePromotion, deletePromotion, getProducts, getCategories } from '../actions';
 import { useRouter } from 'next/navigation';
 
 type Promotion = {
@@ -47,22 +47,34 @@ export function PromotionsClient({ promotions: initial }: { promotions: Promotio
   const [minAmount, setMinAmount] = useState(50);
   const [minQuantity, setMinQuantity] = useState(3);
   const [stackable, setStackable] = useState(false);
+  const [appliesTo, setAppliesTo] = useState<'all' | 'products' | 'categories'>('all');
+  const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
+  const [allProducts, setAllProducts] = useState<{ id: string; title: string }[]>([]);
+  const [allCategories, setAllCategories] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    if (showForm) {
+      getProducts().then(p => setAllProducts(p.map((x: any) => ({ id: x.id, title: x.title }))));
+      getCategories().then(c => setAllCategories(c.map((x: any) => ({ id: x.id, name: x.name }))));
+    }
+  }, [showForm]);
 
   function buildConditions() {
+    const base: Record<string, unknown> = {};
     switch (type) {
       case 'spend_x_save_y':
       case 'free_shipping_above':
-        return { minAmountCents: minAmount * 100 };
+        base.minAmountCents = minAmount * 100; break;
       case 'quantity_discount':
       case 'buy_x_get_discount':
-        return { minQuantity };
+        base.minQuantity = minQuantity; break;
       case 'bundle_discount':
-        return { minItems: minQuantity };
-      case 'first_order_discount':
-        return {};
-      default:
-        return {};
+        base.minItems = minQuantity; break;
     }
+    if (appliesTo === 'products' && selectedProductIds.length > 0) base.productIds = selectedProductIds;
+    if (appliesTo === 'categories' && selectedCategoryIds.length > 0) base.categoryIds = selectedCategoryIds;
+    return base;
   }
 
   async function handleCreate() {
@@ -208,6 +220,36 @@ export function PromotionsClient({ promotions: initial }: { promotions: Promotio
             <input type="checkbox" checked={stackable} onChange={e => setStackable(e.target.checked)} className="rounded" />
             Mit anderen Aktionen kombinierbar
           </label>
+
+          {/* Product/Category targeting */}
+          <div className="space-y-2">
+            <label className="block text-xs font-medium text-zinc-500">Gilt für</label>
+            <select value={appliesTo} onChange={e => { setAppliesTo(e.target.value as any); setSelectedProductIds([]); setSelectedCategoryIds([]); }} className="text-sm border border-zinc-200 rounded-lg px-3 py-2 bg-white">
+              <option value="all">Alle Produkte</option>
+              <option value="products">Bestimmte Produkte</option>
+              <option value="categories">Bestimmte Kategorien</option>
+            </select>
+            {appliesTo === 'products' && allProducts.length > 0 && (
+              <div className="max-h-40 overflow-y-auto border border-zinc-200 rounded-lg p-2 space-y-1">
+                {allProducts.map(p => (
+                  <label key={p.id} className="flex items-center gap-2 text-sm py-0.5">
+                    <input type="checkbox" checked={selectedProductIds.includes(p.id)} onChange={e => setSelectedProductIds(e.target.checked ? [...selectedProductIds, p.id] : selectedProductIds.filter(x => x !== p.id))} className="rounded" />
+                    {p.title}
+                  </label>
+                ))}
+              </div>
+            )}
+            {appliesTo === 'categories' && allCategories.length > 0 && (
+              <div className="max-h-40 overflow-y-auto border border-zinc-200 rounded-lg p-2 space-y-1">
+                {allCategories.map(c => (
+                  <label key={c.id} className="flex items-center gap-2 text-sm py-0.5">
+                    <input type="checkbox" checked={selectedCategoryIds.includes(c.id)} onChange={e => setSelectedCategoryIds(e.target.checked ? [...selectedCategoryIds, c.id] : selectedCategoryIds.filter(x => x !== c.id))} className="rounded" />
+                    {c.name}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className="flex gap-3 pt-2">
             <button onClick={handleCreate} disabled={saving || !name.trim()} className="px-5 py-2 bg-zinc-900 text-white text-sm font-medium rounded-xl hover:bg-zinc-800 transition disabled:opacity-50">
