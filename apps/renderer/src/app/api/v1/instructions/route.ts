@@ -28,6 +28,11 @@ export async function GET(req: NextRequest) {
     tenant: auth.tenant,
     tenantId: auth.tenantId,
     hasShopAddon: hasShop,
+    i18n: {
+      enabled: auth.tenant.i18nEnabled,
+      locales: auth.tenant.i18nLocales.split(','),
+      defaultLocale: auth.tenant.i18nDefaultLocale,
+    },
     existingPages: tenantPages,
     availableSectionTypes: allowedSectionTypes,
     sectionDataSchemas: getSectionSchemas(auth.tenant.industry),
@@ -57,6 +62,8 @@ export async function GET(req: NextRequest) {
       socialLinks: { method: 'PUT', path: '/api/v1/content/social-links', description: 'Set social media links: { facebook?: url, instagram?: url, linkedin?: url, youtube?: url, tiktok?: url, xing?: url, google?: url, pinterest?: url, twitter?: url }' },
       style: { method: 'PUT', path: '/api/v1/content/style', description: 'Set active style variant: { style: "classic"|"modern"|"bold" }' },
       upload: { method: 'POST', path: '/api/v1/content/upload', description: 'Upload an image (multipart/form-data with "file" field). Returns { url, filename, size }. Use the returned url in bgImage, image fields etc.' },
+      i18nGet: { method: 'GET', path: '/api/v1/content/i18n', description: 'Get i18n config (enabled, locales, defaultLocale) and all pages with section data. Use to discover which sections need translation.' },
+      i18nPut: { method: 'PUT', path: '/api/v1/content/i18n', description: 'Update locale-specific section data. Body: { sections: [{ id: "section-uuid", locale: "en", data: { headline: "...", subline: "..." } }] }. Merges locale data into existing sections.' },
       ...(hasShop ? {
         shopCreateCategory: { method: 'POST', path: '/api/v1/shop/categories', description: 'Create a product category: { name, slug, description?, image? }' },
         shopUpdateCategory: { method: 'PUT', path: '/api/v1/shop/categories/:id', description: 'Update a product category' },
@@ -165,6 +172,47 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
 
 8. PUBLISH (POST /api/v1/content/publish):
    - IMMER als letzter Schritt aufrufen!
+
+═══════════════════════════════════════════
+i18n — MEHRSPRACHIGKEIT:
+═══════════════════════════════════════════
+
+Prüfe ZUERST ob i18n aktiv ist: Der Response enthält ein "tenant.i18nEnabled" Feld.
+Wenn i18nEnabled = false → ignoriere diesen Abschnitt komplett.
+
+Wenn i18nEnabled = true:
+
+DATENMODELL:
+- Jede Section speichert ihre Daten pro Locale in einer flachen Struktur
+- Unübersetzte Sections haben normales data-Objekt: { headline: "...", subline: "..." }
+- Übersetzte Sections haben: { _localized: true, de: { headline: "...", subline: "..." }, en: { headline: "...", subline: "..." } }
+- Der Renderer fällt auf die defaultLocale zurück wenn eine Locale fehlt
+
+WORKFLOW:
+1. Erstelle ZUERST alle Inhalte in der Default-Locale (de) wie gewohnt (POST /pages, /collections, etc.)
+2. Dann GET /api/v1/content/i18n aufrufen → gibt dir alle Sections mit IDs
+3. Für jede Section die übersetzt werden soll: PUT /api/v1/content/i18n mit:
+   { sections: [{ id: "section-uuid", locale: "en", data: { headline: "English Title", subline: "English text" } }] }
+4. Du kannst mehrere Sections in einem Request übersetzen (Array)
+
+WAS WIRD ÜBERSETZT:
+- Alle Text-Felder in Section data (headline, subline, text, items[].title, items[].text, etc.)
+- NICHT übersetzen: Bild-URLs, href-Links, Icons, Farben, Zahlen, Slugs
+
+SLUGS & NAVIGATION:
+- Slugs bleiben in ALLEN Sprachen gleich (z.B. "/leistungen" für de UND en)
+- Die Navigation/Footer-Texte werden über Brand/Contact/Navigation-Endpoints pro Locale gesetzt
+- Der Language-Switcher wird automatisch im Frontend gerendert (Stil über Tenant-Settings)
+
+BEISPIEL-PAYLOAD für PUT /api/v1/content/i18n:
+{
+  "sections": [
+    { "id": "abc-123", "locale": "en", "data": { "headline": "Our Services", "subline": "Quality from one source", "manualCards": [{ "title": "Leak Detection", "text": "Modern technology for non-destructive detection." }] } },
+    { "id": "def-456", "locale": "en", "data": { "headline": "About Us", "text": "<p>We have been your partner since 2005.</p>" } }
+  ]
+}
+
+REIHENFOLGE: Immer NACH dem Erstellen aller Inhalte + VOR dem Publish übersetzen!
 
 9. SOCIAL LINKS (PUT /api/v1/content/social-links):
    - Setze passende Social-Media-Profile: { facebook: "url", instagram: "url", google: "url" }
