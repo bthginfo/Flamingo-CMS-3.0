@@ -21,7 +21,7 @@ const INDUSTRIES = [
   { value: 'realestate', label: 'Immobilien' },
   { value: 'tattoo', label: 'Tattoo' },
   { value: 'ecommerce', label: 'E-Commerce' },
-];
+] as const;
 
 export function IndustrySelect({ tenantId, currentIndustry }: { tenantId: string; currentIndustry: string }) {
   const [pending, startTransition] = useTransition();
@@ -31,7 +31,7 @@ export function IndustrySelect({ tenantId, currentIndustry }: { tenantId: string
     const newIndustry = e.target.value;
     if (newIndustry === currentIndustry) return;
     startTransition(async () => {
-      await updateTenantAction(tenantId, { industry: newIndustry });
+      await updateTenantAction(tenantId, { industry: newIndustry as typeof INDUSTRIES[number]['value'] });
       toast.success(`Branche geändert: ${INDUSTRIES.find(i => i.value === newIndustry)?.label || newIndustry}`);
       router.refresh();
     });
