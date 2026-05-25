@@ -11,6 +11,7 @@ import { showcaseSite } from './showcase';
 import { realestateSite } from './realestate';
 import { cafeSite } from './cafe';
 import { tattooSite } from './tattoo';
+import { retailSite } from './retail';
 import type { DemoSite } from './types';
 
 export type { DemoSite, DemoPage } from './types';
@@ -29,6 +30,7 @@ const SITES: Record<string, DemoSite> = {
   realestate: realestateSite,
   cafe: cafeSite,
   tattoo: tattooSite,
+  retail: retailSite,
 };
 
 export function getDemoSite(industryKey: string): DemoSite | undefined {

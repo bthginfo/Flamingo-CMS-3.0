@@ -1,6 +1,6 @@
 import type { NavItem, NavCta, FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 
-export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'showcase';
+export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail' | 'showcase';
 
 export interface DemoSiteData {
   navItems: NavItem[];
@@ -267,6 +267,25 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
         { title: 'Service', items: [{ text: 'Über uns', href: '/demo/shop/ueber-uns' }, { text: 'Kontakt', href: '/demo/shop/kontakt' }] },
       ],
       legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }, { label: 'AGB', href: '#' }],
+    },
+  },
+  retail: {
+    brand: { companyName: 'Möbelhaus Lichtblick', tagline: 'Design-Möbel, Büroplanung & individuelle Beratung seit 1998', primaryColor: '#059669' },
+    contact: { phone: '+49 89 123 456 78', email: 'info@moebelhaus-lichtblick.de', address: 'Leopoldstraße 42, 80802 München' },
+    socialLinks: { instagram: '#', facebook: '#', google: '#' },
+    navItems: [
+      { label: 'Sortiment', href: '/demo/retail#produkte' },
+      { label: 'Showroom', href: '/demo/retail' },
+      { label: 'Büroplanung', href: '/demo/retail#beratung' },
+      { label: 'Kontakt', href: '/demo/retail#rt-contact' },
+    ],
+    cta: { label: 'Beratung buchen', href: '/demo/retail#beratung' },
+    footer: {
+      columns: [
+        { title: 'Sortiment', items: [{ text: 'Wohnzimmer', href: '#' }, { text: 'Büro & Office', href: '#' }, { text: 'Küche', href: '#' }] },
+        { title: 'Service', items: [{ text: 'Beratung', href: '/demo/retail#beratung' }, { text: 'Lieferung & Montage', href: '#' }, { text: 'Kontakt', href: '/demo/retail#rt-contact' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
     },
   },
   showcase: {

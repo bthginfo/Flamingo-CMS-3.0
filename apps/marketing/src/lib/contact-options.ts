@@ -17,6 +17,7 @@ export const BRANCHE_OPTIONS = [
   'Café & Bar',
   'Tattoo Studio',
   'Online-Shop',
+  'Einzelhandel / Möbelhaus',
   'Andere',
 ];
 

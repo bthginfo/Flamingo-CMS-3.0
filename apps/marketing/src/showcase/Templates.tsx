@@ -156,7 +156,7 @@ const TEMPLATES = [
     name: 'Einzelhandel & Weitere',
     tagline: 'Boutique · Handelskette · Retail Store',
     description: 'Produktkatalog mit Kategorien, Inspirations-Galerie, Beratungsbuchung, Liefer-Timeline und Vorher/Nachher-Slider.',
-    image: 'https://images.unsplash.com/photo-1441986300352-7e3dee05fbdb?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80',
     color: '#c41e3a',
     features: ['Produkt-Showcase & Kategorien', 'Inspirations-Grid', 'Beratungsbuchung', 'Liefer-/Projektablauf', 'Vorher/Nachher-Slider', 'Material-Galerie'],
     status: 'live' as const,

@@ -210,7 +210,7 @@ const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     label: 'Einzelhandel & Weitere',
     tagline: 'Boutique · Handelskette · Retail Store',
     description: 'Produktkatalog mit Kategorien, Filialen-Übersicht, Öffnungszeiten, Aktionen und Kontakt — modern und einladend.',
-    image: 'https://images.unsplash.com/photo-1441986300352-7e3dee05fbdb?auto=format&fit=crop&w=1400&q=80',
+    image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1400&q=80',
     accent: '#c41e3a',
     bullets: ['Produkt-Showcase & Kategorien', 'Inspirations-Galerie', 'Beratungsbuchung & Timeline', 'Vorher/Nachher-Slider'],
   },
@@ -283,7 +283,7 @@ const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     bold: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1400&q=80',
   },
   retail: {
-    classic: 'https://images.unsplash.com/photo-1441986300352-7e3dee05fbdb?auto=format&fit=crop&w=1400&q=80',
+    classic: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1483389127117-b6a2102724ae?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=1400&q=80',
   },
@@ -570,6 +570,7 @@ function ShowcaseFooter() {
               <li><a href="https://www.demo.flamingomedia.online/demo/cafe" className="hover:text-accent">Café</a></li>
               <li><a href="https://www.demo.flamingomedia.online/demo/tattoo" className="hover:text-accent">Tattoo Studio</a></li>
               <li><a href="https://www.demo.flamingomedia.online/demo/shop" className="hover:text-accent">Online-Shop</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/retail" className="hover:text-accent">Einzelhandel</a></li>
             </ul>
           </div>
           <div>
@@ -803,11 +804,11 @@ function ServicesSection() {
             </div>
             <h3 className="font-display text-3xl md:text-5xl leading-[1.05] tracking-tight">Branchen-Templates</h3>
             <p className="mt-6 text-base md:text-lg text-muted leading-relaxed max-w-xl">
-              Dreizehn Branchen live — Restaurant, Salon, Hotel, Tourismus, Arztpraxis, Handwerk, Hochzeit, Fotografie, Kanzlei, Immobilien, Café, Tattoo Studio und Online-Shop.
+              Vierzehn Branchen live — Restaurant, Salon, Hotel, Tourismus, Arztpraxis, Handwerk, Hochzeit, Fotografie, Kanzlei, Immobilien, Café, Tattoo Studio, Online-Shop und Einzelhandel.
               Live-Vorschau im Browser, Farbschema in Sekunden.
             </p>
             <div className="mt-8 flex flex-wrap gap-2">
-              {['Restaurant', 'Salon', 'Hotel', 'Tourismus', 'Handwerk', 'Arztpraxis', 'Hochzeit', 'Fotografie', 'Kanzlei', 'Immobilien', 'Café', 'Tattoo'].map((b) => (
+              {['Restaurant', 'Salon', 'Hotel', 'Tourismus', 'Handwerk', 'Arztpraxis', 'Hochzeit', 'Fotografie', 'Kanzlei', 'Immobilien', 'Café', 'Tattoo', 'Einzelhandel'].map((b) => (
                 <span key={b} className="hidden md:inline-block text-[11px] font-mono uppercase tracking-widest border border-line rounded-full px-2.5 py-1 text-muted">{b}</span>
               ))}
             </div>
