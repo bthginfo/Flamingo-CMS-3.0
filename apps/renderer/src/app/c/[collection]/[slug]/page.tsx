@@ -2,6 +2,7 @@ import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
 import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle, getTenantSeoGlobal, getTenantSeoItem } from '@/lib/tenant-data';
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
+import { getDesignCssVars } from '@/lib/design-vars';
 import type { Metadata } from 'next';
 
 export const revalidate = 60;
@@ -60,7 +61,7 @@ export default async function CollectionItemPage({ params }: { params: Promise<{
   const tenantId = await resolveTenant();
   if (!tenantId) notFound();
 
-  const [snapshot, navData, footerData, { brand, contact, socialLinks }, tenantStyle, seoGlobal] = await Promise.all([
+  const [snapshot, navData, footerData, { brand, contact, socialLinks, design }, tenantStyle, seoGlobal] = await Promise.all([
     getActiveSnapshot(tenantId),
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
@@ -82,9 +83,40 @@ export default async function CollectionItemPage({ params }: { params: Promise<{
   const designOverrides: Record<string, string> = {};
   if (brand.primaryColor) designOverrides['--style-brand'] = brand.primaryColor;
   if (brand.accentColor) designOverrides['--style-accent'] = brand.accentColor;
+  Object.assign(designOverrides, getDesignCssVars(design));
+
+  // Custom font loading
+  const customFonts = [brand.headingFont, brand.bodyFont].filter(Boolean) as string[];
+  const googleFontsUrl = customFonts.length > 0
+    ? `https://fonts.googleapis.com/css2?${customFonts.map(f => `family=${f.replace(/ /g, '+')}:wght@400;500;600;700;800`).join('&')}&display=swap`
+    : null;
+  const fontCssVars: Record<string, string> = {};
+  const headingFontName = brand.customHeadingFontName || brand.headingFont || '';
+  const bodyFontName = brand.customBodyFontName || brand.bodyFont || '';
+  if (headingFontName) fontCssVars['--style-heading-font'] = `"${headingFontName}", var(--font-outfit), system-ui, sans-serif`;
+  if (bodyFontName) fontCssVars['--custom-body-font'] = `"${bodyFontName}", var(--font-inter), system-ui, sans-serif`;
+
+  const fontFaceRules: string[] = [];
+  if (brand.customHeadingFontUrl && brand.customHeadingFontName) {
+    fontFaceRules.push(`@font-face { font-family: "${brand.customHeadingFontName}"; src: url("${brand.customHeadingFontUrl}"); font-display: swap; }`);
+  }
+  if (brand.customBodyFontUrl && brand.customBodyFontName) {
+    fontFaceRules.push(`@font-face { font-family: "${brand.customBodyFontName}"; src: url("${brand.customBodyFontUrl}"); font-display: swap; }`);
+  }
+
+  // Build dynamic style overrides that need !important to beat Tailwind utilities
+  const importantOverrides: string[] = [];
+  if (brand.headingColor) importantOverrides.push(`[data-style] main h1, [data-style] main h2, [data-style] main h3, [data-style] main h4, [data-style] main h5, [data-style] main h6 { color: ${brand.headingColor} !important; }`);
+  if (brand.bodyTextColor) importantOverrides.push(`[data-style] main p, [data-style] main li, [data-style] main span:not(.section-badge) { color: ${brand.bodyTextColor} !important; }`);
+  if (brand.mutedTextColor) importantOverrides.push(`[data-style] main .text-gray-500, [data-style] main .text-slate-500, [data-style] main .text-gray-600 { color: ${brand.mutedTextColor} !important; }`);
+  if (brand.linkColor) importantOverrides.push(`[data-style] main a:not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-brand"]):not([class*="text-white"]) { color: ${brand.linkColor} !important; }`);
 
   return (
-    <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...brandCssVars, ...designOverrides } as React.CSSProperties} className="overflow-x-hidden">
+    <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties} className="overflow-x-hidden">
+      {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
+      {fontFaceRules.length > 0 && <style dangerouslySetInnerHTML={{ __html: fontFaceRules.join('\n') }} />}
+      {bodyFontName && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
+      {importantOverrides.length > 0 && <style dangerouslySetInnerHTML={{ __html: importantOverrides.join('\n') }} />}
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} />
       <main>
         <CollectionDetail item={item} collection={col} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} />
