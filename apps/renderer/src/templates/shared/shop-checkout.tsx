@@ -174,7 +174,7 @@ export function ShopCheckoutSection({ data }: Props) {
       <div className="flex items-center gap-2 mb-8">
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= step ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= step ? 'bg-[var(--brand-primary)] text-white' : 'bg-zinc-100 text-zinc-400'}`}>
               {i < step ? <Check size={14} /> : i + 1}
             </div>
             <span className={`text-sm hidden sm:block ${i <= step ? 'font-medium' : 'text-zinc-400'}`}>{s}</span>
@@ -206,7 +206,7 @@ export function ShopCheckoutSection({ data }: Props) {
                   <input value={form.company} onChange={e => set('company', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm" />
                 </div>
               </div>
-              <button onClick={() => setStep(1)} disabled={!form.name || !form.email} className="px-6 py-3 bg-zinc-900 text-white rounded-xl font-medium hover:bg-zinc-800 transition disabled:opacity-50">
+              <button onClick={() => setStep(1)} disabled={!form.name || !form.email} className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
                 Weiter zu Versand
               </button>
             </div>
@@ -245,9 +245,9 @@ export function ShopCheckoutSection({ data }: Props) {
                   {shippingMethods.map(method => {
                     const isFree = method.freeAboveCents && totalCents >= method.freeAboveCents;
                     return (
-                      <label key={method.id} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition ${form.shippingMethod === method.id ? 'border-zinc-900 bg-zinc-50' : 'border-zinc-200'}`}>
+                      <label key={method.id} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition ${form.shippingMethod === method.id ? 'border-[var(--brand-primary)] bg-[var(--brand-primary)]/5' : 'border-zinc-200'}`}>
                         <div className="flex items-center gap-3">
-                          <input type="radio" name="shipping" value={method.id} checked={form.shippingMethod === method.id} onChange={e => set('shippingMethod', e.target.value)} className="accent-zinc-900" />
+                          <input type="radio" name="shipping" value={method.id} checked={form.shippingMethod === method.id} onChange={e => set('shippingMethod', e.target.value)} className="accent-[var(--brand-primary)]" />
                           <div>
                             <p className="text-sm font-medium">{method.name}</p>
                             {method.estimatedDays && <p className="text-xs text-zinc-400">{method.estimatedDays}</p>}
@@ -261,7 +261,7 @@ export function ShopCheckoutSection({ data }: Props) {
               )}
               <div className="flex gap-3">
                 <button onClick={() => setStep(0)} className="px-6 py-3 border border-zinc-200 rounded-xl text-sm">Zurück</button>
-                <button onClick={() => setStep(2)} disabled={!form.street || !form.zip || !form.city} className="px-6 py-3 bg-zinc-900 text-white rounded-xl font-medium hover:bg-zinc-800 transition disabled:opacity-50">
+                <button onClick={() => setStep(2)} disabled={!form.street || !form.zip || !form.city} className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
                   Weiter zu Zahlung
                 </button>
               </div>
@@ -273,8 +273,8 @@ export function ShopCheckoutSection({ data }: Props) {
             <div className="space-y-4">
               <div className="space-y-3">
                 {availablePayments.map(method => (
-                  <label key={method} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition ${form.paymentMethod === method ? 'border-zinc-900 bg-zinc-50' : 'border-zinc-200'}`}>
-                    <input type="radio" name="payment" value={method} checked={form.paymentMethod === method} onChange={e => set('paymentMethod', e.target.value)} className="accent-zinc-900" />
+                  <label key={method} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition ${form.paymentMethod === method ? 'border-[var(--brand-primary)] bg-[var(--brand-primary)]/5' : 'border-zinc-200'}`}>
+                    <input type="radio" name="payment" value={method} checked={form.paymentMethod === method} onChange={e => set('paymentMethod', e.target.value)} className="accent-[var(--brand-primary)]" />
                     <div>
                       <p className="text-sm font-medium">
                         {method === 'prepayment' ? 'Vorkasse / Überweisung' : method === 'stripe' ? 'Kreditkarte (Stripe)' : method === 'paypal' ? 'PayPal' : 'Abholung & Barzahlung'}
@@ -292,7 +292,7 @@ export function ShopCheckoutSection({ data }: Props) {
               </div>
               <div className="flex gap-3">
                 <button onClick={() => setStep(1)} className="px-6 py-3 border border-zinc-200 rounded-xl text-sm">Zurück</button>
-                <button onClick={() => setStep(3)} className="px-6 py-3 bg-zinc-900 text-white rounded-xl font-medium hover:bg-zinc-800 transition">
+                <button onClick={() => setStep(3)} className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-xl font-medium hover:opacity-90 transition">
                   Bestellung prüfen
                 </button>
               </div>
@@ -310,7 +310,7 @@ export function ShopCheckoutSection({ data }: Props) {
               </div>
               <div className="flex gap-3">
                 <button onClick={() => setStep(2)} className="px-6 py-3 border border-zinc-200 rounded-xl text-sm">Zurück</button>
-                <button onClick={handleSubmit} disabled={loading} className="px-6 py-3 bg-zinc-900 text-white rounded-xl font-medium hover:bg-zinc-800 transition disabled:opacity-50 flex items-center gap-2">
+                <button onClick={handleSubmit} disabled={loading} className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2">
                   {loading ? <><Loader2 size={16} className="animate-spin" /> Bestellung wird aufgegeben…</> : 'Kostenpflichtig bestellen'}
                 </button>
               </div>

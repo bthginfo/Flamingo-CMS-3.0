@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
   const [settings] = await db.select().from(shopSettings)
     .where(eq(shopSettings.tenantId, tenantId)).limit(1);
 
-  const paymentMethods: string[] = settings?.paymentMethods as string[] || ['prepayment'];
+  const paymentMethods: string[] = [...new Set(settings?.paymentMethods as string[] || ['prepayment'])];
   // Only include methods that have keys configured
   const availablePayments = paymentMethods.filter(m => {
     if (m === 'stripe') return !!settings?.stripeSecretKey;
