@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createProduct, updateProduct } from '../actions';
 import { ArrowLeft, Save, X, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { ImageUploadField } from '@/components/image-upload-field';
+import { usePreview } from '@/components/admin/preview-context';
 
 type Category = { id: string; name: string };
 
@@ -46,10 +47,19 @@ function slugify(text: string) {
 
 export function ProductForm({ categories, initial }: { categories: Category[]; initial?: ProductData }) {
   const router = useRouter();
+  const preview = usePreview();
   const [data, setData] = useState<ProductData>(initial || defaultProduct);
   const [saving, setSaving] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const isEdit = !!initial?.id;
+
+  // Set preview URL to PDP when editing a product
+  useEffect(() => {
+    if (data.slug) {
+      preview.setUrl(`/shop/${data.slug}`);
+    }
+    return () => { preview.setUrl('/live-preview'); };
+  }, [data.slug]);
 
   function set<K extends keyof ProductData>(key: K, value: ProductData[K]) {
     setData(prev => ({ ...prev, [key]: value }));
