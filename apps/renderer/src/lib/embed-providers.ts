@@ -354,6 +354,7 @@ export const INDUSTRY_EMBED_SUGGESTIONS: Record<string, string[]> = {
   wedding: ['calendly', 'instagram', 'youtube', 'google-reviews', 'spotify'],
   photography: ['instagram', 'youtube', 'vimeo', 'google-reviews'],
   realestate: ['immoscout24', 'matterport', 'google-reviews', 'calendly', 'youtube'],
+  ecommerce: ['google-reviews', 'provenexpert', 'instagram', 'youtube', 'typeform'],
 };
 
 export function getProvider(id: string): EmbedProvider | undefined {

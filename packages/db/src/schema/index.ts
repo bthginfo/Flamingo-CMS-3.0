@@ -3,7 +3,7 @@ import { pgTable, uuid, varchar, text, boolean, integer, jsonb, timestamp, uniqu
 // ─── Enums ────────────────────────────────────────────────────────────
 export const industryEnum = pgEnum('industry', [
   'tradesman', 'restaurant', 'salon', 'hotel', 'tourism',
-  'consulting', 'medical', 'fitness', 'wedding', 'cafe', 'bar', 'photography', 'realestate', 'tattoo',
+  'consulting', 'medical', 'fitness', 'wedding', 'cafe', 'bar', 'photography', 'realestate', 'tattoo', 'ecommerce',
 ]);
 
 export const tenantStatusEnum = pgEnum('tenant_status', ['active', 'suspended', 'provisioning']);

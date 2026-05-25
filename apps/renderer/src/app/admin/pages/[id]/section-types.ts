@@ -285,6 +285,31 @@ export const TATTOO_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
+export const ECOMMERCE_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Shop-Hero', description: 'Hauptbanner mit Produkthighlight oder Aktion' },
+  { type: 'shopProductGrid', label: 'Produkte', description: 'Produktübersicht mit Kategorie-Filter & Suche' },
+  { type: 'shopFeaturedProducts', label: 'Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben' },
+  { type: 'shopProductDetail', label: 'Produkt-Detail', description: 'Einzelprodukt mit Galerie, Varianten & Warenkorb' },
+  { type: 'shopCart', label: 'Warenkorb', description: 'Warenkorb-Übersicht mit Mengen & Coupon' },
+  { type: 'shopCheckout', label: 'Checkout', description: 'Multi-Step Kasse (Kontakt, Versand, Zahlung)' },
+  { type: 'shopThankYou', label: 'Danke-Seite', description: 'Bestellbestätigung nach Kauf' },
+  { type: 'shopCategoryOverview', label: 'Kategorien', description: 'Kategorieübersicht mit Bildern' },
+  { type: 'uspStrip', label: 'USP-Leiste', description: 'Versand, Retoure, Zahlung — Vertrauens-Icons' },
+  { type: 'ctaBand', label: 'CTA-Band', description: 'Aktionsbanner / Sale-Hinweis' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen' },
+  { type: 'testimonialMarquee', label: 'Bewertungs-Marquee', description: 'Endlos-scrollende Bewertungskarten' },
+  { type: 'faq', label: 'FAQ', description: 'Versand, Retoure, Zahlung — Häufige Fragen' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Über uns / Markengeschichte' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular' },
+  { type: 'logoCloud', label: 'Zahlungsarten / Partner', description: 'Payment-Logos, Trust-Badges' },
+  { type: 'newsPreview', label: 'Blog / News', description: 'Aktuelle Beiträge' },
+  { type: 'galleryGrid', label: 'Galerie', description: 'Produkt-Lifestyle Bilder' },
+  { type: 'team', label: 'Team', description: 'Über das Team' },
+  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (AGB, Widerruf etc.)' },
+  { type: 'legalContent', label: 'Rechtliche Inhalte', description: 'Impressum / Datenschutz / Widerruf' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
 const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   tradesman: TRADESMAN_SECTION_TYPES,
   photography: PHOTOGRAPHY_SECTION_TYPES,
@@ -298,6 +323,7 @@ const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   realestate: REALESTATE_SECTION_TYPES,
   cafe: CAFE_SECTION_TYPES,
   tattoo: TATTOO_SECTION_TYPES,
+  ecommerce: ECOMMERCE_SECTION_TYPES,
 };
 
 const INDUSTRY_LABELS: Record<string, string> = {
@@ -313,6 +339,7 @@ const INDUSTRY_LABELS: Record<string, string> = {
   realestate: 'Immobilien',
   cafe: 'Café & Bar',
   tattoo: 'Tattoo Studio',
+  ecommerce: 'E-Commerce',
 };
 
 export function getSectionTypesForIndustry(industry: string, options?: { hasShop?: boolean }): SectionTypeDefinition[] {
