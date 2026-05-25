@@ -66,7 +66,12 @@ export async function GET(req: NextRequest) {
         shopUpdateProduct: { method: 'PUT', path: '/api/v1/shop/products/:id', description: 'Update a product (full replace of provided fields)' },
         shopDeleteProduct: { method: 'DELETE', path: '/api/v1/shop/products/:id', description: 'Delete a product' },
         shopListProducts: { method: 'GET', path: '/api/v1/shop/products', description: 'List all products' },
-        shopSettings: { method: 'PUT', path: '/api/v1/shop/settings', description: 'Update shop settings: { currency?, paymentMethods?: string[], pickupEnabled?, pickupInstructions?, notificationEmail?, orderPrefix?, lowStockThreshold? }' },
+        shopSettings: { method: 'PUT', path: '/api/v1/shop/settings', description: 'Update shop settings: { currency?, paymentMethods?: string[], pickupEnabled?, pickupInstructions?, notificationEmail?, orderPrefix?, invoicePrefix?, lowStockThreshold?, companyInfo?: { name, street, zip, city, country, email?, phone?, taxId?, vatId?, registerCourt?, registerNumber?, ceo? }, bankDetails?: { iban, bic, bankName, accountHolder } }' },
+        shopGetSettings: { method: 'GET', path: '/api/v1/shop/settings', description: 'Get current shop settings (secrets are redacted)' },
+        shopListShipping: { method: 'GET', path: '/api/v1/shop/shipping', description: 'List all shipping zones with their methods' },
+        shopCreateShipping: { method: 'POST', path: '/api/v1/shop/shipping', description: 'Create shipping zone: { name, countries?: string[] (ISO codes), methods?: [{ name, priceCents, freeAboveCents?, estimatedDays? }] }' },
+        shopListCoupons: { method: 'GET', path: '/api/v1/shop/coupons', description: 'List all coupons' },
+        shopCreateCoupon: { method: 'POST', path: '/api/v1/shop/coupons', description: 'Create coupon: { code, type: "percent"|"fixed_amount"|"free_shipping", value (cents for fixed, % for percent), minOrderCents?, maxUses?, validFrom?, validUntil?, appliesTo?: "all"|"specific_products", appliesToIds?: string[] }' },
       } : {}),
     },
     restrictions: [

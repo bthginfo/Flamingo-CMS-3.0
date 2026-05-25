@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createProduct, updateProduct } from '../actions';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { ArrowLeft, Save, X, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { ImageUploadField } from '@/components/image-upload-field';
@@ -48,6 +48,7 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
   const router = useRouter();
   const [data, setData] = useState<ProductData>(initial || defaultProduct);
   const [saving, setSaving] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const isEdit = !!initial?.id;
 
   function set<K extends keyof ProductData>(key: K, value: ProductData[K]) {
@@ -84,6 +85,12 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
           <ArrowLeft size={18} />
         </Link>
         <div className="flex-1" />
+        <button
+          onClick={() => setShowPreview(!showPreview)}
+          className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition ${showPreview ? 'bg-zinc-900 text-white border-zinc-900' : 'border-zinc-200 text-zinc-600 hover:bg-zinc-50'}`}
+        >
+          <Eye size={16} /> Vorschau
+        </button>
         <button
           onClick={handleSave}
           disabled={saving || !data.title.trim()}
@@ -321,6 +328,80 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
           </div>
         </div>
       </div>
+      {/* Live Preview */}
+      {showPreview && (
+        <div className="bg-white rounded-xl border border-zinc-200 p-5 space-y-4">
+          <h2 className="font-semibold text-sm text-zinc-700">Vorschau (Produktdetailseite)</h2>
+          <div className="border border-zinc-100 rounded-xl p-6 bg-zinc-50">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Image gallery */}
+              <div className="space-y-3">
+                {data.images.length > 0 ? (
+                  <>
+                    <div className="aspect-square rounded-xl overflow-hidden bg-white border border-zinc-200">
+                      <img src={data.images[0]} alt="" className="w-full h-full object-cover" />
+                    </div>
+                    {data.images.length > 1 && (
+                      <div className="flex gap-2 overflow-x-auto">
+                        {data.images.map((img, i) => (
+                          <div key={i} className="w-16 h-16 rounded-lg overflow-hidden border border-zinc-200 shrink-0">
+                            <img src={img} alt="" className="w-full h-full object-cover" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="aspect-square rounded-xl bg-zinc-200 flex items-center justify-center text-zinc-400 text-sm">
+                    Kein Bild
+                  </div>
+                )}
+              </div>
+              {/* Product info */}
+              <div className="space-y-4">
+                {data.categoryId && (
+                  <p className="text-xs text-zinc-400 uppercase tracking-wide">
+                    {categories.find(c => c.id === data.categoryId)?.name}
+                  </p>
+                )}
+                <h1 className="text-2xl font-bold text-zinc-900">{data.title || 'Produkttitel'}</h1>
+                {data.shortDescription && (
+                  <p className="text-sm text-zinc-600">{data.shortDescription}</p>
+                )}
+                <div className="flex items-baseline gap-3">
+                  <span className="text-2xl font-bold text-zinc-900">
+                    {(data.priceCents / 100).toFixed(2).replace('.', ',')} €
+                  </span>
+                  {data.comparePriceCents && (
+                    <span className="text-lg text-zinc-400 line-through">
+                      {(data.comparePriceCents / 100).toFixed(2).replace('.', ',')} €
+                    </span>
+                  )}
+                </div>
+                {data.highlights.length > 0 && (
+                  <ul className="space-y-1.5">
+                    {data.highlights.filter(h => h.trim()).map((h, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-zinc-600">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> {h}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <div className="flex items-center gap-3 pt-2">
+                  <div className="px-4 py-2.5 bg-zinc-900 text-white text-sm font-medium rounded-xl cursor-default">
+                    In den Warenkorb
+                  </div>
+                </div>
+                {data.description && (
+                  <div className="pt-4 border-t border-zinc-200">
+                    <p className="text-sm text-zinc-600 whitespace-pre-line">{data.description}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
