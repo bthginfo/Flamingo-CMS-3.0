@@ -277,10 +277,10 @@ export function ShopCheckoutSection({ data }: Props) {
                     <input type="radio" name="payment" value={method} checked={form.paymentMethod === method} onChange={e => set('paymentMethod', e.target.value)} className="accent-[var(--brand-primary)]" />
                     <div>
                       <p className="text-sm font-medium">
-                        {method === 'prepayment' ? 'Vorkasse / Überweisung' : method === 'stripe' ? 'Kreditkarte (Stripe)' : method === 'paypal' ? 'PayPal' : 'Abholung & Barzahlung'}
+                        {method === 'prepayment' ? 'Vorkasse / Überweisung' : method === 'stripe' ? 'Kreditkarte (Stripe)' : method === 'paypal' ? 'PayPal' : method === 'sumup' ? 'Kartenzahlung (SumUp)' : method === 'pickup' ? 'Abholung & Barzahlung' : method}
                       </p>
                       <p className="text-xs text-zinc-400">
-                        {method === 'prepayment' ? 'Bankdaten werden nach Bestellung angezeigt' : method === 'stripe' ? 'Sichere Zahlung via Stripe' : method === 'paypal' ? 'Weiterleitung zu PayPal' : 'Bezahlung bei Abholung'}
+                        {method === 'prepayment' ? 'Bankdaten werden nach Bestellung angezeigt' : method === 'stripe' ? 'Sichere Zahlung via Stripe' : method === 'paypal' ? 'Weiterleitung zu PayPal' : method === 'sumup' ? 'Kartenzahlung über SumUp' : method === 'pickup' ? 'Bezahlung bei Abholung' : ''}
                       </p>
                     </div>
                   </label>

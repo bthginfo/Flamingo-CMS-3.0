@@ -211,13 +211,15 @@ export async function saveShopSettings(data: Partial<{
   const tenantId = await requireTenant();
   const db = getDb();
   // Upsert: create settings row if it doesn't exist, otherwise update
+  const cleanData = { ...data };
+  if (cleanData.paymentMethods) cleanData.paymentMethods = [...new Set(cleanData.paymentMethods)];
   const [existing] = await db.select({ tenantId: shopSettings.tenantId }).from(shopSettings).where(eq(shopSettings.tenantId, tenantId)).limit(1);
   if (existing) {
     await db.update(shopSettings)
-      .set({ ...data, updatedAt: new Date() })
+      .set({ ...cleanData, updatedAt: new Date() })
       .where(eq(shopSettings.tenantId, tenantId));
   } else {
-    await db.insert(shopSettings).values({ tenantId, ...data });
+    await db.insert(shopSettings).values({ tenantId, ...cleanData });
   }
   revalidatePath('/admin/shop');
 }

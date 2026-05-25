@@ -40,7 +40,9 @@ export async function GET(req: NextRequest) {
     if (m === 'stripe') return !!settings?.stripeSecretKey;
     if (m === 'paypal') return !!settings?.paypalClientId && !!settings?.paypalSecret;
     if (m === 'pickup') return settings?.pickupEnabled;
-    return true; // prepayment always available if listed
+    if (m === 'sumup') return !!settings?.sumupApiKey && !!settings?.sumupMerchantCode;
+    if (m === 'prepayment') return true;
+    return false; // unknown methods are excluded
   });
 
   return NextResponse.json({
