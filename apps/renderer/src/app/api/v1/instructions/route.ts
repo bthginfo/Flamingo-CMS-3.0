@@ -240,7 +240,7 @@ REIHENFOLGE: Immer NACH dem Erstellen aller Inhalte + VOR dem Publish übersetze
 
 9. SOCIAL LINKS (PUT /api/v1/content/social-links):
    - Setze passende Social-Media-Profile: { facebook: "url", instagram: "url", google: "url" }
-   - Typisch je Branche: Handwerk (Google, Facebook, Instagram), Restaurant (Instagram, Facebook, Google, TripAdvisor), Hotel (Instagram, Facebook, TripAdvisor, Google), Salon (Instagram, Facebook, Google), Medical (Google, Jameda-Link als google), Tourism (Instagram, Facebook, YouTube), Photography (Instagram, Pinterest, Facebook), Wedding (Instagram), Consulting (LinkedIn, Google), Realestate (LinkedIn, Instagram, Google), Cafe (Instagram, Facebook, Google)
+   - Typisch je Branche: Handwerk (Google, Facebook, Instagram), Restaurant (Instagram, Facebook, Google, TripAdvisor), Hotel (Instagram, Facebook, TripAdvisor, Google), Salon (Instagram, Facebook, Google), Medical (Google, Jameda-Link als google), Tourism (Instagram, Facebook, YouTube), Photography (Instagram, Pinterest, Facebook), Wedding (Instagram), Consulting (LinkedIn, Google), Realestate (LinkedIn, Instagram, Google), Cafe (Instagram, Facebook, Google), Retail (Instagram, Facebook, Google, Pinterest)
 
 10. STYLE (PUT /api/v1/content/style):
     - Wähle den passenden Stil: { style: "classic" } oder "modern" oder "bold"
@@ -576,6 +576,20 @@ function getSectionSchemas(industry: string): Record<string, object> {
       dailySpecials: { fields: { headline: 'string', subline: 'string?', specials: '{ day?: string, title: string, description?: string, price?: string }[]' } },
       eventCalendar: { fields: { headline: 'string', subline: 'string?', events: '{ title: string, date: string, time?: string, description?: string, image?: url, category?: string }[]' } },
       locationVibe: { fields: { headline: 'string', address: 'string', description: 'string? (html)', hours: '{ day: string, hours: string }[]?', vibeText: 'string?', mapImage: 'url?', mapEmbed: 'url? (Google Maps embed URL)' } },
+      testimonials: { fields: { headline: 'string', subline: 'string?', items: '{ quote: string, name: string, context?: string, rating?: 1-5 }[]' } },
+      faq: { fields: { headline: 'string', subline: 'string?', items: '{ question: string, answer: string }[]' } },
+      contact: { fields: { headline: 'string', subline: 'string?', introText: 'string?', badgeText: 'string?', phone: 'string?', email: 'string?', address: 'string?', formEnabled: 'boolean? (default true)', submitLabel: 'string?', infoCards: '{ icon: lucide-icon-name, label: string, value: string }[]?' } },
+    });
+  } else if (industry === 'retail') {
+    Object.assign(schemas, {
+      productShowcase: { fields: { headline: 'string', subline: 'string?', columns: 'string? (2|3|4, default 3)', items: '{ image?: url, title: string, price?: string, badge?: string, href?: string, description?: string }[]' } },
+      categoryMosaic: { fields: { headline: 'string', subline: 'string?', items: '{ image?: url, title: string, href?: string, size?: string (large|small) }[]' } },
+      brandShowroom: { fields: { headline: 'string', subline: 'string?', image: 'url', overlayOpacity: 'number? (0-1)', highlights: '{ title: string, text: string }[]', cta: '{ label: string, href: string }?' } },
+      consultationBooking: { fields: { headline: 'string', subline: 'string?', image: 'url?', services: '{ icon?: lucide-icon-name, title: string, description?: string }[]', cta: '{ label: string, href: string }?' } },
+      materialGallery: { fields: { headline: 'string', subline: 'string?', categories: 'string[]', items: '{ image?: url, name: string, category?: string }[]' } },
+      deliveryTimeline: { fields: { headline: 'string', subline: 'string?', steps: '{ number?: string, icon?: lucide-icon-name, title: string, text?: string }[]' } },
+      inspirationGrid: { fields: { headline: 'string', subline: 'string?', items: '{ image?: url, title?: string, href?: string }[]' } },
+      beforeAfter: { fields: { headline: 'string', description: 'string?', imageBefore: 'url', imageAfter: 'url', labelBefore: 'string? (default "Vorher")', labelAfter: 'string? (default "Nachher")' } },
       testimonials: { fields: { headline: 'string', subline: 'string?', items: '{ quote: string, name: string, context?: string, rating?: 1-5 }[]' } },
       faq: { fields: { headline: 'string', subline: 'string?', items: '{ question: string, answer: string }[]' } },
       contact: { fields: { headline: 'string', subline: 'string?', introText: 'string?', badgeText: 'string?', phone: 'string?', email: 'string?', address: 'string?', formEnabled: 'boolean? (default true)', submitLabel: 'string?', infoCards: '{ icon: lucide-icon-name, label: string, value: string }[]?' } },

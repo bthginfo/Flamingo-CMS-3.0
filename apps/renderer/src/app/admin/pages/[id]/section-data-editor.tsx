@@ -2083,6 +2083,261 @@ function ShopFeaturedProductsEditor({ data, onChange }: EditorProps) {
   );
 }
 
+// ─── Retail / Shared new editors ─────────────────────────────────
+
+function ProductShowcaseEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [columns, setColumns] = useState((data.columns as string) || '3');
+  const [items, setItems] = useState<{ image: string; title: string; price: string; badge: string; href: string; description: string }[]>(
+    (data.items as any[]) || []
+  );
+  useReport({ headline, subline, columns, items }, onChange);
+  function addItem() { setItems([...items, { image: '', title: '', price: '', badge: '', href: '', description: '' }]); }
+  function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
+  function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
+  return (
+    <div className="space-y-4">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      <SelectField label="Spalten" value={columns} options={['2', '3', '4']} onChange={setColumns} />
+      {items.map((item, i) => (
+        <div key={i} className="border rounded-lg p-3 space-y-2 relative">
+          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label="Preis" value={item.price} onChange={(v) => update(i, 'price', v)} placeholder="ab 299 €" />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="Badge" value={item.badge} onChange={(v) => update(i, 'badge', v)} placeholder="Neu / Sale" />
+            <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/produkt" />
+          </div>
+          <Field label="Beschreibung" value={item.description} onChange={(v) => update(i, 'description', v)} />
+        </div>
+      ))}
+      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Produkt hinzufügen</button>
+    </div>
+  );
+}
+
+function CategoryMosaicEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [items, setItems] = useState<{ image: string; title: string; href: string; size: string }[]>(
+    (data.items as any[]) || []
+  );
+  useReport({ headline, subline, items }, onChange);
+  function addItem() { setItems([...items, { image: '', title: '', href: '', size: 'small' }]); }
+  function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
+  function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
+  return (
+    <div className="space-y-4">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      <p className="text-xs text-zinc-500">Tipp: Die ersten 2 Einträge mit Größe "Groß" erscheinen als große Kacheln.</p>
+      {items.map((item, i) => (
+        <div key={i} className="border rounded-lg p-3 space-y-2 relative">
+          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
+          <div className="grid grid-cols-3 gap-2">
+            <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/kategorie" />
+            <SelectField label="Größe" value={item.size} options={['large', 'small']} onChange={(v) => update(i, 'size', v)} />
+          </div>
+        </div>
+      ))}
+      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Kategorie hinzufügen</button>
+    </div>
+  );
+}
+
+function BrandShowroomEditor({ data, onChange }: EditorProps) {
+  const [image, setImage] = useState((data.image as string) || '');
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [overlayOpacity, setOverlayOpacity] = useState(String((data.overlayOpacity as number) ?? 0.5));
+  const [highlights, setHighlights] = useState<{ title: string; text: string }[]>((data.highlights as any[]) || []);
+  const [cta, setCta] = useState((data.cta as { label: string; href: string }) || { label: '', href: '' });
+  useReport({ image, headline, subline, overlayOpacity: parseFloat(overlayOpacity) || 0.5, highlights, cta }, onChange);
+  return (
+    <div className="space-y-4">
+      <ImageUploadField label="Showroom-Bild" value={image} onChange={setImage} />
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label="Overlay-Stärke (0-1)" value={overlayOpacity} onChange={setOverlayOpacity} placeholder="0.5" />
+      <div className="space-y-2">
+        <span className="text-xs text-gray-600 font-medium">Highlights</span>
+        {highlights.map((h, i) => (
+          <div key={i} className="border rounded p-2 space-y-1 relative">
+            <button onClick={() => setHighlights(highlights.filter((_, idx) => idx !== i))} className="absolute top-1 right-1 text-red-400 text-xs">×</button>
+            <Field label="Titel" value={h.title} onChange={(v) => setHighlights(highlights.map((x, idx) => idx === i ? { ...x, title: v } : x))} />
+            <Field label="Text" value={h.text} onChange={(v) => setHighlights(highlights.map((x, idx) => idx === i ? { ...x, text: v } : x))} />
+          </div>
+        ))}
+        <button onClick={() => setHighlights([...highlights, { title: '', text: '' }])} className="text-sm text-blue-600 hover:underline">+ Highlight</button>
+      </div>
+      <ButtonField label="CTA-Button" value={cta} onChange={setCta} />
+    </div>
+  );
+}
+
+function ConsultationBookingEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [image, setImage] = useState((data.image as string) || '');
+  const [services, setServices] = useState<{ icon: string; title: string; description: string }[]>((data.services as any[]) || []);
+  const [cta, setCta] = useState((data.cta as { label: string; href: string }) || { label: '', href: '' });
+  useReport({ headline, subline, image, services, cta }, onChange);
+  function addService() { setServices([...services, { icon: '', title: '', description: '' }]); }
+  function removeService(i: number) { setServices(services.filter((_, idx) => idx !== i)); }
+  function updateService(i: number, field: string, val: string) { setServices(services.map((s, idx) => idx === i ? { ...s, [field]: val } : s)); }
+  return (
+    <div className="space-y-4">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      <ImageUploadField label="Seitenbild" value={image} onChange={setImage} />
+      <div className="space-y-2">
+        <span className="text-xs text-gray-600 font-medium">Services / Beratungsangebote</span>
+        {services.map((s, i) => (
+          <div key={i} className="border rounded-lg p-3 space-y-2 relative">
+            <button onClick={() => removeService(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <div className="grid grid-cols-3 gap-2">
+              <IconPickerField label="Icon" value={s.icon} onChange={(v) => updateService(i, 'icon', v)} />
+              <Field label="Titel" value={s.title} onChange={(v) => updateService(i, 'title', v)} />
+              <Field label="Beschreibung" value={s.description} onChange={(v) => updateService(i, 'description', v)} />
+            </div>
+          </div>
+        ))}
+        <button onClick={addService} className="text-sm text-blue-600 hover:underline">+ Service hinzufügen</button>
+      </div>
+      <ButtonField label="CTA-Button" value={cta} onChange={setCta} />
+    </div>
+  );
+}
+
+function MaterialGalleryEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [categories, setCategories] = useState<string[]>((data.categories as string[]) || []);
+  const [items, setItems] = useState<{ image: string; name: string; category: string }[]>((data.items as any[]) || []);
+  useReport({ headline, subline, categories, items }, onChange);
+  function addItem() { setItems([...items, { image: '', name: '', category: categories[0] || '' }]); }
+  function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
+  function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
+  return (
+    <div className="space-y-4">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      <div className="space-y-2">
+        <span className="text-xs text-gray-600 font-medium">Kategorien (für Filter)</span>
+        {categories.map((cat, i) => (
+          <div key={i} className="flex gap-2 items-center">
+            <input className="admin-input flex-1" value={cat} onChange={(e) => setCategories(categories.map((c, idx) => idx === i ? e.target.value : c))} />
+            <button onClick={() => setCategories(categories.filter((_, idx) => idx !== i))} className="text-red-400 text-xs">×</button>
+          </div>
+        ))}
+        <button onClick={() => setCategories([...categories, ''])} className="text-sm text-blue-600 hover:underline">+ Kategorie</button>
+      </div>
+      <div className="space-y-2">
+        <span className="text-xs text-gray-600 font-medium">Materialien</span>
+        {items.map((item, i) => (
+          <div key={i} className="border rounded-lg p-3 space-y-2 relative">
+            <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+            <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
+            <div className="grid grid-cols-2 gap-2">
+              <Field label="Name" value={item.name} onChange={(v) => update(i, 'name', v)} />
+              <SelectField label="Kategorie" value={item.category} options={['', ...categories]} onChange={(v) => update(i, 'category', v)} />
+            </div>
+          </div>
+        ))}
+        <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Material hinzufügen</button>
+      </div>
+    </div>
+  );
+}
+
+function DeliveryTimelineEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [steps, setSteps] = useState<{ number: string; icon: string; title: string; text: string }[]>((data.steps as any[]) || []);
+  useReport({ headline, subline, steps }, onChange);
+  function addStep() { setSteps([...steps, { number: String(steps.length + 1), icon: '', title: '', text: '' }]); }
+  function removeStep(i: number) { setSteps(steps.filter((_, idx) => idx !== i)); }
+  function updateStep(i: number, field: string, val: string) { setSteps(steps.map((s, idx) => idx === i ? { ...s, [field]: val } : s)); }
+  return (
+    <div className="space-y-4">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      {steps.map((step, i) => (
+        <div key={i} className="border rounded-lg p-3 space-y-2 relative">
+          <button onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-4 gap-2">
+            <Field label="Nr." value={step.number} onChange={(v) => updateStep(i, 'number', v)} />
+            <IconPickerField label="Icon" value={step.icon} onChange={(v) => updateStep(i, 'icon', v)} />
+            <Field label="Titel" value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
+            <Field label="Text" value={step.text} onChange={(v) => updateStep(i, 'text', v)} />
+          </div>
+        </div>
+      ))}
+      <button onClick={addStep} className="text-sm text-blue-600 hover:underline">+ Schritt hinzufügen</button>
+    </div>
+  );
+}
+
+function InspirationGridEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [items, setItems] = useState<{ image: string; title: string; href: string }[]>((data.items as any[]) || []);
+  useReport({ headline, subline, items }, onChange);
+  function addItem() { setItems([...items, { image: '', title: '', href: '' }]); }
+  function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
+  function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
+  return (
+    <div className="space-y-4">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} />
+      {items.map((item, i) => (
+        <div key={i} className="border rounded-lg p-3 space-y-2 relative">
+          <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/inspiration" />
+          </div>
+        </div>
+      ))}
+      <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Bild hinzufügen</button>
+    </div>
+  );
+}
+
+function BeforeAfterEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [description, setDescription] = useState((data.description as string) || '');
+  const [imageBefore, setImageBefore] = useState((data.imageBefore as string) || '');
+  const [imageAfter, setImageAfter] = useState((data.imageAfter as string) || '');
+  const [labelBefore, setLabelBefore] = useState((data.labelBefore as string) || 'Vorher');
+  const [labelAfter, setLabelAfter] = useState((data.labelAfter as string) || 'Nachher');
+  useReport({ headline, description, imageBefore, imageAfter, labelBefore, labelAfter }, onChange);
+  return (
+    <div className="space-y-4">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Beschreibung" value={description} onChange={setDescription} />
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <ImageUploadField label="Bild Vorher" value={imageBefore} onChange={setImageBefore} />
+          <Field label="Label Vorher" value={labelBefore} onChange={setLabelBefore} />
+        </div>
+        <div>
+          <ImageUploadField label="Bild Nachher" value={imageAfter} onChange={setImageAfter} />
+          <Field label="Label Nachher" value={labelAfter} onChange={setLabelAfter} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Editor registry ─────────────────────────────────────────────
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
@@ -2131,4 +2386,12 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   shopCart: ShopCartEditor,
   shopCheckout: ShopCheckoutEditor,
   shopThankYou: ShopThankYouEditor,
+  productShowcase: ProductShowcaseEditor,
+  categoryMosaic: CategoryMosaicEditor,
+  brandShowroom: BrandShowroomEditor,
+  consultationBooking: ConsultationBookingEditor,
+  materialGallery: MaterialGalleryEditor,
+  deliveryTimeline: DeliveryTimelineEditor,
+  inspirationGrid: InspirationGridEditor,
+  beforeAfter: BeforeAfterEditor,
 };

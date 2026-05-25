@@ -51,6 +51,14 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'verticalTimeline', label: 'Prozess-Timeline', description: 'Vertikale Scroll-Timeline mit nummerierten Steps und Progress-Linie', category: 'Inhalt' },
   { type: 'beforeAfterSlider', label: 'Vorher/Nachher-Slider', description: 'Draggbarer Vergleichs-Slider für zwei Bilder', category: 'Medien' },
   { type: 'horizontalScrollShowcase', label: 'Horizontal-Scroll Showcase', description: 'Sticky Fullscreen-Panels die per Scroll horizontal gleiten', category: 'Marketing' },
+  { type: 'productShowcase', label: 'Produkt-Showcase', description: 'Produktkarten-Grid mit Bild, Preis, Badge & Link', category: 'Marketing' },
+  { type: 'categoryMosaic', label: 'Kategorie-Mosaik', description: 'Asymmetrisches Bild-Mosaik für Kategorien/Bereiche', category: 'Medien' },
+  { type: 'brandShowroom', label: 'Showroom-Banner', description: 'Immersives Full-Width Bild mit Overlay-Highlights & CTA', category: 'Marketing' },
+  { type: 'consultationBooking', label: 'Beratungsbuchung', description: 'Service-Auswahl mit Beschreibung & Buchungs-CTA', category: 'Kontakt' },
+  { type: 'materialGallery', label: 'Material-Galerie', description: 'Filterbares Grid für Materialien, Farben oder Stoffe', category: 'Medien' },
+  { type: 'deliveryTimeline', label: 'Liefer-/Projektablauf', description: 'Visueller Ablauf mit nummerierten Schritten', category: 'Leistungen' },
+  { type: 'inspirationGrid', label: 'Inspirations-Grid', description: 'Lifestyle-Bildergalerie mit Hover-Overlay & Links', category: 'Medien' },
+  { type: 'beforeAfter', label: 'Vorher/Nachher', description: 'Interaktiver Slider zum Vergleich zweier Bilder', category: 'Medien' },
 ];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
@@ -310,6 +318,32 @@ export const ECOMMERCE_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
+export const RETAIL_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'hero', label: 'Hero', description: 'Hauptbanner der Seite' },
+  { type: 'productShowcase', label: 'Produkt-Showcase', description: 'Produktkarten-Grid mit Bild, Preis, Badge & Link' },
+  { type: 'categoryMosaic', label: 'Kategorie-Mosaik', description: 'Asymmetrisches Bild-Mosaik für Bereiche' },
+  { type: 'brandShowroom', label: 'Showroom-Banner', description: 'Immersives Bild mit Overlay-Highlights' },
+  { type: 'consultationBooking', label: 'Beratungsbuchung', description: 'Service-Auswahl mit Buchungs-CTA' },
+  { type: 'materialGallery', label: 'Material-Galerie', description: 'Filterbares Grid für Materialien' },
+  { type: 'deliveryTimeline', label: 'Liefer-/Projektablauf', description: 'Visueller Ablauf' },
+  { type: 'inspirationGrid', label: 'Inspirations-Grid', description: 'Lifestyle-Bilder mit Hover-Overlay' },
+  { type: 'beforeAfter', label: 'Vorher/Nachher', description: 'Interaktiver Vergleichs-Slider' },
+  { type: 'uspStrip', label: 'USP-Leiste', description: 'Einzigartige Verkaufsargumente' },
+  { type: 'servicesGrid', label: 'Leistungen', description: 'Leistungs-Grid' },
+  { type: 'processSteps', label: 'Ablauf', description: 'Prozess-Schritte Timeline' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular' },
+  { type: 'map', label: 'Karte', description: 'Google Maps Einbettung' },
+  { type: 'team', label: 'Team', description: 'Team-Mitglieder' },
+  { type: 'stats', label: 'Zahlen & Fakten', description: 'Animierte Statistik-Zähler' },
+  { type: 'galleryGrid', label: 'Galerie', description: 'Bildergalerie' },
+  { type: 'ctaBand', label: 'CTA-Band', description: 'Call-to-Action Banner' },
+  { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt' },
+  { type: 'logoCloud', label: 'Logo-Cloud', description: 'Partner-Logos' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
 const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   tradesman: TRADESMAN_SECTION_TYPES,
   photography: PHOTOGRAPHY_SECTION_TYPES,
@@ -324,6 +358,7 @@ const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   cafe: CAFE_SECTION_TYPES,
   tattoo: TATTOO_SECTION_TYPES,
   ecommerce: ECOMMERCE_SECTION_TYPES,
+  retail: RETAIL_SECTION_TYPES,
 };
 
 const INDUSTRY_LABELS: Record<string, string> = {
@@ -340,6 +375,7 @@ const INDUSTRY_LABELS: Record<string, string> = {
   cafe: 'Café & Bar',
   tattoo: 'Tattoo Studio',
   ecommerce: 'E-Commerce',
+  retail: 'Einzelhandel & Weitere',
 };
 
 export function getSectionTypesForIndustry(industry: string, options?: { hasShop?: boolean }): SectionTypeDefinition[] {

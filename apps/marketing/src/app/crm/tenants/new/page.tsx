@@ -22,6 +22,7 @@ const INDUSTRIES = [
   { value: 'photography', label: 'Fotografie' },
   { value: 'realestate', label: 'Immobilien' },
   { value: 'tattoo', label: 'Tattoo Studio' },
+  { value: 'retail', label: 'Einzelhandel & Weitere' },
 ] as const;
 
 export default function NewTenantPage() {

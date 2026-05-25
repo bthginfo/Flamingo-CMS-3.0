@@ -17,6 +17,7 @@ const DEMO_LINKS: Record<string, string> = {
   cafe: 'https://www.demo.flamingomedia.online/demo/cafe',
   tattoo: 'https://www.demo.flamingomedia.online/demo/tattoo',
   shop: 'https://www.demo.flamingomedia.online/demo/shop',
+  retail: 'https://www.demo.flamingomedia.online/demo/retail',
 };
 
 const TEMPLATES = [
@@ -148,6 +149,16 @@ const TEMPLATES = [
     image: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=800&q=80',
     color: '#4a1942',
     features: ['Produktkatalog & Suche', 'Kategorien-Übersicht', 'Warenkorb & Checkout', 'Gutscheine & Rabatte', 'Versandkonfiguration', 'PDF-Rechnungen'],
+    status: 'live' as const,
+  },
+  {
+    key: 'retail',
+    name: 'Einzelhandel & Weitere',
+    tagline: 'Boutique · Handelskette · Retail Store',
+    description: 'Produktkatalog mit Kategorien, Inspirations-Galerie, Beratungsbuchung, Liefer-Timeline und Vorher/Nachher-Slider.',
+    image: 'https://images.unsplash.com/photo-1441986300352-7e3dee05fbdb?w=800&q=80',
+    color: '#c41e3a',
+    features: ['Produkt-Showcase & Kategorien', 'Inspirations-Grid', 'Beratungsbuchung', 'Liefer-/Projektablauf', 'Vorher/Nachher-Slider', 'Material-Galerie'],
     status: 'live' as const,
   },
 ];

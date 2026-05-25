@@ -1,0 +1,73 @@
+'use client';
+
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
+import { ShoppingBag } from 'lucide-react';
+
+type Product = {
+  image?: string;
+  title: string;
+  price?: string;
+  badge?: string;
+  href?: string;
+  description?: string;
+};
+
+type Props = { data: Record<string, unknown>; variant?: string | null };
+
+export function ProductShowcaseSection({ data }: Props) {
+  const headline = (data.headline as string) || '';
+  const subline = (data.subline as string) || '';
+  const items = (data.items as Product[]) || [];
+  const columns = (data.columns as string) || '3';
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-50px' });
+
+  const colClass = columns === '4' ? 'lg:grid-cols-4' : columns === '2' ? 'lg:grid-cols-2' : 'lg:grid-cols-3';
+
+  return (
+    <div ref={ref}>
+      {(headline || subline) && (
+        <div className="text-center mb-10">
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]">{headline}</h2>}
+          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{subline}</p>}
+        </div>
+      )}
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${colClass} gap-6`}>
+        {items.map((item, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <a
+              href={item.href || '#'}
+              className="group block rounded-[var(--style-card-radius,1rem)] overflow-hidden bg-[var(--style-card-bg,#fff)] border-[var(--style-card-border,1px_solid_rgba(0,0,0,0.06))] shadow-[var(--style-card-shadow,0_4px_20px_rgba(0,0,0,0.06))] hover:shadow-xl transition-all duration-300"
+            >
+              <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+                {item.image ? (
+                  <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-300">
+                    <ShoppingBag size={48} />
+                  </div>
+                )}
+                {item.badge && (
+                  <span className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full bg-[var(--brand-primary,#2563eb)] text-white shadow-md">
+                    {item.badge}
+                  </span>
+                )}
+              </div>
+              <div className="p-5">
+                <h3 className="font-display font-semibold text-lg text-[var(--style-text-primary,#0f172a)] group-hover:text-[var(--brand-primary,#2563eb)] transition-colors">{item.title}</h3>
+                {item.description && <p className="mt-1.5 text-sm text-[var(--style-text-secondary,#64748b)] line-clamp-2">{item.description}</p>}
+                {item.price && <p className="mt-3 text-lg font-bold text-[var(--brand-primary,#2563eb)]">{item.price}</p>}
+              </div>
+            </a>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}

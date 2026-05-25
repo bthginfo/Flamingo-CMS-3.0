@@ -94,7 +94,7 @@ function applyShowcasePalette() {
 }
 
 /* ─── Template metadata ────────────────────────────────────────────── */
-const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop', {
+const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail', {
   label: string;
   tagline: string;
   description: string;
@@ -206,9 +206,17 @@ const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     accent: '#7c2d12',
     bullets: ['Produkte & Kategorien mit Varianten', 'Warenkorb & Checkout', 'Bestellverwaltung & Rechnungen', 'Versand, Gutscheine & Storno'],
   },
+  retail: {
+    label: 'Einzelhandel & Weitere',
+    tagline: 'Boutique · Handelskette · Retail Store',
+    description: 'Produktkatalog mit Kategorien, Filialen-Übersicht, Öffnungszeiten, Aktionen und Kontakt — modern und einladend.',
+    image: 'https://images.unsplash.com/photo-1441986300352-7e3dee05fbdb?auto=format&fit=crop&w=1400&q=80',
+    accent: '#c41e3a',
+    bullets: ['Produkt-Showcase & Kategorien', 'Inspirations-Galerie', 'Beratungsbuchung & Timeline', 'Vorher/Nachher-Slider'],
+  },
 };
 
-const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop', { classic: string; modern: string; bold: string }> = {
+const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail', { classic: string; modern: string; bold: string }> = {
   handwerk: {
     classic: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80',
@@ -273,6 +281,11 @@ const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     classic: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1400&q=80',
+  },
+  retail: {
+    classic: 'https://images.unsplash.com/photo-1441986300352-7e3dee05fbdb?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1483389127117-b6a2102724ae?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=1400&q=80',
   },
 };
 

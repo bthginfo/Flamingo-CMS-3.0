@@ -32,6 +32,14 @@ import { LogoMarqueeSection } from './shared/logo-marquee';
 import { VerticalTimelineSection } from './shared/vertical-timeline';
 import { BeforeAfterSliderSection } from './shared/before-after-slider';
 import { HorizontalScrollShowcaseSection } from './shared/horizontal-scroll-showcase';
+import { ProductShowcaseSection } from './shared/product-showcase';
+import { CategoryMosaicSection } from './shared/category-mosaic';
+import { BrandShowroomSection } from './shared/brand-showroom';
+import { ConsultationBookingSection } from './shared/consultation-booking';
+import { MaterialGallerySection } from './shared/material-gallery';
+import { DeliveryTimelineSection } from './shared/delivery-timeline';
+import { InspirationGridSection } from './shared/inspiration-grid';
+import { BeforeAfterSection } from './shared/before-after';
 import { CollectionListSection } from './shared/collection-list';
 import { ShopProductGridSection } from './shared/shop-product-grid';
 import { ShopProductDetailSection } from './shared/shop-product-detail';
@@ -523,6 +531,33 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     legalContent: LegalContentSection,
     collectionHero: CollectionHeroSection,
   },
+  retail: {
+    hero: HeroSection,
+    productShowcase: ProductShowcaseSection,
+    categoryMosaic: CategoryMosaicSection,
+    brandShowroom: BrandShowroomSection,
+    consultationBooking: ConsultationBookingSection,
+    materialGallery: MaterialGallerySection,
+    deliveryTimeline: DeliveryTimelineSection,
+    inspirationGrid: InspirationGridSection,
+    beforeAfter: BeforeAfterSection,
+    uspStrip: UspStripSection,
+    servicesGrid: ServicesGridSection,
+    processSteps: ProcessStepsSection,
+    testimonials: TestimonialsSection,
+    faq: FaqSection,
+    contact: ContactSection,
+    map: MapSection,
+    team: TeamSection,
+    stats: StatsSection,
+    galleryGrid: GalleryGridSection,
+    ctaBand: CtaBandSection,
+    textImage: TextImageSection,
+    logoCloud: LogoCloudSection,
+    richText: RichTextSection,
+    legalContent: LegalContentSection,
+    collectionHero: CollectionHeroSection,
+  },
 };
 
 // Shared/generic sections available to ALL templates
@@ -591,6 +626,14 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   verticalTimeline: VerticalTimelineSection,
   beforeAfterSlider: BeforeAfterSliderSection,
   horizontalScrollShowcase: HorizontalScrollShowcaseSection,
+  productShowcase: ProductShowcaseSection,
+  categoryMosaic: CategoryMosaicSection,
+  brandShowroom: BrandShowroomSection,
+  consultationBooking: ConsultationBookingSection,
+  materialGallery: MaterialGallerySection,
+  deliveryTimeline: DeliveryTimelineSection,
+  inspirationGrid: InspirationGridSection,
+  beforeAfter: BeforeAfterSection,
 };
 
 // Merge ALL industry templates as ultimate fallback so foreign sections render

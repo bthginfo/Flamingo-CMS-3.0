@@ -21,6 +21,7 @@ const INDUSTRIES = [
   { value: 'realestate', label: 'Immobilien' },
   { value: 'tattoo', label: 'Tattoo' },
   { value: 'ecommerce', label: 'E-Commerce' },
+  { value: 'retail', label: 'Einzelhandel & Weitere' },
 ] as const;
 
 export function IndustrySelect({ tenantId, currentIndustry }: { tenantId: string; currentIndustry: string }) {
