@@ -11,22 +11,65 @@ type FooterData = {
   columns: FooterColumn[];
   legalLinks: { label: string; href: string }[];
 };
+type I18nConfig = { enabled: boolean; locales: string[]; defaultLocale: string };
 
-export function FooterForm({ initial }: { initial: FooterData }) {
-  const [columns, setColumns] = useState<FooterColumn[]>(initial.columns);
-  const [legalLinks, setLegalLinks] = useState(initial.legalLinks);
+export function FooterForm({ initial, i18n }: { initial: any; i18n?: I18nConfig }) {
+  const isLocalized = initial?.columns?._localized || initial?._localized;
+  const locales = i18n?.locales || [];
+  const defaultLocale = i18n?.defaultLocale || 'de';
+  const [activeLocale, setActiveLocale] = useState(defaultLocale);
+
+  function getColumnsForLocale(locale: string): FooterColumn[] {
+    const cols = initial?.columns;
+    if (cols?._localized) return cols[locale] || cols._default || [];
+    return Array.isArray(cols) ? cols : [];
+  }
+  function getLegalForLocale(locale: string): { label: string; href: string }[] {
+    const ll = initial?.legalLinks;
+    if (ll?._localized) return ll[locale] || ll._default || [];
+    return Array.isArray(ll) ? ll : [];
+  }
+
+  const [localeData, setLocaleData] = useState<Record<string, FooterData>>(() => {
+    if (i18n?.enabled && locales.length > 0) {
+      const data: Record<string, FooterData> = {};
+      for (const loc of locales) {
+        data[loc] = { columns: getColumnsForLocale(loc), legalLinks: getLegalForLocale(loc) };
+      }
+      return data;
+    }
+    return { [defaultLocale]: { columns: Array.isArray(initial?.columns) ? initial.columns : [], legalLinks: Array.isArray(initial?.legalLinks) ? initial.legalLinks : [] } };
+  });
+
+  const columns = localeData[activeLocale]?.columns || [];
+  const legalLinks = localeData[activeLocale]?.legalLinks || [];
+
+  const setColumns = (val: FooterColumn[]) => {
+    setLocaleData(prev => ({ ...prev, [activeLocale]: { ...prev[activeLocale], columns: val } }));
+  };
+  const setLegalLinks = (val: { label: string; href: string }[]) => {
+    setLocaleData(prev => ({ ...prev, [activeLocale]: { ...prev[activeLocale], legalLinks: val } }));
+  };
+
   const [saving, setSaving] = useState(false);
   const { markDirty, markSaved } = useSaveState();
   const mounted = useRef(false);
-  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [columns, legalLinks]);
+  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [localeData]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      await saveFooterSettings({
-        columns,
-        legalLinks: legalLinks.filter(l => l.label.trim()),
-      });
+      if (i18n?.enabled) {
+        for (const loc of locales) {
+          const d = localeData[loc];
+          if (d) {
+            await saveFooterSettings({ columns: d.columns, legalLinks: d.legalLinks.filter(l => l.label.trim()) }, loc);
+          }
+        }
+      } else {
+        const d = localeData[defaultLocale];
+        await saveFooterSettings({ columns: d.columns, legalLinks: d.legalLinks.filter(l => l.label.trim()) });
+      }
       toast.success('Footer gespeichert');
       markSaved();
     } catch {
@@ -46,6 +89,17 @@ export function FooterForm({ initial }: { initial: FooterData }) {
   return (
     <div className="admin-card p-6 space-y-6">
       <h2 className="font-semibold text-lg">Footer</h2>
+
+      {/* Locale Tabs */}
+      {i18n?.enabled && locales.length > 1 && (
+        <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-lg w-fit">
+          {locales.map(locale => (
+            <button key={locale} onClick={() => setActiveLocale(locale)} className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${activeLocale === locale ? 'bg-white shadow text-blue-700' : 'text-gray-500 hover:text-gray-700'}`}>
+              {locale.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Columns */}
       <div className="space-y-6">

@@ -110,20 +110,52 @@ export async function getNavigationSettings() {
   const tenantId = await requireTenant();
   const db = getDb();
   const [row] = await db.select().from(navigation).where(eq(navigation.tenantId, tenantId)).limit(1);
+  const rawItems = row?.items as any;
+  const rawCta = row?.cta as any;
+  // If _localized structure, return the whole thing for locale-aware editing
+  if (rawItems?._localized) {
+    return { items: rawItems, cta: rawCta, _localized: true as const };
+  }
   return {
-    items: (row?.items as { label: string; href: string; type?: string }[]) || [],
-    cta: (row?.cta as { label: string; href: string } | null) || null,
+    items: (rawItems as { label: string; href: string; type?: string }[]) || [],
+    cta: (rawCta as { label: string; href: string } | null) || null,
   };
 }
 
-export async function saveNavigationSettings(items: { label: string; href: string; type?: string }[], cta?: { label: string; href: string } | null) {
+export async function saveNavigationSettings(items: { label: string; href: string; type?: string }[], cta?: { label: string; href: string } | null, locale?: string) {
   const tenantId = await requireTenant();
   const db = getDb();
   const [existing] = await db.select().from(navigation).where(eq(navigation.tenantId, tenantId)).limit(1);
+
+  let finalItems: any = items;
+  let finalCta: any = cta || {};
+
+  if (locale) {
+    // Merge into _localized structure
+    const currentItems = (existing?.items as any) || {};
+    const currentCta = (existing?.cta as any) || {};
+    if (currentItems._localized) {
+      finalItems = { ...currentItems, [locale]: items };
+      finalCta = { ...currentCta, [locale]: cta || null };
+    } else {
+      // Migrate: existing flat becomes _default
+      finalItems = { _localized: true, _default: currentItems._localized ? undefined : (Array.isArray(currentItems) ? currentItems : []), [locale]: items };
+      finalCta = { _localized: true, _default: currentCta._localized ? undefined : currentCta, [locale]: cta || null };
+      // If no _default needed (first locale IS the default), keep clean
+      if (!Array.isArray(currentItems) || currentItems.length === 0) {
+        finalItems = { _localized: true, [locale]: items };
+        finalCta = { _localized: true, [locale]: cta || null };
+      } else {
+        finalItems = { _localized: true, _default: currentItems, [locale]: items };
+        finalCta = { _localized: true, _default: currentCta, [locale]: cta || null };
+      }
+    }
+  }
+
   if (existing) {
-    await db.update(navigation).set({ items, cta: cta || {}, updatedAt: new Date() }).where(eq(navigation.tenantId, tenantId));
+    await db.update(navigation).set({ items: finalItems, cta: finalCta, updatedAt: new Date() }).where(eq(navigation.tenantId, tenantId));
   } else {
-    await db.insert(navigation).values({ tenantId, items, cta: cta || {} });
+    await db.insert(navigation).values({ tenantId, items: finalItems, cta: finalCta });
   }
   revalidatePath('/admin/navigation');
   return { success: true };
@@ -135,23 +167,49 @@ export async function getFooterSettings() {
   const tenantId = await requireTenant();
   const db = getDb();
   const [row] = await db.select().from(footer).where(eq(footer.tenantId, tenantId)).limit(1);
+  const rawColumns = row?.columns as any;
+  const rawLegalLinks = row?.legalLinks as any;
+  if (rawColumns?._localized) {
+    return { columns: rawColumns, legalLinks: rawLegalLinks, _localized: true as const };
+  }
   return {
-    columns: (row?.columns as { title: string; items: { text: string; href?: string }[] }[]) || [],
-    legalLinks: (row?.legalLinks as { label: string; href: string }[]) || [],
+    columns: (rawColumns as { title: string; items: { text: string; href?: string }[] }[]) || [],
+    legalLinks: (rawLegalLinks as { label: string; href: string }[]) || [],
   };
 }
 
 export async function saveFooterSettings(data: {
   columns: { title: string; items: { text: string; href?: string }[] }[];
   legalLinks: { label: string; href: string }[];
-}) {
+}, locale?: string) {
   const tenantId = await requireTenant();
   const db = getDb();
   const [existing] = await db.select().from(footer).where(eq(footer.tenantId, tenantId)).limit(1);
+
+  let finalColumns: any = data.columns;
+  let finalLegalLinks: any = data.legalLinks;
+
+  if (locale) {
+    const currentColumns = (existing?.columns as any) || {};
+    const currentLegalLinks = (existing?.legalLinks as any) || {};
+    if (currentColumns._localized) {
+      finalColumns = { ...currentColumns, [locale]: data.columns };
+      finalLegalLinks = { ...currentLegalLinks, [locale]: data.legalLinks };
+    } else {
+      if (!Array.isArray(currentColumns) || currentColumns.length === 0) {
+        finalColumns = { _localized: true, [locale]: data.columns };
+        finalLegalLinks = { _localized: true, [locale]: data.legalLinks };
+      } else {
+        finalColumns = { _localized: true, _default: currentColumns, [locale]: data.columns };
+        finalLegalLinks = { _localized: true, _default: currentLegalLinks, [locale]: data.legalLinks };
+      }
+    }
+  }
+
   if (existing) {
-    await db.update(footer).set({ columns: data.columns, legalLinks: data.legalLinks, updatedAt: new Date() }).where(eq(footer.tenantId, tenantId));
+    await db.update(footer).set({ columns: finalColumns, legalLinks: finalLegalLinks, updatedAt: new Date() }).where(eq(footer.tenantId, tenantId));
   } else {
-    await db.insert(footer).values({ tenantId, columns: data.columns, legalLinks: data.legalLinks });
+    await db.insert(footer).values({ tenantId, columns: finalColumns, legalLinks: finalLegalLinks });
   }
   revalidatePath('/admin/navigation');
   return { success: true };

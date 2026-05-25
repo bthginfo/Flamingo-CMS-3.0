@@ -7,19 +7,76 @@ import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
 
 type NavItem = { label: string; href: string; type?: string };
+type I18nConfig = { enabled: boolean; locales: string[]; defaultLocale: string };
 
-export function NavigationForm({ initial, initialCta }: { initial: NavItem[]; initialCta?: { label: string; href: string } | null }) {
-  const [items, setItems] = useState<NavItem[]>(initial.length > 0 ? initial : [{ label: '', href: '/', type: 'link' }]);
-  const [cta, setCta] = useState(initialCta || { label: 'Termin vereinbaren', href: '/kontakt' });
+export function NavigationForm({ initial, initialCta, i18n }: { initial: any; initialCta?: any; i18n?: I18nConfig }) {
+  const isLocalized = initial?._localized;
+  const locales = i18n?.locales || [];
+  const defaultLocale = i18n?.defaultLocale || 'de';
+  const [activeLocale, setActiveLocale] = useState(defaultLocale);
+
+  // Resolve initial items/cta per locale
+  function getItemsForLocale(locale: string): NavItem[] {
+    if (isLocalized) {
+      return initial[locale] || initial._default || [];
+    }
+    return Array.isArray(initial) ? initial : [];
+  }
+  function getCtaForLocale(locale: string): { label: string; href: string } {
+    if (initialCta?._localized) {
+      const c = initialCta[locale] || initialCta._default;
+      return c || { label: '', href: '' };
+    }
+    return initialCta || { label: 'Termin vereinbaren', href: '/kontakt' };
+  }
+
+  // State per locale
+  const [localeData, setLocaleData] = useState<Record<string, { items: NavItem[]; cta: { label: string; href: string } }>>(() => {
+    if (i18n?.enabled && locales.length > 0) {
+      const data: Record<string, { items: NavItem[]; cta: { label: string; href: string } }> = {};
+      for (const loc of locales) {
+        const items = getItemsForLocale(loc);
+        data[loc] = { items: items.length > 0 ? items : [{ label: '', href: '/', type: 'link' }], cta: getCtaForLocale(loc) };
+      }
+      return data;
+    }
+    const items = Array.isArray(initial) ? initial : [];
+    return { [defaultLocale]: { items: items.length > 0 ? items : [{ label: '', href: '/', type: 'link' }], cta: initialCta || { label: 'Termin vereinbaren', href: '/kontakt' } } };
+  });
+
+  const items = localeData[activeLocale]?.items || [];
+  const cta = localeData[activeLocale]?.cta || { label: '', href: '' };
+
+  const setItems = (newItems: NavItem[] | ((prev: NavItem[]) => NavItem[])) => {
+    setLocaleData(prev => {
+      const resolved = typeof newItems === 'function' ? newItems(prev[activeLocale]?.items || []) : newItems;
+      return { ...prev, [activeLocale]: { ...prev[activeLocale], items: resolved } };
+    });
+  };
+  const setCta = (newCta: { label: string; href: string }) => {
+    setLocaleData(prev => ({ ...prev, [activeLocale]: { ...prev[activeLocale], cta: newCta } }));
+  };
+
   const [saving, setSaving] = useState(false);
   const { markDirty, markSaved } = useSaveState();
   const mounted = useRef(false);
-  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [items, cta]);
+  useEffect(() => { if (mounted.current) markDirty(); else mounted.current = true; }, [localeData]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      await saveNavigationSettings(items.filter(i => i.label.trim()), cta.label.trim() ? cta : null);
+      if (i18n?.enabled) {
+        // Save each locale
+        for (const loc of locales) {
+          const d = localeData[loc];
+          if (d) {
+            await saveNavigationSettings(d.items.filter(i => i.label.trim()), d.cta.label.trim() ? d.cta : null, loc);
+          }
+        }
+      } else {
+        const d = localeData[defaultLocale];
+        await saveNavigationSettings(d.items.filter(i => i.label.trim()), d.cta.label.trim() ? d.cta : null);
+      }
       toast.success('Navigation gespeichert');
       markSaved();
     } catch {
@@ -43,6 +100,17 @@ export function NavigationForm({ initial, initialCta }: { initial: NavItem[]; in
         <h2 className="font-semibold text-lg">Hauptnavigation</h2>
         <span className="text-xs text-zinc-400">{items.length} Einträge</span>
       </div>
+
+      {/* Locale Tabs */}
+      {i18n?.enabled && locales.length > 1 && (
+        <div className="flex items-center gap-1 p-1 bg-gray-100 rounded-lg w-fit">
+          {locales.map(locale => (
+            <button key={locale} onClick={() => setActiveLocale(locale)} className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${activeLocale === locale ? 'bg-white shadow text-blue-700' : 'text-gray-500 hover:text-gray-700'}`}>
+              {locale.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="space-y-2">
         {items.map((item, i) => (
