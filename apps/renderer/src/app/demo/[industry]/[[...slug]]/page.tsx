@@ -22,6 +22,7 @@ const INDUSTRY_MAP: Record<string, string> = {
   tattoo: 'tattoo',
   showcase: 'tradesman',
   shop: 'restaurant',
+  retail: 'retail',
 };
 
 /** Recursively prefix internal hrefs in section data with the demo path */
