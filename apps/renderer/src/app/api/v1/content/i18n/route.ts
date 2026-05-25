@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { pages, pageSections, tenants } from '@flamingo/db';
+import { pages, pageSections, tenants, collections, collectionItems } from '@flamingo/db';
 import { eq, and, asc } from 'drizzle-orm';
 import { withApiHandler } from '@/lib/api-utils';
 
 /**
  * GET /api/v1/content/i18n
  * 
- * Returns all pages with their sections and i18n configuration.
+ * Returns all pages with their sections AND all collections with their items.
  * Sections with localized data show the full locale structure.
- * AI agents use this to know which sections need translation.
+ * AI agents use this to know which sections/items need translation.
  * 
- * Response: { i18n: { enabled, locales, defaultLocale }, pages: [...] }
+ * Response: { i18n: { enabled, locales, defaultLocale }, pages: [...], collections: [...] }
  */
 export const GET = withApiHandler(async (_req, auth) => {
   const db = getDb();
@@ -28,10 +28,11 @@ export const GET = withApiHandler(async (_req, auth) => {
     defaultLocale: tenant?.i18nDefaultLocale || 'de',
   };
 
+  // Pages + their sections
   const allPages = await db.select().from(pages).where(eq(pages.tenantId, auth.tenantId));
   const allSections = await db.select().from(pageSections).where(eq(pageSections.tenantId, auth.tenantId)).orderBy(asc(pageSections.sortOrder));
 
-  const result = allPages.map(page => ({
+  const pagesResult = allPages.map(page => ({
     id: page.id,
     slug: page.slug,
     title: page.title,
@@ -44,27 +45,54 @@ export const GET = withApiHandler(async (_req, auth) => {
       })),
   }));
 
-  return NextResponse.json({ i18n, pages: result });
+  // Collections + their items (sections are embedded in item.data.sections)
+  const allCollections = await db.select().from(collections).where(eq(collections.tenantId, auth.tenantId));
+  const allItems = await db.select().from(collectionItems).where(eq(collectionItems.tenantId, auth.tenantId));
+
+  const collectionsResult = allCollections.map(col => ({
+    key: col.key,
+    label: col.label,
+    items: allItems
+      .filter(item => item.collectionId === col.id)
+      .map(item => {
+        const itemData = (item.data || {}) as Record<string, unknown>;
+        const sections = (itemData.sections || []) as Array<{ id?: string; type?: string; data?: unknown }>;
+        return {
+          id: item.id,
+          slug: item.slug,
+          title: item.title,
+          excerpt: itemData.excerpt as string | undefined,
+          sections: sections.map(s => ({
+            id: s.id,
+            type: s.type,
+            data: s.data,
+          })),
+        };
+      }),
+  }));
+
+  return NextResponse.json({ i18n, pages: pagesResult, collections: collectionsResult });
 });
 
 /**
  * PUT /api/v1/content/i18n
  * 
- * Update locale-specific data for one or more sections.
- * AI agents use this after translating content.
+ * Update locale-specific data for sections (page sections) and/or collection items.
  * 
- * Body: { sections: [{ id: "section-uuid", locale: "en", data: { headline: "...", ... } }] }
+ * Body: {
+ *   sections?: [{ id: "section-uuid", locale: "en", data: { headline: "...", ... } }],
+ *   items?: [{ id: "collection-item-uuid", locale: "en", title?: "English Title", excerpt?: "...", sections?: [{ id: "section-id-within-item", data: { ... } }] }]
+ * }
  * 
- * This merges the provided locale data into the existing section data structure:
- * - If section.data is flat (not localized yet), it migrates: { _localized: true, [defaultLocale]: oldData, [locale]: newData }
- * - If section.data is already localized, it updates the specific locale key.
+ * For page sections: merges locale data into existing section data structure.
+ * For collection items: localizes title, excerpt, and individual sections within item.data.
  */
 export const PUT = withApiHandler(async (req, auth) => {
   const body = await req.json();
-  const { sections } = body;
+  const { sections, items } = body;
 
-  if (!Array.isArray(sections) || sections.length === 0) {
-    return NextResponse.json({ error: 'sections array required' }, { status: 400 });
+  if ((!Array.isArray(sections) || sections.length === 0) && (!Array.isArray(items) || items.length === 0)) {
+    return NextResponse.json({ error: 'sections and/or items array required' }, { status: 400 });
   }
 
   const db = getDb();
@@ -76,40 +104,101 @@ export const PUT = withApiHandler(async (req, auth) => {
   let updated = 0;
   const errors: string[] = [];
 
-  for (const entry of sections) {
-    if (!entry.id || !entry.locale || !entry.data) {
-      errors.push(`Invalid entry: id, locale, and data are required`);
-      continue;
+  // Handle page sections
+  if (Array.isArray(sections)) {
+    for (const entry of sections) {
+      if (!entry.id || !entry.locale || !entry.data) {
+        errors.push(`Invalid section entry: id, locale, and data are required`);
+        continue;
+      }
+
+      const [existing] = await db.select({ data: pageSections.data }).from(pageSections)
+        .where(and(eq(pageSections.id, entry.id), eq(pageSections.tenantId, auth.tenantId)))
+        .limit(1);
+
+      if (!existing) {
+        errors.push(`Section ${entry.id} not found`);
+        continue;
+      }
+
+      const currentData = (existing.data as Record<string, unknown>) || {};
+      let newData: Record<string, unknown>;
+
+      if (currentData._localized) {
+        newData = { ...currentData, [entry.locale]: entry.data };
+      } else {
+        newData = { _localized: true, [defaultLocale]: currentData, [entry.locale]: entry.data };
+      }
+
+      await db.update(pageSections)
+        .set({ data: newData, updatedAt: new Date() })
+        .where(and(eq(pageSections.id, entry.id), eq(pageSections.tenantId, auth.tenantId)));
+      updated++;
     }
+  }
 
-    const [existing] = await db.select({ data: pageSections.data }).from(pageSections)
-      .where(and(eq(pageSections.id, entry.id), eq(pageSections.tenantId, auth.tenantId)))
-      .limit(1);
+  // Handle collection items
+  if (Array.isArray(items)) {
+    for (const entry of items) {
+      if (!entry.id || !entry.locale) {
+        errors.push(`Invalid item entry: id and locale are required`);
+        continue;
+      }
 
-    if (!existing) {
-      errors.push(`Section ${entry.id} not found`);
-      continue;
+      const [existing] = await db.select({ data: collectionItems.data, title: collectionItems.title }).from(collectionItems)
+        .where(and(eq(collectionItems.id, entry.id), eq(collectionItems.tenantId, auth.tenantId)))
+        .limit(1);
+
+      if (!existing) {
+        errors.push(`Collection item ${entry.id} not found`);
+        continue;
+      }
+
+      const currentData = (existing.data || {}) as Record<string, unknown>;
+      const newData = { ...currentData };
+
+      // Localize title
+      if (entry.title) {
+        const currentTitles = (currentData._titles as Record<string, string>) || {};
+        if (!currentTitles[defaultLocale]) currentTitles[defaultLocale] = existing.title;
+        currentTitles[entry.locale] = entry.title;
+        newData._titles = currentTitles;
+      }
+
+      // Localize excerpt
+      if (entry.excerpt !== undefined) {
+        const currentExcerpts = (currentData._excerpts as Record<string, string>) || {};
+        if (!currentExcerpts[defaultLocale] && currentData.excerpt) currentExcerpts[defaultLocale] = currentData.excerpt as string;
+        currentExcerpts[entry.locale] = entry.excerpt;
+        newData._excerpts = currentExcerpts;
+      }
+
+      // Localize sections within the item
+      if (Array.isArray(entry.sections)) {
+        const currentSections = (currentData.sections || []) as Array<Record<string, unknown>>;
+        for (const secEntry of entry.sections) {
+          if (!secEntry.id || !secEntry.data) continue;
+          const secIdx = currentSections.findIndex((s: Record<string, unknown>) => s.id === secEntry.id);
+          if (secIdx === -1) {
+            errors.push(`Section ${secEntry.id} not found in collection item ${entry.id}`);
+            continue;
+          }
+          const sec = currentSections[secIdx];
+          const secData = (sec.data || {}) as Record<string, unknown>;
+          if (secData._localized) {
+            currentSections[secIdx] = { ...sec, data: { ...secData, [entry.locale]: secEntry.data } };
+          } else {
+            currentSections[secIdx] = { ...sec, data: { _localized: true, [defaultLocale]: secData, [entry.locale]: secEntry.data } };
+          }
+        }
+        newData.sections = currentSections;
+      }
+
+      await db.update(collectionItems)
+        .set({ data: newData, updatedAt: new Date() })
+        .where(and(eq(collectionItems.id, entry.id), eq(collectionItems.tenantId, auth.tenantId)));
+      updated++;
     }
-
-    const currentData = (existing.data as Record<string, unknown>) || {};
-    let newData: Record<string, unknown>;
-
-    if (currentData._localized) {
-      // Already localized — update locale key
-      newData = { ...currentData, [entry.locale]: entry.data };
-    } else {
-      // Migrate flat data → localized structure
-      newData = {
-        _localized: true,
-        [defaultLocale]: currentData,
-        [entry.locale]: entry.data,
-      };
-    }
-
-    await db.update(pageSections)
-      .set({ data: newData, updatedAt: new Date() })
-      .where(and(eq(pageSections.id, entry.id), eq(pageSections.tenantId, auth.tenantId)));
-    updated++;
   }
 
   return NextResponse.json({ success: true, updated, errors: errors.length > 0 ? errors : undefined });

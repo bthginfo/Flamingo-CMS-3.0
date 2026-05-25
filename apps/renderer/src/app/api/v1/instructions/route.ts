@@ -62,8 +62,8 @@ export async function GET(req: NextRequest) {
       socialLinks: { method: 'PUT', path: '/api/v1/content/social-links', description: 'Set social media links: { facebook?: url, instagram?: url, linkedin?: url, youtube?: url, tiktok?: url, xing?: url, google?: url, pinterest?: url, twitter?: url }' },
       style: { method: 'PUT', path: '/api/v1/content/style', description: 'Set active style variant: { style: "classic"|"modern"|"bold" }' },
       upload: { method: 'POST', path: '/api/v1/content/upload', description: 'Upload an image (multipart/form-data with "file" field). Returns { url, filename, size }. Use the returned url in bgImage, image fields etc.' },
-      i18nGet: { method: 'GET', path: '/api/v1/content/i18n', description: 'Get i18n config (enabled, locales, defaultLocale) and all pages with section data. Use to discover which sections need translation.' },
-      i18nPut: { method: 'PUT', path: '/api/v1/content/i18n', description: 'Update locale-specific section data. Body: { sections: [{ id: "section-uuid", locale: "en", data: { headline: "...", subline: "..." } }] }. Merges locale data into existing sections.' },
+      i18nGet: { method: 'GET', path: '/api/v1/content/i18n', description: 'Get i18n config (enabled, locales, defaultLocale), all pages with section data, AND all collections with their items and embedded sections. Use to discover which sections/items need translation.' },
+      i18nPut: { method: 'PUT', path: '/api/v1/content/i18n', description: 'Update locale-specific data. Body: { sections?: [{ id, locale, data }], items?: [{ id: "collection-item-id", locale, title?, excerpt?, sections?: [{ id: "section-id-in-item", data }] }] }. Works for both page sections and collection item sections.' },
       ...(hasShop ? {
         shopCreateCategory: { method: 'POST', path: '/api/v1/shop/categories', description: 'Create a product category: { name, slug, description?, image? }' },
         shopUpdateCategory: { method: 'PUT', path: '/api/v1/shop/categories/:id', description: 'Update a product category' },
@@ -197,6 +197,8 @@ WORKFLOW:
 
 WAS WIRD ÜBERSETZT:
 - Alle Text-Felder in Section data (headline, subline, text, items[].title, items[].text, etc.)
+- Collection-Item title und excerpt (über items[].title / items[].excerpt)
+- Collection-Item Sections (über items[].sections[])
 - NICHT übersetzen: Bild-URLs, href-Links, Icons, Farben, Zahlen, Slugs
 
 SLUGS & NAVIGATION:
@@ -204,11 +206,31 @@ SLUGS & NAVIGATION:
 - Die Navigation/Footer-Texte werden über Brand/Contact/Navigation-Endpoints pro Locale gesetzt
 - Der Language-Switcher wird automatisch im Frontend gerendert (Stil über Tenant-Settings)
 
+COLLECTION-ITEMS ÜBERSETZEN:
+Die GET-Response enthält auch collections[].items[].sections. Nutze PUT /content/i18n mit dem items-Array:
+{
+  "items": [
+    {
+      "id": "collection-item-uuid",
+      "locale": "en",
+      "title": "Leadership That Works",
+      "excerpt": "English excerpt text",
+      "sections": [
+        { "id": "section-id-inside-item", "data": { "headline": "English Headline", "text": "<p>English text</p>" } }
+      ]
+    }
+  ]
+}
+Die Section-IDs findest du in der GET-Response unter collections[].items[].sections[].id.
+
 BEISPIEL-PAYLOAD für PUT /api/v1/content/i18n:
 {
   "sections": [
     { "id": "abc-123", "locale": "en", "data": { "headline": "Our Services", "subline": "Quality from one source", "manualCards": [{ "title": "Leak Detection", "text": "Modern technology for non-destructive detection." }] } },
     { "id": "def-456", "locale": "en", "data": { "headline": "About Us", "text": "<p>We have been your partner since 2005.</p>" } }
+  ],
+  "items": [
+    { "id": "item-789", "locale": "en", "title": "Leak Detection Service", "excerpt": "Professional leak detection", "sections": [{ "id": "sec-in-item-1", "data": { "headline": "Leak Detection", "subline": "Fast and reliable" } }] }
   ]
 }
 
