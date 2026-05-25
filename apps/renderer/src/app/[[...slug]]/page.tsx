@@ -1,5 +1,5 @@
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
-import { getTenantNav, getTenantFooter, getTenantBrand, getTenantSeoGlobal, getTenantSeoPage, getTenantStyle } from '@/lib/tenant-data';
+import { getTenantNav, getTenantFooter, getTenantBrand, getTenantSeoGlobal, getTenantSeoPage, getTenantStyle, getTenantI18n } from '@/lib/tenant-data';
 
 // ISR: revalidate every 60s, on-demand revalidation via publish webhook
 export const revalidate = 60;
@@ -13,17 +13,38 @@ import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { WhatsAppFab } from '@/components/whatsapp-fab';
 
+// Known locale codes for i18n routing (first slug segment)
+const LOCALE_PATTERN = /^[a-z]{2}$/;
+
 async function resolvePageData(slug?: string[]) {
   const tenantId = await resolveTenant();
   if (!tenantId) return null;
-  const snapshot = await getActiveSnapshot(tenantId);
+  const [snapshot, i18n] = await Promise.all([
+    getActiveSnapshot(tenantId),
+    getTenantI18n(tenantId),
+  ]);
   if (!snapshot) return null;
-  const targetSlug = slug?.join('/') || '';
+
+  // i18n: detect locale prefix from slug (e.g. /en/about → locale='en', pageSlug='about')
+  let locale: string | undefined;
+  let pageSlug = slug || [];
+  if (i18n.enabled && pageSlug.length > 0 && LOCALE_PATTERN.test(pageSlug[0])) {
+    if (i18n.locales.includes(pageSlug[0])) {
+      locale = pageSlug[0];
+      pageSlug = pageSlug.slice(1);
+    }
+  }
+  // If no locale detected but i18n is enabled, use default
+  if (i18n.enabled && !locale) {
+    locale = i18n.defaultLocale;
+  }
+
+  const targetSlug = pageSlug.join('/') || '';
   const page = snapshot.pages.find(p =>
     p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
   );
   if (!page || page.visible === false) return null;
-  return { tenantId, snapshot, page };
+  return { tenantId, snapshot, page, locale };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug?: string[] }> }): Promise<Metadata> {
@@ -95,7 +116,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   const result = await resolvePageData(slug);
   if (!result) notFound();
 
-  const { tenantId, snapshot, page } = result;
+  const { tenantId, snapshot, page, locale } = result;
   const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle, seoGlobal] = await Promise.all([
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
@@ -228,7 +249,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} />
       <main>
         {visibleSections.map((section) => (
-          <SectionRenderer key={section.id} section={section.type.startsWith('shop') ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} />
+          <SectionRenderer key={section.id} section={section.type.startsWith('shop') ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={locale} />
         ))}
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />

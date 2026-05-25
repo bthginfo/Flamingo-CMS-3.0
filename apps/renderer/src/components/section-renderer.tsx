@@ -31,7 +31,16 @@ const CONTAINER: Record<string, string> = {
   full: 'w-full px-6',
 };
 
-export function SectionRenderer({ section, collections, styleVariant, industry = 'tradesman' }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string; industry?: string }) {
+export function SectionRenderer({ section, collections, styleVariant, industry = 'tradesman', locale }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string; industry?: string; locale?: string }) {
+  // i18n locale resolution: if section.data contains locale keys, resolve to the active locale
+  if (locale && section.data && typeof section.data[locale] === 'object' && section.data[locale] !== null) {
+    section = { ...section, data: section.data[locale] as Record<string, unknown> };
+  } else if (locale && section.data && section.data._localized) {
+    // Fallback: if _localized flag exists but requested locale missing, try 'de'
+    const fallback = (section.data['de'] as Record<string, unknown>) ?? section.data;
+    section = { ...section, data: fallback };
+  }
+
   const Component = getIndustryTemplates(industry)[section.type];
 
   // Inject collection items into newsPreview/newsGrid sections

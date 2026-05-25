@@ -39,6 +39,13 @@ export const tenants = pgTable('tenants', {
   isLead: boolean('is_lead').notNull().default(false),
   deploymentMode: deploymentModeEnum('deployment_mode').notNull().default('shared'),
   vercelProjectId: varchar('vercel_project_id', { length: 255 }),
+  // i18n
+  i18nEnabled: boolean('i18n_enabled').notNull().default(false),
+  i18nMaxLanguages: integer('i18n_max_languages').notNull().default(2),
+  i18nDefaultLocale: varchar('i18n_default_locale', { length: 10 }).notNull().default('de'),
+  i18nLocales: text('i18n_locales').notNull().default('de'), // comma-separated: "de,en,fr"
+  i18nSwitcherStyle: varchar('i18n_switcher_style', { length: 20 }).notNull().default('dropdown'), // dropdown | flags | text
+  i18nSwitcherPosition: varchar('i18n_switcher_position', { length: 20 }).notNull().default('nav-right'), // nav-left | nav-right | footer
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

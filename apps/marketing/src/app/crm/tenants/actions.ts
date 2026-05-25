@@ -171,3 +171,23 @@ export async function getShopAddonStatus(tenantId: string): Promise<boolean> {
     .limit(1);
   return row?.active ?? false;
 }
+
+export async function toggleI18nAction(tenantId: string, active: boolean) {
+  'use server';
+  const db = getDb();
+  await db.update(tenants)
+    .set({ i18nEnabled: active, updatedAt: new Date() })
+    .where(eq(tenants.id, tenantId));
+  revalidatePath(`/crm/tenants/${tenantId}`);
+  return { success: true };
+}
+
+export async function updateI18nSettingsAction(tenantId: string, data: { maxLanguages?: number }) {
+  'use server';
+  const db = getDb();
+  const updates: Record<string, unknown> = { updatedAt: new Date() };
+  if (data.maxLanguages !== undefined) updates.i18nMaxLanguages = data.maxLanguages;
+  await db.update(tenants).set(updates).where(eq(tenants.id, tenantId));
+  revalidatePath(`/crm/tenants/${tenantId}`);
+  return { success: true };
+}

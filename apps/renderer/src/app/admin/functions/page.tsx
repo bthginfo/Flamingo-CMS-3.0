@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Heart, CalendarDays, Inbox, ShoppingBag, Sparkles, X } from 'lucide-react';
+import { Heart, CalendarDays, Inbox, ShoppingBag, Sparkles, X, Globe, Lock } from 'lucide-react';
 
 const FEATURES = [
   {
@@ -96,6 +96,28 @@ export default function FunctionsPage() {
             </div>
           </Link>
         ))}
+      </div>
+
+      {/* Premium Addons */}
+      <h2 className="text-lg font-semibold mt-10 mb-4">Premium-Erweiterungen</h2>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="admin-card p-5 flex items-start gap-4 opacity-75 relative">
+          <Globe className="w-6 h-6 mt-0.5 shrink-0 text-violet-500" />
+          <div>
+            <div className="flex items-center gap-2">
+              <p className="font-semibold">Mehrsprachigkeit (i18n)</p>
+              <Lock size={12} className="text-zinc-400" />
+            </div>
+            <p className="text-sm text-zinc-500 mt-0.5">Website in mehreren Sprachen — automatische Übersetzung inklusive.</p>
+            <p className="text-xs text-zinc-400 mt-2">Ab 290€ einmalig · Bis zu 10 Sprachen</p>
+            <button
+              onClick={() => { setShowModal(true); setSent(false); setForm({ ...form, message: 'Ich hätte gerne die Mehrsprachigkeit (i18n) für meine Website aktiviert.' }); }}
+              className="mt-2 text-xs font-medium text-violet-600 hover:text-violet-700 underline underline-offset-2"
+            >
+              Jetzt anfragen →
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* CTA for custom features */}

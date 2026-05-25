@@ -16,6 +16,16 @@ export async function getTenantStyle(tenantId: string): Promise<{ industry: stri
   return { industry: t?.industry ?? 'tradesman', activeStyle: t?.activeStyle ?? 'classic' };
 }
 
+export async function getTenantI18n(tenantId: string): Promise<{ enabled: boolean; locales: string[]; defaultLocale: string }> {
+  const db = getDb();
+  const [t] = await db.select({ enabled: tenants.i18nEnabled, locales: tenants.i18nLocales, defaultLocale: tenants.i18nDefaultLocale }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  return {
+    enabled: t?.enabled ?? false,
+    locales: (t?.locales || 'de').split(','),
+    defaultLocale: t?.defaultLocale || 'de',
+  };
+}
+
 export async function getTenantNav(tenantId: string): Promise<{ items: NavItem[]; cta: NavCta | null }> {
   const db = getDb();
   const [nav] = await db.select().from(navigation).where(eq(navigation.tenantId, tenantId)).limit(1);

@@ -1,12 +1,12 @@
 'use client';
 
 import { useTransition } from 'react';
-import { updateTenantAction, deleteTenantAction, configureBlobAction, toggleShopAddonAction } from '../actions';
+import { updateTenantAction, deleteTenantAction, configureBlobAction, toggleShopAddonAction, toggleI18nAction, updateI18nSettingsAction } from '../actions';
 import { toast } from 'sonner';
-import { Power, Pause, Trash2, Eye, ShoppingBag, UserCheck } from 'lucide-react';
+import { Power, Pause, Trash2, Eye, ShoppingBag, UserCheck, Globe } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, isLead, deploymentMode, shopActive }: { tenantId: string; currentStatus: string; currentStyle: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: string; shopActive?: boolean }) {
+export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, isLead, deploymentMode, shopActive, i18nEnabled, i18nMaxLanguages }: { tenantId: string; currentStatus: string; currentStyle: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: string; shopActive?: boolean; i18nEnabled?: boolean; i18nMaxLanguages?: number }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -69,6 +69,39 @@ export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, i
       >
         <ShoppingBag size={14} /> {shopActive ? 'Shop-Modul deaktivieren' : 'Shop-Modul aktivieren'}
       </button>
+      {/* i18n */}
+      <div className="border-t border-slate-100 pt-3 space-y-2">
+        <button
+          onClick={() => {
+            startTransition(async () => {
+              const result = await toggleI18nAction(tenantId, !i18nEnabled);
+              if (result.success) toast.success(i18nEnabled ? 'i18n deaktiviert' : 'i18n aktiviert');
+              router.refresh();
+            });
+          }}
+          disabled={pending}
+          className={`w-full crm-btn ${i18nEnabled ? 'bg-violet-50 text-violet-700 hover:bg-violet-100 border border-violet-200' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`}
+        >
+          <Globe size={14} /> {i18nEnabled ? 'Mehrsprachigkeit deaktivieren' : 'Mehrsprachigkeit aktivieren'}
+        </button>
+        {i18nEnabled && (
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <span>Max. Sprachen:</span>
+            <select
+              value={i18nMaxLanguages ?? 2}
+              onChange={e => {
+                startTransition(async () => {
+                  await updateI18nSettingsAction(tenantId, { maxLanguages: Number(e.target.value) });
+                  router.refresh();
+                });
+              }}
+              className="border rounded px-2 py-1 text-xs"
+            >
+              {[2, 3, 4, 5, 6, 8, 10].map(n => <option key={n} value={n}>{n}</option>)}
+            </select>
+          </div>
+        )}
+      </div>
       <button
         onClick={() => {
           if (!confirm('Tenant wirklich endgültig löschen? Alle Daten und das Vercel-Projekt werden unwiderruflich gelöscht.')) return;
