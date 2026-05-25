@@ -39,7 +39,7 @@ import { ConsultationBookingSection } from './shared/consultation-booking';
 import { MaterialGallerySection } from './shared/material-gallery';
 import { DeliveryTimelineSection } from './shared/delivery-timeline';
 import { InspirationGridSection } from './shared/inspiration-grid';
-import { BeforeAfterSection } from './shared/before-after';
+import { BeforeAfterSection as SharedBeforeAfterSection } from './shared/before-after';
 import { CollectionListSection } from './shared/collection-list';
 import { ShopProductGridSection } from './shared/shop-product-grid';
 import { ShopProductDetailSection } from './shared/shop-product-detail';
@@ -540,7 +540,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     materialGallery: MaterialGallerySection,
     deliveryTimeline: DeliveryTimelineSection,
     inspirationGrid: InspirationGridSection,
-    beforeAfter: BeforeAfterSection,
+    beforeAfter: SharedBeforeAfterSection,
     uspStrip: UspStripSection,
     servicesGrid: ServicesGridSection,
     processSteps: ProcessStepsSection,
@@ -633,7 +633,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   materialGallery: MaterialGallerySection,
   deliveryTimeline: DeliveryTimelineSection,
   inspirationGrid: InspirationGridSection,
-  beforeAfter: BeforeAfterSection,
+  beforeAfter: SharedBeforeAfterSection,
 };
 
 // Merge ALL industry templates as ultimate fallback so foreign sections render

@@ -674,6 +674,11 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   beforeAfter: {
     headline: 'Vorher & Nachher',
     badgeText: 'Transformation',
+    description: 'Sehen Sie den Unterschied — ziehen Sie den Slider.',
+    imageBefore: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80',
+    imageAfter: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80',
+    labelBefore: 'Vorher',
+    labelAfter: 'Nachher',
     items: [
       { before: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&q=80', after: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&q=80', title: 'Balayage Transformation' },
     ],
@@ -1092,14 +1097,6 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80', title: 'Küche Köln', href: '#' },
       { image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80', title: 'Bad Frankfurt', href: '#' },
     ],
-  },
-  beforeAfter: {
-    headline: 'Vorher & Nachher',
-    description: 'Sehen Sie den Unterschied — ziehen Sie den Slider.',
-    imageBefore: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80',
-    imageAfter: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80',
-    labelBefore: 'Vorher',
-    labelAfter: 'Nachher',
   },
   horizontalScrollShowcase: {
     headline: 'Referenzen',
