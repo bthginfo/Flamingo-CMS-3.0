@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { saveShopSettings } from '../actions';
 import { useRouter } from 'next/navigation';
 import { Save, Info } from 'lucide-react';
+import { toast } from 'sonner';
 
 type Settings = {
   currency: string;
@@ -65,9 +66,15 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
 
   async function handleSave() {
     setSaving(true);
-    await saveShopSettings(data);
-    setSaving(false);
-    router.refresh();
+    try {
+      await saveShopSettings(data);
+      toast.success('Einstellungen gespeichert');
+    } catch {
+      toast.error('Speichern fehlgeschlagen');
+    } finally {
+      setSaving(false);
+      router.refresh();
+    }
   }
 
   return (

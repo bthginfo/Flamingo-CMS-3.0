@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus, Trash2, MapPin, Truck } from 'lucide-react';
 import { createShippingZone, deleteShippingZone, createShippingMethod, updateShippingMethod, deleteShippingMethod } from '../actions';
+import { toast } from 'sonner';
 
 type Method = { id: string; name: string; priceCents: number; freeAboveCents: number | null; estimatedDays: string | null; active: boolean };
 type Zone = { id: string; name: string; countries: string[] | null; methods: Method[] };
@@ -12,7 +14,8 @@ function formatPrice(cents: number) {
 }
 
 export function ShippingClient({ zones: initialZones }: { zones: Zone[] }) {
-  const [zones] = useState(initialZones);
+  const router = useRouter();
+  const [zones, setZones] = useState(initialZones);
   const [showNewZone, setShowNewZone] = useState(false);
   const [newZoneName, setNewZoneName] = useState('');
   const [newZoneCountries, setNewZoneCountries] = useState('DE');
@@ -28,6 +31,8 @@ export function ShippingClient({ zones: initialZones }: { zones: Zone[] }) {
     setNewZoneName('');
     setNewZoneCountries('DE');
     setShowNewZone(false);
+    toast.success('Versandzone erstellt');
+    router.refresh();
   }
 
   async function handleAddMethod(zoneId: string) {
@@ -41,6 +46,8 @@ export function ShippingClient({ zones: initialZones }: { zones: Zone[] }) {
     });
     setMethodForm({ name: '', priceCents: '', freeAboveCents: '', estimatedDays: '' });
     setAddingMethodZone(null);
+    toast.success('Versandmethode hinzugefügt');
+    router.refresh();
   }
 
   return (
@@ -59,7 +66,7 @@ export function ShippingClient({ zones: initialZones }: { zones: Zone[] }) {
               <h3 className="font-semibold">{zone.name}</h3>
               <p className="text-xs text-zinc-400">Länder: {(zone.countries || []).join(', ') || 'Alle'}</p>
             </div>
-            <button onClick={() => deleteShippingZone(zone.id)} className="text-red-400 hover:text-red-600 p-1">
+            <button onClick={async () => { await deleteShippingZone(zone.id); toast.success('Zone gelöscht'); router.refresh(); }} className="text-red-400 hover:text-red-600 p-1">
               <Trash2 size={16} />
             </button>
           </div>
@@ -85,7 +92,7 @@ export function ShippingClient({ zones: initialZones }: { zones: Zone[] }) {
                   >
                     {method.active ? 'Aktiv' : 'Inaktiv'}
                   </button>
-                  <button onClick={() => deleteShippingMethod(method.id)} className="text-red-400 hover:text-red-600">
+                  <button onClick={async () => { await deleteShippingMethod(method.id); router.refresh(); }} className="text-red-400 hover:text-red-600">
                     <Trash2 size={14} />
                   </button>
                 </div>

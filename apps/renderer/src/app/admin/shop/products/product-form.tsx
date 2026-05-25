@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createProduct, updateProduct } from '../actions';
 import { ArrowLeft, Save } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 type Category = { id: string; name: string };
 
@@ -66,8 +67,10 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
 
     if (isEdit && initial?.id) {
       await updateProduct(initial.id, payload);
+      toast.success('Produkt gespeichert');
     } else {
       await createProduct(payload);
+      toast.success('Produkt erstellt');
     }
     router.push('/admin/shop/products');
     router.refresh();
