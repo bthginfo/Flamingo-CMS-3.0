@@ -51,9 +51,14 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
 
   // Resolve demo tenant from DB
   const SLUG_MAP: Record<string, string> = { showcase: 'demo-showcase', shop: 'demo-shop' };
-  const tenantId = SLUG_MAP[industry]
-    ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
-    : await resolveDemoTenant(dbIndustry);
+  let tenantId: string | null = null;
+  try {
+    tenantId = SLUG_MAP[industry]
+      ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
+      : await resolveDemoTenant(dbIndustry);
+  } catch {
+    // DB enum may not include this industry yet — fall through to static
+  }
 
   // Fallback to static demo pages if no DB tenant exists
   if (!tenantId) {
