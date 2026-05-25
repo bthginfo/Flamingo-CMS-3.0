@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Trash2, MapPin, Truck } from 'lucide-react';
 import { createShippingZone, deleteShippingZone, createShippingMethod, updateShippingMethod, deleteShippingMethod } from '../actions';
@@ -17,6 +17,9 @@ export function ShippingClient({ zones: initialZones }: { zones: Zone[] }) {
   const router = useRouter();
   const [zones, setZones] = useState(initialZones);
   const [showNewZone, setShowNewZone] = useState(false);
+
+  // Sync zones from server when props change (after router.refresh)
+  useEffect(() => { setZones(initialZones); }, [initialZones]);
   const [newZoneName, setNewZoneName] = useState('');
   const [newZoneCountries, setNewZoneCountries] = useState('DE');
   const [addingMethodZone, setAddingMethodZone] = useState<string | null>(null);

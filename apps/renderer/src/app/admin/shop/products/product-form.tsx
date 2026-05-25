@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createProduct, updateProduct } from '../actions';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, X } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { ImageUploadField } from '@/components/image-upload-field';
 
 type Category = { id: string; name: string };
 
@@ -135,6 +136,25 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
             className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 resize-y"
             placeholder="Ausführliche Produktbeschreibung (Absätze mit Enter trennen)"
           />
+        </div>
+      </div>
+
+      {/* Images */}
+      <div className="bg-white rounded-xl border border-zinc-200 p-5 space-y-4">
+        <h2 className="font-semibold text-sm text-zinc-700">Produktbilder</h2>
+        <p className="text-xs text-zinc-400">Erstes Bild wird als Hauptbild verwendet.</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {data.images.map((img, i) => (
+            <div key={i} className="relative group">
+              <img src={img} alt="" className="w-full aspect-square object-cover rounded-lg border border-zinc-200" />
+              <button onClick={() => set('images', data.images.filter((_, j) => j !== i))} className="absolute top-1 right-1 p-1 bg-white/90 rounded-full shadow opacity-0 group-hover:opacity-100 transition">
+                <X size={14} className="text-red-500" />
+              </button>
+            </div>
+          ))}
+          <div className="aspect-square">
+            <ImageUploadField label="" value="" onChange={url => { if (url) set('images', [...data.images, url]); }} />
+          </div>
         </div>
       </div>
 
