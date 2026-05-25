@@ -2,6 +2,23 @@ import { icons, type LucideIcon } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
+/** Legacy icon names that were renamed in newer lucide-react versions */
+const LEGACY_ALIASES: Record<string, string> = {
+  BarChart: 'ChartBar', BarChart2: 'ChartBar', BarChart3: 'ChartColumn', BarChart4: 'ChartColumnStacked',
+  LineChart: 'ChartLine', PieChart: 'ChartPie', Activity: 'ChartSpline',
+  Globe2: 'Globe', Map2: 'Map', Bell2: 'Bell', Lock2: 'Lock', Unlock2: 'Unlock',
+  Edit: 'Pencil', Edit2: 'PencilLine', Edit3: 'Pen',
+  Trash: 'Trash2', File: 'FileText', Folder: 'FolderOpen',
+  AlertCircle: 'CircleAlert', AlertTriangle: 'TriangleAlert', AlertOctagon: 'OctagonAlert',
+  CheckCircle: 'CircleCheck', CheckCircle2: 'CircleCheckBig', XCircle: 'CircleX',
+  HelpCircle: 'CircleHelp', InfoIcon: 'Info', Info2: 'Info',
+  ArrowUpRight: 'ArrowUpRight', ExternalLink: 'ExternalLink',
+  Loader: 'LoaderCircle', Loader2: 'LoaderCircle',
+  Send: 'SendHorizonal', Zap: 'Zap', ZapOff: 'ZapOff',
+  Palmtree: 'TreePalm', Flower: 'Flower2',
+  Clipboard: 'ClipboardList', ClipboardCheck: 'ClipboardCheck',
+};
+
 /** Convert kebab-case or lowercase to PascalCase for lucide-react lookup */
 function toPascalCase(str: string): string {
   return str
@@ -24,6 +41,9 @@ function resolveIcon(name: string): LucideIcon | null {
     const reversed = parts[1].charAt(0).toUpperCase() + parts[1].slice(1) + parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
     if (iconMap[reversed]) return iconMap[reversed];
   }
+  // 4. Legacy alias lookup
+  const alias = LEGACY_ALIASES[name] || LEGACY_ALIASES[pascal];
+  if (alias && iconMap[alias]) return iconMap[alias];
   return null;
 }
 
