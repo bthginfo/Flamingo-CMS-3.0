@@ -5,6 +5,8 @@
 :root {
   --brand-primary: #1a5276;
   --brand-primary-rgb: 26 82 118;
+  --color-primary: var(--brand-primary);
+  --color-primary-rgb: var(--brand-primary-rgb);
   --brand-secondary: #2e86c1;
   --brand-accent: #f39c12;
   --brand-dark: #0d2137;

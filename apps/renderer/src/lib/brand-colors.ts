@@ -36,6 +36,8 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
 
   vars['--brand-primary'] = normalizedPrimary;
   vars['--brand-primary-rgb'] = hexToRgb(normalizedPrimary);
+  vars['--color-primary'] = 'var(--brand-primary)';
+  vars['--color-primary-rgb'] = 'var(--brand-primary-rgb)';
   vars['--brand-dark'] = darken(normalizedPrimary, 0.45);
   vars['--brand-secondary'] = brand.secondaryColor || lighten(normalizedPrimary, 0.3);
   vars['--brand-accent'] = brand.accentColor || '#f39c12';

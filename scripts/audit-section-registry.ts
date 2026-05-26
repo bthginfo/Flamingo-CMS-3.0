@@ -143,6 +143,13 @@ function main() {
     'horizontalScrollShowcase',
     'socialProofBar',
     'statsCounter',
+    'productShowcase',
+    'categoryMosaic',
+    'brandShowroom',
+    'consultationBooking',
+    'materialGallery',
+    'deliveryTimeline',
+    'inspirationGrid',
   ];
 
   const result = {

@@ -17,9 +17,9 @@ export function BeforeAfterSliderSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const slides = (data.slides as Slide[]) || [];
-  const handleColor = (data.handleColor as string) || '#18181b';
-  const bgColor = (data.bgColor as string) || '';
-  const textColor = (data.textColor as string) || '';
+  const handleColor = (data.handleColor as string) || 'var(--brand-primary, #18181b)';
+  const bgColor = (data.bgColor as string) || 'var(--style-section-bg, transparent)';
+  const textColor = (data.textColor as string) || 'var(--style-body-color, inherit)';
   const aspectRatio = (data.aspectRatio as string) || '16/9';
 
   const [activeSlide, setActiveSlide] = useState(0);
@@ -28,7 +28,7 @@ export function BeforeAfterSliderSection({ data }: Props) {
   if (!currentSlide) return null;
 
   return (
-    <section className="py-16 md:py-24" style={{ backgroundColor: bgColor || undefined, color: textColor || undefined }}>
+    <section className="py-16 md:py-24" style={{ backgroundColor: bgColor, color: textColor }}>
       <div className="max-w-5xl mx-auto px-5">
         {(headline || subline) && (
           <motion.div
@@ -38,15 +38,15 @@ export function BeforeAfterSliderSection({ data }: Props) {
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
-            {headline && <h2 className="text-3xl md:text-4xl font-bold">{headline}</h2>}
-            {subline && <p className="mt-3 text-zinc-500 max-w-xl mx-auto">{subline}</p>}
+            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[var(--style-heading-color,var(--style-text-primary,inherit))]">{headline}</h2>}
+            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--style-subheading-color,var(--style-text-secondary,#71717a))]">{subline}</p>}
           </motion.div>
         )}
 
         <SliderWidget slide={currentSlide} handleColor={handleColor} aspectRatio={aspectRatio} />
 
         {currentSlide.caption && (
-          <p className="text-center text-sm text-zinc-500 mt-4">{currentSlide.caption}</p>
+          <p className="text-center text-sm text-[var(--style-text-muted,#71717a)] mt-4">{currentSlide.caption}</p>
         )}
 
         {slides.length > 1 && (

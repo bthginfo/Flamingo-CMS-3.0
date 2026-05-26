@@ -112,10 +112,12 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
     'uspStrip',
     // Generic
     'servicePackages',
+    // Premium shared
+    'beforeAfterSlider', 'horizontalScrollShowcase', 'verticalTimeline',
   ]);
 
   // Full-bleed sections that have LIGHT backgrounds (don't apply data-theme="dark")
-  const FULL_BLEED_LIGHT = new Set(['dailySpecials', 'servicePackages', 'uspStrip']);
+  const FULL_BLEED_LIGHT = new Set(['dailySpecials', 'servicePackages', 'uspStrip', 'beforeAfterSlider', 'verticalTimeline']);
 
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);
 

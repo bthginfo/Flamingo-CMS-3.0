@@ -2339,6 +2339,127 @@ function BeforeAfterEditor({ data, onChange }: EditorProps) {
 }
 
 // ─── Editor registry ─────────────────────────────────────────────
+function VerticalTimelineEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [steps, setSteps] = useState<{ number: string; timeLabel: string; title: string; text: string; checkmarks: string[] }[]>(
+    ((data.steps as any[]) || []).map((step) => ({
+      number: step.number || '',
+      timeLabel: step.timeLabel || '',
+      title: step.title || '',
+      text: step.text || '',
+      checkmarks: Array.isArray(step.checkmarks) ? step.checkmarks : [],
+    }))
+  );
+  useReport({ headline, subline, steps }, onChange);
+  function addStep() { setSteps([...steps, { number: String(steps.length + 1).padStart(2, '0'), timeLabel: '', title: '', text: '', checkmarks: [] }]); }
+  function removeStep(i: number) { setSteps(steps.filter((_, idx) => idx !== i)); }
+  function updateStep(i: number, field: string, value: string | string[]) { setSteps(steps.map((step, idx) => idx === i ? { ...step, [field]: value } : step)); }
+  return (
+    <div className="space-y-4">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      {steps.map((step, i) => (
+        <div key={i} className="border rounded-lg p-3 space-y-2 relative">
+          <button type="button" onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="Nummer" value={step.number} onChange={(v) => updateStep(i, 'number', v)} />
+            <Field label="Zeit / Label" value={step.timeLabel} onChange={(v) => updateStep(i, 'timeLabel', v)} placeholder="z.B. Woche 1" />
+          </div>
+          <Field label="Titel" value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
+          <Field label="Text" value={step.text} onChange={(v) => updateStep(i, 'text', v)} multiline />
+          <Field label="Checkpunkte (eine Zeile pro Punkt)" value={step.checkmarks.join('\n')} onChange={(v) => updateStep(i, 'checkmarks', v.split('\n').map(item => item.trim()).filter(Boolean))} multiline />
+        </div>
+      ))}
+      <button type="button" onClick={addStep} className="text-sm text-blue-600 hover:underline">+ Schritt hinzufügen</button>
+    </div>
+  );
+}
+
+function BeforeAfterSliderEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [aspectRatio, setAspectRatio] = useState((data.aspectRatio as string) || '16/9');
+  const [slides, setSlides] = useState<{ imageBefore: string; imageAfter: string; labelBefore: string; labelAfter: string; caption: string }[]>(
+    ((data.slides as any[]) || []).map((slide) => ({
+      imageBefore: slide.imageBefore || '',
+      imageAfter: slide.imageAfter || '',
+      labelBefore: slide.labelBefore || 'Vorher',
+      labelAfter: slide.labelAfter || 'Nachher',
+      caption: slide.caption || '',
+    }))
+  );
+  useReport({ headline, subline, slides, aspectRatio }, onChange);
+  function addSlide() { setSlides([...slides, { imageBefore: '', imageAfter: '', labelBefore: 'Vorher', labelAfter: 'Nachher', caption: '' }]); }
+  function removeSlide(i: number) { setSlides(slides.filter((_, idx) => idx !== i)); }
+  function updateSlide(i: number, field: string, value: string) { setSlides(slides.map((slide, idx) => idx === i ? { ...slide, [field]: value } : slide)); }
+  return (
+    <div className="space-y-4">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      <SelectField label="Bildformat" value={aspectRatio} options={['16/9', '4/3', '1/1']} onChange={setAspectRatio} />
+      {slides.map((slide, i) => (
+        <div key={i} className="border rounded-lg p-3 space-y-3 relative">
+          <button type="button" onClick={() => removeSlide(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <ImageUploadField label="Bild vorher" value={slide.imageBefore} onChange={(v) => updateSlide(i, 'imageBefore', v)} />
+              <Field label="Label vorher" value={slide.labelBefore} onChange={(v) => updateSlide(i, 'labelBefore', v)} />
+            </div>
+            <div>
+              <ImageUploadField label="Bild nachher" value={slide.imageAfter} onChange={(v) => updateSlide(i, 'imageAfter', v)} />
+              <Field label="Label nachher" value={slide.labelAfter} onChange={(v) => updateSlide(i, 'labelAfter', v)} />
+            </div>
+          </div>
+          <Field label="Caption" value={slide.caption} onChange={(v) => updateSlide(i, 'caption', v)} />
+        </div>
+      ))}
+      <button type="button" onClick={addSlide} className="text-sm text-blue-600 hover:underline">+ Vergleich hinzufügen</button>
+    </div>
+  );
+}
+
+function HorizontalScrollShowcaseEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [panelHeight, setPanelHeight] = useState((data.panelHeight as string) || 'full');
+  const [panels, setPanels] = useState<{ image: string; title: string; text: string; ctaLabel: string; ctaHref: string; overlayColor: string }[]>(
+    ((data.panels as any[]) || []).map((panel) => ({
+      image: panel.image || '',
+      title: panel.title || '',
+      text: panel.text || '',
+      ctaLabel: panel.ctaLabel || '',
+      ctaHref: panel.ctaHref || '',
+      overlayColor: panel.overlayColor || 'rgba(0,0,0,0.4)',
+    }))
+  );
+  useReport({ headline, subline, panels, panelHeight }, onChange);
+  function addPanel() { setPanels([...panels, { image: '', title: '', text: '', ctaLabel: '', ctaHref: '', overlayColor: 'rgba(0,0,0,0.4)' }]); }
+  function removePanel(i: number) { setPanels(panels.filter((_, idx) => idx !== i)); }
+  function updatePanel(i: number, field: string, value: string) { setPanels(panels.map((panel, idx) => idx === i ? { ...panel, [field]: value } : panel)); }
+  return (
+    <div className="space-y-4">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      <SelectField label="Panel-Höhe" value={panelHeight} options={['full', 'compact']} onChange={setPanelHeight} />
+      {panels.map((panel, i) => (
+        <div key={i} className="border rounded-lg p-3 space-y-2 relative">
+          <button type="button" onClick={() => removePanel(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
+          <ImageUploadField label="Bild" value={panel.image} onChange={(v) => updatePanel(i, 'image', v)} />
+          <Field label="Titel" value={panel.title} onChange={(v) => updatePanel(i, 'title', v)} />
+          <Field label="Text" value={panel.text} onChange={(v) => updatePanel(i, 'text', v)} multiline />
+          <div className="grid grid-cols-2 gap-2">
+            <Field label="CTA Label" value={panel.ctaLabel} onChange={(v) => updatePanel(i, 'ctaLabel', v)} />
+            <Field label="CTA Link" value={panel.ctaHref} onChange={(v) => updatePanel(i, 'ctaHref', v)} />
+          </div>
+          <Field label="Overlay-Farbe" value={panel.overlayColor} onChange={(v) => updatePanel(i, 'overlayColor', v)} placeholder="rgba(0,0,0,0.4)" />
+        </div>
+      ))}
+      <button type="button" onClick={addPanel} className="text-sm text-blue-600 hover:underline">+ Panel hinzufügen</button>
+    </div>
+  );
+}
+
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
   faq: FaqEditor,
@@ -2379,6 +2500,9 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   testimonialMarquee: TestimonialMarqueeEditor,
   featureShowcase: FeatureShowcaseEditor,
   logoMarquee: LogoMarqueeEditor,
+  verticalTimeline: VerticalTimelineEditor,
+  beforeAfterSlider: BeforeAfterSliderEditor,
+  horizontalScrollShowcase: HorizontalScrollShowcaseEditor,
   collectionList: CollectionListEditor,
   shopFeaturedProducts: ShopFeaturedProductsEditor,
   shopProductGrid: ShopProductGridEditor,
