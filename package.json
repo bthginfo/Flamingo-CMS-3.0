@@ -9,6 +9,9 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
+    "audit:tenant": "tsx scripts/audit-tenant-content.ts",
+    "audit:tenant:diff": "tsx scripts/compare-tenant-audits.ts",
+    "audit:sections": "tsx scripts/audit-section-registry.ts",
     "db:generate": "pnpm --filter @flamingo/db generate",
     "db:push": "pnpm --filter @flamingo/db push"
   },

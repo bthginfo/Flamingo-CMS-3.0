@@ -24,6 +24,7 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'galleryGrid', label: 'Galerie', description: 'Bildergalerie mit Lightbox', category: 'Medien' },
   { type: 'newsPreview', label: 'News-Vorschau', description: 'Aktuelle Beiträge (News/Blog)', category: 'Medien' },
   { type: 'newsGrid', label: 'News-Grid', description: 'News-Beiträge als Grid', category: 'Medien' },
+  { type: 'collectionList', label: 'Collection-Liste', description: 'Einträge einer Collection als Übersicht anzeigen', category: 'Medien' },
   { type: 'contact', label: 'Kontakt', description: 'Kontaktformular', category: 'Kontakt' },
   { type: 'map', label: 'Karte', description: 'Google Maps Einbettung', category: 'Kontakt' },
   { type: 'team', label: 'Team', description: 'Team-Mitglieder', category: 'Team & Personen' },

@@ -130,9 +130,18 @@ export async function getItemWithIndustryAction(itemId: string) {
   const db = getDb();
   const [item] = await db.select().from(collectionItems).where(and(eq(collectionItems.id, itemId), eq(collectionItems.tenantId, session.tenantId)));
   if (!item) return null;
-  const [tenant] = await db.select({ industry: tenants.industry, activeStyle: tenants.activeStyle }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1);
+  const [tenant] = await db.select({
+    industry: tenants.industry,
+    activeStyle: tenants.activeStyle,
+    i18nEnabled: tenants.i18nEnabled,
+    i18nLocales: tenants.i18nLocales,
+    i18nDefaultLocale: tenants.i18nDefaultLocale,
+  }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1);
   const [brandResult] = await db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1);
-  return { item, industry: tenant?.industry ?? 'tradesman', styleVariant: tenant?.activeStyle ?? 'classic', brand: (brandResult?.brand as Record<string, string>) || {} };
+  const i18n = tenant?.i18nEnabled
+    ? { enabled: true, locales: (tenant.i18nLocales || 'de').split(','), defaultLocale: tenant.i18nDefaultLocale || 'de' }
+    : undefined;
+  return { item, industry: tenant?.industry ?? 'tradesman', styleVariant: tenant?.activeStyle ?? 'classic', brand: (brandResult?.brand as Record<string, string>) || {}, i18n };
 }
 
 // ─── Collection Overview Page ──────────────────────────────────────

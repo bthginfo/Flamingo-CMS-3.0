@@ -1,37 +1,27 @@
 'use client';
 
-import { useState, useTransition, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Plus, Trash2, GripVertical, Eye, EyeOff, Settings2, ChevronDown, ChevronUp, Save, Rocket, MonitorPlay } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { usePreview } from '@/components/admin/preview-context';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, TouchSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { updateItemAction } from '../../actions';
 import { publishAction } from '@/app/admin/actions/publish';
 import { PageSectionsProvider } from '@/components/button-field';
-import { IndustrySectionDataEditor } from '../../../pages/[id]/industry-section-editor';
-import { SectionColorEditor } from '../../../pages/[id]/section-color-editor';
-import { getSectionTypesForIndustry, type SectionTypeDefinition } from '../../../pages/[id]/section-types';
-import { SectionPickerModal } from '../../../components/section-picker-modal';
+import { getSectionTypesForIndustry } from '../../../pages/[id]/section-types';
 import { ItemSeoPanel } from './item-seo-panel';
 import type { ItemSeoPanelHandle } from './item-seo-panel';
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { toast } from 'sonner';
+import { createEmptyEditableSection, type EditableSection } from '@/app/admin/editor/editable-section';
+import { collectionItemSectionsToEditableSections, editableSectionsToCollectionItemSections } from '@/app/admin/editor/section-mappers';
+import { EditorActionBar } from '@/app/admin/editor/editor-action-bar';
+import { EditorLocaleTabs } from '@/app/admin/editor/editor-locale-tabs';
+import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor/live-preview-data';
+import { SectionEditorCard } from '@/app/admin/editor/section-editor-card';
+import { SectionStackEditor } from '@/app/admin/editor/section-stack-editor';
 
-type Section = {
-  id: string;
-  type: string;
-  variant: string | null;
-  visible: boolean;
-  container: string;
-  spacingTop: string;
-  spacingBottom: string;
-  anchorId: string | null;
-  data: Record<string, unknown>;
-  styleOverrides?: Record<string, unknown> | null;
-};
+type Section = EditableSection;
 
 type Item = {
   id: string;
@@ -46,141 +36,30 @@ function generateId() {
   return crypto.randomUUID();
 }
 
-function SortableSection({ section, industry, sectionTypes, resolvedVars, onDelete, onToggleVisible, onChangeData, onSaveMeta, onSaveColorOverrides }: {
-  section: Section;
-  industry: string;
-  sectionTypes: SectionTypeDefinition[];
-  resolvedVars: Record<string, string>;
-  onDelete: () => void;
-  onToggleVisible: () => void;
-  onChangeData: (data: Record<string, unknown>) => void;
-  onSaveMeta: (meta: Partial<Section>) => void;
-  onSaveColorOverrides: (overrides: Record<string, unknown> | null) => void;
-}) {
-  const [expanded, setExpanded] = useState(false);
-  // Stabilize onChange ref to prevent useReport re-fires after parent re-render
-  const onChangeRef = useRef(onChangeData);
-  onChangeRef.current = onChangeData;
-  const stableOnChange = useCallback((data: Record<string, unknown>) => onChangeRef.current(data), []);
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: section.id });
-  const style = { transform: CSS.Transform.toString(transform), transition };
-  const typeInfo = sectionTypes.find(t => t.type === section.type);
-
-  return (
-    <div ref={setNodeRef} style={style} className={`admin-card mb-3 p-0 overflow-hidden ${expanded ? 'ring-2 ring-blue-500/20 border-blue-300' : ''} ${isDragging ? 'opacity-50' : !section.visible ? 'opacity-50' : ''}`}>
-      <div className={`flex items-center px-4 py-3 border-b cursor-pointer ${expanded ? 'bg-blue-50' : 'bg-gray-50 hover:bg-gray-100'} transition-colors`} onClick={() => setExpanded(!expanded)}>
-        <button {...attributes} {...listeners} className="cursor-grab mr-3 text-gray-400 hover:text-gray-600 touch-none" onClick={(e) => e.stopPropagation()}>
-          <GripVertical size={18} />
-        </button>
-        <div className="flex-1 min-w-0 flex items-center gap-2">
-          <span className={`font-medium text-sm ${expanded ? 'text-blue-700' : ''}`}>{typeInfo?.label ?? section.type}</span>
-          {!expanded && <span className="text-[10px] text-zinc-400 ml-1">— Klicken zum Bearbeiten</span>}
-        </div>
-        <button onClick={(e) => { e.stopPropagation(); onToggleVisible(); }} className="p-1 mr-2" title={section.visible ? 'Ausblenden' : 'Einblenden'}>
-          {section.visible ? <Eye size={16} className="text-green-600" /> : <EyeOff size={16} className="text-gray-400" />}
-        </button>
-        <button onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }} className="p-1 mr-2">
-          {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
-        <button onClick={(e) => { e.stopPropagation(); onDelete(); }} className="p-1 text-red-400 hover:text-red-600">
-          <Trash2 size={16} />
-        </button>
-      </div>
-      {expanded && (
-        <div className="p-4">
-          <IndustrySectionDataEditor industry={industry} type={section.type} data={section.data} onChange={stableOnChange} />
-          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} resolvedVars={resolvedVars} sectionId={section.id} />
-          <details className="mt-4">
-            <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
-            <SectionMetaEditor section={section} onSave={onSaveMeta} />
-          </details>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function SectionMetaEditor({ section, onSave }: { section: Section; onSave: (meta: Partial<Section>) => void }) {
-  const [meta, setMeta] = useState({
-    variant: section.variant || '',
-    container: section.container,
-    spacingTop: section.spacingTop,
-    spacingBottom: section.spacingBottom,
-    anchorId: section.anchorId || '',
-  });
-
-  return (
-    <div className="grid grid-cols-2 gap-3 mt-3 text-sm">
-      <label className="block">
-        <span className="text-gray-600 text-xs">Variante</span>
-        <input className="admin-input mt-1" value={meta.variant} onChange={(e) => setMeta({ ...meta, variant: e.target.value })} />
-      </label>
-      <label className="block">
-        <span className="text-gray-600 text-xs">Container</span>
-        <select className="admin-input mt-1" value={meta.container} onChange={(e) => setMeta({ ...meta, container: e.target.value })}>
-          <option value="default">Standard</option>
-          <option value="wide">Breit</option>
-          <option value="full">Volle Breite</option>
-          <option value="narrow">Schmal</option>
-        </select>
-      </label>
-      <label className="block">
-        <span className="text-gray-600 text-xs">Anker-ID</span>
-        <input className="admin-input mt-1" value={meta.anchorId} onChange={(e) => setMeta({ ...meta, anchorId: e.target.value })} />
-      </label>
-      <label className="block">
-        <span className="text-gray-600 text-xs">Abstand oben</span>
-        <select className="admin-input mt-1" value={meta.spacingTop} onChange={(e) => setMeta({ ...meta, spacingTop: e.target.value })}>
-          <option value="none">Kein</option><option value="s">Klein</option><option value="m">Mittel</option><option value="l">Groß</option><option value="xl">Extra Groß</option>
-        </select>
-      </label>
-      <label className="block">
-        <span className="text-gray-600 text-xs">Abstand unten</span>
-        <select className="admin-input mt-1" value={meta.spacingBottom} onChange={(e) => setMeta({ ...meta, spacingBottom: e.target.value })}>
-          <option value="none">Kein</option><option value="s">Klein</option><option value="m">Mittel</option><option value="l">Groß</option><option value="xl">Extra Groß</option>
-        </select>
-      </label>
-      <div className="col-span-2">
-        <button className="admin-btn-primary text-xs" onClick={() => onSave(meta)}>Meta speichern</button>
-      </div>
-    </div>
-  );
-}
-
-export function ItemEditor({ item: initial, collectionKey, industry, styleVariant = 'classic', brand = {} }: { item: Item; collectionKey: string; industry: string; styleVariant?: string; brand?: Record<string, string> }) {
+export function ItemEditor({ item: initial, collectionKey, industry, styleVariant = 'classic', brand = {}, i18n }: { item: Item; collectionKey: string; industry: string; styleVariant?: string; brand?: Record<string, string>; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string } }) {
   const [item, setItem] = useState(initial);
   const [sections, setSections] = useState<Section[]>(
-    ((initial.data.sections as Section[]) || []).map(s => ({ ...s, id: s.id || generateId(), visible: s.visible !== false }))
+    collectionItemSectionsToEditableSections(initial.data.sections, generateId)
   );
-  const previewUrl = `/c/${collectionKey}/${item.slug}`;
+  const [activeLocale, setActiveLocale] = useState(i18n?.defaultLocale || 'de');
   const preview = usePreview();
   const sectionTypes = getSectionTypesForIndustry(industry);
   const resolvedVars = { ...getStyleCssVars(industry, styleVariant), ...getBrandCssVars(brand) };
-  const [showAddMenu, setShowAddMenu] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [hasDirty, setHasDirty] = useState(false);
-  const [pending, startTransition] = useTransition();
   const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
   const seoRef = useRef<ItemSeoPanelHandle>(null);
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
   const sectionsRef = useRef(sections);
   sectionsRef.current = sections;
 
   // Send live preview data to iframe
   const sendPreviewData = useCallback(() => {
     if (!preview.isOpen) return;
-    const liveSections = sectionsRef.current.map(sec => {
-      const newData = pendingChanges.current.get(sec.id);
-      return { ...sec, data: newData ?? sec.data };
-    });
-    preview.sendLiveData({ sections: liveSections, industry });
-  }, [preview.isOpen, preview.sendLiveData, industry]);
+    const liveSections = buildLiveSections(sectionsRef.current, pendingChanges.current);
+    preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale });
+  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, activeLocale]);
 
   // Re-send on sections array change (add/remove/reorder/toggle)
   useEffect(() => { sendPreviewData(); }, [sections, sendPreviewData]);
@@ -196,28 +75,13 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
 
   function markDirty() { setHasDirty(true); setSaved(false); }
 
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    const oldIndex = sections.findIndex(s => s.id === active.id);
-    const newIndex = sections.findIndex(s => s.id === over.id);
-    setSections(arrayMove(sections, oldIndex, newIndex));
+  function handleReorder(nextSections: Section[]) {
+    setSections(nextSections);
     markDirty();
   }
 
   function handleAddSection(type: string) {
-    setShowAddMenu(false);
-    const newSection: Section = {
-      id: generateId(),
-      type,
-      variant: null,
-      visible: true,
-      container: 'default',
-      spacingTop: 'm',
-      spacingBottom: 'm',
-      anchorId: null,
-      data: {},
-    };
+    const newSection = createEmptyEditableSection(type, generateId(), sections.length);
     setSections(prev => [...prev, newSection]);
     markDirty();
     toast.success('Sektion hinzugefügt');
@@ -237,11 +101,15 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   }
 
   const handleSectionChange = useCallback((sectionId: string, data: Record<string, unknown>) => {
-    pendingChanges.current.set(sectionId, data);
+    const saveData = mergeLocalizedSectionData({ sectionId, data, sections: sectionsRef.current, pendingChanges: pendingChanges.current, i18n, activeLocale });
+    pendingChanges.current.set(sectionId, saveData);
     setHasDirty(true);
     setSaved(false);
-    sendPreviewData();
-  }, [sendPreviewData]);
+    if (preview.isOpen) {
+      const liveSections = buildLiveSections(sectionsRef.current, pendingChanges.current, { sectionId, data: saveData });
+      preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale });
+    }
+  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, i18n, activeLocale]);
 
   function handleSaveMeta(sectionId: string, meta: Partial<Section>) {
     setSections(prev => prev.map(s => s.id === sectionId ? { ...s, ...meta } : s));
@@ -269,7 +137,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
         return newData ? { ...sec, data: newData } : sec;
       });
 
-      const itemData = { ...item.data, sections: finalSections };
+      const itemData = { ...item.data, sections: editableSectionsToCollectionItemSections(finalSections) };
       await updateItemAction(item.id, {
         title: item.title,
         slug: item.slug,
@@ -289,6 +157,19 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
       toast.error('Speichern fehlgeschlagen');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handlePublish() {
+    setPublishing(true);
+    try {
+      await publishAction();
+      toast.success('Veröffentlicht!');
+      setSaved(false);
+    } catch {
+      toast.error('Fehler');
+    } finally {
+      setPublishing(false);
     }
   }
 
@@ -323,76 +204,46 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
           </div>
         </div>
 
+        <EditorLocaleTabs i18n={i18n} activeLocale={activeLocale} onChange={setActiveLocale} />
+
         {/* SEO */}
         <ItemSeoPanel ref={seoRef} itemId={item.id} onDirty={() => { setHasDirty(true); setSaved(false); }} />
 
-        {/* Section List with DnD */}
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
-            {sections.map((section) => (
-              <SortableSection
+        <SectionStackEditor
+          sections={sections}
+          sectionTypes={sectionTypes}
+          industry={industry}
+          styleVariant={styleVariant}
+          onReorder={handleReorder}
+          onAddSection={handleAddSection}
+          renderSection={(section) => (
+              <SectionEditorCard
                 key={section.id}
                 section={section}
                 industry={industry}
                 sectionTypes={sectionTypes}
+                styleVariant={styleVariant}
                 resolvedVars={resolvedVars}
+                iframeRef={preview.iframeRef}
                 onDelete={() => handleDeleteSection(section.id)}
                 onToggleVisible={() => handleToggleVisible(section.id)}
                 onChangeData={(data) => handleSectionChange(section.id, data)}
                 onSaveMeta={(meta) => handleSaveMeta(section.id, meta)}
                 onSaveColorOverrides={(overrides) => handleSaveColorOverrides(section.id, overrides)}
+                activeLocale={activeLocale}
+                i18n={i18n}
               />
-            ))}
-          </SortableContext>
-        </DndContext>
-
-        {sections.length === 0 && (
-          <div className="admin-card text-center py-12 text-gray-400">
-            Noch keine Sektionen. Füge unten eine hinzu.
-          </div>
-        )}
-
-        {/* Add Section */}
-        <div className="mt-4 pb-24">
-          <button onClick={() => setShowAddMenu(!showAddMenu)} className="admin-btn-primary w-full flex items-center justify-center gap-2">
-            <Plus size={18} /> Sektion hinzufügen
-          </button>
-          {showAddMenu && (
-            <SectionPickerModal
-              sectionTypes={sectionTypes}
-              onSelect={handleAddSection}
-              onClose={() => setShowAddMenu(false)}
-              industry={industry}
-            />
-          )}
-        </div>
-
-        {/* FAB Bar */}
-        <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
-          <button
-            onClick={() => { preview.isOpen ? preview.close() : preview.open('/admin/live-preview'); }}
-            className={`flex items-center gap-2 px-4 py-2.5 border rounded-full shadow-lg text-sm font-medium transition-colors ${preview.isOpen ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
-          >
-            <MonitorPlay size={16} /> Vorschau
-          </button>
-          {!saved ? (
-            <button
-              onClick={handleSaveAll}
-              disabled={saving}
-              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Save size={16} /> {saving ? 'Speichert…' : 'Speichern'}
-            </button>
-          ) : (
-            <button
-              onClick={async () => { setPublishing(true); try { await publishAction(); toast.success('Veröffentlicht!'); setSaved(false); } catch { toast.error('Fehler'); } finally { setPublishing(false); } }}
-              disabled={publishing}
-              className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-full shadow-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Rocket size={16} /> {publishing ? 'Wird veröffentlicht…' : 'Veröffentlichen'}
-            </button>
-          )}
-        </div>
+            )}
+        />
+        <EditorActionBar
+          previewOpen={preview.isOpen}
+          saved={saved}
+          saving={saving}
+          publishing={publishing}
+          onTogglePreview={() => { preview.isOpen ? preview.close() : preview.open('/live-preview'); }}
+          onSave={handleSaveAll}
+          onPublish={handlePublish}
+        />
       </div>
     </PageSectionsProvider>
   );

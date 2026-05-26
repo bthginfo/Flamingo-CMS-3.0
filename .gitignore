@@ -4,6 +4,7 @@ node_modules
 dist
 .turbo
 *.log
+reports/
 .env
 .env.local
 .vercel
