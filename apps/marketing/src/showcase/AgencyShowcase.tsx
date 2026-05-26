@@ -1077,7 +1077,6 @@ function LiveDeviceFrame({ item }: { item: DeviceItem }) {
         width: `${dims.vw}px`,
         height: `${dims.vh}px`,
         border: '0',
-        pointerEvents: 'none',
       }}
     />
     )
@@ -1295,7 +1294,7 @@ function DeviceCaption({ label, caption, dark }: { label: string; caption: strin
 }
 
 function AdminPreviewSection() {
-  return <LiveAdminShowcase mode="cms" compact />;
+  return <LiveAdminShowcase mode="cms" compact showTabs={false} smallPreview />;
 }
 
 function ProcessTimelineSection() {

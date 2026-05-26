@@ -253,7 +253,7 @@ export default function CmsFeaturesPage() {
         </div>
       </section>
 
-      <LiveAdminShowcase mode="cms" compact />
+      <LiveAdminShowcase mode="cms" compact showTabs={false} smallPreview />
 
       {/* Feature blocks */}
       {FEATURES.map((feature, i) => (

@@ -67,7 +67,7 @@ function viewportSize(viewport: Viewport) {
   return { width: 1440, height: 920 };
 }
 
-function AdminFrame({ src, viewport, framed = true }: { src: string; viewport: Viewport; framed?: boolean }) {
+function AdminFrame({ src, viewport, framed = true, small = false }: { src: string; viewport: Viewport; framed?: boolean; small?: boolean }) {
   const shellRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   const size = viewportSize(viewport);
@@ -87,7 +87,7 @@ function AdminFrame({ src, viewport, framed = true }: { src: string; viewport: V
   }, [size.height, size.width, viewport]);
 
   return (
-    <div ref={shellRef} className={`relative grid min-h-[520px] w-full place-items-center overflow-hidden ${framed ? 'rounded-[28px] border border-white/10 bg-[#07070a] p-3 shadow-2xl shadow-black/35' : ''}`}>
+    <div ref={shellRef} className={`relative grid ${small ? 'min-h-[360px] md:min-h-[430px]' : 'min-h-[520px]'} w-full place-items-center overflow-hidden ${framed ? 'rounded-[28px] border border-white/10 bg-[#07070a] p-3 shadow-2xl shadow-black/35' : ''}`}>
       <div className="relative" style={{ width: size.width * scale, height: size.height * scale }}>
         <div
           className="absolute left-0 top-0 origin-top-left overflow-hidden rounded-[18px] bg-white shadow-2xl"
@@ -105,7 +105,7 @@ function AdminFrame({ src, viewport, framed = true }: { src: string; viewport: V
   );
 }
 
-export function LiveAdminShowcase({ mode = 'cms', compact = false }: { mode?: ShowcaseMode; compact?: boolean }) {
+export function LiveAdminShowcase({ mode = 'cms', compact = false, showTabs = true, smallPreview = false }: { mode?: ShowcaseMode; compact?: boolean; showTabs?: boolean; smallPreview?: boolean }) {
   const [viewport, setViewport] = useState<Viewport>('desktop');
   const tabs = mode === 'shop' ? SHOP_TABS : CMS_TABS;
   const [activeTab, setActiveTab] = useState(0);
@@ -140,34 +140,36 @@ export function LiveAdminShowcase({ mode = 'cms', compact = false }: { mode?: Sh
   return (
     <section className={compact ? 'py-16 md:py-24' : 'py-20 md:py-28'}>
       <div className="container-x">
-        <div className={`grid gap-8 ${compact ? 'lg:grid-cols-[0.72fr_1.28fr]' : 'lg:grid-cols-[0.65fr_1.35fr]'} lg:items-center`}>
+        <div className={`grid gap-8 ${showTabs ? (compact ? 'lg:grid-cols-[0.72fr_1.28fr]' : 'lg:grid-cols-[0.65fr_1.35fr]') : 'lg:grid-cols-[0.78fr_1.22fr]'} lg:items-center`}>
           <div className="reveal">
             <p className="eyebrow mb-5">{copy.eyebrow}</p>
             <h2 className={compact ? 'headline-md' : 'headline-lg'}>{copy.title}</h2>
             <p className="mt-5 max-w-xl text-base leading-8 text-muted md:text-lg">{copy.text}</p>
 
-            <div className="mt-8 grid gap-2">
-              {tabs.map((tab, index) => {
-                const Icon = tab.icon;
-                const selected = index === activeTab;
-                return (
-                  <button
-                    key={tab.label}
-                    type="button"
-                    onClick={() => setActiveTab(index)}
-                    className={`group flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${selected ? 'border-slate-950 bg-slate-950 text-white shadow-xl shadow-slate-950/15' : 'border-line bg-white text-slate-700 hover:border-slate-300 hover:shadow-sm'}`}
-                  >
-                    <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${selected ? 'bg-white text-slate-950' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'}`}>
-                      <Icon size={18} />
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-sm font-semibold">{tab.label}</span>
-                      <span className={`block truncate text-xs ${selected ? 'text-white/62' : 'text-slate-500'}`}>{tab.note}</span>
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            {showTabs && (
+              <div className="mt-8 grid gap-2">
+                {tabs.map((tab, index) => {
+                  const Icon = tab.icon;
+                  const selected = index === activeTab;
+                  return (
+                    <button
+                      key={tab.label}
+                      type="button"
+                      onClick={() => setActiveTab(index)}
+                      className={`group flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${selected ? 'border-slate-950 bg-slate-950 text-white shadow-xl shadow-slate-950/15' : 'border-line bg-white text-slate-700 hover:border-slate-300 hover:shadow-sm'}`}
+                    >
+                      <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${selected ? 'bg-white text-slate-950' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200'}`}>
+                        <Icon size={18} />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-sm font-semibold">{tab.label}</span>
+                        <span className={`block truncate text-xs ${selected ? 'text-white/62' : 'text-slate-500'}`}>{tab.note}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
             <a href="/demo" className="btn-primary mt-8 inline-flex items-center gap-2">
               {copy.cta} <ExternalLink size={16} />
@@ -202,7 +204,7 @@ export function LiveAdminShowcase({ mode = 'cms', compact = false }: { mode?: Sh
                   ))}
                 </div>
               </div>
-              <AdminFrame src={src} viewport={viewport} framed={false} />
+              <AdminFrame src={src} viewport={viewport} framed={false} small={smallPreview} />
             </div>
           </div>
         </div>

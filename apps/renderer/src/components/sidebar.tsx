@@ -38,15 +38,23 @@ const NAV: { href: string; label: string; icon: typeof LayoutDashboard; tour?: s
 const RENDERER_URL = '';
 
 export function Sidebar({ tenantId, industry }: { tenantId: string; industry: string }) {
-  const filteredNav = NAV.filter(item => !item.industry || item.industry === industry);
   const pathname = usePathname();
   const router = useRouter();
   const preview = usePreview();
   const [open, setOpen] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
     return localStorage.getItem('sidebar-collapsed') === '1';
   });
+  const filteredNav = NAV.filter(item => {
+    if (isDemo && item.href === '/admin/ai-api') return false;
+    return !item.industry || item.industry === industry;
+  });
+
+  useEffect(() => {
+    setIsDemo(document.cookie.split(';').some((cookie) => cookie.trim() === 'flamingo_demo=1'));
+  }, []);
 
   function toggleCollapse() {
     const next = !collapsed;

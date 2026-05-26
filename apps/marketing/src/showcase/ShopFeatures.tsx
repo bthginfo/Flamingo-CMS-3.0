@@ -114,7 +114,7 @@ export default function ShopFeaturesPage() {
         </div>
       </section>
 
-      <LiveAdminShowcase mode="shop" compact />
+      <LiveAdminShowcase mode="shop" compact showTabs={false} smallPreview />
 
       <section className="py-10 md:py-16">
         <div className="container-x space-y-32">
