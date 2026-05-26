@@ -60,11 +60,20 @@ export async function ensureDefaultCollections() {
   }
 }
 
+const DEFAULT_COLLECTIONS: Record<string, string> = { news: 'News & Blog' };
+
 export async function getCollectionByKeyAction(key: string) {
   const session = await requireSession();
   const db = getDb();
   const [collection] = await db.select().from(collections).where(and(eq(collections.tenantId, session.tenantId), eq(collections.key, key)));
-  return collection ?? null;
+  if (collection) return collection;
+
+  // Auto-create known default collections on first access
+  if (DEFAULT_COLLECTIONS[key]) {
+    const [created] = await db.insert(collections).values({ tenantId: session.tenantId, key, label: DEFAULT_COLLECTIONS[key] }).returning();
+    return created ?? null;
+  }
+  return null;
 }
 
 // ─── Collection Items ──────────────────────────────────────────────
