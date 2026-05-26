@@ -12,6 +12,21 @@ type RegistryEntry = {
 };
 
 const ROOT = process.cwd();
+const INTERNAL_RENDERER_ALIASES = new Set([
+  'heroCafe',
+  'heroConsulting',
+  'heroEcommerce',
+  'heroHandwerk',
+  'heroHotel',
+  'heroMedical',
+  'heroRealestate',
+  'heroRestaurant',
+  'heroSalon',
+  'heroTattoo',
+  'heroTourism',
+  'heroWedding',
+  'story',
+]);
 
 function read(relativePath: string): string {
   return readFileSync(resolve(ROOT, relativePath), 'utf8');
@@ -121,7 +136,7 @@ function buildAudit(): RegistryEntry[] {
     };
 
     if (entry.adminSelectable && !entry.rendererRegistered) entry.notes.push('Selectable in admin but not registered in renderer');
-    if (entry.rendererRegistered && !entry.adminSelectable) entry.notes.push('Renderer exists but section is not selectable in admin');
+    if (entry.rendererRegistered && !entry.adminSelectable && !INTERNAL_RENDERER_ALIASES.has(type)) entry.notes.push('Renderer exists but section is not selectable in admin');
     if (entry.adminSelectable && !entry.apiSchema) entry.notes.push('Admin section has no API schema');
     if (entry.adminSelectable && !entry.dataEditor) entry.notes.push('Falls back to generic JSON editor');
     if (entry.adminSelectable && !entry.colorMapping) entry.notes.push('Uses generic color fields');

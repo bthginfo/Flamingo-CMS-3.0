@@ -10,6 +10,7 @@ import { RichTextEditorField } from '@/components/rich-text-editor';
 import { MiniRichTextField } from '@/components/mini-rich-text';
 import { saveMediaRecord } from '@/app/admin/media-actions';
 import { EMBED_PROVIDERS, EMBED_CATEGORIES, getProvider } from '@/lib/embed-providers';
+import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
 
 // Reports current editor data to parent on every change (skip initial render).
 function useReport(data: Record<string, unknown>, onChange: (d: Record<string, unknown>) => void) {
@@ -25,10 +26,10 @@ function useReport(data: Record<string, unknown>, onChange: (d: Record<string, u
 // Generic section data editor that renders a form per section type.
 export function SectionDataEditor({ type, data, onChange }: { type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void }) {
   const Editor = EDITORS[type] ?? GenericJsonEditor;
-  return <Editor data={data} onChange={onChange} />;
+  return <Editor type={type} data={data} onChange={onChange} />;
 }
 
-type EditorProps = { data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void };
+type EditorProps = { type?: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void };
 
 // GenericJsonEditor keeps a button because JSON may be invalid mid-edit
 function GenericJsonEditor({ data, onChange }: EditorProps) {
@@ -55,6 +56,91 @@ function GenericJsonEditor({ data, onChange }: EditorProps) {
 }
 
 // ─── Hero Editor ─────────────────────────────────────────────────
+function GenericStructuredEditor({ type, data, onChange }: EditorProps) {
+  const defaults = type ? SECTION_PREVIEW_DATA[type] || {} : {};
+  const source = Object.keys(data).length > 0 ? data : defaults;
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (Object.keys(data).length === 0 && Object.keys(defaults).length > 0) {
+      onChange(defaults);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
+
+  function updateField(key: string, value: unknown) {
+    onChange({ ...source, [key]: value });
+  }
+
+  function fieldLabel(key: string) {
+    return key.replace(/([A-Z])/g, ' $1').replace(/^./, char => char.toUpperCase());
+  }
+
+  function renderField(key: string, value: unknown) {
+    if (typeof value === 'boolean') {
+      return (
+        <label key={key} className="flex items-center gap-2 text-sm text-zinc-700">
+          <input type="checkbox" checked={value} onChange={(e) => updateField(key, e.target.checked)} className="rounded" />
+          {fieldLabel(key)}
+        </label>
+      );
+    }
+
+    if (typeof value === 'number') {
+      return (
+        <label key={key} className="block">
+          <span className="text-xs font-medium text-zinc-600 mb-1 block">{fieldLabel(key)}</span>
+          <input type="number" className="admin-input" value={value} onChange={(e) => updateField(key, Number(e.target.value))} />
+        </label>
+      );
+    }
+
+    if (typeof value === 'string') {
+      const multiline = value.length > 80 || /content|description|text|subline|bio|answer/i.test(key);
+      return <Field key={key} label={fieldLabel(key)} value={value} onChange={(v) => updateField(key, v)} multiline={multiline} />;
+    }
+
+    const jsonValue = drafts[key] ?? JSON.stringify(value ?? (Array.isArray(value) ? [] : {}), null, 2);
+    return (
+      <label key={key} className="block">
+        <span className="text-xs font-medium text-zinc-600 mb-1 block">{fieldLabel(key)}</span>
+        <textarea
+          className="admin-input font-mono text-xs w-full"
+          rows={Array.isArray(value) ? 8 : 6}
+          value={jsonValue}
+          onChange={(e) => {
+            const next = e.target.value;
+            setDrafts(prev => ({ ...prev, [key]: next }));
+            try {
+              updateField(key, JSON.parse(next));
+              setDrafts(prev => {
+                const copy = { ...prev };
+                delete copy[key];
+                return copy;
+              });
+            } catch {
+              // Keep the typed draft until it becomes valid JSON.
+            }
+          }}
+        />
+        {drafts[key] && <p className="mt-1 text-xs text-amber-600">Wird übernommen, sobald das JSON gültig ist.</p>}
+      </label>
+    );
+  }
+
+  const keys = Object.keys(source);
+  if (keys.length === 0) return <GenericJsonEditor data={data} onChange={onChange} />;
+
+  return (
+    <div className="space-y-3">
+      <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">
+        Strukturierter Basis-Editor für ältere Sections. Komplexe Listen bleiben feldweise als JSON editierbar.
+      </div>
+      {keys.map((key) => renderField(key, source[key]))}
+    </div>
+  );
+}
+
 function HeroEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({
     headline: (data.headline as string) || '',
@@ -2518,4 +2604,86 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   deliveryTimeline: DeliveryTimelineEditor,
   inspirationGrid: InspirationGridEditor,
   beforeAfter: BeforeAfterEditor,
+  accommodationGrid: GenericStructuredEditor,
+  aftercareSteps: GenericStructuredEditor,
+  agentTeam: GenericStructuredEditor,
+  ambience: GenericStructuredEditor,
+  amenities: GenericStructuredEditor,
+  appointmentCta: GenericStructuredEditor,
+  artistGrid: GenericStructuredEditor,
+  artistHero: GenericStructuredEditor,
+  atmosphereGallery: GenericStructuredEditor,
+  bookingCta: GenericStructuredEditor,
+  bookingStrip: GenericStructuredEditor,
+  cafeEventCalendar: GenericStructuredEditor,
+  caseResults: GenericStructuredEditor,
+  certifications: GenericStructuredEditor,
+  coupleStory: GenericStructuredEditor,
+  dailySpecials: GenericStructuredEditor,
+  destinationHighlights: GenericStructuredEditor,
+  diagnostics: GenericStructuredEditor,
+  doctorTeam: GenericStructuredEditor,
+  downloadForms: GenericStructuredEditor,
+  downloadGuides: GenericStructuredEditor,
+  dresscode: GenericStructuredEditor,
+  drinkMenu: GenericStructuredEditor,
+  emergencyInfo: GenericStructuredEditor,
+  equipmentHighlights: GenericStructuredEditor,
+  eventSchedule: GenericStructuredEditor,
+  eventSpaces: GenericStructuredEditor,
+  events: GenericStructuredEditor,
+  eventsCalendar: GenericStructuredEditor,
+  experienceGrid: GenericStructuredEditor,
+  expertiseGrid: GenericStructuredEditor,
+  feeTable: GenericStructuredEditor,
+  flashDayBanner: GenericStructuredEditor,
+  foodMenu: GenericStructuredEditor,
+  gallery: GenericStructuredEditor,
+  giftRegistry: GenericStructuredEditor,
+  hotelDining: GenericStructuredEditor,
+  insuranceInfo: GenericStructuredEditor,
+  location: GenericStructuredEditor,
+  locationContact: GenericStructuredEditor,
+  locationHighlight: GenericStructuredEditor,
+  locationVibe: GenericStructuredEditor,
+  marketReport: GenericStructuredEditor,
+  menu: GenericStructuredEditor,
+  offers: GenericStructuredEditor,
+  openingHours: GenericStructuredEditor,
+  packages: GenericStructuredEditor,
+  patientInfo: GenericStructuredEditor,
+  placesMap: GenericStructuredEditor,
+  practiceAreas: GenericStructuredEditor,
+  practiceGallery: GenericStructuredEditor,
+  practiceTeam: GenericStructuredEditor,
+  priceList: GenericStructuredEditor,
+  pricingInfo: GenericStructuredEditor,
+  propertySearch: GenericStructuredEditor,
+  propertyShowcase: GenericStructuredEditor,
+  publications: GenericStructuredEditor,
+  referencesSold: GenericStructuredEditor,
+  reservation: GenericStructuredEditor,
+  roomShowcase: GenericStructuredEditor,
+  rsvp: GenericStructuredEditor,
+  seasonTeaser: GenericStructuredEditor,
+  serviceMenu: GenericStructuredEditor,
+  serviceOverview: GenericStructuredEditor,
+  shopCategoryOverview: GenericStructuredEditor,
+  sightseeingList: GenericStructuredEditor,
+  signatureDishes: GenericStructuredEditor,
+  styleGallery: GenericStructuredEditor,
+  tattooBooking: GenericStructuredEditor,
+  tattooBookingCta: GenericStructuredEditor,
+  teamShowcase: GenericStructuredEditor,
+  tourRoutes: GenericStructuredEditor,
+  tourismContact: GenericStructuredEditor,
+  travelInfo: GenericStructuredEditor,
+  treatmentDetail: GenericStructuredEditor,
+  valuationCta: GenericStructuredEditor,
+  valuesGrid: GenericStructuredEditor,
+  venueInfo: GenericStructuredEditor,
+  visitorInfo: GenericStructuredEditor,
+  weddingMenu: GenericStructuredEditor,
+  weddingParty: GenericStructuredEditor,
+  wellness: GenericStructuredEditor,
 };
