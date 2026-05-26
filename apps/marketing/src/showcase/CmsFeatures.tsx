@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Seo from '@/components/Seo';
+import { LiveAdminShowcase } from './LiveAdminShowcase';
 
 const DEMO_BASE = 'https://www.demo.flamingomedia.online';
 
@@ -250,6 +251,8 @@ export default function CmsFeaturesPage() {
           </div>
         </div>
       </section>
+
+      <LiveAdminShowcase mode="cms" compact />
 
       {/* Feature blocks */}
       {FEATURES.map((feature, i) => (
