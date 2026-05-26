@@ -460,6 +460,56 @@ export const leads = pgTable('leads', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+// ─── FlamingoMedia CRM Customers ─────────────────────────────────────
+export const crmCustomerStatusEnum = pgEnum('crm_customer_status', ['aktiv', 'pausiert', 'gekündigt']);
+export const crmPaymentStatusEnum = pgEnum('crm_payment_status', ['offen', 'bezahlt', 'überfällig', 'storniert']);
+
+export const crmCustomers = pgTable('crm_customers', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  company: varchar('company', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }),
+  phone: varchar('phone', { length: 50 }),
+  status: crmCustomerStatusEnum('status').notNull().default('aktiv'),
+  location: varchar('location', { length: 255 }),
+  industry: varchar('industry', { length: 200 }),
+  websiteOld: varchar('website_old', { length: 500 }),
+  flamingoLink: varchar('flamingo_link', { length: 500 }),
+  contact: varchar('contact', { length: 255 }),
+  contactFirstName: varchar('contact_first_name', { length: 100 }),
+  contactLastName: varchar('contact_last_name', { length: 100 }),
+  anrede: varchar('anrede', { length: 10 }),
+  responsible: varchar('responsible', { length: 100 }),
+  tenantId: uuid('tenant_id').references(() => tenants.id, { onDelete: 'set null' }),
+  leadId: uuid('lead_id').references(() => leads.id, { onDelete: 'set null' }),
+  adminPassword: varchar('admin_password', { length: 100 }),
+  packageName: varchar('package_name', { length: 120 }),
+  setupPriceCents: integer('setup_price_cents').notNull().default(0),
+  hostingMonthlyCents: integer('hosting_monthly_cents').notNull().default(0),
+  notes: text('notes'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('crm_customers_company_idx').on(t.company),
+  index('crm_customers_status_idx').on(t.status),
+  index('crm_customers_lead_idx').on(t.leadId),
+]);
+
+export const crmCustomerPayments = pgTable('crm_customer_payments', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  customerId: uuid('customer_id').notNull().references(() => crmCustomers.id, { onDelete: 'cascade' }),
+  type: varchar('type', { length: 50 }).notNull().default('setup'),
+  title: varchar('title', { length: 255 }).notNull(),
+  amountCents: integer('amount_cents').notNull(),
+  status: crmPaymentStatusEnum('status').notNull().default('offen'),
+  dueDate: timestamp('due_date', { withTimezone: true }),
+  paidAt: timestamp('paid_at', { withTimezone: true }),
+  note: text('note'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('crm_customer_payments_customer_idx').on(t.customerId),
+  index('crm_customer_payments_status_idx').on(t.status),
+]);
+
 // ═══════════════════════════════════════════════════════════════════════
 // ─── SHOP ADDON TABLES ───────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════

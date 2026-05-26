@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, LayoutDashboard, Users, Target, Inbox, BarChart3 } from 'lucide-react';
+import { Menu, X, LayoutDashboard, Users, Target, Inbox, BarChart3, BriefcaseBusiness } from 'lucide-react';
 
 const links = [
   { href: '/crm', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/crm/tenants', label: 'Tenants', icon: Users },
   { href: '/crm/leads', label: 'Leads', icon: Target },
+  { href: '/crm/kunden', label: 'Kunden', icon: BriefcaseBusiness },
   { href: '/crm/auswertung', label: 'Auswertung', icon: BarChart3 },
   { href: '/crm/anfragen', label: 'Anfragen', icon: Inbox },
 ];

@@ -50,7 +50,30 @@ function buildEmailHtml(subject: string, body: string): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { to, subject, body } = await req.json();
+    const contentType = req.headers.get('content-type') || '';
+    let to = '';
+    let subject = '';
+    let body = '';
+    let attachments: { filename: string; content: Buffer }[] = [];
+
+    if (contentType.includes('multipart/form-data')) {
+      const form = await req.formData();
+      to = String(form.get('to') || '');
+      subject = String(form.get('subject') || '');
+      body = String(form.get('body') || '');
+      const file = form.get('attachment');
+      if (file instanceof File && file.size > 0) {
+        if (file.size > 8 * 1024 * 1024) {
+          return NextResponse.json({ error: 'Anhang ist zu groß (max. 8 MB)' }, { status: 400 });
+        }
+        attachments = [{ filename: file.name, content: Buffer.from(await file.arrayBuffer()) }];
+      }
+    } else {
+      const json = await req.json();
+      to = json.to;
+      subject = json.subject;
+      body = json.body;
+    }
 
     if (!to || !subject || !body) {
       return NextResponse.json({ error: 'to, subject und body sind erforderlich' }, { status: 400 });
@@ -72,6 +95,7 @@ export async function POST(req: NextRequest) {
       subject,
       text: body,
       html,
+      attachments,
       headers: {
         'X-Mailer': 'Flamingo Media CRM',
       },
