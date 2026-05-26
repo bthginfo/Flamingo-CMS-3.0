@@ -79,6 +79,7 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   embed:             ['sectionBg'],
   noticeBanner:      ['sectionBg', 'headingColor', 'bodyColor', 'iconColor', 'btnBg', 'btnText'],
   collectionHero:    ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'badgeBg', 'badgeText'],
+  collectionList:    ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
   ctaLinks:          ['sectionBg', 'headingColor', 'accentColor'],
   headerBanner:      ['sectionBg', 'headingColor', 'bodyColor'],
   map:               ['sectionBg', 'headingColor'],
@@ -178,6 +179,14 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   tattooBooking:     ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'btnBg', 'btnText'],
   flashDayBanner:    ['sectionBg', 'headingColor', 'bodyColor', 'btnBg', 'btnText', 'accentColor'],
   aftercareSteps:    ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'dividerColor'],
+  // SHOP
+  shopProductGrid:   ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
+  shopProductDetail: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor'],
+  shopFeaturedProducts:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
+  shopCategoryOverview:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'badgeBg', 'badgeText', 'borderColor'],
+  shopCart:          ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'dividerColor'],
+  shopCheckout:      ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'dividerColor'],
+  shopThankYou:      ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
 };
 
 function getFieldsForSection(sectionType: string): ColorFieldKey[] {
