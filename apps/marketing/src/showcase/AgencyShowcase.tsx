@@ -7,6 +7,7 @@ import { TemplateGallery } from './Templates';
 import { FundingCalculatorPage } from './FundingCalculator';
 import CmsFeaturesPage, { CmsFeaturesTeaserSection } from './CmsFeatures';
 import ShopFeaturesPage, { ShopFeaturesTeaserSection } from './ShopFeatures';
+import { LiveAdminShowcase } from './LiveAdminShowcase';
 import Seo from '@/components/Seo';
 import {
   Marquee, AnimatedCounter, RotatingWord, ScrollProgress, Accordion, useReveal,
@@ -981,6 +982,7 @@ type DeviceItem = {
 const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'https://www.demo.flamingomedia.online';
 
 const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://www.demo.flamingomedia.online';
+const demoAdminUrl = (next = '/admin') => `${ADMIN_URL_SHOWCASE}/admin/demo-login?industry=handwerk&next=${encodeURIComponent(next)}`;
 
 const DEVICE_ITEMS: DeviceItem[] = [
   {
@@ -991,7 +993,7 @@ const DEVICE_ITEMS: DeviceItem[] = [
   },
   {
     kind: 'tablet',
-    src: `${ADMIN_URL_SHOWCASE}/demo/admin`,
+    src: demoAdminUrl('/admin/pages'),
     label: 'Admin-Bereich',
     caption: 'Inhalte pflegen, ohne Code',
   },
@@ -1293,125 +1295,7 @@ function DeviceCaption({ label, caption, dark }: { label: string; caption: strin
 }
 
 function AdminPreviewSection() {
-  const [activeTab, setActiveTab] = useState(0);
-  const tabs = [
-    { label: 'Seiten', content: (
-      <div className="space-y-3">
-        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 border border-slate-100">
-          <span className="text-xs bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5 font-medium">Live</span>
-          <span className="font-medium text-sm">Startseite</span>
-          <span className="ml-auto text-xs text-slate-400">12 Sections</span>
-        </div>
-        {['Leistungen', 'Über uns', 'Projekte', 'Kontakt'].map(p => (
-          <div key={p} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-slate-100 text-sm">
-            <span className="text-xs bg-slate-100 text-slate-500 rounded-full px-2 py-0.5 font-medium">Draft</span>
-            <span className="font-medium">{p}</span>
-            <span className="ml-auto text-xs text-slate-400">→</span>
-          </div>
-        ))}
-      </div>
-    )},
-    { label: 'Hero-Editor', content: (
-      <div className="space-y-3">
-        <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Headline</p><div className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium">Müller & Söhne Meisterbetrieb</div></div>
-        <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Subline</p><div className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm">Ihr Partner für Sanitär, Heizung und Bäder seit 1987.</div></div>
-        <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Hintergrundbild</p><div className="border border-dashed border-slate-200 rounded-xl p-4 text-center text-xs text-slate-400"><div className="w-full h-16 bg-slate-100 rounded-lg mb-2 flex items-center justify-center">📷</div>Bild hochladen</div></div>
-        <div className="grid grid-cols-2 gap-3">
-          <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Primärer CTA</p><div className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm">Anfrage senden</div></div>
-          <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Link</p><div className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-400">/kontakt</div></div>
-        </div>
-      </div>
-    )},
-    { label: 'Design', content: (
-      <div className="space-y-4">
-        <p className="text-[11px] uppercase tracking-widest text-slate-400">Stil wählen</p>
-        <div className="grid grid-cols-3 gap-2">
-          {['Classic', 'Modern', 'Bold'].map((s, i) => (
-            <div key={s} className={`p-3 rounded-xl border-2 text-center text-xs font-semibold cursor-pointer transition-all ${i === 0 ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500 hover:border-slate-300'}`}>{s}</div>
-          ))}
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Primärfarbe</p><div className="flex gap-2 items-center"><span className="w-8 h-8 rounded-lg bg-blue-600" /><span className="text-xs font-mono text-slate-500">#2563EB</span></div></div>
-          <div><p className="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Akzentfarbe</p><div className="flex gap-2 items-center"><span className="w-8 h-8 rounded-lg bg-amber-500" /><span className="text-xs font-mono text-slate-500">#F59E0B</span></div></div>
-        </div>
-      </div>
-    )},
-  ];
-
-  return (
-    <section className="py-24 md:py-32">
-      <div className="container-x grid lg:grid-cols-12 gap-12 items-center">
-        <div className="lg:col-span-5 reveal">
-          <p className="eyebrow mb-5">Admin-Bereich</p>
-          <h2 className="headline-md">Dein Inhalt.<br /><em className="italic-pop">Deine Kontrolle.</em></h2>
-          <p className="mt-6 text-lg text-muted leading-relaxed">
-            Ein Admin, der sich anfühlt wie eine App — nicht wie ein Baukasten aus 2012.
-            Texte, Bilder, Design und SEO an einem Ort. Speichern, fertig.
-          </p>
-          <ul className="mt-10 space-y-4">
-            {[
-              'Sections per Drag & Drop sortieren und ein-/ausblenden.',
-              'Bilder direkt hochladen — mit Vorschau im Editor.',
-              'Drei Stilrichtungen pro Branche — live umschaltbar.',
-              'SEO, Open Graph und Meta-Tags in eigenem Panel.',
-              'Navigation, Footer, Kontakt und Social Media zentral verwalten.',
-              'Kein Plugin-Wirrwarr. Kein WordPress.',
-            ].map((t, i) => (
-              <li key={i} className="flex gap-3 items-start">
-                <span className="mt-1 inline-flex h-6 w-6 rounded-full bg-[var(--accent-color)] items-center justify-center">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="text-brand">
-                    <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
-                <span className="text-lg">{t}</span>
-              </li>
-            ))}
-          </ul>
-          <a href={`${DEMO_BASE}/demo/admin`} target="_blank" rel="noopener noreferrer" className="btn-primary mt-8 inline-flex">
-            Admin-Demo ausprobieren →
-          </a>
-        </div>
-
-        <div className="lg:col-span-7 relative reveal">
-          <div className="rounded-3xl overflow-hidden border border-line shadow-2xl bg-white">
-            <div className="bg-slate-900 px-5 py-3 flex items-center gap-2 border-b border-slate-700">
-              <span className="h-3 w-3 rounded-full bg-rose-400" />
-              <span className="h-3 w-3 rounded-full bg-amber-400" />
-              <span className="h-3 w-3 rounded-full bg-emerald-400" />
-              <span className="ml-3 text-xs text-slate-400 font-mono hidden sm:inline">flamingo-cms.de/demo/admin</span>
-            </div>
-            <div className="flex overflow-x-auto">
-              <aside className="w-48 bg-slate-900 p-3 border-r border-slate-800 shrink-0 hidden md:block">
-                <div className="flex items-center gap-2 px-2 py-2 mb-3">
-                  <span className="w-6 h-6 rounded-md bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">F</span>
-                  <span className="text-xs text-white font-semibold">Flamingo CMS</span>
-                </div>
-                {['Dashboard', 'Seiten', 'Collections', 'Marke & Design', 'Navigation', 'SEO', 'Kontakt'].map((s, i) => (
-                  <div key={s} className={`px-3 py-1.5 rounded-md text-xs mb-0.5 ${i === 1 ? 'bg-white/10 text-white font-medium' : 'text-slate-500 hover:text-slate-300'}`}>{s}</div>
-                ))}
-              </aside>
-              <div className="flex-1 p-5">
-                <div className="flex gap-1 mb-4 border-b border-slate-100 pb-3">
-                  {tabs.map((tab, i) => (
-                    <button key={tab.label} onClick={() => setActiveTab(i)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${i === activeTab ? 'bg-slate-900 text-white' : 'text-slate-400 hover:text-slate-600'}`}>
-                      {tab.label}
-                    </button>
-                  ))}
-                </div>
-                {tabs[activeTab].content}
-                <div className="flex justify-end gap-2 pt-4 mt-4 border-t border-slate-100">
-                  <button className="px-4 py-2 rounded-xl text-xs text-slate-400 border border-slate-200">Abbrechen</button>
-                  <button className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white">Speichern</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="absolute -inset-4 -z-10 bg-[var(--accent-color)]/30 blur-3xl rounded-full" />
-        </div>
-      </div>
-    </section>
-  );
+  return <LiveAdminShowcase mode="cms" compact />;
 }
 
 function ProcessTimelineSection() {
@@ -2055,7 +1939,7 @@ function AboutPage() {
                 n: 'Julius von Ingelheim',
                 r: 'CTO · Web · UX',
                 img: '/team/julius.jpg',
-                bio: 'Gelernter UX-Designer und Tech-Nerd. Liebt saubere Design-Systeme, schnelle Ladezeiten und guter Wein – in dieser Reihenfolge.',
+                bio: 'Gelernter UX-Designer und Tech-Nerd. Herr über das CMS und den Code. Liebt Design, schnelle Ladezeiten und guten Wein.',
               },
               {
                 n: 'Nikey',
@@ -2140,11 +2024,10 @@ function Pricing() {
   const addons = [
     { t: 'Shop-Addon', p: 'ab 999 €', d: 'Vollwertiger Online-Shop mit Produktkatalog, Warenkorb, Checkout, Stripe & PayPal, Versandverwaltung, Rechnungen & Gutscheine. Inkl. Einrichtung: 1.450 €.' },
     { t: 'Mehrsprachigkeit', p: 'ab 290 €', d: 'DE + EN, weitere Sprachen auf Anfrage. Inkl. Sprach-Switcher.' },
-    { t: 'Online-Reservierung', p: 'ab 390 €', d: 'Anbindung an Tools wie Quandoo, OpenTable, Treatwell.' },
     { t: 'Foto-/Video-Nachshooting', p: '890 €', d: '1 Drehtag light für saisonale Updates, neue Produkte oder Teamwechsel (ca. 25 Bilder + 1 Reel).' },
-    { t: 'Newsletter-Setup', p: '290 €', d: 'Anbindung an Mailerlite, Brevo oder Mailchimp.' },
-    { t: 'Texte & SEO', p: 'ab 490 €', d: 'Schreiben aller Inhalte durch unsere Copywriter:innen, inkl. SEO-Recherche.' },
-    { t: 'Logo-Refresh', p: 'ab 590 €', d: 'Modernisierung Deines bestehenden Logos. Drei Iterationen.' },
+    { t: 'SEO optimierte Texte', p: 'ab 450 €', d: 'Professionelle Website-Texte mit klarer Struktur, lokaler Suchintention und sauberer Onpage-Grundlage.' },
+    { t: 'Eigenes CRM/Kundenverwaltung', p: 'ab 800 €', d: 'Ein eigener geschützter Bereich für Kontakte, Kunden, Status, Notizen und einfache Auswertungen.' },
+    { t: 'Logo-Refresh', p: 'ab 899 €', d: 'Modernisierung Deines bestehenden Logos. Drei Iterationen.' },
     { t: 'Individuelle Sections', p: 'ab 200 €', d: 'Maßgeschneiderte Inhaltsblöcke außerhalb des Templates. Preis abhängig von Anzahl, Komplexität und Interaktivität.' },
   ];
 

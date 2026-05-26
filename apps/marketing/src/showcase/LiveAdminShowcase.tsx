@@ -27,6 +27,7 @@ import {
 
 const DEMO_BASE = 'https://www.demo.flamingomedia.online';
 const PREVIEW_TENANT_ID = 'f50cbf53-279d-43f3-b58b-f5ae3d550ab2';
+const demoAdminUrl = (next = '/admin') => `${DEMO_BASE}/admin/demo-login?industry=handwerk&next=${encodeURIComponent(next)}`;
 
 type Viewport = 'desktop' | 'tablet' | 'mobile';
 type ShowcaseMode = 'demo' | 'cms' | 'shop';
@@ -38,26 +39,26 @@ type AdminTab = {
 };
 
 const CMS_TABS: AdminTab[] = [
-  { label: 'Dashboard', href: '/demo/admin', icon: LayoutDashboard, note: 'Überblick, Status und Schnellzugriffe' },
-  { label: 'Seiten', href: '/demo/admin/pages', icon: FileText, note: 'Seiten, Sections und Live-Vorschau' },
-  { label: 'Editor', href: '/demo/admin/pages', icon: PanelLeft, note: 'Inhalte direkt im Builder pflegen' },
-  { label: 'Marke', href: '/demo/admin/brand', icon: Brush, note: 'Farben, Schriften und Logo steuern' },
-  { label: 'Medien', href: '/demo/admin/media', icon: ImageIcon, note: 'Bilder hochladen und wiederverwenden' },
-  { label: 'Navigation', href: '/demo/admin/navigation', icon: Menu, note: 'Menü, CTA und Footer zentral verwalten' },
-  { label: 'Kontakt', href: '/demo/admin/contact', icon: Contact, note: 'Adresse, Telefon und Formularfelder' },
-  { label: 'SEO', href: '/demo/admin/seo', icon: Search, note: 'Meta-Titel, Vorschau und Indexierung' },
-  { label: 'Posteingang', href: '/demo/admin/inbox', icon: Mail, note: 'Anfragen und Formulareingänge prüfen' },
+  { label: 'Dashboard', href: '/admin', icon: LayoutDashboard, note: 'Überblick, Status und Schnellzugriffe' },
+  { label: 'Seiten', href: '/admin/pages', icon: FileText, note: 'Seiten, Sections und Live-Vorschau' },
+  { label: 'Editor', href: '/admin/pages', icon: PanelLeft, note: 'Inhalte direkt im Builder pflegen' },
+  { label: 'Marke', href: '/admin/brand', icon: Brush, note: 'Farben, Schriften und Logo steuern' },
+  { label: 'Medien', href: '/admin/media', icon: ImageIcon, note: 'Bilder hochladen und wiederverwenden' },
+  { label: 'Navigation', href: '/admin/navigation', icon: Menu, note: 'Menü, CTA und Footer zentral verwalten' },
+  { label: 'Kontakt', href: '/admin/contact', icon: Contact, note: 'Adresse, Telefon und Formularfelder' },
+  { label: 'SEO', href: '/admin/seo', icon: Search, note: 'Meta-Titel, Vorschau und Indexierung' },
+  { label: 'Posteingang', href: '/admin/inbox', icon: Mail, note: 'Anfragen und Formulareingänge prüfen' },
   { label: 'Live Preview', href: `/live-preview?tenant=${PREVIEW_TENANT_ID}`, icon: Monitor, note: 'Demo-Tenant als Website-Vorschau sehen' },
 ];
 
 const SHOP_TABS: AdminTab[] = [
-  { label: 'Shop', href: '/demo/admin/shop', icon: ShoppingBag, note: 'Shop-Setup und Aktivierung' },
-  { label: 'Produkte', href: '/demo/admin/shop/products', icon: Package, note: 'Produkte, Varianten, Bilder und Bestand' },
-  { label: 'Kategorien', href: '/demo/admin/shop/categories', icon: Globe2, note: 'Sortimente und Übersichtsseiten strukturieren' },
-  { label: 'Bestellungen', href: '/demo/admin/shop/orders', icon: BarChart3, note: 'Status, Zahlung, Rechnung und Versand' },
-  { label: 'Gutscheine', href: '/demo/admin/shop/coupons', icon: ShoppingBag, note: 'Rabatte, Limits und Laufzeiten' },
-  { label: 'Versand', href: '/demo/admin/shop/shipping', icon: Rocket, note: 'Versandzonen, Preise und Lieferzeiten' },
-  { label: 'Einstellungen', href: '/demo/admin/shop/settings', icon: Settings, note: 'Zahlung, Versand und Rechnungsdaten' },
+  { label: 'Shop', href: '/admin/shop', icon: ShoppingBag, note: 'Shop-Setup und Aktivierung' },
+  { label: 'Produkte', href: '/admin/shop/products', icon: Package, note: 'Produkte, Varianten, Bilder und Bestand' },
+  { label: 'Kategorien', href: '/admin/shop/categories', icon: Globe2, note: 'Sortimente und Übersichtsseiten strukturieren' },
+  { label: 'Bestellungen', href: '/admin/shop/orders', icon: BarChart3, note: 'Status, Zahlung, Rechnung und Versand' },
+  { label: 'Gutscheine', href: '/admin/shop/coupons', icon: ShoppingBag, note: 'Rabatte, Limits und Laufzeiten' },
+  { label: 'Versand', href: '/admin/shop/shipping', icon: Rocket, note: 'Versandzonen, Preise und Lieferzeiten' },
+  { label: 'Einstellungen', href: '/admin/shop/settings', icon: Settings, note: 'Zahlung, Versand und Rechnungsdaten' },
 ];
 
 function viewportSize(viewport: Viewport) {
@@ -95,14 +96,10 @@ function AdminFrame({ src, viewport, framed = true }: { src: string; viewport: V
           <iframe
             src={src}
             title="Flamingo CMS Admin Demo"
-            className="h-full w-full border-0 pointer-events-none"
+            className="h-full w-full border-0"
             loading="lazy"
-            aria-hidden="true"
           />
         </div>
-      </div>
-      <div className="pointer-events-none absolute bottom-5 left-1/2 z-10 -translate-x-1/2 rounded-full border border-white/15 bg-black/75 px-4 py-2 text-xs font-semibold text-white shadow-2xl backdrop-blur">
-        Read-only Vorschau
       </div>
     </div>
   );
@@ -113,7 +110,7 @@ export function LiveAdminShowcase({ mode = 'cms', compact = false }: { mode?: Sh
   const tabs = mode === 'shop' ? SHOP_TABS : CMS_TABS;
   const [activeTab, setActiveTab] = useState(0);
   const active = tabs[activeTab] || tabs[0];
-  const src = `${DEMO_BASE}${active.href}`;
+  const src = active.href.startsWith('/admin') ? demoAdminUrl(active.href) : `${DEMO_BASE}${active.href}`;
 
   const copy = useMemo(() => {
     if (mode === 'shop') {
@@ -219,7 +216,7 @@ export default function DemoAdminExperience() {
   const [activeTab, setActiveTab] = useState(0);
   const tabs = CMS_TABS;
   const active = tabs[activeTab] || tabs[0];
-  const src = `${DEMO_BASE}${active.href}`;
+  const src = active.href.startsWith('/admin') ? demoAdminUrl(active.href) : `${DEMO_BASE}${active.href}`;
 
   return (
     <main className="min-h-screen bg-[#08080c] text-white">

@@ -22,6 +22,7 @@ const INDUSTRY_MAP: Record<string, string> = {
 
 export async function GET(request: NextRequest) {
   const industry = request.nextUrl.searchParams.get('industry');
+  const requestedNext = request.nextUrl.searchParams.get('next');
 
   let tenantId = DEFAULT_DEMO_TENANT_ID;
 
@@ -61,8 +62,12 @@ export async function GET(request: NextRequest) {
   }
 
   const token = await createSessionToken(tenantId);
-  const target = new URL('/admin/pages', request.nextUrl.origin);
+  const safeNext = requestedNext?.startsWith('/admin') && !requestedNext.startsWith('/admin/login')
+    ? requestedNext
+    : '/admin';
+  const target = new URL(safeNext, request.nextUrl.origin);
   target.searchParams.set('_dt', token);
+  target.searchParams.set('_demo', '1');
 
   return NextResponse.redirect(target);
 }

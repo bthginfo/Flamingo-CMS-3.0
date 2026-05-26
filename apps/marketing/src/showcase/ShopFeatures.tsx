@@ -5,6 +5,7 @@ import Seo from '@/components/Seo';
 import { LiveAdminShowcase } from './LiveAdminShowcase';
 
 const DEMO_BASE = 'https://www.demo.flamingomedia.online';
+const demoAdminUrl = (next = '/admin') => `${DEMO_BASE}/admin/demo-login?industry=handwerk&next=${encodeURIComponent(next)}`;
 
 const FEATURES = [
   {
@@ -26,7 +27,7 @@ const FEATURES = [
     title: 'Bestellungen.\nAutomatisch verwaltet.',
     description: 'Jede Bestellung erzeugt automatisch eine PDF-Rechnung. Statusänderungen, Tracking-Nummern und Storno mit Gutschrift — alles im Admin.',
     highlights: ['Automatische PDF-Rechnungen', 'Storno mit Gutschrift-PDF', 'Tracking-Nummern & Versand-E-Mails', 'Bestellhistorie pro Kunde'],
-    demoUrl: `${DEMO_BASE}/demo/admin`,
+    demoUrl: demoAdminUrl('/admin/shop/orders'),
   },
   {
     badge: 'Versand & Gutscheine',
@@ -68,7 +69,7 @@ function DesktopMockup({ demoUrl }: { demoUrl: string }) {
         {mount ? (
           <iframe
             src={demoUrl}
-            className="absolute top-0 left-0 w-[1280px] h-[800px] origin-top-left border-0 pointer-events-none"
+            className="absolute top-0 left-0 w-[1280px] h-[800px] origin-top-left border-0"
             style={{ transform: 'scale(var(--mockup-scale, 0.5))' }}
             loading="lazy"
             title="Shop Demo"

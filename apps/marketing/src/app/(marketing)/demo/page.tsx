@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import DemoPlayground from '@/showcase/DemoPlayground';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Live Demo – Flamingo CMS ausprobieren',
@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <DemoPlayground />;
+  redirect('https://www.demo.flamingomedia.online/admin/demo-login?industry=handwerk&next=/admin');
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useMemo, useState, useTransition } from 'react';
 import { Plus, Trash2, ExternalLink, Mail, Search, X } from 'lucide-react';
 import { createLead, updateLead, deleteLead, type Lead } from './actions';
 import { toast } from 'sonner';
@@ -43,6 +43,13 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
   const [form, setForm] = useState({
     company: '', email: '', status: 'offen' as LeadStatus, location: '', websiteOld: '', flamingoLink: '', contact: '', contactFirstName: '', contactLastName: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '', industry: '',
   });
+  const normalizedCompany = normalizeCompanyName(form.company);
+  const duplicateCompanyLead = useMemo(
+    () => normalizedCompany
+      ? leads.find((lead) => lead.id !== editId && normalizeCompanyName(lead.company) === normalizedCompany)
+      : undefined,
+    [editId, leads, normalizedCompany],
+  );
 
   function openNew() {
     setForm({ company: '', email: '', status: 'offen', location: '', websiteOld: '', flamingoLink: '', contact: '', contactFirstName: '', contactLastName: '', anrede: '', responsible: 'Julius', tenantId: '', adminPassword: '', industry: '' });
@@ -377,6 +384,12 @@ Flamingo Media`;
               <div className="col-span-1 sm:col-span-2">
                 <label className="text-xs font-medium text-slate-500">Firma *</label>
                 <input className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} />
+                {duplicateCompanyLead && (
+                  <p className="mt-1.5 text-xs leading-5 text-amber-700">
+                    Dieser Firmenname existiert bereits, möchtest du ihn erneut anlegen?
+                    {duplicateCompanyLead.location ? ` Bestehender Lead: ${duplicateCompanyLead.location}.` : ''}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="text-xs font-medium text-slate-500">E-Mail</label>
@@ -623,4 +636,12 @@ Flamingo Media`;
       </div>
     </div>
   );
+}
+
+function normalizeCompanyName(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[.,;:!?'"`´’‘“”()[\]{}]/g, '');
 }

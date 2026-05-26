@@ -16,6 +16,12 @@ export async function POST(req: NextRequest) {
     const paket = typeof body.paket === 'string' ? body.paket.trim().slice(0, 100) : null;
     const message = typeof body.message === 'string' ? body.message.trim().slice(0, 5000) : '';
     const source = typeof body.source === 'string' ? body.source.trim().slice(0, 100) : null;
+    const rawAddons: unknown[] = Array.isArray(body.addons) ? body.addons : [];
+    const addons = rawAddons
+          .filter((addon: unknown): addon is string => typeof addon === 'string')
+          .map((addon) => addon.trim().slice(0, 160))
+          .filter(Boolean)
+          .slice(0, 20);
 
     // Honeypot
     if (body.website) {
@@ -37,12 +43,12 @@ export async function POST(req: NextRequest) {
       email,
       branche,
       paket,
-      message: message || '(keine Nachricht)',
+      message: [message || '(keine Nachricht)', addons.length ? `Gewünschte Add-ons: ${addons.join(', ')}` : ''].filter(Boolean).join('\n\n'),
       source,
     });
 
     // Send notification email (fire-and-forget)
-    sendNotification({ name, email, branche, paket, message, source }).catch(() => {});
+    sendNotification({ name, email, branche, paket, message, source, addons }).catch(() => {});
 
     return NextResponse.json({ ok: true });
   } catch (e) {
@@ -51,7 +57,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function sendNotification(data: { name: string; email: string; branche: string | null; paket: string | null; message: string; source: string | null }) {
+async function sendNotification(data: { name: string; email: string; branche: string | null; paket: string | null; message: string; source: string | null; addons: string[] }) {
   const host = process.env.PLATFORM_SMTP_HOST;
   const user = process.env.PLATFORM_SMTP_USER;
   const pass = process.env.PLATFORM_SMTP_PASS;
@@ -70,6 +76,7 @@ async function sendNotification(data: { name: string; email: string; branche: st
     `<strong>E-Mail:</strong> ${escapeHtml(data.email)}`,
     data.branche ? `<strong>Branche:</strong> ${escapeHtml(data.branche)}` : '',
     data.paket ? `<strong>Paket:</strong> ${escapeHtml(data.paket)}` : '',
+    data.addons.length ? `<strong>Add-ons:</strong> ${escapeHtml(data.addons.join(', '))}` : '',
     `<strong>Nachricht:</strong><br>${escapeHtml(data.message).replace(/\n/g, '<br>')}`,
     data.source ? `<em>Quelle: ${escapeHtml(data.source)}</em>` : '',
   ].filter(Boolean);

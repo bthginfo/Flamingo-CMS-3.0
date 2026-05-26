@@ -32,7 +32,9 @@ export const ADDON_OPTIONS = [
   { value: 'shop-self', label: 'Shop-Addon (999 €)' },
   { value: 'shop-setup', label: 'Shop-Addon inkl. Einrichtung (1.450 €)' },
   { value: 'multilang', label: 'Mehrsprachigkeit (ab 290 €)' },
-  { value: 'reservation', label: 'Online-Reservierung (ab 390 €)' },
-  { value: 'newsletter', label: 'Newsletter-Setup (290 €)' },
-  { value: 'seo-texte', label: 'Texte & SEO (ab 490 €)' },
+  { value: 'content-reshoot', label: 'Foto-/Video-Nachshooting (890 €)' },
+  { value: 'seo-texte', label: 'SEO optimierte Texte (ab 450 €)' },
+  { value: 'crm', label: 'Eigenes CRM/Kundenverwaltung (ab 800 €)' },
+  { value: 'logo-refresh', label: 'Logo-Refresh (ab 899 €)' },
+  { value: 'custom-sections', label: 'Individuelle Sections (ab 200 €)' },
 ];

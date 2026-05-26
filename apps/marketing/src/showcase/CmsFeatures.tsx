@@ -5,6 +5,7 @@ import Seo from '@/components/Seo';
 import { LiveAdminShowcase } from './LiveAdminShowcase';
 
 const DEMO_BASE = 'https://www.demo.flamingomedia.online';
+const demoAdminUrl = (next = '/admin') => `${DEMO_BASE}/admin/demo-login?industry=handwerk&next=${encodeURIComponent(next)}`;
 
 const FEATURES = [
   {
@@ -12,42 +13,42 @@ const FEATURES = [
     title: 'Drag & Drop\nSeiten-Builder',
     description: 'Erstelle beliebig viele Seiten mit vorgefertigten Sektionen. Per Drag & Drop sortieren, ein- und ausblenden — ohne eine Zeile Code.',
     highlights: ['Über 35 Sektionstypen pro Branche', 'Drag & Drop Reihenfolge', 'Ein-/Ausblenden per Klick', 'Live-Vorschau im Editor'],
-    demoUrl: `${DEMO_BASE}/demo/admin/pages`,
+    demoUrl: demoAdminUrl('/admin/pages'),
   },
   {
     badge: 'Design-Kontrolle',
     title: 'Drei Stile.\nEin Klick.',
     description: 'Wechsle den gesamten Look deiner Website zwischen Classic, Modern und Bold — oder steuere den Stil pro Sektion im Individuell-Modus.',
     highlights: ['Classic: zeitlos & warm', 'Modern: clean & minimal', 'Bold: dynamisch & markant', 'Individuell: pro Sektion steuerbar'],
-    demoUrl: `${DEMO_BASE}/demo/admin/brand`,
+    demoUrl: demoAdminUrl('/admin/brand'),
   },
   {
     badge: 'Mediathek',
     title: 'Bilder hochladen.\nOptimiert serviert.',
     description: 'Lade Bilder direkt im Editor hoch. Automatische Komprimierung, WebP-Konvertierung und CDN-Delivery. Keine externen Tools nötig.',
     highlights: ['Drag & Drop Upload', 'Auto-Komprimierung & WebP', 'CDN mit globalem Edge-Cache', 'Bulk-Upload für Galerien'],
-    demoUrl: `${DEMO_BASE}/demo/admin/media`,
+    demoUrl: demoAdminUrl('/admin/media'),
   },
   {
     badge: 'SEO & Meta',
     title: 'SEO an\nBord.',
     description: 'Meta-Titel, Beschreibungen, Open Graph, Canonical URLs und Robots-Einstellungen — direkt im CMS. Ohne Plugin, ohne WordPress.',
     highlights: ['Meta-Tags pro Seite', 'Open Graph & Social Preview', 'Sitemap & Robots automatisch', 'Structured Data (JSON-LD)'],
-    demoUrl: `${DEMO_BASE}/demo/admin/seo`,
+    demoUrl: demoAdminUrl('/admin/seo'),
   },
   {
     badge: 'Navigation & Footer',
     title: 'Navigation.\nZentral verwaltet.',
     description: 'Menü-Items, Call-to-Action-Button, Footer-Spalten und Social-Links — alles an einem Ort konfigurierbar.',
     highlights: ['Drag & Drop Menü-Sortierung', 'CTA-Button im Header', 'Multi-Column Footer', 'Social Media Icons'],
-    demoUrl: `${DEMO_BASE}/demo/admin/navigation`,
+    demoUrl: demoAdminUrl('/admin/navigation'),
   },
   {
     badge: 'Veröffentlichung',
     title: 'Ein Klick.\nLive.',
     description: 'Arbeite im Draft-Modus und veröffentliche wenn du bereit bist. Atomares Publishing — deine Website ist nie „halb fertig".',
     highlights: ['Draft vs. Live Trennung', 'Multi-Page Publish', 'Publish-History mit Timestamps', 'Rollback jederzeit möglich'],
-    demoUrl: `${DEMO_BASE}/demo/admin`,
+    demoUrl: demoAdminUrl('/admin'),
   },
   {
     badge: 'Live-Vorschau',
@@ -83,7 +84,7 @@ function DesktopMockup({ demoUrl }: { demoUrl: string }) {
         {mount ? (
           <iframe
             src={demoUrl}
-            className="absolute top-0 left-0 w-[1280px] h-[800px] origin-top-left border-0 pointer-events-none"
+            className="absolute top-0 left-0 w-[1280px] h-[800px] origin-top-left border-0"
             style={{ transform: 'scale(var(--mockup-scale, 0.5))' }}
             loading="lazy"
             title="CMS Demo"
@@ -131,8 +132,8 @@ function SplitPanelMockup() {
         <div className="relative w-[40%] h-full border-r border-slate-200 overflow-hidden">
           {mount ? (
             <iframe
-              src={`${DEMO_BASE}/demo/admin/pages?embed=1`}
-              className="absolute top-0 left-0 w-[800px] h-[900px] origin-top-left border-0 pointer-events-none"
+              src={demoAdminUrl('/admin/pages')}
+              className="absolute top-0 left-0 w-[800px] h-[900px] origin-top-left border-0"
               style={{ transform: 'scale(var(--split-admin-scale, 0.35))' }}
               loading="lazy"
               title="CMS Admin Editor"
@@ -157,7 +158,7 @@ function SplitPanelMockup() {
           {mount ? (
             <iframe
               src={`${DEMO_BASE}/live-preview`}
-              className="absolute top-0 left-0 w-[1280px] h-[900px] origin-top-left border-0 pointer-events-none"
+              className="absolute top-0 left-0 w-[1280px] h-[900px] origin-top-left border-0"
               style={{ transform: 'scale(var(--split-preview-scale, 0.5))' }}
               loading="lazy"
               title="Live Preview"
@@ -242,7 +243,7 @@ export default function CmsFeaturesPage() {
             die sich anfühlt wie eine moderne App. Kein Bloat, keine Plugins, kein Frust.
           </p>
           <div className="flex gap-4 justify-center mt-10">
-            <a href={`${DEMO_BASE}/demo/admin`} target="_blank" rel="noopener noreferrer" className="btn-primary">
+            <a href="/demo" className="btn-primary">
               Demo testen →
             </a>
             <a href="/kontakt" className="btn-ghost">
@@ -268,7 +269,7 @@ export default function CmsFeaturesPage() {
             Teste Flamingo CMS kostenlos in der Demo. Keine Registrierung, kein Risiko.
           </p>
           <div className="flex gap-4 justify-center mt-10">
-            <a href={`${DEMO_BASE}/demo/admin`} target="_blank" rel="noopener noreferrer" className="px-8 py-4 rounded-full bg-white text-slate-900 font-bold text-sm hover:bg-slate-100 transition-colors">
+            <a href="/demo" className="px-8 py-4 rounded-full bg-white text-slate-900 font-bold text-sm hover:bg-slate-100 transition-colors">
               Jetzt Demo starten
             </a>
             <a href="/kontakt" className="px-8 py-4 rounded-full border-2 border-white/30 text-white font-bold text-sm hover:border-white/60 transition-colors">

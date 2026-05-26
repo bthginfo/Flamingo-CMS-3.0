@@ -132,6 +132,7 @@ export function ContactForm({
         payload.website = String(v);
         return;
       }
+      if (k.startsWith('addon_')) return;
       if (k.startsWith('extra__')) {
         const inner = k.slice(7);
         if (inner) extras[inner] = String(v);
@@ -139,6 +140,10 @@ export function ContactForm({
       }
       payload[k] = String(v);
     });
+    const selectedAddons = addonOptions
+      ?.filter((addon) => fd.has(`addon_${addon.value}`))
+      .map((addon) => addon.label);
+    if (selectedAddons && selectedAddons.length > 0) payload.addons = selectedAddons;
     if (Object.keys(extras).length > 0) payload.extras = extras;
     try {
       const r = await fetch('/api/contact', {
