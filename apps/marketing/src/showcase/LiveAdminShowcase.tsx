@@ -87,7 +87,7 @@ function AdminFrame({ src, viewport, framed = true, small = false }: { src: stri
   }, [size.height, size.width, viewport]);
 
   return (
-    <div ref={shellRef} className={`relative grid ${small ? 'min-h-[360px] md:min-h-[430px]' : 'min-h-[520px]'} w-full place-items-center overflow-hidden ${framed ? 'rounded-[28px] border border-white/10 bg-[#07070a] p-3 shadow-2xl shadow-black/35' : ''}`}>
+    <div ref={shellRef} className={`relative grid ${small ? 'aspect-[16/10] min-h-0' : 'min-h-[520px]'} w-full place-items-center overflow-hidden ${framed ? 'rounded-[28px] border border-white/10 bg-[#07070a] p-3 shadow-2xl shadow-black/35' : ''}`}>
       <div className="relative" style={{ width: size.width * scale, height: size.height * scale }}>
         <div
           className="absolute left-0 top-0 origin-top-left overflow-hidden rounded-[18px] bg-white shadow-2xl"
@@ -140,7 +140,7 @@ export function LiveAdminShowcase({ mode = 'cms', compact = false, showTabs = tr
   return (
     <section className={compact ? 'py-16 md:py-24' : 'py-20 md:py-28'}>
       <div className="container-x">
-        <div className={`grid gap-8 ${showTabs ? (compact ? 'lg:grid-cols-[0.72fr_1.28fr]' : 'lg:grid-cols-[0.65fr_1.35fr]') : 'lg:grid-cols-[0.78fr_1.22fr]'} lg:items-center`}>
+        <div className={`grid gap-8 ${showTabs ? (compact ? 'lg:grid-cols-[0.72fr_1.28fr]' : 'lg:grid-cols-[0.65fr_1.35fr]') : 'lg:grid-cols-[0.95fr_1.05fr]'} lg:items-center`}>
           <div className="reveal">
             <p className="eyebrow mb-5">{copy.eyebrow}</p>
             <h2 className={compact ? 'headline-md' : 'headline-lg'}>{copy.title}</h2>
@@ -176,33 +176,44 @@ export function LiveAdminShowcase({ mode = 'cms', compact = false, showTabs = tr
             </a>
           </div>
 
-          <div className="reveal">
-            <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-[#0b0b10] shadow-2xl shadow-slate-950/25">
-              <div className="flex flex-col gap-3 border-b border-white/10 bg-[#111119] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex min-w-0 items-center gap-3">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-sm font-black text-slate-950">F</span>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-white">Flamingo CMS Admin</p>
-                    <p className="truncate text-xs text-white/45">{active.note}</p>
+          <div className={`reveal ${smallPreview ? 'mx-auto w-full max-w-[520px]' : ''}`}>
+            <div className={`overflow-hidden border border-slate-200 bg-white shadow-2xl shadow-slate-950/15 ${smallPreview ? 'rounded-2xl' : 'rounded-[32px]'}`}>
+              <div className={`${smallPreview ? 'bg-slate-900 px-4 py-2.5' : 'border-b border-white/10 bg-[#111119] px-4 py-3'} flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between`}>
+                {smallPreview ? (
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                    <span className="ml-3 text-[10px] font-mono text-slate-500">flamingo-cms.de/admin</span>
                   </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {([
-                    ['desktop', Monitor],
-                    ['tablet', Tablet],
-                    ['mobile', Smartphone],
-                  ] as const).map(([key, Icon]) => (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => setViewport(key)}
-                      className={`grid h-9 w-9 place-items-center rounded-xl transition ${viewport === key ? 'bg-white text-slate-950' : 'bg-white/5 text-white/45 hover:bg-white/10 hover:text-white'}`}
-                      aria-label={`${key} Vorschau`}
-                    >
-                      <Icon size={17} />
-                    </button>
-                  ))}
-                </div>
+                ) : (
+                  <>
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-sm font-black text-slate-950">F</span>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-white">Flamingo CMS Admin</p>
+                        <p className="truncate text-xs text-white/45">{active.note}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {([
+                        ['desktop', Monitor],
+                        ['tablet', Tablet],
+                        ['mobile', Smartphone],
+                      ] as const).map(([key, Icon]) => (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => setViewport(key)}
+                          className={`grid h-9 w-9 place-items-center rounded-xl transition ${viewport === key ? 'bg-white text-slate-950' : 'bg-white/5 text-white/45 hover:bg-white/10 hover:text-white'}`}
+                          aria-label={`${key} Vorschau`}
+                        >
+                          <Icon size={17} />
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
               <AdminFrame src={src} viewport={viewport} framed={false} small={smallPreview} />
             </div>
