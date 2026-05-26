@@ -169,6 +169,13 @@ function main() {
     'spotlightCards',
     'scrollStory',
     'premiumComparison',
+    'immersiveCtaBanner',
+    'proofWall',
+    'editorialFeatureRail',
+    'offerCampaignStrip',
+    'beforeAfterStoryPro',
+    'signatureGrid',
+    'comparisonCardsPro',
   ];
 
   const result = {

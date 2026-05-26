@@ -10,6 +10,12 @@ export default async function BrandPage() {
     <div>
       <h1 className="text-2xl font-bold mb-1">Marke & Design</h1>
       <p className="text-zinc-500 text-sm mb-8">Firmenname, Slogan, Farbschema und Stil Ihrer Website.</p>
+      <div className="mb-6 rounded-xl border border-blue-100 bg-blue-50/80 p-4 text-sm text-blue-900">
+        <p className="font-semibold">Globale Farben sind die Basis, einzelne Sektionen können gezielt abweichen.</p>
+        <p className="mt-1 text-blue-800">
+          Die Einstellungen hier steuern das grundsätzliche Erscheinungsbild der Website. Wenn eine bestimmte Sektion stärker hervorstechen soll, können Sie im Seiten-Editor direkt an der jeweiligen Sektion eigene Farben festlegen, etwa für Hintergrund, Überschriften, Buttons oder Akzente.
+        </p>
+      </div>
       <StyleSwitcher industry={tenantInfo.industry} activeStyle={tenantInfo.activeStyle} />
       <BrandForm initial={brand} />
       <BackgroundForm initial={design} />

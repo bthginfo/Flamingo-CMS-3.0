@@ -191,6 +191,13 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   spotlightCards:    ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText'],
   scrollStory:       ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor', 'dividerColor'],
   premiumComparison: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText'],
+  immersiveCtaBanner:['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
+  proofWall:         ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText'],
+  editorialFeatureRail:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'borderColor', 'btnBg', 'btnText'],
+  offerCampaignStrip:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
+  beforeAfterStoryPro:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
+  signatureGrid:     ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText'],
+  comparisonCardsPro:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
 };
 
 function getFieldsForSection(sectionType: string): ColorFieldKey[] {

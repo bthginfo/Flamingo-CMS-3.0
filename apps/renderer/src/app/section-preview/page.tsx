@@ -16,7 +16,7 @@ const FULL_BLEED_TYPES = new Set([
   'roomShowcase', 'wellness', 'ambience', 'signatureDishes',
   'portfolioGallery', 'bentoGrid', 'locationVibe',
   'horizontalScrollShowcase', 'verticalTimeline', 'beforeAfterSlider',
-  'cinematicHero',
+  'cinematicHero', 'immersiveCtaBanner', 'editorialFeatureRail', 'offerCampaignStrip',
 ]);
 
 export default async function SectionPreviewPage({ searchParams }: { searchParams: Promise<{ type?: string; industry?: string; style?: string }> }) {

@@ -436,6 +436,13 @@ function getSectionSchemas(industry: string): Record<string, object> {
     spotlightCards: { fields: { badge: 'string?', headline: 'string', subline: 'string?', cards: '{ title: string, text?: string, icon?: lucide-icon-name, image?: url, href?: string }[]' } },
     scrollStory: { fields: { headline: 'string', subline: 'string?', steps: '{ kicker?: string, title: string, text?: string, image?: url }[]' } },
     premiumComparison: { fields: { badge: 'string?', headline: 'string', subline: 'string?', columns: '{ label: string, note?: string }[]', rows: '{ feature: string, values: (string|boolean)[] }[]', highlightCol: 'number?' } },
+    immersiveCtaBanner: { fields: { badge: 'string?', headline: 'string', subline: 'string?', image: 'url?', overlay: 'rgba()?', primaryCta: '{ label: string, href: string }?', secondaryCta: '{ label: string, href: string }?', metrics: '{ value: string, label: string }[]?' } },
+    proofWall: { fields: { badge: 'string?', headline: 'string', subline: 'string?', proofs: '{ value?: string, label: string, note?: string }[]?', reviews: '{ quote: string, name: string, context?: string, rating?: number }[]?', logos: '{ name: string, image?: url }[]?' } },
+    editorialFeatureRail: { fields: { badge: 'string?', headline: 'string', subline: 'string?', items: '{ kicker?: string, title: string, text?: string, image?: url, ctaLabel?: string, ctaHref?: string }[]' } },
+    offerCampaignStrip: { fields: { badge: 'string?', headline: 'string', subline: 'string?', image: 'url?', offerLabel: 'string?', deadline: 'string?', benefits: 'string[]?', cta: '{ label: string, href: string }?' } },
+    beforeAfterStoryPro: { fields: { badge: 'string?', headline: 'string', problem: 'string?', solution: 'string?', result: 'string?', beforeImage: 'url?', afterImage: 'url?', points: '{ value?: string, label: string }[]?', cta: '{ label: string, href: string }?' } },
+    signatureGrid: { fields: { badge: 'string?', headline: 'string', subline: 'string?', image: 'url?', traits: '{ title: string, text?: string, icon?: lucide-icon-name }[]?', stats: '{ value: string, label: string }[]?' } },
+    comparisonCardsPro: { fields: { badge: 'string?', headline: 'string', subline: 'string?', plans: '{ name: string, price?: string, note?: string, highlighted?: boolean, features?: string[], missing?: string[], ctaLabel?: string, ctaHref?: string }[]' } },
   };
 
   if (industry === 'wedding') {

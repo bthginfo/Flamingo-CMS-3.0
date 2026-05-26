@@ -18,6 +18,7 @@ export default function CrmLayout({ children }: { children: React.ReactNode }) {
             <Link href="/crm" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition-all font-medium">Dashboard</Link>
             <Link href="/crm/tenants" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition-all font-medium">Tenants</Link>
             <Link href="/crm/leads" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition-all font-medium">Leads</Link>
+            <Link href="/crm/kunden" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition-all font-medium">Kunden</Link>
             <Link href="/crm/auswertung" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition-all font-medium">Auswertung</Link>
             <Link href="/crm/anfragen" className="text-slate-500 hover:text-slate-900 hover:bg-slate-100 px-3 py-1.5 rounded-lg transition-all font-medium">Anfragen</Link>
           </nav>
