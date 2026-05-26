@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import Link from 'next/link';
 import { Marquee, ScrollProgress, useReveal } from '@/components/fx';
 import { ConsentProvider } from '@/lib/consent';
 import { CookieBanner } from '@/components/CookieBanner';
@@ -52,6 +51,20 @@ const NAV = [
   { href: '/ueber-uns', label: 'Über uns' },
   { href: '/kontakt', label: 'Kontakt' },
 ];
+
+function MarketingAnchor({
+  href,
+  children,
+  className,
+  onClick,
+  ...props
+}: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) {
+  return (
+    <a href={href} className={className} onClick={onClick} {...props}>
+      {children}
+    </a>
+  );
+}
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   const [scrolled, setScrolled] = useState(false);
@@ -115,16 +128,16 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
           }`}
         >
           <div className="container-x flex items-center justify-between py-3">
-            <Link href="/" className="flex items-center leading-none group" aria-label={AGENCY.fullName}>
+            <MarketingAnchor href="/" className="flex items-center leading-none group" aria-label={AGENCY.fullName}>
               <img
                 src={AGENCY.logoFullBesideSrc}
                 alt={AGENCY.name}
                 className="h-9 md:h-10 w-auto transition-transform group-hover:scale-[1.03]"
               />
-            </Link>
+            </MarketingAnchor>
             <nav className="hidden lg:flex items-center gap-0.5">
               {NAV.map((n) => (
-                <Link
+                <MarketingAnchor
                   key={n.href}
                   href={n.href}
                   className={`px-3 py-1.5 text-[13px] font-medium rounded-full transition-colors ${
@@ -132,15 +145,15 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                   }`}
                 >
                   {n.label}
-                </Link>
+                </MarketingAnchor>
               ))}
               <span className="w-px h-5 bg-white/20 mx-2" />
-              <Link href="/kontakt" className="btn-accent !py-1.5 !px-4 text-[13px]">
+              <MarketingAnchor href="/kontakt" className="btn-accent !py-1.5 !px-4 text-[13px]">
                 Beratung <span aria-hidden>→</span>
-              </Link>
-              <Link href="/demo" className="ml-1.5 rounded-full border border-white/30 px-4 py-1.5 text-[13px] font-medium text-white transition hover:bg-white/10">
+              </MarketingAnchor>
+              <MarketingAnchor href="/demo" className="ml-1.5 rounded-full border border-white/30 px-4 py-1.5 text-[13px] font-medium text-white transition hover:bg-white/10">
                 Demo
-              </Link>
+              </MarketingAnchor>
             </nav>
             <button
               onClick={() => setMobile(true)}
@@ -168,22 +181,22 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             </div>
             <nav className="container-x flex flex-col gap-0.5 mt-6">
               {NAV.map((n) => (
-                <Link
+                <MarketingAnchor
                   key={n.href}
                   href={n.href}
                   onClick={() => setMobile(false)}
                   className="py-3 text-2xl font-display border-b border-line transition-transform hover:translate-x-2 text-slate-800"
                 >
                   {n.label}
-                </Link>
+                </MarketingAnchor>
               ))}
               <div className="flex items-center gap-3 mt-8">
-                <Link href="/kontakt" onClick={() => setMobile(false)} className="btn-accent">
+                <MarketingAnchor href="/kontakt" onClick={() => setMobile(false)} className="btn-accent">
                   Beratung anfragen <span aria-hidden>→</span>
-                </Link>
-                <Link href="/demo" onClick={() => setMobile(false)} className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-800 transition hover:bg-slate-100">
+                </MarketingAnchor>
+                <MarketingAnchor href="/demo" onClick={() => setMobile(false)} className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-800 transition hover:bg-slate-100">
                   Demo
-                </Link>
+                </MarketingAnchor>
               </div>
             </nav>
           </div>
@@ -215,11 +228,11 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               <div>
                 <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Angebot</p>
                 <ul className="space-y-2">
-                  <li><Link href="/templates" className="hover:text-accent">Templates</Link></li>
-                  <li><Link href="/prozess" className="hover:text-accent">Ablauf</Link></li>
-                  <li><Link href="/preise" className="hover:text-accent">Preise</Link></li>
-                  <li><Link href="/ueber-uns" className="hover:text-accent">Über uns</Link></li>
-                  <li><Link href="/kontakt" className="hover:text-accent">Kontakt</Link></li>
+                  <li><MarketingAnchor href="/templates" className="hover:text-accent">Templates</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/prozess" className="hover:text-accent">Ablauf</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/preise" className="hover:text-accent">Preise</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/ueber-uns" className="hover:text-accent">Über uns</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/kontakt" className="hover:text-accent">Kontakt</MarketingAnchor></li>
                 </ul>
               </div>
               <div>
@@ -249,9 +262,9 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               <div>
                 <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Rechtliches</p>
                 <ul className="space-y-2">
-                  <li><Link href="/impressum" className="hover:text-accent">Impressum</Link></li>
-                  <li><Link href="/datenschutz" className="hover:text-accent">Datenschutz</Link></li>
-                  <li><Link href="/agb" className="hover:text-accent">AGB</Link></li>
+                  <li><MarketingAnchor href="/impressum" className="hover:text-accent">Impressum</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/datenschutz" className="hover:text-accent">Datenschutz</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/agb" className="hover:text-accent">AGB</MarketingAnchor></li>
                 </ul>
               </div>
             </div>
