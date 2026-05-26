@@ -13,14 +13,30 @@ const CATEGORY_META: Record<string, { icon: typeof FileText; color: string; desc
   'Kontakt': { icon: Mail, color: 'text-green-600 bg-green-50', description: 'Formulare & Karten' },
   'Team & Personen': { icon: Users, color: 'text-indigo-600 bg-indigo-50', description: 'Team-Mitglieder & Personen' },
   'Leistungen': { icon: Wrench, color: 'text-red-600 bg-red-50', description: 'Services, Preise & Prozesse' },
-  'Sonstiges': { icon: MoreHorizontal, color: 'text-gray-600 bg-gray-50', description: 'Branchenspezifische Sektionen' },
+  'Branchenspezifisch': { icon: MoreHorizontal, color: 'text-gray-600 bg-gray-50', description: 'Sektionen passend zur aktuellen Branche' },
+  'Premium': { icon: Star, color: 'text-fuchsia-600 bg-fuchsia-50', description: 'Visuell starke Premium-Sektionen' },
 };
 
 function getCategoryMeta(cat: string) {
   if (CATEGORY_META[cat]) return CATEGORY_META[cat];
-  // For "Andere: X" categories
-  return { icon: Layers, color: 'text-teal-600 bg-teal-50', description: 'Sektionen aus anderen Branchen' };
+  if (cat.startsWith('Andere:')) {
+    return { icon: Layers, color: 'text-teal-600 bg-teal-50', description: 'Sektionen aus anderen Branchen' };
+  }
+  return { icon: Layers, color: 'text-gray-600 bg-gray-50', description: 'Weitere Sektionen' };
 }
+
+const CATEGORY_ORDER = [
+  'Branchenspezifisch',
+  'Premium',
+  'Inhalt',
+  'Marketing',
+  'Leistungen',
+  'Medien',
+  'Social Proof',
+  'Kontakt',
+  'Team & Personen',
+  'Shop',
+];
 
 export function SectionPickerModal({ sectionTypes, onSelect, onClose, industry, styleVariant }: { sectionTypes: SectionTypeDefinition[]; onSelect: (type: string) => void; onClose: () => void; industry?: string; styleVariant?: string }) {
   const [search, setSearch] = useState('');
@@ -37,10 +53,15 @@ export function SectionPickerModal({ sectionTypes, onSelect, onClose, industry, 
   const grouped = useMemo(() => {
     const g: Record<string, SectionTypeDefinition[]> = {};
     for (const st of sectionTypes) {
-      const cat = st.category || 'Sonstiges';
+      const cat = st.category || 'Branchenspezifisch';
       (g[cat] ??= []).push(st);
     }
-    return Object.entries(g);
+    return Object.entries(g).sort(([a], [b]) => {
+      const ai = CATEGORY_ORDER.indexOf(a);
+      const bi = CATEGORY_ORDER.indexOf(b);
+      if (ai !== -1 || bi !== -1) return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+      return a.localeCompare(b, 'de');
+    });
   }, [sectionTypes]);
 
   const filtered = useMemo(() => {
