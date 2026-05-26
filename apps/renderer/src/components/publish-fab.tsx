@@ -14,9 +14,10 @@ export function PublishFab() {
   const { state: saveState, hasSaveHandler, triggerSave, reset } = useSaveState();
   const preview = usePreview();
 
-  // Page editor and collection item editor have their own FAB bars
+  // Editors with their own EditorActionBar — hide global FAB
   if (/^\/admin\/pages\/[^/]+$/.test(pathname)) return null;
   if (/^\/admin\/collections\/[^/]+\/[^/]+$/.test(pathname)) return null;
+  if (/^\/admin\/shop\/products\/[^/]+$/.test(pathname)) return null;
 
   async function handlePublish() {
     setPublishing(true);
