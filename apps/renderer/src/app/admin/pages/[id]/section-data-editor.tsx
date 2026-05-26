@@ -2871,14 +2871,29 @@ function SignatureGridEditor({ data, onChange }: EditorProps) {
   );
 }
 
+type ComparisonCardsProPlanEditor = {
+  name: string;
+  price: string;
+  note: string;
+  highlighted: boolean;
+  featuresText: string;
+  missingText: string;
+  ctaLabel: string;
+  ctaHref: string;
+};
+
+function linesToList(value: string): string[] {
+  return value.split('\n').map((line: string) => line.trim()).filter(Boolean);
+}
+
 function ComparisonCardsProEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({
     badge: (data.badge as string) || '',
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
-    plans: ((data.plans as any[]) || []).map(item => ({ name: item.name || '', price: item.price || '', note: item.note || '', highlighted: Boolean(item.highlighted), featuresText: Array.isArray(item.features) ? item.features.join('\n') : '', missingText: Array.isArray(item.missing) ? item.missing.join('\n') : '', ctaLabel: item.ctaLabel || '', ctaHref: item.ctaHref || '' })),
+    plans: ((data.plans as any[]) || []).map((item): ComparisonCardsProPlanEditor => ({ name: item.name || '', price: item.price || '', note: item.note || '', highlighted: Boolean(item.highlighted), featuresText: Array.isArray(item.features) ? item.features.join('\n') : '', missingText: Array.isArray(item.missing) ? item.missing.join('\n') : '', ctaLabel: item.ctaLabel || '', ctaHref: item.ctaHref || '' })),
   });
-  useReport({ ...d, plans: d.plans.map(plan => ({ name: plan.name, price: plan.price, note: plan.note, highlighted: plan.highlighted, features: plan.featuresText.split('\n').map(v => v.trim()).filter(Boolean), missing: plan.missingText.split('\n').map(v => v.trim()).filter(Boolean), ctaLabel: plan.ctaLabel, ctaHref: plan.ctaHref })) }, onChange);
+  useReport({ ...d, plans: d.plans.map((plan: ComparisonCardsProPlanEditor) => ({ name: plan.name, price: plan.price, note: plan.note, highlighted: plan.highlighted, features: linesToList(plan.featuresText), missing: linesToList(plan.missingText), ctaLabel: plan.ctaLabel, ctaHref: plan.ctaHref })) }, onChange);
   return (
     <div className="space-y-4">
       <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
