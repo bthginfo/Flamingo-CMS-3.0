@@ -4,18 +4,23 @@ import { getDb } from '@/lib/db';
 import { pages, tenantAddons } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
+import { ensureShopPages } from '@/app/admin/shop/actions';
 
 export async function GET(req: NextRequest) {
   const auth = await validatePat(req.headers.get('authorization'));
   if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const db = getDb();
-  const tenantPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title }).from(pages).where(eq(pages.tenantId, auth.tenantId));
 
   // Check shop addon status
   const [shopAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
     .where(and(eq(tenantAddons.tenantId, auth.tenantId), eq(tenantAddons.addonKey, 'shop')));
   const hasShop = shopAddon?.active === true;
+
+  // Ensure shop pages exist when shop is active
+  if (hasShop) await ensureShopPages(auth.tenantId);
+
+  const tenantPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title }).from(pages).where(eq(pages.tenantId, auth.tenantId));
 
   const sectionTypes = getSectionTypesForIndustry(auth.tenant.industry);
   // Exclude HTML-Block (freeHtml) from AI usage

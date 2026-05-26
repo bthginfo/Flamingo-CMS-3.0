@@ -34,6 +34,25 @@ export async function ensureDefaultPages() {
       await db.insert(pages).values({ tenantId: session.tenantId, title: d.title, slug: d.slug, type: 'free', status: 'draft', visible: true, sortOrder: 99 });
     }
   }
+
+  // Auto-create shop pages if shop addon is active
+  const [shopAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'shop')))
+    .limit(1);
+  if (shopAddon?.active) {
+    for (const def of SHOP_PAGE_DEFS) {
+      if (!slugs.has(def.slug)) {
+        const [page] = await db.insert(pages).values({
+          tenantId: session.tenantId, title: def.title, slug: def.slug, type: 'system', status: 'published', visible: true, sortOrder: def.sortOrder,
+        }).returning({ id: pages.id });
+        for (const section of def.sections) {
+          await db.insert(pageSections).values({
+            tenantId: session.tenantId, pageId: page.id, type: section.type, data: section.data, sortOrder: 0, locked: true, titleInternal: `[Shop] ${def.title}`,
+          });
+        }
+      }
+    }
+  }
 }
 
 export async function createPageAction(formData: FormData) {

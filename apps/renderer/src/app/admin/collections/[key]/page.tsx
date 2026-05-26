@@ -4,8 +4,9 @@ import { CollectionItemsList } from './items-list';
 
 export default async function CollectionDetailPage({ params }: { params: Promise<{ key: string }> }) {
   const { key } = await params;
-  const collection = await getCollectionByKeyAction(key);
-  if (!collection) notFound();
+  const collectionResult = await getCollectionByKeyAction(key);
+  if (!collectionResult) notFound();
+  const collection = collectionResult;
   const items = await getItemsAction(collection.id);
 
   async function createAction(formData: FormData) {
