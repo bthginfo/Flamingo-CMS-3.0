@@ -2730,6 +2730,193 @@ function PremiumComparisonEditor({ data, onChange }: EditorProps) {
   );
 }
 
+function ImmersiveCtaBannerEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    image: (data.image as string) || '',
+    overlay: (data.overlay as string) || 'rgba(0,0,0,0.62)',
+    primaryCta: (data.primaryCta as { label: string; href: string }) || { label: '', href: '' },
+    secondaryCta: (data.secondaryCta as { label: string; href: string }) || { label: '', href: '' },
+    metrics: ((data.metrics as any[]) || []).map(item => ({ value: item.value || '', label: item.label || '' })),
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-4">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <ImageUploadField label="Hintergrundbild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <Field label="Overlay" value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} placeholder="rgba(0,0,0,0.62)" />
+      <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
+      <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
+      <SimplePairs title="Kennzahlen" items={d.metrics} onAdd={() => setD({ ...d, metrics: [...d.metrics, { value: '', label: '' }] })} onRemove={(i) => setD({ ...d, metrics: d.metrics.filter((_, idx) => idx !== i) })} onChange={(i, next) => setD({ ...d, metrics: d.metrics.map((item, idx) => idx === i ? next : item) })} firstLabel="Wert" secondLabel="Label" />
+    </div>
+  );
+}
+
+function ProofWallEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    proofs: ((data.proofs as any[]) || []).map(item => ({ value: item.value || '', label: item.label || '', note: item.note || '' })),
+    reviews: ((data.reviews as any[]) || []).map(item => ({ quote: item.quote || '', name: item.name || '', context: item.context || '', rating: String(item.rating || 5) })),
+    logos: ((data.logos as any[]) || []).map(item => ({ name: item.name || '', image: item.image || '' })),
+  });
+  useReport({ ...d, reviews: d.reviews.map(review => ({ ...review, rating: Number(review.rating) || 5 })) }, onChange);
+  return (
+    <div className="space-y-4">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <ProofList title="Proofs" items={d.proofs} onChange={(items) => setD({ ...d, proofs: items })} />
+      <ReviewList title="Bewertungen" items={d.reviews} onChange={(items) => setD({ ...d, reviews: items })} />
+      <LogoList title="Logos/Zertifikate" items={d.logos} onChange={(items) => setD({ ...d, logos: items })} />
+    </div>
+  );
+}
+
+function EditorialFeatureRailEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    items: ((data.items as any[]) || []).map(item => ({ kicker: item.kicker || '', title: item.title || '', text: item.text || '', image: item.image || '', ctaLabel: item.ctaLabel || '', ctaHref: item.ctaHref || '' })),
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-4">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <RailItems items={d.items} onChange={(items) => setD({ ...d, items })} />
+    </div>
+  );
+}
+
+function OfferCampaignStripEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    image: (data.image as string) || '',
+    offerLabel: (data.offerLabel as string) || '',
+    deadline: (data.deadline as string) || '',
+    benefitsText: Array.isArray(data.benefits) ? (data.benefits as string[]).join('\n') : '',
+    cta: (data.cta as { label: string; href: string }) || { label: '', href: '' },
+  });
+  useReport({ ...d, benefits: d.benefitsText.split('\n').map(v => v.trim()).filter(Boolean), benefitsText: undefined }, onChange);
+  return (
+    <div className="space-y-4">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <div className="grid grid-cols-2 gap-3"><Field label="Angebotslabel" value={d.offerLabel} onChange={(v) => setD({ ...d, offerLabel: v })} /><Field label="Deadline" value={d.deadline} onChange={(v) => setD({ ...d, deadline: v })} /></div>
+      <Field label="Benefits (eine Zeile pro Punkt)" value={d.benefitsText} onChange={(v) => setD({ ...d, benefitsText: v })} multiline />
+      <ButtonField label="CTA" value={d.cta} onChange={(v) => setD({ ...d, cta: v })} />
+    </div>
+  );
+}
+
+function BeforeAfterStoryProEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    problem: (data.problem as string) || '',
+    solution: (data.solution as string) || '',
+    result: (data.result as string) || '',
+    beforeImage: (data.beforeImage as string) || '',
+    afterImage: (data.afterImage as string) || '',
+    cta: (data.cta as { label: string; href: string }) || { label: '', href: '' },
+    points: ((data.points as any[]) || []).map(item => ({ value: item.value || '', label: item.label || '' })),
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-4">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Ausgangslage" value={d.problem} onChange={(v) => setD({ ...d, problem: v })} multiline />
+      <Field label="Lösung" value={d.solution} onChange={(v) => setD({ ...d, solution: v })} multiline />
+      <Field label="Ergebnis" value={d.result} onChange={(v) => setD({ ...d, result: v })} multiline />
+      <ImageUploadField label="Vorher-Bild" value={d.beforeImage} onChange={(v) => setD({ ...d, beforeImage: v })} />
+      <ImageUploadField label="Nachher-Bild" value={d.afterImage} onChange={(v) => setD({ ...d, afterImage: v })} />
+      <ButtonField label="CTA" value={d.cta} onChange={(v) => setD({ ...d, cta: v })} />
+      <SimplePairs title="Ergebnis-Kennzahlen" items={d.points} onAdd={() => setD({ ...d, points: [...d.points, { value: '', label: '' }] })} onRemove={(i) => setD({ ...d, points: d.points.filter((_, idx) => idx !== i) })} onChange={(i, next) => setD({ ...d, points: d.points.map((item, idx) => idx === i ? next : item) })} firstLabel="Wert" secondLabel="Label" />
+    </div>
+  );
+}
+
+function SignatureGridEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    image: (data.image as string) || '',
+    traits: ((data.traits as any[]) || []).map(item => ({ title: item.title || '', text: item.text || '', icon: item.icon || '' })),
+    stats: ((data.stats as any[]) || []).map(item => ({ value: item.value || '', label: item.label || '' })),
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-4">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <ImageUploadField label="Signatur-Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <TraitList items={d.traits} onChange={(items) => setD({ ...d, traits: items })} />
+      <SimplePairs title="Stats" items={d.stats} onAdd={() => setD({ ...d, stats: [...d.stats, { value: '', label: '' }] })} onRemove={(i) => setD({ ...d, stats: d.stats.filter((_, idx) => idx !== i) })} onChange={(i, next) => setD({ ...d, stats: d.stats.map((item, idx) => idx === i ? next : item) })} firstLabel="Wert" secondLabel="Label" />
+    </div>
+  );
+}
+
+function ComparisonCardsProEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    plans: ((data.plans as any[]) || []).map(item => ({ name: item.name || '', price: item.price || '', note: item.note || '', highlighted: Boolean(item.highlighted), featuresText: Array.isArray(item.features) ? item.features.join('\n') : '', missingText: Array.isArray(item.missing) ? item.missing.join('\n') : '', ctaLabel: item.ctaLabel || '', ctaHref: item.ctaHref || '' })),
+  });
+  useReport({ ...d, plans: d.plans.map(plan => ({ name: plan.name, price: plan.price, note: plan.note, highlighted: plan.highlighted, features: plan.featuresText.split('\n').map(v => v.trim()).filter(Boolean), missing: plan.missingText.split('\n').map(v => v.trim()).filter(Boolean), ctaLabel: plan.ctaLabel, ctaHref: plan.ctaHref })) }, onChange);
+  return (
+    <div className="space-y-4">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <PlanList items={d.plans} onChange={(plans) => setD({ ...d, plans })} />
+    </div>
+  );
+}
+
+function SimplePairs({ title, items, onAdd, onRemove, onChange, firstLabel, secondLabel }: { title: string; items: { value: string; label: string }[]; onAdd: () => void; onRemove: (i: number) => void; onChange: (i: number, item: { value: string; label: string }) => void; firstLabel: string; secondLabel: string }) {
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3"><button type="button" onClick={() => onRemove(i)} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-2 gap-2"><Field label={firstLabel} value={item.value} onChange={(v) => onChange(i, { ...item, value: v })} /><Field label={secondLabel} value={item.label} onChange={(v) => onChange(i, { ...item, label: v })} /></div></div>)}<button type="button" onClick={onAdd} className="text-sm text-blue-600 hover:underline">+ Eintrag hinzufügen</button></div>;
+}
+
+function ProofList({ title, items, onChange }: { title: string; items: { value: string; label: string; note: string }[]; onChange: (items: { value: string; label: string; note: string }[]) => void }) {
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-2 gap-2"><Field label="Wert" value={item.value} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, value: v } : x))} /><Field label="Label" value={item.label} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, label: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /></div>)}<button type="button" onClick={() => onChange([...items, { value: '', label: '', note: '' }])} className="text-sm text-blue-600 hover:underline">+ Proof hinzufügen</button></div>;
+}
+
+function ReviewList({ title, items, onChange }: { title: string; items: { quote: string; name: string; context: string; rating: string }[]; onChange: (items: { quote: string; name: string; context: string; rating: string }[]) => void }) {
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label="Zitat" value={item.quote} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, quote: v } : x))} multiline /><div className="grid grid-cols-3 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Kontext" value={item.context} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, context: v } : x))} /><Field label="Rating" value={item.rating} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, rating: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { quote: '', name: '', context: '', rating: '5' }])} className="text-sm text-blue-600 hover:underline">+ Bewertung hinzufügen</button></div>;
+}
+
+function LogoList({ title, items, onChange }: { title: string; items: { name: string; image: string }[]; onChange: (items: { name: string; image: string }[]) => void }) {
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><ImageUploadField label="Logo optional" value={item.image} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, image: v } : x))} /></div>)}<button type="button" onClick={() => onChange([...items, { name: '', image: '' }])} className="text-sm text-blue-600 hover:underline">+ Logo hinzufügen</button></div>;
+}
+
+function RailItems({ items, onChange }: { items: { kicker: string; title: string; text: string; image: string; ctaLabel: string; ctaHref: string }[]; onChange: (items: { kicker: string; title: string; text: string; image: string; ctaLabel: string; ctaHref: string }[]) => void }) {
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Slides</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label="Kicker" value={item.kicker} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, kicker: v } : x))} /><Field label="Titel" value={item.title} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, title: v } : x))} /><Field label="Text" value={item.text} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, text: v } : x))} multiline /><ImageUploadField label="Bild" value={item.image} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, image: v } : x))} /><div className="grid grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { kicker: '', title: '', text: '', image: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Slide hinzufügen</button></div>;
+}
+
+function TraitList({ items, onChange }: { items: { title: string; text: string; icon: string }[]; onChange: (items: { title: string; text: string; icon: string }[]) => void }) {
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Merkmale</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label="Titel" value={item.title} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, title: v } : x))} /><Field label="Text" value={item.text} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, text: v } : x))} multiline /><IconPickerField label="Icon" value={item.icon} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, icon: v } : x))} /></div>)}<button type="button" onClick={() => onChange([...items, { title: '', text: '', icon: '' }])} className="text-sm text-blue-600 hover:underline">+ Merkmal hinzufügen</button></div>;
+}
+
+function PlanList({ items, onChange }: { items: { name: string; price: string; note: string; highlighted: boolean; featuresText: string; missingText: string; ctaLabel: string; ctaHref: string }[]; onChange: (items: { name: string; price: string; note: string; highlighted: boolean; featuresText: string; missingText: string; ctaLabel: string; ctaHref: string }[]) => void }) {
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Pakete</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-2 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Preis" value={item.price} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, price: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /><label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={item.highlighted} onChange={(e) => onChange(items.map((x, idx) => idx === i ? { ...x, highlighted: e.target.checked } : x))} /> Empfohlen</label><Field label="Features (eine Zeile pro Punkt)" value={item.featuresText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, featuresText: v } : x))} multiline /><Field label="Nicht enthalten (eine Zeile pro Punkt)" value={item.missingText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, missingText: v } : x))} multiline /><div className="grid grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', price: '', note: '', highlighted: false, featuresText: '', missingText: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Paket hinzufügen</button></div>;
+}
+
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
   faq: FaqEditor,
@@ -2874,4 +3061,11 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   spotlightCards: SpotlightCardsEditor,
   scrollStory: ScrollStoryEditor,
   premiumComparison: PremiumComparisonEditor,
+  immersiveCtaBanner: ImmersiveCtaBannerEditor,
+  proofWall: ProofWallEditor,
+  editorialFeatureRail: EditorialFeatureRailEditor,
+  offerCampaignStrip: OfferCampaignStripEditor,
+  beforeAfterStoryPro: BeforeAfterStoryProEditor,
+  signatureGrid: SignatureGridEditor,
+  comparisonCardsPro: ComparisonCardsProEditor,
 };

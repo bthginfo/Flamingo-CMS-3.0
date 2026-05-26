@@ -44,6 +44,13 @@ import { CinematicHeroSection } from './shared/cinematic-hero';
 import { SpotlightCardsSection } from './shared/spotlight-cards';
 import { ScrollStorySection } from './shared/scroll-story';
 import { PremiumComparisonSection } from './shared/premium-comparison';
+import { ImmersiveCtaBannerSection } from './shared/immersive-cta-banner';
+import { ProofWallSection } from './shared/proof-wall';
+import { EditorialFeatureRailSection } from './shared/editorial-feature-rail';
+import { OfferCampaignStripSection } from './shared/offer-campaign-strip';
+import { BeforeAfterStoryProSection } from './shared/before-after-story-pro';
+import { SignatureGridSection } from './shared/signature-grid';
+import { ComparisonCardsProSection } from './shared/comparison-cards-pro';
 import { CollectionListSection } from './shared/collection-list';
 import { ShopProductGridSection } from './shared/shop-product-grid';
 import { ShopProductDetailSection } from './shared/shop-product-detail';
@@ -642,6 +649,13 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   spotlightCards: SpotlightCardsSection,
   scrollStory: ScrollStorySection,
   premiumComparison: PremiumComparisonSection,
+  immersiveCtaBanner: ImmersiveCtaBannerSection,
+  proofWall: ProofWallSection,
+  editorialFeatureRail: EditorialFeatureRailSection,
+  offerCampaignStrip: OfferCampaignStripSection,
+  beforeAfterStoryPro: BeforeAfterStoryProSection,
+  signatureGrid: SignatureGridSection,
+  comparisonCardsPro: ComparisonCardsProSection,
 };
 
 // Merge ALL industry templates as ultimate fallback so foreign sections render

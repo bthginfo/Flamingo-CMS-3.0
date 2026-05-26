@@ -64,6 +64,13 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'spotlightCards', label: 'Spotlight Cards', description: 'Interaktive Premium-Karten mit Hover-Spotlight', category: 'Premium' },
   { type: 'scrollStory', label: 'Scroll Story', description: 'Sticky Storytelling-Sektion mit Progress und Bildkarten', category: 'Premium' },
   { type: 'premiumComparison', label: 'Premium-Vergleich', description: 'Hochwertige Vergleichsmatrix für Pakete, Leistungen oder Angebote', category: 'Premium' },
+  { type: 'immersiveCtaBanner', label: 'Immersive CTA Banner', description: 'Fullwidth CTA mit Bild, Parallax-Gefühl, Kennzahlen und starken CTAs', category: 'Premium' },
+  { type: 'proofWall', label: 'Proof Wall', description: 'Trust-Wand mit Bewertungen, Logos, Zertifikaten und Kennzahlen', category: 'Premium' },
+  { type: 'editorialFeatureRail', label: 'Editorial Feature Rail', description: 'Horizontale Premium-Story für Cases, Leistungen und Markenwelten', category: 'Premium' },
+  { type: 'offerCampaignStrip', label: 'Offer Campaign Strip', description: 'Kampagnenbanner mit Angebot, Bild, Benefits, Deadline und CTA', category: 'Premium' },
+  { type: 'beforeAfterStoryPro', label: 'Before/After Story Pro', description: 'Vorher/Nachher-Case mit Problem, Lösung, Ergebnis und Kennzahlen', category: 'Premium' },
+  { type: 'signatureGrid', label: 'Signature Grid', description: 'Premium-Grid mit starkem Bild, Markenmerkmalen und Proof-Daten', category: 'Premium' },
+  { type: 'comparisonCardsPro', label: 'Comparison Cards Pro', description: 'Hochwertige Paketkarten mit Empfehlung, Features und CTA', category: 'Premium' },
 ];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
