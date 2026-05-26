@@ -165,6 +165,10 @@ function main() {
     'materialGallery',
     'deliveryTimeline',
     'inspirationGrid',
+    'cinematicHero',
+    'spotlightCards',
+    'scrollStory',
+    'premiumComparison',
   ];
 
   const result = {

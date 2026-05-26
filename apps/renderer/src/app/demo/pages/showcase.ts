@@ -303,6 +303,77 @@ export const showcaseSite: DemoSite = {
               { title: 'Prozess-Timeline', text: 'Vertikale Scroll-Timeline mit animierter Progress-Linie.', icon: 'gitBranch', mediaType: 'icon' },
               { title: 'Vorher/Nachher-Slider', text: 'Draggbarer Vergleichs-Slider für zwei Bilder.', icon: 'columns', mediaType: 'icon' },
               { title: 'Horizontal-Scroll Showcase', text: 'Sticky Fullscreen-Panels die per Scroll horizontal gleiten.', icon: 'arrowRight', mediaType: 'icon' },
+              { title: 'Cinematic Hero', text: 'Fullscreen Media-Hero mit Parallax, Faktenleiste und starken CTAs.', icon: 'play', mediaType: 'icon' },
+              { title: 'Spotlight Cards', text: 'Premium-Karten mit Maus-Spotlight, Bildern, Icons und Links.', icon: 'sparkles', mediaType: 'icon' },
+              { title: 'Scroll Story', text: 'Sticky Storytelling mit Scroll-Fortschritt und visuellen Kapiteln.', icon: 'listOrdered', mediaType: 'icon' },
+              { title: 'Premium-Vergleich', text: 'Hochwertige Vergleichsmatrix für Pakete, Angebote oder Leistungen.', icon: 'columns', mediaType: 'icon' },
+            ],
+          },
+        },
+        // Live-Demo: Cinematic Hero
+        {
+          ...B, id: 'sc-cinematic-hero', type: 'cinematicHero',
+          data: {
+            eyebrow: 'Premium Section',
+            headline: 'Ein erster Eindruck, der sofort Vertrauen aufbaut.',
+            subline: 'Ein fullscreen Einstieg mit Bild, Parallax-Bewegung, klaren Handlungsoptionen und Fakten, die in wenigen Sekunden überzeugen.',
+            image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1800&q=85',
+            overlay: 'rgba(0,0,0,0.55)',
+            primaryCta: { label: 'Beratung starten', href: '#kontakt' },
+            secondaryCta: { label: 'Showcase ansehen', href: '#sections' },
+            facts: [
+              { value: '4.9/5', label: 'Bewertung' },
+              { value: '120+', label: 'Projekte' },
+              { value: '24h', label: 'Antwortzeit' },
+              { value: '100%', label: 'CMS steuerbar' },
+            ],
+          },
+        },
+        // Live-Demo: Spotlight Cards
+        {
+          ...B, id: 'sc-spotlight-cards', type: 'spotlightCards',
+          data: {
+            badge: 'Microinteraction',
+            headline: 'Leistungsargumente, die sich hochwertig anfassen.',
+            subline: 'Spotlight Cards eignen sich für Vorteile, Leistungen, Werte und Angebotsbereiche, bei denen die Nutzer schnell vergleichen sollen.',
+            cards: [
+              { title: 'Strategie', text: 'Jede Karte macht ein klares Argument sichtbar und kann direkt auf eine Detailseite führen.', icon: 'target', href: '#' },
+              { title: 'Design', text: 'Hover-Spotlight, dezente Tiefe und Bildoptionen erzeugen ein hochwertiges Gefühl ohne zu überladen.', icon: 'sparkles', href: '#' },
+              { title: 'Conversion', text: 'Ideal für Seiten, die Vertrauen, Orientierung und nächste Schritte gleichzeitig vermitteln müssen.', icon: 'mousePointerClick', href: '#' },
+            ],
+          },
+        },
+        // Live-Demo: Scroll Story
+        {
+          ...B, id: 'sc-scroll-story', type: 'scrollStory',
+          data: {
+            headline: 'Eine Geschichte, die beim Scrollen klarer wird.',
+            subline: 'Für Prozesse, Projektabläufe, Transformationen oder Markenstories mit visueller Führung und Fortschrittsindikator.',
+            steps: [
+              { kicker: '01 Analyse', title: 'Ausgangslage verstehen', text: 'Der erste Abschnitt schafft Kontext und zeigt, welches Problem gelöst wird.', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80' },
+              { kicker: '02 Konzept', title: 'Lösung greifbar machen', text: 'Der Nutzer sieht Schritt für Schritt, wie aus Beratung, Planung und Umsetzung ein klares Ergebnis wird.', image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1200&q=80' },
+              { kicker: '03 Ergebnis', title: 'Vertrauen mit Beweisen schließen', text: 'Am Ende stehen konkrete Resultate, Bilder und ein natürlicher nächster Schritt.', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200&q=80' },
+            ],
+          },
+        },
+        // Live-Demo: Premium Comparison
+        {
+          ...B, id: 'sc-premium-comparison', type: 'premiumComparison',
+          data: {
+            badge: 'Entscheidungshilfe',
+            headline: 'Pakete und Leistungen ohne Reibung vergleichbar machen.',
+            subline: 'Die Matrix hebt die empfohlene Option hervor und bleibt vollständig über das CMS pflegbar.',
+            columns: [
+              { label: 'Basis', note: 'solider Start' },
+              { label: 'Premium', note: 'empfohlen' },
+              { label: 'Enterprise', note: 'maximal flexibel' },
+            ],
+            highlightCol: 1,
+            rows: [
+              { feature: 'Strategie-Setup', values: [true, true, true] },
+              { feature: 'Individuelle Premium-Sections', values: [false, true, true] },
+              { feature: 'Persönliche Launch-Begleitung', values: [false, true, true] },
+              { feature: 'Support-Reaktionszeit', values: ['72h', '48h', '24h'] },
             ],
           },
         },

@@ -113,7 +113,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
     // Generic
     'servicePackages',
     // Premium shared
-    'beforeAfterSlider', 'horizontalScrollShowcase', 'verticalTimeline',
+    'beforeAfterSlider', 'horizontalScrollShowcase', 'verticalTimeline', 'cinematicHero',
   ]);
 
   // Full-bleed sections that have LIGHT backgrounds (don't apply data-theme="dark")

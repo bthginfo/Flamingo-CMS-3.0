@@ -2546,6 +2546,190 @@ function HorizontalScrollShowcaseEditor({ data, onChange }: EditorProps) {
   );
 }
 
+function CinematicHeroEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    eyebrow: (data.eyebrow as string) || '',
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    image: (data.image as string) || '',
+    videoUrl: (data.videoUrl as string) || '',
+    overlay: (data.overlay as string) || 'rgba(0,0,0,0.52)',
+    align: (data.align as string) || 'left',
+    primaryCta: (data.primaryCta as { label: string; href: string }) || { label: '', href: '' },
+    secondaryCta: (data.secondaryCta as { label: string; href: string }) || { label: '', href: '' },
+    facts: (((data.facts as any[]) || []) as any[]).map((fact) => ({ value: fact.value || '', label: fact.label || '' })),
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  function addFact() { setD({ ...d, facts: [...d.facts, { value: '', label: '' }] }); }
+  function removeFact(i: number) { setD({ ...d, facts: d.facts.filter((_, idx) => idx !== i) }); }
+  function updateFact(i: number, field: 'value' | 'label', value: string) {
+    setD({ ...d, facts: d.facts.map((fact, idx) => idx === i ? { ...fact, [field]: value } : fact) });
+  }
+  return (
+    <div className="space-y-4">
+      <Field label="Eyebrow / Badge" value={d.eyebrow} onChange={(v) => setD({ ...d, eyebrow: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <ImageUploadField label="Hero-Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <Field label="Video-URL optional" value={d.videoUrl} onChange={(v) => setD({ ...d, videoUrl: v })} placeholder="https://..." />
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Overlay" value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} placeholder="rgba(0,0,0,0.52)" />
+        <SelectField label="Textausrichtung" value={d.align} options={['left', 'center']} onChange={(v) => setD({ ...d, align: v })} />
+      </div>
+      <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
+      <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
+      <div className="space-y-3">
+        <div className="text-xs font-semibold text-zinc-600">Faktenleiste</div>
+        {d.facts.map((fact, i) => (
+          <div key={i} className="relative rounded-lg border p-3">
+            <button type="button" onClick={() => removeFact(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
+            <div className="grid grid-cols-2 gap-2">
+              <Field label="Wert" value={fact.value} onChange={(v) => updateFact(i, 'value', v)} />
+              <Field label="Label" value={fact.label} onChange={(v) => updateFact(i, 'label', v)} />
+            </div>
+          </div>
+        ))}
+        <button type="button" onClick={addFact} className="text-sm text-blue-600 hover:underline">+ Fakt hinzufügen</button>
+      </div>
+    </div>
+  );
+}
+
+function SpotlightCardsEditor({ data, onChange }: EditorProps) {
+  const [badge, setBadge] = useState((data.badge as string) || '');
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [cards, setCards] = useState<{ title: string; text: string; icon: string; image: string; href: string }[]>(
+    ((data.cards as any[]) || []).map((card) => ({ title: card.title || '', text: card.text || '', icon: card.icon || '', image: card.image || '', href: card.href || '' }))
+  );
+  useReport({ badge, headline, subline, cards }, onChange);
+  function addCard() { setCards([...cards, { title: '', text: '', icon: '', image: '', href: '' }]); }
+  function removeCard(i: number) { setCards(cards.filter((_, idx) => idx !== i)); }
+  function updateCard(i: number, field: string, value: string) {
+    setCards(cards.map((card, idx) => idx === i ? { ...card, [field]: value } : card));
+  }
+  return (
+    <div className="space-y-4">
+      <Field label="Badge" value={badge} onChange={setBadge} />
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      {cards.map((card, i) => (
+        <div key={i} className="relative rounded-lg border p-3 space-y-2">
+          <button type="button" onClick={() => removeCard(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
+          <Field label="Titel" value={card.title} onChange={(v) => updateCard(i, 'title', v)} />
+          <Field label="Text" value={card.text} onChange={(v) => updateCard(i, 'text', v)} multiline />
+          <IconPickerField label="Icon" value={card.icon} onChange={(v) => updateCard(i, 'icon', v)} />
+          <ImageUploadField label="Bild optional" value={card.image} onChange={(v) => updateCard(i, 'image', v)} />
+          <Field label="Link optional" value={card.href} onChange={(v) => updateCard(i, 'href', v)} />
+        </div>
+      ))}
+      <button type="button" onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Karte hinzufügen</button>
+    </div>
+  );
+}
+
+function ScrollStoryEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [steps, setSteps] = useState<{ kicker: string; title: string; text: string; image: string }[]>(
+    ((data.steps as any[]) || []).map((step) => ({ kicker: step.kicker || '', title: step.title || '', text: step.text || '', image: step.image || '' }))
+  );
+  useReport({ headline, subline, steps }, onChange);
+  function addStep() { setSteps([...steps, { kicker: '', title: '', text: '', image: '' }]); }
+  function removeStep(i: number) { setSteps(steps.filter((_, idx) => idx !== i)); }
+  function updateStep(i: number, field: string, value: string) {
+    setSteps(steps.map((step, idx) => idx === i ? { ...step, [field]: value } : step));
+  }
+  return (
+    <div className="space-y-4">
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      {steps.map((step, i) => (
+        <div key={i} className="relative rounded-lg border p-3 space-y-2">
+          <button type="button" onClick={() => removeStep(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
+          <Field label="Kicker" value={step.kicker} onChange={(v) => updateStep(i, 'kicker', v)} placeholder="01 / Analyse / Woche 1" />
+          <Field label="Titel" value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
+          <Field label="Text" value={step.text} onChange={(v) => updateStep(i, 'text', v)} multiline />
+          <ImageUploadField label="Bild" value={step.image} onChange={(v) => updateStep(i, 'image', v)} />
+        </div>
+      ))}
+      <button type="button" onClick={addStep} className="text-sm text-blue-600 hover:underline">+ Story-Schritt hinzufügen</button>
+    </div>
+  );
+}
+
+function PremiumComparisonEditor({ data, onChange }: EditorProps) {
+  const [badge, setBadge] = useState((data.badge as string) || '');
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [highlightCol, setHighlightCol] = useState(Number(data.highlightCol ?? 1));
+  const [columns, setColumns] = useState<{ label: string; note: string }[]>(
+    ((data.columns as any[]) || []).map((col) => ({ label: col.label || '', note: col.note || '' }))
+  );
+  const [rows, setRows] = useState<{ feature: string; values: string[] }[]>(
+    ((data.rows as any[]) || []).map((row) => ({ feature: row.feature || '', values: Array.isArray(row.values) ? row.values.map(String) : [] }))
+  );
+  useReport({ badge, headline, subline, columns, rows, highlightCol }, onChange);
+  function addColumn() {
+    setColumns([...columns, { label: '', note: '' }]);
+    setRows(rows.map((row) => ({ ...row, values: [...row.values, ''] })));
+  }
+  function removeColumn(i: number) {
+    setColumns(columns.filter((_, idx) => idx !== i));
+    setRows(rows.map((row) => ({ ...row, values: row.values.filter((_, idx) => idx !== i) })));
+  }
+  function updateColumn(i: number, field: string, value: string) {
+    setColumns(columns.map((col, idx) => idx === i ? { ...col, [field]: value } : col));
+  }
+  function addRow() { setRows([...rows, { feature: '', values: columns.map(() => '') }]); }
+  function removeRow(i: number) { setRows(rows.filter((_, idx) => idx !== i)); }
+  function updateRow(i: number, field: string, value: string) {
+    setRows(rows.map((row, idx) => idx === i ? { ...row, [field]: value } : row));
+  }
+  function updateValue(rowIndex: number, colIndex: number, value: string) {
+    setRows(rows.map((row, idx) => idx === rowIndex ? { ...row, values: row.values.map((current, ci) => ci === colIndex ? value : current) } : row));
+  }
+  return (
+    <div className="space-y-4">
+      <Field label="Badge" value={badge} onChange={setBadge} />
+      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      <label className="block text-sm">
+        <span className="text-gray-600 text-xs">Highlight-Spalte (0-basiert)</span>
+        <input className="admin-input mt-1 w-full" type="number" min={0} value={highlightCol} onChange={(e) => setHighlightCol(Number(e.target.value))} />
+      </label>
+      <div className="space-y-3">
+        <div className="text-xs font-semibold text-zinc-600">Spalten</div>
+        {columns.map((column, i) => (
+          <div key={i} className="relative rounded-lg border p-3">
+            <button type="button" onClick={() => removeColumn(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
+            <div className="grid grid-cols-2 gap-2">
+              <Field label="Label" value={column.label} onChange={(v) => updateColumn(i, 'label', v)} />
+              <Field label="Notiz" value={column.note} onChange={(v) => updateColumn(i, 'note', v)} />
+            </div>
+          </div>
+        ))}
+        <button type="button" onClick={addColumn} className="text-sm text-blue-600 hover:underline">+ Spalte hinzufügen</button>
+      </div>
+      <div className="space-y-3">
+        <div className="text-xs font-semibold text-zinc-600">Zeilen</div>
+        {rows.map((row, rowIndex) => (
+          <div key={rowIndex} className="relative rounded-lg border p-3 space-y-2">
+            <button type="button" onClick={() => removeRow(rowIndex)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
+            <Field label="Feature" value={row.feature} onChange={(v) => updateRow(rowIndex, 'feature', v)} />
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+              {columns.map((column, colIndex) => (
+                <Field key={colIndex} label={column.label || `Spalte ${colIndex + 1}`} value={row.values[colIndex] || ''} onChange={(v) => updateValue(rowIndex, colIndex, v)} placeholder="true, false oder Text" />
+              ))}
+            </div>
+          </div>
+        ))}
+        <button type="button" onClick={addRow} className="text-sm text-blue-600 hover:underline">+ Zeile hinzufügen</button>
+      </div>
+    </div>
+  );
+}
+
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
   faq: FaqEditor,
@@ -2686,4 +2870,8 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   weddingMenu: GenericStructuredEditor,
   weddingParty: GenericStructuredEditor,
   wellness: GenericStructuredEditor,
+  cinematicHero: CinematicHeroEditor,
+  spotlightCards: SpotlightCardsEditor,
+  scrollStory: ScrollStoryEditor,
+  premiumComparison: PremiumComparisonEditor,
 };

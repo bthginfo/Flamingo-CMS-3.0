@@ -3,6 +3,57 @@
  * Used by the section-preview route to render isolated section previews.
  */
 export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
+  cinematicHero: {
+    eyebrow: 'Premium Experience',
+    headline: 'Ein Auftritt, der sofort nach Marktführer wirkt.',
+    subline: 'Fullscreen Media, klare Conversion und hochwertige Bewegung für Marken, Projekte und Leistungen mit Anspruch.',
+    image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1800&q=85',
+    overlay: 'rgba(0,0,0,0.52)',
+    primaryCta: { label: 'Beratung starten', href: '#kontakt' },
+    secondaryCta: { label: 'Showreel ansehen', href: '#showreel' },
+    facts: [
+      { value: '4.9/5', label: 'Kundenbewertung' },
+      { value: '120+', label: 'Projekte' },
+      { value: '24h', label: 'Antwortzeit' },
+      { value: '100%', label: 'CMS steuerbar' },
+    ],
+  },
+  spotlightCards: {
+    badge: 'Warum es funktioniert',
+    headline: 'Karten mit Tiefe, Fokus und klarer Story.',
+    subline: 'Ideal für Leistungen, Vorteile, Werte oder Feature-Highlights.',
+    cards: [
+      { title: 'Strategisch', text: 'Jede Karte führt auf einen konkreten Nutzen oder nächsten Schritt.', icon: 'target' },
+      { title: 'Interaktiv', text: 'Subtile Bewegung und Hover-Spotlight schaffen Premium-Haptik.', icon: 'sparkles' },
+      { title: 'Flexibel', text: 'Bilder, Icons, Links und Texte sind vollständig CMS-gesteuert.', icon: 'slidersHorizontal' },
+    ],
+  },
+  scrollStory: {
+    headline: 'Eine Story, die beim Scrollen verkauft.',
+    subline: 'Für Prozesse, Transformationen, Projektabläufe oder Markengeschichten.',
+    steps: [
+      { kicker: 'Analyse', title: 'Ausgangslage verstehen', text: 'Wir zeigen Problem, Kontext und Ziel auf einen Blick.', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80' },
+      { kicker: 'Konzept', title: 'Lösung sichtbar machen', text: 'Jeder Scroll-Schritt macht den Mehrwert konkreter.', image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1200&q=80' },
+      { kicker: 'Launch', title: 'Ergebnis beweisen', text: 'Die Story endet mit Vertrauen, Fakten und Handlung.', image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1200&q=80' },
+    ],
+  },
+  premiumComparison: {
+    badge: 'Vergleich',
+    headline: 'Warum das Premium-Angebot gewinnt.',
+    subline: 'Eine hochwertige Matrix für Pakete, Leistungen oder Produktvarianten.',
+    columns: [
+      { label: 'Basis', note: 'solide' },
+      { label: 'Premium', note: 'empfohlen' },
+      { label: 'Enterprise', note: 'maximal' },
+    ],
+    highlightCol: 1,
+    rows: [
+      { feature: 'Strategie-Setup', values: [true, true, true] },
+      { feature: 'Individuelle Sections', values: [false, true, true] },
+      { feature: 'Priority Support', values: [false, '48h', '24h'] },
+      { feature: 'Launch-Begleitung', values: [false, true, true] },
+    ],
+  },
   hero: {
     headline: 'Willkommen bei uns',
     subline: 'Professionell, zuverlässig und mit Leidenschaft für unsere Kunden.',

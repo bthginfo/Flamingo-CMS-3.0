@@ -60,6 +60,10 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'deliveryTimeline', label: 'Liefer-/Projektablauf', description: 'Visueller Ablauf mit nummerierten Schritten', category: 'Leistungen' },
   { type: 'inspirationGrid', label: 'Inspirations-Grid', description: 'Lifestyle-Bildergalerie mit Hover-Overlay & Links', category: 'Medien' },
   { type: 'beforeAfter', label: 'Vorher/Nachher', description: 'Interaktiver Slider zum Vergleich zweier Bilder', category: 'Medien' },
+  { type: 'cinematicHero', label: 'Cinematic Hero', description: 'Fullscreen Premium-Hero mit Parallax, Media, Fakten und CTAs', category: 'Premium' },
+  { type: 'spotlightCards', label: 'Spotlight Cards', description: 'Interaktive Premium-Karten mit Hover-Spotlight', category: 'Premium' },
+  { type: 'scrollStory', label: 'Scroll Story', description: 'Sticky Storytelling-Sektion mit Progress und Bildkarten', category: 'Premium' },
+  { type: 'premiumComparison', label: 'Premium-Vergleich', description: 'Hochwertige Vergleichsmatrix für Pakete, Leistungen oder Angebote', category: 'Premium' },
 ];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [

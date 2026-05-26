@@ -40,6 +40,10 @@ import { MaterialGallerySection } from './shared/material-gallery';
 import { DeliveryTimelineSection } from './shared/delivery-timeline';
 import { InspirationGridSection } from './shared/inspiration-grid';
 import { BeforeAfterSection as SharedBeforeAfterSection } from './shared/before-after';
+import { CinematicHeroSection } from './shared/cinematic-hero';
+import { SpotlightCardsSection } from './shared/spotlight-cards';
+import { ScrollStorySection } from './shared/scroll-story';
+import { PremiumComparisonSection } from './shared/premium-comparison';
 import { CollectionListSection } from './shared/collection-list';
 import { ShopProductGridSection } from './shared/shop-product-grid';
 import { ShopProductDetailSection } from './shared/shop-product-detail';
@@ -634,6 +638,10 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   deliveryTimeline: DeliveryTimelineSection,
   inspirationGrid: InspirationGridSection,
   beforeAfter: SharedBeforeAfterSection,
+  cinematicHero: CinematicHeroSection,
+  spotlightCards: SpotlightCardsSection,
+  scrollStory: ScrollStorySection,
+  premiumComparison: PremiumComparisonSection,
 };
 
 // Merge ALL industry templates as ultimate fallback so foreign sections render

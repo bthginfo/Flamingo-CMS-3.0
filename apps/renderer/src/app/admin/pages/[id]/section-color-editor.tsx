@@ -187,6 +187,10 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   shopCart:          ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'dividerColor'],
   shopCheckout:      ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'dividerColor'],
   shopThankYou:      ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
+  cinematicHero:     ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
+  spotlightCards:    ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText'],
+  scrollStory:       ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor', 'dividerColor'],
+  premiumComparison: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText'],
 };
 
 function getFieldsForSection(sectionType: string): ColorFieldKey[] {

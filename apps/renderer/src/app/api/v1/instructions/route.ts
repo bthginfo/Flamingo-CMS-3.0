@@ -427,6 +427,10 @@ function getSectionSchemas(industry: string): Record<string, object> {
     verticalTimeline: { fields: { headline: 'string?', subline: 'string?', steps: '{ number?: string, timeLabel?: string, title: string, text?: string, checkmarks?: string[] }[]', accentColor: 'hex?', lineColor: 'hex?', bgColor: 'hex?', textColor: 'hex?' } },
     beforeAfterSlider: { fields: { headline: 'string?', subline: 'string?', slides: '{ imageBefore: url, imageAfter: url, labelBefore?: string, labelAfter?: string, caption?: string }[]', handleColor: 'hex?', bgColor: 'hex?', textColor: 'hex?', aspectRatio: '"16/9"|"4/3"|"1/1"?' } },
     horizontalScrollShowcase: { fields: { headline: 'string?', subline: 'string?', panels: '{ image: url, title: string, text?: string, ctaLabel?: string, ctaHref?: string, overlayColor?: "rgba()" }[]', bgColor: 'hex?', textColor: 'hex?', dotColor: 'hex?', panelHeight: '"full"|"compact"?' } },
+    cinematicHero: { fields: { eyebrow: 'string?', headline: 'string', subline: 'string?', image: 'url?', videoUrl: 'url?', overlay: 'rgba()?', align: '"left"|"center"?', primaryCta: '{ label: string, href: string }?', secondaryCta: '{ label: string, href: string }?', facts: '{ value: string, label: string }[]?' } },
+    spotlightCards: { fields: { badge: 'string?', headline: 'string', subline: 'string?', cards: '{ title: string, text?: string, icon?: lucide-icon-name, image?: url, href?: string }[]' } },
+    scrollStory: { fields: { headline: 'string', subline: 'string?', steps: '{ kicker?: string, title: string, text?: string, image?: url }[]' } },
+    premiumComparison: { fields: { badge: 'string?', headline: 'string', subline: 'string?', columns: '{ label: string, note?: string }[]', rows: '{ feature: string, values: (string|boolean)[] }[]', highlightCol: 'number?' } },
   };
 
   if (industry === 'wedding') {
