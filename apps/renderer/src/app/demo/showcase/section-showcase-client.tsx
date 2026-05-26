@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ExternalLink, Search } from 'lucide-react';
 
 export type ShowcaseSection = {
@@ -25,8 +25,25 @@ export function SectionShowcaseClient({ sections, categories }: { sections: Show
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('Alle');
   const [selectedType, setSelectedType] = useState(sections[0]?.type || '');
+  const previewShellRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.62);
 
   const selected = sections.find(section => section.type === selectedType) || sections[0];
+  const frameWidth = 1440;
+  const frameHeight = 900;
+
+  useEffect(() => {
+    function updateScale() {
+      const shell = previewShellRef.current;
+      if (!shell) return;
+      const rect = shell.getBoundingClientRect();
+      const next = Math.min((rect.width - 32) / frameWidth, (rect.height - 32) / frameHeight, 1);
+      setScale(Math.max(next, 0.24));
+    }
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -123,12 +140,20 @@ export function SectionShowcaseClient({ sections, categories }: { sections: Show
                   <ExternalLink size={14} />
                 </a>
               </div>
-              <iframe
-                key={`${selected.type}-${selected.industry}`}
-                title={`${selected.label} Vorschau`}
-                src={previewUrl(selected)}
-                className="h-[72vh] w-full bg-white"
-              />
+              <div ref={previewShellRef} className="flex h-[72vh] items-center justify-center overflow-hidden bg-zinc-100 p-4">
+                <div
+                  className="overflow-hidden rounded-lg bg-white shadow-xl ring-1 ring-black/10"
+                  style={{ width: frameWidth * scale, height: frameHeight * scale }}
+                >
+                  <iframe
+                    key={`${selected.type}-${selected.industry}`}
+                    title={`${selected.label} Vorschau`}
+                    src={previewUrl(selected)}
+                    className="origin-top-left border-0 bg-white"
+                    style={{ width: frameWidth, height: frameHeight, transform: `scale(${scale})` }}
+                  />
+                </div>
+              </div>
             </div>
           ) : (
             <div className="flex h-full items-center justify-center p-10 text-center text-zinc-500">Keine Section ausgewählt.</div>

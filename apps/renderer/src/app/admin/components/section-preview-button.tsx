@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Eye, X, Monitor, Smartphone } from 'lucide-react';
 
 interface SectionPreviewButtonProps {
@@ -13,8 +13,26 @@ export function SectionPreviewButton({ sectionType, industry, style = 'classic' 
   const [open, setOpen] = useState(false);
   const [viewport, setViewport] = useState<'desktop' | 'mobile'>('desktop');
   const [previewStyle, setPreviewStyle] = useState(style);
+  const frameShellRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.6);
 
   const previewUrl = `/section-preview?type=${sectionType}&industry=${industry}&style=${previewStyle}`;
+  const frameWidth = viewport === 'desktop' ? 1440 : 390;
+  const frameHeight = viewport === 'desktop' ? 900 : 844;
+
+  useEffect(() => {
+    if (!open) return;
+    function updateScale() {
+      const shell = frameShellRef.current;
+      if (!shell) return;
+      const rect = shell.getBoundingClientRect();
+      const next = Math.min((rect.width - 24) / frameWidth, (rect.height - 24) / frameHeight, 1);
+      setScale(Math.max(next, 0.24));
+    }
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, [frameHeight, frameWidth, open, viewport]);
 
   return (
     <>
@@ -66,11 +84,15 @@ export function SectionPreviewButton({ sectionType, industry, style = 'classic' 
             </div>
 
             {/* iframe */}
-            <div className="flex-1 flex items-center justify-center bg-gray-100 p-4 overflow-hidden rounded-b-xl">
-              <div className={`bg-white shadow-lg rounded-lg overflow-hidden transition-all duration-300 h-full ${viewport === 'mobile' ? 'w-[375px]' : 'w-full'}`}>
+            <div ref={frameShellRef} className="flex-1 flex items-center justify-center bg-gray-100 p-4 overflow-hidden rounded-b-xl">
+              <div
+                className="bg-white shadow-lg rounded-lg overflow-hidden transition-all duration-300 ring-1 ring-black/10"
+                style={{ width: frameWidth * scale, height: frameHeight * scale }}
+              >
                 <iframe
                   src={previewUrl}
-                  className="w-full h-full border-0"
+                  className="border-0 origin-top-left"
+                  style={{ width: frameWidth, height: frameHeight, transform: `scale(${scale})` }}
                   title={`Preview: ${sectionType}`}
                 />
               </div>

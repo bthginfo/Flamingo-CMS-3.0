@@ -35,7 +35,7 @@ export function SignatureGridSection({ data }: Props) {
           </motion.article>
         ))}
         {stats.map((stat, index) => (
-          <div key={`stat-${index}`} className="rounded-3xl bg-[var(--style-section-bg,#09090b)] p-6 text-white">
+          <div key={`stat-${index}`} className="rounded-3xl bg-[#070707] p-6 text-white">
             <div className="text-4xl font-black text-[var(--style-accent-color,#fff)]">{stat.value}</div>
             <div className="mt-2 text-sm text-white/62">{stat.label}</div>
           </div>

@@ -17,8 +17,8 @@ export function OfferCampaignStripSection({ data }: Props) {
   const cta = (data.cta as Cta) || {};
 
   return (
-    <section className="bg-[var(--style-section-bg,#111)] px-4 py-8 text-white">
-      <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl border border-white/10 bg-[var(--style-card-bg,#18181b)] shadow-2xl">
+    <section className="bg-[#070707] px-4 py-8 text-white">
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl border border-white/10 bg-[#18181b] shadow-2xl">
         <div className="grid md:grid-cols-[0.9fr_1.1fr]">
           <div className="relative min-h-[280px] overflow-hidden">
             {image ? <img src={image} alt="" className="h-full w-full object-cover" /> : <div className="h-full bg-zinc-900" />}

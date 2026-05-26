@@ -23,7 +23,7 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
   const metrics = (data.metrics as Metric[]) || [];
 
   return (
-    <section ref={ref} className="relative overflow-hidden bg-[var(--style-section-bg,#050505)] text-white">
+    <section ref={ref} className="relative overflow-hidden bg-[#050505] text-white">
       <motion.div style={{ y }} className="absolute inset-x-0 -top-10 h-[calc(100%+80px)]">
         {image ? <img src={image} alt="" className="h-full w-full object-cover" /> : <div className="h-full bg-zinc-950" />}
         <div className="absolute inset-0" style={{ background: overlay }} />

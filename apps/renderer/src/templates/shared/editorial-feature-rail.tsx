@@ -14,7 +14,7 @@ export function EditorialFeatureRailSection({ data }: Props) {
   if (!items.length) return null;
 
   return (
-    <section className="overflow-hidden bg-[var(--style-section-bg,#09090b)] py-16 text-white md:py-24">
+    <section className="overflow-hidden bg-[#070707] py-16 text-white md:py-24">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-12 max-w-3xl">
           {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--style-accent-color,var(--brand-primary,#fff))]">{badge}</div>}
