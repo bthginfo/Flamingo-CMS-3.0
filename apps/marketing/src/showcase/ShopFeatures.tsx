@@ -6,6 +6,7 @@ import { LiveAdminShowcase } from './LiveAdminShowcase';
 
 const DEMO_BASE = 'https://www.demo.flamingomedia.online';
 const demoAdminUrl = (next = '/admin') => `${DEMO_BASE}/admin/demo-login?industry=handwerk&next=${encodeURIComponent(next)}`;
+const demoEmbedUrl = (path: string) => `${DEMO_BASE}${path}?embed=1`;
 
 const FEATURES = [
   {
@@ -13,14 +14,14 @@ const FEATURES = [
     title: 'Produkte.\nKategorien.\nVarianten.',
     description: 'Lege Produkte mit Bildern, Preisen, Varianten (Größe, Farbe etc.) und Lagerbestand an. Kategorien helfen Deinen Kunden beim Stöbern.',
     highlights: ['Unbegrenzte Produkte & Kategorien', 'Varianten mit eigenen Preisen & Lager', 'Bulk-Bildupload per Drag & Drop', 'SEO-Felder pro Produkt'],
-    demoUrl: `${DEMO_BASE}/demo/shop/shop`,
+    demoUrl: demoEmbedUrl('/demo/shop/shop'),
   },
   {
     badge: 'Checkout & Zahlung',
     title: 'Stripe.\nPayPal.\nVorkasse.',
     description: 'Deine Kunden zahlen per Kreditkarte (Stripe), PayPal oder Überweisung. Du wählst, welche Methoden aktiv sind — eine, alle oder beliebige Kombination.',
     highlights: ['Stripe Checkout (Kredit- & Debitkarte)', 'PayPal mit einem Klick', 'Vorkasse mit automatischer Bankdaten-Mail', 'Abholung & Barzahlung'],
-    demoUrl: `${DEMO_BASE}/demo/shop/warenkorb`,
+    demoUrl: demoEmbedUrl('/demo/shop/warenkorb'),
   },
   {
     badge: 'Bestellungen & Rechnungen',
@@ -34,14 +35,14 @@ const FEATURES = [
     title: 'Versandzonen.\nGutscheincodes.\nAlles drin.',
     description: 'Definiere Versandzonen mit Ländern, Preisen und Frei-ab-Schwellen. Erstelle Rabattcodes (% oder Fixbetrag) mit Ablaufdatum und Nutzungslimits.',
     highlights: ['Flexible Versandzonen (Länder, Gewicht)', 'Kostenloser Versand ab X €', 'Prozent- & Fixbetrag-Gutscheine', 'Nutzungslimits & Ablaufdatum'],
-    demoUrl: `${DEMO_BASE}/demo/shop/shop`,
+    demoUrl: demoEmbedUrl('/demo/shop/shop'),
   },
   {
     badge: 'Nahtlose Integration',
     title: 'Kein externer Shop.\nAlles in Deiner Website.',
     description: 'Der Shop läuft direkt auf Deiner Flamingo-Website. Gleiches Design, gleiche Domain, gleicher Admin. Keine Weiterleitung zu Shopify oder WooCommerce.',
     highlights: ['Shop-Sections im Page-Builder platzieren', 'Gleicher Style & Branding wie die restliche Seite', 'Keine externen Accounts nötig', 'Mobile-first Design'],
-    demoUrl: `${DEMO_BASE}/demo/shop`,
+    demoUrl: demoEmbedUrl('/demo/shop'),
   },
 ];
 
