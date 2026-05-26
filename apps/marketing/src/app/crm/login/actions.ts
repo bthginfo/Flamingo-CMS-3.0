@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers';
 import { createCrmToken, getCrmCookieName } from '@/lib/session';
 
-export async function loginAction(_prev: unknown, formData: FormData): Promise<{ error?: string }> {
+export async function loginAction(_prev: unknown, formData: FormData): Promise<{ error?: string; success?: boolean }> {
   const password = formData.get('password') as string;
   if (!password) return { error: 'Passwort erforderlich' };
 
@@ -22,5 +22,5 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
     maxAge: 24 * 60 * 60,
   });
 
-  return {};
+  return { success: true };
 }

@@ -10,7 +10,7 @@ export default function CrmLoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (state && !state.error && !isPending && Object.keys(state).length === 0) {
+    if (state?.success && !isPending) {
       router.push('/crm');
     }
   }, [state, isPending, router]);
