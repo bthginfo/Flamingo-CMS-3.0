@@ -32,17 +32,20 @@ export function ShopProductGridSection({ data }: Props) {
   const columns = (data.columns as number) || 3;
   const shopBase = (data.basePath as string) || '/shop';
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<{ name: string; slug: string }[]>([]);
-  const [loading, setLoading] = useState(true);
+  const previewProducts = (data.products as Product[] | undefined) || [];
+  const previewCategories = (data.categories as { name: string; slug: string }[] | undefined) || [];
+  const [products, setProducts] = useState<Product[]>(previewProducts);
+  const [categories, setCategories] = useState<{ name: string; slug: string }[]>(previewCategories);
+  const [loading, setLoading] = useState(previewProducts.length === 0);
 
   useEffect(() => {
+    if (previewProducts.length > 0) return;
     const params = data.tenantId ? `?tenantId=${data.tenantId}` : '';
     fetch(`/api/shop/products${params}`)
       .then(r => r.json())
       .then(d => { setProducts(d.products || []); setCategories(d.categories || []); })
       .finally(() => setLoading(false));
-  }, []);
+  }, [data.tenantId, previewProducts.length]);
 
   const searchParams = useSearchParams();
   const kategorieParam = searchParams.get('kategorie');

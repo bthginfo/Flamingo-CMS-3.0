@@ -27,9 +27,11 @@ export function ShopFeaturedProductsSection({ data }: Props) {
   const count = (data.count as number) || 4;
   const columns = (data.columns as number) || 4;
   const shopBase = (data.basePath as string) || '/shop';
-  const [products, setProducts] = useState<Product[]>([]);
+  const previewProducts = (data.products as Product[] | undefined) || [];
+  const [products, setProducts] = useState<Product[]>(previewProducts.slice(0, count));
 
   useEffect(() => {
+    if (previewProducts.length > 0) return;
     let url = '/api/shop/products?limit=' + count;
     if (data.tenantId) url += '&tenantId=' + data.tenantId;
     if (mode === 'category' && categorySlug) {
@@ -41,7 +43,7 @@ export function ShopFeaturedProductsSection({ data }: Props) {
     fetch(url)
       .then(r => r.json())
       .then(d => setProducts((d.products || []).slice(0, count)));
-  }, [mode, categorySlug, count, productIds.join(',')]);
+  }, [mode, categorySlug, count, productIds.join(','), data.tenantId, previewProducts.length]);
 
   if (products.length === 0) return null;
 

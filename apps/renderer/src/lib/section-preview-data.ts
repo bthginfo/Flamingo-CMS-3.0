@@ -3,6 +3,99 @@
  * Used by the section-preview route to render isolated section previews.
  */
 export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
+  collectionList: {
+    headline: 'Aktuelle Einträge',
+    subline: 'Eine sortierbare Übersicht für News, Leistungen, Referenzen oder beliebige Collection-Inhalte.',
+    collectionBasePath: '/c/referenzen',
+    columns: 3,
+    showSortControls: true,
+    items: [
+      { title: 'Showroom-Konzept München', slug: 'showroom-konzept-muenchen', excerpt: 'Ein moderner Raum mit klarer Zonierung, hochwertigen Materialien und starker Bildsprache.', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80', date: '2026-05-10', priority: 1 },
+      { title: 'Beratung mit 3D-Planung', slug: 'beratung-mit-3d-planung', excerpt: 'Vom ersten Gespräch bis zur finalen Auswahl: strukturierter Prozess für bessere Entscheidungen.', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=900&q=80', date: '2026-04-18', priority: 2 },
+      { title: 'Materialien im Vergleich', slug: 'materialien-im-vergleich', excerpt: 'Eine kompakte Übersicht für Oberflächen, Stoffe und langlebige Produktentscheidungen.', image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=900&q=80', date: '2026-03-22', priority: 3 },
+    ],
+  },
+  shopProductGrid: {
+    headline: 'Ausgewählte Produkte',
+    columns: 3,
+    showSearch: true,
+    showCategories: true,
+    basePath: '/shop',
+    categories: [
+      { name: 'Wohnen', slug: 'wohnen' },
+      { name: 'Büro', slug: 'buero' },
+      { name: 'Accessoires', slug: 'accessoires' },
+    ],
+    products: [
+      { id: 'preview-1', title: 'Lounge Chair No. 1', slug: 'lounge-chair-no-1', priceCents: 129900, comparePriceCents: 149900, images: ['https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=900&q=80'], shortDescription: 'Skulpturaler Sessel mit Stoffbezug und Massivholzgestell.', categoryName: 'Wohnen', categorySlug: 'wohnen', status: 'active', stock: 6 },
+      { id: 'preview-2', title: 'Executive Desk', slug: 'executive-desk', priceCents: 219000, images: ['https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=900&q=80'], shortDescription: 'Reduzierter Arbeitsplatz mit Stauraum und Kabelmanagement.', categoryName: 'Büro', categorySlug: 'buero', status: 'active', stock: 3 },
+      { id: 'preview-3', title: 'Ceramic Table Light', slug: 'ceramic-table-light', priceCents: 34900, images: ['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=900&q=80'], shortDescription: 'Warme Akzentbeleuchtung für Sideboard, Nachttisch oder Empfang.', categoryName: 'Accessoires', categorySlug: 'accessoires', status: 'active', stock: 12 },
+    ],
+  },
+  shopFeaturedProducts: {
+    headline: 'Highlights der Woche',
+    count: 3,
+    columns: 3,
+    basePath: '/shop',
+    products: [
+      { id: 'featured-1', title: 'Modular Sofa', slug: 'modular-sofa', priceCents: 289000, comparePriceCents: 319000, images: ['https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=900&q=80'] },
+      { id: 'featured-2', title: 'Oak Dining Table', slug: 'oak-dining-table', priceCents: 179000, images: ['https://images.unsplash.com/photo-1615066390971-03e4e1c36ddf?w=900&q=80'] },
+      { id: 'featured-3', title: 'Soft Wool Rug', slug: 'soft-wool-rug', priceCents: 69000, images: ['https://images.unsplash.com/photo-1600166898405-da9535204843?w=900&q=80'] },
+    ],
+  },
+  shopProductDetail: {
+    basePath: '/shop',
+    _product: {
+      id: 'detail-preview',
+      title: 'Lounge Chair No. 1',
+      slug: 'lounge-chair-no-1',
+      categoryName: 'Wohnen',
+      shortDescription: 'Ein komfortabler Statement-Sessel für Wohnräume, Empfangsbereiche und ruhige Leseecken.',
+      description: 'Der Lounge Chair verbindet präzise Linien, hochwertige Polsterung und ein massives Holzgestell. Die Preview zeigt Galerie, Varianten, Preislogik, Trust-Elemente und Warenkorb-Interaktion.',
+      priceCents: 129900,
+      comparePriceCents: 149900,
+      images: [
+        'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=1000&q=85',
+        'https://images.unsplash.com/photo-1616486338812-3dadae5b4ace?w=1000&q=85',
+      ],
+      stock: 4,
+      isDigital: false,
+      highlights: ['Premium-Stoff mit hoher Scheuerbeständigkeit', 'Massivholzgestell aus zertifizierter Eiche', 'Lieferung und Montage optional buchbar'],
+      variants: [
+        { id: 'fabric-sand', name: 'Sand', stock: 4 },
+        { id: 'fabric-graphite', name: 'Graphit', priceCents: 134900, stock: 2 },
+      ],
+      variantOptions: [{ name: 'Farbe', values: ['Sand', 'Graphit'] }],
+    },
+  },
+  shopCart: {
+    headline: 'Warenkorb',
+    emptyText: 'Der Warenkorb ist in dieser Vorschau leer.',
+    continueShoppingLabel: 'Weiter einkaufen',
+    checkoutLabel: 'Zur Kasse',
+    basePath: '/shop',
+  },
+  shopCheckout: {
+    headline: 'Checkout',
+    basePath: '/demo/shop',
+  },
+  shopThankYou: {
+    headline: 'Vielen Dank für deine Bestellung!',
+    subline: 'Diese Section bestätigt den erfolgreichen Kauf und führt zurück zum Shop.',
+    continueShoppingLabel: 'Weiter einkaufen',
+  },
+  shopCategoryOverview: {
+    headline: 'Shop-Kategorien',
+    subline: 'Eine visuelle Übersicht für Sortimente, Kollektionen oder Produktwelten.',
+    columns: 3,
+    basePath: '/shop',
+    shopGridPath: '/shop',
+    categories: [
+      { id: 'cat-1', name: 'Wohnen', slug: 'wohnen', description: 'Sofas, Sessel und Wohnaccessoires.', image: 'https://images.unsplash.com/photo-1616486338812-3dadae5b4ace?w=900&q=80' },
+      { id: 'cat-2', name: 'Büro', slug: 'buero', description: 'Tische, Stühle und Stauraum für produktive Räume.', image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=80' },
+      { id: 'cat-3', name: 'Accessoires', slug: 'accessoires', description: 'Leuchten, Teppiche und Details mit Wirkung.', image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=900&q=80' },
+    ],
+  },
   cinematicHero: {
     eyebrow: 'Premium Experience',
     headline: 'Ein Auftritt, der sofort nach Marktführer wirkt.',

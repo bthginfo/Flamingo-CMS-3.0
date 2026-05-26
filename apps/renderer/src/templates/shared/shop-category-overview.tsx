@@ -15,16 +15,18 @@ export function ShopCategoryOverviewSection({ data }: Props) {
   const shopBase = (data.basePath as string) || '/shop';
   const shopGridPath = (data.shopGridPath as string) || shopBase;
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const previewCategories = (data.categories as Category[] | undefined) || [];
+  const [categories, setCategories] = useState<Category[]>(previewCategories);
+  const [loading, setLoading] = useState(previewCategories.length === 0);
 
   useEffect(() => {
+    if (previewCategories.length > 0) return;
     const params = data.tenantId ? `?tenantId=${data.tenantId}` : '';
     fetch(`/api/shop/products${params}`)
       .then(r => r.json())
       .then(d => setCategories(d.categories || []))
       .finally(() => setLoading(false));
-  }, []);
+  }, [data.tenantId, previewCategories.length]);
 
   if (loading) return <section className="py-12 text-center text-zinc-400">Kategorien werden geladen…</section>;
   if (categories.length === 0) return null;
