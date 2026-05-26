@@ -17,7 +17,7 @@ export function OfferCampaignStripSection({ data }: Props) {
   const cta = (data.cta as Cta) || {};
 
   return (
-    <section className="bg-[#070707] px-4 py-8 text-white">
+    <section data-theme="dark" className="bg-[#070707] px-4 py-8 text-[#ffffff]">
       <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl border border-white/10 bg-[#18181b] shadow-2xl">
         <div className="grid md:grid-cols-[0.9fr_1.1fr]">
           <div className="relative min-h-[280px] overflow-hidden">
@@ -27,18 +27,18 @@ export function OfferCampaignStripSection({ data }: Props) {
           </div>
           <div className="p-6 md:p-10">
             {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--style-accent-color,var(--brand-primary,#fff))]">{badge}</div>}
-            {headline && <h2 className="text-3xl font-black leading-tight text-[var(--style-heading-color,#fff)] md:text-5xl">{headline}</h2>}
-            {subline && <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--style-body-color,rgba(255,255,255,0.72))]">{subline}</p>}
+            {headline && <h2 className="text-3xl font-black leading-tight text-[#ffffff] md:text-5xl">{headline}</h2>}
+            {subline && <p className="mt-4 max-w-2xl text-base leading-7 text-[rgba(255,255,255,0.72)]">{subline}</p>}
             <div className="mt-6 grid gap-2 sm:grid-cols-2">
               {benefits.map((benefit, index) => (
-                <motion.div key={index} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.04 }} className="flex items-center gap-2 text-sm text-white/78">
+                <motion.div key={index} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.04 }} className="flex items-center gap-2 text-sm text-[rgba(255,255,255,0.78)]">
                   <Check size={16} className="text-[var(--style-accent-color,var(--brand-primary,#fff))]" />{benefit}
                 </motion.div>
               ))}
             </div>
             <div className="mt-8 flex flex-wrap items-center gap-4">
               {cta.label && <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-btn-bg,var(--brand-primary,#fff))] px-5 py-3 text-sm font-bold text-[var(--brand-btn-text,#111)]">{cta.label}<ArrowRight size={16} /></a>}
-              {deadline && <div className="text-sm text-white/58">Gültig bis {deadline}</div>}
+              {deadline && <div className="text-sm text-[rgba(255,255,255,0.58)]">Gültig bis {deadline}</div>}
             </div>
           </div>
         </div>

@@ -48,6 +48,10 @@ function paymentTotals(customers: CustomerWithPayments[]) {
   return { paid, open, overdue, mrr, payments };
 }
 
+function errorMessage(error: unknown) {
+  return error instanceof Error && error.message ? error.message : 'Die Aktion konnte nicht ausgeführt werden';
+}
+
 export function CustomersClient({ initialCustomers, leads }: { initialCustomers: CustomerWithPayments[]; leads: Lead[] }) {
   const [customers, setCustomers] = useState(initialCustomers);
   const [query, setQuery] = useState('');
@@ -87,51 +91,71 @@ export function CustomersClient({ initialCustomers, leads }: { initialCustomers:
 
   function handleCreate(form: CustomerFormState) {
     startTransition(async () => {
-      const created = await createCustomer(formToPayload(form));
-      upsertCustomer(created);
-      setShowNew(false);
-      toast.success('Kunde angelegt');
+      try {
+        const created = await createCustomer(formToPayload(form));
+        upsertCustomer(created);
+        setShowNew(false);
+        toast.success('Kunde angelegt');
+      } catch (error) {
+        toast.error(errorMessage(error));
+      }
     });
   }
 
   function handleUpdate(form: CustomerFormState) {
     if (!editing) return;
     startTransition(async () => {
-      const updated = await updateCustomer(editing.id, formToPayload(form));
-      upsertCustomer(updated);
-      setEditing(null);
-      toast.success('Kunde gespeichert');
+      try {
+        const updated = await updateCustomer(editing.id, formToPayload(form));
+        upsertCustomer(updated);
+        setEditing(null);
+        toast.success('Kunde gespeichert');
+      } catch (error) {
+        toast.error(errorMessage(error));
+      }
     });
   }
 
   function handleConvert() {
     if (!convertLeadId) return;
     startTransition(async () => {
-      const lead = openLeads.find(item => item.id === convertLeadId);
-      const customer = await convertLeadToCustomer(convertLeadId, {
-        packageName: 'Website Premium',
-        setupPriceCents: 145000,
-        hostingMonthlyCents: 4900,
-        notes: lead ? `Aus Lead umgewandelt: ${lead.company}` : undefined,
-      });
-      upsertCustomer(customer);
-      setConvertLeadId('');
-      toast.success('Lead wurde in einen Kunden umgewandelt');
+      try {
+        const lead = openLeads.find(item => item.id === convertLeadId);
+        const customer = await convertLeadToCustomer(convertLeadId, {
+          packageName: 'Website Premium',
+          setupPriceCents: 145000,
+          hostingMonthlyCents: 4900,
+          notes: lead ? `Aus Lead umgewandelt: ${lead.company}` : undefined,
+        });
+        upsertCustomer(customer);
+        setConvertLeadId('');
+        toast.success('Lead wurde in einen Kunden umgewandelt');
+      } catch (error) {
+        toast.error(errorMessage(error));
+      }
     });
   }
 
   function handleDelete(id: string) {
     if (!confirm('Kunden wirklich löschen?')) return;
     startTransition(async () => {
-      await deleteCustomer(id);
-      setCustomers(customers.filter(customer => customer.id !== id));
-      toast.success('Kunde gelöscht');
+      try {
+        await deleteCustomer(id);
+        setCustomers(customers.filter(customer => customer.id !== id));
+        toast.success('Kunde gelöscht');
+      } catch (error) {
+        toast.error(errorMessage(error));
+      }
     });
   }
 
   async function syncCustomer(id: string) {
-    const updated = await updateCustomer(id, {});
-    upsertCustomer(updated);
+    try {
+      const updated = await updateCustomer(id, {});
+      upsertCustomer(updated);
+    } catch (error) {
+      toast.error(errorMessage(error));
+    }
   }
 
   return (
@@ -400,8 +424,12 @@ function PaymentInline({ customer, onChange }: { customer: CustomerWithPayments;
             key={payment.id}
             disabled={pending}
             onClick={() => startTransition(async () => {
-              await updateCustomerPayment(payment.id, { status: payment.status === 'bezahlt' ? 'offen' : 'bezahlt' });
-              onChange();
+              try {
+                await updateCustomerPayment(payment.id, { status: payment.status === 'bezahlt' ? 'offen' : 'bezahlt' });
+                onChange();
+              } catch (error) {
+                toast.error(errorMessage(error));
+              }
             })}
             className={`rounded-full px-2 py-1 text-[11px] font-medium ${PAYMENT_COLORS[payment.status]}`}
             title="Status zwischen offen und bezahlt wechseln"
@@ -414,10 +442,14 @@ function PaymentInline({ customer, onChange }: { customer: CustomerWithPayments;
         <input value={title} onChange={event => setTitle(event.target.value)} placeholder="Zahlung" className="min-w-0 rounded-md border border-slate-200 px-2 py-1 text-xs" />
         <input value={amount} onChange={event => setAmount(event.target.value)} placeholder="€" className="min-w-0 rounded-md border border-slate-200 px-2 py-1 text-xs" />
         <button disabled={pending || !title.trim() || !amount.trim()} onClick={() => startTransition(async () => {
-          await addCustomerPayment({ customerId: customer.id, title, amountCents: toCents(amount), status: 'offen', type: 'custom' });
-          setTitle('');
-          setAmount('');
-          onChange();
+          try {
+            await addCustomerPayment({ customerId: customer.id, title, amountCents: toCents(amount), status: 'offen', type: 'custom' });
+            setTitle('');
+            setAmount('');
+            onChange();
+          } catch (error) {
+            toast.error(errorMessage(error));
+          }
         })} className="rounded-md bg-slate-900 px-2 py-1 text-xs text-white disabled:opacity-40">+</button>
       </div>
     </div>
