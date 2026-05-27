@@ -36,6 +36,7 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten', category: 'Inhalt' },
   { type: 'servicePackages', label: 'Pakete & Preise', description: 'Leistungspakete mit Features und Preisen', category: 'Leistungen' },
   { type: 'noticeBanner', label: 'Hinweisbanner', description: 'Auffälliges Banner für wichtige Hinweise (Urlaub, Aktionen etc.)', category: 'Marketing' },
+  { type: 'popup', label: 'Popup', description: 'Zeitgesteuertes Modal mit Overlay, Text und bis zu zwei Buttons', category: 'Marketing' },
   { type: 'comparisonTable', label: 'Vergleichstabelle', description: 'Pakete/Optionen im Vergleich darstellen', category: 'Marketing' },
   { type: 'socialProofBar', label: 'Social-Proof-Leiste', description: 'Kennzahlen, Bewertungen & Partner kompakt', category: 'Social Proof' },
   { type: 'timeline', label: 'Zeitleiste', description: 'Chronologischer Verlauf (Geschichte, Meilensteine)', category: 'Inhalt' },

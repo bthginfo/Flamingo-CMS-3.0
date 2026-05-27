@@ -52,6 +52,7 @@ import { BeforeAfterStoryProSection } from './shared/before-after-story-pro';
 import { SignatureGridSection } from './shared/signature-grid';
 import { ComparisonCardsProSection } from './shared/comparison-cards-pro';
 import { AdditionalLocationsSection } from './shared/additional-locations';
+import { PopupSection } from './shared/popup';
 import { TemplateAdvantageSection } from './shared/template-advantage';
 import { PrinciplesGridSection } from './shared/principles-grid';
 import { GlowHeroSection } from './shared/glow-hero';
@@ -733,6 +734,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   signatureGrid: SignatureGridSection,
   comparisonCardsPro: ComparisonCardsProSection,
   additionalLocations: AdditionalLocationsSection,
+  popup: PopupSection,
   templateAdvantage: TemplateAdvantageSection,
   principlesGrid: PrinciplesGridSection,
   glowHero: GlowHeroSection,

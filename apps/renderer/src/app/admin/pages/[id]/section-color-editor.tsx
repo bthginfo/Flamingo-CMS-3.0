@@ -79,6 +79,7 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   videoEmbed:        ['sectionBg', 'headingColor', 'subheadingColor'],
   embed:             ['sectionBg'],
   noticeBanner:      ['sectionBg', 'headingColor', 'bodyColor', 'iconColor', 'btnBg', 'btnText'],
+  popup:             ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'borderColor'],
   collectionHero:    ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'badgeBg', 'badgeText'],
   collectionList:    ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
   ctaLinks:          ['sectionBg', 'headingColor', 'accentColor'],

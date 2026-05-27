@@ -115,11 +115,11 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
     // Premium shared
     'beforeAfterSlider', 'horizontalScrollShowcase', 'verticalTimeline', 'cinematicHero',
     'immersiveCtaBanner', 'editorialFeatureRail', 'offerCampaignStrip',
-    'glowHero', 'floristHero', 'fitnessHero', 'locationHero',
+    'glowHero', 'floristHero', 'fitnessHero', 'locationHero', 'popup',
   ]);
 
   // Full-bleed sections that have LIGHT backgrounds (don't apply data-theme="dark")
-  const FULL_BLEED_LIGHT = new Set(['dailySpecials', 'servicePackages', 'uspStrip', 'beforeAfterSlider', 'verticalTimeline']);
+  const FULL_BLEED_LIGHT = new Set(['dailySpecials', 'servicePackages', 'uspStrip', 'beforeAfterSlider', 'verticalTimeline', 'popup']);
 
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);
 

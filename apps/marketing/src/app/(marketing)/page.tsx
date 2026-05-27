@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { LandingPage } from './landing-client';
 import { NewsSection } from './news-section';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'FlamingoMedia · Websites für lokale Marken',
   description:

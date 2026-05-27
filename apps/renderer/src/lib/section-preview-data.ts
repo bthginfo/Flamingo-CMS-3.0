@@ -3,6 +3,15 @@
  * Used by the section-preview route to render isolated section previews.
  */
 export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
+  popup: {
+    title: 'Sichern Sie sich Ihren Beratungstermin.',
+    subtitle: 'Kurzer Hinweis',
+    text: '<p>Dieses Popup eignet sich für Aktionen, Newsletter, Beratungstermine oder wichtige Hinweise. Timing, Wiederholung, Texte und Buttons werden vollständig im CMS gepflegt.</p>',
+    delayMs: 0,
+    frequency: 'session',
+    primaryCta: { label: 'Termin anfragen', href: '#kontakt' },
+    secondaryCta: { label: 'Mehr erfahren', href: '#details' },
+  },
   glowHero: {
     eyebrow: 'Premium Einstieg',
     headline: 'Ein erster Eindruck, der hängen bleibt.',

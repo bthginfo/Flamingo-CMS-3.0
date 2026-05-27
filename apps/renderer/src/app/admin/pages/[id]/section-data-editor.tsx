@@ -141,6 +141,47 @@ function GenericStructuredEditor({ type, data, onChange }: EditorProps) {
   );
 }
 
+function PopupEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    title: (data.title as string) || 'Sichern Sie sich Ihren Beratungstermin.',
+    subtitle: (data.subtitle as string) || '',
+    text: (data.text as string) || '',
+    delayMs: Number(data.delayMs ?? data.triggerDelayMs ?? 2500),
+    frequency: (data.frequency as string) || 'once',
+    primaryCta: (data.primaryCta as { label: string; href: string }) || { label: '', href: '' },
+    secondaryCta: (data.secondaryCta as { label: string; href: string }) || { label: '', href: '' },
+  });
+
+  useReport(d, onChange);
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs leading-5 text-blue-800">
+        <strong>Nur einmal</strong> bedeutet: Nach dem Schließen sieht dieser Besucher das Popup auf diesem Gerät nicht erneut. <strong>Einmal pro Session</strong> bedeutet: Es kann in einer neuen Browser-Sitzung wieder erscheinen, aber nicht ständig beim Seitenwechsel.
+      </div>
+      <Field label="Titel" value={d.title} onChange={(v) => setD({ ...d, title: v })} />
+      <Field label="Subtitle / Eyebrow" value={d.subtitle} onChange={(v) => setD({ ...d, subtitle: v })} placeholder="z.B. Kurzer Hinweis, Aktion, Newsletter" />
+      <Field label="Fließtext" value={d.text} onChange={(v) => setD({ ...d, text: v })} multiline placeholder="Kurzer erklärender Text im Popup" />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <label className="block">
+          <span className="text-xs font-medium text-zinc-600 mb-1 block">Trigger-Verzögerung in ms</span>
+          <input type="number" min={0} step={250} className="admin-input" value={d.delayMs} onChange={(e) => setD({ ...d, delayMs: Math.max(0, Number(e.target.value) || 0) })} />
+          <span className="mt-1 block text-[11px] text-zinc-400">1000 ms = 1 Sekunde. 0 ms öffnet direkt.</span>
+        </label>
+        <label className="block">
+          <span className="text-xs font-medium text-zinc-600 mb-1 block">Wiederholung</span>
+          <select className="admin-input" value={d.frequency} onChange={(e) => setD({ ...d, frequency: e.target.value })}>
+            <option value="once">Nur einmal pro Besucher/Gerät</option>
+            <option value="session">Einmal pro Browser-Session</option>
+          </select>
+        </label>
+      </div>
+      <ButtonField label="Primärer Button (optional)" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
+      <ButtonField label="Sekundärer Button (optional)" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
+    </div>
+  );
+}
+
 function HeroEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({
     headline: (data.headline as string) || '',
@@ -3117,6 +3158,7 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   signatureGrid: SignatureGridEditor,
   comparisonCardsPro: ComparisonCardsProEditor,
   additionalLocations: AdditionalLocationsEditor,
+  popup: PopupEditor,
   templateAdvantage: GenericStructuredEditor,
   principlesGrid: GenericStructuredEditor,
   glowHero: GenericStructuredEditor,
