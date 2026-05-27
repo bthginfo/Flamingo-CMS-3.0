@@ -204,9 +204,17 @@ export function TemplateGallery() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (window.innerWidth < 768 || !('IntersectionObserver' in window)) {
+      setRevealed(true);
+      return;
+    }
     const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setRevealed(true); io.disconnect(); } }, { threshold: 0.1 });
     io.observe(el);
-    return () => io.disconnect();
+    const fallback = window.setTimeout(() => setRevealed(true), 1200);
+    return () => {
+      window.clearTimeout(fallback);
+      io.disconnect();
+    };
   }, []);
 
   const filtered = TEMPLATES;

@@ -4,8 +4,15 @@ import { pages, pageSections, collectionItems, publishedSnapshots, tenants, medi
 import { eq, count, and } from 'drizzle-orm';
 import { FileText, Layers, FolderOpen, Rocket, Eye, Globe, ImageIcon, Search, AlertTriangle, CheckCircle2, Gift, Send } from 'lucide-react';
 import Link from 'next/link';
+import { cookies } from 'next/headers';
+import { publishAction } from './actions/publish';
 
 const RENDERER_URL = '';
+
+async function publishFromDashboard() {
+  'use server';
+  await publishAction();
+}
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -13,6 +20,8 @@ export default async function DashboardPage() {
 
   const db = getDb();
   const tid = session.tenantId;
+  const cookieStore = await cookies();
+  const isPublicDemoMode = cookieStore.get('flamingo_demo')?.value === '1';
 
   const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tid));
   const [pageCount] = await db.select({ value: count() }).from(pages).where(eq(pages.tenantId, tid));
@@ -53,9 +62,11 @@ export default async function DashboardPage() {
           <a href={RENDERER_URL} target="_blank" rel="noopener noreferrer" className="admin-btn-secondary">
             <Eye size={16} /> Preview
           </a>
-          <button className="admin-btn-primary" disabled>
-            <Rocket size={16} /> Veröffentlichen
-          </button>
+          <form action={publishFromDashboard}>
+            <button className="admin-btn-primary" disabled={isPublicDemoMode} title={isPublicDemoMode ? 'Im öffentlichen Demo-Modus deaktiviert' : undefined}>
+              <Rocket size={16} /> Veröffentlichen
+            </button>
+          </form>
         </div>
       </div>
 
