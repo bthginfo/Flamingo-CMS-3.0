@@ -99,6 +99,9 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
     if (typeof value === 'string') {
       const fieldName = String(path[path.length - 1] || '');
       const multiline = value.length > 80 || /content|description|text|subline|bio|answer|excerpt|intro/i.test(fieldName);
+      if (/color|colour|farbe|overlay/i.test(fieldName)) {
+        return <ColorField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} allowEmpty />;
+      }
       if (/image|background|photo|avatar|poster|logo/i.test(fieldName)) {
         return <ImageUploadField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} />;
       }
@@ -170,9 +173,6 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">
-        Alle Inhalte dieser Section sind als Felder editierbar. Listen lassen sich als einzelne Einträge pflegen.
-      </div>
       {keys.map((key) => renderValue([key], fieldLabel(key), source[key]))}
     </div>
   );
@@ -291,10 +291,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
                 </label>
                 {d.overlayOpacity > 0 && (
                   <>
-                    <label className="block">
-                      <span className="text-xs font-medium text-zinc-600">Overlay-Farbe</span>
-                      <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} />
-                    </label>
+                    <ColorField label="Overlay-Farbe" value={d.overlayColor} onChange={(v) => setD({ ...d, overlayColor: v })} />
                     <label className="block">
                       <span className="text-xs font-medium text-zinc-600">Deckkraft ({Math.round(d.overlayOpacity * 100)}%)</span>
                       <input type="range" min="0.05" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} />
@@ -306,13 +303,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
             )}
           </>
         ) : (
-          <div className="block">
-            <span className="text-xs font-medium text-zinc-600">Hintergrundfarbe</span>
-            <div className="flex items-center gap-2 mt-1">
-              <input type="color" className="h-9 w-12 p-1 cursor-pointer rounded border border-zinc-200" value={d.bgColor} onChange={(e) => setD({ ...d, bgColor: e.target.value })} />
-              <input type="text" className="admin-input flex-1" value={d.bgColor} onChange={(e) => setD({ ...d, bgColor: e.target.value })} placeholder="#1a1a2e" />
-            </div>
-          </div>
+          <ColorField label="Hintergrundfarbe" value={d.bgColor} onChange={(v) => setD({ ...d, bgColor: v })} />
         )}
       </div>
       <div className="space-y-2">
@@ -324,11 +315,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
           </div>
         ))}
         <button onClick={() => setD({ ...d, trustItems: [...d.trustItems, ''] })} className="text-xs text-blue-600 hover:underline">+ Trust-Element</button>
-        <div className="flex items-center gap-2 mt-2">
-          <label className="text-xs text-zinc-600">Strip-Farbe</label>
-          <input type="color" value={d.trustStripColor || '#000000'} onChange={(e) => setD({ ...d, trustStripColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" />
-          {d.trustStripColor && <button onClick={() => setD({ ...d, trustStripColor: '' })} className="text-xs text-red-400 hover:text-red-600">×</button>}
-        </div>
+        <ColorField label="Strip-Farbe" value={d.trustStripColor} onChange={(v) => setD({ ...d, trustStripColor: v })} allowEmpty />
       </div>
       <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
       <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
@@ -406,27 +393,9 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
       <details className="border border-zinc-200 rounded-lg p-3">
         <summary className="text-xs font-medium text-zinc-500 cursor-pointer">Farben überschreiben (optional)</summary>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
-          <div>
-            <label className="admin-label text-[10px]">Hintergrund</label>
-            <div className="flex items-center gap-2">
-              <input type="color" value={d.bgColor || '#1a2035'} onChange={(e) => setD({ ...d, bgColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" />
-              {d.bgColor && <button onClick={() => setD({ ...d, bgColor: '' })} className="text-[10px] text-red-400 hover:text-red-600">×</button>}
-            </div>
-          </div>
-          <div>
-            <label className="admin-label text-[10px]">Text</label>
-            <div className="flex items-center gap-2">
-              <input type="color" value={d.textColor || '#ffffff'} onChange={(e) => setD({ ...d, textColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" />
-              {d.textColor && <button onClick={() => setD({ ...d, textColor: '' })} className="text-[10px] text-red-400 hover:text-red-600">×</button>}
-            </div>
-          </div>
-          <div>
-            <label className="admin-label text-[10px]">Akzent / Button</label>
-            <div className="flex items-center gap-2">
-              <input type="color" value={d.accentColor || '#f39c12'} onChange={(e) => setD({ ...d, accentColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" />
-              {d.accentColor && <button onClick={() => setD({ ...d, accentColor: '' })} className="text-[10px] text-red-400 hover:text-red-600">×</button>}
-            </div>
-          </div>
+          <ColorField label="Hintergrund" value={d.bgColor} onChange={(v) => setD({ ...d, bgColor: v })} allowEmpty />
+          <ColorField label="Text" value={d.textColor} onChange={(v) => setD({ ...d, textColor: v })} allowEmpty />
+          <ColorField label="Akzent / Button" value={d.accentColor} onChange={(v) => setD({ ...d, accentColor: v })} allowEmpty />
         </div>
       </details>
     </div>
@@ -513,6 +482,54 @@ function SelectField({ label, value, options, onChange }: { label: string; value
 }
 
 // ─── CTA Links Editor ────────────────────────────────────────────
+function parseColorValue(value: string) {
+  const trimmed = value.trim();
+  const rgba = trimmed.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([0-9.]+))?\)$/i);
+  if (rgba) {
+    const toHex = (n: string) => Math.max(0, Math.min(255, Number(n) || 0)).toString(16).padStart(2, '0');
+    return { hex: `#${toHex(rgba[1])}${toHex(rgba[2])}${toHex(rgba[3])}`, alpha: Math.max(0, Math.min(1, Number(rgba[4] ?? 1))), format: 'rgba' as const };
+  }
+  if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(trimmed)) {
+    const hex = trimmed.length === 4 ? `#${trimmed[1]}${trimmed[1]}${trimmed[2]}${trimmed[2]}${trimmed[3]}${trimmed[3]}` : trimmed;
+    return { hex, alpha: 1, format: 'hex' as const };
+  }
+  return { hex: '#000000', alpha: 1, format: 'hex' as const };
+}
+
+function hexToRgba(hex: string, alpha: number) {
+  const normalized = hex.length === 4 ? `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}` : hex;
+  const r = parseInt(normalized.slice(1, 3), 16);
+  const g = parseInt(normalized.slice(3, 5), 16);
+  const b = parseInt(normalized.slice(5, 7), 16);
+  return `rgba(${r},${g},${b},${Math.round(alpha * 100) / 100})`;
+}
+
+function ColorField({ label, value, onChange, allowEmpty = false, alpha = 'auto' }: { label: string; value: string; onChange: (v: string) => void; allowEmpty?: boolean; alpha?: 'auto' | 'never' | 'always' }) {
+  const parsed = parseColorValue(value || '#000000');
+  const showAlpha = alpha === 'always' || (alpha === 'auto' && parsed.format === 'rgba');
+  const updateColor = (hex: string) => onChange(showAlpha ? hexToRgba(hex, parsed.alpha) : hex);
+  const updateAlpha = (nextAlpha: number) => onChange(hexToRgba(parsed.hex, nextAlpha));
+
+  return (
+    <div className="text-sm">
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-gray-600 text-xs">{label}</span>
+        {allowEmpty && value && <button type="button" onClick={() => onChange('')} className="text-[10px] text-red-500 hover:text-red-600">Entfernen</button>}
+      </div>
+      <div className="mt-1 flex items-center gap-2">
+        <input type="color" className="h-10 w-12 shrink-0 cursor-pointer rounded border border-zinc-200 p-1" value={parsed.hex} onChange={(e) => updateColor(e.target.value)} />
+        <div className="admin-input flex min-w-0 flex-1 items-center truncate text-xs text-zinc-500">{value || 'Standard'}</div>
+      </div>
+      {showAlpha && (
+        <label className="mt-2 block">
+          <span className="text-[11px] text-zinc-500">Deckkraft ({Math.round(parsed.alpha * 100)}%)</span>
+          <input type="range" min="0" max="1" step="0.05" className="mt-1 w-full" value={parsed.alpha} onChange={(e) => updateAlpha(Number(e.target.value))} />
+        </label>
+      )}
+    </div>
+  );
+}
+
 function CtaLinksEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
@@ -1244,14 +1261,8 @@ function NoticeBannerEditor({ data, onChange }: EditorProps) {
       <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <Field label="Fließtext (HTML)" value={d.text} onChange={(v) => setD({ ...d, text: v })} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <label className="text-xs text-zinc-600">Hintergrundfarbe</label>
-          <input type="color" value={d.bgColor || '#2563eb'} onChange={(e) => setD({ ...d, bgColor: e.target.value })} className="w-full h-10 rounded border cursor-pointer" />
-        </div>
-        <div>
-          <label className="text-xs text-zinc-600">Textfarbe</label>
-          <input type="color" value={d.textColor} onChange={(e) => setD({ ...d, textColor: e.target.value })} className="w-full h-10 rounded border cursor-pointer" />
-        </div>
+        <ColorField label="Hintergrundfarbe" value={d.bgColor} onChange={(v) => setD({ ...d, bgColor: v })} allowEmpty />
+        <ColorField label="Textfarbe" value={d.textColor} onChange={(v) => setD({ ...d, textColor: v })} />
       </div>
       <ButtonField label="Button 1 (optional)" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
       <ButtonField label="Button 2 (optional)" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
@@ -1302,10 +1313,7 @@ function CollectionHeroEditor({ data, onChange }: EditorProps) {
           </label>
           {d.overlayOpacity > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-              <label className="block">
-                <span className="text-xs font-medium text-zinc-600">Overlay-Farbe</span>
-                <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} />
-              </label>
+              <ColorField label="Overlay-Farbe" value={d.overlayColor} onChange={(v) => setD({ ...d, overlayColor: v })} />
               <label className="block">
                 <span className="text-xs font-medium text-zinc-600">Deckkraft ({Math.round(d.overlayOpacity * 100)}%)</span>
                 <input type="range" min="0.05" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} />
@@ -2607,7 +2615,7 @@ function HorizontalScrollShowcaseEditor({ data, onChange }: EditorProps) {
             <Field label="CTA Label" value={panel.ctaLabel} onChange={(v) => updatePanel(i, 'ctaLabel', v)} />
             <Field label="CTA Link" value={panel.ctaHref} onChange={(v) => updatePanel(i, 'ctaHref', v)} />
           </div>
-          <Field label="Overlay-Farbe" value={panel.overlayColor} onChange={(v) => updatePanel(i, 'overlayColor', v)} placeholder="rgba(0,0,0,0.4)" />
+          <ColorField label="Overlay-Farbe" value={panel.overlayColor} onChange={(v) => updatePanel(i, 'overlayColor', v)} alpha="always" />
         </div>
       ))}
       <button type="button" onClick={addPanel} className="text-sm text-blue-600 hover:underline">+ Panel hinzufügen</button>
@@ -2642,7 +2650,7 @@ function CinematicHeroEditor({ data, onChange }: EditorProps) {
       <ImageUploadField label="Hero-Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
       <Field label="Video-URL optional" value={d.videoUrl} onChange={(v) => setD({ ...d, videoUrl: v })} placeholder="https://..." />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Field label="Overlay" value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} placeholder="rgba(0,0,0,0.52)" />
+        <ColorField label="Overlay" value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} alpha="always" />
         <SelectField label="Textausrichtung" value={d.align} options={['left', 'center']} onChange={(v) => setD({ ...d, align: v })} />
       </div>
       <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
@@ -2817,7 +2825,7 @@ function ImmersiveCtaBannerEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <ImageUploadField label="Hintergrundbild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
-      <Field label="Overlay" value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} placeholder="rgba(0,0,0,0.62)" />
+      <ColorField label="Overlay" value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} alpha="always" />
       <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
       <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
       <SimplePairs title="Kennzahlen" items={d.metrics} onAdd={() => setD({ ...d, metrics: [...d.metrics, { value: '', label: '' }] })} onRemove={(i) => setD({ ...d, metrics: d.metrics.filter((_, idx) => idx !== i) })} onChange={(i, next) => setD({ ...d, metrics: d.metrics.map((item, idx) => idx === i ? next : item) })} firstLabel="Wert" secondLabel="Label" />

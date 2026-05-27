@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { upload } from '@vercel/blob/client';
 import { ImageIcon, Upload, X, Link as LinkIcon, FolderOpen } from 'lucide-react';
 import { saveMediaRecord, getMediaAssets, type MediaAsset } from '@/app/admin/media-actions';
@@ -72,6 +72,16 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
   const [loadingLib, setLoadingLib] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (!value && mode === 'library') setMode('upload');
+  }, [value, mode]);
+
+  function clearValue() {
+    onChange('');
+    if (inputRef.current) inputRef.current.value = '';
+    setMode('url');
+  }
+
   async function openLibrary() {
     setMode('library');
     if (libraryAssets.length === 0) {
@@ -120,7 +130,7 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
     <div className="text-sm">
       <div className="flex items-center justify-between mb-1">
         <span className="text-gray-600 text-xs">{label}</span>
-        <div className="flex gap-1">
+        <div className="flex flex-wrap justify-end gap-1">
           <button
             type="button"
             onClick={() => setMode('upload')}
@@ -142,6 +152,15 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
           >
             <FolderOpen size={10} className="inline mr-0.5" /> Mediathek
           </button>
+          {value && (
+            <button
+              type="button"
+              onClick={clearValue}
+              className="text-[10px] px-1.5 py-0.5 rounded text-red-500 hover:bg-red-50 hover:text-red-600"
+            >
+              Entfernen
+            </button>
+          )}
         </div>
       </div>
 
@@ -151,8 +170,9 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
           <img src={value} alt="" className="w-20 h-20 object-cover rounded-lg border" />
           <button
             type="button"
-            onClick={() => onChange('')}
+            onClick={clearValue}
             className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+            aria-label="Bild entfernen"
           >
             <X size={10} />
           </button>
