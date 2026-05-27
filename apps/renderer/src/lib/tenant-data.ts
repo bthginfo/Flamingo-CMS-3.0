@@ -10,6 +10,11 @@ export type BrandData = { companyName?: string; tagline?: string; primaryColor?:
 export type SocialLinks = Record<string, string>;
 export type ContactData = { phone?: string; email?: string; address?: string; whatsapp?: string; whatsappEnabled?: boolean; whatsappColor?: string };
 
+function isPlaceholderCompanyName(value?: string): boolean {
+  const normalized = (value || '').trim().toLowerCase();
+  return !normalized || normalized === 'firmenname' || normalized === 'firma' || normalized === 'company name';
+}
+
 export async function getTenantStyle(tenantId: string): Promise<{ industry: string; activeStyle: string }> {
   const db = getDb();
   const [t] = await db.select({ industry: tenants.industry, activeStyle: tenants.activeStyle }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
@@ -75,7 +80,12 @@ export async function getTenantFooter(tenantId: string, locale?: string): Promis
 export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandData; contact: ContactData; socialLinks: SocialLinks; design: Record<string, string> }> {
   const db = getDb();
   const [s] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
-  return { brand: (s?.brand as BrandData) || {}, contact: (s?.contact as ContactData) || {}, socialLinks: (s?.socialLinks as SocialLinks) || {}, design: (s?.design as Record<string, string>) || {} };
+  const [tenant] = await db.select({ name: tenants.name }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  const brand = { ...(((s?.brand as BrandData) || {}) as BrandData) };
+  if (tenant?.name && isPlaceholderCompanyName(brand.companyName)) {
+    brand.companyName = tenant.name;
+  }
+  return { brand, contact: (s?.contact as ContactData) || {}, socialLinks: (s?.socialLinks as SocialLinks) || {}, design: (s?.design as Record<string, string>) || {} };
 }
 
 export type SeoGlobalData = {
