@@ -53,8 +53,8 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
   });
 
   useEffect(() => {
-    setIsDemo(document.cookie.split(';').some((cookie) => cookie.trim() === 'flamingo_public_demo=1'));
-  }, []);
+    setIsDemo(document.cookie.split(';').some((cookie) => cookie.trim() === `flamingo_public_demo=${tenantId}`));
+  }, [tenantId]);
 
   function toggleCollapse() {
     const next = !collapsed;

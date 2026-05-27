@@ -27,7 +27,7 @@ import {
 
 const DEMO_BASE = 'https://www.demo.flamingomedia.online';
 const PREVIEW_TENANT_ID = 'f50cbf53-279d-43f3-b58b-f5ae3d550ab2';
-const demoAdminUrl = (next = '/admin') => `${DEMO_BASE}/admin/demo-login?industry=handwerk&next=${encodeURIComponent(next)}`;
+const demoAdminUrl = (next = '/admin') => `${DEMO_BASE}/admin/demo-login?industry=handwerk&public=1&next=${encodeURIComponent(next)}`;
 
 type Viewport = 'desktop' | 'tablet' | 'mobile';
 type ShowcaseMode = 'demo' | 'cms' | 'shop';

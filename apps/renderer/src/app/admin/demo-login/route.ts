@@ -38,6 +38,7 @@ const SLUG_MAP: Record<string, string> = {
 export async function GET(request: NextRequest) {
   const industry = request.nextUrl.searchParams.get('industry');
   const requestedNext = request.nextUrl.searchParams.get('next');
+  const publicDemo = request.nextUrl.searchParams.get('public') === '1' || request.nextUrl.searchParams.get('embed') === '1';
 
   let tenantId = DEFAULT_DEMO_TENANT_ID;
 
@@ -89,6 +90,7 @@ export async function GET(request: NextRequest) {
   if (request.nextUrl.searchParams.get('embed') === '1') {
     target.searchParams.set('_dt', token);
     target.searchParams.set('_demo', '1');
+    target.searchParams.set('_demoTenant', tenantId);
     return NextResponse.redirect(target);
   }
   const response = NextResponse.redirect(target);
@@ -99,13 +101,18 @@ export async function GET(request: NextRequest) {
     secure: true,
     maxAge: 60 * 60,
   });
-  response.cookies.set('flamingo_public_demo', '1', {
-    path: '/admin',
-    httpOnly: false,
-    sameSite: 'none',
-    secure: true,
-    maxAge: 60 * 60,
-  });
+  if (publicDemo) {
+    response.cookies.set('flamingo_public_demo', tenantId, {
+      path: '/admin',
+      httpOnly: false,
+      sameSite: 'none',
+      secure: true,
+      maxAge: 60 * 60,
+    });
+  } else {
+    response.cookies.set('flamingo_public_demo', '', { path: '/admin', maxAge: 0 });
+    response.cookies.set('flamingo_demo', '', { path: '/admin', maxAge: 0 });
+  }
 
   return response;
 }

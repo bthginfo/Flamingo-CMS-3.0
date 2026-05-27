@@ -26,6 +26,9 @@ importers:
       '@types/nodemailer':
         specifier: ^8.0.0
         version: 8.0.0
+      '@vercel/blob':
+        specifier: ^2.3.3
+        version: 2.3.3
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3

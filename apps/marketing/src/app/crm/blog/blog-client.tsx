@@ -1,7 +1,8 @@
 'use client';
 
-import { useMemo, useState, useTransition } from 'react';
-import { Edit3, ExternalLink, FileText, Plus, Search, Trash2, Wand2, X } from 'lucide-react';
+import { useMemo, useRef, useState, useTransition } from 'react';
+import { upload as uploadBlob } from '@vercel/blob/client';
+import { Bold, Edit3, ExternalLink, FileText, Heading2, Heading3, Image as ImageIcon, Italic, Link as LinkIcon, List, ListOrdered, Plus, Quote, Search, Trash2, Wand2, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { createBlogPost, deleteBlogPost, updateBlogPost, type CrmBlogPost } from './actions';
 
@@ -31,11 +32,26 @@ const STATUS_CLASS: Record<Status, string> = {
 };
 
 function slugify(value: string) {
-  return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  return value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 function excerptFrom(value: string, length = 155) {
-  const clean = value.replace(/[#*_`>-]/g, ' ').replace(/\s+/g, ' ').trim();
+  const clean = value
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[#*_`>-]/g, ' ')
+    .replace(/\d+\.\s+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   return clean.length > length ? `${clean.slice(0, length - 1).trim()}…` : clean;
 }
 
@@ -60,6 +76,15 @@ function fromPost(post?: CrmBlogPost): FormState {
 
 function errorMessage(error: unknown) {
   return error instanceof Error && error.message ? error.message : 'Die Aktion konnte nicht ausgeführt werden';
+}
+
+async function uploadImage(file: File) {
+  if (!file.type.startsWith('image/')) throw new Error('Bitte eine Bilddatei auswählen.');
+  const blob = await uploadBlob(file.name, file, {
+    access: 'public',
+    handleUploadUrl: '/crm/api/upload',
+  });
+  return blob.url;
 }
 
 export function BlogClient({ initialPosts }: { initialPosts: CrmBlogPost[] }) {
@@ -200,7 +225,7 @@ function BlogModal({ title, post, pending, onClose, onSave }: { title: string; p
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-            <p className="mt-1 text-sm text-slate-500">Markdown-ähnlich schreiben: `## Zwischenüberschrift` und `- Liste` werden im Artikel sauber gesetzt.</p>
+            <p className="mt-1 text-sm text-slate-500">Formatiere den Beitrag mit der Toolbar: Überschriften, Fett, Links, Listen, Zitate und Bilder werden im Artikel sauber gesetzt.</p>
           </div>
           <button onClick={onClose} className="rounded-lg p-2 text-slate-400 hover:bg-slate-100"><X size={18} /></button>
         </div>
@@ -213,10 +238,7 @@ function BlogModal({ title, post, pending, onClose, onSave }: { title: string; p
               <span className="text-xs font-medium text-slate-500">Kurzbeschreibung *</span>
               <textarea value={form.excerpt} onChange={event => patch({ excerpt: event.target.value })} className="mt-1 min-h-20 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
             </label>
-            <label className="block">
-              <span className="text-xs font-medium text-slate-500">Inhalt *</span>
-              <textarea value={form.content} onChange={event => patch({ content: event.target.value })} className="mt-1 min-h-[460px] w-full rounded-lg border border-slate-200 px-3 py-2 font-mono text-sm leading-6" />
-            </label>
+            <BlogBodyEditor value={form.content} onChange={value => patch({ content: value })} />
           </div>
           <aside className="space-y-3">
             <label className="block">
@@ -229,7 +251,7 @@ function BlogModal({ title, post, pending, onClose, onSave }: { title: string; p
             </label>
             <Field label="Kategorie" value={form.category} onChange={value => patch({ category: value })} />
             <Field label="Tags (kommagetrennt)" value={form.tagsText} onChange={value => patch({ tagsText: value })} />
-            <Field label="Cover-Bild URL" value={form.coverImage} onChange={value => patch({ coverImage: value })} />
+            <ImageUploadInput label="Cover-Bild" value={form.coverImage} onChange={value => patch({ coverImage: value, ogImage: form.ogImage || value })} />
             <Field label="Bild-Alt-Text" value={form.coverAlt} onChange={value => patch({ coverAlt: value })} />
             <Field label="Autor" value={form.authorName} onChange={value => patch({ authorName: value })} />
             <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
@@ -240,7 +262,7 @@ function BlogModal({ title, post, pending, onClose, onSave }: { title: string; p
               <div className="space-y-3">
                 <Field label="Meta Title" value={form.metaTitle} onChange={value => patch({ metaTitle: value })} />
                 <Field label="Meta Description" value={form.metaDescription} onChange={value => patch({ metaDescription: value })} />
-                <Field label="OG-Bild URL" value={form.ogImage} onChange={value => patch({ ogImage: value })} />
+                <ImageUploadInput label="OG-Bild" value={form.ogImage} onChange={value => patch({ ogImage: value })} compact />
                 <Field label="Canonical Path" value={form.canonicalPath} onChange={value => patch({ canonicalPath: value })} />
               </div>
             </div>
@@ -254,6 +276,123 @@ function BlogModal({ title, post, pending, onClose, onSave }: { title: string; p
         </div>
       </div>
     </div>
+  );
+}
+
+function BlogBodyEditor({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  function replaceSelection(before: string, after = '', placeholder = '') {
+    const textarea = textareaRef.current;
+    if (!textarea) {
+      onChange(`${value}${before}${placeholder}${after}`);
+      return;
+    }
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = value.slice(start, end) || placeholder;
+    const next = `${value.slice(0, start)}${before}${selected}${after}${value.slice(end)}`;
+    onChange(next);
+    window.requestAnimationFrame(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + before.length, start + before.length + selected.length);
+    });
+  }
+
+  function insertBlock(markup: string) {
+    const prefix = value && !value.endsWith('\n') ? '\n\n' : '';
+    replaceSelection(`${prefix}${markup}`);
+  }
+
+  async function handleFile(file?: File) {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadImage(file);
+      const alt = window.prompt('Alt-Text für das Bild', file.name.replace(/\.[^.]+$/, '')) || '';
+      insertBlock(`![${alt}](${url})\n\n`);
+      toast.success('Bild hochgeladen');
+    } catch (error) {
+      toast.error(errorMessage(error));
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  }
+
+  const tools = [
+    { label: 'H2', icon: Heading2, action: () => insertBlock('## Zwischenüberschrift\n\n') },
+    { label: 'H3', icon: Heading3, action: () => insertBlock('### Abschnitt\n\n') },
+    { label: 'Fett', icon: Bold, action: () => replaceSelection('**', '**', 'wichtiger Text') },
+    { label: 'Kursiv', icon: Italic, action: () => replaceSelection('*', '*', 'betonter Text') },
+    { label: 'Link', icon: LinkIcon, action: () => {
+      const url = window.prompt('Link-URL', 'https://');
+      if (!url) return;
+      replaceSelection('[', `](${url})`, 'Linktext');
+    } },
+    { label: 'Liste', icon: List, action: () => insertBlock('- Erster Punkt\n- Zweiter Punkt\n\n') },
+    { label: 'Nummerierte Liste', icon: ListOrdered, action: () => insertBlock('1. Erster Schritt\n2. Zweiter Schritt\n\n') },
+    { label: 'Zitat', icon: Quote, action: () => insertBlock('> Aussage oder Zitat\n\n') },
+  ];
+
+  return (
+    <div>
+      <span className="text-xs font-medium text-slate-500">Inhalt *</span>
+      <div className="mt-1 overflow-hidden rounded-lg border border-slate-200 bg-white">
+        <div className="flex flex-wrap gap-1 border-b border-slate-100 bg-slate-50 p-2">
+          {tools.map(tool => {
+            const Icon = tool.icon;
+            return (
+              <button key={tool.label} type="button" onClick={tool.action} title={tool.label} className="inline-flex h-8 items-center gap-1 rounded-md px-2 text-xs font-medium text-slate-600 hover:bg-white hover:text-indigo-700">
+                <Icon size={14} /> {tool.label}
+              </button>
+            );
+          })}
+          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={event => handleFile(event.target.files?.[0])} />
+          <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="inline-flex h-8 items-center gap-1 rounded-md px-2 text-xs font-medium text-slate-600 hover:bg-white hover:text-indigo-700 disabled:opacity-50">
+            <ImageIcon size={14} /> {uploading ? 'Upload...' : 'Bild'}
+          </button>
+        </div>
+        <textarea ref={textareaRef} value={value} onChange={event => onChange(event.target.value)} className="min-h-[460px] w-full resize-y border-0 px-3 py-2 font-mono text-sm leading-6 outline-none" />
+      </div>
+      <p className="mt-1 text-xs text-slate-400">Speichert als Markdown. Bilder werden hochgeladen und als Bildblock eingefügt.</p>
+    </div>
+  );
+}
+
+function ImageUploadInput({ label, value, onChange, compact }: { label: string; value: string; onChange: (value: string) => void; compact?: boolean }) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(file?: File) {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadImage(file);
+      onChange(url);
+      toast.success('Bild hochgeladen');
+    } catch (error) {
+      toast.error(errorMessage(error));
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  }
+
+  return (
+    <label className="block">
+      <span className="text-xs font-medium text-slate-500">{label}</span>
+      <div className="mt-1 flex gap-2">
+        <input value={value} onChange={event => onChange(event.target.value)} placeholder="https://... oder hochladen" className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={event => handleFile(event.target.files?.[0])} />
+        <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="inline-flex shrink-0 items-center justify-center gap-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50">
+          <ImageIcon size={15} />
+          {!compact && (uploading ? 'Upload...' : 'Upload')}
+        </button>
+      </div>
+    </label>
   );
 }
 

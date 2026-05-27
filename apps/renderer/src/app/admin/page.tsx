@@ -21,7 +21,7 @@ export default async function DashboardPage() {
   const db = getDb();
   const tid = session.tenantId;
   const cookieStore = await cookies();
-  const isPublicDemoMode = cookieStore.get('flamingo_public_demo')?.value === '1';
+  const isPublicDemoMode = cookieStore.get('flamingo_public_demo')?.value === session.tenantId;
 
   const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tid));
   const [pageCount] = await db.select({ value: count() }).from(pages).where(eq(pages.tenantId, tid));

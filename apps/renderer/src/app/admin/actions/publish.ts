@@ -18,11 +18,11 @@ async function requireSession() {
  * Publish = mark all draft pages as published + invalidate all cached pages.
  */
 export async function publishAction() {
+  const session = await requireSession();
   const cookieStore = await cookies();
-  if (cookieStore.get('flamingo_public_demo')?.value === '1') {
+  if (cookieStore.get('flamingo_public_demo')?.value === session.tenantId) {
     return { error: 'Veröffentlichung ist im Demo-Modus deaktiviert.' };
   }
-  const session = await requireSession();
 
   // Mark all draft pages as published
   const db = getDb();

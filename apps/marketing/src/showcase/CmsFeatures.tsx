@@ -5,7 +5,7 @@ import Seo from '@/components/Seo';
 import { LiveAdminShowcase } from './LiveAdminShowcase';
 
 const DEMO_BASE = 'https://www.demo.flamingomedia.online';
-const demoAdminUrl = (next = '/admin') => `${DEMO_BASE}/admin/demo-login?industry=handwerk&next=${encodeURIComponent(next)}`;
+const demoAdminUrl = (next = '/admin') => `${DEMO_BASE}/admin/demo-login?industry=handwerk&public=1&next=${encodeURIComponent(next)}`;
 
 const FEATURES = [
   {

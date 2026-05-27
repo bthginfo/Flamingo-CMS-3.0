@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  redirect('https://www.demo.flamingomedia.online/admin/demo-login?industry=handwerk&next=/admin');
+  redirect('https://www.demo.flamingomedia.online/admin/demo-login?industry=handwerk&public=1&next=/admin');
 }

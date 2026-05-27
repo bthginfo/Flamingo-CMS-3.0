@@ -17,6 +17,7 @@ export function middleware(request: NextRequest) {
     const clean = new URL(request.url);
     clean.searchParams.delete('_dt');
     clean.searchParams.delete('_demo');
+    clean.searchParams.delete('_demoTenant');
     const response = NextResponse.redirect(clean);
     response.cookies.set(getSessionCookieName(), demoToken, {
       path: '/',
@@ -26,7 +27,7 @@ export function middleware(request: NextRequest) {
       maxAge: 60 * 60,
     });
     if (searchParams.get('_demo') === '1') {
-      response.cookies.set('flamingo_public_demo', '1', {
+      response.cookies.set('flamingo_public_demo', searchParams.get('_demoTenant') || 'public', {
         path: '/admin',
         httpOnly: false,
         sameSite: 'none',

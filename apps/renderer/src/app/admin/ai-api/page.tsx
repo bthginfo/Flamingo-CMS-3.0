@@ -2,10 +2,12 @@ import { getApiToken } from './actions';
 import { AiApiClient } from './ai-api-client';
 import { cookies } from 'next/headers';
 import { headers } from 'next/headers';
+import { getSession } from '@/lib/session';
 
 export default async function AiApiPage() {
+  const session = await getSession();
   const cookieStore = await cookies();
-  const isDemo = cookieStore.get('flamingo_public_demo')?.value === '1';
+  const isDemo = !!session && cookieStore.get('flamingo_public_demo')?.value === session.tenantId;
 
   if (isDemo) {
     return (
