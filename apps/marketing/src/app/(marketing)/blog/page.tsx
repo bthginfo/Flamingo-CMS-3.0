@@ -41,10 +41,10 @@ export default async function BlogPage() {
         <div className="container-x relative">
           <p className="eyebrow !text-white/65 mb-5">Blog & News</p>
           <h1 className="headline-xl max-w-5xl">
-            Gedanken zu Websites, die <em className="italic-pop" style={{ color: 'var(--accent-color)' }}>wirklich arbeiten.</em>
+            Ideen für Websites, die auffallen, Vertrauen schaffen und <em className="italic-pop" style={{ color: 'var(--accent-color)' }}>Anfragen bringen.</em>
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-white/72">
-            Kein Keyword-Gewitter. Sondern klare Notizen zu Design, CMS, lokaler Sichtbarkeit und den Entscheidungen, die eine Website besser machen.
+            Einblicke aus Projekten, Produktentwicklung und lokalem Marketing: Was gute Websites klarer, schneller und wirksamer macht.
           </p>
         </div>
       </section>
