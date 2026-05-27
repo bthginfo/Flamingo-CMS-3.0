@@ -27,6 +27,7 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionList', label: 'Collection-Liste', description: 'Einträge einer Collection als Übersicht anzeigen', category: 'Medien' },
   { type: 'contact', label: 'Kontakt', description: 'Kontaktformular', category: 'Kontakt' },
   { type: 'map', label: 'Karte', description: 'Google Maps Einbettung', category: 'Kontakt' },
+  { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Mehrere Standorte als Karten mit optionaler Karte, Adresse, Kontakt und Öffnungszeiten', category: 'Kontakt' },
   { type: 'team', label: 'Team', description: 'Team-Mitglieder', category: 'Team & Personen' },
   { type: 'servicesGrid', label: 'Leistungen', description: 'Leistungs-Grid', category: 'Leistungen' },
   { type: 'processSteps', label: 'Ablauf', description: 'Prozess-Schritte Timeline', category: 'Leistungen' },
@@ -71,6 +72,9 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'beforeAfterStoryPro', label: 'Before/After Story Pro', description: 'Vorher/Nachher-Case mit Problem, Lösung, Ergebnis und Kennzahlen', category: 'Premium' },
   { type: 'signatureGrid', label: 'Signature Grid', description: 'Premium-Grid mit starkem Bild, Markenmerkmalen und Proof-Daten', category: 'Premium' },
   { type: 'comparisonCardsPro', label: 'Comparison Cards Pro', description: 'Hochwertige Paketkarten mit Empfehlung, Features und CTA', category: 'Premium' },
+  { type: 'templateAdvantage', label: 'Template Advantage', description: 'Editoriale Template-/Vorteils-Section mit Bildkarten, Benefits und CTA', category: 'Premium' },
+  { type: 'principlesGrid', label: 'Principles Grid', description: 'Hochwertige Werte- oder Prinzipien-Section mit konsistentem Headline-Stil', category: 'Premium' },
+  { type: 'glowHero', label: 'Glow Hero', description: 'Interaktiver Premium-Hero mit Mouse-Glow, Bild, Fakten und CTAs', category: 'Premium' },
 ];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
@@ -356,6 +360,58 @@ export const RETAIL_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
+export const FITNESS_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'fitnessHero', label: 'Fitness-Hero', description: 'Starker Einstieg mit Studio-Bild, Fakten und Probetraining-CTA' },
+  { type: 'programGrid', label: 'Programme', description: 'Trainingsbereiche, Kurse und Coaching-Angebote als Karten' },
+  { type: 'courseSchedule', label: 'Kursplan', description: 'Kurse, Zeiten, Level und Trainer kompakt darstellen' },
+  { type: 'trainerProfiles', label: 'Trainer', description: 'Trainerprofile mit Rollen, Bildern und Schwerpunkten' },
+  { type: 'membershipPlans', label: 'Mitgliedschaften', description: 'Pakete, Preise, Leistungen und Empfehlungskarte' },
+  { type: 'trialSessionCta', label: 'Probetraining-CTA', description: 'Bildstarker CTA fuer Probetraining oder Beratung' },
+  { type: 'transformationStories', label: 'Transformationen', description: 'Kundenstory mit Ausgangslage, Loesung, Ergebnis und Bildern' },
+  { type: 'studioAmenities', label: 'Studio-Ausstattung', description: 'Ausstattung, Vorteile und Besonderheiten im modernen Bento-Grid' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Mitgliederstimmen und Social Proof' },
+  { type: 'faq', label: 'FAQ', description: 'Haeufige Fragen zu Probetraining, Kursen und Mitgliedschaften' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular und Studio-Kontaktdaten' },
+  { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Mehrere Studios oder Trainingsorte' },
+  { type: 'galleryGrid', label: 'Galerie', description: 'Studio- und Trainingsbilder' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero fuer Detail-Seiten' },
+];
+
+export const FLORIST_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'floristHero', label: 'Floristik-Hero', description: 'Emotionaler Einstieg mit Atelier-Bild, Anlass und Beratungs-CTA' },
+  { type: 'bouquetShowcase', label: 'Sträuße & Produkte', description: 'Bouquets, Pflanzen und florale Produkte als hochwertige Karten' },
+  { type: 'occasionMosaic', label: 'Anlässe', description: 'Hochzeit, Trauer, Geschenk, Event oder Saison als Bildmosaik' },
+  { type: 'weddingFloristry', label: 'Hochzeitsfloristik', description: 'Immersiver Banner für Brautstrauß, Deko und Eventfloristik' },
+  { type: 'workshopBooking', label: 'Workshops', description: 'Workshop- oder Beratungsangebote mit CTA' },
+  { type: 'seasonalCampaign', label: 'Saison-Kampagne', description: 'Muttertag, Advent, Valentinstag oder saisonale Angebote' },
+  { type: 'floristMaterials', label: 'Blumen & Materialien', description: 'Blumen, Farben, Stile oder Materialien filterbar zeigen' },
+  { type: 'deliveryTimeline', label: 'Bestellung & Lieferung', description: 'Ablauf von Anfrage bis Abholung oder Lieferung' },
+  { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Ateliers, Filialen oder Abholorte' },
+  { type: 'galleryGrid', label: 'Galerie', description: 'Bouquets, Events und Atelierbilder' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen und Social Proof' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen zu Bestellung, Lieferung und Hochzeiten' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular und Atelier-Kontaktdaten' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const LOCATION_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'locationHero', label: 'Location-Hero', description: 'Filmischer Einstieg fuer Hochzeitslocations, Eventraeume und Coworking' },
+  { type: 'spaceShowcase', label: 'Raeume & Flaechen', description: 'Raeume mit Bild, Kapazitaet, Preis oder Details' },
+  { type: 'eventTypes', label: 'Eventarten', description: 'Hochzeiten, Workshops, Tagungen, Coworking und Feiern' },
+  { type: 'availabilityCta', label: 'Anfrage-CTA', description: 'Starker CTA fuer Datum, Personenanzahl und Eventtyp' },
+  { type: 'locationPackages', label: 'Location-Pakete', description: 'Pakete und Optionen im hochwertigen Vergleich' },
+  { type: 'amenitiesGrid', label: 'Ausstattung', description: 'Technik, Catering, Parken, WLAN und Services im Bento-Grid' },
+  { type: 'floorPlanOverview', label: 'Grundriss & Setup', description: 'Text-Bild-Section fuer Grundrisse, Downloads oder Setups' },
+  { type: 'galleryMoodboard', label: 'Mood-Galerie', description: 'Bildergalerie fuer Raeume, Setups und Atmosphaere' },
+  { type: 'locationAccess', label: 'Anfahrt & Umgebung', description: 'Adresse, Karte, Parken, OePNV und Umgebung' },
+  { type: 'hostTeam', label: 'Ansprechpartner', description: 'Team oder Gastgeber der Location' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Gaestestimmen und Veranstalter-Feedback' },
+  { type: 'faq', label: 'FAQ', description: 'Fragen zu Catering, Sperrstunde, Technik, Deko und Storno' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular und Location-Kontaktdaten' },
+  { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Weitere Locations oder Raeume' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero fuer Detail-Seiten' },
+];
+
 const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   tradesman: TRADESMAN_SECTION_TYPES,
   photography: PHOTOGRAPHY_SECTION_TYPES,
@@ -371,6 +427,9 @@ const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   tattoo: TATTOO_SECTION_TYPES,
   ecommerce: ECOMMERCE_SECTION_TYPES,
   retail: RETAIL_SECTION_TYPES,
+  florist: FLORIST_SECTION_TYPES,
+  fitness: FITNESS_SECTION_TYPES,
+  location: LOCATION_SECTION_TYPES,
 };
 
 const INDUSTRY_LABELS: Record<string, string> = {
@@ -388,6 +447,9 @@ const INDUSTRY_LABELS: Record<string, string> = {
   tattoo: 'Tattoo Studio',
   ecommerce: 'E-Commerce',
   retail: 'Einzelhandel & Weitere',
+  florist: 'Floristik',
+  fitness: 'Fitnessstudio',
+  location: 'Location',
 };
 
 export function getSectionTypesForIndustry(industry: string, options?: { hasShop?: boolean }): SectionTypeDefinition[] {

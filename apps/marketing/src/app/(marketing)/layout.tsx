@@ -247,6 +247,9 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                   <li><a href={`${DEMO_BASE}/demo/wedding`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Hochzeit</a></li>
                   <li><a href={`${DEMO_BASE}/demo/consulting`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Kanzlei &amp; Beratung</a></li>
                   <li><a href={`${DEMO_BASE}/demo/tattoo`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Tattoo Studio</a></li>
+                  <li><a href={`${DEMO_BASE}/demo/florist`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Floristik</a></li>
+                  <li><a href={`${DEMO_BASE}/demo/fitness`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Fitness</a></li>
+                  <li><a href={`${DEMO_BASE}/demo/location`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Location</a></li>
                   <li><a href={`${DEMO_BASE}/demo/retail`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Einzelhandel</a></li>
                 </ul>
               </div>

@@ -50,8 +50,8 @@ export type Snapshot = {
   generatedAt: string;
 };
 
-/** Resolve tenant from the request hostname. Falls back to first tenant for dev. */
-export async function resolveTenant(): Promise<string | null> {
+/** Resolve tenant from hostname, or from the first path segment for shared lead/demo URLs. */
+export async function resolveTenant(candidateSlug?: string): Promise<string | null> {
   // Standalone mode: fixed tenant via env var (dedicated Vercel project)
   const fixedTenantId = process.env.FIXED_TENANT_ID;
   if (fixedTenantId) return fixedTenantId;
@@ -64,6 +64,11 @@ export async function resolveTenant(): Promise<string | null> {
     // Try domain lookup
     const [domain] = await db.select({ tenantId: tenantDomains.tenantId }).from(tenantDomains).where(eq(tenantDomains.domain, host)).limit(1);
     if (domain) return domain.tenantId;
+
+    if (candidateSlug) {
+      const [tenantBySlug] = await db.select({ id: tenants.id }).from(tenants).where(and(eq(tenants.slug, candidateSlug), eq(tenants.status, 'active'))).limit(1);
+      if (tenantBySlug) return tenantBySlug.id;
+    }
 
     // Fallback: first active tenant (dev mode)
     const [tenant] = await db.select({ id: tenants.id }).from(tenants).where(eq(tenants.status, 'active')).limit(1);

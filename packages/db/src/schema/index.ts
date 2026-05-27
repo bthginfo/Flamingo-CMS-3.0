@@ -3,11 +3,11 @@ import { pgTable, uuid, varchar, text, boolean, integer, jsonb, timestamp, uniqu
 // ─── Enums ────────────────────────────────────────────────────────────
 export const industryEnum = pgEnum('industry', [
   'tradesman', 'restaurant', 'salon', 'hotel', 'tourism',
-  'consulting', 'medical', 'fitness', 'wedding', 'cafe', 'bar', 'photography', 'realestate', 'tattoo', 'ecommerce', 'retail',
+  'consulting', 'medical', 'fitness', 'wedding', 'cafe', 'bar', 'photography', 'realestate', 'tattoo', 'ecommerce', 'retail', 'florist', 'location',
 ]);
 
 export const tenantStatusEnum = pgEnum('tenant_status', ['active', 'suspended', 'provisioning']);
-export const deploymentModeEnum = pgEnum('deployment_mode', ['shared', 'standalone']);
+export const deploymentModeEnum = pgEnum('deployment_mode', ['shared', 'lead_shared', 'standalone']);
 export const domainTypeEnum = pgEnum('domain_type', ['primary', 'alias', 'preview']);
 export const pageTypeEnum = pgEnum('page_type', ['free', 'collection_overview', 'legal', 'system']);
 export const pageStatusEnum = pgEnum('page_status', ['draft', 'published', 'archived']);

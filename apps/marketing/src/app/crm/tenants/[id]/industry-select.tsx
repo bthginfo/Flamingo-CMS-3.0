@@ -13,7 +13,8 @@ const INDUSTRIES = [
   { value: 'tourism', label: 'Tourismus' },
   { value: 'consulting', label: 'Consulting' },
   { value: 'medical', label: 'Medizin' },
-  { value: 'fitness', label: 'Fitness' },
+  { value: 'fitness', label: 'Fitnessstudio' },
+  { value: 'location', label: 'Location' },
   { value: 'wedding', label: 'Hochzeit' },
   { value: 'cafe', label: 'Café' },
   { value: 'bar', label: 'Bar' },
@@ -21,6 +22,7 @@ const INDUSTRIES = [
   { value: 'realestate', label: 'Immobilien' },
   { value: 'tattoo', label: 'Tattoo' },
   { value: 'ecommerce', label: 'E-Commerce' },
+  { value: 'florist', label: 'Floristik' },
   { value: 'retail', label: 'Einzelhandel & Weitere' },
 ] as const;
 

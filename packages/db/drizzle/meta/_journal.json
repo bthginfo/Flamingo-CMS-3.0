@@ -8,6 +8,27 @@
       "when": 1778841828807,
       "tag": "0000_orange_network",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1779880000000,
+      "tag": "0001_crm_customers",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779881000000,
+      "tag": "0002_florist_industry",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1779882000000,
+      "tag": "0003_location_lead_shared",
+      "breakpoints": true
     }
   ]
 }

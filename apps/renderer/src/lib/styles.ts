@@ -1385,6 +1385,21 @@ export const INDUSTRY_STYLES: Record<string, IndustryStyles> = {
   },
 };
 
+INDUSTRY_STYLES.florist = {
+  label: 'Floristik',
+  styles: INDUSTRY_STYLES.salon.styles,
+};
+
+INDUSTRY_STYLES.fitness = {
+  label: 'Fitnessstudio',
+  styles: INDUSTRY_STYLES.tradesman.styles,
+};
+
+INDUSTRY_STYLES.location = {
+  label: 'Location',
+  styles: INDUSTRY_STYLES.hotel.styles,
+};
+
 export function getStyleConfig(industry: string, style: string): StyleConfig | null {
   return INDUSTRY_STYLES[industry]?.styles[style] ?? INDUSTRY_STYLES[industry]?.styles['classic'] ?? null;
 }

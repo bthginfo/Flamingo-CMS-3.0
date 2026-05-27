@@ -2,12 +2,17 @@
 
 import { useActionState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { loginAction } from './actions';
 
 export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(loginAction, {});
   const router = useRouter();
+  const [tenant, setTenant] = useState('');
+
+  useEffect(() => {
+    setTenant(new URLSearchParams(window.location.search).get('tenant') || '');
+  }, []);
 
   useEffect(() => {
     if (state && !state.error && !isPending && state !== null && Object.keys(state).length === 0) {
@@ -29,6 +34,7 @@ export default function LoginPage() {
         </div>
 
         <form action={formAction} className="admin-card p-6 space-y-4">
+          {tenant && <input type="hidden" name="tenant" value={tenant} />}
           <div>
             <label htmlFor="password" className="admin-label">Passwort</label>
             <input

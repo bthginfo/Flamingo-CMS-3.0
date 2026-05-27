@@ -6,6 +6,9 @@ export const revalidate = 60;
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { getDesignCssVars } from '@/lib/design-vars';
+import { getDb } from '@/lib/db';
+import { tenants } from '@flamingo/db';
+import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { SectionRenderer } from '@/components/section-renderer';
@@ -17,7 +20,8 @@ import { WhatsAppFab } from '@/components/whatsapp-fab';
 const LOCALE_PATTERN = /^[a-z]{2}$/;
 
 async function resolvePageData(slug?: string[]) {
-  const tenantId = await resolveTenant();
+  const requestedSlug = slug || [];
+  const tenantId = await resolveTenant(requestedSlug[0]);
   if (!tenantId) return null;
   const [snapshot, i18n] = await Promise.all([
     getActiveSnapshot(tenantId),
@@ -27,7 +31,18 @@ async function resolvePageData(slug?: string[]) {
 
   // i18n: detect locale prefix from slug (e.g. /en/about → locale='en', pageSlug='about')
   let locale: string | undefined;
-  let pageSlug = slug || [];
+  let pageSlug = requestedSlug;
+
+  // Shared renderer tenant URLs can use /:tenantSlug/... without a custom domain.
+  // If the first segment belongs to the resolved tenant, it is routing context,
+  // not the CMS page slug.
+  if (pageSlug.length > 0) {
+    const db = getDb();
+    const [tenant] = await db.select({ slug: tenants.slug }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+    if (tenant?.slug && pageSlug[0] === tenant.slug) {
+      pageSlug = pageSlug.slice(1);
+    }
+  }
   if (i18n.enabled && pageSlug.length > 0 && LOCALE_PATTERN.test(pageSlug[0])) {
     if (i18n.locales.includes(pageSlug[0])) {
       locale = pageSlug[0];

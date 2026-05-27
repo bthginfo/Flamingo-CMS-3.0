@@ -131,6 +131,20 @@ export const PRESETS: Record<TemplateKey, ThemePreset[]> = {
     { id: 'gold',       label: 'Gold',           primary: '#a16207', primaryFg: '#fefce8', accent: '#eab308', surface: '#fefce8', bg: '#ffffff', text: '#422006' },
     { id: 'dark',       label: 'Dark Retail',    primary: '#10b981', primaryFg: '#0a0a0a', accent: '#34d399', surface: '#1c1917', bg: '#0c0a09', text: '#fafaf9' },
   ],
+  florist: [
+    { id: 'blossom',    label: 'Blossom',        primary: '#be185d', primaryFg: '#fff1f5', accent: '#fb7185', surface: '#fff1f5', bg: '#ffffff', text: '#1f1521' },
+    { id: 'atelier',    label: 'Atelier',        primary: '#6d284d', primaryFg: '#fdf2f8', accent: '#d946ef', surface: '#fdf2f8', bg: '#fff7fb', text: '#24101c' },
+    { id: 'botanical',  label: 'Botanical',      primary: '#166534', primaryFg: '#f0fdf4', accent: '#f472b6', surface: '#f7fee7', bg: '#ffffff', text: '#122014' },
+    { id: 'mono',       label: 'Mono',           primary: '#111111', primaryFg: '#ffffff', accent: '#111111', surface: '#f5f5f5', bg: '#ffffff', text: '#0a0a0a' },
+    { id: 'night-bloom',label: 'Night Bloom',    primary: '#f9a8d4', primaryFg: '#24101c', accent: '#f9a8d4', surface: '#3b1228', bg: '#180713', text: '#fff1f5' },
+  ],
+  location: [
+    { id: 'loft',       label: 'Loft',           primary: '#92400e', primaryFg: '#fffbeb', accent: '#d4a373', surface: '#faf6ef', bg: '#fffdf8', text: '#1c1812' },
+    { id: 'gallery',    label: 'Gallery',        primary: '#111827', primaryFg: '#f9fafb', accent: '#f59e0b', surface: '#f3f4f6', bg: '#ffffff', text: '#111827' },
+    { id: 'garden',     label: 'Garden',         primary: '#166534', primaryFg: '#f0fdf4', accent: '#fbbf24', surface: '#f7fee7', bg: '#ffffff', text: '#122014' },
+    { id: 'mono',       label: 'Mono',           primary: '#111111', primaryFg: '#ffffff', accent: '#111111', surface: '#f5f5f5', bg: '#ffffff', text: '#0a0a0a' },
+    { id: 'midnight',   label: 'Midnight Venue', primary: '#facc15', primaryFg: '#1c1917', accent: '#facc15', surface: '#1c1917', bg: '#0c0a09', text: '#fafaf9' },
+  ],
 };
 
 export function applyTheme(p: ThemePreset) {

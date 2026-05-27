@@ -2932,6 +2932,39 @@ function PlanList({ items, onChange }: { items: { name: string; price: string; n
   return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Pakete</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-2 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Preis" value={item.price} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, price: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /><label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={item.highlighted} onChange={(e) => onChange(items.map((x, idx) => idx === i ? { ...x, highlighted: e.target.checked } : x))} /> Empfohlen</label><Field label="Features (eine Zeile pro Punkt)" value={item.featuresText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, featuresText: v } : x))} multiline /><Field label="Nicht enthalten (eine Zeile pro Punkt)" value={item.missingText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, missingText: v } : x))} multiline /><div className="grid grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', price: '', note: '', highlighted: false, featuresText: '', missingText: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Paket hinzufügen</button></div>;
 }
 
+type AdditionalLocationDraft = { name: string; address: string; phone: string; email: string; mapEmbedUrl: string; openingHours: string; ctaLabel: string; ctaHref: string };
+
+function AdditionalLocationsEditor({ data, onChange }: EditorProps) {
+  const [d, setD] = useState({
+    badge: (data.badge as string) || '',
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    locations: ((data.locations as any[]) || []).map((item): AdditionalLocationDraft => ({
+      name: item.name || '',
+      address: item.address || '',
+      phone: item.phone || '',
+      email: item.email || item.mail || '',
+      mapEmbedUrl: item.mapEmbedUrl || '',
+      openingHours: item.openingHours || '',
+      ctaLabel: item.ctaLabel || '',
+      ctaHref: item.ctaHref || '',
+    })),
+  });
+  useReport(d as unknown as Record<string, unknown>, onChange);
+  return (
+    <div className="space-y-4">
+      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <LocationList items={d.locations} onChange={(locations) => setD({ ...d, locations })} />
+    </div>
+  );
+}
+
+function LocationList({ items, onChange }: { items: AdditionalLocationDraft[]; onChange: (items: AdditionalLocationDraft[]) => void }) {
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Standorte</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-2 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Telefon" value={item.phone} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, phone: v } : x))} /></div><Field label="Adresse" value={item.address} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, address: v } : x))} multiline /><Field label="E-Mail" value={item.email} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, email: v } : x))} /><Field label="Öffnungszeiten" value={item.openingHours} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, openingHours: v } : x))} multiline /><Field label="Google Maps Embed URL" value={item.mapEmbedUrl} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, mapEmbedUrl: v } : x))} multiline /><div className="grid grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', address: '', phone: '', email: '', mapEmbedUrl: '', openingHours: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Standort hinzufügen</button></div>;
+}
+
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
   faq: FaqEditor,
@@ -3083,4 +3116,33 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   beforeAfterStoryPro: BeforeAfterStoryProEditor,
   signatureGrid: SignatureGridEditor,
   comparisonCardsPro: ComparisonCardsProEditor,
+  additionalLocations: AdditionalLocationsEditor,
+  templateAdvantage: GenericStructuredEditor,
+  principlesGrid: GenericStructuredEditor,
+  glowHero: GenericStructuredEditor,
+  floristHero: GenericStructuredEditor,
+  bouquetShowcase: ProductShowcaseEditor,
+  occasionMosaic: CategoryMosaicEditor,
+  weddingFloristry: BrandShowroomEditor,
+  workshopBooking: ConsultationBookingEditor,
+  seasonalCampaign: OfferCampaignStripEditor,
+  floristMaterials: MaterialGalleryEditor,
+  fitnessHero: GenericStructuredEditor,
+  programGrid: ServicesGridEditor,
+  courseSchedule: TimelineEditor,
+  trainerProfiles: TeamEditor,
+  membershipPlans: ComparisonCardsProEditor,
+  trialSessionCta: ImmersiveCtaBannerEditor,
+  transformationStories: BeforeAfterStoryProEditor,
+  studioAmenities: BentoGridEditor,
+  locationHero: CinematicHeroEditor,
+  spaceShowcase: ProductShowcaseEditor,
+  eventTypes: CategoryMosaicEditor,
+  availabilityCta: ImmersiveCtaBannerEditor,
+  locationPackages: ComparisonCardsProEditor,
+  amenitiesGrid: BentoGridEditor,
+  floorPlanOverview: TextImageEditor,
+  galleryMoodboard: GalleryGridEditor,
+  locationAccess: MapEditor,
+  hostTeam: TeamEditor,
 };

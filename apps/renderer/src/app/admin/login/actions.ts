@@ -8,6 +8,7 @@ import { cookies } from 'next/headers';
 
 export async function loginAction(_prev: unknown, formData: FormData): Promise<{ error?: string }> {
   const password = formData.get('password') as string;
+  const tenantSlug = (formData.get('tenant') as string | null)?.trim();
   if (!password) return { error: 'Passwort ist erforderlich' };
 
   const db = getDb();
@@ -16,7 +17,9 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
   const fixedId = process.env.FIXED_TENANT_ID;
   const [tenant] = fixedId
     ? await db.select().from(tenants).where(eq(tenants.id, fixedId)).limit(1)
-    : await db.select().from(tenants).limit(1);
+    : tenantSlug
+      ? await db.select().from(tenants).where(eq(tenants.slug, tenantSlug)).limit(1)
+      : await db.select().from(tenants).limit(1);
   if (!tenant) return { error: 'Kein Tenant konfiguriert' };
 
   const [secret] = await db.select().from(adminSecrets).where(eq(adminSecrets.tenantId, tenant.id));

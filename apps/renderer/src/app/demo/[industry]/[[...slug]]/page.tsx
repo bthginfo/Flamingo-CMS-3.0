@@ -23,6 +23,9 @@ const INDUSTRY_MAP: Record<string, string> = {
   showcase: 'tradesman',
   shop: 'restaurant',
   retail: 'retail',
+  florist: 'florist',
+  fitness: 'fitness',
+  location: 'location',
 };
 
 /** Recursively prefix internal hrefs in section data with the demo path */

@@ -3,7 +3,7 @@ import { tenants, tenantDomains, pages, publishedSnapshots, globalSettings } fro
 import { eq, and, count } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Globe, FileText, Layers, ExternalLink, Shield, Server, Cloud } from 'lucide-react';
+import { ArrowLeft, Globe, FileText, Layers, ExternalLink, Shield, Server, Cloud, UserCheck } from 'lucide-react';
 import { TenantActions } from './tenant-actions';
 import { IndustrySelect } from './industry-select';
 import { DomainManager } from './domain-manager';
@@ -54,6 +54,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
               <span className="hidden sm:inline">·</span>
               <span className={tenant.status === 'active' ? 'crm-badge-green' : tenant.status === 'provisioning' ? 'crm-badge-amber' : 'crm-badge-red'}>{tenant.status}</span>
               {tenant.deploymentMode === 'standalone' && <span className="crm-badge-amber">Standalone</span>}
+              {tenant.deploymentMode === 'lead_shared' && <span className="crm-badge-amber">Lead-Shared</span>}
             </div>
           </div>
         </div>
@@ -129,7 +130,11 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
               <div className="flex justify-between">
                 <span>Deployment</span>
                 <span className="inline-flex items-center gap-1 text-slate-900">
-                  {tenant.deploymentMode === 'standalone' ? <><Cloud size={12} /> Standalone</> : <><Server size={12} /> Shared</>}
+                  {tenant.deploymentMode === 'standalone'
+                    ? <><Cloud size={12} /> Standalone</>
+                    : tenant.deploymentMode === 'lead_shared'
+                      ? <><UserCheck size={12} /> Lead-Shared</>
+                      : <><Server size={12} /> Shared</>}
                 </span>
               </div>
               {tenant.vercelProjectId && (
@@ -157,6 +162,19 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
           {/* Quick links */}
           <div className="crm-card p-5 space-y-3">
             <h3 className="font-semibold text-slate-900 text-sm">Quick Links</h3>
+            {domains.length === 0 && tenant.deploymentMode !== 'standalone' && (() => {
+              const rendererBase = process.env.RENDERER_URL || 'https://flamingo-renderer.vercel.app';
+              return (
+                <>
+                  <a href={`${rendererBase}/${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 truncate">
+                    <ExternalLink size={14} className="shrink-0" /> Shared Frontend
+                  </a>
+                  <a href={`${rendererBase}/admin/login?tenant=${tenant.slug}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800">
+                    <Shield size={14} className="shrink-0" /> Admin öffnen
+                  </a>
+                </>
+              );
+            })()}
             {domains.map(d => (
               <a key={d.id} href={`https://${d.domain}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800 truncate">
                 <ExternalLink size={14} className="shrink-0" /> {d.domain}
@@ -168,7 +186,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
               </a>
             )}
             {(tenant.isDemo || tenant.slug?.startsWith('demo-')) && (() => {
-              const industryMap: Record<string, string> = { tradesman: 'handwerk', hotel: 'hotel', restaurant: 'restaurant', salon: 'salon', tourism: 'tourism', medical: 'medical', wedding: 'wedding', photography: 'photography' };
+              const industryMap: Record<string, string> = { tradesman: 'handwerk', hotel: 'hotel', restaurant: 'restaurant', salon: 'salon', tourism: 'tourism', medical: 'medical', wedding: 'wedding', photography: 'photography', florist: 'florist', fitness: 'fitness', location: 'location' };
               const demoKey = industryMap[tenant.industry] || tenant.industry;
               const rendererBase = domains[0] ? `https://${domains[0].domain}` : 'https://flamingo-renderer.vercel.app';
               const adminUrl = domains[0] ? `${rendererBase}/admin` : `${rendererBase}/admin/demo-login?industry=${demoKey}`;

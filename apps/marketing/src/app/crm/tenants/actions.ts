@@ -5,7 +5,7 @@ import { getDb } from '@/lib/db';
 import { tenants, tenantDomains, globalSettings, tenantAddons, shopSettings, pages, pageSections } from '@flamingo/db';
 import { eq, and, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { addDomainToRenderer, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject } from '@/lib/vercel';
+import { addDomainToRenderer, addDomainToProject, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject, createStandaloneProject } from '@/lib/vercel';
 
 export async function createTenantAction(input: ProvisionInput) {
   try {
@@ -20,7 +20,7 @@ export async function createTenantAction(input: ProvisionInput) {
   }
 }
 
-export async function updateTenantAction(tenantId: string, data: { name?: string; status?: 'active' | 'suspended'; activeStyle?: string; isDemo?: boolean; isLead?: boolean; industry?: 'tradesman' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'consulting' | 'medical' | 'fitness' | 'wedding' | 'cafe' | 'bar' | 'photography' | 'realestate' | 'tattoo' | 'ecommerce' | 'retail' }) {
+export async function updateTenantAction(tenantId: string, data: { name?: string; status?: 'active' | 'suspended'; activeStyle?: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: 'shared' | 'lead_shared'; industry?: 'tradesman' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'consulting' | 'medical' | 'fitness' | 'wedding' | 'cafe' | 'bar' | 'photography' | 'realestate' | 'tattoo' | 'ecommerce' | 'retail' | 'florist' | 'location' }) {
   const db = getDb();
   await db.update(tenants)
     .set({ ...data, updatedAt: new Date() })
@@ -32,6 +32,8 @@ export async function updateTenantAction(tenantId: string, data: { name?: string
 
 export async function addDomainAction(tenantId: string, domain: string) {
   const db = getDb();
+  const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  if (!tenant) return { success: false, error: 'Tenant nicht gefunden' };
 
   // Add to DB
   await db.insert(tenantDomains).values({
@@ -43,7 +45,9 @@ export async function addDomainAction(tenantId: string, domain: string) {
 
   // Add to Vercel
   try {
-    const result = await addDomainToRenderer(domain);
+    const result = tenant.deploymentMode === 'standalone' && tenant.vercelProjectId
+      ? await addDomainToProject(tenant.vercelProjectId, domain)
+      : await addDomainToRenderer(domain);
     if (result.verified) {
       await db.update(tenantDomains)
         .set({ verified: true })
@@ -54,6 +58,34 @@ export async function addDomainAction(tenantId: string, domain: string) {
   } catch (err) {
     revalidatePath(`/crm/tenants/${tenantId}`);
     return { success: false, error: (err as Error).message };
+  }
+}
+
+export async function convertLeadSharedToStandaloneAction(tenantId: string) {
+  const db = getDb();
+  const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  if (!tenant) return { success: false as const, error: 'Tenant nicht gefunden' };
+  if (tenant.deploymentMode !== 'lead_shared') {
+    return { success: false as const, error: 'Nur Lead-Shared-Tenants können mit diesem Button umgezogen werden.' };
+  }
+
+  try {
+    const result = await createStandaloneProject(tenant.slug, tenant.id);
+    await db.update(tenants)
+      .set({ deploymentMode: 'standalone', vercelProjectId: result.projectId, isLead: false, updatedAt: new Date() })
+      .where(eq(tenants.id, tenantId));
+
+    const previewDomain = `flamingo-${tenant.slug}.vercel.app`;
+    const [existingDomain] = await db.select().from(tenantDomains).where(eq(tenantDomains.domain, previewDomain)).limit(1);
+    if (!existingDomain) {
+      await db.insert(tenantDomains).values({ tenantId, domain: previewDomain, type: 'preview', verified: true });
+    }
+
+    revalidatePath('/crm');
+    revalidatePath(`/crm/tenants/${tenantId}`);
+    return { success: true as const, projectUrl: result.projectUrl, warning: result.blobConnected ? undefined : 'Blob Storage wurde nicht automatisch verbunden. Bitte im Tenant prüfen.' };
+  } catch (err) {
+    return { success: false as const, error: err instanceof Error ? err.message : 'Standalone-Umzug fehlgeschlagen' };
   }
 }
 

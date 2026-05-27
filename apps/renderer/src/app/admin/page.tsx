@@ -2,7 +2,7 @@ import { getSession } from '@/lib/session';
 import { getDb } from '@/lib/db';
 import { pages, pageSections, collectionItems, publishedSnapshots, tenants, mediaAssets, seoGlobal, seoPage } from '@flamingo/db';
 import { eq, count, and } from 'drizzle-orm';
-import { FileText, Layers, FolderOpen, Rocket, Eye, Globe, ImageIcon, Search, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { FileText, Layers, FolderOpen, Rocket, Eye, Globe, ImageIcon, Search, AlertTriangle, CheckCircle2, Gift, Send } from 'lucide-react';
 import Link from 'next/link';
 
 const RENDERER_URL = '';
@@ -56,6 +56,23 @@ export default async function DashboardPage() {
           <button className="admin-btn-primary" disabled>
             <Rocket size={16} /> Veröffentlichen
           </button>
+        </div>
+      </div>
+
+      <div className="admin-card mb-8 overflow-hidden border-pink-100 bg-gradient-to-r from-pink-50 via-white to-orange-50 p-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex gap-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-pink-500 text-white">
+              <Gift size={20} />
+            </div>
+            <div>
+              <h2 className="font-semibold text-zinc-950">Du bist zufrieden mit Flamingo Media?</h2>
+              <p className="mt-1 text-sm leading-6 text-zinc-600">Empfiehl uns weiter und erhalte 3 Monate Hosting kostenlos. Das kostenlose Hosting wird bei erfolgreicher Vermittlung eines neuen Projekts aktiviert.</p>
+            </div>
+          </div>
+          <a href="mailto:hello@flamingomedia.online?subject=Empfehlung%20f%C3%BCr%20Flamingo%20Media" className="admin-btn-primary shrink-0">
+            <Send size={16} /> Empfehlung senden
+          </a>
         </div>
       </div>
 

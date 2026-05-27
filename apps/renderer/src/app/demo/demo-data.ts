@@ -1,6 +1,6 @@
 import type { NavItem, NavCta, FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
 
-export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail' | 'showcase';
+export type IndustryKey = 'handwerk' | 'hotel' | 'medical' | 'restaurant' | 'salon' | 'tourism' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail' | 'florist' | 'fitness' | 'location' | 'showcase';
 
 export interface DemoSiteData {
   navItems: NavItem[];
@@ -284,6 +284,64 @@ const DEMO_DATA: Record<IndustryKey, DemoSiteData> = {
       columns: [
         { title: 'Sortiment', items: [{ text: 'Wohnzimmer', href: '#' }, { text: 'Büro & Office', href: '#' }, { text: 'Küche', href: '#' }] },
         { title: 'Service', items: [{ text: 'Beratung', href: '/demo/retail#beratung' }, { text: 'Lieferung & Montage', href: '#' }, { text: 'Kontakt', href: '/demo/retail#rt-contact' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    },
+  },
+  florist: {
+    brand: { companyName: 'Blütenwerk Atelier', tagline: 'Floristik, Hochzeiten & saisonale Blumenwelten', primaryColor: '#be185d' },
+    contact: { phone: '+49 841 123 456', email: 'hallo@bluetenwerk-atelier.de', address: 'Theresienstraße 12, 85049 Ingolstadt' },
+    socialLinks: { instagram: '#', facebook: '#' },
+    navItems: [
+      { label: 'Sträuße', href: '/demo/florist/straeusse' },
+      { label: 'Hochzeiten', href: '/demo/florist/hochzeiten' },
+      { label: 'Workshops', href: '/demo/florist/workshops' },
+      { label: 'Kontakt', href: '/demo/florist/kontakt' },
+    ],
+    cta: { label: 'Beratung anfragen', href: '/demo/florist/kontakt' },
+    footer: {
+      columns: [
+        { title: 'Floristik', items: [{ text: 'Sträuße', href: '/demo/florist/straeusse' }, { text: 'Hochzeiten', href: '/demo/florist/hochzeiten' }, { text: 'Workshops', href: '/demo/florist/workshops' }] },
+        { title: 'Atelier', items: [{ text: 'Kontakt', href: '/demo/florist/kontakt' }, { text: 'Anfahrt', href: '/demo/florist/kontakt' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    },
+  },
+  fitness: {
+    brand: { companyName: 'Studio Kraftwerk', tagline: 'Training, Coaching & Kurse', primaryColor: '#9333ea' },
+    contact: { phone: '+49 89 555 123', email: 'hallo@studio-kraftwerk.de', address: 'Sendlinger Straße 18, 80331 München' },
+    socialLinks: { instagram: '#', facebook: '#' },
+    navItems: [
+      { label: 'Kurse', href: '/demo/fitness/kurse' },
+      { label: 'Coaching', href: '/demo/fitness/coaching' },
+      { label: 'Trainer', href: '/demo/fitness/trainer' },
+      { label: 'Kontakt', href: '/demo/fitness/kontakt' },
+    ],
+    cta: { label: 'Probetraining buchen', href: '/demo/fitness/kontakt' },
+    footer: {
+      columns: [
+        { title: 'Training', items: [{ text: 'Kurse', href: '/demo/fitness/kurse' }, { text: 'Coaching', href: '/demo/fitness/coaching' }] },
+        { title: 'Studio', items: [{ text: 'Trainer', href: '/demo/fitness/trainer' }, { text: 'Kontakt', href: '/demo/fitness/kontakt' }] },
+      ],
+      legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    },
+  },
+  location: {
+    brand: { companyName: 'Lichtwerk Loft', tagline: 'Eventlocation, Hochzeiten & Coworking', primaryColor: '#b45309' },
+    contact: { phone: '+49 841 456 789', email: 'hello@lichtwerk-loft.de', address: 'Donaustraße 18, 85049 Ingolstadt' },
+    socialLinks: { instagram: '#', linkedin: '#' },
+    navItems: [
+      { label: 'Räume', href: '/demo/location/raeume' },
+      { label: 'Events', href: '/demo/location/events' },
+      { label: 'Coworking', href: '/demo/location/coworking' },
+      { label: 'Galerie', href: '/demo/location/galerie' },
+      { label: 'Kontakt', href: '/demo/location/kontakt' },
+    ],
+    cta: { label: 'Wunschtermin anfragen', href: '/demo/location/kontakt' },
+    footer: {
+      columns: [
+        { title: 'Location', items: [{ text: 'Räume', href: '/demo/location/raeume' }, { text: 'Events', href: '/demo/location/events' }, { text: 'Coworking', href: '/demo/location/coworking' }] },
+        { title: 'Planung', items: [{ text: 'Galerie', href: '/demo/location/galerie' }, { text: 'Kontakt', href: '/demo/location/kontakt' }] },
       ],
       legalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
     },

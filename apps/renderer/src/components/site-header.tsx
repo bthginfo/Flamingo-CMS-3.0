@@ -11,13 +11,14 @@ import { useHeaderContrast } from '@/hooks/use-header-contrast';
 import { LanguageSwitcher } from './language-switcher';
 import type { NavItem, NavCta, BrandData, ContactData } from '@/lib/tenant-data';
 
-export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/', i18n }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string; i18n?: { locales: string[]; currentLocale: string; defaultLocale: string; style?: string } }) {
+export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/', i18n, showTopBar = true, forceDarkNav = false }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string; i18n?: { locales: string[]; currentLocale: string; defaultLocale: string; style?: string }; showTopBar?: boolean; forceDarkNav?: boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const { scrollY } = useScroll();
   const pathname = usePathname();
-  const isHeroDark = useHeaderContrast(darkBg);
+  const measuredHeroDark = useHeaderContrast(darkBg);
+  const isHeroDark = forceDarkNav ? true : measuredHeroDark;
 
   // Close mobile menu on route change
   useEffect(() => { setMobileOpen(false); }, [pathname]);
@@ -37,7 +38,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   return (
     <>
       {/* Top bar — fixed, disappears on scroll */}
-      <motion.div
+      {showTopBar && <motion.div
         animate={{ y: scrolled || mobileOpen ? -40 : 0, opacity: scrolled || mobileOpen ? 0 : 1 }}
         transition={{ duration: 0.3 }}
         className="fixed top-0 left-0 right-0 z-[60] text-white/80 text-xs py-2.5"
@@ -58,7 +59,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
           </div>
           <span className="hidden sm:inline font-medium text-white/60">{brand.tagline}</span>
         </div>
-      </motion.div>
+      </motion.div>}
 
       {/* Main nav — becomes glassmorphism on scroll */}
       <motion.header
@@ -66,7 +67,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
           'fixed left-0 right-0 z-50 transition-all duration-500',
-          scrolled ? 'top-0' : 'top-10',
+          scrolled || !showTopBar ? 'top-0' : 'top-10',
         )}
       >
         <div className={cn(
@@ -226,7 +227,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
       </motion.header>
 
       {/* Spacer for top bar */}
-      <div className="h-10" />
+      {showTopBar && <div className="h-10" />}
     </>
   );
 }

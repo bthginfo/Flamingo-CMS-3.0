@@ -14,6 +14,13 @@ const INDUSTRY_MAP: Record<string, string> = {
   wedding: 'wedding',
   photography: 'photography',
   consulting: 'consulting',
+  realestate: 'realestate',
+  cafe: 'cafe',
+  tattoo: 'tattoo',
+  retail: 'retail',
+  florist: 'florist',
+  fitness: 'fitness',
+  location: 'location',
 };
 
 export default async function DemoCollectionDetailPage({

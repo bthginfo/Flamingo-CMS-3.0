@@ -1,9 +1,9 @@
 'use client';
 
 import { useTransition } from 'react';
-import { updateTenantAction, deleteTenantAction, configureBlobAction, toggleShopAddonAction, toggleI18nAction, updateI18nSettingsAction } from '../actions';
+import { updateTenantAction, deleteTenantAction, configureBlobAction, toggleShopAddonAction, toggleI18nAction, updateI18nSettingsAction, convertLeadSharedToStandaloneAction } from '../actions';
 import { toast } from 'sonner';
-import { Power, Pause, Trash2, Eye, ShoppingBag, UserCheck, Globe } from 'lucide-react';
+import { Power, Pause, Trash2, Eye, ShoppingBag, UserCheck, Globe, CloudUpload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, isLead, deploymentMode, shopActive, i18nEnabled, i18nMaxLanguages }: { tenantId: string; currentStatus: string; currentStyle: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: string; shopActive?: boolean; i18nEnabled?: boolean; i18nMaxLanguages?: number }) {
@@ -136,6 +136,26 @@ export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, i
           className="w-full crm-btn bg-amber-50 text-amber-700 hover:bg-amber-100 active:bg-amber-200 border border-amber-200"
         >
           Blob Storage konfigurieren
+        </button>
+      )}
+      {deploymentMode === 'lead_shared' && (
+        <button
+          onClick={() => {
+            if (!confirm('Lead-Shared-Tenant jetzt in ein eigenes Standalone-Projekt umziehen?')) return;
+            startTransition(async () => {
+              const result = await convertLeadSharedToStandaloneAction(tenantId);
+              if (result.success) {
+                toast.success(result.warning || 'Tenant wurde in ein Standalone-Projekt umgezogen');
+                router.refresh();
+              } else {
+                toast.error(result.error || 'Umzug fehlgeschlagen');
+              }
+            });
+          }}
+          disabled={pending}
+          className="w-full crm-btn bg-indigo-50 text-indigo-700 hover:bg-indigo-100 active:bg-indigo-200 border border-indigo-200"
+        >
+          <CloudUpload size={14} /> Zu Standalone umziehen
         </button>
       )}
     </div>

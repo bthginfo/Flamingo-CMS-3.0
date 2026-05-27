@@ -23,7 +23,7 @@ const tdPair = z.object({
   d: z.string().optional().default(''),
 });
 
-const templateKeyZ = z.enum(['restaurant', 'hotel', 'tourism', 'salon', 'tradesman', 'consulting', 'medical', 'fitness', 'wedding', 'photography', 'realestate', 'cafe', 'tattoo', 'shop', 'retail']);
+const templateKeyZ = z.enum(['restaurant', 'hotel', 'tourism', 'salon', 'tradesman', 'consulting', 'medical', 'fitness', 'wedding', 'photography', 'realestate', 'cafe', 'tattoo', 'shop', 'retail', 'florist', 'location']);
 const templateStyleZ = z.enum(['classic', 'modern', 'bold']);
 
 /**
@@ -760,5 +760,5 @@ export const SiteContentSchema = z.object({
 
 export type SiteContent = z.infer<typeof SiteContentSchema>;
 
-export type TemplateKey = 'restaurant' | 'hotel' | 'tourism' | 'salon' | 'tradesman' | 'consulting' | 'medical' | 'fitness' | 'wedding' | 'photography' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail';
+export type TemplateKey = 'restaurant' | 'hotel' | 'tourism' | 'salon' | 'tradesman' | 'consulting' | 'medical' | 'fitness' | 'wedding' | 'photography' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail' | 'florist' | 'location';
 export type PageId = 'home' | 'services' | 'gallery' | 'about' | 'contactPage';

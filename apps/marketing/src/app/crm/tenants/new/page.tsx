@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createTenantAction, toggleShopAddonAction } from '../actions';
 import { toast } from 'sonner';
-import { ArrowLeft, Rocket, Server, Cloud } from 'lucide-react';
+import { ArrowLeft, Rocket, Server, Cloud, UserCheck } from 'lucide-react';
 import Link from 'next/link';
 
 const INDUSTRIES = [
@@ -15,13 +15,15 @@ const INDUSTRIES = [
   { value: 'tourism', label: 'Tourismus' },
   { value: 'consulting', label: 'Beratung' },
   { value: 'medical', label: 'Medizin / Praxis' },
-  { value: 'fitness', label: 'Fitness' },
+  { value: 'fitness', label: 'Fitnessstudio' },
+  { value: 'location', label: 'Location' },
   { value: 'wedding', label: 'Hochzeit' },
   { value: 'cafe', label: 'Café' },
   { value: 'bar', label: 'Bar' },
   { value: 'photography', label: 'Fotografie' },
   { value: 'realestate', label: 'Immobilien' },
   { value: 'tattoo', label: 'Tattoo Studio' },
+  { value: 'florist', label: 'Floristik' },
   { value: 'retail', label: 'Einzelhandel & Weitere' },
 ] as const;
 
@@ -42,7 +44,7 @@ export default function NewTenantPage() {
     phone: '',
     email: '',
     address: '',
-    deploymentMode: 'shared' as 'shared' | 'standalone',
+    deploymentMode: 'shared' as 'shared' | 'lead_shared' | 'standalone',
     activateShop: false,
   });
 
@@ -194,7 +196,20 @@ export default function NewTenantPage() {
         {/* Deployment Mode */}
         <div className="crm-card p-5 space-y-4">
           <h2 className="font-semibold text-sm uppercase tracking-wide text-slate-500">Deployment</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <button
+              type="button"
+              onClick={() => setForm(f => ({ ...f, deploymentMode: 'lead_shared' }))}
+              className={`p-4 rounded-xl border-2 text-left transition-all ${
+                form.deploymentMode === 'lead_shared'
+                  ? 'border-indigo-500 bg-indigo-50'
+                  : 'border-slate-200 hover:border-slate-300'
+              }`}
+            >
+              <UserCheck size={20} className={form.deploymentMode === 'lead_shared' ? 'text-indigo-600' : 'text-slate-400'} />
+              <p className="font-semibold mt-2 text-sm">Lead-Shared</p>
+              <p className="text-xs text-slate-500 mt-1">Für Akquise-Seiten auf dem Shared Renderer. Eigener Inhalt, eigenes Passwort, später umziehbar.</p>
+            </button>
             <button
               type="button"
               onClick={() => setForm(f => ({ ...f, deploymentMode: 'shared' }))}

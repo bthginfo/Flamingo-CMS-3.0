@@ -11,7 +11,7 @@ import { addDomainToRenderer, createStandaloneProject, addDomainToProject, trigg
 export type ProvisionInput = {
   name: string;
   slug: string;
-  industry: 'tradesman' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'consulting' | 'medical' | 'fitness' | 'wedding' | 'cafe' | 'bar';
+  industry: 'tradesman' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'consulting' | 'medical' | 'fitness' | 'wedding' | 'cafe' | 'bar' | 'photography' | 'realestate' | 'tattoo' | 'ecommerce' | 'retail' | 'florist' | 'location';
   domain?: string;
   password: string;
   companyName: string;
@@ -22,7 +22,7 @@ export type ProvisionInput = {
   phone?: string;
   email?: string;
   address?: string;
-  deploymentMode?: 'shared' | 'standalone';
+  deploymentMode?: 'shared' | 'lead_shared' | 'standalone';
 };
 
 export type ProvisionResult = {
@@ -83,6 +83,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     activeStyle: 'classic',
     status: 'provisioning',
     deploymentMode,
+    isLead: deploymentMode === 'lead_shared',
   }).returning();
 
   const tenantId = tenant.id;
@@ -239,7 +240,8 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
       }
     }
   } else {
-    // Shared mode: use shared renderer with slug-based routing
+    // Shared and Lead-Shared mode: use the shared renderer. Lead-Shared keeps
+    // costs low until the lead becomes a customer and is converted to standalone.
     // Only add custom domain if explicitly provided
     if (input.domain) {
       await db.insert(tenantDomains).values({
@@ -282,7 +284,7 @@ export async function provisionTenant(input: ProvisionInput): Promise<ProvisionR
     slug: input.slug,
     domain: input.domain,
     domainConfigured,
-    adminUrl: standaloneUrl ? `${standaloneUrl}/admin` : `${rendererBaseUrl}/${input.slug}/admin`,
+    adminUrl: standaloneUrl ? `${standaloneUrl}/admin` : `${rendererBaseUrl}/admin/login?tenant=${input.slug}`,
     rendererUrl: standaloneUrl || sharedUrl,
     warning: standaloneError ? `Standalone-Projekt Fehler: ${standaloneError}` : undefined,
   };
@@ -294,6 +296,18 @@ function getProvisioningDefaults(input: ProvisionInput): ProvisioningDefaults {
   if (input.industry === 'tourism') return getTourismProvisioningDefaults(input);
   if (input.industry === 'hotel') return getHotelProvisioningDefaults(input);
   if (input.industry === 'restaurant') return getRestaurantProvisioningDefaults(input);
+  if (input.industry === 'fitness') return {
+    ...getGenericProvisioningDefaults(input),
+    brand: { primaryColor: '#111827', secondaryColor: '#9333ea', accentColor: '#f59e0b' },
+    navigationCta: { label: 'Probetraining buchen', href: '/kontakt' },
+    footerCta: { label: 'Probetraining buchen', href: '/kontakt' },
+  };
+  if (input.industry === 'location') return {
+    ...getGenericProvisioningDefaults(input),
+    brand: { primaryColor: '#111827', secondaryColor: '#92400e', accentColor: '#d4a373' },
+    navigationCta: { label: 'Wunschtermin anfragen', href: '/kontakt' },
+    footerCta: { label: 'Wunschtermin anfragen', href: '/kontakt' },
+  };
   return getGenericProvisioningDefaults(input);
 }
 

@@ -64,6 +64,7 @@ const ROTATING_WORDS = [
   'Hotels.',
   'Bäckereien.',
   'Boutiquen.',
+  'Floristik.',
 ];
 
 /* ─── Showcase palette ─────────────────────────────────────────────
@@ -95,7 +96,7 @@ function applyShowcasePalette() {
 }
 
 /* ─── Template metadata ────────────────────────────────────────────── */
-const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail', {
+const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail' | 'florist' | 'fitness' | 'location', {
   label: string;
   tagline: string;
   description: string;
@@ -215,9 +216,33 @@ const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     accent: '#c41e3a',
     bullets: ['Produkt-Showcase & Kategorien', 'Inspirations-Galerie', 'Beratungsbuchung & Timeline', 'Vorher/Nachher-Slider'],
   },
+  florist: {
+    label: 'Floristik',
+    tagline: 'Blumenladen · Atelier · Hochzeitsfloristik',
+    description: 'Bouquets, Hochzeiten, Workshops, saisonale Kampagnen, weitere Standorte und Kontakt als emotionale, hochwertige Website.',
+    image: 'https://images.unsplash.com/photo-1487070183336-b863922373d4?auto=format&fit=crop&w=1400&q=80',
+    accent: '#be185d',
+    bullets: ['Bouquet- und Anlass-Showcase', 'Hochzeiten & Events', 'Workshops & Saisonkampagnen', 'Standorte & Kontakt'],
+  },
+  fitness: {
+    label: 'Fitness & Coaching',
+    tagline: 'Studio · Yoga · Personal Training',
+    description: 'Programme, Trainer, Probetraining, Kurspläne, Preise und Kontakt als motivierende Website für Studios und Coaches.',
+    image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1400&q=80',
+    accent: '#9333ea',
+    bullets: ['Programme & Kurse', 'Trainer:innen', 'Probetraining-CTA', 'Preise & Pakete'],
+  },
+  location: {
+    label: 'Location',
+    tagline: 'Eventlocation · Hochzeit · Coworking',
+    description: 'Räume, Kapazitäten, Eventarten, Pakete, Ausstattung, Galerie und Anfrage-CTA für Locations mit echtem Wow-Faktor.',
+    image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1400&q=80',
+    accent: '#b45309',
+    bullets: ['Räume & Kapazitäten', 'Eventarten & Pakete', 'Ausstattung & Mood-Galerie', 'Anfrage-CTA & Anfahrt'],
+  },
 };
 
-const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail', { classic: string; modern: string; bold: string }> = {
+const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail' | 'florist' | 'fitness' | 'location', { classic: string; modern: string; bold: string }> = {
   handwerk: {
     classic: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80',
@@ -287,6 +312,21 @@ const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     classic: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1483389127117-b6a2102724ae?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=1400&q=80',
+  },
+  florist: {
+    classic: 'https://images.unsplash.com/photo-1487070183336-b863922373d4?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1468327768560-75b778cbb551?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=1400&q=80',
+  },
+  fitness: {
+    classic: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1549060279-7e168fcee0c2?auto=format&fit=crop&w=1400&q=80',
+  },
+  location: {
+    classic: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1400&q=80',
+    modern: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=80',
+    bold: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1400&q=80',
   },
 };
 
@@ -570,6 +610,9 @@ function ShowcaseFooter() {
               <li><a href="https://www.demo.flamingomedia.online/demo/realestate" className="hover:text-accent">Immobilien</a></li>
               <li><a href="https://www.demo.flamingomedia.online/demo/cafe" className="hover:text-accent">Café</a></li>
               <li><a href="https://www.demo.flamingomedia.online/demo/tattoo" className="hover:text-accent">Tattoo Studio</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/florist" className="hover:text-accent">Floristik</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/fitness" className="hover:text-accent">Fitness</a></li>
+              <li><a href="https://www.demo.flamingomedia.online/demo/location" className="hover:text-accent">Location</a></li>
               <li><a href="https://www.demo.flamingomedia.online/demo/shop" className="hover:text-accent">Online-Shop</a></li>
               <li><a href="https://www.demo.flamingomedia.online/demo/retail" className="hover:text-accent">Einzelhandel</a></li>
             </ul>
@@ -804,11 +847,11 @@ function ServicesSection() {
             </div>
             <h3 className="font-display text-3xl md:text-5xl leading-[1.05] tracking-tight">Branchen-Templates</h3>
             <p className="mt-6 text-base md:text-lg text-muted leading-relaxed max-w-xl">
-              Vierzehn Branchen live — Restaurant, Salon, Hotel, Tourismus, Arztpraxis, Handwerk, Hochzeit, Fotografie, Kanzlei, Immobilien, Café, Tattoo Studio, Online-Shop und Einzelhandel.
+              Siebzehn Branchen live — Restaurant, Salon, Hotel, Tourismus, Arztpraxis, Handwerk, Hochzeit, Fotografie, Kanzlei, Immobilien, Café, Tattoo Studio, Floristik, Fitness, Location, Online-Shop und Einzelhandel.
               Mit echten Unterseiten, passenden Sections und einem Admin, der sich nach Alltag anfühlt.
             </p>
             <div className="mt-8 flex flex-wrap gap-2">
-              {['Restaurant', 'Salon', 'Hotel', 'Tourismus', 'Handwerk', 'Arztpraxis', 'Hochzeit', 'Fotografie', 'Kanzlei', 'Immobilien', 'Café', 'Tattoo', 'Einzelhandel'].map((b) => (
+              {['Restaurant', 'Salon', 'Hotel', 'Tourismus', 'Handwerk', 'Arztpraxis', 'Hochzeit', 'Fotografie', 'Kanzlei', 'Immobilien', 'Café', 'Tattoo', 'Floristik', 'Fitness', 'Location', 'Einzelhandel'].map((b) => (
                 <span key={b} className="hidden md:inline-block text-[11px] font-mono uppercase tracking-widest border border-line rounded-full px-2.5 py-1 text-muted">{b}</span>
               ))}
             </div>
@@ -1441,13 +1484,13 @@ function NumbersSection() {
             In <em className="italic-pop">Zahlen.</em>
           </h2>
           <p className="md:col-span-5 text-lg text-muted reveal">
-            13 Branchen live, drei Stilrichtungen, über 80 Sections — ein Admin, mit dem Du alles selbst pflegst. Kein Agentur-Ticket nötig.
+            17 Branchen live, drei Stilrichtungen, über 80 Sections — ein Admin, mit dem Du alles selbst pflegst. Kein Agentur-Ticket nötig.
           </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 md:gap-y-0 reveal-stagger">
           {[
-            { v: 13, s: '', l: 'Branchen-Templates' },
+            { v: 17, s: '', l: 'Branchen-Templates' },
             { v: 3, s: '', l: 'Stilrichtungen je Branche' },
             { v: 80, s: '+', l: 'Sections kombinierbar' },
             { v: 7, s: ' Tage', l: 'Bis online (Ø)' },
@@ -1977,7 +2020,7 @@ function Pricing() {
       sub: 'einmalig',
       monthly: '+ 29 € / Monat Hosting & Pflege',
       features: [
-        'Eines unserer Branchen-Templates (13 Branchen, 3 Stile)',
+        'Eines unserer Branchen-Templates (17 Branchen, 3 Stile)',
         '6 Farbschemas pro Branche – jederzeit per Klick umstellbar',
         'Admin-Bereich zum selbst pflegen',
         'Hosting & Pflege inklusive',

@@ -176,6 +176,9 @@ function main() {
     'beforeAfterStoryPro',
     'signatureGrid',
     'comparisonCardsPro',
+    'templateAdvantage',
+    'principlesGrid',
+    'glowHero',
   ];
 
   const result = {
