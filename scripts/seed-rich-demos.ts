@@ -182,11 +182,26 @@ async function seedTenant(config: DemoConfig) {
 }
 
 async function main() {
-  console.log('🚀 Seeding all rich demo tenants…\n');
-  for (const config of ALL_CONFIGS) {
+  const onlySlugs = (process.env.DEMO_SLUGS || '')
+    .split(',')
+    .map(slug => slug.trim())
+    .filter(Boolean);
+  const configs = onlySlugs.length > 0
+    ? ALL_CONFIGS.filter(config => onlySlugs.includes(config.slug))
+    : ALL_CONFIGS;
+
+  if (onlySlugs.length > 0 && configs.length !== onlySlugs.length) {
+    const found = new Set(configs.map(config => config.slug));
+    const missing = onlySlugs.filter(slug => !found.has(slug));
+    console.error(`Unknown demo slug(s): ${missing.join(', ')}`);
+    process.exit(1);
+  }
+
+  console.log(onlySlugs.length > 0 ? `🚀 Seeding selected demo tenants: ${onlySlugs.join(', ')}\n` : '🚀 Seeding all rich demo tenants…\n');
+  for (const config of configs) {
     await seedTenant(config);
   }
-  console.log('\n🎉 All rich demo tenants seeded!');
+  console.log(onlySlugs.length > 0 ? '\n🎉 Selected demo tenants seeded!' : '\n🎉 All rich demo tenants seeded!');
   console.log('   Password for all: demo2024');
 }
 
