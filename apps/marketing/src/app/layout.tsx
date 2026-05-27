@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     template: '%s · FlamingoMedia',
   },
   description:
-    'FlamingoMedia gestaltet und betreut Websites für inhabergeführte Betriebe in der DACH-Region – Restaurants, Salons, Handwerk, Praxen & mehr. Editorial-Design mit einem Hauch von Pop. Inhalte selbst pflegen, ohne Agentur.',
+    'FlamingoMedia erstellt schnelle, moderne Websites für lokale Betriebe in Innsbruck, München, Ingolstadt und der DACH-Region. Starkes Design, eigenes CMS, SEO-Grundlage und Inhalte, die Du selbst pflegen kannst.',
   keywords: [
     'Website erstellen lassen',
     'Webdesign für Restaurants',
@@ -23,6 +23,11 @@ export const metadata: Metadata = {
     'Website für Arztpraxis',
     'Website für Beratung',
     'Webdesign Innsbruck',
+    'Website erstellen Innsbruck',
+    'Webdesign München',
+    'Website erstellen München',
+    'Webdesign Ingolstadt',
+    'Website erstellen Ingolstadt',
     'Webdesign Österreich',
     'Webdesign Deutschland',
   ],
@@ -34,7 +39,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'FlamingoMedia · Websites für lokale Marken',
     description:
-      'Editorial-Design mit Pop für Restaurants, Salons, Handwerk, Praxen, Beratung, Studios und viele mehr. Inhalte, die Sie selbst pflegen – ohne Agentur.',
+      'Websites für lokale Betriebe in Innsbruck, München, Ingolstadt und der DACH-Region. Schnell, stark gestaltet und mit CMS, damit Inhalte selbst gepflegt werden können.',
     type: 'website',
 
     locale: 'de_AT',
@@ -44,7 +49,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'FlamingoMedia · Websites für lokale Marken',
     description:
-      'Editorial-Design mit Pop für Restaurants, Salons, Handwerk, Praxen, Beratung, Studios und viele mehr.',
+      'Moderne Websites für lokale Betriebe: Design, CMS, SEO-Grundlage, Hosting und Pflege aus einer Hand.',
 
   },
   robots: {
@@ -112,17 +117,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   '@type': 'Organization',
                   name: 'FlamingoMedia',
                 },
-                areaServed: {
-                  '@type': 'GeoCircle',
-                  geoMidpoint: {
-                    '@type': 'GeoCoordinates',
-                    latitude: 47.26,
-                    longitude: 11.39,
-                  },
-                  geoRadius: '500',
-                },
+                areaServed: [
+                  { '@type': 'City', name: 'Innsbruck' },
+                  { '@type': 'City', name: 'München' },
+                  { '@type': 'City', name: 'Ingolstadt' },
+                  { '@type': 'Country', name: 'Österreich' },
+                  { '@type': 'Country', name: 'Deutschland' },
+                ],
                 description:
-                  'Wir gestalten und betreuen Websites für inhabergeführte Betriebe: Restaurants, Salons, Handwerk, Praxen, Beratung und mehr. Editorial-Design mit einem Hauch von Pop.',
+                  'Wir erstellen und betreuen Websites für inhabergeführte Betriebe: Restaurants, Salons, Handwerk, Praxen, Beratung und mehr. Mit starkem Design, sauberer technischer Basis, CMS und regionaler SEO-Grundlage.',
               },
               {
                 '@context': 'https://schema.org',
@@ -133,7 +136,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     name: 'Was kostet eine Website bei FlamingoMedia?',
                     acceptedAnswer: {
                       '@type': 'Answer',
-                      text: 'Unsere Websites starten ab einem einmaligen Setup-Preis. Dazu kommt eine monatliche Betreuungspauschale, die Hosting, Pflege und Support umfasst. Kontaktieren Sie uns für ein individuelles Angebot.',
+                      text: 'Unsere Websites starten ab einem einmaligen Setup-Preis. Dazu kommt auf Wunsch eine monatliche Betreuungspauschale für Hosting, Pflege und Support. Die Pakete sind transparent kalkuliert und können erweitert werden.',
                     },
                   },
                   {
@@ -149,7 +152,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     name: 'Für welche Branchen eignet sich FlamingoMedia?',
                     acceptedAnswer: {
                       '@type': 'Answer',
-                      text: 'Wir spezialisieren uns auf inhabergeführte Betriebe: Restaurants, Salons, Handwerksbetriebe, Arztpraxen, Beratungen, Hotels und ähnliche lokale Unternehmen in der DACH-Region.',
+                      text: 'Wir spezialisieren uns auf inhabergeführte Betriebe: Restaurants, Salons, Handwerk, Arztpraxen, Beratung, Hotels, Einzelhandel und ähnliche lokale Unternehmen in Innsbruck, München, Ingolstadt und der DACH-Region.',
                     },
                   },
                 ],

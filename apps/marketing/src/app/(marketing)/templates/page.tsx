@@ -4,12 +4,12 @@ import { TemplatesPage } from './templates-client';
 export const metadata: Metadata = {
   title: 'Website-Templates für jede Branche',
   description:
-    'Acht branchenspezifische Website-Templates: Handwerk, Restaurant, Salon, Hotel, Tourismus, Arztpraxis, Hochzeit und Fotografie. Drei Stilvarianten pro Branche. Sofort einsatzbereit.',
+    'Branchenspezifische Website-Templates für Handwerk, Restaurant, Salon, Hotel, Tourismus, Praxis, Shop und mehr. Schnell live, stark gestaltet und komplett im CMS pflegbar.',
   alternates: { canonical: '/templates' },
   openGraph: {
     title: 'Website-Templates für jede Branche · FlamingoMedia',
     description:
-      'Branchenspezifische Templates für lokale Betriebe – Restaurant, Salon, Handwerk, Hotel, Praxis und mehr. Editorial-Design, sofort einsatzbereit.',
+      'Website-Templates für lokale Betriebe: branchennah gedacht, SEO-sauber aufgebaut und in wenigen Tagen mit Deinen Inhalten online.',
   },
 };
 

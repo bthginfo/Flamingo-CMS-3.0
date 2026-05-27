@@ -614,7 +614,7 @@ function ShowcaseFooter() {
 function Landing() {
   return (
     <>
-      <Seo title="FlamingoMedia · Websites für lokale Marken" description="Editorial-Design mit Pop für Restaurants, Hotels, Tourismus, Handwerk, Praxen, Beratung, Studios und viele mehr in der DACH-Region. Inhalte, die Du selbst pflegst." />
+      <Seo title="FlamingoMedia · Websites für lokale Marken" description="Websites für lokale Betriebe in Innsbruck, München, Ingolstadt und der DACH-Region. Starkes Design, eigenes CMS, SEO-Grundlage und Inhalte, die Du selbst pflegst." />
       <HeroSection />
       <ClientLogosSection />
       <ServicesSection />
@@ -699,9 +699,8 @@ function HeroSection() {
 
         <div className="grid md:grid-cols-12 gap-8 mt-14">
           <p className="md:col-span-7 text-lg md:text-2xl text-white/85 leading-relaxed reveal-fast is-visible">
-            Wir gestalten und betreuen Websites für inhabergeführte Betriebe in der DACH-Region.
-            Editorial-Design, das mit dem Tempo Deiner Marke gehen kann. Inhalte, die Du selbst pflegst.
-            Foto und Video von unserem eigenen Team.
+            Wir gestalten und betreuen Websites für inhabergeführte Betriebe, die online nicht wie alle anderen aussehen wollen.
+            Starkes Design, saubere Technik, Inhalte im eigenen CMS und auf Wunsch Foto und Video von unserem Team.
           </p>
           <div className="md:col-span-5 md:pl-8 md:border-l border-white/15 self-end reveal-fast is-visible">
             <p className="font-mono text-xs text-white/60 uppercase tracking-widest mb-4">/ Website live in wenigen Tagen</p>
@@ -786,8 +785,8 @@ function ServicesSection() {
             </h2>
           </div>
           <p className="md:col-span-5 text-lg text-white/75 leading-relaxed reveal">
-            Vier Leistungen. Ein Team. Wir bauen, fotografieren, hosten und kümmern uns –
-            damit Du Dich um Deinen Betrieb kümmern kannst.
+            Ein Team für Konzept, Design, CMS, Inhalte, Hosting und Pflege. Du bekommst keinen Baukasten,
+            sondern eine Website, die schnell live geht und danach einfach weiterlebt.
           </p>
         </div>
 
@@ -806,7 +805,7 @@ function ServicesSection() {
             <h3 className="font-display text-3xl md:text-5xl leading-[1.05] tracking-tight">Branchen-Templates</h3>
             <p className="mt-6 text-base md:text-lg text-muted leading-relaxed max-w-xl">
               Vierzehn Branchen live — Restaurant, Salon, Hotel, Tourismus, Arztpraxis, Handwerk, Hochzeit, Fotografie, Kanzlei, Immobilien, Café, Tattoo Studio, Online-Shop und Einzelhandel.
-              Live-Vorschau im Browser, Farbschema in Sekunden.
+              Mit echten Unterseiten, passenden Sections und einem Admin, der sich nach Alltag anfühlt.
             </p>
             <div className="mt-8 flex flex-wrap gap-2">
               {['Restaurant', 'Salon', 'Hotel', 'Tourismus', 'Handwerk', 'Arztpraxis', 'Hochzeit', 'Fotografie', 'Kanzlei', 'Immobilien', 'Café', 'Tattoo', 'Einzelhandel'].map((b) => (
@@ -822,8 +821,8 @@ function ServicesSection() {
             <span className="font-mono text-xs text-white/80">02</span>
             <h3 className="mt-12 font-display text-3xl md:text-4xl leading-[1.05] tracking-tight">Custom Design</h3>
             <p className="mt-5 text-sm text-white/90 leading-relaxed">
-              Wenn Template nicht reicht: individuell entworfen, eigene Funktionen, eigene
-              Bibliothek. Wie ein Maßanzug.
+              Wenn Template nicht reicht: eigenes Design, eigene Funktionen und eigene
+              Sections. Ohne unnötigen Agentur-Overhead.
             </p>
             <p className="mt-6 text-[11px] uppercase tracking-widest text-white/80 font-mono">Ab 4 Wochen</p>
           </BentoCard>
@@ -853,8 +852,8 @@ function ServicesSection() {
             </div>
             <h3 className="mt-10 font-display text-3xl md:text-4xl leading-[1.05] tracking-tight">Hosting &amp; Pflege</h3>
             <p className="mt-5 text-sm text-muted leading-relaxed">
-              Unkompliziertes Hosting und kleine Anpassungen zum Pauschalpreis. 29 €/Monat –
-              wir sind ansprechbar, wenn Du uns brauchst.
+              Schnelles Hosting, Updates und kleine Anpassungen zum Pauschalpreis. 29 €/Monat –
+              mit Ansprechpartner statt Ticket-Lotterie.
             </p>
             <p className="mt-6 font-display text-3xl tabular-nums">
               29<span className="text-base text-muted ml-1">€/Monat</span>
@@ -881,9 +880,8 @@ function TemplatesPreviewSection() {
             </h2>
           </div>
           <p className="md:col-span-5 text-lg text-muted reveal">
-            Branchenspezifische Templates mit passgenauen Sections, drei Stilrichtungen und einem Admin,
-            der genau die Felder zeigt, die Du brauchst. Du hast eine andere Branche? Kein Problem –
-            wir setzen jede Branche auf Anfrage gerne für Dich um.
+            Branchenspezifische Templates mit echten Seiten, passenden Sections, drei Stilrichtungen und einem Admin,
+            der nur zeigt, was Du wirklich brauchst. Deine Branche fehlt? Dann bauen wir sie sauber nach.
           </p>
         </div>
 
@@ -947,7 +945,7 @@ function ManifestoSection() {
           {[
             {
               t: 'Inhalt vor Effekt.',
-              d: 'Eine Website soll zeigen, was Du wirklich machst. Animationen sind die Würze, nicht das Hauptgericht.',
+              d: 'Eine Website soll zeigen, warum man Dich wählen sollte. Animationen sind die Würze, nicht das Hauptgericht.',
             },
             {
               t: 'Eigentum, nicht Miete.',
@@ -955,7 +953,7 @@ function ManifestoSection() {
             },
             {
               t: 'Geschwindigkeit ist Respekt.',
-              d: 'Schnelle Ladezeiten, sauberes Mobile-Design, gute Auffindbarkeit bei Google. Damit Deine Gäste finden, was sie suchen – und bleiben.',
+              d: 'Schnelle Ladezeiten, sauberes Mobile-Design, gute Auffindbarkeit bei Google. Damit Menschen Dich finden, verstehen und anfragen.',
             },
           ].map((b, i) => (
             <div key={i} className="border-t border-white/15 pt-8">
@@ -999,8 +997,8 @@ const DEVICE_ITEMS: DeviceItem[] = [
   },
   {
     kind: 'phone',
-    src: `${RENDERER_URL}/demo/handwerk/leistungen?embed=1`,
-    label: 'Handwerk · Leistungen',
+    src: `${RENDERER_URL}/demo/restaurant?embed=1`,
+    label: 'Restaurant · Home',
     caption: 'Mobile zuerst gedacht',
   },
 ];

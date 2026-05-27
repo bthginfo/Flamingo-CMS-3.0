@@ -4,11 +4,11 @@ import { KontaktPage } from './kontakt-client';
 export const metadata: Metadata = {
   title: 'Kontakt – Erstgespräch & Beratung',
   description:
-    'Erstgespräch, Angebot oder einfach mal Hallo. FlamingoMedia antwortet innerhalb von 24 Stunden. Erreichbar per E-Mail, Telefon oder Kontaktformular.',
+    'Website-Projekt besprechen? Schreib FlamingoMedia für ein Erstgespräch, ein Angebot oder eine kurze Einschätzung. Wir arbeiten für Betriebe in Innsbruck, München, Ingolstadt und DACH-weit.',
   alternates: { canonical: '/kontakt' },
   openGraph: {
     title: 'Kontakt · FlamingoMedia',
-    description: 'Erstgespräch, Angebot oder einfach mal Hallo. Wir antworten innerhalb von 24 Stunden.',
+    description: 'Erstgespräch, Angebot oder kurze Einschätzung zu Deiner Website. Wir antworten innerhalb von 24 Stunden.',
   },
 };
 

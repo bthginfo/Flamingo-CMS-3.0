@@ -4,12 +4,12 @@ import { PreisePage } from './preise-client';
 export const metadata: Metadata = {
   title: 'Preise & Pakete – Website ab 1.490 €',
   description:
-    'Drei klare Pakete: Template ab 1.490 €, mit Foto- & Video-Content-Kit ab 2.400 €, oder komplett individuell. Transparente Festpreise, keine versteckten Kosten. Hosting ab 29 €/Monat.',
+    'Transparente Website-Pakete für lokale Betriebe: Template ab 1.490 €, Content Kit ab 2.400 €, Shop-Addon, SEO-Texte und Hosting ab 29 €/Monat.',
   alternates: { canonical: '/preise' },
   openGraph: {
     title: 'Preise & Pakete · FlamingoMedia',
     description:
-      'Website-Pakete ab 1.490 € einmalig. Faire Preise, keine Überraschungen. Hosting & Pflege ab 29 €/Monat.',
+      'Faire Website-Preise ohne Agentur-Nebel: klare Pakete, sinnvolle Add-ons und monatliche Pflege auf Wunsch.',
   },
 };
 

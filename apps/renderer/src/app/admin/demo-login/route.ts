@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createSessionToken } from '@flamingo/auth';
+import { createSessionToken, getSessionCookieName } from '@flamingo/auth';
 import { resolveDemoTenant, resolveDemoTenantBySlug } from '@/lib/snapshot';
 import { getDb } from '@/lib/db';
 import { tenants } from '@flamingo/db';
@@ -66,8 +66,21 @@ export async function GET(request: NextRequest) {
     ? requestedNext
     : '/admin';
   const target = new URL(safeNext, request.nextUrl.origin);
-  target.searchParams.set('_dt', token);
-  target.searchParams.set('_demo', '1');
+  const response = NextResponse.redirect(target);
+  response.cookies.set(getSessionCookieName(), token, {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'none',
+    secure: true,
+    maxAge: 60 * 60,
+  });
+  response.cookies.set('flamingo_demo', '1', {
+    path: '/admin',
+    httpOnly: false,
+    sameSite: 'none',
+    secure: true,
+    maxAge: 60 * 60,
+  });
 
-  return NextResponse.redirect(target);
+  return response;
 }

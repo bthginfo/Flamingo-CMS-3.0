@@ -224,7 +224,7 @@ function FeatureBlock({ feature, index }: { feature: typeof FEATURES[0]; index: 
 export default function CmsFeaturesPage() {
   return (
     <>
-      <Seo title="CMS-Funktionen · Flamingo CMS" description="Alle Funktionen des Flamingo CMS im Überblick: Seiten-Builder, Design-Stile, Mediathek, SEO, Navigation und Ein-Klick-Publishing." />
+      <Seo title="CMS-Funktionen · Flamingo CMS" description="Flamingo CMS macht Website-Pflege einfach: Seiten-Builder, Design-Stile, Mediathek, SEO, Navigation, Shop-Inhalte und Ein-Klick-Publishing." />
 
       {/* Hero */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
@@ -240,7 +240,7 @@ export default function CmsFeaturesPage() {
           </h1>
           <p className="mt-6 text-xl text-muted max-w-2xl mx-auto leading-relaxed">
             Flamingo CMS gibt dir volle Kontrolle über deine Website — mit einer Oberfläche,
-            die sich anfühlt wie eine moderne App. Kein Bloat, keine Plugins, kein Frust.
+            die sich anfühlt wie eine moderne App. Seiten, Bilder, SEO und Design bleiben dort, wo Du sie brauchst.
           </p>
           <div className="flex gap-4 justify-center mt-10">
             <a href="/demo" className="btn-primary">
@@ -266,7 +266,7 @@ export default function CmsFeaturesPage() {
         <div className="container-x text-center relative reveal">
           <h2 className="headline-md text-white">Bereit für ein CMS,<br />das <em className="italic-pop text-[var(--accent-color)]">mitdenkt</em>?</h2>
           <p className="mt-6 text-lg text-slate-300 max-w-xl mx-auto">
-            Teste Flamingo CMS kostenlos in der Demo. Keine Registrierung, kein Risiko.
+            Teste Flamingo CMS in der Demo und klick Dich durch echte Admin-Ansichten. Keine Registrierung, kein Risiko.
           </p>
           <div className="flex gap-4 justify-center mt-10">
             <a href="/demo" className="px-8 py-4 rounded-full bg-white text-slate-900 font-bold text-sm hover:bg-slate-100 transition-colors">
@@ -292,7 +292,7 @@ export function CmsFeaturesTeaserSection() {
           Ein CMS, das sich anfühlt wie<br /><em className="italic-pop">deine eigene App.</em>
         </h2>
         <p className="mt-6 text-lg text-muted max-w-2xl mx-auto leading-relaxed">
-          Seiten bauen, Bilder hochladen, Design ändern, SEO optimieren und veröffentlichen — alles in einer einzigen, eleganten Oberfläche.
+          Seiten bauen, Bilder hochladen, Design ändern, SEO optimieren und veröffentlichen — alles in einer Oberfläche, die man auch wirklich gerne benutzt.
         </p>
 
         <div className="grid sm:grid-cols-3 gap-6 mt-14 text-left max-w-4xl mx-auto">

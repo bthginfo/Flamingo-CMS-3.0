@@ -96,7 +96,7 @@ function DesktopMockup({ demoUrl }: { demoUrl: string }) {
 export default function ShopFeaturesPage() {
   return (
     <>
-      <Seo title="Shop-Addon · FlamingoMedia" description="Dein eigener Online-Shop – direkt in Deiner Flamingo-Website. Produkte, Checkout, Stripe, PayPal, Versand, Rechnungen und mehr." />
+      <Seo title="Shop-Addon · FlamingoMedia" description="Dein eigener Online-Shop direkt in Deiner Website: Produkte, Kategorien, Checkout, Stripe, PayPal, Versand, Rechnungen und Admin in einem System." />
 
       <section className="pt-44 pb-12">
         <div className="container-x">
@@ -106,7 +106,7 @@ export default function ShopFeaturesPage() {
             <em className="italic-pop">Direkt in Deiner Website.</em>
           </h1>
           <p className="mt-8 text-lg md:text-xl text-muted max-w-2xl reveal">
-            Kein Shopify. Kein WooCommerce. Kein Umweg. Das Flamingo Shop-Addon verwandelt Deine Website in einen vollwertigen Online-Shop — mit dem gleichen Look, der gleichen Domain und dem gleichen Admin.
+            Kein Shopify. Kein WooCommerce. Kein Umweg. Das Flamingo Shop-Addon macht aus Deiner Website einen vollwertigen Online-Shop — mit gleichem Look, gleicher Domain und gleichem Admin.
           </p>
           <div className="flex flex-wrap gap-4 mt-10 reveal">
             <a href="/kontakt" className="btn-primary">Shop anfragen →</a>
@@ -181,7 +181,7 @@ export function ShopFeaturesTeaserSection() {
           Verkaufe direkt auf<br /><em className="italic-pop">Deiner Website.</em>
         </h2>
         <p className="mt-6 text-lg text-muted max-w-2xl mx-auto leading-relaxed">
-          Produkte, Warenkorb, Checkout, Stripe, PayPal — alles integriert in Dein Flamingo-Design. Kein Shopify nötig.
+          Produkte, Warenkorb, Checkout, Stripe, PayPal — alles integriert in Dein Flamingo-Design. Kein externes Shopsystem, kein doppelter Pflegeaufwand.
         </p>
 
         <div className="grid sm:grid-cols-3 gap-6 mt-14 text-left max-w-4xl mx-auto">
