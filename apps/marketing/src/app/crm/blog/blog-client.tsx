@@ -1,8 +1,34 @@
 'use client';
 
-import { useMemo, useRef, useState, useTransition } from 'react';
+import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { upload as uploadBlob } from '@vercel/blob/client';
-import { Bold, Edit3, ExternalLink, FileText, Heading2, Heading3, Image as ImageIcon, Italic, Link as LinkIcon, List, ListOrdered, Plus, Quote, Search, Trash2, Wand2, X } from 'lucide-react';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Link from '@tiptap/extension-link';
+import Underline from '@tiptap/extension-underline';
+import Image from '@tiptap/extension-image';
+import {
+  Bold,
+  Edit3,
+  ExternalLink,
+  FileText,
+  Heading2,
+  Heading3,
+  Image as ImageIcon,
+  Italic,
+  Link as LinkIcon,
+  List,
+  ListOrdered,
+  Plus,
+  Quote,
+  Redo,
+  Search,
+  Trash2,
+  Underline as UnderlineIcon,
+  Undo,
+  Wand2,
+  X,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { createBlogPost, deleteBlogPost, updateBlogPost, type CrmBlogPost } from './actions';
 
@@ -44,8 +70,21 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, '');
 }
 
+function textFromHtml(value: string) {
+  return value
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function excerptFrom(value: string, length = 155) {
-  const clean = value
+  const clean = textFromHtml(value)
     .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
     .replace(/[#*_`>-]/g, ' ')
@@ -225,7 +264,7 @@ function BlogModal({ title, post, pending, onClose, onSave }: { title: string; p
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-            <p className="mt-1 text-sm text-slate-500">Formatiere den Beitrag mit der Toolbar: Überschriften, Fett, Links, Listen, Zitate und Bilder werden im Artikel sauber gesetzt.</p>
+            <p className="mt-1 text-sm text-slate-500">Schreibe wie in einem normalen Texteditor. Formatierungen, Links und Bilder werden als sauberes HTML im Artikel gespeichert.</p>
           </div>
           <button onClick={onClose} className="rounded-lg p-2 text-slate-400 hover:bg-slate-100"><X size={18} /></button>
         </div>
@@ -238,7 +277,7 @@ function BlogModal({ title, post, pending, onClose, onSave }: { title: string; p
               <span className="text-xs font-medium text-slate-500">Kurzbeschreibung *</span>
               <textarea value={form.excerpt} onChange={event => patch({ excerpt: event.target.value })} className="mt-1 min-h-20 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm" />
             </label>
-            <BlogBodyEditor value={form.content} onChange={value => patch({ content: value })} />
+            <BlogRichTextEditor value={form.content} onChange={value => patch({ content: value })} />
           </div>
           <aside className="space-y-3">
             <label className="block">
@@ -272,48 +311,52 @@ function BlogModal({ title, post, pending, onClose, onSave }: { title: string; p
         <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <button onClick={onClose} className="rounded-lg px-4 py-2 text-sm text-slate-600 hover:bg-slate-100">Abbrechen</button>
           <button onClick={autoSeo} className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"><FileText size={15} /> SEO-Felder füllen</button>
-          <button onClick={() => onSave(form)} disabled={pending || !form.title.trim() || !form.content.trim()} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50">Speichern</button>
+          <button onClick={() => onSave(form)} disabled={pending || !form.title.trim() || !textFromHtml(form.content).trim()} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50">Speichern</button>
         </div>
       </div>
     </div>
   );
 }
 
-function BlogBodyEditor({ value, onChange }: { value: string; onChange: (value: string) => void }) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+function BlogRichTextEditor({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const onChangeRef = useRef(onChange);
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  onChangeRef.current = onChange;
 
-  function replaceSelection(before: string, after = '', placeholder = '') {
-    const textarea = textareaRef.current;
-    if (!textarea) {
-      onChange(`${value}${before}${placeholder}${after}`);
-      return;
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Image.configure({ inline: false, allowBase64: false }),
+      Link.configure({ openOnClick: false, HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' } }),
+    ],
+    content: value || '<p></p>',
+    immediatelyRender: false,
+    editorProps: {
+      attributes: {
+        class: 'min-h-[420px] px-4 py-3 text-sm leading-7 text-slate-800 outline-none',
+      },
+    },
+    onUpdate: ({ editor: nextEditor }) => {
+      onChangeRef.current(nextEditor.getHTML());
+    },
+  });
+
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value || '<p></p>', { emitUpdate: false });
     }
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selected = value.slice(start, end) || placeholder;
-    const next = `${value.slice(0, start)}${before}${selected}${after}${value.slice(end)}`;
-    onChange(next);
-    window.requestAnimationFrame(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + before.length, start + before.length + selected.length);
-    });
-  }
+  }, [value, editor]);
 
-  function insertBlock(markup: string) {
-    const prefix = value && !value.endsWith('\n') ? '\n\n' : '';
-    replaceSelection(`${prefix}${markup}`);
-  }
-
-  async function handleFile(file?: File) {
-    if (!file) return;
+  async function handleBodyImage(file?: File) {
+    if (!file || !editor) return;
     setUploading(true);
     try {
       const url = await uploadImage(file);
       const alt = window.prompt('Alt-Text für das Bild', file.name.replace(/\.[^.]+$/, '')) || '';
-      insertBlock(`![${alt}](${url})\n\n`);
-      toast.success('Bild hochgeladen');
+      editor.chain().focus().setImage({ src: url, alt }).run();
+      toast.success('Bild eingefügt');
     } catch (error) {
       toast.error(errorMessage(error));
     } finally {
@@ -322,42 +365,47 @@ function BlogBodyEditor({ value, onChange }: { value: string; onChange: (value: 
     }
   }
 
-  const tools = [
-    { label: 'H2', icon: Heading2, action: () => insertBlock('## Zwischenüberschrift\n\n') },
-    { label: 'H3', icon: Heading3, action: () => insertBlock('### Abschnitt\n\n') },
-    { label: 'Fett', icon: Bold, action: () => replaceSelection('**', '**', 'wichtiger Text') },
-    { label: 'Kursiv', icon: Italic, action: () => replaceSelection('*', '*', 'betonter Text') },
-    { label: 'Link', icon: LinkIcon, action: () => {
-      const url = window.prompt('Link-URL', 'https://');
-      if (!url) return;
-      replaceSelection('[', `](${url})`, 'Linktext');
-    } },
-    { label: 'Liste', icon: List, action: () => insertBlock('- Erster Punkt\n- Zweiter Punkt\n\n') },
-    { label: 'Nummerierte Liste', icon: ListOrdered, action: () => insertBlock('1. Erster Schritt\n2. Zweiter Schritt\n\n') },
-    { label: 'Zitat', icon: Quote, action: () => insertBlock('> Aussage oder Zitat\n\n') },
-  ];
+  function setLink() {
+    if (!editor) return;
+    const previous = editor.getAttributes('link').href || 'https://';
+    const url = window.prompt('URL eingeben:', previous);
+    if (url === null) return;
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+      return;
+    }
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+  }
+
+  const btn = (active = false) =>
+    `inline-flex h-8 items-center justify-center gap-1 rounded-md px-2 text-xs font-medium transition ${active ? 'bg-indigo-100 text-indigo-700' : 'text-slate-600 hover:bg-white hover:text-indigo-700'}`;
 
   return (
     <div>
       <span className="text-xs font-medium text-slate-500">Inhalt *</span>
-      <div className="mt-1 overflow-hidden rounded-lg border border-slate-200 bg-white">
-        <div className="flex flex-wrap gap-1 border-b border-slate-100 bg-slate-50 p-2">
-          {tools.map(tool => {
-            const Icon = tool.icon;
-            return (
-              <button key={tool.label} type="button" onClick={tool.action} title={tool.label} className="inline-flex h-8 items-center gap-1 rounded-md px-2 text-xs font-medium text-slate-600 hover:bg-white hover:text-indigo-700">
-                <Icon size={14} /> {tool.label}
-              </button>
-            );
-          })}
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={event => handleFile(event.target.files?.[0])} />
-          <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="inline-flex h-8 items-center gap-1 rounded-md px-2 text-xs font-medium text-slate-600 hover:bg-white hover:text-indigo-700 disabled:opacity-50">
-            <ImageIcon size={14} /> {uploading ? 'Upload...' : 'Bild'}
-          </button>
+      <div className="mt-1 overflow-hidden rounded-lg border border-slate-200 bg-white focus-within:border-indigo-300 focus-within:ring-2 focus-within:ring-indigo-100">
+        <div className="flex flex-wrap items-center gap-1 border-b border-slate-100 bg-slate-50 p-2">
+          <button type="button" onClick={() => editor?.chain().focus().toggleBold().run()} className={btn(editor?.isActive('bold'))} title="Fett"><Bold size={14} /></button>
+          <button type="button" onClick={() => editor?.chain().focus().toggleItalic().run()} className={btn(editor?.isActive('italic'))} title="Kursiv"><Italic size={14} /></button>
+          <button type="button" onClick={() => editor?.chain().focus().toggleUnderline().run()} className={btn(editor?.isActive('underline'))} title="Unterstrichen"><UnderlineIcon size={14} /></button>
+          <div className="mx-1 h-5 w-px bg-slate-200" />
+          <button type="button" onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()} className={btn(editor?.isActive('heading', { level: 2 }))} title="Überschrift 2"><Heading2 size={14} /></button>
+          <button type="button" onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()} className={btn(editor?.isActive('heading', { level: 3 }))} title="Überschrift 3"><Heading3 size={14} /></button>
+          <div className="mx-1 h-5 w-px bg-slate-200" />
+          <button type="button" onClick={() => editor?.chain().focus().toggleBulletList().run()} className={btn(editor?.isActive('bulletList'))} title="Liste"><List size={14} /></button>
+          <button type="button" onClick={() => editor?.chain().focus().toggleOrderedList().run()} className={btn(editor?.isActive('orderedList'))} title="Nummerierte Liste"><ListOrdered size={14} /></button>
+          <button type="button" onClick={() => editor?.chain().focus().toggleBlockquote().run()} className={btn(editor?.isActive('blockquote'))} title="Zitat"><Quote size={14} /></button>
+          <div className="mx-1 h-5 w-px bg-slate-200" />
+          <button type="button" onClick={setLink} className={btn(editor?.isActive('link'))} title="Link"><LinkIcon size={14} /></button>
+          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={event => handleBodyImage(event.target.files?.[0])} />
+          <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className={btn()} title="Bild hochladen"><ImageIcon size={14} /> {uploading ? 'Upload...' : 'Bild'}</button>
+          <div className="mx-1 h-5 w-px bg-slate-200" />
+          <button type="button" onClick={() => editor?.chain().focus().undo().run()} className={btn()} title="Rückgängig"><Undo size={14} /></button>
+          <button type="button" onClick={() => editor?.chain().focus().redo().run()} className={btn()} title="Wiederholen"><Redo size={14} /></button>
         </div>
-        <textarea ref={textareaRef} value={value} onChange={event => onChange(event.target.value)} className="min-h-[460px] w-full resize-y border-0 px-3 py-2 font-mono text-sm leading-6 outline-none" />
+        <EditorContent editor={editor} className="blog-editor-content" />
       </div>
-      <p className="mt-1 text-xs text-slate-400">Speichert als Markdown. Bilder werden hochgeladen und als Bildblock eingefügt.</p>
+      <p className="mt-1 text-xs text-slate-400">Der Beitrag wird als sauberes HTML gespeichert. Cover-Bild und Bilder im Text können direkt hochgeladen werden.</p>
     </div>
   );
 }

@@ -185,11 +185,11 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
                 <Shield size={14} className="shrink-0" /> Admin öffnen
               </a>
             )}
-            {(tenant.isDemo || tenant.slug?.startsWith('demo-')) && (() => {
+            {!tenant.isLead && (tenant.isDemo || tenant.slug?.startsWith('demo-')) && (() => {
               const industryMap: Record<string, string> = { tradesman: 'handwerk', hotel: 'hotel', restaurant: 'restaurant', salon: 'salon', tourism: 'tourism', medical: 'medical', wedding: 'wedding', photography: 'photography', florist: 'florist', fitness: 'fitness', location: 'location' };
               const demoKey = industryMap[tenant.industry] || tenant.industry;
               const rendererBase = domains[0] ? `https://${domains[0].domain}` : 'https://flamingo-renderer.vercel.app';
-              const adminUrl = domains[0] ? `${rendererBase}/admin` : `${rendererBase}/admin/demo-login?industry=${demoKey}`;
+              const adminUrl = domains[0] ? `${rendererBase}/admin` : `${rendererBase}/admin/login?tenant=${tenant.slug}`;
               const frontendPath = domains[0] ? '' : `/demo/${demoKey}`;
               return (
                 <>

@@ -6,7 +6,7 @@ import { verifyPassword, createSessionToken, buildSessionCookie } from '@flaming
 import { eq } from 'drizzle-orm';
 import { cookies } from 'next/headers';
 
-export async function loginAction(_prev: unknown, formData: FormData): Promise<{ error?: string }> {
+export async function loginAction(_prev: unknown, formData: FormData): Promise<{ error?: string; success?: boolean }> {
   const password = formData.get('password') as string;
   const tenantSlug = (formData.get('tenant') as string | null)?.trim();
   if (!password) return { error: 'Passwort ist erforderlich' };
@@ -46,5 +46,5 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
   cookieStore.set('flamingo_demo', '', { path: '/admin', maxAge: 0 });
   cookieStore.set('flamingo_public_demo', '', { path: '/admin', maxAge: 0 });
 
-  return {};
+  return { success: true };
 }

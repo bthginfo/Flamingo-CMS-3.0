@@ -1,8 +1,7 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { loginAction } from './actions';
 
 export default function LoginPage() {
@@ -15,11 +14,7 @@ export default function LoginPage() {
   }, []);
 
   useEffect(() => {
-    if (state && !state.error && !isPending && state !== null && Object.keys(state).length === 0) {
-      // Check if this is after a successful login (empty object returned, no error)
-      // Only redirect if we've actually submitted (not initial state)
-      router.push('/admin');
-    }
+    if (state?.success && !isPending) router.push('/admin');
   }, [state, isPending, router]);
 
   return (

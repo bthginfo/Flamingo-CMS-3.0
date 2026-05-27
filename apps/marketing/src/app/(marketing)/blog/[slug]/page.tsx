@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPublishedBlogPost } from '@/lib/blog';
@@ -83,73 +82,11 @@ export default async function BlogDetailPage({ params }: { params: Promise<Param
             {post.tags?.length ? <div className="mt-8 flex flex-wrap gap-2">{post.tags.map(tag => <span key={tag} className="rounded-full bg-white px-3 py-1 text-xs shadow-sm">{tag}</span>)}</div> : null}
           </aside>
           <div className="min-w-0 rounded-[2rem] bg-white p-6 shadow-sm md:p-12">
-            <BlogContent content={post.content} />
+            <div className="prose-blog" dangerouslySetInnerHTML={{ __html: post.content }} />
           </div>
           <aside className="hidden lg:block" />
         </div>
       </article>
     </>
   );
-}
-
-function BlogContent({ content }: { content: string }) {
-  const blocks = content.split(/\n{2,}/).map(block => block.trim()).filter(Boolean);
-  return (
-    <div className="prose-blog">
-      {blocks.map((block, index) => {
-        if (block.startsWith('### ')) return <h3 key={index}>{renderInline(block.slice(4))}</h3>;
-        if (block.startsWith('## ')) return <h2 key={index}>{renderInline(block.slice(3))}</h2>;
-
-        const image = block.match(/^!\[([^\]]*)\]\((https?:\/\/[^)\s]+|\/[^)\s]+)\)$/);
-        if (image) {
-          return (
-            <figure key={index}>
-              <img src={image[2]} alt={image[1]} />
-              {image[1] && <figcaption>{image[1]}</figcaption>}
-            </figure>
-          );
-        }
-
-        if (block.split('\n').every(line => /^\d+\.\s+/.test(line.trim()))) {
-          return <ol key={index}>{block.split('\n').map((line, itemIndex) => <li key={`${index}-${itemIndex}`}>{renderInline(line.trim().replace(/^\d+\.\s+/, ''))}</li>)}</ol>;
-        }
-
-        if (block.split('\n').every(line => line.trim().startsWith('- '))) {
-          return <ul key={index}>{block.split('\n').map((line, itemIndex) => <li key={`${index}-${itemIndex}`}>{renderInline(line.trim().replace(/^- /, ''))}</li>)}</ul>;
-        }
-
-        if (block.split('\n').every(line => line.trim().startsWith('> '))) {
-          return <blockquote key={index}>{block.split('\n').map(line => line.trim().replace(/^> /, '')).map((line, lineIndex) => <p key={lineIndex}>{renderInline(line)}</p>)}</blockquote>;
-        }
-
-        return <p key={index}>{renderInline(block)}</p>;
-      })}
-    </div>
-  );
-}
-
-function renderInline(text: string): ReactNode[] {
-  const parts: ReactNode[] = [];
-  const regex = /(\[([^\]]+)\]\((https?:\/\/[^)\s]+|\/[^)\s]+)\)|\*\*([^*]+)\*\*|\*([^*]+)\*)/g;
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-
-  while ((match = regex.exec(text))) {
-    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
-
-    if (match[2] && match[3]) {
-      const href = match[3];
-      const external = href.startsWith('http');
-      parts.push(<a key={match.index} href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}>{match[2]}</a>);
-    } else if (match[4]) {
-      parts.push(<strong key={match.index}>{match[4]}</strong>);
-    } else if (match[5]) {
-      parts.push(<em key={match.index}>{match[5]}</em>);
-    }
-
-    lastIndex = regex.lastIndex;
-  }
-
-  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
-  return parts;
 }
