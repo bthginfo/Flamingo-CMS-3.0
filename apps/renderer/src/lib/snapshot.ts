@@ -60,6 +60,7 @@ export async function resolveTenant(candidateSlug?: string): Promise<string | nu
     const db = getDb();
     const headersList = await headers();
     const host = headersList.get('host') ?? 'localhost';
+    const isLocalHost = host.startsWith('localhost') || host.startsWith('127.0.0.1') || host.startsWith('[::1]');
 
     // Try domain lookup
     const [domain] = await db.select({ tenantId: tenantDomains.tenantId }).from(tenantDomains).where(eq(tenantDomains.domain, host)).limit(1);
@@ -68,9 +69,12 @@ export async function resolveTenant(candidateSlug?: string): Promise<string | nu
     if (candidateSlug) {
       const [tenantBySlug] = await db.select({ id: tenants.id }).from(tenants).where(and(eq(tenants.slug, candidateSlug), eq(tenants.status, 'active'))).limit(1);
       if (tenantBySlug) return tenantBySlug.id;
+      if (!isLocalHost) return null;
     }
 
-    // Fallback: first active tenant (dev mode)
+    if (!isLocalHost) return null;
+
+    // Fallback: first active tenant (local dev mode only)
     const [tenant] = await db.select({ id: tenants.id }).from(tenants).where(eq(tenants.status, 'active')).limit(1);
     return tenant?.id ?? null;
   } catch (err) {

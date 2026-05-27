@@ -32,6 +32,7 @@ async function resolvePageData(slug?: string[]) {
   // i18n: detect locale prefix from slug (e.g. /en/about → locale='en', pageSlug='about')
   let locale: string | undefined;
   let pageSlug = requestedSlug;
+  let linkPrefix = '';
 
   // Shared renderer tenant URLs can use /:tenantSlug/... without a custom domain.
   // If the first segment belongs to the resolved tenant, it is routing context,
@@ -40,6 +41,7 @@ async function resolvePageData(slug?: string[]) {
     const db = getDb();
     const [tenant] = await db.select({ slug: tenants.slug }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
     if (tenant?.slug && pageSlug[0] === tenant.slug) {
+      linkPrefix = `/${tenant.slug}`;
       pageSlug = pageSlug.slice(1);
     }
   }
@@ -59,7 +61,7 @@ async function resolvePageData(slug?: string[]) {
     p.slug === targetSlug || (targetSlug === '' && (p.slug === '' || p.slug === 'home' || p.slug === 'startseite'))
   );
   if (!page || page.visible === false) return null;
-  return { tenantId, snapshot, page, locale, i18n: i18n.enabled ? i18n : undefined };
+  return { tenantId, snapshot, page, locale, i18n: i18n.enabled ? i18n : undefined, linkPrefix };
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug?: string[] }> }): Promise<Metadata> {
@@ -131,7 +133,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   const result = await resolvePageData(slug);
   if (!result) notFound();
 
-  const { tenantId, snapshot, page, locale, i18n } = result;
+  const { tenantId, snapshot, page, locale, i18n, linkPrefix } = result;
   const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle, seoGlobal] = await Promise.all([
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
@@ -261,13 +263,13 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       {bodyFontName && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
       {importantOverrides.length > 0 && <style dangerouslySetInnerHTML={{ __html: importantOverrides.join('\n') }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdList) }} />
-      <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} i18n={i18n ? { locales: i18n.locales, currentLocale: locale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} />
+      <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} i18n={i18n ? { locales: i18n.locales, currentLocale: locale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} linkPrefix={linkPrefix} />
       <main>
         {visibleSections.map((section) => (
-          <SectionRenderer key={section.id} section={section.type.startsWith('shop') ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={locale} />
+          <SectionRenderer key={section.id} section={section.type.startsWith('shop') ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={locale} linkPrefix={linkPrefix} />
         ))}
       </main>
-      <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />
+      <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} />
       {contact.whatsappEnabled && contact.whatsapp && <WhatsAppFab phone={contact.whatsapp} color={contact.whatsappColor} />}
     </div>
   );

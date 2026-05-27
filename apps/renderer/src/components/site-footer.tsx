@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, MapPin, Phone, Mail, Instagram, Facebook, Linkedin, Youtube, Globe, Music } from 'lucide-react';
 import type { FooterData, BrandData, ContactData, SocialLinks } from '@/lib/tenant-data';
+import { prefixInternalHref } from '@/lib/link-prefix';
 
 const SOCIAL_ICONS: Record<string, React.ElementType> = {
   instagram: Instagram, facebook: Facebook, linkedin: Linkedin, youtube: Youtube, google: Globe, tiktok: Music,
@@ -18,7 +19,7 @@ function isLightColor(hex: string | undefined): boolean {
   return lum > 0.4;
 }
 
-export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: FooterData | null; brand: BrandData; contact?: ContactData; socialLinks?: SocialLinks }) {
+export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '' }: { footer: FooterData | null; brand: BrandData; contact?: ContactData; socialLinks?: SocialLinks; linkPrefix?: string }) {
   if (!footer) return null;
 
   const socials = Object.entries(socialLinks || {}).filter(([, url]) => url);
@@ -40,7 +41,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
           {/* Brand block */}
           <div className="lg:col-span-4 space-y-5">
             {footer.cta?.label && footer.cta?.href && (
-              <Link href={footer.cta.href} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-accent text-gray-900 font-medium text-sm hover:opacity-90 transition-opacity mb-3">
+              <Link href={prefixInternalHref(footer.cta.href, linkPrefix) as string} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-accent text-gray-900 font-medium text-sm hover:opacity-90 transition-opacity mb-3">
                 {footer.cta.label}
               </Link>
             )}
@@ -97,7 +98,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
                   {(col.items || []).map((item, j) => (
                     <li key={j}>
                       {item.href ? (
-                        <Link href={item.href} className="text-sm opacity-70 hover:opacity-100 hover:translate-x-0.5 inline-block transition-all duration-200">
+                        <Link href={prefixInternalHref(item.href, linkPrefix) as string} className="text-sm opacity-70 hover:opacity-100 hover:translate-x-0.5 inline-block transition-all duration-200">
                           {item.text}
                         </Link>
                       ) : (
@@ -118,7 +119,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks }: { footer: Fo
           </span>
           <div className="flex items-center gap-6 flex-wrap justify-center">
             {footer.legalLinks.map((link, i) => (
-              <Link key={i} href={link.href} className="text-xs opacity-50 hover:opacity-100 transition-colors duration-200">
+              <Link key={i} href={prefixInternalHref(link.href, linkPrefix) as string} className="text-xs opacity-50 hover:opacity-100 transition-colors duration-200">
                 {link.label}
               </Link>
             ))}

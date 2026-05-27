@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Save, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { ImageUploadField } from '@/components/image-upload-field';
 import { ButtonField, DetailLinkField } from '@/components/button-field';
 import { IconPickerField } from '@/components/icon-picker-field';
@@ -25,41 +25,16 @@ function useReport(data: Record<string, unknown>, onChange: (d: Record<string, u
 
 // Generic section data editor that renders a form per section type.
 export function SectionDataEditor({ type, data, onChange }: { type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void }) {
-  const Editor = EDITORS[type] ?? GenericJsonEditor;
+  const Editor = EDITORS[type] ?? SchemaSectionEditor;
   return <Editor type={type} data={data} onChange={onChange} />;
 }
 
 type EditorProps = { type?: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void };
 
-// GenericJsonEditor keeps a button because JSON may be invalid mid-edit
-function GenericJsonEditor({ data, onChange }: EditorProps) {
-  const [json, setJson] = useState(JSON.stringify(data, null, 2));
-  const [error, setError] = useState('');
-
-  function handleApply() {
-    try {
-      const parsed = JSON.parse(json);
-      setError('');
-      onChange(parsed);
-    } catch {
-      setError('Ungültiges JSON');
-    }
-  }
-
-  return (
-    <div>
-      <textarea className="admin-input font-mono text-xs w-full" rows={12} value={json} onChange={(e) => setJson(e.target.value)} />
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
-      <button onClick={handleApply} className="admin-btn-primary text-xs mt-2 flex items-center gap-1"><Save size={12} /> Übernehmen</button>
-    </div>
-  );
-}
-
-// ─── Hero Editor ─────────────────────────────────────────────────
-function GenericStructuredEditor({ type, data, onChange }: EditorProps) {
+// Generic structured editor for schema-shaped section data.
+function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
   const defaults = type ? SECTION_PREVIEW_DATA[type] || {} : {};
   const source = Object.keys(data).length > 0 ? data : defaults;
-  const [drafts, setDrafts] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (Object.keys(data).length === 0 && Object.keys(defaults).length > 0) {
@@ -68,75 +43,137 @@ function GenericStructuredEditor({ type, data, onChange }: EditorProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
 
-  function updateField(key: string, value: unknown) {
-    onChange({ ...source, [key]: value });
+  function isRecord(value: unknown): value is Record<string, unknown> {
+    return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
   }
 
   function fieldLabel(key: string) {
     return key.replace(/([A-Z])/g, ' $1').replace(/^./, char => char.toUpperCase());
   }
 
-  function renderField(key: string, value: unknown) {
+  function updateAtPath(path: Array<string | number>, value: unknown) {
+    const update = (current: unknown, depth: number): unknown => {
+      const key = path[depth];
+      if (depth === path.length - 1) {
+        if (Array.isArray(current)) return current.map((item, index) => index === key ? value : item);
+        if (isRecord(current)) return { ...current, [key]: value };
+        return current;
+      }
+      if (Array.isArray(current)) return current.map((item, index) => index === key ? update(item, depth + 1) : item);
+      if (isRecord(current)) return { ...current, [key]: update(current[key as string], depth + 1) };
+      return current;
+    };
+
+    onChange(update(source, 0) as Record<string, unknown>);
+  }
+
+  function createEmptyLike(sample: unknown): unknown {
+    if (typeof sample === 'string') return '';
+    if (typeof sample === 'number') return 0;
+    if (typeof sample === 'boolean') return false;
+    if (Array.isArray(sample)) return [];
+    if (isRecord(sample)) return Object.fromEntries(Object.keys(sample).map(key => [key, createEmptyLike(sample[key])])) as Record<string, unknown>;
+    return '';
+  }
+
+  function renderValue(path: Array<string | number>, label: string, value: unknown) {
+    const renderKey = path.join('.');
     if (typeof value === 'boolean') {
       return (
-        <label key={key} className="flex items-center gap-2 text-sm text-zinc-700">
-          <input type="checkbox" checked={value} onChange={(e) => updateField(key, e.target.checked)} className="rounded" />
-          {fieldLabel(key)}
+        <label key={renderKey} className="flex items-center gap-2 text-sm text-zinc-700">
+          <input type="checkbox" checked={value} onChange={(e) => updateAtPath(path, e.target.checked)} className="rounded" />
+          {label}
         </label>
       );
     }
 
     if (typeof value === 'number') {
       return (
-        <label key={key} className="block">
-          <span className="text-xs font-medium text-zinc-600 mb-1 block">{fieldLabel(key)}</span>
-          <input type="number" className="admin-input" value={value} onChange={(e) => updateField(key, Number(e.target.value))} />
+        <label key={renderKey} className="block">
+          <span className="text-xs font-medium text-zinc-600 mb-1 block">{label}</span>
+          <input type="number" className="admin-input" value={value} onChange={(e) => updateAtPath(path, Number(e.target.value))} />
         </label>
       );
     }
 
     if (typeof value === 'string') {
-      const multiline = value.length > 80 || /content|description|text|subline|bio|answer/i.test(key);
-      return <Field key={key} label={fieldLabel(key)} value={value} onChange={(v) => updateField(key, v)} multiline={multiline} />;
+      const fieldName = String(path[path.length - 1] || '');
+      const multiline = value.length > 80 || /content|description|text|subline|bio|answer|excerpt|intro/i.test(fieldName);
+      if (/image|background|photo|avatar|poster|logo/i.test(fieldName)) {
+        return <ImageUploadField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} />;
+      }
+      if (/href|link|url/i.test(fieldName)) {
+        return <DetailLinkField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} />;
+      }
+      if (/icon/i.test(fieldName)) {
+        return <IconPickerField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} />;
+      }
+      return <Field key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} multiline={multiline} />;
     }
 
-    const jsonValue = drafts[key] ?? JSON.stringify(value ?? (Array.isArray(value) ? [] : {}), null, 2);
-    return (
-      <label key={key} className="block">
-        <span className="text-xs font-medium text-zinc-600 mb-1 block">{fieldLabel(key)}</span>
-        <textarea
-          className="admin-input font-mono text-xs w-full"
-          rows={Array.isArray(value) ? 8 : 6}
-          value={jsonValue}
-          onChange={(e) => {
-            const next = e.target.value;
-            setDrafts(prev => ({ ...prev, [key]: next }));
-            try {
-              updateField(key, JSON.parse(next));
-              setDrafts(prev => {
-                const copy = { ...prev };
-                delete copy[key];
-                return copy;
-              });
-            } catch {
-              // Keep the typed draft until it becomes valid JSON.
-            }
-          }}
-        />
-        {drafts[key] && <p className="mt-1 text-xs text-amber-600">Wird übernommen, sobald das JSON gültig ist.</p>}
-      </label>
-    );
+    if (Array.isArray(value)) {
+      const sample = value[0] ?? '';
+      return (
+        <div key={renderKey} className="space-y-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <span className="text-xs font-semibold text-zinc-600">{label}</span>
+            <button type="button" className="text-xs font-medium text-blue-600 hover:underline" onClick={() => updateAtPath(path, [...value, createEmptyLike(sample)])}>+ Eintrag</button>
+          </div>
+          <div className="space-y-3">
+            {value.map((item, index) => (
+              <div key={`${renderKey}.${index}`} className="relative rounded-xl border border-zinc-200 bg-white p-3 pt-8 shadow-sm">
+                <button type="button" className="absolute right-3 top-2 text-xs text-red-500 hover:text-red-600" onClick={() => updateAtPath(path, value.filter((_, itemIndex) => itemIndex !== index))}>Entfernen</button>
+                {isRecord(item) ? (
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                    {Object.entries(item).map(([childKey, childValue]) => (
+                      <div key={childKey} className={/text|description|subline|content|bio|answer/i.test(childKey) ? 'md:col-span-2' : undefined}>
+                        {renderValue([...path, index, childKey], fieldLabel(childKey), childValue)}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  renderValue([...path, index], `${label} ${index + 1}`, item)
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (isRecord(value)) {
+      const entries = Object.entries(value);
+      if ('label' in value && 'href' in value) {
+        return <ButtonField key={renderKey} label={label} value={{ label: String(value.label ?? ''), href: String(value.href ?? ''), icon: typeof value.icon === 'string' ? value.icon : undefined }} onChange={(v) => updateAtPath(path, v)} />;
+      }
+      return (
+        <div key={renderKey} className="rounded-xl border border-zinc-200 bg-zinc-50 p-3">
+          <p className="mb-3 text-xs font-semibold text-zinc-600">{label}</p>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            {entries.map(([childKey, childValue]) => (
+              <div key={childKey} className={/text|description|subline|content|bio|answer/i.test(childKey) ? 'md:col-span-2' : undefined}>
+                {renderValue([...path, childKey], fieldLabel(childKey), childValue)}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return <Field key={renderKey} label={label} value={String(value ?? '')} onChange={(v) => updateAtPath(path, v)} />;
   }
 
   const keys = Object.keys(source);
-  if (keys.length === 0) return <GenericJsonEditor data={data} onChange={onChange} />;
+  if (keys.length === 0) {
+    return <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-3 text-sm text-zinc-600">Für diese Section sind aktuell keine editierbaren Felder definiert.</div>;
+  }
 
   return (
     <div className="space-y-3">
       <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs text-blue-700">
-        Strukturierter Basis-Editor für ältere Sections. Komplexe Listen bleiben feldweise als JSON editierbar.
+        Alle Inhalte dieser Section sind als Felder editierbar. Listen lassen sich als einzelne Einträge pflegen.
       </div>
-      {keys.map((key) => renderField(key, source[key]))}
+      {keys.map((key) => renderValue([key], fieldLabel(key), source[key]))}
     </div>
   );
 }
@@ -227,7 +264,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
               <>
               <div className="mt-3">
                 <span className="text-xs font-medium text-zinc-600 block mb-1.5">Bildposition Desktop (Fokuspunkt)</span>
-                <div className="inline-grid grid-cols-3 gap-1 bg-zinc-100 p-1 rounded-lg">
+                <div className="inline-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 bg-zinc-100 p-1 rounded-lg">
                   {(['top left','top center','top right','center left','center','center right','bottom left','bottom center','bottom right'] as const).map(pos => (
                     <button key={pos} type="button" onClick={() => setD({ ...d, bgPosition: pos })} className={`w-7 h-7 rounded text-[9px] leading-none transition-colors ${d.bgPosition === pos ? 'bg-blue-500 text-white shadow-sm' : 'hover:bg-zinc-200 text-zinc-400'}`} title={pos}>●</button>
                   ))}
@@ -236,14 +273,14 @@ function HeroEditor({ data, onChange }: EditorProps) {
               {d.bgImageMobile && (
                 <div className="mt-3">
                   <span className="text-xs font-medium text-zinc-600 block mb-1.5">Bildposition Mobil (Fokuspunkt)</span>
-                  <div className="inline-grid grid-cols-3 gap-1 bg-zinc-100 p-1 rounded-lg">
+                  <div className="inline-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 bg-zinc-100 p-1 rounded-lg">
                     {(['top left','top center','top right','center left','center','center right','bottom left','bottom center','bottom right'] as const).map(pos => (
                       <button key={pos} type="button" onClick={() => setD({ ...d, bgPositionMobile: pos })} className={`w-7 h-7 rounded text-[9px] leading-none transition-colors ${d.bgPositionMobile === pos ? 'bg-blue-500 text-white shadow-sm' : 'hover:bg-zinc-200 text-zinc-400'}`} title={pos}>●</button>
                     ))}
                   </div>
                 </div>
               )}
-              <div className="grid grid-cols-2 gap-3 mt-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                 <label className="block col-span-2">
                   <span className="text-xs font-medium text-zinc-600">Overlay</span>
                   <div className="flex gap-2 mt-1.5">
@@ -368,7 +405,7 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
       <details className="border border-zinc-200 rounded-lg p-3">
         <summary className="text-xs font-medium text-zinc-500 cursor-pointer">Farben überschreiben (optional)</summary>
-        <div className="grid grid-cols-3 gap-3 mt-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
           <div>
             <label className="admin-label text-[10px]">Hintergrund</label>
             <div className="flex items-center gap-2">
@@ -414,7 +451,7 @@ function TestimonialsEditor({ data, onChange }: EditorProps) {
     <div className="space-y-3">
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       <Field label="Headline" value={headline} onChange={setHeadline} />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="Bewertungsdurchschnitt (z.B. 4.9)" value={ratingValue} onChange={setRatingValue} />
         <Field label="Anzahl Bewertungen (z.B. 150)" value={ratingCount} onChange={setRatingCount} />
       </div>
@@ -422,7 +459,7 @@ function TestimonialsEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <Field label="Zitat" value={item.quote} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, quote: v } : it))} multiline />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Name" value={item.name} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
             <Field label="Kontext" value={item.context} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, context: v } : it))} />
           </div>
@@ -499,7 +536,7 @@ function CtaLinksEditor({ data, onChange }: EditorProps) {
           <button onClick={() => removeLink(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <Field label="Label" value={link.label} onChange={(v) => updateLink(i, 'label', v)} />
           <DetailLinkField label="Link" value={link.href} onChange={(v) => updateLink(i, 'href', v)} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <IconPickerField label="Icon" value={link.icon} onChange={(v) => updateLink(i, 'icon', v)} />
             <Field label="Beschreibung" value={link.description} onChange={(v) => updateLink(i, 'description', v)} multiline />
           </div>
@@ -549,14 +586,14 @@ function StatsEditor({ data, onChange }: EditorProps) {
       {stats.map((stat, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeStat(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <label className="block text-sm"><span className="text-gray-600 text-xs">Wert</span>
               <input type="number" className="admin-input mt-1 w-full" value={stat.value} onChange={(e) => setStats(stats.map((s, idx) => idx === i ? { ...s, value: Number(e.target.value) } : s))} />
             </label>
             <Field label="Prefix" value={stat.prefix} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, prefix: v } : s))} />
             <Field label="Suffix (+, %, etc.)" value={stat.suffix} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, suffix: v } : s))} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Label" value={stat.label} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} />
             <IconPickerField label="Icon" value={stat.icon} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, icon: v } : s))} />
           </div>
@@ -639,7 +676,7 @@ function GalleryGridEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeImage(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Alt-Text" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
             <Field label="Bildunterschrift" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} />
           </div>
@@ -673,7 +710,7 @@ function UspStripEditor({ data, onChange }: EditorProps) {
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <IconPickerField label="Icon" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
             <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Text" value={item.text} onChange={(v) => update(i, 'text', v)} multiline />
@@ -717,11 +754,11 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
       {cards.map((card, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Titel" value={card.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Beschreibung" value={card.text} onChange={(v) => update(i, 'text', v)} multiline />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <SelectField label="Medientyp" value={card.mediaType} options={['icon', 'image']} onChange={(v) => update(i, 'mediaType', v)} />
             {card.mediaType === 'icon' ? (
               <IconPickerField label="Icon" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
@@ -757,7 +794,7 @@ function ProcessStepsEditor({ data, onChange }: EditorProps) {
       {steps.map((step, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <Field label="Titel" value={step.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Beschreibung" value={step.text} onChange={(v) => update(i, 'text', v)} multiline />
             <IconPickerField label="Icon" value={step.icon} onChange={(v) => update(i, 'icon', v)} />
@@ -799,7 +836,7 @@ function ContactEditor({ data, onChange }: EditorProps) {
       {infoCards.map((card, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <IconPickerField label="Icon" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
             <Field label="Label" value={card.label} onChange={(v) => update(i, 'label', v)} />
             <Field label="Wert" value={card.value} onChange={(v) => update(i, 'value', v)} />
@@ -845,11 +882,11 @@ function ServiceDetailEditor({ data, onChange }: EditorProps) {
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Beschreibung" value={item.text} onChange={(v) => update(i, 'text', v)} multiline />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <SelectField label="Medientyp" value={item.mediaType} options={['icon', 'image']} onChange={(v) => update(i, 'mediaType', v)} />
             {item.mediaType === 'icon' ? (
               <IconPickerField label="Icon" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
@@ -898,7 +935,7 @@ function PortfolioEditor({ data, onChange }: EditorProps) {
       {projects.map((proj, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeProject(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Titel" value={proj.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Kategorie" value={proj.category} onChange={(v) => update(i, 'category', v)} />
           </div>
@@ -983,11 +1020,11 @@ function TeamEditor({ data, onChange }: EditorProps) {
       {values.map((v, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Titel" value={v.title} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, title: val } : vl))} />
             <Field label="Text" value={v.text} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, text: val } : vl))} multiline />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <SelectField label="Medientyp" value={v.mediaType} options={['icon', 'image']} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, mediaType: val } : vl))} />
             {v.mediaType === 'icon' ? (
               <IconPickerField label="Icon" value={v.icon} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, icon: val } : vl))} />
@@ -1004,7 +1041,7 @@ function TeamEditor({ data, onChange }: EditorProps) {
       {members.map((m, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setMembers(members.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Name" value={m.name} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, name: v } : mem))} />
             <Field label="Rolle" value={m.role} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, role: v } : mem))} />
           </div>
@@ -1026,16 +1063,7 @@ function RichTextEditor({ data, onChange }: EditorProps) {
   return (
     <div className="space-y-3">
       <Field label="Headline (optional)" value={headline} onChange={setHeadline} />
-      <div>
-        <label className="text-xs font-medium text-zinc-600 mb-1 block">HTML-Code</label>
-        <textarea
-          className="admin-input w-full min-h-[300px] font-mono text-xs leading-relaxed"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="<h2>Überschrift</h2>\n<p>Ihr Text hier...</p>"
-        />
-        <p className="text-[10px] text-zinc-400 mt-1">HTML-Tags: &lt;h2&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;ol&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;a&gt; werden unterstützt.</p>
-      </div>
+      <RichTextEditorField label="Inhalt" value={content} onChange={setContent} />
     </div>
   );
 }
@@ -1157,7 +1185,7 @@ function EmbedEditor({ data, onChange }: EditorProps) {
       )}
 
       {/* Layout options */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <label className="block text-sm">
           <span className="text-gray-600 text-xs">Höhe (px)</span>
           <input type="number" className="admin-input mt-1 w-full" value={height || currentProvider?.defaultHeight || 500} onChange={(e) => setHeight(Number(e.target.value))} />
@@ -1215,7 +1243,7 @@ function NoticeBannerEditor({ data, onChange }: EditorProps) {
       <Field label="Titel" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <Field label="Fließtext (HTML)" value={d.text} onChange={(v) => setD({ ...d, text: v })} />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="text-xs text-zinc-600">Hintergrundfarbe</label>
           <input type="color" value={d.bgColor || '#2563eb'} onChange={(e) => setD({ ...d, bgColor: e.target.value })} className="w-full h-10 rounded border cursor-pointer" />
@@ -1251,7 +1279,7 @@ function CollectionHeroEditor({ data, onChange }: EditorProps) {
     <div className="space-y-3">
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="Kategorie (optional)" value={d.category} onChange={(v) => setD({ ...d, category: v })} />
         <Field label="Datum (optional)" value={d.date} onChange={(v) => setD({ ...d, date: v })} />
       </div>
@@ -1259,7 +1287,7 @@ function CollectionHeroEditor({ data, onChange }: EditorProps) {
       {d.bgImage && (
         <>
           <span className="text-xs font-medium text-zinc-600 block mb-1.5">Bildposition (Fokuspunkt)</span>
-          <div className="inline-grid grid-cols-3 gap-1 bg-zinc-100 p-1 rounded-lg">
+          <div className="inline-grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1 bg-zinc-100 p-1 rounded-lg">
             {(['top left','top center','top right','center left','center','center right','bottom left','bottom center','bottom right'] as const).map(pos => (
               <button key={pos} type="button" onClick={() => setD({ ...d, bgPosition: pos })} className={`w-7 h-7 rounded text-[9px] leading-none transition-colors ${d.bgPosition === pos ? 'bg-blue-500 text-white shadow-sm' : 'hover:bg-zinc-200 text-zinc-400'}`} title={pos}>●</button>
             ))}
@@ -1273,7 +1301,7 @@ function CollectionHeroEditor({ data, onChange }: EditorProps) {
             </div>
           </label>
           {d.overlayOpacity > 0 && (
-            <div className="grid grid-cols-2 gap-3 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
               <label className="block">
                 <span className="text-xs font-medium text-zinc-600">Overlay-Farbe</span>
                 <input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} />
@@ -1339,7 +1367,7 @@ function TextImageEditor({ data, onChange }: EditorProps) {
         {items.map((item, i) => (
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
             <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field label="Titel" value={item.title} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, title: v } : it))} />
               <IconPickerField label="Icon" value={item.icon} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, icon: v } : it))} />
             </div>
@@ -1445,7 +1473,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
                     <div key={i} className="relative border border-zinc-100 rounded p-3">
                       <button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
                       <ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
-                      <div className="grid grid-cols-2 gap-2 mt-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                         <Field label="Alt-Text" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
                         <Field label="Ort" value={img.location} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, location: v } : im))} />
                       </div>
@@ -1476,7 +1504,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
               <div key={i} className="relative border border-zinc-100 rounded p-3 mb-2">
                 <button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
                 <ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
-                <div className="grid grid-cols-3 gap-2 mt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
                   <Field label="Alt-Text" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
                   <label className="block"><span className="text-gray-600 text-xs">Kategorie</span><select className="admin-input mt-1 w-full" value={img.category} onChange={(e) => setImages(images.map((im, idx) => idx === i ? { ...im, category: e.target.value } : im))}><option value="">—</option>{categories.map(c => <option key={c} value={c}>{c}</option>)}</select></label>
                   <Field label="Ort" value={img.location} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, location: v } : im))} />
@@ -1573,7 +1601,7 @@ function ShootingProcessEditor({ data, onChange }: EditorProps) {
         {steps.map((step, i) => (
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
             <button onClick={() => setSteps(steps.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field label="Titel" value={step.title} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, title: v } : s))} />
               <IconPickerField label="Icon" value={step.icon} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, icon: v } : s))} />
             </div>
@@ -1624,7 +1652,7 @@ function ServicePackagesEditor({ data, onChange }: EditorProps) {
         {packages.map((pkg, i) => (
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-3">
             <button onClick={() => setPackages(packages.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field label="Name" value={pkg.name} onChange={(v) => updatePkg(i, 'name', v)} />
               <Field label="Preis" value={pkg.price} onChange={(v) => updatePkg(i, 'price', v)} placeholder="z.B. ab 490€" />
             </div>
@@ -1752,7 +1780,7 @@ function SocialProofBarEditor({ data, onChange }: EditorProps) {
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="Wert (z.B. 500+)" value={item.value} onChange={(v) => updateItem(i, 'value', v)} />
             <Field label="Label" value={item.label} onChange={(v) => updateItem(i, 'label', v)} />
             <Field label="Icon (star oder leer)" value={item.icon} onChange={(v) => updateItem(i, 'icon', v)} />
@@ -1787,7 +1815,7 @@ function TimelineEditor({ data, onChange }: EditorProps) {
       {entries.map((entry, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeEntry(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="Jahr / Datum" value={entry.year} onChange={(v) => updateEntry(i, 'year', v)} />
             <Field label="Titel" value={entry.title} onChange={(v) => updateEntry(i, 'title', v)} />
           </div>
@@ -1817,7 +1845,7 @@ function StatsCounterEditor({ data, onChange }: EditorProps) {
       {stats.map((stat, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setStats(stats.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             <Field label="Prefix (z.B. +)" value={stat.prefix} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, prefix: v } : s))} />
             <Field label="Wert (Zahl)" value={stat.value} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, value: v } : s))} />
             <Field label="Suffix (z.B. %)" value={stat.suffix} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, suffix: v } : s))} />
@@ -1883,7 +1911,7 @@ function TestimonialMarqueeEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <Field label="Zitat" value={item.quote} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, quote: v } : it))} multiline />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="Name" value={item.name} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
             <Field label="Rolle / Kontext" value={item.role} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, role: v } : it))} />
           </div>
@@ -1925,7 +1953,7 @@ function FeatureShowcaseEditor({ data, onChange }: EditorProps) {
         <label className="text-xs font-medium text-zinc-600">Features (eine pro Zeile)</label>
         <textarea className="admin-input mt-1 w-full" rows={4} value={features.join('\n')} onChange={e => setFeatures(e.target.value.split('\n'))} />
       </div>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <Field label="CTA Label" value={ctaLabel} onChange={setCtaLabel} />
         <Field label="CTA Link" value={ctaHref} onChange={setCtaHref} />
       </div>
@@ -1979,7 +2007,7 @@ function CollectionListEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} placeholder="z.B. Alle Beiträge" />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <Field label="Collection-Key" value={d.collectionKey} onChange={(v) => setD({ ...d, collectionKey: v })} placeholder="z.B. news, blog, portfolio" />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <label className="block">
           <span className="text-xs text-gray-600">Standard-Sortierung</span>
           <select className="admin-input mt-1" value={d.sortBy} onChange={(e) => setD({ ...d, sortBy: e.target.value })}>
@@ -2038,7 +2066,7 @@ function ShopProductGridEditor({ data, onChange }: EditorProps) {
         <label className="block text-sm font-medium mb-1">Überschrift</label>
         <input className="w-full border rounded px-3 py-2" value={headline} onChange={e => setHeadline(e.target.value)} />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" checked={showSearch} onChange={e => setShowSearch(e.target.checked)} />
           Suche anzeigen
@@ -2098,7 +2126,7 @@ function ShopCartEditor({ data, onChange }: EditorProps) {
         <label className="block text-sm font-medium mb-1">Text bei leerem Warenkorb</label>
         <input className="w-full border rounded px-3 py-2" value={emptyText} onChange={e => setEmptyText(e.target.value)} />
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Button: Weiter einkaufen</label>
           <input className="w-full border rounded px-3 py-2" value={continueShoppingLabel} onChange={e => setContinueShoppingLabel(e.target.value)} />
@@ -2192,7 +2220,7 @@ function ShopFeaturedProductsEditor({ data, onChange }: EditorProps) {
           <input className="w-full border rounded px-3 py-2" value={productIds} onChange={e => setProductIds(e.target.value)} placeholder="id1, id2, id3" />
         </div>
       )}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Anzahl</label>
           <input type="number" className="w-full border rounded px-3 py-2" value={count} onChange={e => setCount(Number(e.target.value))} min={1} max={12} />
@@ -2232,11 +2260,11 @@ function ProductShowcaseEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Preis" value={item.price} onChange={(v) => update(i, 'price', v)} placeholder="ab 299 €" />
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="Badge" value={item.badge} onChange={(v) => update(i, 'badge', v)} placeholder="Neu / Sale" />
             <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/produkt" />
           </div>
@@ -2267,7 +2295,7 @@ function CategoryMosaicEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/kategorie" />
             <SelectField label="Größe" value={item.size} options={['large', 'small']} onChange={(v) => update(i, 'size', v)} />
@@ -2329,7 +2357,7 @@ function ConsultationBookingEditor({ data, onChange }: EditorProps) {
         {services.map((s, i) => (
           <div key={i} className="border rounded-lg p-3 space-y-2 relative">
             <button onClick={() => removeService(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               <IconPickerField label="Icon" value={s.icon} onChange={(v) => updateService(i, 'icon', v)} />
               <Field label="Titel" value={s.title} onChange={(v) => updateService(i, 'title', v)} />
               <Field label="Beschreibung" value={s.description} onChange={(v) => updateService(i, 'description', v)} />
@@ -2372,7 +2400,7 @@ function MaterialGalleryEditor({ data, onChange }: EditorProps) {
           <div key={i} className="border rounded-lg p-3 space-y-2 relative">
             <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
             <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field label="Name" value={item.name} onChange={(v) => update(i, 'name', v)} />
               <SelectField label="Kategorie" value={item.category} options={['', ...categories]} onChange={(v) => update(i, 'category', v)} />
             </div>
@@ -2399,7 +2427,7 @@ function DeliveryTimelineEditor({ data, onChange }: EditorProps) {
       {steps.map((step, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
             <Field label="Nr." value={step.number} onChange={(v) => updateStep(i, 'number', v)} />
             <IconPickerField label="Icon" value={step.icon} onChange={(v) => updateStep(i, 'icon', v)} />
             <Field label="Titel" value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
@@ -2428,7 +2456,7 @@ function InspirationGridEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/inspiration" />
           </div>
@@ -2451,7 +2479,7 @@ function BeforeAfterEditor({ data, onChange }: EditorProps) {
     <div className="space-y-4">
       <Field label="Headline" value={headline} onChange={setHeadline} />
       <Field label="Beschreibung" value={description} onChange={setDescription} />
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <ImageUploadField label="Bild Vorher" value={imageBefore} onChange={setImageBefore} />
           <Field label="Label Vorher" value={labelBefore} onChange={setLabelBefore} />
@@ -2489,7 +2517,7 @@ function VerticalTimelineEditor({ data, onChange }: EditorProps) {
       {steps.map((step, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button type="button" onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="Nummer" value={step.number} onChange={(v) => updateStep(i, 'number', v)} />
             <Field label="Zeit / Label" value={step.timeLabel} onChange={(v) => updateStep(i, 'timeLabel', v)} placeholder="z.B. Woche 1" />
           </div>
@@ -2575,7 +2603,7 @@ function HorizontalScrollShowcaseEditor({ data, onChange }: EditorProps) {
           <ImageUploadField label="Bild" value={panel.image} onChange={(v) => updatePanel(i, 'image', v)} />
           <Field label="Titel" value={panel.title} onChange={(v) => updatePanel(i, 'title', v)} />
           <Field label="Text" value={panel.text} onChange={(v) => updatePanel(i, 'text', v)} multiline />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="CTA Label" value={panel.ctaLabel} onChange={(v) => updatePanel(i, 'ctaLabel', v)} />
             <Field label="CTA Link" value={panel.ctaHref} onChange={(v) => updatePanel(i, 'ctaHref', v)} />
           </div>
@@ -2613,7 +2641,7 @@ function CinematicHeroEditor({ data, onChange }: EditorProps) {
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <ImageUploadField label="Hero-Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
       <Field label="Video-URL optional" value={d.videoUrl} onChange={(v) => setD({ ...d, videoUrl: v })} placeholder="https://..." />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="Overlay" value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} placeholder="rgba(0,0,0,0.52)" />
         <SelectField label="Textausrichtung" value={d.align} options={['left', 'center']} onChange={(v) => setD({ ...d, align: v })} />
       </div>
@@ -2624,7 +2652,7 @@ function CinematicHeroEditor({ data, onChange }: EditorProps) {
         {d.facts.map((fact, i) => (
           <div key={i} className="relative rounded-lg border p-3">
             <button type="button" onClick={() => removeFact(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field label="Wert" value={fact.value} onChange={(v) => updateFact(i, 'value', v)} />
               <Field label="Label" value={fact.label} onChange={(v) => updateFact(i, 'label', v)} />
             </div>
@@ -2744,7 +2772,7 @@ function PremiumComparisonEditor({ data, onChange }: EditorProps) {
         {columns.map((column, i) => (
           <div key={i} className="relative rounded-lg border p-3">
             <button type="button" onClick={() => removeColumn(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <Field label="Label" value={column.label} onChange={(v) => updateColumn(i, 'label', v)} />
               <Field label="Notiz" value={column.note} onChange={(v) => updateColumn(i, 'note', v)} />
             </div>
@@ -2855,7 +2883,7 @@ function OfferCampaignStripEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
-      <div className="grid grid-cols-2 gap-3"><Field label="Angebotslabel" value={d.offerLabel} onChange={(v) => setD({ ...d, offerLabel: v })} /><Field label="Deadline" value={d.deadline} onChange={(v) => setD({ ...d, deadline: v })} /></div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3"><Field label="Angebotslabel" value={d.offerLabel} onChange={(v) => setD({ ...d, offerLabel: v })} /><Field label="Deadline" value={d.deadline} onChange={(v) => setD({ ...d, deadline: v })} /></div>
       <Field label="Benefits (eine Zeile pro Punkt)" value={d.benefitsText} onChange={(v) => setD({ ...d, benefitsText: v })} multiline />
       <ButtonField label="CTA" value={d.cta} onChange={(v) => setD({ ...d, cta: v })} />
     </div>
@@ -2946,15 +2974,15 @@ function ComparisonCardsProEditor({ data, onChange }: EditorProps) {
 }
 
 function SimplePairs({ title, items, onAdd, onRemove, onChange, firstLabel, secondLabel }: { title: string; items: { value: string; label: string }[]; onAdd: () => void; onRemove: (i: number) => void; onChange: (i: number, item: { value: string; label: string }) => void; firstLabel: string; secondLabel: string }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3"><button type="button" onClick={() => onRemove(i)} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-2 gap-2"><Field label={firstLabel} value={item.value} onChange={(v) => onChange(i, { ...item, value: v })} /><Field label={secondLabel} value={item.label} onChange={(v) => onChange(i, { ...item, label: v })} /></div></div>)}<button type="button" onClick={onAdd} className="text-sm text-blue-600 hover:underline">+ Eintrag hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3"><button type="button" onClick={() => onRemove(i)} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={firstLabel} value={item.value} onChange={(v) => onChange(i, { ...item, value: v })} /><Field label={secondLabel} value={item.label} onChange={(v) => onChange(i, { ...item, label: v })} /></div></div>)}<button type="button" onClick={onAdd} className="text-sm text-blue-600 hover:underline">+ Eintrag hinzufügen</button></div>;
 }
 
 function ProofList({ title, items, onChange }: { title: string; items: { value: string; label: string; note: string }[]; onChange: (items: { value: string; label: string; note: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-2 gap-2"><Field label="Wert" value={item.value} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, value: v } : x))} /><Field label="Label" value={item.label} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, label: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /></div>)}<button type="button" onClick={() => onChange([...items, { value: '', label: '', note: '' }])} className="text-sm text-blue-600 hover:underline">+ Proof hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label="Wert" value={item.value} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, value: v } : x))} /><Field label="Label" value={item.label} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, label: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /></div>)}<button type="button" onClick={() => onChange([...items, { value: '', label: '', note: '' }])} className="text-sm text-blue-600 hover:underline">+ Proof hinzufügen</button></div>;
 }
 
 function ReviewList({ title, items, onChange }: { title: string; items: { quote: string; name: string; context: string; rating: string }[]; onChange: (items: { quote: string; name: string; context: string; rating: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label="Zitat" value={item.quote} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, quote: v } : x))} multiline /><div className="grid grid-cols-3 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Kontext" value={item.context} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, context: v } : x))} /><Field label="Rating" value={item.rating} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, rating: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { quote: '', name: '', context: '', rating: '5' }])} className="text-sm text-blue-600 hover:underline">+ Bewertung hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label="Zitat" value={item.quote} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, quote: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Kontext" value={item.context} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, context: v } : x))} /><Field label="Rating" value={item.rating} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, rating: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { quote: '', name: '', context: '', rating: '5' }])} className="text-sm text-blue-600 hover:underline">+ Bewertung hinzufügen</button></div>;
 }
 
 function LogoList({ title, items, onChange }: { title: string; items: { name: string; image: string }[]; onChange: (items: { name: string; image: string }[]) => void }) {
@@ -2962,7 +2990,7 @@ function LogoList({ title, items, onChange }: { title: string; items: { name: st
 }
 
 function RailItems({ items, onChange }: { items: { kicker: string; title: string; text: string; image: string; ctaLabel: string; ctaHref: string }[]; onChange: (items: { kicker: string; title: string; text: string; image: string; ctaLabel: string; ctaHref: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Slides</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label="Kicker" value={item.kicker} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, kicker: v } : x))} /><Field label="Titel" value={item.title} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, title: v } : x))} /><Field label="Text" value={item.text} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, text: v } : x))} multiline /><ImageUploadField label="Bild" value={item.image} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, image: v } : x))} /><div className="grid grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { kicker: '', title: '', text: '', image: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Slide hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Slides</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label="Kicker" value={item.kicker} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, kicker: v } : x))} /><Field label="Titel" value={item.title} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, title: v } : x))} /><Field label="Text" value={item.text} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, text: v } : x))} multiline /><ImageUploadField label="Bild" value={item.image} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, image: v } : x))} /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { kicker: '', title: '', text: '', image: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Slide hinzufügen</button></div>;
 }
 
 function TraitList({ items, onChange }: { items: { title: string; text: string; icon: string }[]; onChange: (items: { title: string; text: string; icon: string }[]) => void }) {
@@ -2970,7 +2998,7 @@ function TraitList({ items, onChange }: { items: { title: string; text: string; 
 }
 
 function PlanList({ items, onChange }: { items: { name: string; price: string; note: string; highlighted: boolean; featuresText: string; missingText: string; ctaLabel: string; ctaHref: string }[]; onChange: (items: { name: string; price: string; note: string; highlighted: boolean; featuresText: string; missingText: string; ctaLabel: string; ctaHref: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Pakete</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-2 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Preis" value={item.price} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, price: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /><label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={item.highlighted} onChange={(e) => onChange(items.map((x, idx) => idx === i ? { ...x, highlighted: e.target.checked } : x))} /> Empfohlen</label><Field label="Features (eine Zeile pro Punkt)" value={item.featuresText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, featuresText: v } : x))} multiline /><Field label="Nicht enthalten (eine Zeile pro Punkt)" value={item.missingText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, missingText: v } : x))} multiline /><div className="grid grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', price: '', note: '', highlighted: false, featuresText: '', missingText: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Paket hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Pakete</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Preis" value={item.price} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, price: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /><label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={item.highlighted} onChange={(e) => onChange(items.map((x, idx) => idx === i ? { ...x, highlighted: e.target.checked } : x))} /> Empfohlen</label><Field label="Features (eine Zeile pro Punkt)" value={item.featuresText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, featuresText: v } : x))} multiline /><Field label="Nicht enthalten (eine Zeile pro Punkt)" value={item.missingText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, missingText: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', price: '', note: '', highlighted: false, featuresText: '', missingText: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Paket hinzufügen</button></div>;
 }
 
 type AdditionalLocationDraft = { name: string; address: string; phone: string; email: string; mapEmbedUrl: string; openingHours: string; ctaLabel: string; ctaHref: string };
@@ -3003,7 +3031,7 @@ function AdditionalLocationsEditor({ data, onChange }: EditorProps) {
 }
 
 function LocationList({ items, onChange }: { items: AdditionalLocationDraft[]; onChange: (items: AdditionalLocationDraft[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Standorte</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-2 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Telefon" value={item.phone} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, phone: v } : x))} /></div><Field label="Adresse" value={item.address} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, address: v } : x))} multiline /><Field label="E-Mail" value={item.email} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, email: v } : x))} /><Field label="Öffnungszeiten" value={item.openingHours} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, openingHours: v } : x))} multiline /><Field label="Google Maps Embed URL" value={item.mapEmbedUrl} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, mapEmbedUrl: v } : x))} multiline /><div className="grid grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', address: '', phone: '', email: '', mapEmbedUrl: '', openingHours: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Standort hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Standorte</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Telefon" value={item.phone} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, phone: v } : x))} /></div><Field label="Adresse" value={item.address} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, address: v } : x))} multiline /><Field label="E-Mail" value={item.email} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, email: v } : x))} /><Field label="Öffnungszeiten" value={item.openingHours} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, openingHours: v } : x))} multiline /><Field label="Google Maps Embed URL" value={item.mapEmbedUrl} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, mapEmbedUrl: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', address: '', phone: '', email: '', mapEmbedUrl: '', openingHours: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Standort hinzufügen</button></div>;
 }
 
 const EDITORS: Record<string, React.FC<EditorProps>> = {
@@ -3064,88 +3092,88 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   deliveryTimeline: DeliveryTimelineEditor,
   inspirationGrid: InspirationGridEditor,
   beforeAfter: BeforeAfterEditor,
-  accommodationGrid: GenericStructuredEditor,
-  aftercareSteps: GenericStructuredEditor,
-  agentTeam: GenericStructuredEditor,
-  ambience: GenericStructuredEditor,
-  amenities: GenericStructuredEditor,
-  appointmentCta: GenericStructuredEditor,
-  artistGrid: GenericStructuredEditor,
-  artistHero: GenericStructuredEditor,
-  atmosphereGallery: GenericStructuredEditor,
-  bookingCta: GenericStructuredEditor,
-  bookingStrip: GenericStructuredEditor,
-  cafeEventCalendar: GenericStructuredEditor,
-  caseResults: GenericStructuredEditor,
-  certifications: GenericStructuredEditor,
-  coupleStory: GenericStructuredEditor,
-  dailySpecials: GenericStructuredEditor,
-  destinationHighlights: GenericStructuredEditor,
-  diagnostics: GenericStructuredEditor,
-  doctorTeam: GenericStructuredEditor,
-  downloadForms: GenericStructuredEditor,
-  downloadGuides: GenericStructuredEditor,
-  dresscode: GenericStructuredEditor,
-  drinkMenu: GenericStructuredEditor,
-  emergencyInfo: GenericStructuredEditor,
-  equipmentHighlights: GenericStructuredEditor,
-  eventSchedule: GenericStructuredEditor,
-  eventSpaces: GenericStructuredEditor,
-  events: GenericStructuredEditor,
-  eventsCalendar: GenericStructuredEditor,
-  experienceGrid: GenericStructuredEditor,
-  expertiseGrid: GenericStructuredEditor,
-  feeTable: GenericStructuredEditor,
-  flashDayBanner: GenericStructuredEditor,
-  foodMenu: GenericStructuredEditor,
-  gallery: GenericStructuredEditor,
-  giftRegistry: GenericStructuredEditor,
-  hotelDining: GenericStructuredEditor,
-  insuranceInfo: GenericStructuredEditor,
-  location: GenericStructuredEditor,
-  locationContact: GenericStructuredEditor,
-  locationHighlight: GenericStructuredEditor,
-  locationVibe: GenericStructuredEditor,
-  marketReport: GenericStructuredEditor,
-  menu: GenericStructuredEditor,
-  offers: GenericStructuredEditor,
-  openingHours: GenericStructuredEditor,
-  packages: GenericStructuredEditor,
-  patientInfo: GenericStructuredEditor,
-  placesMap: GenericStructuredEditor,
-  practiceAreas: GenericStructuredEditor,
-  practiceGallery: GenericStructuredEditor,
-  practiceTeam: GenericStructuredEditor,
-  priceList: GenericStructuredEditor,
-  pricingInfo: GenericStructuredEditor,
-  propertySearch: GenericStructuredEditor,
-  propertyShowcase: GenericStructuredEditor,
-  publications: GenericStructuredEditor,
-  referencesSold: GenericStructuredEditor,
-  reservation: GenericStructuredEditor,
-  roomShowcase: GenericStructuredEditor,
-  rsvp: GenericStructuredEditor,
-  seasonTeaser: GenericStructuredEditor,
-  serviceMenu: GenericStructuredEditor,
-  serviceOverview: GenericStructuredEditor,
-  shopCategoryOverview: GenericStructuredEditor,
-  sightseeingList: GenericStructuredEditor,
-  signatureDishes: GenericStructuredEditor,
-  styleGallery: GenericStructuredEditor,
-  tattooBooking: GenericStructuredEditor,
-  tattooBookingCta: GenericStructuredEditor,
-  teamShowcase: GenericStructuredEditor,
-  tourRoutes: GenericStructuredEditor,
-  tourismContact: GenericStructuredEditor,
-  travelInfo: GenericStructuredEditor,
-  treatmentDetail: GenericStructuredEditor,
-  valuationCta: GenericStructuredEditor,
-  valuesGrid: GenericStructuredEditor,
-  venueInfo: GenericStructuredEditor,
-  visitorInfo: GenericStructuredEditor,
-  weddingMenu: GenericStructuredEditor,
-  weddingParty: GenericStructuredEditor,
-  wellness: GenericStructuredEditor,
+  accommodationGrid: SchemaSectionEditor,
+  aftercareSteps: SchemaSectionEditor,
+  agentTeam: SchemaSectionEditor,
+  ambience: SchemaSectionEditor,
+  amenities: SchemaSectionEditor,
+  appointmentCta: SchemaSectionEditor,
+  artistGrid: SchemaSectionEditor,
+  artistHero: SchemaSectionEditor,
+  atmosphereGallery: SchemaSectionEditor,
+  bookingCta: SchemaSectionEditor,
+  bookingStrip: SchemaSectionEditor,
+  cafeEventCalendar: SchemaSectionEditor,
+  caseResults: SchemaSectionEditor,
+  certifications: SchemaSectionEditor,
+  coupleStory: SchemaSectionEditor,
+  dailySpecials: SchemaSectionEditor,
+  destinationHighlights: SchemaSectionEditor,
+  diagnostics: SchemaSectionEditor,
+  doctorTeam: SchemaSectionEditor,
+  downloadForms: SchemaSectionEditor,
+  downloadGuides: SchemaSectionEditor,
+  dresscode: SchemaSectionEditor,
+  drinkMenu: SchemaSectionEditor,
+  emergencyInfo: SchemaSectionEditor,
+  equipmentHighlights: SchemaSectionEditor,
+  eventSchedule: SchemaSectionEditor,
+  eventSpaces: SchemaSectionEditor,
+  events: SchemaSectionEditor,
+  eventsCalendar: SchemaSectionEditor,
+  experienceGrid: SchemaSectionEditor,
+  expertiseGrid: SchemaSectionEditor,
+  feeTable: SchemaSectionEditor,
+  flashDayBanner: SchemaSectionEditor,
+  foodMenu: SchemaSectionEditor,
+  gallery: SchemaSectionEditor,
+  giftRegistry: SchemaSectionEditor,
+  hotelDining: SchemaSectionEditor,
+  insuranceInfo: SchemaSectionEditor,
+  location: SchemaSectionEditor,
+  locationContact: SchemaSectionEditor,
+  locationHighlight: SchemaSectionEditor,
+  locationVibe: SchemaSectionEditor,
+  marketReport: SchemaSectionEditor,
+  menu: SchemaSectionEditor,
+  offers: SchemaSectionEditor,
+  openingHours: SchemaSectionEditor,
+  packages: SchemaSectionEditor,
+  patientInfo: SchemaSectionEditor,
+  placesMap: SchemaSectionEditor,
+  practiceAreas: SchemaSectionEditor,
+  practiceGallery: SchemaSectionEditor,
+  practiceTeam: SchemaSectionEditor,
+  priceList: SchemaSectionEditor,
+  pricingInfo: SchemaSectionEditor,
+  propertySearch: SchemaSectionEditor,
+  propertyShowcase: SchemaSectionEditor,
+  publications: SchemaSectionEditor,
+  referencesSold: SchemaSectionEditor,
+  reservation: SchemaSectionEditor,
+  roomShowcase: SchemaSectionEditor,
+  rsvp: SchemaSectionEditor,
+  seasonTeaser: SchemaSectionEditor,
+  serviceMenu: SchemaSectionEditor,
+  serviceOverview: SchemaSectionEditor,
+  shopCategoryOverview: SchemaSectionEditor,
+  sightseeingList: SchemaSectionEditor,
+  signatureDishes: SchemaSectionEditor,
+  styleGallery: SchemaSectionEditor,
+  tattooBooking: SchemaSectionEditor,
+  tattooBookingCta: SchemaSectionEditor,
+  teamShowcase: SchemaSectionEditor,
+  tourRoutes: SchemaSectionEditor,
+  tourismContact: SchemaSectionEditor,
+  travelInfo: SchemaSectionEditor,
+  treatmentDetail: SchemaSectionEditor,
+  valuationCta: SchemaSectionEditor,
+  valuesGrid: SchemaSectionEditor,
+  venueInfo: SchemaSectionEditor,
+  visitorInfo: SchemaSectionEditor,
+  weddingMenu: SchemaSectionEditor,
+  weddingParty: SchemaSectionEditor,
+  wellness: SchemaSectionEditor,
   cinematicHero: CinematicHeroEditor,
   spotlightCards: SpotlightCardsEditor,
   scrollStory: ScrollStoryEditor,
@@ -3159,17 +3187,17 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   comparisonCardsPro: ComparisonCardsProEditor,
   additionalLocations: AdditionalLocationsEditor,
   popup: PopupEditor,
-  templateAdvantage: GenericStructuredEditor,
-  principlesGrid: GenericStructuredEditor,
-  glowHero: GenericStructuredEditor,
-  floristHero: GenericStructuredEditor,
+  templateAdvantage: SchemaSectionEditor,
+  principlesGrid: SchemaSectionEditor,
+  glowHero: SchemaSectionEditor,
+  floristHero: SchemaSectionEditor,
   bouquetShowcase: ProductShowcaseEditor,
   occasionMosaic: CategoryMosaicEditor,
   weddingFloristry: BrandShowroomEditor,
   workshopBooking: ConsultationBookingEditor,
   seasonalCampaign: OfferCampaignStripEditor,
   floristMaterials: MaterialGalleryEditor,
-  fitnessHero: GenericStructuredEditor,
+  fitnessHero: SchemaSectionEditor,
   programGrid: ServicesGridEditor,
   courseSchedule: TimelineEditor,
   trainerProfiles: TeamEditor,

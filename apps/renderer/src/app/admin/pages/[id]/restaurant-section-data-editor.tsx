@@ -61,7 +61,7 @@ function MenuEditor({ data, onChange }: EditorProps) {
           <Field label="Beschreibung" value={category.description} onChange={(v) => setD({ ...d, categories: updateAt(d.categories, categoryIndex, { ...category, description: v }) })} multiline />
           {category.items.map((item, itemIndex) => (
             <div key={itemIndex} className="rounded border bg-white p-3 space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Field label="Gericht" value={item.name} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, name: v })} />
                 <Field label="Preis" value={item.price} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, price: v })} />
               </div>
@@ -71,7 +71,7 @@ function MenuEditor({ data, onChange }: EditorProps) {
               <Field label="Allergene (eine pro Zeile)" value={item.allergens} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, allergens: v })} multiline />
               <Field label="Detail-Link Label" value={item.detailLabel} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, detailLabel: v })} />
               <DetailLinkField label="Detail-Link" value={item.detailHref} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, detailHref: v })} />
-              <div className="grid grid-cols-4 gap-2 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
                 <Checkbox label="Highlight" checked={item.highlighted} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, highlighted: v })} />
                 <Checkbox label="Vegetarisch" checked={item.vegetarian} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, vegetarian: v })} />
                 <Checkbox label="Vegan" checked={item.vegan} onChange={(v) => updateMenuItem(d, setD, categoryIndex, itemIndex, { ...item, vegan: v })} />
@@ -150,7 +150,7 @@ function OpeningHoursEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       {d.days.map((day, index) => (
-        <div key={index} className="grid grid-cols-4 gap-2 border rounded p-3">
+        <div key={index} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 border rounded p-3">
           <Field label="Tag" value={day.label} onChange={(v) => setD({ ...d, days: updateAt(d.days, index, { ...day, label: v }) })} />
           <Field label="Zeiten" value={day.hours} onChange={(v) => setD({ ...d, days: updateAt(d.days, index, { ...day, hours: v }) })} />
           <Field label="Notiz" value={day.note} onChange={(v) => setD({ ...d, days: updateAt(d.days, index, { ...day, note: v }) })} />
@@ -185,7 +185,7 @@ function SignatureDishesEditor({ data, onChange }: EditorProps) {
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       {d.dishes.map((dish, index) => (
         <div key={index} className="border rounded p-3 space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Name" value={dish.name} onChange={(v) => setD({ ...d, dishes: updateAt(d.dishes, index, { ...dish, name: v }) })} />
             <Field label="Preis" value={dish.price} onChange={(v) => setD({ ...d, dishes: updateAt(d.dishes, index, { ...dish, price: v }) })} />
           </div>
@@ -219,7 +219,7 @@ function EventsEditor({ data, onChange }: EditorProps) {
       {d.events.map((event, index) => (
         <div key={index} className="border rounded p-3 space-y-3">
           <Field label="Titel" value={event.title} onChange={(v) => setD({ ...d, events: updateAt(d.events, index, { ...event, title: v }) })} />
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <Field label="Datum" value={event.dateLabel} onChange={(v) => setD({ ...d, events: updateAt(d.events, index, { ...event, dateLabel: v }) })} />
             <Field label="Zeit" value={event.timeLabel} onChange={(v) => setD({ ...d, events: updateAt(d.events, index, { ...event, timeLabel: v }) })} />
             <Field label="Preis" value={event.priceLabel} onChange={(v) => setD({ ...d, events: updateAt(d.events, index, { ...event, priceLabel: v }) })} />
@@ -260,7 +260,7 @@ function AmbienceEditor({ data, onChange }: EditorProps) {
       <ImageUploadField label="Drittbild" value={d.imageTertiary} onChange={(v) => setD({ ...d, imageTertiary: v })} />
       {d.highlights.map((highlight, index) => (
         <div key={index} className="border rounded p-3 space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Titel" value={highlight.title} onChange={(v) => setD({ ...d, highlights: updateAt(d.highlights, index, { ...highlight, title: v }) })} />
             <IconPickerField label="Icon" value={highlight.icon} onChange={(v) => setD({ ...d, highlights: updateAt(d.highlights, index, { ...highlight, icon: v }) })} />
           </div>
@@ -299,7 +299,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
       <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
       <div><label className="text-xs font-medium text-zinc-600 mb-1 block">Bild-Effekt</label><select className="admin-input" value={d.imageEffect} onChange={(e) => setD({ ...d, imageEffect: e.target.value })}><option value="none">Kein Effekt</option><option value="parallax">Parallax</option><option value="kenBurns">Ken Burns (Zoom)</option></select>{d.imageEffect !== 'none' && (<select className="admin-input mt-2" value={d.imageEffectIntensity} onChange={(e) => setD({ ...d, imageEffectIntensity: e.target.value })}><option value="subtle">Dezent</option><option value="medium">Mittel</option><option value="strong">Stark</option></select>)}</div>
       <label className="block"><span className="text-xs font-medium text-zinc-600">Overlay</span><div className="flex gap-2 mt-1.5"><button type="button" onClick={() => setD({ ...d, overlayOpacity: -1, overlayColor: '#000000' })} className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${d.overlayOpacity === -1 ? 'bg-blue-500 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Standard</button><button type="button" onClick={() => setD({ ...d, overlayOpacity: 0.5 })} className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${d.overlayOpacity > 0 ? 'bg-blue-500 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Eigene Farbe</button><button type="button" onClick={() => setD({ ...d, overlayOpacity: 0 })} className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${d.overlayOpacity === 0 ? 'bg-blue-500 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>Kein Overlay</button></div></label>
-      {d.overlayOpacity > 0 && (<div className="grid grid-cols-2 gap-3"><label className="block"><span className="text-xs font-medium text-zinc-600">Farbe</span><input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} /></label><label className="block"><span className="text-xs font-medium text-zinc-600">Deckkraft ({Math.round(d.overlayOpacity * 100)}%)</span><input type="range" min="0.05" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} /></label></div>)}
+      {d.overlayOpacity > 0 && (<div className="grid grid-cols-1 sm:grid-cols-2 gap-3"><label className="block"><span className="text-xs font-medium text-zinc-600">Farbe</span><input type="color" className="admin-input mt-1 h-9 p-1 cursor-pointer" value={d.overlayColor} onChange={(e) => setD({ ...d, overlayColor: e.target.value })} /></label><label className="block"><span className="text-xs font-medium text-zinc-600">Deckkraft ({Math.round(d.overlayOpacity * 100)}%)</span><input type="range" min="0.05" max="1" step="0.05" className="w-full mt-2" value={d.overlayOpacity} onChange={(e) => setD({ ...d, overlayOpacity: parseFloat(e.target.value) })} /></label></div>)}
     </div>
   );
 }
@@ -401,12 +401,12 @@ function RestaurantGalleryEditor({ data, onChange }: EditorProps) {
       {categories.map(cat => { const catImgs = images.filter(img => img.category === cat); const isOpen = openCats[cat]; return (
         <div key={cat} className="border border-zinc-200 rounded-lg overflow-hidden">
           <div className="flex items-center justify-between px-3 py-2 bg-zinc-50 cursor-pointer" onClick={() => setOpenCats({ ...openCats, [cat]: !isOpen })}><span className="text-sm font-medium text-zinc-700">{cat} <span className="text-zinc-400 font-normal">({catImgs.length})</span></span><div className="flex items-center gap-2"><button onClick={(e) => { e.stopPropagation(); removeCategory(cat); }} className="text-xs text-red-400 hover:text-red-600">Entfernen</button><span className="text-zinc-400 text-xs">{isOpen ? '▲' : '▼'}</span></div></div>
-          {isOpen && (<div className="p-3 space-y-2">{catImgs.map((img) => { const i = images.indexOf(img); return (<div key={i} className="relative border border-zinc-100 rounded p-3"><button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button><ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} /><div className="grid grid-cols-2 gap-2 mt-2"><Field label="Alt" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} /><Field label="Caption" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} /></div></div>); })}<div className="flex items-center gap-3 pt-1"><button onClick={() => setImages([...images, { src: '', alt: '', caption: '', category: cat }])} className="text-xs text-blue-600 hover:underline">+ Bild</button><button onClick={() => bulkRefs.current[cat]?.click()} disabled={bulkUploading === cat} className="text-xs text-blue-600 hover:underline disabled:opacity-50">{bulkUploading === cat ? '⏳ Hochladen...' : '+ Bulk Upload'}</button><input ref={(el) => { bulkRefs.current[cat] = el; }} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files, cat)} />
+          {isOpen && (<div className="p-3 space-y-2">{catImgs.map((img) => { const i = images.indexOf(img); return (<div key={i} className="relative border border-zinc-100 rounded p-3"><button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button><ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2"><Field label="Alt" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} /><Field label="Caption" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} /></div></div>); })}<div className="flex items-center gap-3 pt-1"><button onClick={() => setImages([...images, { src: '', alt: '', caption: '', category: cat }])} className="text-xs text-blue-600 hover:underline">+ Bild</button><button onClick={() => bulkRefs.current[cat]?.click()} disabled={bulkUploading === cat} className="text-xs text-blue-600 hover:underline disabled:opacity-50">{bulkUploading === cat ? '⏳ Hochladen...' : '+ Bulk Upload'}</button><input ref={(el) => { bulkRefs.current[cat] = el; }} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files, cat)} />
                   <MediaBulkPickerButton onSelect={(imgs) => setImages(prev => [...prev, ...imgs.map(i => ({ src: i.src, alt: i.alt, caption: '', category: cat }))])} />
                   <MediaBulkPickerButton onSelect={(imgs) => setImages(prev => [...prev, ...imgs.map(i => ({ src: i.src, alt: i.alt, caption: '', category: cat }))])} /></div></div>)}
         </div>
       ); })}
-      {uncategorized.length > 0 && (<div className="border border-amber-200 rounded-lg p-3"><p className="text-xs font-medium text-amber-700 mb-2">Ohne Kategorie ({uncategorized.length})</p>{uncategorized.map((img) => { const i = images.indexOf(img); return (<div key={i} className="relative border border-zinc-100 rounded p-3 mb-2"><button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button><ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} /><div className="grid grid-cols-3 gap-2 mt-2"><Field label="Alt" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} /><Field label="Caption" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} /><label className="block"><span className="text-gray-600 text-xs">Kategorie</span><select className="admin-input mt-1 w-full" value={img.category} onChange={(e) => setImages(images.map((im, idx) => idx === i ? { ...im, category: e.target.value } : im))}><option value="">—</option>{categories.map(c => <option key={c} value={c}>{c}</option>)}</select></label></div></div>); })}</div>)}
+      {uncategorized.length > 0 && (<div className="border border-amber-200 rounded-lg p-3"><p className="text-xs font-medium text-amber-700 mb-2">Ohne Kategorie ({uncategorized.length})</p>{uncategorized.map((img) => { const i = images.indexOf(img); return (<div key={i} className="relative border border-zinc-100 rounded p-3 mb-2"><button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button><ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} /><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-2"><Field label="Alt" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} /><Field label="Caption" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} /><label className="block"><span className="text-gray-600 text-xs">Kategorie</span><select className="admin-input mt-1 w-full" value={img.category} onChange={(e) => setImages(images.map((im, idx) => idx === i ? { ...im, category: e.target.value } : im))}><option value="">—</option>{categories.map(c => <option key={c} value={c}>{c}</option>)}</select></label></div></div>); })}</div>)}
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
     </div>
   );

@@ -10,8 +10,9 @@ import { cn } from '@/lib/utils';
 import { useHeaderContrast } from '@/hooks/use-header-contrast';
 import { LanguageSwitcher } from './language-switcher';
 import type { NavItem, NavCta, BrandData, ContactData } from '@/lib/tenant-data';
+import { prefixInternalHref } from '@/lib/link-prefix';
 
-export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/', i18n, showTopBar = true, forceDarkNav = false }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string; i18n?: { locales: string[]; currentLocale: string; defaultLocale: string; style?: string }; showTopBar?: boolean; forceDarkNav?: boolean }) {
+export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/', i18n, showTopBar = true, forceDarkNav = false, linkPrefix = '' }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string; i18n?: { locales: string[]; currentLocale: string; defaultLocale: string; style?: string }; showTopBar?: boolean; forceDarkNav?: boolean; linkPrefix?: string }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -79,7 +80,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
         style={(scrolled || (!isHeroDark)) ? { backgroundColor: brand.navBgColor || 'rgba(255,255,255,0.8)' } : undefined}
         >
           <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-[72px]">
-            <Link href={homeHref} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || (!isHeroDark)) ? (brand.navBrandColor || brand.primaryColor) : 'white' }}>
+            <Link href={prefixInternalHref(homeHref, linkPrefix) as string} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight transition-colors duration-300" style={{ color: (scrolled || (!isHeroDark)) ? (brand.navBrandColor || brand.primaryColor) : 'white' }}>
               {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
                 brand.navLogoColor ? (
                   <span
@@ -110,7 +111,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
               {navItems.map((item, i) => (
                 <Link
                   key={i}
-                  href={item.href}
+                  href={prefixInternalHref(item.href, linkPrefix) as string}
                   className={cn(
                     'text-[13px] font-medium tracking-wide uppercase transition-colors duration-300 hover:text-brand-accent',
                     (scrolled || (!isHeroDark)) ? 'text-gray-600' : 'text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]',
@@ -120,7 +121,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                 </Link>
               ))}
               <Link
-                href={cta?.href || '/kontakt'}
+                href={prefixInternalHref(cta?.href || '/kontakt', linkPrefix) as string}
                 className={cn(
                   'inline-flex items-center gap-2 text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-300',
                   (scrolled || (!isHeroDark))
@@ -161,7 +162,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
             >
               {/* Close button */}
               <div className="flex items-center justify-between h-[72px] px-6">
-                <Link href={homeHref} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight" style={{ color: brand.navBrandColor || brand.primaryColor }}>
+                <Link href={prefixInternalHref(homeHref, linkPrefix) as string} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight" style={{ color: brand.navBrandColor || brand.primaryColor }}>
                   {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
                     <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto object-contain" />
                   )}
@@ -184,7 +185,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                     transition={{ delay: i * 0.05, duration: 0.3 }}
                   >
                     <Link
-                      href={item.href}
+                      href={prefixInternalHref(item.href, linkPrefix) as string}
                       onClick={() => setMobileOpen(false)}
                       className="block text-2xl font-semibold text-gray-800 py-3 hover:text-brand-primary transition-colors"
                     >
@@ -199,7 +200,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                   className="mt-6"
                 >
                   <Link
-                    href={cta?.href || '/kontakt'}
+                    href={prefixInternalHref(cta?.href || '/kontakt', linkPrefix) as string}
                     onClick={() => setMobileOpen(false)}
                     className="inline-flex items-center justify-center gap-2 w-full text-center bg-brand-primary text-white font-semibold py-4 rounded-full text-lg hover:bg-brand-dark transition"
                   >

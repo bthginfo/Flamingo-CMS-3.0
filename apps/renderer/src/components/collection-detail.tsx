@@ -12,11 +12,12 @@ type Props = {
   collection: SnapshotCollection;
   collections?: SnapshotCollection[];
   backHrefPrefix?: string;
+  linkPrefix?: string;
   styleVariant?: string;
   industry?: string;
 };
 
-export function CollectionDetail({ item, collection, collections, backHrefPrefix = '', styleVariant, industry }: Props) {
+export function CollectionDetail({ item, collection, collections, backHrefPrefix = '', linkPrefix = '', styleVariant, industry }: Props) {
   const data = item.data;
   const sections = data.sections as SnapshotSection[] | undefined;
 
@@ -31,7 +32,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
         {/* Hero sections with overlapping back button */}
         <div className="relative">
           {heroSections.map((section) => (
-            <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} />
+            <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} linkPrefix={linkPrefix} />
           ))}
           {/* Back button — overlaps hero bottom edge */}
           <div className="absolute bottom-0 left-0 z-30 translate-y-1/2 ml-6 md:ml-10">
@@ -43,7 +44,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
         </div>
         {/* Remaining sections (CTA bands, etc.) */}
         {otherSections.map((section) => (
-          <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} />
+          <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} linkPrefix={linkPrefix} />
         ))}
       </div>
     );

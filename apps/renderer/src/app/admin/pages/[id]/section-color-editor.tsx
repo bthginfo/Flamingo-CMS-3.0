@@ -343,7 +343,7 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
         <Palette size={12} /> Farben anpassen
         {activeCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-[10px] font-medium">{activeCount}</span>}
       </summary>
-      <div className="grid grid-cols-2 gap-3 mt-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
         {fields.map((fieldKey) => {
           const def = FIELD_DEFS[fieldKey];
           if (!def) return null;

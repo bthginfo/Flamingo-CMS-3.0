@@ -9,7 +9,7 @@ export type SectionTypeDefinition = {
 const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild', category: 'Inhalt' },
   { type: 'freeText', label: 'Freitext', description: 'Formatierter Text mit Editor', category: 'Inhalt' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)', category: 'Inhalt' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.', category: 'Inhalt' },
   { type: 'legalContent', label: 'Rechtliche Inhalte', description: 'Strukturierte Abschnitte für Impressum / Datenschutz', category: 'Inhalt' },
   { type: 'videoEmbed', label: 'Video', description: 'YouTube / Vimeo Video einbetten', category: 'Inhalt' },
   { type: 'embed', label: 'Embed / Integration', description: 'Externe Dienste einbinden (Buchung, Bewertungen, Karten, etc.)', category: 'Inhalt' },
@@ -98,7 +98,7 @@ export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'portfolio', label: 'Portfolio', description: 'Referenzprojekte-Galerie' },
   { type: 'team', label: 'Team', description: 'Team-Mitglieder' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'headerBanner', label: 'Header-Banner', description: 'Obere Hinweisleiste' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
@@ -112,7 +112,7 @@ export const RESTAURANT_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'ambience', label: 'Ambiente', description: 'Atmosphäre, Bilder und Highlights' },
   { type: 'events', label: 'Events', description: 'Themenabende, Feiern und Buchungs-CTAs' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -131,7 +131,7 @@ export const HOTEL_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'faq', label: 'FAQ', description: 'Check-in, Parken, Buchung, Storno' },
   { type: 'contact', label: 'Kontakt', description: 'Kontaktformular, Infokarten und Route' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -151,7 +151,7 @@ export const TOURISM_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'faq', label: 'FAQ', description: 'Häufige Fragen für Besucher' },
   { type: 'tourismContact', label: 'Tourismus-Kontakt', description: 'Tourismusbuero, Formular, Infokarten und CTAs' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -171,7 +171,7 @@ export const SALON_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'locationContact', label: 'Kontakt & Standort', description: 'Adresse, Karte, Formular und CTAs' },
   { type: 'faq', label: 'FAQ', description: 'Häufige Fragen' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -195,7 +195,7 @@ export const MEDICAL_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'locationContact', label: 'Kontakt & Anfahrt', description: 'Adresse, Karte, Formular und Kontaktkarten' },
   { type: 'faq', label: 'FAQ', description: 'Häufige Patientenfragen' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -213,7 +213,7 @@ export const WEDDING_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'faq', label: 'FAQ', description: 'Häufige Fragen der Gäste' },
   { type: 'gallery', label: 'Galerie', description: 'Fotos vom Paar / Engagement-Shooting' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -231,7 +231,7 @@ export const PHOTOGRAPHY_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'uspStrip', label: 'USP-Leiste', description: 'Einzigartige Verkaufsargumente' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
   { type: 'newsPreview', label: 'News-Vorschau', description: 'Aktuelle Beiträge' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -250,7 +250,7 @@ export const CONSULTING_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'stats', label: 'Zahlen & Fakten', description: 'Animierte Kennzahlen der Kanzlei' },
   { type: 'map', label: 'Karte', description: 'Standort der Kanzlei' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt (z.B. Kanzleigeschichte)' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -268,7 +268,7 @@ export const REALESTATE_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'testimonials', label: 'Kundenstimmen', description: 'Bewertungen von Käufern und Verkäufern' },
   { type: 'stats', label: 'Zahlen & Fakten', description: 'Vermittelte Objekte, Erfahrung, Vermarktungszeit' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt (z.B. Über uns, Philosophie)' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -286,7 +286,7 @@ export const CAFE_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'team', label: 'Team', description: 'Barista-Team und Köche' },
   { type: 'galleryGrid', label: 'Galerie', description: 'Bildergalerie mit Lightbox' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt (z.B. Story, Philosophie)' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -306,7 +306,7 @@ export const TATTOO_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'processSteps', label: 'Ablauf', description: 'Beratung → Entwurf → Session → Nachsorge' },
   { type: 'team', label: 'Team', description: 'Studio-Team' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -330,7 +330,7 @@ export const ECOMMERCE_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'newsPreview', label: 'Blog / News', description: 'Aktuelle Beiträge' },
   { type: 'galleryGrid', label: 'Galerie', description: 'Produkt-Lifestyle Bilder' },
   { type: 'team', label: 'Team', description: 'Über das Team' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (AGB, Widerruf etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r AGB, Widerruf etc.' },
   { type: 'legalContent', label: 'Rechtliche Inhalte', description: 'Impressum / Datenschutz / Widerruf' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
