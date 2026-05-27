@@ -29,6 +29,13 @@
       "when": 1779882000000,
       "tag": "0003_location_lead_shared",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1779883000000,
+      "tag": "0004_crm_blog_posts",
+      "breakpoints": true
     }
   ]
 }

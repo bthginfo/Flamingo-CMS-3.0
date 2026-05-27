@@ -24,7 +24,7 @@ function hexToRgb(hex: string): string {
   return `${parseInt(hex.slice(1, 3), 16)} ${parseInt(hex.slice(3, 5), 16)} ${parseInt(hex.slice(5, 7), 16)}`;
 }
 
-export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?: string; accentColor?: string; topBarColor?: string; footerColor?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; dividerColor?: string; btnRadius?: string; cardRadius?: string }): Record<string, string> {
+export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?: string; accentColor?: string; pageBg?: string; sectionBg?: string; sectionBgAlt?: string; cardBg?: string; topBarColor?: string; footerColor?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; borderColor?: string; dividerColor?: string; iconColor?: string; btnRadius?: string; cardRadius?: string }): Record<string, string> {
   const vars: Record<string, string> = {};
   const primary = brand.primaryColor;
   if (!primary || !/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(primary)) return vars;
@@ -40,18 +40,26 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   vars['--color-primary-rgb'] = 'var(--brand-primary-rgb)';
   vars['--brand-dark'] = darken(normalizedPrimary, 0.45);
   vars['--brand-secondary'] = brand.secondaryColor || lighten(normalizedPrimary, 0.3);
-  vars['--brand-accent'] = brand.accentColor || '#f39c12';
+  const accent = brand.accentColor || '#f39c12';
+  vars['--brand-accent'] = accent;
   vars['--brand-topbar'] = brand.topBarColor || vars['--brand-dark'];
   vars['--brand-footer'] = brand.footerColor || vars['--brand-dark'];
 
   // Override style-level variables so industry style defaults (e.g. salon pink)
   // get replaced by the tenant's actual brand colors
   vars['--style-brand'] = normalizedPrimary;
-  vars['--style-accent'] = brand.accentColor || vars['--brand-accent'];
+  vars['--style-accent'] = accent;
+  vars['--style-accent-color'] = accent;
+  vars['--style-icon-color'] = brand.iconColor || normalizedPrimary;
   vars['--style-badge-bg'] = `${normalizedPrimary}12`;
   vars['--style-badge-border'] = `${normalizedPrimary}28`;
   vars['--style-badge-text'] = normalizedPrimary;
   vars['--style-accent-glow'] = `0 0 30px ${normalizedPrimary}33`;
+
+  if (brand.pageBg) vars['--background'] = brand.pageBg;
+  if (brand.sectionBg) vars['--style-section-bg'] = brand.sectionBg;
+  if (brand.sectionBgAlt) vars['--style-section-bg-alt'] = brand.sectionBgAlt;
+  if (brand.cardBg) vars['--style-card-bg'] = brand.cardBg;
 
   if (brand.footerLinkColor) vars['--brand-footer-link'] = brand.footerLinkColor;
   if (brand.footerTextColor) vars['--brand-footer-text'] = brand.footerTextColor;
@@ -59,8 +67,15 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   if (brand.navBgColor) vars['--brand-nav-bg'] = brand.navBgColor;
   if (brand.navBrandColor) vars['--brand-nav-brand'] = brand.navBrandColor;
   if (brand.navLogoColor) vars['--brand-nav-logo'] = brand.navLogoColor;
-  if (brand.headingColor) vars['--brand-heading'] = brand.headingColor;
-  if (brand.bodyTextColor) vars['--brand-body-text'] = brand.bodyTextColor;
+  if (brand.headingColor) {
+    vars['--brand-heading'] = brand.headingColor;
+    vars['--style-heading-color'] = brand.headingColor;
+  }
+  if (brand.bodyTextColor) {
+    vars['--brand-body-text'] = brand.bodyTextColor;
+    vars['--style-body-color'] = brand.bodyTextColor;
+    vars['--style-text-primary'] = brand.bodyTextColor;
+  }
   if (brand.mutedTextColor) vars['--style-text-muted'] = brand.mutedTextColor;
   if (brand.linkColor) vars['--brand-link'] = brand.linkColor;
   if (brand.linkHoverColor) vars['--brand-link-hover'] = brand.linkHoverColor;
@@ -79,10 +94,15 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   if (brand.badgeBorder) vars['--style-badge-border'] = brand.badgeBorder;
 
   // Card & border overrides
-  if (brand.cardBorder) vars['--style-card-border'] = `1px solid ${brand.cardBorder}`;
+  const borderColor = brand.borderColor || brand.cardBorder;
+  if (borderColor) {
+    vars['--style-border-color'] = borderColor;
+    vars['--style-card-border'] = `1px solid ${borderColor}`;
+  }
   if (brand.dividerColor) {
     vars['--style-divider'] = `1px solid ${brand.dividerColor}`;
     vars['--style-border-light'] = brand.dividerColor;
+    vars['--style-divider-color'] = brand.dividerColor;
   }
 
   // Radius overrides

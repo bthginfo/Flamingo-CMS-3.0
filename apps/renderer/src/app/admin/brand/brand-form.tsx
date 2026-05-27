@@ -9,7 +9,7 @@ import { usePreview } from '@/components/admin/preview-context';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { ImageUploadField } from '@/components/image-upload-field';
 
-type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; dividerColor?: string; btnRadius?: string; cardRadius?: string };
+type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; pageBg?: string; sectionBg?: string; sectionBgAlt?: string; cardBg?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; borderColor?: string; dividerColor?: string; iconColor?: string; btnRadius?: string; cardRadius?: string };
 
 const GOOGLE_FONTS = [
   { value: '', label: 'Standard (Outfit / Inter)' },
@@ -42,6 +42,10 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     primaryColor: initial.primaryColor || '#1a5276',
     secondaryColor: initial.secondaryColor || '#2e86c1',
     accentColor: initial.accentColor || '#f39c12',
+    pageBg: initial.pageBg || '',
+    sectionBg: initial.sectionBg || '',
+    sectionBgAlt: initial.sectionBgAlt || '',
+    cardBg: initial.cardBg || '',
     logoUrl: initial.logoUrl || '',
     logoDisplay: initial.logoDisplay || 'logoAndName',
     headingFont: initial.headingFont || '',
@@ -75,7 +79,9 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     badgeText: initial.badgeText || '',
     badgeBorder: initial.badgeBorder || '',
     cardBorder: initial.cardBorder || '',
+    borderColor: initial.borderColor || '',
     dividerColor: initial.dividerColor || '',
+    iconColor: initial.iconColor || '',
     btnRadius: initial.btnRadius || '',
     cardRadius: initial.cardRadius || '',
   });
@@ -134,6 +140,13 @@ export function BrandForm({ initial }: { initial: BrandData }) {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
+      <div className="rounded-2xl border border-pink-200 bg-pink-50/80 p-5 text-sm text-zinc-700">
+        <div className="font-semibold text-zinc-950">Globales Design und Section-Overrides</div>
+        <p className="mt-1 leading-6">
+          Diese Einstellungen gelten als Design-Basis für die gesamte Website. In jeder einzelnen Section kannst du Farben trotzdem individuell überschreiben, zum Beispiel Hintergrund, Text, Karten, Buttons oder Akzente.
+        </p>
+      </div>
+
       <div className="admin-card p-6 space-y-5">
         <h2 className="font-semibold text-lg">Firmeninfo</h2>
         <div>
@@ -200,6 +213,44 @@ export function BrandForm({ initial }: { initial: BrandData }) {
       </div>
 
       {/* ─── Texte & Links ─── */}
+      <div className="admin-card p-6 space-y-5">
+        <h2 className="font-semibold text-lg">Globale Flächen</h2>
+        <p className="text-sm text-zinc-500">Basisfarben für Seiten, Sections und Karten. Leer lassen = automatisch aus Farbschema und Template abgeleitet.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {([
+            { key: 'pageBg', label: 'Seitenhintergrund', hint: 'Grundfläche der Website hinter allen Inhalten', fallback: '#ffffff' },
+            { key: 'sectionBg', label: 'Section-Hintergrund', hint: 'Standard-Hintergrund für normale Inhaltsbereiche', fallback: '#ffffff' },
+            { key: 'sectionBgAlt', label: 'Alternative Section', hint: 'Abgesetzte Bereiche, Listen und ruhige Kontrastflächen', fallback: '#f8fafc' },
+            { key: 'cardBg', label: 'Karten-Hintergrund', hint: 'Cards, Boxen, Testimonials, Preis- und Inhaltskarten', fallback: '#ffffff' },
+          ] as { key: keyof typeof form; label: string; hint: string; fallback: string }[]).map(({ key, label, hint, fallback }) => (
+            <div key={key}>
+              <label className="admin-label">{label}</label>
+              <p className="text-xs text-zinc-400 mb-1.5">{hint}</p>
+              <div className="flex items-center gap-3">
+                <input type="color" value={(form as Record<string, string>)[key] || fallback} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+                <input className="admin-input flex-1" value={(form as Record<string, string>)[key]} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder="Leer = automatisch" />
+                {(form as Record<string, string>)[key] && <button type="button" onClick={() => setForm(f => ({ ...f, [key]: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="pt-4 border-t border-admin-border">
+          <p className="text-sm text-zinc-500 mb-3">Vorschau:</p>
+          <div className="rounded-2xl border border-zinc-200 p-4" style={{ backgroundColor: form.pageBg || '#ffffff' }}>
+            <div className="rounded-xl p-4" style={{ backgroundColor: form.sectionBg || '#ffffff' }}>
+              <div className="rounded-xl border p-4 shadow-sm" style={{ backgroundColor: form.cardBg || '#ffffff', borderColor: form.borderColor || form.cardBorder || '#e5e7eb' }}>
+                <div className="h-3 w-32 rounded-full" style={{ backgroundColor: form.primaryColor }} />
+                <div className="mt-3 h-2 w-48 rounded-full bg-zinc-200" />
+                <div className="mt-2 h-2 w-36 rounded-full bg-zinc-100" />
+              </div>
+              <div className="mt-3 rounded-xl p-3 text-xs text-zinc-500" style={{ backgroundColor: form.sectionBgAlt || '#f8fafc' }}>
+                Alternative Section-Fläche
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="admin-card p-6 space-y-5">
         <h2 className="font-semibold text-lg">Texte & Links</h2>
         <p className="text-sm text-zinc-500">Farben für Textinhalte auf der Website. Leer lassen = automatisch aus dem Farbschema abgeleitet.</p>
@@ -471,15 +522,33 @@ export function BrandForm({ initial }: { initial: BrandData }) {
       {/* ─── Karten & Ränder ─── */}
       <div className="admin-card p-6 space-y-5">
         <h2 className="font-semibold text-lg">Karten & Ränder</h2>
-        <p className="text-sm text-zinc-500">Rahmen und Trennlinien zwischen Sektionen, Karten und Inhaltsblöcken.</p>
+        <p className="text-sm text-zinc-500">Icons, Rahmen und Trennlinien zwischen Sektionen, Karten und Inhaltsblöcken.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="admin-label">Karten-Rahmen</label>
-            <p className="text-xs text-zinc-400 mb-1.5">Umrandung von Team-Cards, Service-Karten, Testimonials etc.</p>
+            <label className="admin-label">Icons</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Icon-Farbe in Karten, Listen, Standort- und Premium-Sektionen.</p>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.iconColor || form.primaryColor} onChange={e => setForm(f => ({ ...f, iconColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.iconColor} onChange={e => setForm(f => ({ ...f, iconColor: e.target.value }))} placeholder="Leer = Primärfarbe" />
+              {form.iconColor && <button type="button" onClick={() => setForm(f => ({ ...f, iconColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Kartenlinien</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Linien von Team-Cards, Service-Karten, Testimonials etc.</p>
             <div className="flex items-center gap-3">
               <input type="color" value={form.cardBorder || '#e5e7eb'} onChange={e => setForm(f => ({ ...f, cardBorder: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
               <input className="admin-input flex-1" value={form.cardBorder} onChange={e => setForm(f => ({ ...f, cardBorder: e.target.value }))} placeholder="Leer = rgba(0,0,0,0.06)" />
               {form.cardBorder && <button type="button" onClick={() => setForm(f => ({ ...f, cardBorder: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+            </div>
+          </div>
+          <div>
+            <label className="admin-label">Allgemeine Linien</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Linienfarbe moderner und Premium-Sektionen.</p>
+            <div className="flex items-center gap-3">
+              <input type="color" value={form.borderColor || form.cardBorder || '#e5e7eb'} onChange={e => setForm(f => ({ ...f, borderColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
+              <input className="admin-input flex-1" value={form.borderColor} onChange={e => setForm(f => ({ ...f, borderColor: e.target.value }))} placeholder="Leer = Karten-Rahmen" />
+              {form.borderColor && <button type="button" onClick={() => setForm(f => ({ ...f, borderColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
             </div>
           </div>
           <div>

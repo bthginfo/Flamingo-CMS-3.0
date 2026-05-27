@@ -5,7 +5,7 @@ import { headers } from 'next/headers';
 
 export default async function AiApiPage() {
   const cookieStore = await cookies();
-  const isDemo = cookieStore.get('flamingo_demo')?.value === '1';
+  const isDemo = cookieStore.get('flamingo_public_demo')?.value === '1';
 
   if (isDemo) {
     return (

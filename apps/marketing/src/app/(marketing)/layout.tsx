@@ -48,6 +48,7 @@ const NAV = [
   { href: '/foerderrechner', label: 'Förderrechner' },
   { href: '/prozess', label: 'Ablauf' },
   { href: '/preise', label: 'Preise' },
+  { href: '/blog', label: 'Blog' },
   { href: '/ueber-uns', label: 'Über uns' },
   { href: '/kontakt', label: 'Kontakt' },
 ];
@@ -231,6 +232,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                   <li><MarketingAnchor href="/templates" className="hover:text-accent">Templates</MarketingAnchor></li>
                   <li><MarketingAnchor href="/prozess" className="hover:text-accent">Ablauf</MarketingAnchor></li>
                   <li><MarketingAnchor href="/preise" className="hover:text-accent">Preise</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/blog" className="hover:text-accent">Blog</MarketingAnchor></li>
                   <li><MarketingAnchor href="/ueber-uns" className="hover:text-accent">Über uns</MarketingAnchor></li>
                   <li><MarketingAnchor href="/kontakt" className="hover:text-accent">Kontakt</MarketingAnchor></li>
                 </ul>

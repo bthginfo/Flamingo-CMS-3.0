@@ -86,6 +86,11 @@ export async function GET(request: NextRequest) {
     ? requestedNext
     : '/admin';
   const target = new URL(safeNext, request.nextUrl.origin);
+  if (request.nextUrl.searchParams.get('embed') === '1') {
+    target.searchParams.set('_dt', token);
+    target.searchParams.set('_demo', '1');
+    return NextResponse.redirect(target);
+  }
   const response = NextResponse.redirect(target);
   response.cookies.set(getSessionCookieName(), token, {
     path: '/',
@@ -94,7 +99,7 @@ export async function GET(request: NextRequest) {
     secure: true,
     maxAge: 60 * 60,
   });
-  response.cookies.set('flamingo_demo', '1', {
+  response.cookies.set('flamingo_public_demo', '1', {
     path: '/admin',
     httpOnly: false,
     sameSite: 'none',

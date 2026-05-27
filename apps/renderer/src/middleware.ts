@@ -26,7 +26,7 @@ export function middleware(request: NextRequest) {
       maxAge: 60 * 60,
     });
     if (searchParams.get('_demo') === '1') {
-      response.cookies.set('flamingo_demo', '1', {
+      response.cookies.set('flamingo_public_demo', '1', {
         path: '/admin',
         httpOnly: false,
         sameSite: 'none',

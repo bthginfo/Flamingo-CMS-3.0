@@ -22,7 +22,7 @@ const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; descrip
   bodyColor:      { cssVar: '--style-body-color',       label: 'Fließtext',          description: 'Farbe des Fließtexts' },
   mutedColor:     { cssVar: '--style-text-muted',       label: 'Dezenter Text',      description: 'Dezente Texte, Labels' },
   iconColor:      { cssVar: '--style-icon-color',       label: 'Icons',              description: 'Farbe der Icons' },
-  accentColor:    { cssVar: '--brand-primary',          label: 'Akzentfarbe',        description: 'Akzente, Linien, Hervorhebungen' },
+  accentColor:    { cssVar: '--style-accent-color',     label: 'Akzentfarbe',        description: 'Akzente, Linien, Hervorhebungen' },
   btnBg:          { cssVar: '--brand-btn-bg',           label: 'Button Hintergrund', description: 'CTA-Button Hintergrund' },
   btnText:        { cssVar: '--brand-btn-text',         label: 'Button Text',        description: 'CTA-Button Textfarbe' },
   badgeBg:        { cssVar: '--style-badge-bg',         label: 'Badge Hintergrund',  description: 'Badge/Label Hintergrund' },
@@ -244,7 +244,7 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
   // All CSS vars we need to read
   const allVarKeys = [
     ...fields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean),
-    '--style-text-primary', '--style-text-secondary', '--brand-primary', '--brand-accent', '--brand-dark', '--style-card-bg', '--style-section-bg', '--style-card-border', '--style-text-muted', '--style-badge-bg', '--style-badge-text',
+    '--style-text-primary', '--style-text-secondary', '--brand-primary', '--brand-accent', '--brand-dark', '--style-card-bg', '--style-section-bg', '--style-card-border', '--style-border-color', '--style-divider-color', '--style-text-muted', '--style-badge-bg', '--style-badge-text',
   ];
 
   const readComputedStyles = useCallback(() => {
@@ -299,8 +299,9 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
       '--style-subheading-color': '--style-text-secondary',
       '--style-body-color': '--style-text-secondary',
       '--style-icon-color': '--brand-primary',
+      '--style-accent-color': '--brand-primary',
       '--style-border-color': '--style-card-border',
-      '--style-divider-color': '--style-card-border',
+      '--style-divider-color': '--style-border-color',
       '--brand-btn-bg': '--brand-accent',
       '--brand-btn-text': '--brand-dark',
     };
@@ -311,6 +312,13 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
 
   const handleChange = (key: string, color: string) => {
     const next = { ...overrides, [key]: color };
+    if (key === '--style-accent-color') {
+      next['--brand-primary'] = color;
+      next['--brand-accent'] = color;
+    }
+    if (key === '--style-border-color') {
+      next['--style-card-border'] = `1px solid ${color}`;
+    }
     Object.keys(next).forEach(k => { if (!next[k]) delete next[k]; });
     onChange(Object.keys(next).length > 0 ? next : null);
   };
@@ -318,6 +326,13 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
   const handleClear = (key: string) => {
     const next = { ...overrides };
     delete next[key];
+    if (key === '--style-accent-color') {
+      delete next['--brand-primary'];
+      delete next['--brand-accent'];
+    }
+    if (key === '--style-border-color') {
+      delete next['--style-card-border'];
+    }
     onChange(Object.keys(next).length > 0 ? next : null);
   };
 
@@ -331,7 +346,10 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
         {fields.map((fieldKey) => {
           const def = FIELD_DEFS[fieldKey];
           if (!def) return null;
-          const currentOverride = overrides[def.cssVar] || '';
+          const currentOverride = overrides[def.cssVar]
+            || (def.cssVar === '--style-accent-color' ? overrides['--brand-primary'] : '')
+            || (def.cssVar === '--style-border-color' ? (overrides['--style-card-border'] || '').replace(/^1px solid\s+/, '') : '')
+            || '';
           const resolved = getResolvedColor(def.cssVar);
           const displayColor = currentOverride || resolved || '';
           return (

@@ -42,6 +42,9 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
     maxAge: 7 * 24 * 60 * 60,
   });
   cookieStore.delete('flamingo_demo');
+  cookieStore.delete('flamingo_public_demo');
+  cookieStore.set('flamingo_demo', '', { path: '/admin', maxAge: 0 });
+  cookieStore.set('flamingo_public_demo', '', { path: '/admin', maxAge: 0 });
 
   return {};
 }

@@ -19,7 +19,7 @@ async function requireSession() {
  */
 export async function publishAction() {
   const cookieStore = await cookies();
-  if (cookieStore.get('flamingo_demo')?.value === '1') {
+  if (cookieStore.get('flamingo_public_demo')?.value === '1') {
     return { error: 'Veröffentlichung ist im Demo-Modus deaktiviert.' };
   }
   const session = await requireSession();

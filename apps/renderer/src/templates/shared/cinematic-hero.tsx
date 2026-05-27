@@ -27,7 +27,7 @@ export function CinematicHeroSection({ data }: Props) {
   const overlay = (data.overlay as string) || 'rgba(0,0,0,0.48)';
 
   return (
-    <section ref={ref} className="relative min-h-[92vh] overflow-hidden bg-[var(--style-section-bg,#000)] text-[var(--style-body-color,#fff)]">
+    <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-[var(--style-section-bg,#000)] text-[var(--style-body-color,#fff)]">
       <motion.div className="absolute inset-0" style={{ y: mediaY }}>
         {videoUrl ? (
           <video src={videoUrl} poster={image} autoPlay muted loop playsInline className="h-[110%] w-full object-cover" />
@@ -40,7 +40,7 @@ export function CinematicHeroSection({ data }: Props) {
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black to-transparent" />
       </motion.div>
 
-      <motion.div style={{ y: copyY, opacity }} className={`relative z-10 mx-auto flex min-h-[92vh] max-w-7xl flex-col justify-end px-6 pb-16 pt-32 md:pb-24 ${align === 'center' ? 'items-center text-center' : 'items-start text-left'}`}>
+      <motion.div style={{ y: copyY, opacity }} className={`relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-6 pb-16 pt-32 md:pb-24 ${align === 'center' ? 'items-center text-center' : 'items-start text-left'}`}>
         {eyebrow && <div className="mb-5 inline-flex rounded-full border border-white/20 bg-[var(--style-badge-bg,rgba(255,255,255,0.10))] px-4 py-2 text-xs font-semibold uppercase text-[var(--style-badge-text,#fff)] backdrop-blur">{eyebrow}</div>}
         {headline && <h1 className="max-w-5xl text-5xl font-black leading-[0.95] text-[var(--style-heading-color,#fff)] md:text-7xl lg:text-8xl">{headline}</h1>}
         {subline && <p className={`mt-6 max-w-2xl text-base leading-8 text-[var(--style-subheading-color,rgba(255,255,255,0.78))] md:text-xl ${align === 'center' ? 'mx-auto' : ''}`}>{subline}</p>}

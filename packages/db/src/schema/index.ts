@@ -463,6 +463,7 @@ export const leads = pgTable('leads', {
 // ─── FlamingoMedia CRM Customers ─────────────────────────────────────
 export const crmCustomerStatusEnum = pgEnum('crm_customer_status', ['aktiv', 'pausiert', 'gekündigt']);
 export const crmPaymentStatusEnum = pgEnum('crm_payment_status', ['offen', 'bezahlt', 'überfällig', 'storniert']);
+export const crmBlogPostStatusEnum = pgEnum('crm_blog_post_status', ['draft', 'published', 'archived']);
 
 export const crmCustomers = pgTable('crm_customers', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -508,6 +509,32 @@ export const crmCustomerPayments = pgTable('crm_customer_payments', {
 }, (t) => [
   index('crm_customer_payments_customer_idx').on(t.customerId),
   index('crm_customer_payments_status_idx').on(t.status),
+]);
+
+export const crmBlogPosts = pgTable('crm_blog_posts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug: varchar('slug', { length: 180 }).notNull(),
+  title: varchar('title', { length: 180 }).notNull(),
+  excerpt: text('excerpt').notNull(),
+  content: text('content').notNull(),
+  status: crmBlogPostStatusEnum('status').notNull().default('draft'),
+  category: varchar('category', { length: 120 }),
+  tags: jsonb('tags').$type<string[]>().notNull().default([]),
+  coverImage: varchar('cover_image', { length: 700 }),
+  coverAlt: varchar('cover_alt', { length: 255 }),
+  authorName: varchar('author_name', { length: 120 }).notNull().default('FlamingoMedia'),
+  metaTitle: varchar('meta_title', { length: 180 }),
+  metaDescription: varchar('meta_description', { length: 260 }),
+  ogImage: varchar('og_image', { length: 700 }),
+  canonicalPath: varchar('canonical_path', { length: 255 }),
+  readingMinutes: integer('reading_minutes').notNull().default(1),
+  publishedAt: timestamp('published_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('crm_blog_posts_slug_idx').on(t.slug),
+  index('crm_blog_posts_status_idx').on(t.status),
+  index('crm_blog_posts_published_idx').on(t.publishedAt),
 ]);
 
 // ═══════════════════════════════════════════════════════════════════════

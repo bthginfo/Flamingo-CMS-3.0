@@ -22,6 +22,7 @@ html {
 
 @layer base {
   body {
+    background-color: var(--background, #ffffff);
     color: var(--brand-body-text, var(--style-text-primary, var(--text-primary)));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -34,6 +35,7 @@ html {
   }
 
   h1, h2, h3, h4, h5, h6 {
+    color: var(--brand-heading, inherit);
     letter-spacing: var(--style-heading-tracking, -0.025em);
     text-wrap: balance;
     overflow-wrap: break-word;
@@ -54,6 +56,10 @@ html {
 
   [data-style] main a:not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-"]) {
     color: var(--brand-link, inherit);
+  }
+
+  [data-style] main a:not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-"]):hover {
+    color: var(--brand-link-hover, var(--brand-link, inherit));
   }
 
   /* ─── Text color overrides ─── */
@@ -340,11 +346,18 @@ html {
   }
 
   section[style*="--style-border-color"] .border-gray-100,
-  section[style*="--style-border-color"] .border-gray-200 {
+  section[style*="--style-border-color"] .border-gray-200,
+  section[style*="--style-border-color"] .border-slate-100,
+  section[style*="--style-border-color"] .border-slate-200,
+  section[style*="--style-border-color"] .border-zinc-100,
+  section[style*="--style-border-color"] .border-zinc-200,
+  section[style*="--style-border-color"] [class*="border-[var(--style-border-color"] {
     border-color: var(--style-border-color) !important;
   }
 
   section[style*="--style-divider-color"] .divide-gray-100 > * + *,
+  section[style*="--style-divider-color"] .divide-slate-100 > * + *,
+  section[style*="--style-divider-color"] .divide-zinc-100 > * + *,
   section[style*="--style-divider-color"] .border-b {
     border-color: var(--style-divider-color) !important;
   }

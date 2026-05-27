@@ -410,6 +410,7 @@ function ShowcaseShell() {
     { to: '/foerderrechner', label: 'Förderrechner' },
     { to: '/prozess', label: 'Ablauf' },
     { to: '/preise', label: 'Preise' },
+    { to: '/blog', label: 'Blog' },
     { to: '/ueber-uns', label: 'Über uns' },
     { to: '/kontakt', label: 'Kontakt' },
   ];
@@ -563,9 +564,10 @@ function ShowcaseFooter() {
             <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Angebot</p>
             <ul className="space-y-2">
               <li><Link to="/templates" className="hover:text-accent">Templates</Link></li>
-              <li><Link to="/prozess" className="hover:text-accent">Ablauf</Link></li>
-              <li><Link to="/preise" className="hover:text-accent">Preise</Link></li>
-              <li><Link to="/ueber-uns" className="hover:text-accent">Über uns</Link></li>
+                  <li><Link to="/prozess" className="hover:text-accent">Ablauf</Link></li>
+                  <li><Link to="/preise" className="hover:text-accent">Preise</Link></li>
+                  <li><Link to="/blog" className="hover:text-accent">Blog</Link></li>
+                  <li><Link to="/ueber-uns" className="hover:text-accent">Über uns</Link></li>
               <li><Link to="/kontakt" className="hover:text-accent">Kontakt</Link></li>
             </ul>
           </div>
@@ -628,7 +630,7 @@ function ShowcaseFooter() {
 }
 
 /* ─── Landing ─────────────────────────────────────────────────────── */
-function Landing() {
+function Landing({ newsSlot }: { newsSlot?: ReactNode } = {}) {
   return (
     <>
       <Seo title="FlamingoMedia · Websites für lokale Marken" description="Websites für lokale Betriebe in Innsbruck, München, Ingolstadt und der DACH-Region. Starkes Design, eigenes CMS, SEO-Grundlage und Inhalte, die Du selbst pflegst." />
@@ -645,6 +647,7 @@ function Landing() {
       <ProductionSection />
       <NumbersSection />
       <TestimonialsSection />
+      {newsSlot}
       <CalloutFooter />
     </>
   );
@@ -997,7 +1000,7 @@ type DeviceItem = {
 const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'https://www.demo.flamingomedia.online';
 
 const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://www.demo.flamingomedia.online';
-const demoAdminUrl = (next = '/admin') => `${ADMIN_URL_SHOWCASE}/admin/demo-login?industry=handwerk&next=${encodeURIComponent(next)}`;
+const demoAdminUrl = (next = '/admin') => `${ADMIN_URL_SHOWCASE}/admin/demo-login?industry=handwerk&embed=1&next=${encodeURIComponent(next)}`;
 
 const DEVICE_ITEMS: DeviceItem[] = [
   {
@@ -1008,7 +1011,7 @@ const DEVICE_ITEMS: DeviceItem[] = [
   },
   {
     kind: 'tablet',
-    src: demoAdminUrl('/admin/pages'),
+    src: demoAdminUrl('/admin'),
     label: 'Admin-Bereich',
     caption: 'Inhalte pflegen, ohne Code',
   },

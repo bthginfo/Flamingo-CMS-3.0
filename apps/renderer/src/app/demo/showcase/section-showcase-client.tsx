@@ -65,7 +65,7 @@ export function SectionShowcaseClient({ sections, categories }: { sections: Show
             <p className="mb-3 text-xs font-bold uppercase text-zinc-400">Flamingo CMS</p>
             <h1 className="text-4xl font-black leading-tight md:text-6xl">Section Showcase</h1>
             <p className="mt-4 text-base leading-7 text-zinc-300 md:text-lg">
-              Alle im Admin auswählbaren Sections an einem Ort. Die Vorschau nutzt dieselbe isolierte Preview-Route wie der CMS-Editor.
+              Entdecke die Bausteine, aus denen Flamingo-Websites entstehen: vom ersten Hero bis zu Galerien, CTAs, Vertrauen-Elementen und branchenspezifischen Premium-Sektionen.
             </p>
           </div>
           <div className="grid gap-3 md:grid-cols-[1fr_260px]">

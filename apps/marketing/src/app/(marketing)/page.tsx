@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { LandingPage } from './landing-client';
+import { NewsSection } from './news-section';
 
 export const metadata: Metadata = {
   title: 'FlamingoMedia · Websites für lokale Marken',
@@ -14,5 +15,9 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <LandingPage />;
+  return (
+    <LandingPage>
+      <NewsSection />
+    </LandingPage>
+  );
 }

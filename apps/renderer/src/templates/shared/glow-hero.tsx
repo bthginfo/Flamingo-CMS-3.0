@@ -33,7 +33,7 @@ export function GlowHeroSection({ data }: Props) {
   if (!headline) return null;
 
   return (
-    <section ref={ref} className="relative min-h-[720px] overflow-hidden bg-[var(--style-section-bg,#07070a)] text-white">
+    <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-[var(--style-section-bg,#07070a)] text-white">
       {image && <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70" />}
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
       <div
@@ -42,7 +42,7 @@ export function GlowHeroSection({ data }: Props) {
       />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.055)_1px,transparent_1px)] bg-[size:72px_72px] opacity-35" />
 
-      <div className="relative z-10 mx-auto flex min-h-[720px] max-w-7xl flex-col justify-end px-6 py-16 md:py-24">
+      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-6 py-16 md:py-24">
         <div className="max-w-5xl">
           {eyebrow && <div className="mb-5 text-xs font-bold uppercase tracking-[0.24em] text-[var(--style-badge-text,#ffffff)]">{eyebrow}</div>}
           <h1 className="text-5xl font-black leading-none text-[var(--style-heading-color,#ffffff)] md:text-7xl lg:text-8xl">{headline}</h1>
