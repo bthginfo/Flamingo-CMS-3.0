@@ -18,6 +18,18 @@ const INDUSTRY_MAP: Record<string, string> = {
   medical: 'medical',
   wedding: 'wedding',
   photography: 'photography',
+  consulting: 'consulting',
+  realestate: 'realestate',
+  cafe: 'cafe',
+  tattoo: 'tattoo',
+  retail: 'retail',
+  shop: 'restaurant',
+  showcase: 'tradesman',
+};
+
+const SLUG_MAP: Record<string, string> = {
+  shop: 'demo-shop',
+  showcase: 'demo-showcase',
 };
 
 export async function GET(request: NextRequest) {
@@ -29,15 +41,20 @@ export async function GET(request: NextRequest) {
   if (industry) {
     const dbIndustry = INDUSTRY_MAP[industry] || industry;
     try {
-      // 1. Try resolving via isDemo=true flag
-      let resolved = await resolveDemoTenant(dbIndustry);
+      // 1. Slug-specific demos such as shop/showcase are not industry-unique.
+      let resolved = SLUG_MAP[industry] ? await resolveDemoTenantBySlug(SLUG_MAP[industry]) : null;
 
-      // 2. Fallback: try slug-based lookup (demo-{industry})
+      // 2. Try resolving via isDemo=true flag
+      if (!resolved) {
+        resolved = await resolveDemoTenant(dbIndustry);
+      }
+
+      // 3. Fallback: try slug-based lookup (demo-{industry})
       if (!resolved) {
         resolved = await resolveDemoTenantBySlug(`demo-${industry}`);
       }
 
-      // 3. Fallback: find any tenant with matching industry and slug starting with "demo"
+      // 4. Fallback: find any tenant with matching industry and slug starting with "demo"
       if (!resolved) {
         const db = getDb();
         const [tenant] = await db

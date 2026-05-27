@@ -107,7 +107,7 @@ export function DemoFab({ currentIndustry, currentStyle, onStyleChange }: DemoFa
           {/* Links */}
           <div className="border-t border-white/10 px-5 py-3 space-y-1.5">
             <a
-              href="/demo/admin"
+              href={`/admin/demo-login?industry=${encodeURIComponent(currentIndustry)}&next=${encodeURIComponent('/admin')}`}
               className="flex items-center gap-2 text-xs text-white/60 hover:text-white transition py-1"
             >
               <Settings size={14} />
