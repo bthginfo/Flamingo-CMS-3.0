@@ -147,7 +147,7 @@ export const TOURISM_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'visitorInfo', label: 'Besucherinfo', description: 'Anreise, Parken, ÖPNV und Barrierefreiheit' },
   { type: 'downloadGuides', label: 'Downloads', description: 'Karten, Broschüren und PDF-Guides' },
   { type: 'gallery', label: 'Galerie', description: 'Destinationsbilder mit Kategorien und Captions' },
-  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen fuer Besucher' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen für Besucher' },
   { type: 'tourismContact', label: 'Tourismus-Kontakt', description: 'Tourismusbuero, Formular, Infokarten und CTAs' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
   { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
@@ -366,7 +366,7 @@ export const FITNESS_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'courseSchedule', label: 'Kursplan', description: 'Kurse, Zeiten, Level und Trainer kompakt darstellen' },
   { type: 'trainerProfiles', label: 'Trainer', description: 'Trainerprofile mit Rollen, Bildern und Schwerpunkten' },
   { type: 'membershipPlans', label: 'Mitgliedschaften', description: 'Pakete, Preise, Leistungen und Empfehlungskarte' },
-  { type: 'trialSessionCta', label: 'Probetraining-CTA', description: 'Bildstarker CTA fuer Probetraining oder Beratung' },
+  { type: 'trialSessionCta', label: 'Probetraining-CTA', description: 'Bildstarker CTA für Probetraining oder Beratung' },
   { type: 'transformationStories', label: 'Transformationen', description: 'Kundenstory mit Ausgangslage, Loesung, Ergebnis und Bildern' },
   { type: 'studioAmenities', label: 'Studio-Ausstattung', description: 'Ausstattung, Vorteile und Besonderheiten im modernen Bento-Grid' },
   { type: 'testimonials', label: 'Bewertungen', description: 'Mitgliederstimmen und Social Proof' },
@@ -374,7 +374,7 @@ export const FITNESS_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'contact', label: 'Kontakt', description: 'Kontaktformular und Studio-Kontaktdaten' },
   { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Mehrere Studios oder Trainingsorte' },
   { type: 'galleryGrid', label: 'Galerie', description: 'Studio- und Trainingsbilder' },
-  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero fuer Detail-Seiten' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
 export const FLORIST_SECTION_TYPES: SectionTypeDefinition[] = [
@@ -395,21 +395,21 @@ export const FLORIST_SECTION_TYPES: SectionTypeDefinition[] = [
 ];
 
 export const LOCATION_SECTION_TYPES: SectionTypeDefinition[] = [
-  { type: 'locationHero', label: 'Location-Hero', description: 'Filmischer Einstieg fuer Hochzeitslocations, Eventraeume und Coworking' },
-  { type: 'spaceShowcase', label: 'Raeume & Flaechen', description: 'Raeume mit Bild, Kapazitaet, Preis oder Details' },
+  { type: 'locationHero', label: 'Location-Hero', description: 'Filmischer Einstieg für Hochzeitslocations, Eventräume und Coworking' },
+  { type: 'spaceShowcase', label: 'Räume & Flächen', description: 'Räume mit Bild, Kapazität, Preis oder Details' },
   { type: 'eventTypes', label: 'Eventarten', description: 'Hochzeiten, Workshops, Tagungen, Coworking und Feiern' },
-  { type: 'availabilityCta', label: 'Anfrage-CTA', description: 'Starker CTA fuer Datum, Personenanzahl und Eventtyp' },
+  { type: 'availabilityCta', label: 'Anfrage-CTA', description: 'Starker CTA für Datum, Personenanzahl und Eventtyp' },
   { type: 'locationPackages', label: 'Location-Pakete', description: 'Pakete und Optionen im hochwertigen Vergleich' },
   { type: 'amenitiesGrid', label: 'Ausstattung', description: 'Technik, Catering, Parken, WLAN und Services im Bento-Grid' },
-  { type: 'floorPlanOverview', label: 'Grundriss & Setup', description: 'Text-Bild-Section fuer Grundrisse, Downloads oder Setups' },
-  { type: 'galleryMoodboard', label: 'Mood-Galerie', description: 'Bildergalerie fuer Raeume, Setups und Atmosphaere' },
-  { type: 'locationAccess', label: 'Anfahrt & Umgebung', description: 'Adresse, Karte, Parken, OePNV und Umgebung' },
+  { type: 'floorPlanOverview', label: 'Grundriss & Setup', description: 'Text-Bild-Section für Grundrisse, Downloads oder Setups' },
+  { type: 'galleryMoodboard', label: 'Mood-Galerie', description: 'Bildergalerie für Räume, Setups und Atmosphäre' },
+  { type: 'locationAccess', label: 'Anfahrt & Umgebung', description: 'Adresse, Karte, Parken, ÖPNV und Umgebung' },
   { type: 'hostTeam', label: 'Ansprechpartner', description: 'Team oder Gastgeber der Location' },
   { type: 'testimonials', label: 'Bewertungen', description: 'Gaestestimmen und Veranstalter-Feedback' },
   { type: 'faq', label: 'FAQ', description: 'Fragen zu Catering, Sperrstunde, Technik, Deko und Storno' },
   { type: 'contact', label: 'Kontakt', description: 'Kontaktformular und Location-Kontaktdaten' },
-  { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Weitere Locations oder Raeume' },
-  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero fuer Detail-Seiten' },
+  { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Weitere Locations oder Räume' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
 const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {

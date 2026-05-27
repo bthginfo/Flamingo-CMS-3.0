@@ -245,11 +245,15 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                   <li><a href={`${DEMO_BASE}/demo/medical`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Arztpraxis</a></li>
                   <li><a href={`${DEMO_BASE}/demo/tourism`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Tourismus</a></li>
                   <li><a href={`${DEMO_BASE}/demo/wedding`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Hochzeit</a></li>
+                  <li><a href={`${DEMO_BASE}/demo/photography`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Fotografie</a></li>
                   <li><a href={`${DEMO_BASE}/demo/consulting`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Kanzlei &amp; Beratung</a></li>
+                  <li><a href={`${DEMO_BASE}/demo/realestate`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Immobilien</a></li>
+                  <li><a href={`${DEMO_BASE}/demo/cafe`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Café &amp; Bar</a></li>
                   <li><a href={`${DEMO_BASE}/demo/tattoo`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Tattoo Studio</a></li>
                   <li><a href={`${DEMO_BASE}/demo/florist`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Floristik</a></li>
                   <li><a href={`${DEMO_BASE}/demo/fitness`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Fitness</a></li>
                   <li><a href={`${DEMO_BASE}/demo/location`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Location</a></li>
+                  <li><a href={`${DEMO_BASE}/demo/shop`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Online-Shop</a></li>
                   <li><a href={`${DEMO_BASE}/demo/retail`} target="_blank" rel="noopener noreferrer" className="hover:text-accent">Einzelhandel</a></li>
                 </ul>
               </div>

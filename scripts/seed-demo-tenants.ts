@@ -22,6 +22,9 @@ import { photographySite } from '../apps/renderer/src/app/demo/pages/photography
 import { weddingSite } from '../apps/renderer/src/app/demo/pages/wedding';
 import { realestateSite } from '../apps/renderer/src/app/demo/pages/realestate';
 import { cafeSite } from '../apps/renderer/src/app/demo/pages/cafe';
+import { floristSite } from '../apps/renderer/src/app/demo/pages/florist';
+import { fitnessSite } from '../apps/renderer/src/app/demo/pages/fitness';
+import { locationSite } from '../apps/renderer/src/app/demo/pages/location';
 
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) { console.error('DATABASE_URL not set'); process.exit(1); }
@@ -350,6 +353,94 @@ const DEMO_TENANTS: DemoTenantConfig[] = [
       sections: p.sections.map(s => ({
         ...s,
         data: rewriteDemoHrefs(s.data as Record<string, unknown>, '/demo/cafe'),
+      })),
+    })),
+  },
+  {
+    slug: 'demo-florist',
+    name: 'Blütenwerk Atelier',
+    industry: 'florist',
+    activeStyle: 'classic',
+    brand: { companyName: 'Blütenwerk Atelier', tagline: 'Floristik, Hochzeiten & saisonale Blumenwelten', primaryColor: '#be185d' },
+    contact: { phone: '+49 89 4455 2211', email: 'hello@bluetenwerk-atelier.de', address: 'Gärtnerplatz 8, 80469 München' },
+    socialLinks: { instagram: '#' },
+    navItems: [
+      { label: 'Sträuße', href: '/straeusse' },
+      { label: 'Hochzeiten', href: '/hochzeiten' },
+      { label: 'Workshops', href: '/workshops' },
+      { label: 'Kontakt', href: '/kontakt' },
+    ],
+    navCta: { label: 'Beratung anfragen', href: '/kontakt' },
+    footerColumns: [
+      { title: 'Floristik', items: [{ text: 'Sträuße', href: '/straeusse' }, { text: 'Hochzeiten', href: '/hochzeiten' }, { text: 'Workshops', href: '/workshops' }] },
+      { title: 'Atelier', items: [{ text: 'Kontakt', href: '/kontakt' }, { text: 'Anfahrt', href: '/kontakt' }] },
+    ],
+    footerLegalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    footerCta: { label: 'Beratung anfragen', href: '/kontakt' },
+    pages: floristSite.pages.map(p => ({
+      ...p,
+      sections: p.sections.map(s => ({
+        ...s,
+        data: rewriteDemoHrefs(s.data as Record<string, unknown>, '/demo/florist'),
+      })),
+    })),
+  },
+  {
+    slug: 'demo-fitness',
+    name: 'Pulse Studio',
+    industry: 'fitness',
+    activeStyle: 'classic',
+    brand: { companyName: 'Pulse Studio', tagline: 'Training, Kurse & Personal Coaching', primaryColor: '#9333ea' },
+    contact: { phone: '+49 89 7711 2233', email: 'hello@pulse-studio.de', address: 'Westendstraße 41, 80339 München' },
+    socialLinks: { instagram: '#' },
+    navItems: [
+      { label: 'Kurse', href: '/kurse' },
+      { label: 'Coaching', href: '/coaching' },
+      { label: 'Trainer', href: '/trainer' },
+      { label: 'Kontakt', href: '/kontakt' },
+    ],
+    navCta: { label: 'Probetraining buchen', href: '/kontakt' },
+    footerColumns: [
+      { title: 'Training', items: [{ text: 'Kurse', href: '/kurse' }, { text: 'Coaching', href: '/coaching' }] },
+      { title: 'Studio', items: [{ text: 'Trainer', href: '/trainer' }, { text: 'Kontakt', href: '/kontakt' }] },
+    ],
+    footerLegalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    footerCta: { label: 'Probetraining buchen', href: '/kontakt' },
+    pages: fitnessSite.pages.map(p => ({
+      ...p,
+      sections: p.sections.map(s => ({
+        ...s,
+        data: rewriteDemoHrefs(s.data as Record<string, unknown>, '/demo/fitness'),
+      })),
+    })),
+  },
+  {
+    slug: 'demo-location',
+    name: 'Lichtwerk Loft',
+    industry: 'location',
+    activeStyle: 'classic',
+    brand: { companyName: 'Lichtwerk Loft', tagline: 'Eventlocation, Hochzeiten & Coworking', primaryColor: '#b45309' },
+    contact: { phone: '+49 89 8899 4411', email: 'events@lichtwerk-loft.de', address: 'Am Speicher 12, 85049 Ingolstadt' },
+    socialLinks: { instagram: '#' },
+    navItems: [
+      { label: 'Räume', href: '/raeume' },
+      { label: 'Events', href: '/events' },
+      { label: 'Coworking', href: '/coworking' },
+      { label: 'Galerie', href: '/galerie' },
+      { label: 'Kontakt', href: '/kontakt' },
+    ],
+    navCta: { label: 'Wunschtermin anfragen', href: '/kontakt' },
+    footerColumns: [
+      { title: 'Location', items: [{ text: 'Räume', href: '/raeume' }, { text: 'Events', href: '/events' }, { text: 'Coworking', href: '/coworking' }] },
+      { title: 'Planung', items: [{ text: 'Galerie', href: '/galerie' }, { text: 'Kontakt', href: '/kontakt' }] },
+    ],
+    footerLegalLinks: [{ label: 'Impressum', href: '#' }, { label: 'Datenschutz', href: '#' }],
+    footerCta: { label: 'Wunschtermin anfragen', href: '/kontakt' },
+    pages: locationSite.pages.map(p => ({
+      ...p,
+      sections: p.sections.map(s => ({
+        ...s,
+        data: rewriteDemoHrefs(s.data as Record<string, unknown>, '/demo/location'),
       })),
     })),
   },

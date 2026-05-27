@@ -22,6 +22,9 @@ import { CAFE_CONFIG } from './demo-data/cafe';
 import { CONSULTING_CONFIG } from './demo-data/consulting';
 import { REALESTATE_CONFIG } from './demo-data/realestate';
 import { PHOTOGRAPHY_LISA_CONFIG } from './demo-data/photography-lisa';
+import { FLORIST_CONFIG } from './demo-data/florist';
+import { FITNESS_CONFIG } from './demo-data/fitness';
+import { LOCATION_CONFIG } from './demo-data/location';
 
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) { console.error('DATABASE_URL not set'); process.exit(1); }
@@ -31,9 +34,10 @@ const db = drizzle(sql, { schema });
 
 const DEMO_PASSWORD_HASH = '$2a$12$HMKCVT2eAmQj0huq6SUShOGHQOVNO4FWi4teS8IbQvrrymkpRjVHK'; // demo2024
 
-const ALL_CONFIGS = [RESTAURANT_CONFIG, HOTEL_CONFIG, SALON_CONFIG, TOURISM_CONFIG, MEDICAL_CONFIG, HANDWERK_CONFIG, WEDDING_CONFIG, TATTOO_CONFIG, CAFE_CONFIG, CONSULTING_CONFIG, REALESTATE_CONFIG, PHOTOGRAPHY_LISA_CONFIG];
+const ALL_CONFIGS = [RESTAURANT_CONFIG, HOTEL_CONFIG, SALON_CONFIG, TOURISM_CONFIG, MEDICAL_CONFIG, HANDWERK_CONFIG, WEDDING_CONFIG, TATTOO_CONFIG, CAFE_CONFIG, CONSULTING_CONFIG, REALESTATE_CONFIG, PHOTOGRAPHY_LISA_CONFIG, FLORIST_CONFIG, FITNESS_CONFIG, LOCATION_CONFIG];
+type DemoConfig = (typeof ALL_CONFIGS)[number];
 
-async function seedTenant(config: typeof RESTAURANT_CONFIG) {
+async function seedTenant(config: DemoConfig) {
   console.log(`\n🔧 Seeding ${config.name} (${config.industry})…`);
 
   // Create or find tenant

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, Outlet, Routes, Route, useLocation } from '@/lib/nav-compat';
-import type { TemplateKey } from '@/lib/types';
 import { Imprint, Privacy } from './Legal';
 import { NotFound } from './Blog';
 import { TemplateGallery } from './Templates';
@@ -65,6 +64,8 @@ const ROTATING_WORDS = [
   'Bäckereien.',
   'Boutiquen.',
   'Floristik.',
+  'Fitness.',
+  'Locations.',
 ];
 
 /* ─── Showcase palette ─────────────────────────────────────────────
@@ -327,33 +328,6 @@ const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
     classic: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1400&q=80',
     modern: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=80',
     bold: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1400&q=80',
-  },
-};
-
-/* ─── Coming-soon branches ───────────────────────────────────────── */
-type ExtraBranchKey = 'fitness';
-type BranchKey = TemplateKey | ExtraBranchKey;
-const EXTRA_KEYS: ExtraBranchKey[] = ['fitness'];
-const isExtraKey = (k: string | undefined): k is ExtraBranchKey =>
-  !!k && (EXTRA_KEYS as string[]).includes(k);
-
-// Color presets for extras now come from PRESETS in @/lib/theme (single source of truth).
-
-const EXTRA_BRANCHES: Record<ExtraBranchKey, {
-  label: string;
-  tagline: string;
-  description: string;
-  image: string;
-  accent: string;
-  bullets: string[];
-}> = {
-  fitness: {
-    label: 'Studios & Coaching',
-    tagline: 'Fitness · Yoga · Personal',
-    description: 'Energiegeladenes Editorial mit Kurs-Plan, Trainer-Bios und Probetraining-Funnel.',
-    image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1400&q=80',
-    accent: '#9333ea',
-    bullets: ['Programme & Kursformat', 'Trainer:innen mit Stories', 'Probetraining-CTA im Hero', 'Preise pro Kurs / Paket'],
   },
 };
 
