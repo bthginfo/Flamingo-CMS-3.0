@@ -10,9 +10,6 @@ import { SectionColorEditor } from '../pages/[id]/section-color-editor';
 import type { SectionTypeDefinition } from '../pages/[id]/section-types';
 import type { EditableSection } from './editable-section';
 
-
-// Sections with built-in color fields in their data editor (skip global SectionColorEditor)
-const SECTIONS_WITH_OWN_COLORS = new Set(['ctaBand', 'noticeBanner']);
 type I18nConfig = { enabled: boolean; locales: string[]; defaultLocale: string };
 
 type Props = {
@@ -89,7 +86,7 @@ export function SectionEditorCard({
       {expanded && (
         <div className="p-4">
           <IndustrySectionDataEditor industry={industry} type={section.type} data={editorData} onChange={stableOnChange} />
-          {!SECTIONS_WITH_OWN_COLORS.has(section.type) && <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} resolvedVars={resolvedVars} iframeRef={iframeRef} sectionId={section.id} />}
+          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} resolvedVars={resolvedVars} iframeRef={iframeRef} sectionId={section.id} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
             <SectionMetaEditor section={section} styleVariant={styleVariant} onSave={onSaveMeta} />
