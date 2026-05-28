@@ -136,19 +136,19 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
         <h2 className="font-semibold text-sm text-zinc-700">Steuerklassen</h2>
         <p className="text-xs text-zinc-500">Definieren Sie die verfügbaren Steuersätze für Ihre Produkte.</p>
         <div className="space-y-2">
-          {data.taxClasses.map((tc, idx) => (
+          {(data.taxClasses || []).map((tc, idx) => (
             <div key={idx} className="flex items-center gap-2">
-              <input value={tc.label} onChange={e => { const arr = [...data.taxClasses]; arr[idx] = { ...arr[idx], label: e.target.value }; set('taxClasses', arr); }} className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-sm" placeholder="Bezeichnung" />
+              <input value={tc.label} onChange={e => { const arr = [...(data.taxClasses || [])]; arr[idx] = { ...arr[idx], label: e.target.value }; set('taxClasses', arr); }} className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-sm" placeholder="Bezeichnung" />
               <div className="flex items-center gap-1">
-                <input type="number" value={tc.rate} onChange={e => { const arr = [...data.taxClasses]; arr[idx] = { ...arr[idx], rate: Number(e.target.value) }; set('taxClasses', arr); }} className="w-16 px-2 py-2 rounded-lg border border-zinc-200 text-sm text-right" min={0} max={100} />
+                <input type="number" value={tc.rate} onChange={e => { const arr = [...(data.taxClasses || [])]; arr[idx] = { ...arr[idx], rate: Number(e.target.value) }; set('taxClasses', arr); }} className="w-16 px-2 py-2 rounded-lg border border-zinc-200 text-sm text-right" min={0} max={100} />
                 <span className="text-xs text-zinc-500">%</span>
               </div>
-              {data.taxClasses.length > 1 && (
-                <button type="button" onClick={() => set('taxClasses', data.taxClasses.filter((_, i) => i !== idx))} className="text-xs text-red-500 hover:text-red-700">×</button>
+              {(data.taxClasses || []).length > 1 && (
+                <button type="button" onClick={() => set('taxClasses', (data.taxClasses || []).filter((_, i) => i !== idx))} className="text-xs text-red-500 hover:text-red-700">×</button>
               )}
             </div>
           ))}
-          <button type="button" onClick={() => set('taxClasses', [...data.taxClasses, { key: `custom-${Date.now()}`, label: '', rate: 0 }])} className="text-xs text-blue-600 hover:underline">+ Steuerklasse hinzufügen</button>
+          <button type="button" onClick={() => set('taxClasses', [...(data.taxClasses || []), { key: `custom-${Date.now()}`, label: '', rate: 0 }])} className="text-xs text-blue-600 hover:underline">+ Steuerklasse hinzufügen</button>
         </div>
       </div>
 
