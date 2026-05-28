@@ -1344,7 +1344,10 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     phoneCta: { label: 'Anrufen', href: 'tel:+491234567890' },
     notes: ['Terminabsage mindestens 24h vorher', 'Neue Kunden bitte 10 Min. früher da sein'],
     introText: "",
-    whatsappCta: {"label":"","href":""},
+    whatsappCta: {"label":"","href":""}
+    ctaLabel: '',
+    ctaHref: '',
+    hints: [],,
   },
   locationContact: {
     headline: 'Kontakt & Standort',
@@ -1800,65 +1803,29 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
   },
   story: {
-      "headline": "Unsere Geschichte",
-      "subline": "",
-      "badgeText": "",
-      "storyText": "<p>Ihre Unternehmensgeschichte hier.</p>",
-      "imagePrimary": "",
-      "imageSecondary": "",
-      "founderName": "",
-      "founderRole": "",
-      "founderQuote": "",
-      "stats": [
-          {
-              "value": "10+",
-              "label": "Jahre Erfahrung"
-          }
-      ],
-      "values": [
-          {
-              "title": "Qualität",
-              "text": "Unser Anspruch an erstklassige Ergebnisse."
-          }
-      ],
-      "milestones": [
-          {
-              "year": "2015",
-              "title": "Gründung",
-              "text": ""
-          }
-      ],
-      "ctaPrimary": {
-          "label": "",
-          "href": ""
-      }
+    headline: 'Unsere Geschichte',
+    subline: '',
+    badgeText: '',
+    storyText: '<p>Ihre Unternehmensgeschichte hier.</p>',
+    imagePrimary: '',
+    imageSecondary: '',
+    founderName: '',
+    founderRole: '',
+    founderQuote: '',
+    stats: [{ value: '10+', label: 'Jahre Erfahrung' }],
+    values: [{ title: 'Qualität', text: 'Unser Anspruch an erstklassige Ergebnisse.' }],
+    milestones: [{ year: '2015', title: 'Gründung', text: '' }],
+    ctaPrimary: { label: '', href: '' },
   },
   faqGallery: {
-      "badge": "FAQ",
-      "headline": "Häufige Fragen",
-      "items": [
-          {
-              "question": "Beispielfrage?",
-              "answer": "Antwort auf die Frage."
-          }
-      ],
-      "images": [
-          {
-              "src": "",
-              "alt": ""
-          }
-      ]
+    badge: 'FAQ',
+    headline: 'Häufige Fragen',
+    items: [{ question: 'Beispielfrage?', answer: 'Antwort auf die Frage.' }],
+    images: [{ src: '', alt: '' }],
   },
   eventCalendar: {
-      "headline": "Unsere Veranstaltungen",
-      "subline": "",
-      "events": [
-          {
-              "title": "Event Titel",
-              "date": "2025-06-15",
-              "description": "",
-              "image": ""
-          }
-      ]
+    headline: 'Unsere Veranstaltungen',
+    subline: '',
+    events: [{ title: 'Event Titel', date: '2025-06-15', description: '', image: '' }],
   },
 };
