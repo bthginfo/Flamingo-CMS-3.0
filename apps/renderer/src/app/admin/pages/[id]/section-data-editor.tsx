@@ -726,7 +726,7 @@ function FaqEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline} help="Optionale Überschrift über dem Statistik-Bereich" />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline} />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -753,7 +753,7 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
     <div className="space-y-3">
       <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
       <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} help="Optionaler Beschreibungstext" />
+      <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
     </div>
   );
@@ -940,8 +940,8 @@ function NewsPreviewEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} help="Wird über den News-Karten angezeigt" />
-      <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} help="Optionaler Beschreibungstext unter der Überschrift" />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <CollectionKeySelect value={d.collectionKey} onChange={(v) => setD({ ...d, collectionKey: v })} />
       <ButtonField label="Alle-Beiträge-Link" value={{ label: d.linkLabel, href: d.linkHref }} onChange={(v) => setD({ ...d, linkLabel: v.label, linkHref: v.href })} />
       <p className="text-xs text-gray-400">Die Beiträge werden automatisch aus der gewählten Collection geladen.</p>
@@ -971,7 +971,7 @@ function StatsEditor({ data, onChange }: EditorProps) {
               <input type="number" className="admin-input mt-1 w-full" value={stat.value} onChange={(e) => setStats(stats.map((s, idx) => idx === i ? { ...s, value: Number(e.target.value) } : s))} />
             </label>
             <Field label="Vorzeichen" value={stat.prefix} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, prefix: v } : s))} placeholder="z.B. €, >" />
-            <Field label="Nachzeichen" value={stat.suffix} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, suffix: v } : s))} placeholder="z.B. +, %, Jahre" help="Wird hinter dem Zahlenwert angezeigt" />
+            <Field label="Nachzeichen" value={stat.suffix} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, suffix: v } : s))} placeholder="z.B. +, %, Jahre" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Beschriftung" value={stat.label} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} />
@@ -2392,7 +2392,7 @@ function CollectionListEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} placeholder="z.B. Alle Beiträge" help="Hauptüberschrift über der Beitragsliste" />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} placeholder="z.B. Alle Beiträge" />
       <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <CollectionKeySelect value={d.collectionKey} onChange={(v) => setD({ ...d, collectionKey: v })} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
