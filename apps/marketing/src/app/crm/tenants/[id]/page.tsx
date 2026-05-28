@@ -181,7 +181,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
               </a>
             ))}
             {domains[0] && (
-              <a href={`https://${domains[0].domain}/admin`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800">
+              <a href={`https://${domains[0].domain}/admin/login`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-800">
                 <Shield size={14} className="shrink-0" /> Admin öffnen
               </a>
             )}
