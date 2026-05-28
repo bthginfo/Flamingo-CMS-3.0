@@ -31,8 +31,6 @@ export async function saveBrandSettings(data: Record<string, unknown>) {
   // Check if row exists
   const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
 
-  console.log('[saveBrandSettings] tenantId:', tenantId, 'existing:', !!existing, 'primaryColor:', data.primaryColor);
-
   if (existing) {
     await db.update(globalSettings)
       .set({ brand: data, updatedAt: new Date() })
@@ -41,15 +39,11 @@ export async function saveBrandSettings(data: Record<string, unknown>) {
     await db.insert(globalSettings).values({ tenantId, brand: data });
   }
 
-  // Verify the write
-  const [verify] = await db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
-  const savedPrimary = (verify?.brand as Record<string, unknown>)?.primaryColor;
-  console.log('[saveBrandSettings] VERIFY after write:', savedPrimary);
 
   revalidatePath('/admin/brand');
   revalidatePath('/', 'layout');
   revalidatePath('/', 'page');
-  return { success: true, verified: savedPrimary === data.primaryColor };
+  return { success: true };
 }
 
 // ─── Contact ──────────────────────────────────────────────────────────
