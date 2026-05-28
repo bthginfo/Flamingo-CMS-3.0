@@ -9,7 +9,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 /** Sanitize standard embed code — only allow iframe tags */
 function sanitizeEmbedCode(html: string): string | null {
   if (!html) return null;
-  const match = html.match(/<iframe\s[^>]*src=["']([^"']+)["'][^>]*><\/iframe>/i)
+  const match = html.match(/<iframe\s[^>]*src=["']([^"']+)["'][^>]*>[\s\S]*?<\/iframe>/i)
     || html.match(/<iframe\s[^>]*src=["']([^"']+)["'][^>]*\/>/i);
   if (!match) return null;
   // Return only a safe iframe with the extracted src
