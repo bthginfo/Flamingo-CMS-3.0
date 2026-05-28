@@ -4,6 +4,7 @@ import { formSubmissions, globalSettings } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 import nodemailer from 'nodemailer';
+import { getEffectiveSmtp } from '@/lib/smtp';
 
 const MAX_FIELD_LENGTH = 5000;
 const MAX_FIELDS = 20;
@@ -64,20 +65,13 @@ export async function POST(req: NextRequest) {
     // Load SMTP + auto-response settings
     try {
       const [settings] = await db
-        .select({ smtp: globalSettings.smtp, autoResponse: globalSettings.autoResponse })
+        .select({ autoResponse: globalSettings.autoResponse })
         .from(globalSettings)
         .where(eq(globalSettings.tenantId, tenantId))
         .limit(1);
 
-      const smtp = settings?.smtp as { host: string; port: number; user: string; pass: string; from: string } | null;
       const autoResponse = settings?.autoResponse as { enabled: boolean; subject: string; body: string; notificationEmail?: string } | null;
-
-      // Use tenant SMTP if configured, otherwise fall back to platform SMTP from env
-      const effectiveSmtp = (smtp?.host && smtp?.user && smtp?.pass && smtp?.from)
-        ? smtp
-        : (process.env.PLATFORM_SMTP_HOST && process.env.PLATFORM_SMTP_USER && process.env.PLATFORM_SMTP_PASS && process.env.PLATFORM_SMTP_FROM)
-          ? { host: process.env.PLATFORM_SMTP_HOST, port: Number(process.env.PLATFORM_SMTP_PORT) || 587, user: process.env.PLATFORM_SMTP_USER, pass: process.env.PLATFORM_SMTP_PASS, from: process.env.PLATFORM_SMTP_FROM }
-          : null;
+      const effectiveSmtp = await getEffectiveSmtp(tenantId);
 
       if (effectiveSmtp) {
         const transporter = nodemailer.createTransport({
