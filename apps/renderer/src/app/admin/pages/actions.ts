@@ -3,7 +3,7 @@
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { validateSectionData } from '@/lib/validate-section';
-import { pages, pageSections, tenants, globalSettings, tenantAddons } from '@flamingo/db';
+import { pages, pageSections, tenants, globalSettings, tenantAddons, collections, collectionItems } from '@flamingo/db';
 import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -90,18 +90,28 @@ export async function updatePageAction(pageId: string, data: { title?: string; s
 export async function getPageWithSectionsAction(pageId: string) {
   const session = await requireSession();
   const db = getDb();
-  const [pageResult, sectionsResult, tenantResult, brandResult, shopAddonResult] = await Promise.all([
+  const [pageResult, sectionsResult, tenantResult, brandResult, shopAddonResult, collectionsResult] = await Promise.all([
     db.select().from(pages).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId))),
     db.select().from(pageSections).where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).orderBy(asc(pageSections.sortOrder)),
     db.select({ industry: tenants.industry, activeStyle: tenants.activeStyle, i18nEnabled: tenants.i18nEnabled, i18nLocales: tenants.i18nLocales, i18nDefaultLocale: tenants.i18nDefaultLocale }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1),
     db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1),
     db.select({ active: tenantAddons.active }).from(tenantAddons).where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'shop'))).limit(1),
+    db.select().from(collections).where(eq(collections.tenantId, session.tenantId)),
   ]);
   const page = pageResult[0];
   if (!page) return null;
   const tenant = tenantResult[0];
   const i18n = tenant?.i18nEnabled ? { enabled: true, locales: (tenant.i18nLocales || 'de').split(','), defaultLocale: tenant.i18nDefaultLocale || 'de' } : undefined;
-  return { page, sections: sectionsResult, industry: tenant?.industry ?? 'tradesman', styleVariant: tenant?.activeStyle ?? 'classic', brand: (brandResult[0]?.brand as Record<string, string>) || {}, hasShop: !!shopAddonResult[0]?.active, i18n };
+  // Build collections with items for live preview
+  const colIds = collectionsResult.map(c => c.id);
+  const allItems = colIds.length > 0
+    ? await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, session.tenantId), eq(collectionItems.published, true))).orderBy(asc(collectionItems.sortOrder))
+    : [];
+  const previewCollections = collectionsResult.map(c => ({
+    key: c.key, label: c.label,
+    items: allItems.filter(i => i.collectionId === c.id).map(i => ({ id: i.id, title: i.title, slug: i.slug, data: i.data })),
+  }));
+  return { page, sections: sectionsResult, industry: tenant?.industry ?? 'tradesman', styleVariant: tenant?.activeStyle ?? 'classic', brand: (brandResult[0]?.brand as Record<string, string>) || {}, hasShop: !!shopAddonResult[0]?.active, i18n, collections: previewCollections };
 }
 
 export async function addSectionAction(pageId: string, type: string) {
