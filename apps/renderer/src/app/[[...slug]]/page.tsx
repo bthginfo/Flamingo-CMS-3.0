@@ -135,8 +135,8 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
 
   const { tenantId, snapshot, page, locale, i18n, linkPrefix } = result;
   const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle, seoGlobal] = await Promise.all([
-    getTenantNav(tenantId),
-    getTenantFooter(tenantId),
+    getTenantNav(tenantId, locale),
+    getTenantFooter(tenantId, locale),
     getTenantBrand(tenantId),
     getTenantStyle(tenantId),
     getTenantSeoGlobal(tenantId),
