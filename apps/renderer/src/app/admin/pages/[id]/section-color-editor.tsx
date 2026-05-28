@@ -220,7 +220,7 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   seasonalCampaign:  ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
   floristMaterials:  ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'badgeBg', 'badgeText', 'borderColor'],
   // FITNESS
-  fitnessHero:       ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder'],
+  fitnessHero:       ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeText'],
   programGrid:       ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius'],
   courseSchedule:    ['sectionBg', 'headingColor', 'bodyColor', 'accentColor', 'iconColor', 'dividerColor'],
   trainerProfiles:   ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
