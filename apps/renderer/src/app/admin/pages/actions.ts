@@ -105,7 +105,7 @@ export async function getPageWithSectionsAction(pageId: string) {
   // Build collections with items for live preview
   const colIds = collectionsResult.map(c => c.id);
   const allItems = colIds.length > 0
-    ? await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, session.tenantId), eq(collectionItems.published, true))).orderBy(asc(collectionItems.sortOrder))
+    ? await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, session.tenantId), eq(collectionItems.published, true))).orderBy(asc(collectionItems.priority))
     : [];
   const previewCollections = collectionsResult.map(c => ({
     key: c.key, label: c.label,
