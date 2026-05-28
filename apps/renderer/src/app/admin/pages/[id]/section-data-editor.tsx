@@ -336,24 +336,6 @@ function fieldHelp(key: string): string | undefined {
 return FIELD_HELP[key];
 }
 
-function updateAtPath(path: Array<string | number>, value: unknown) {
-  const update = (current: unknown, depth: number): unknown => {
-    const key = path[depth];
-    if (depth === path.length - 1) {
-      if (Array.isArray(current)) return current.map((item, index) => index === key ? value : item);
-      if (isRecord(current)) return { ...current, [key]: value };
-      return current;
-    }
-    if (Array.isArray(current)) return current.map((item, index) => index === key ? update(item, depth + 1) : item);
-    if (isRecord(current)) return { ...current, [key]: update(current[key as string], depth + 1) };
-    return current;
-  };
-
-  const next = update(source, 0) as Record<string, unknown>;
-  setSource(next);
-  onChange(next);
-}
-
 // Generic section data editor that renders a form per section type.
 export function SectionDataEditor({ type, data, onChange }: { type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void }) {
   const Editor = EDITORS[type] ?? SchemaSectionEditor;
@@ -378,195 +360,27 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
 
   function isRecord(value: unknown): value is Record<string, unknown> {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+
+  function updateAtPath(path: Array<string | number>, value: unknown) {
+    const update = (current: unknown, depth: number): unknown => {
+      const key = path[depth];
+      if (depth === path.length - 1) {
+        if (Array.isArray(current)) return current.map((item, index) => index === key ? value : item);
+        if (isRecord(current)) return { ...current, [key]: value };
+        return current;
+      }
+      if (Array.isArray(current)) return current.map((item, index) => index === key ? update(item, depth + 1) : item);
+      if (isRecord(current)) return { ...current, [key]: update(current[key as string], depth + 1) };
+      return current;
+    };
+  
+    const next = update(source, 0) as Record<string, unknown>;
+    setSource(next);
+    onChange(next);
+  }
   }
 
   
-const FIELD_LABELS: Record<string, string> = {
-    headline: 'Überschrift',
-    subline: 'Untertitel',
-    text: 'Fließtext',
-    content: 'Inhalt',
-    description: 'Beschreibung',
-    badge: 'Badge-Text',
-    eyebrow: 'Eyebrow',
-    image: 'Bild',
-    bgImage: 'Hintergrundbild',
-    bgImageMobile: 'Hintergrundbild (Mobil)',
-    bgColor: 'Hintergrundfarbe',
-    bgPosition: 'Bildposition',
-    bgPositionMobile: 'Bildposition (Mobil)',
-    bgMode: 'Hintergrund-Modus',
-    videoUrl: 'Video-URL',
-    embedUrl: 'Embed-URL',
-    embedCode: 'Embed-Code',
-    alt: 'Alt-Text',
-    imageAlt: 'Bild Alt-Text',
-    overlay: 'Overlay-Stärke',
-    overlayColor: 'Overlay-Farbe',
-    overlayOpacity: 'Overlay-Deckkraft',
-    primaryCta: 'Primärer Button',
-    secondaryCta: 'Sekundärer Button',
-    cta: 'Button',
-    ctaLabel: 'Button-Text',
-    ctaHref: 'Button-Link',
-    ctaPrimary: 'Primärer Button',
-    linkHref: 'Link-Ziel',
-    linkLabel: 'Link-Text',
-    buttonHref: 'Button-Ziel',
-    collectionKey: 'Collection',
-    sortBy: 'Sortierung',
-    columns: 'Spalten',
-    maxItems: 'Max. Einträge',
-    items: 'Einträge',
-    cards: 'Karten',
-    steps: 'Schritte',
-    stats: 'Statistiken',
-    members: 'Mitglieder',
-    logos: 'Logos',
-    images: 'Bilder',
-    projects: 'Projekte',
-    facts: 'Fakten',
-    values: 'Werte',
-    entries: 'Einträge',
-    highlights: 'Highlights',
-    services: 'Leistungen',
-    features: 'Features',
-    reviews: 'Bewertungen',
-    proofs: 'Nachweise',
-    infoCards: 'Info-Karten',
-    trustItems: 'Trust-Elemente',
-    formEnabled: 'Formular anzeigen',
-    submitLabel: 'Absenden-Text',
-    introText: 'Einleitungstext',
-    storyHeadline: 'Story-Überschrift',
-    storyText: 'Story-Text',
-    storyImage: 'Story-Bild',
-    valuesHeadline: 'Werte-Überschrift',
-    membersHeadline: 'Team-Überschrift',
-    badgeText: 'Badge-Text',
-    badgeIcon: 'Badge-Icon',
-    ratingValue: 'Bewertungs-Durchschnitt',
-    ratingCount: 'Anzahl Bewertungen',
-    prefix: 'Vorzeichen',
-    suffix: 'Nachzeichen',
-    icon: 'Icon',
-    title: 'Titel',
-    name: 'Name',
-    role: 'Rolle',
-    bio: 'Biografie',
-    quote: 'Zitat',
-    context: 'Kontext',
-    category: 'Kategorie',
-    date: 'Datum',
-    label: 'Label',
-    value: 'Wert',
-    href: 'Link',
-    note: 'Anmerkung',
-    price: 'Preis',
-    answer: 'Antwort',
-    question: 'Frage',
-    intro: 'Einleitung',
-    story: 'Geschichte',
-    excerpt: 'Auszug',
-    caption: 'Bildunterschrift',
-    location: 'Ort',
-    year: 'Jahr',
-    reversed: 'Layout spiegeln',
-    imagePosition: 'Bild-Position',
-    imageEffect: 'Bild-Effekt',
-    imageEffectIntensity: 'Effekt-Stärke',
-    height: 'Höhe',
-    maxWidth: 'Max-Breite',
-    mode: 'Modus',
-    provider: 'Anbieter',
-    style: 'Stil',
-    layout: 'Layout',
-    showImage: 'Bilder anzeigen',
-    showDate: 'Datum anzeigen',
-    showExcerpt: 'Auszug anzeigen',
-    showSearch: 'Suche anzeigen',
-    showCategories: 'Kategorien anzeigen',
-    showSort: 'Sortierung anzeigen',
-    showSortControls: 'Sortier-Dropdown',
-    delayMs: 'Verzögerung (ms)',
-    frequency: 'Wiederholung',
-    highlighted: 'Hervorgehoben',
-    continueShoppingLabel: 'Weiter-einkaufen-Text',
-    checkoutLabel: 'Kasse-Text',
-    emptyText: 'Leer-Text',
-    deadline: 'Deadline',
-    offerLabel: 'Angebots-Label',
-    panelHeight: 'Panel-Höhe',
-    align: 'Ausrichtung',
-    aspectRatio: 'Bildformat',
-    glowColor: 'Glow-Farbe',
-    trustStripColor: 'Trust-Strip-Farbe',
-    imageBefore: 'Bild vorher',
-    imageAfter: 'Bild nachher',
-    labelBefore: 'Label vorher',
-    labelAfter: 'Label nachher',
-    beforeImage: 'Vorher-Bild',
-    afterImage: 'Nachher-Bild',
-  };
-
-  const FIELD_HELP: Record<string, string> = {
-    headline: 'Hauptüberschrift der Sektion',
-    subline: 'Ergänzender Text unter der Überschrift zur näheren Beschreibung',
-    text: 'Fließtext-Inhalt der Sektion',
-    content: 'Inhalt im Rich-Text-Format (HTML erlaubt)',
-    description: 'Beschreibungstext, der unter dem Titel angezeigt wird',
-    badge: 'Kleiner Text über der Überschrift, z.B. "Neu" oder eine Kategorie',
-    eyebrow: 'Kleine Zeile über der Hauptüberschrift zur Einordnung',
-    image: 'Haupt-Bild der Sektion',
-    bgImage: 'Hintergrundbild (wird auf volle Breite skaliert)',
-    bgImageMobile: 'Separates Bild für mobile Geräte (optional)',
-    bgColor: 'Hintergrundfarbe wenn kein Bild verwendet wird',
-    videoUrl: 'YouTube- oder Vimeo-Link einfügen. Das Video wird automatisch eingebettet.',
-    embedUrl: 'URL zum Einbetten (z.B. Google Maps Embed-URL)',
-    embedCode: 'Kompletter iframe-Code zum Einbetten eines externen Widgets',
-    alt: 'Beschreiben Sie das Bild für Screenreader und SEO (z.B. "Team bei der Arbeit")',
-    imageAlt: 'Alternativtext für das Bild (SEO & Barrierefreiheit)',
-    overlay: 'Wert zwischen 0 (transparent) und 1 (komplett dunkel). Verbessert die Lesbarkeit von Text auf Bildern.',
-    overlayColor: 'Farbe des Overlays über dem Hintergrundbild',
-    overlayOpacity: 'Stärke des Overlays (0 = unsichtbar, 1 = voll deckend)',
-    collectionKey: 'Der Key der Collection, deren Einträge hier angezeigt werden sollen.',
-    buttonHref: 'Relativer Pfad (z.B. /kontakt) oder externe URL (https://...)',
-    linkHref: 'Relativer Pfad (z.B. /ueber-uns) oder volle URL',
-    ctaHref: 'Relativer Pfad oder externe URL für den Call-to-Action Button',
-    ctaLabel: 'Text auf dem Button (z.B. "Jetzt anfragen")',
-    excerpt: 'Kurze Zusammenfassung, die in Vorschau-Karten angezeigt wird',
-    maxItems: 'Maximale Anzahl der angezeigten Einträge (leer = alle)',
-    suffix: 'Zeichen nach dem Wert, z.B. +, %, €, Jahre',
-    prefix: 'Zeichen vor dem Wert, z.B. €, ca., >',
-    columns: 'Anzahl der Spalten im Grid (auf Desktop)',
-    icon: 'Icon-Name aus der Lucide-Bibliothek',
-    formEnabled: 'Wenn aktiviert, wird ein Kontaktformular angezeigt',
-    submitLabel: 'Text auf dem Absenden-Button des Formulars',
-    introText: 'Einleitender Text der über dem Formular erscheint',
-    trustItems: 'Vertrauens-Elemente die unter dem Hero angezeigt werden',
-    trustStripColor: 'Hintergrundfarbe des Trust-Streifens',
-    facts: 'Fakten/Stichpunkte die neben dem Hauptinhalt angezeigt werden',
-    glowColor: 'Farbe des Glow-Effekts hinter dem Badge',
-    delayMs: '1000 ms = 1 Sekunde. 0 ms öffnet direkt.',
-    frequency: 'Wie oft das Popup pro Besucher angezeigt wird',
-    height: 'Höhe des eingebetteten Elements in Pixel',
-    maxWidth: 'Maximale Breite (z.B. 100%, 800px)',
-    imageBefore: 'Bild das den Zustand VORHER zeigt',
-    imageAfter: 'Bild das den Zustand NACHHER zeigt',
-    beforeImage: 'Bild das den Zustand VORHER zeigt',
-    afterImage: 'Bild das den Zustand NACHHER zeigt',
-    imagePosition: 'Bild links oder rechts vom Text anzeigen',
-    imageEffect: 'Visueller Effekt auf dem Hintergrundbild',
-    reversed: 'Spiegelt die Reihenfolge von Text und Bild',
-    ratingValue: 'Durchschnittliche Bewertung (z.B. 4.9)',
-    ratingCount: 'Gesamtzahl der Bewertungen (z.B. 150)',
-    sortBy: 'Standardmäßige Sortierreihenfolge der Einträge',
-    date: 'Datum im Format TT.MM.JJJJ oder als Freitext',
-    category: 'Kategorie zur Filterung oder Gruppierung',
-    panelHeight: 'Höhe der Panels (full = Vollbild, compact = reduziert)',
-    aspectRatio: 'Seitenverhältnis der Bilder (z.B. 16/9, 4/3)',
-    align: 'Textausrichtung (links oder zentriert)',
-  };
 
   function valueAtPath(path: Array<string | number>) {
     return path.reduce<unknown>((current, key) => {
