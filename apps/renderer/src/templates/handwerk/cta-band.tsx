@@ -12,10 +12,11 @@ export function CtaBandSection({ data, styleVariant }: Props) {
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
   const cta = data.ctaPrimary as { label: string; href: string; icon?: string } | undefined;
+  // Colors come from styleOverrides (CSS vars: --style-section-bg, --style-heading-color, --style-accent-color)
   const colors = {
-    bgColor: (data.bgColor as string) || undefined,
-    textColor: (data.textColor as string) || undefined,
-    accentColor: (data.accentColor as string) || undefined,
+    bgColor: undefined as string | undefined,
+    textColor: undefined as string | undefined,
+    accentColor: undefined as string | undefined,
   };
 
   if (styleVariant === 'modern') return <CtaModern headline={headline} subline={subline} badgeText={badgeText} cta={cta} colors={colors} />;
