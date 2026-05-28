@@ -11,6 +11,7 @@ import { MiniRichTextField } from '@/components/mini-rich-text';
 import { saveMediaRecord } from '@/app/admin/media-actions';
 import { EMBED_PROVIDERS, EMBED_CATEGORIES, getProvider } from '@/lib/embed-providers';
 import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
+import { getCollectionKeysAction } from '@/app/admin/collections/actions';
 
 // Reports current editor data to parent on every change (skip initial render).
 function useReport(data: Record<string, unknown>, onChange: (d: Record<string, unknown>) => void) {
@@ -109,9 +110,12 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
     const renderKey = path.join('.');
     if (typeof value === 'boolean') {
       return (
-        <label key={renderKey} className="flex items-center gap-2 text-sm text-zinc-700">
-          <input type="checkbox" checked={value} onChange={(e) => updateAtPath(path, e.target.checked)} className="rounded" />
-          {label}
+        <label key={renderKey} className="flex items-center justify-between gap-3 py-1 cursor-pointer group">
+          <span className="text-sm text-zinc-700">{label}</span>
+          <button type="button" role="switch" aria-checked={value} onClick={() => updateAtPath(path, !value)}
+            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${value ? 'bg-blue-600' : 'bg-zinc-300'}`}>
+            <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${value ? 'translate-x-6' : 'translate-x-1'}`} />
+          </button>
         </label>
       );
     }
@@ -609,7 +613,7 @@ function NewsPreviewEditor({ data, onChange }: EditorProps) {
     <div className="space-y-3">
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
-      <Field label="Collection-Key (z.B. news, blog)" value={d.collectionKey} onChange={(v) => setD({ ...d, collectionKey: v })} />
+      <CollectionKeySelect value={d.collectionKey} onChange={(v) => setD({ ...d, collectionKey: v })} />
       <ButtonField label="Link" value={{ label: d.linkLabel, href: d.linkHref }} onChange={(v) => setD({ ...d, linkLabel: v.label, linkHref: v.href })} />
       <p className="text-xs text-gray-400">Die News-Items werden automatisch aus der verknüpften Collection geladen.</p>
     </div>
@@ -2022,6 +2026,26 @@ function LogoMarqueeEditor({ data, onChange }: EditorProps) {
   );
 }
 
+
+// Async-loaded collection key dropdown
+function CollectionKeySelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [keys, setKeys] = useState<{ key: string; label: string }[]>([]);
+  useEffect(() => { getCollectionKeysAction().then(setKeys).catch(() => {}); }, []);
+  return (
+    <label className="block">
+      <span className="text-xs font-medium text-zinc-600 mb-1 block">Collection</span>
+      {keys.length > 0 ? (
+        <select className="admin-input" value={value} onChange={(e) => onChange(e.target.value)}>
+          <option value="">– Bitte wählen –</option>
+          {keys.map(c => <option key={c.key} value={c.key}>{c.label} ({c.key})</option>)}
+        </select>
+      ) : (
+        <input className="admin-input" value={value} onChange={(e) => onChange(e.target.value)} placeholder="z.B. news, blog" />
+      )}
+    </label>
+  );
+}
+
 // ─── CollectionList Editor ───────────────────────────────────────
 function CollectionListEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({
@@ -2041,7 +2065,7 @@ function CollectionListEditor({ data, onChange }: EditorProps) {
     <div className="space-y-3">
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} placeholder="z.B. Alle Beiträge" />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
-      <Field label="Collection-Key" value={d.collectionKey} onChange={(v) => setD({ ...d, collectionKey: v })} placeholder="z.B. news, blog, portfolio" />
+      <CollectionKeySelect value={d.collectionKey} onChange={(v) => setD({ ...d, collectionKey: v })} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <label className="block">
           <span className="text-xs text-gray-600">Standard-Sortierung</span>
