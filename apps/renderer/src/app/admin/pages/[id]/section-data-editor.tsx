@@ -31,9 +31,9 @@ const FIELD_LABELS: Record<string, string> = {
   headline: 'Überschrift',
   halfWidth: 'Halbe Breite',
   subline: 'Unterzeile',
-  badgeText: 'Badge (kleines Label oben)',
+  badgeText: 'Badge',
   badge: 'Badge',
-  eyebrow: 'Dachzeile (kleiner Text über Überschrift)',
+  eyebrow: 'Dachzeile',
   text: 'Text',
   content: 'Inhalt',
   intro: 'Einleitung',
@@ -67,12 +67,12 @@ const FIELD_LABELS: Record<string, string> = {
   secondaryCta: 'Sekundärer Button',
   ctaPrimary: 'Primärer Button',
   ctaLabel: 'Button-Beschriftung',
-  ctaHref: 'Button-Ziel (URL oder /pfad)',
+  ctaHref: 'Button-Link',
   cta: 'Call-to-Action',
   label: 'Beschriftung',
-  href: 'Link-Ziel (URL oder /pfad)',
+  href: 'Link-Ziel',
   linkLabel: 'Link-Text',
-  linkHref: 'Link-Ziel (URL oder /pfad)',
+  linkHref: 'Link-Ziel',
   submitLabel: 'Absende-Button',
   continueShoppingLabel: 'Weiter-Einkaufen-Text',
   checkoutLabel: 'Zur-Kasse-Text',
@@ -88,20 +88,20 @@ const FIELD_LABELS: Record<string, string> = {
   logo: 'Logo',
 
   // Lists / Items
-  items: 'Einträge / Elemente',
+  items: 'Einträge',
   links: 'Links',
-  cards: 'Karten (Inhaltsblöcke)',
-  steps: 'Schritte / Abschnitte',
-  entries: 'Einträge (z.B. Zeitstrahl)',
-  features: 'Merkmale / Vorteile',
+  cards: 'Karten',
+  steps: 'Schritte',
+  entries: 'Einträge',
+  features: 'Merkmale',
   facts: 'Fakten',
   values: 'Werte',
   stats: 'Statistiken',
   highlights: 'Highlights',
   logos: 'Logos',
   images: 'Bilder',
-  panels: 'Panels (Scroll-Abschnitte)',
-  slides: 'Slides (Inhaltsblöcke)',
+  panels: 'Panels',
+  slides: 'Slides',
   members: 'Team-Mitglieder',
   projects: 'Projekte',
   categories: 'Kategorien',
@@ -141,7 +141,7 @@ const FIELD_LABELS: Record<string, string> = {
   prefix: 'Präfix',
 
   // Collection
-  collectionKey: 'Collection (z.B. news, leistungen)',
+  collectionKey: 'Collection',
   sortBy: 'Sortierung',
   showImage: 'Bild anzeigen',
   showDate: 'Datum anzeigen',
@@ -152,7 +152,7 @@ const FIELD_LABELS: Record<string, string> = {
   showSort: 'Sortierung anzeigen',
 
   // Shop
-  mode: 'Anzeigemodus',
+  mode: 'Modus',
   categorySlug: 'Kategorie-Slug',
   productIds: 'Produkt-IDs',
   count: 'Anzahl',
@@ -165,11 +165,11 @@ const FIELD_LABELS: Record<string, string> = {
   frequency: 'Häufigkeit',
 
   // Process / Timeline
-  icon: 'Icon (Lucide Icon-Name)',
+  icon: 'Icon',
   number: 'Nummer',
   year: 'Jahr',
   timeLabel: 'Zeitangabe',
-  kicker: 'Kicker (Einleitung über dem Titel)',
+  kicker: 'Kicker',
   checkmarks: 'Häkchen',
 
   // Before/After
@@ -177,10 +177,10 @@ const FIELD_LABELS: Record<string, string> = {
   imageAfter: 'Bild nachher',
   labelBefore: 'Label vorher',
   labelAfter: 'Label nachher',
-  aspectRatio: 'Seitenverhältnis (z.B. 16:9)',
+  aspectRatio: 'Seitenverhältnis',
 
   // Showcase / Product
-  span: 'Breite im Grid (1–3 Spalten)',
+  span: 'Grid-Breite',
   size: 'Größe',
   mediaType: 'Medientyp',
   panelHeight: 'Panel-Höhe',
@@ -777,7 +777,7 @@ function TestimonialsEditor({ data, onChange }: EditorProps) {
   return (
     <div className="space-y-3">
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="Bewertungsdurchschnitt (z.B. 4.9)" value={ratingValue} onChange={setRatingValue} />
         <Field label="Anzahl Bewertungen (z.B. 150)" value={ratingCount} onChange={setRatingCount} />
@@ -816,7 +816,7 @@ function MapEditor({ data, onChange }: EditorProps) {
 }
 
 // ─── Shared field components ─────────────────────────────────────
-function Field({ label, value, onChange, multiline, placeholder, help }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean; placeholder?: string; help?: string }) {
+function Field({ label, value, onChange, multiline, placeholder }: { label: string; value: string; onChange: (v: string) => void; multiline?: boolean; placeholder?: string }) {
   if (multiline) {
     return (
       <div>
@@ -828,7 +828,6 @@ function Field({ label, value, onChange, multiline, placeholder, help }: { label
   return (
     <label className="block text-sm">
       <span className="text-gray-600 text-xs">{label}</span>
-      {help && <p className="text-[11px] text-zinc-400 mt-0.5 mb-1">{help}</p>}
       <input className="admin-input mt-1 w-full" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
       {help && <p className="text-[11px] text-zinc-400 mt-0.5">{help}</p>}
     </label>
@@ -911,8 +910,8 @@ function CtaLinksEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       {links.map((link, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeLink(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -964,7 +963,7 @@ function StatsEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       {stats.map((stat, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeStat(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -1000,8 +999,8 @@ function LogoCloudEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       {logos.map((logo, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeLogo(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -1052,8 +1051,8 @@ function GalleryGridEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       {images.map((img, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeImage(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -1130,8 +1129,8 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       <ButtonField label="CTA-Button" value={{ label: ctaLabel, href: ctaHref }} onChange={(v) => { setCtaLabel(v.label); setCtaHref(v.href); }} />
       {cards.map((card, i) => (
@@ -1172,7 +1171,7 @@ function ProcessStepsEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       {steps.map((step, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
@@ -1207,7 +1206,7 @@ function ContactEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label="Einleitungstext" value={introText} onChange={setIntroText} multiline />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       <Field label="Button-Text" value={submitLabel} onChange={setSubmitLabel} />
@@ -1259,8 +1258,8 @@ function ServiceDetailEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
@@ -1311,8 +1310,8 @@ function PortfolioEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       <ButtonField label="CTA-Button" value={{ label: ctaLabel, href: ctaHref }} onChange={(v) => { setCtaLabel(v.label); setCtaHref(v.href); }} />
       {projects.map((proj, i) => (
@@ -1379,8 +1378,8 @@ function TeamEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
 
       <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Firmengeschichte</h4>
@@ -2092,8 +2091,8 @@ function ComparisonTableEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label="Beschreibung" value={text} onChange={setText} multiline />
       <div>
         <span className="text-xs font-medium text-gray-600 mb-1 block">Spalten</span>
@@ -2179,8 +2178,8 @@ function TimelineEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label="Unterzeile" value={subline} onChange={setSubline} />
       {entries.map((entry, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
@@ -2209,9 +2208,9 @@ function StatsCounterEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       {stats.map((stat, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setStats(stats.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -2240,9 +2239,9 @@ function BentoGridEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -2276,7 +2275,7 @@ function TestimonialMarqueeEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -2314,18 +2313,18 @@ function FeatureShowcaseEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
-      <Field label={fieldLabel('text')} value={text} onChange={setText} multiline  help={fieldHelp('text')} />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
+      <Field label={fieldLabel('text')} value={text} onChange={setText} multiline  />
       <ImageUploadField label={fieldLabel('image')} value={image} onChange={setImage} />
       <div>
         <label className="text-xs font-medium text-zinc-600">Features (eine pro Zeile)</label>
         <textarea className="admin-input mt-1 w-full" rows={4} value={features.join('\n')} onChange={e => setFeatures(e.target.value.split('\n'))} />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Field label={fieldLabel('ctaLabel')} value={ctaLabel} onChange={setCtaLabel}  help={fieldHelp('ctaLabel')} />
-        <Field label={fieldLabel('ctaHref')} value={ctaHref} onChange={setCtaHref}  help={fieldHelp('ctaHref')} />
+        <Field label={fieldLabel('ctaLabel')} value={ctaLabel} onChange={setCtaLabel}  />
+        <Field label={fieldLabel('ctaHref')} value={ctaHref} onChange={setCtaHref}  />
       </div>
       <label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={reversed} onChange={e => setReversed(e.target.checked)} /> Layout spiegeln</label>
     </div>
@@ -2343,8 +2342,8 @@ function LogoMarqueeEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -2643,8 +2642,8 @@ function ProductShowcaseEditor({ data, onChange }: EditorProps) {
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <SelectField label={fieldLabel('columns')} value={columns} options={['2', '3', '4']} onChange={setColumns} />
       {items.map((item, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
@@ -2678,8 +2677,8 @@ function CategoryMosaicEditor({ data, onChange }: EditorProps) {
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <p className="text-xs text-zinc-500">Tipp: Die ersten 2 Einträge mit Größe "Groß" erscheinen als große Kacheln.</p>
       {items.map((item, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
@@ -2708,8 +2707,8 @@ function BrandShowroomEditor({ data, onChange }: EditorProps) {
   return (
     <div className="space-y-4">
       <ImageUploadField label="Showroom-Bild" value={image} onChange={setImage} />
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <Field label="Overlay-Stärke (0-1)" value={overlayOpacity} onChange={setOverlayOpacity} placeholder="0.5" />
       <div className="space-y-2">
         <span className="text-xs text-gray-600 font-medium">Highlights</span>
@@ -2739,8 +2738,8 @@ function ConsultationBookingEditor({ data, onChange }: EditorProps) {
   function updateService(i: number, field: string, val: string) { setServices(services.map((s, idx) => idx === i ? { ...s, [field]: val } : s)); }
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <ImageUploadField label="Seitenbild" value={image} onChange={setImage} />
       <div className="space-y-2">
         <span className="text-xs text-gray-600 font-medium">Services / Beratungsangebote</span>
@@ -2772,8 +2771,8 @@ function MaterialGalleryEditor({ data, onChange }: EditorProps) {
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       <div className="space-y-2">
         <span className="text-xs text-gray-600 font-medium">Kategorien (für Filter)</span>
         {categories.map((cat, i) => (
@@ -2812,8 +2811,8 @@ function DeliveryTimelineEditor({ data, onChange }: EditorProps) {
   function updateStep(i: number, field: string, val: string) { setSteps(steps.map((s, idx) => idx === i ? { ...s, [field]: val } : s)); }
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       {steps.map((step, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -2840,8 +2839,8 @@ function InspirationGridEditor({ data, onChange }: EditorProps) {
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  />
       {items.map((item, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -2867,7 +2866,7 @@ function BeforeAfterEditor({ data, onChange }: EditorProps) {
   useReport({ headline, description, imageBefore, imageAfter, labelBefore, labelAfter }, onChange);
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label="Beschreibung" value={description} onChange={setDescription} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
@@ -2902,8 +2901,8 @@ function VerticalTimelineEditor({ data, onChange }: EditorProps) {
   function updateStep(i: number, field: string, value: string | string[]) { setSteps(steps.map((step, idx) => idx === i ? { ...step, [field]: value } : step)); }
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       {steps.map((step, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button type="button" onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -2940,8 +2939,8 @@ function BeforeAfterSliderEditor({ data, onChange }: EditorProps) {
   function updateSlide(i: number, field: string, value: string) { setSlides(slides.map((slide, idx) => idx === i ? { ...slide, [field]: value } : slide)); }
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       <SelectField label="Bildformat" value={aspectRatio} options={['16/9', '4/3', '1/1']} onChange={setAspectRatio} />
       {slides.map((slide, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-3 relative">
@@ -2984,8 +2983,8 @@ function HorizontalScrollShowcaseEditor({ data, onChange }: EditorProps) {
   function updatePanel(i: number, field: string, value: string) { setPanels(panels.map((panel, idx) => idx === i ? { ...panel, [field]: value } : panel)); }
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       <SelectField label="Panel-Höhe" value={panelHeight} options={['full', 'compact']} onChange={setPanelHeight} />
       {panels.map((panel, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
@@ -3069,9 +3068,9 @@ function SpotlightCardsEditor({ data, onChange }: EditorProps) {
   }
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       {cards.map((card, i) => (
         <div key={i} className="relative rounded-lg border p-3 space-y-2">
           <button type="button" onClick={() => removeCard(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
@@ -3101,8 +3100,8 @@ function ScrollStoryEditor({ data, onChange }: EditorProps) {
   }
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       {steps.map((step, i) => (
         <div key={i} className="relative rounded-lg border p-3 space-y-2">
           <button type="button" onClick={() => removeStep(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
@@ -3150,9 +3149,9 @@ function PremiumComparisonEditor({ data, onChange }: EditorProps) {
   }
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
-      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
-      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
       <label className="block text-sm">
         <span className="text-gray-600 text-xs">Highlight-Spalte (0-basiert)</span>
         <input className="admin-input mt-1 w-full" type="number" min={0} value={highlightCol} onChange={(e) => setHighlightCol(Number(e.target.value))} />
