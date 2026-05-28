@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
@@ -6,7 +6,7 @@ import { DynamicIcon } from '@/components/ui/icon-map';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
-type BentoItem = { title: string; description?: string; icon?: string; image?: string; span?: 'wide' | 'tall' | 'large' };
+type BentoItem = { title: string; description?: string; icon?: string; image?: string; span?: string; size?: string };
 
 export function BentoGridSection({ data }: Props) {
   const headline = (data.headline as string) || '';
@@ -44,7 +44,7 @@ export function BentoGridSection({ data }: Props) {
             initial={{ opacity: 0, y: 20, scale: 0.97 }}
             animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
             transition={{ duration: 0.4, delay: i * 0.08 }}
-            className={`group relative overflow-hidden rounded-2xl bg-zinc-50 border border-zinc-200/60 p-6 cursor-default transition-all duration-300 hover:shadow-xl hover:shadow-zinc-200/50 hover:border-[var(--color-primary)]/20 hover:-translate-y-1 ${getSpanClass(item.span, i)}`}
+            className={`group relative overflow-hidden rounded-2xl bg-zinc-50 border border-zinc-200/60 p-6 cursor-default transition-all duration-300 hover:shadow-xl hover:shadow-zinc-200/50 hover:border-[var(--color-primary)]/20 hover:-translate-y-1 ${getSpanClass(item, i)}`}
           >
             {/* Hover spotlight */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(600px_at_50%_50%,var(--color-primary)/0.04,transparent)]" />

@@ -159,7 +159,8 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
     }
 
     if (Array.isArray(value)) {
-      const sample = value[0] ?? '';
+      // Use first item as template; fall back to defaults if array is empty
+      const sample = value[0] ?? (Array.isArray(defaults[String(path[0])]) ? (defaults[String(path[0])] as unknown[])[0] : '') ?? '';
       return (
         <div key={renderKey} className="space-y-2">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
