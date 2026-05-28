@@ -328,6 +328,32 @@ const FIELD_HELP: Record<string, string> = {
   packages: 'Preis-/Leistungspakete.',
 };
 
+function fieldLabel(key: string) {
+return FIELD_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, char => char.toUpperCase());
+}
+
+function fieldHelp(key: string): string | undefined {
+return FIELD_HELP[key];
+}
+
+function updateAtPath(path: Array<string | number>, value: unknown) {
+  const update = (current: unknown, depth: number): unknown => {
+    const key = path[depth];
+    if (depth === path.length - 1) {
+      if (Array.isArray(current)) return current.map((item, index) => index === key ? value : item);
+      if (isRecord(current)) return { ...current, [key]: value };
+      return current;
+    }
+    if (Array.isArray(current)) return current.map((item, index) => index === key ? update(item, depth + 1) : item);
+    if (isRecord(current)) return { ...current, [key]: update(current[key as string], depth + 1) };
+    return current;
+  };
+
+  const next = update(source, 0) as Record<string, unknown>;
+  setSource(next);
+  onChange(next);
+}
+
 // Generic section data editor that renders a form per section type.
 export function SectionDataEditor({ type, data, onChange }: { type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void }) {
   const Editor = EDITORS[type] ?? SchemaSectionEditor;
@@ -541,31 +567,6 @@ const FIELD_LABELS: Record<string, string> = {
     aspectRatio: 'Seitenverhältnis der Bilder (z.B. 16/9, 4/3)',
     align: 'Textausrichtung (links oder zentriert)',
   };
-function fieldLabel(key: string) {
-  return FIELD_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, char => char.toUpperCase());
-  }
-
-function fieldHelp(key: string): string | undefined {
-  return FIELD_HELP[key];
-}
-
-  function updateAtPath(path: Array<string | number>, value: unknown) {
-    const update = (current: unknown, depth: number): unknown => {
-      const key = path[depth];
-      if (depth === path.length - 1) {
-        if (Array.isArray(current)) return current.map((item, index) => index === key ? value : item);
-        if (isRecord(current)) return { ...current, [key]: value };
-        return current;
-      }
-      if (Array.isArray(current)) return current.map((item, index) => index === key ? update(item, depth + 1) : item);
-      if (isRecord(current)) return { ...current, [key]: update(current[key as string], depth + 1) };
-      return current;
-    };
-
-    const next = update(source, 0) as Record<string, unknown>;
-    setSource(next);
-    onChange(next);
-  }
 
   function valueAtPath(path: Array<string | number>) {
     return path.reduce<unknown>((current, key) => {
