@@ -133,42 +133,54 @@ function renderFields(fields: FormFieldDef[], inputClass: string) {
 }
 
 function renderField(field: FormFieldDef, inputClass: string) {
+  const labelEl = (
+    <span className="block text-sm font-medium text-gray-700 mb-1.5">
+      {field.label}{field.required && <span className="text-red-400 ml-0.5">*</span>}
+    </span>
+  );
+
   if (field.type === 'textarea') {
     return (
-      <textarea
-        key={field.name}
-        name={field.name}
-        placeholder={field.placeholder || field.label}
-        required={field.required}
-        rows={5}
-        className={cn(inputClass, 'resize-none')}
-      />
+      <label key={field.name} className="block">
+        {labelEl}
+        <textarea
+          name={field.name}
+          placeholder={field.placeholder || field.label}
+          required={field.required}
+          rows={5}
+          className={cn(inputClass, 'resize-none')}
+        />
+      </label>
     );
   }
   if (field.type === 'select') {
     return (
-      <select
-        key={field.name}
-        name={field.name}
-        required={field.required}
-        className={inputClass}
-        defaultValue=""
-      >
-        <option value="" disabled>{field.placeholder || field.label}</option>
-        {field.options?.map((opt) => (
-          <option key={opt} value={opt}>{opt}</option>
-        ))}
-      </select>
+      <label key={field.name} className="block">
+        {labelEl}
+        <select
+          name={field.name}
+          required={field.required}
+          className={inputClass}
+          defaultValue=""
+        >
+          <option value="" disabled>{field.placeholder || field.label}</option>
+          {field.options?.map((opt) => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
+        </select>
+      </label>
     );
   }
   return (
-    <input
-      key={field.name}
-      name={field.name}
-      type={field.type}
-      placeholder={field.placeholder || field.label}
-      required={field.required}
-      className={inputClass}
-    />
+    <label key={field.name} className="block">
+      {labelEl}
+      <input
+        name={field.name}
+        type={field.type}
+        placeholder={field.placeholder || field.label}
+        required={field.required}
+        className={inputClass}
+      />
+    </label>
   );
 }
