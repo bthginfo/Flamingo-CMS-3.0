@@ -26,7 +26,7 @@ type Settings = {
   invoicePrefix: string;
   notificationEmail: string | null;
   lowStockThreshold: number;
-  taxClasses: { key: string; label: string; rate: number }[];
+  taxClasses?: { key: string; label: string; rate: number }[];
   companyInfo: { name: string; street: string; zip: string; city: string; country: string; email?: string; phone?: string; taxId?: string; vatId?: string; registerCourt?: string; registerNumber?: string; ceo?: string } | null;
 };
 
