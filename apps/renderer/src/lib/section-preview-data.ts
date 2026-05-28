@@ -25,6 +25,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { value: 'CMS', label: 'alle Inhalte editierbar' },
       { value: '100%', label: 'responsive und animiert' },
     ],
+    imagePosition: "center",
   },
   fitnessHero: {
     eyebrow: 'Fitnessstudio in Deiner Nähe',
@@ -953,12 +954,14 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Kaffee', items: [{ name: 'Espresso', price: '2,80 €', description: 'Klassisch italienisch' }, { name: 'Cappuccino', price: '3,90 €', description: 'Mit cremigem Milchschaum' }] },
       { name: 'Tee', items: [{ name: 'Earl Grey', price: '3,20 €', description: 'Schwarztee mit Bergamotte' }] },
     ],
+    subline: "",
   },
   foodMenu: {
     headline: 'Speisekarte',
     categories: [
       { name: 'Frühstück', items: [{ name: 'Granola Bowl', price: '8,90 €', description: 'Mit frischem Obst und Joghurt' }, { name: 'Avocado Toast', price: '9,50 €', description: 'Auf Sauerteigbrot' }] },
     ],
+    subline: "",
   },
   dailySpecials: {
     headline: 'Diese Woche bei uns',
@@ -994,6 +997,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { day: 'Sa–So', time: '09:00 – 18:00' },
     ],
     vibeText: 'Dein Wohnzimmer in der Stadt.',
+    mapImage: "",
+    mapEmbed: "",
   },
 
   // === RESTAURANT ===
@@ -1005,6 +1010,9 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Vorspeisen', items: [{ name: 'Carpaccio', price: '14,50 €', description: 'Rindercarpaccio mit Rucola und Parmesan' }] },
       { name: 'Hauptgänge', items: [{ name: 'Risotto', price: '19,90 €', description: 'Steinpilzrisotto mit Trüffelöl' }, { name: 'Dorade', price: '24,90 €', description: 'Gegrillte Dorade mit Gemüse' }] },
     ],
+    introText: "",
+    footnote: "",
+    ctaPrimary: {"label":"","href":""},
   },
   signatureDishes: {
     headline: 'Empfehlungen des Hauses',
@@ -1013,6 +1021,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Wagyu Burger', price: '28,90 €', description: 'Mit Trüffelmayo und Brioche-Bun', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80' },
       { name: 'Tuna Tataki', price: '22,50 €', description: 'Mit Sesam und Ponzu-Sauce', image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&q=80' },
     ],
+    subline: "",
   },
   reservation: {
     headline: 'Tisch reservieren',
@@ -1021,6 +1030,12 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     formEnabled: true,
     submitLabel: 'Anfrage senden',
     timeHint: 'Küche: 12:00–14:30 & 18:00–22:00',
+    introText: "",
+    phoneCta: {"label":"","href":""},
+    externalBookingCta: {"label":"","href":""},
+    partySizeOptions: ["2","4","6","8+"],
+    policyText: "",
+    image: "",
   },
   openingHours: {
     headline: 'Öffnungszeiten',
@@ -1032,6 +1047,11 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
     kitchenHoursHeadline: 'Küchenzeiten',
     kitchenHoursText: 'Warme Küche bis 22:00 Uhr',
+    subline: "",
+    holidayNote: "",
+    ctaPrimary: {"label":"","href":""},
+    acuteCareText: '',
+    bookingNote: '',
   },
   ambience: {
     headline: 'Atmosphäre',
@@ -1042,6 +1062,9 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Sonnenterrasse', description: '50 Plätze mit Blick ins Grüne' },
       { title: 'Private Dining', description: 'Separater Raum für bis zu 12 Gäste' },
     ],
+    subline: "",
+    imageTertiary: "",
+    ctaPrimary: {"label":"","href":""},
   },
   events: {
     headline: 'Events',
@@ -1050,6 +1073,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Weinprobe', date: '2026-06-15', description: 'Italienische Weine mit 5-Gänge-Menü', price: '79 €' },
       { title: 'Sonntagsbrunch', date: '2026-06-22', description: 'All-you-can-eat Brunch-Buffet', price: '39 €' },
     ],
+    subline: "",
+    fallbackText: "Demnächst neue Veranstaltungen.",
   },
 
   // === HOTEL ===
@@ -1058,6 +1083,9 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     badgeText: 'Direkt buchen',
     submitCta: { label: 'Suchen', href: '#' },
     bookingNote: 'Bestpreis-Garantie bei Direktbuchung',
+    subline: "",
+    secondaryCta: {"label":"","href":""},
+    trustItems: [{"icon":"shield","text":"Kostenfreie Stornierung"}],
   },
   roomShowcase: {
     headline: 'Zimmer & Suiten',
@@ -1067,6 +1095,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Deluxe Doppelzimmer', price: 'ab 149 €/Nacht', size: '32 m²', image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&q=80', features: ['Kingsize-Bett', 'Balkon', 'Regendusche'] },
       { name: 'Junior Suite', price: 'ab 229 €/Nacht', size: '48 m²', image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&q=80', features: ['Wohnbereich', 'Whirlpool', 'Minibar'] },
     ],
+    footerText: "",
   },
   offers: {
     headline: 'Angebote',
@@ -1075,6 +1104,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Romantik-Paket', description: 'Champagner, Spa & Candlelight-Dinner', price: 'ab 349 €', duration: '2 Nächte' },
       { title: 'Wellness-Woche', description: 'Yoga, Massagen & Detox-Menü', price: 'ab 899 €', duration: '5 Nächte' },
     ],
+    subline: "",
+    fallbackText: "Aktuell keine Angebote verfügbar.",
   },
   amenities: {
     headline: 'Ausstattung & Service',
@@ -1085,6 +1116,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: '24h Rezeption', icon: 'clock', description: 'Jederzeit für Sie da' },
       { title: 'Frühstücksbuffet', icon: 'coffee', description: 'Täglich 7:00–10:30' },
     ],
+    subline: "",
+    ctaPrimary: {"label":"","href":""},
   },
   wellness: {
     headline: 'Wellness & Spa',
@@ -1096,6 +1129,9 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Gesichtsbehandlung', duration: '45 Min.', price: '69 €' },
     ],
     features: [{ title: 'Finnische Sauna' }, { title: 'Infinity-Pool' }, { title: 'Dampfbad' }],
+    subline: "",
+    imageSecondary: "",
+    ctaPrimary: {"label":"","href":""},
   },
   location: {
     headline: 'Lage & Anreise',
@@ -1106,6 +1142,10 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { mode: 'Auto', text: 'A8 Ausfahrt Holzkirchen, dann 20 Min.' },
       { mode: 'Bahn', text: 'München Hbf → Rottach-Egern (1h)' },
     ],
+    subline: "",
+    image: "",
+    nearbyItems: [{"label":"Zentrum","distance":"500m"}],
+    routeCta: {"label":"Route planen","href":""},
   },
   hotelDining: {
     headline: 'Restaurant & Bar',
@@ -1115,6 +1155,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     openingText: 'Frühstück 7–10:30 | Restaurant 18–22 | Bar 16–01',
     menus: [{ title: '3-Gänge-Menü', price: '59 €' }, { title: '5-Gänge-Menü', price: '89 €' }],
     highlights: [{ title: 'Regionale Küche' }, { title: 'Weinbar mit 200+ Positionen' }],
+    subline: "",
+    ctaPrimary: {"label":"","href":""},
   },
   eventSpaces: {
     headline: 'Events & Tagungen',
@@ -1124,6 +1166,9 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Festsaal', capacity: '120 Personen', features: ['Bühne', 'Tanzfläche', 'Bar'] },
     ],
     ctaPrimary: { label: 'Anfrage senden', href: '#' },
+    subline: "",
+    processHeadline: "So planen wir Ihr Event",
+    processSteps: [{"title":"Anfrage","text":"Teilen Sie uns Ihren Wunschtermin mit."}],
   },
   gallery: {
     headline: 'Galerie',
@@ -1133,6 +1178,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { src: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&q=80', alt: 'Suite', category: 'Zimmer' },
       { src: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6f?w=600&q=80', alt: 'Spa', category: 'Wellness' },
     ],
+    subline: "",
+    ctaPrimary: {"label":"","href":""},
   },
 
   // === TOURISM ===
@@ -1141,12 +1188,14 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Schloss Neuschwanstein', description: 'Das Märchenschloss König Ludwigs II.', image: 'https://images.unsplash.com/photo-1534313314376-a72289b6181e?w=600&q=80', category: 'Kultur' },
       { title: 'Partnachklamm', description: 'Spektakuläre Schlucht bei Garmisch.', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80', category: 'Natur' },
     ],
+    ctaPrimary: {"label":"","href":""},
   },
   experienceGrid: {
     items: [
       { title: 'Bergwandern', description: 'Über 200 km markierte Wege.', duration: '2–6h', level: 'Mittel', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=400&q=80' },
       { title: 'Radtouren', description: 'E-Bike-Verleih vor Ort.', duration: '3–5h', level: 'Leicht', image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&q=80' },
     ],
+    ctaPrimary: {"label":"","href":""},
   },
   seasonTeaser: {
     seasons: [
@@ -1159,6 +1208,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Almabtrieb', date: '2026-09-15', location: 'Marktplatz', description: 'Traditioneller Almabtrieb mit Fest' },
       { title: 'Weihnachtsmarkt', date: '2026-12-01', location: 'Altstadt', description: 'Adventszauber mit 50 Ständen' },
     ],
+    fallbackText: "Aktuell keine Veranstaltungen geplant.",
   },
   placesMap: {
     mapEmbedUrl: 'https://www.openstreetmap.org/export/embed.html?bbox=13.3%2C52.45%2C13.5%2C52.55&layer=mapnik',
@@ -1166,6 +1216,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Tourist-Info', address: 'Hauptstraße 1', category: 'Service' },
       { name: 'Bergbahn', address: 'Talstation 5', category: 'Aktivität' },
     ],
+    ctaPrimary: {"label":"","href":""},
+    mapFallbackText: "",
   },
   sightseeingList: {
     items: [
@@ -1178,6 +1230,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Panoramaweg', length: '12 km', duration: '4h', difficulty: 'Mittel', description: 'Aussichtsreiche Rundwanderung.' },
       { title: 'Seerundweg', length: '5 km', duration: '1,5h', difficulty: 'Leicht', description: 'Gemütlich um den See.' },
     ],
+    ctaPrimary: {"label":"","href":""},
   },
   accommodationGrid: {
     items: [
@@ -1207,6 +1260,10 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { icon: 'phone', label: 'Telefon', value: '+49 8022 123 456' },
       { icon: 'mail', label: 'E-Mail', value: 'info@tourismus-beispiel.de' },
     ],
+    image: "",
+    formFields: [],
+    primaryCta: {"label":"","href":""},
+    secondaryCta: {"label":"","href":""},
   },
 
   // === SALON ===
@@ -1217,6 +1274,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Haare', items: [{ name: 'Waschen & Schneiden', price: 'ab 45 €', duration: '45 Min.' }, { name: 'Färben', price: 'ab 65 €', duration: '90 Min.' }] },
       { name: 'Nägel', items: [{ name: 'Maniküre', price: '35 €', duration: '30 Min.' }] },
     ],
+    subline: "",
+    ctaPrimary: {"label":"","href":""},
   },
   priceList: {
     headline: 'Preisliste',
@@ -1225,6 +1284,9 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Damen', items: [{ name: 'Schneiden', price: '45 €' }, { name: 'Waschen & Föhnen', price: '25 €' }] },
       { name: 'Herren', items: [{ name: 'Schneiden', price: '30 €' }] },
     ],
+    subline: "",
+    footnote: "",
+    ctaPrimary: {"label":"","href":""},
   },
   treatmentDetail: {
     headline: 'Behandlungen im Detail',
@@ -1232,6 +1294,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     treatments: [
       { name: 'Keratin-Glättung', duration: '120 Min.', description: 'Glättet und pflegt das Haar für bis zu 3 Monate.', steps: ['Waschen', 'Auftragen', 'Einwirken', 'Styling'] },
     ],
+    subline: "",
   },
   packages: {
     headline: 'Pakete & Specials',
@@ -1240,6 +1303,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Braut-Paket', price: '189 €', features: ['Probetermin', 'Styling am Tag', 'Make-up'] },
       { name: 'Wellness-Paket', price: '99 €', features: ['Kopfmassage', 'Pflege', 'Styling'] },
     ],
+    subline: "",
+    ctaPrimary: {"label":"","href":""},
   },
   teamShowcase: {
     headline: 'Unser Team',
@@ -1248,6 +1313,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Lisa', role: 'Friseurmeisterin', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80', specialties: ['Balayage', 'Hochsteckfrisuren'] },
       { name: 'Marc', role: 'Stylist', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80', specialties: ['Barber-Cuts', 'Colorierung'] },
     ],
+    subline: "",
   },
   expertiseGrid: {
     headline: 'Expertise',
@@ -1256,6 +1322,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Olaplex Certified', description: 'Zertifizierter Olaplex-Salon.' },
       { title: 'Kerastase Expert', description: 'Offizieller Kerastase Partner.' },
     ],
+    subline: "",
   },
   beforeAfter: {
     headline: 'Vorher & Nachher',
@@ -1276,6 +1343,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     onlineCta: { label: 'Online buchen', href: '#' },
     phoneCta: { label: 'Anrufen', href: 'tel:+491234567890' },
     notes: ['Terminabsage mindestens 24h vorher', 'Neue Kunden bitte 10 Min. früher da sein'],
+    introText: "",
+    whatsappCta: {"label":"","href":""},
   },
   locationContact: {
     headline: 'Kontakt & Standort',
@@ -1287,6 +1356,12 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { icon: 'phone', label: 'Telefon', value: '+49 30 123 456' },
       { icon: 'mapPin', label: 'Adresse', value: 'Schönhauser Allee 12, Berlin' },
     ],
+    subline: "",
+    image: "",
+    mapEmbedUrl: "",
+    formFields: [],
+    primaryCta: {"label":"","href":""},
+    secondaryCta: {"label":"","href":""},
   },
 
   // === MEDICAL ===
@@ -1296,6 +1371,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Labordiagnostik', description: 'Blutbild, Hormone, Allergietests.', icon: 'flask' },
       { title: 'Impfungen', description: 'Reise- und Standardimpfungen.', icon: 'shield' },
     ],
+    ctaPrimary: {"label":"","href":""},
   },
   diagnostics: {
     items: [
@@ -1345,6 +1421,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     onlineCta: { label: 'Online-Termin', href: '#' },
     phoneCta: { label: 'Anrufen', href: 'tel:+491234567890' },
     notes: ['Akutsprechstunde: Mo–Fr 8:00–9:00', 'Terminabsage bitte 24h vorher'],
+    callbackCta: {"label":"","href":""},
+    externalCta: {"label":"","href":""},
   },
   emergencyInfo: {
     introText: 'Im Notfall wählen Sie bitte 112.',
@@ -1352,6 +1430,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Ärztlicher Bereitschaftsdienst', phone: '116 117', description: 'Außerhalb der Sprechzeiten' },
       { title: 'Giftnotruf', phone: '030 19240', description: 'Bei Vergiftungen' },
     ],
+    ctaPrimary: {"label":"","href":""},
   },
   practiceGallery: {
     images: [
@@ -1402,6 +1481,13 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80',
     address: 'Schlossweg 1, 83700 Rottach-Egern',
     mapUrl: 'https://www.openstreetmap.org/export/embed.html?bbox=13.3%2C52.45%2C13.5%2C52.55&layer=mapnik',
+    subline: "",
+    venues: [],
+    contact: {"phone":"","email":""},
+    directions: "",
+    sections: [],
+    accommodations: [],
+    hotels: [],
   },
   travelInfo: {
     badge: 'Anreise',
@@ -1431,6 +1517,11 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Reisekasse', description: 'Für unsere Flitterwochen auf Bali' },
       { name: 'Küchenmaschine', description: 'KitchenAid Artisan in Creme' },
     ],
+    subline: "",
+    freeText: "",
+    gifts: [{"title":"Beitrag","description":"","href":""}],
+    bankDetails: "",
+    bankInfo: "",
   },
   dresscode: {
     badge: 'Dresscode',
@@ -1498,6 +1589,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Familienrecht', description: 'Scheidung, Sorgerecht, Unterhalt', icon: 'users' },
       { title: 'Mietrecht', description: 'Mieterhöhung, Kündigung, Mängel', icon: 'home' },
     ],
+    subline: "",
   },
   caseResults: {
     headline: 'Unsere Erfolgsbilanz',
@@ -1517,6 +1609,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { service: 'Gerichtliche Vertretung', price: 'nach RVG', note: 'Zzgl. Gerichtskosten' },
     ],
     footnote: 'Rechtsschutzversicherung wird akzeptiert.',
+    subline: "",
   },
   publications: {
     headline: 'Fachbeiträge & Aktuelles',
@@ -1525,6 +1618,9 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Neue Regelungen im Mietrecht 2026', date: '2026-05-01', excerpt: 'Was Mieter und Vermieter jetzt wissen müssen.' },
       { title: 'Abfindung richtig verhandeln', date: '2026-04-15', excerpt: '5 Tipps für eine höhere Abfindung.' },
     ],
+    subline: "",
+    ctaLabel: "",
+    ctaHref: "",
   },
 
   // === REALESTATE ===
@@ -1539,6 +1635,11 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
   propertySearch: {
     headline: 'Ihre Traumimmobilie finden',
     categories: ['Kaufen', 'Mieten'],
+    subline: "",
+    collectionKey: "",
+    ctaLabel: "",
+    ctaHref: "",
+    bgColor: "",
   },
   marketReport: {
     headline: 'Marktbericht',
@@ -1568,6 +1669,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { label: 'Bewertungen durchgeführt', value: '1.200+' },
       { label: 'Zufriedene Eigentümer', value: '98%' },
     ],
+    bgImage: "",
   },
   referencesSold: {
     headline: 'Erfolgreich vermittelt',
@@ -1587,6 +1689,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Grundschule', distance: '500m', category: 'Bildung' },
       { title: 'Supermarkt', distance: '200m', category: 'Einkaufen' },
     ],
+    subline: "",
   },
   verticalTimeline: {
     headline: 'So läuft Ihr Projekt ab',
@@ -1695,5 +1798,67 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=88', title: 'Showroom Upgrade', text: 'Die Produkte bekommen mehr Bühne, der Beratungsprozess wird nachvollziehbarer und die Verweildauer steigt.', ctaLabel: 'Case ansehen', ctaHref: '#' },
       { image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1600&q=88', title: 'Hospitality Konzept', text: 'Ein warmer, hochwertiger Auftritt, der Buchungen, Empfehlungen und Wiedererkennung zusammenbringt.', ctaLabel: 'Case ansehen', ctaHref: '#' },
     ],
+  },
+  story: {
+      "headline": "Unsere Geschichte",
+      "subline": "",
+      "badgeText": "",
+      "storyText": "<p>Ihre Unternehmensgeschichte hier.</p>",
+      "imagePrimary": "",
+      "imageSecondary": "",
+      "founderName": "",
+      "founderRole": "",
+      "founderQuote": "",
+      "stats": [
+          {
+              "value": "10+",
+              "label": "Jahre Erfahrung"
+          }
+      ],
+      "values": [
+          {
+              "title": "Qualität",
+              "text": "Unser Anspruch an erstklassige Ergebnisse."
+          }
+      ],
+      "milestones": [
+          {
+              "year": "2015",
+              "title": "Gründung",
+              "text": ""
+          }
+      ],
+      "ctaPrimary": {
+          "label": "",
+          "href": ""
+      }
+  },
+  faqGallery: {
+      "badge": "FAQ",
+      "headline": "Häufige Fragen",
+      "items": [
+          {
+              "question": "Beispielfrage?",
+              "answer": "Antwort auf die Frage."
+          }
+      ],
+      "images": [
+          {
+              "src": "",
+              "alt": ""
+          }
+      ]
+  },
+  eventCalendar: {
+      "headline": "Unsere Veranstaltungen",
+      "subline": "",
+      "events": [
+          {
+              "title": "Event Titel",
+              "date": "2025-06-15",
+              "description": "",
+              "image": ""
+          }
+      ]
   },
 };
