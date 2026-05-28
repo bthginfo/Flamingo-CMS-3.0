@@ -24,6 +24,310 @@ function useReport(data: Record<string, unknown>, onChange: (d: Record<string, u
   }, [serialized]);
 }
 
+
+// ─── FIELD LABELS (German) ────────────────────────────────────────────────────
+const FIELD_LABELS: Record<string, string> = {
+  // Common / Generic
+  headline: 'Überschrift',
+  subline: 'Unterzeile',
+  badgeText: 'Badge-Text',
+  badge: 'Badge',
+  eyebrow: 'Dachzeile',
+  text: 'Text',
+  content: 'Inhalt',
+  intro: 'Einleitung',
+  story: 'Geschichte',
+  description: 'Beschreibung',
+  title: 'Titel',
+  subtitle: 'Untertitel',
+  name: 'Name',
+  role: 'Rolle',
+  bio: 'Biografie',
+  quote: 'Zitat',
+  image: 'Bild',
+  bgImage: 'Hintergrundbild',
+  bgImageMobile: 'Hintergrundbild (Mobil)',
+  bgColor: 'Hintergrundfarbe',
+  bgPosition: 'Bildposition',
+  bgPositionMobile: 'Bildposition (Mobil)',
+  bgMode: 'Hintergrund-Modus',
+  overlayColor: 'Overlay-Farbe',
+  overlayOpacity: 'Overlay-Deckkraft',
+  imageEffect: 'Bildeffekt',
+  imageEffectIntensity: 'Effekt-Intensität',
+  imagePosition: 'Bildposition',
+  imageAlt: 'Alt-Text (Barrierefreiheit)',
+  layout: 'Layout',
+  align: 'Ausrichtung',
+  reversed: 'Gespiegelt',
+
+  // CTA / Buttons
+  primaryCta: 'Primärer Button',
+  secondaryCta: 'Sekundärer Button',
+  ctaPrimary: 'Primärer Button',
+  ctaLabel: 'Button-Text',
+  ctaHref: 'Button-Link',
+  cta: 'Call-to-Action',
+  label: 'Beschriftung',
+  href: 'Link-Ziel',
+  linkLabel: 'Link-Text',
+  linkHref: 'Link-Ziel',
+  submitLabel: 'Absende-Button',
+  continueShoppingLabel: 'Weiter-Einkaufen-Text',
+  checkoutLabel: 'Zur-Kasse-Text',
+
+  // Media
+  videoUrl: 'Video-URL',
+  embedUrl: 'Einbettungs-URL',
+  embedCode: 'Einbettungs-Code',
+  src: 'Bildquelle',
+  alt: 'Alt-Text',
+  caption: 'Bildunterschrift',
+  poster: 'Vorschaubild',
+  logo: 'Logo',
+
+  // Lists / Items
+  items: 'Einträge',
+  links: 'Links',
+  cards: 'Karten',
+  steps: 'Schritte',
+  entries: 'Einträge',
+  features: 'Merkmale',
+  facts: 'Fakten',
+  values: 'Werte',
+  stats: 'Statistiken',
+  highlights: 'Highlights',
+  logos: 'Logos',
+  images: 'Bilder',
+  panels: 'Panels',
+  slides: 'Slides',
+  members: 'Team-Mitglieder',
+  projects: 'Projekte',
+  categories: 'Kategorien',
+  packages: 'Pakete',
+  columns: 'Spalten',
+  rows: 'Zeilen',
+  blocks: 'Blöcke',
+  services: 'Leistungen',
+  manualCards: 'Karten (manuell)',
+  infoCards: 'Info-Karten',
+  trustItems: 'Vertrauens-Elemente',
+
+  // Hero specific
+  trustStripColor: 'Trust-Leiste Farbe',
+  badgeIcon: 'Badge-Icon',
+  badgeStarsIcon: 'Badge-Sterne-Icon',
+
+  // FAQ
+  question: 'Frage',
+  answer: 'Antwort',
+  expandFirst: 'Erste offen',
+  source: 'Quelle',
+
+  // Testimonials
+  ratingValue: 'Bewertung',
+  ratingCount: 'Anzahl Bewertungen',
+  rating: 'Sterne',
+  context: 'Kontext',
+
+  // Map
+  height: 'Höhe',
+  provider: 'Anbieter',
+
+  // Stats
+  value: 'Wert',
+  suffix: 'Suffix',
+  prefix: 'Präfix',
+
+  // Collection
+  collectionKey: 'Collection-Schlüssel',
+  sortBy: 'Sortierung',
+  showImage: 'Bild anzeigen',
+  showDate: 'Datum anzeigen',
+  showExcerpt: 'Vorschau anzeigen',
+  showSortControls: 'Sortier-Optionen zeigen',
+  showSearch: 'Suche anzeigen',
+  showCategories: 'Kategorien anzeigen',
+  showSort: 'Sortierung anzeigen',
+
+  // Shop
+  mode: 'Modus',
+  categorySlug: 'Kategorie-Slug',
+  productIds: 'Produkt-IDs',
+  count: 'Anzahl',
+  emptyText: 'Leer-Text',
+  price: 'Preis',
+
+  // Popup
+  delayMs: 'Verzögerung (ms)',
+  triggerDelayMs: 'Trigger-Verzögerung (ms)',
+  frequency: 'Häufigkeit',
+
+  // Process / Timeline
+  icon: 'Icon',
+  number: 'Nummer',
+  year: 'Jahr',
+  timeLabel: 'Zeitangabe',
+  kicker: 'Kicker',
+  checkmarks: 'Häkchen',
+
+  // Before/After
+  imageBefore: 'Bild vorher',
+  imageAfter: 'Bild nachher',
+  labelBefore: 'Label vorher',
+  labelAfter: 'Label nachher',
+  aspectRatio: 'Seitenverhältnis',
+
+  // Showcase / Product
+  span: 'Spanne (Grid)',
+  size: 'Größe',
+  mediaType: 'Medientyp',
+  panelHeight: 'Panel-Höhe',
+  ctaLink: 'CTA-Link',
+
+  // Color fields
+  textColor: 'Textfarbe',
+  accentColor: 'Akzentfarbe',
+  trustStripBg: 'Trust-Leiste Hintergrund',
+
+  // Team
+  storyHeadline: 'Story-Überschrift',
+  storyText: 'Story-Text',
+  storyImage: 'Story-Bild',
+  valuesHeadline: 'Werte-Überschrift',
+  membersHeadline: 'Team-Überschrift',
+
+  // Embed
+  config: 'Konfiguration',
+  maxWidth: 'Max. Breite',
+
+  // Comparison
+  highlightCol: 'Hervorgehobene Spalte',
+  feature: 'Merkmal',
+  note: 'Anmerkung',
+  highlighted: 'Hervorgehoben',
+
+  // Photography
+  location: 'Standort',
+  category: 'Kategorie',
+  date: 'Datum',
+  excerpt: 'Vorschau-Text',
+
+  // Banner
+  style: 'Stil',
+  link: 'Link',
+  bgStyle: 'Hintergrund-Stil',
+
+  // Cinematic Hero
+  overlay: 'Overlay',
+
+  // ServiceDetail
+  introText: 'Einleitungstext',
+  formEnabled: 'Formular aktiv',
+
+  // Wedding
+  dresscode: 'Dresscode',
+  weddingMenu: 'Menü',
+  accommodation: 'Unterkunft',
+};
+
+// ─── FIELD HELP TEXTS (German) ────────────────────────────────────────────────
+const FIELD_HELP: Record<string, string> = {
+  headline: 'Die Hauptüberschrift der Section.',
+  subline: 'Ergänzender Text unter der Überschrift.',
+  badgeText: 'Kleines Label über der Überschrift (z.B. "Neu", "Top bewertet").',
+  badge: 'Kleines Label über der Überschrift.',
+  eyebrow: 'Dachzeile über der Hauptüberschrift.',
+  text: 'Freitext-Inhalt, unterstützt einfache Formatierung.',
+  content: 'Hauptinhalt — unterstützt Rich-Text (fett, kursiv, Listen).',
+  image: 'Hauptbild der Section. Empfohlen: 16:9 oder 3:2.',
+  bgImage: 'Hintergrundbild, das die gesamte Section füllt.',
+  bgImageMobile: 'Alternatives Hintergrundbild für Mobilgeräte.',
+  bgColor: 'Hintergrundfarbe als Hex-Wert (z.B. #1a1a2e).',
+  bgPosition: 'Bildausschnitt bestimmen (z.B. center, top).',
+  overlayColor: 'Overlay-Farbe über dem Hintergrundbild (z.B. für Lesbarkeit).',
+  overlayOpacity: 'Deckkraft des Overlays (0 = transparent, 1 = deckend).',
+  imageEffect: 'Optionaler Effekt (z.B. parallax, zoom).',
+  imageEffectIntensity: 'Stärke des Bildeffekts (0–100).',
+  imageAlt: 'Beschreibender Text für Screenreader und SEO.',
+  layout: 'Variante der Darstellung.',
+  align: 'Textausrichtung (links, zentriert, rechts).',
+  reversed: 'Reihenfolge von Bild und Text tauschen.',
+  primaryCta: 'Haupt-Button mit Text und Ziel-Link.',
+  secondaryCta: 'Optionaler zweiter Button.',
+  ctaLabel: 'Text auf dem Button.',
+  ctaHref: 'Ziel-URL des Buttons.',
+  linkLabel: 'Beschriftung des Links.',
+  linkHref: 'Ziel-URL des Links.',
+  videoUrl: 'YouTube- oder Vimeo-URL für Videoeinbettung.',
+  embedUrl: 'URL für die Karteneinbettung (Google Maps, OpenStreetMap).',
+  embedCode: 'HTML-Code für externe Einbettungen (iFrames etc.).',
+  height: 'Höhe in Pixel.',
+  maxWidth: 'Maximale Breite (z.B. 800px oder 100%).',
+  provider: 'Externer Anbieter (z.B. Google Maps).',
+  collectionKey: 'Technischer Schlüssel der verknüpften Collection.',
+  sortBy: 'Standard-Sortierreihenfolge.',
+  showImage: 'Vorschaulbild in der Liste anzeigen.',
+  showDate: 'Erscheinungsdatum anzeigen.',
+  showExcerpt: 'Kurzen Vorschau-Text anzeigen.',
+  showSortControls: 'Sortier-Buttons für Besucher anzeigen.',
+  showSearch: 'Suchfeld für Besucher anzeigen.',
+  showCategories: 'Kategorie-Filter anzeigen.',
+  items: 'Liste der Einträge — per "Eintrag" hinzufügen und bearbeiten.',
+  steps: 'Schritte/Phasen beschreiben (z.B. für Prozess-Darstellungen).',
+  members: 'Team-Mitglieder mit Name, Rolle, Bild und optional Bio.',
+  stats: 'Kennzahlen mit Wert und Beschriftung.',
+  logos: 'Partnerlogos — empfohlen: SVG oder transparentes PNG.',
+  images: 'Bildersammlung für die Galerie.',
+  ratingValue: 'Durchschnittsbewertung (z.B. 4.8).',
+  ratingCount: 'Gesamtanzahl der Bewertungen.',
+  expandFirst: 'Erste FAQ standardmäßig geöffnet anzeigen.',
+  source: 'Optionale Quellenangabe.',
+  delayMs: 'Wartezeit in Millisekunden bevor das Popup erscheint.',
+  frequency: 'Wie oft das Popup pro Besucher erscheint.',
+  icon: 'Icon-Name (z.B. aus Lucide Icons).',
+  imageBefore: 'Bild für den Vorher-Zustand.',
+  imageAfter: 'Bild für den Nachher-Zustand.',
+  labelBefore: 'Beschriftung für "Vorher".',
+  labelAfter: 'Beschriftung für "Nachher".',
+  aspectRatio: 'Seitenverhältnis (z.B. 16:9, 4:3, 1:1).',
+  panelHeight: 'Höhe der Scroll-Panels in Pixel.',
+  trustItems: 'Vertrauens-Elemente unter dem Hero (z.B. Zertifikate, Bewertungen).',
+  trustStripColor: 'Hintergrundfarbe der Trust-Leiste.',
+  manualCards: 'Karten manuell anlegen statt aus Collection zu laden.',
+  infoCards: 'Info-Karten z.B. für Kontaktdaten.',
+  submitLabel: 'Text auf dem Absende-Button.',
+  formEnabled: 'Kontaktformular in dieser Section anzeigen.',
+  storyHeadline: 'Überschrift für den Story-Bereich.',
+  storyText: 'Freitext für die Teamgeschichte.',
+  storyImage: 'Bild für den Story-Bereich.',
+  valuesHeadline: 'Überschrift über den Unternehmenswerten.',
+  membersHeadline: 'Überschrift über der Team-Liste.',
+  highlightCol: 'Welche Spalte farblich hervorgehoben wird (0-basiert).',
+  categorySlug: 'URL-Slug der Shop-Kategorie.',
+  productIds: 'Komma-getrennte Liste von Produkt-IDs.',
+  count: 'Maximale Anzahl der angezeigten Elemente.',
+  emptyText: 'Text der angezeigt wird wenn keine Einträge vorhanden sind.',
+  mode: 'Betriebsmodus (z.B. automatisch, manuell).',
+  config: 'Erweiterte Konfiguration als JSON.',
+  bgMode: 'Art des Hintergrunds (Bild, Farbe, Gradient).',
+  span: 'Wie viele Grid-Spalten das Element einnimmt.',
+  size: 'Größenvariante (klein, mittel, groß).',
+  mediaType: 'Art des Mediums (Bild oder Video).',
+  style: 'Stil-Variante der Darstellung.',
+  bgStyle: 'Stil für den Hintergrund.',
+  overlay: 'Overlay-Einstellung.',
+  date: 'Datum der Veröffentlichung.',
+  category: 'Zugeordnete Kategorie.',
+  introText: 'Einleitender Text vor dem Hauptinhalt.',
+  highlighted: 'Dieses Element visuell hervorheben.',
+  features: 'Liste von Merkmalen/Vorteilen.',
+  facts: 'Kennzahlen oder Fakten (Wert + Beschriftung).',
+  highlights: 'Besondere Highlights hervorheben.',
+  services: 'Liste der angebotenen Leistungen.',
+  packages: 'Preis-/Leistungspakete.',
+};
+
 // Generic section data editor that renders a form per section type.
 export function SectionDataEditor({ type, data, onChange }: { type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void }) {
   const Editor = EDITORS[type] ?? SchemaSectionEditor;
