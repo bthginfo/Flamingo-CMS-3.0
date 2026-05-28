@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Award, CheckCircle2, Quote, Star } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Proof = { label: string; value?: string; note?: string };
 type Review = { quote: string; name: string; context?: string; rating?: number };
@@ -30,8 +31,8 @@ export function ProofWallSection({ data }: Props) {
             <motion.div key={index} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[var(--style-border-color,rgba(0,0,0,0.08))] bg-[var(--style-card-bg,#fff)] p-5 shadow-sm">
               <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--style-badge-bg,rgba(0,0,0,0.06))] text-[var(--style-accent-color,var(--brand-primary))]"><Award size={19} /></div>
               {proof.value && <div className="text-3xl font-black text-[var(--style-heading-color,#111)]">{proof.value}</div>}
-              <div className="mt-1 font-semibold text-[var(--style-body-color,#27272a)]">{proof.label}</div>
-              {proof.note && <div className="mt-2 text-sm leading-6 text-[var(--style-muted-color,#71717a)]">{proof.note}</div>}
+              <div className="mt-1 font-semibold text-[var(--style-body-color,#27272a)]">{plain(proof.label)}</div>
+              {proof.note && <div className="mt-2 text-sm leading-6 text-[var(--style-muted-color,#71717a)]">{plain(proof.note)}</div>}
             </motion.div>
           ))}
         </div>
@@ -41,7 +42,7 @@ export function ProofWallSection({ data }: Props) {
             {reviews.map((review, index) => (
               <article key={index} className="rounded-2xl bg-[var(--style-section-bg,#f4f4f5)] p-5">
                 <Quote className="mb-4 text-[var(--style-accent-color,var(--brand-primary))]" size={24} />
-                <p className="text-sm leading-7 text-[var(--style-body-color,#3f3f46)]">{review.quote}</p>
+                <p className="text-sm leading-7 text-[var(--style-body-color,#3f3f46)]">{plain(review.quote)}</p>
                 <div className="mt-5 flex items-center justify-between gap-3">
                   <div>
                     <div className="font-bold text-[var(--style-heading-color,#111)]">{review.name}</div>
