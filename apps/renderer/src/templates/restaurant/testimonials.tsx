@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 import { Star } from 'lucide-react';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 
@@ -41,7 +42,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
         {items.map((item, i) => (
           <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-black/10 bg-white p-6 shadow-md">
             <div className="text-brand-accent"><Stars count={item.rating || 5} /></div>
-            {item.quote && <p className="mt-4 text-sm leading-6 text-gray-900">&ldquo;{item.quote}&rdquo;</p>}
+            {item.quote && <p className="mt-4 text-sm leading-6 text-gray-900">&ldquo;{plain(item.quote)}&rdquo;</p>}
             <div className="mt-4 border-t border-black/10 pt-4">
               <p className="font-semibold text-gray-900">{item.name || ''}</p>
               <p className="text-xs text-gray-500">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
@@ -68,7 +69,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
         {items.map((item, i) => (
           <article key={`${item.name}-${i}`} className="border-t border-black/10 pt-6">
             <div className="text-brand-accent"><Stars count={item.rating || 5} /></div>
-            {item.quote && <p className="mt-4 text-sm font-light leading-7 text-gray-900">&ldquo;{item.quote}&rdquo;</p>}
+            {item.quote && <p className="mt-4 text-sm font-light leading-7 text-gray-900">&ldquo;{plain(item.quote)}&rdquo;</p>}
             <p className="mt-4 font-medium text-gray-900">{item.name || ''}</p>
             <p className="text-xs font-light text-gray-500">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
           </article>
@@ -93,7 +94,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
         {items.map((item, i) => (
           <article key={`${item.name}-${i}`} className="border-2 border-white/20 p-6 shadow-[4px_4px_0_rgba(255,255,255,0.15)]">
             <div className="text-brand-accent"><Stars count={item.rating || 5} /></div>
-            {item.quote && <p className="mt-4 text-sm leading-6">&ldquo;{item.quote}&rdquo;</p>}
+            {item.quote && <p className="mt-4 text-sm leading-6">&ldquo;{plain(item.quote)}&rdquo;</p>}
             <div className="mt-4 border-t border-white/20 pt-4">
               <p className="font-black uppercase">{item.name || ''}</p>
               <p className="text-xs text-white/60">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
