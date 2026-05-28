@@ -6,6 +6,15 @@ import { resolveTenant } from '@/lib/snapshot';
 import { sendOrderEmails } from '@/lib/shop-email';
 import Stripe from 'stripe';
 
+// Map taxClass to rate percentage
+function getTaxRate(taxClass: string): number {
+  switch (taxClass) {
+    case 'reduced': return 7;
+    case 'free': return 0;
+    default: return 19; // 'standard'
+  }
+}
+
 export async function POST(req: NextRequest) {
   const tenantId = await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
@@ -80,7 +89,7 @@ export async function POST(req: NextRequest) {
       variantName,
       quantity,
       priceCents,
-      taxRate: 19,
+      taxRate: getTaxRate(product.taxClass),
     });
     subtotalCents += priceCents * quantity;
   }
@@ -103,7 +112,11 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const taxCents = Math.round(subtotalCents * 19 / 119); // 19% included
+  // Calculate tax per item (supports mixed rates: 19%, 7%, 0%)
+  const taxCents = orderItems.reduce((sum, item) => {
+    const itemTotal = item.priceCents * item.quantity;
+    return sum + Math.round(itemTotal * item.taxRate / (100 + item.taxRate));
+  }, 0);
 
   // Server-side discount calculation (never trust client discount)
   let discountCents = 0;
