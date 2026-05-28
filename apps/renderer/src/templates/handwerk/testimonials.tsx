@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { plain } from '@/lib/strip-html';
 import { motion, useInView } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards';
@@ -71,7 +72,7 @@ function TestimonialsModern({ headline, badgeText, ratingValue, ratingCount, ite
             transition={{ duration: 0.5, delay: i * 0.1 }}
             className="break-inside-avoid p-8 border border-gray-100 rounded-lg bg-white"
           >
-            <p className="text-gray-600 leading-relaxed italic">&ldquo;{item.quote}&rdquo;</p>
+            <p className="text-gray-600 leading-relaxed italic">&ldquo;{plain(item.quote)}&rdquo;</p>
             <div className="mt-6 pt-4 border-t border-gray-50">
               <p className="font-medium text-sm text-gray-900">{item.name}</p>
               {item.context && <p className="text-xs text-gray-400 mt-0.5">{item.context}</p>}
