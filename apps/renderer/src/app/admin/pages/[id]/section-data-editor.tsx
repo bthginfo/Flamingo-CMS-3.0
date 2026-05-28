@@ -360,6 +360,7 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
 
   function isRecord(value: unknown): value is Record<string, unknown> {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+  }
 
   function updateAtPath(path: Array<string | number>, value: unknown) {
     const update = (current: unknown, depth: number): unknown => {
@@ -377,7 +378,6 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
     const next = update(source, 0) as Record<string, unknown>;
     setSource(next);
     onChange(next);
-  }
   }
 
   
