@@ -199,3 +199,11 @@ export async function getOrCreateOverviewPageAction(collectionKey: string): Prom
   revalidatePath('/admin/pages');
   return page.id;
 }
+
+// Lightweight action returning just keys+labels for dropdowns
+export async function getCollectionKeysAction(): Promise<{ key: string; label: string }[]> {
+  const session = await requireSession();
+  const db = getDb();
+  const cols = await db.select({ key: collections.key, label: collections.label }).from(collections).where(eq(collections.tenantId, session.tenantId)).orderBy(asc(collections.key));
+  return cols;
+}
