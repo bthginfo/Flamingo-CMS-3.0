@@ -542,8 +542,12 @@ const FIELD_LABELS: Record<string, string> = {
     align: 'Textausrichtung (links oder zentriert)',
   };
 function fieldLabel(key: string) {
-    return FIELD_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, char => char.toUpperCase());
+  return FIELD_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, char => char.toUpperCase());
   }
+
+function fieldHelp(key: string): string | undefined {
+  return FIELD_HELP[key];
+}
 
   function updateAtPath(path: Array<string | number>, value: unknown) {
     const update = (current: unknown, depth: number): unknown => {
@@ -996,6 +1000,7 @@ function Field({ label, value, onChange, multiline, placeholder, help }: { label
   return (
     <label className="block text-sm">
       <span className="text-gray-600 text-xs">{label}</span>
+      {help && <span className="ml-1 text-[10px] text-zinc-400">— {help}</span>}
       <input className="admin-input mt-1 w-full" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
       {help && <p className="text-[11px] text-zinc-400 mt-0.5">{help}</p>}
     </label>
