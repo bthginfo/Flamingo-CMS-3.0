@@ -25,7 +25,7 @@ export function PrinciplesGridSection({ data }: Props) {
           {subline && <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--style-subheading-color,rgba(255,255,255,0.74))]">{subline}</p>}
         </div>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-[var(--style-border-color,rgba(255,255,255,0.12))] bg-[var(--style-border-color,rgba(255,255,255,0.12))] md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-[2px] overflow-hidden rounded-2xl border border-[var(--style-border-color,rgba(255,255,255,0.12))] bg-[var(--style-border-color,rgba(255,255,255,0.12))] md:grid-cols-2 lg:grid-cols-4">
           {principles.map((item, index) => (
             <motion.article
               key={index}
@@ -33,7 +33,7 @@ export function PrinciplesGridSection({ data }: Props) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ delay: index * 0.05 }}
-              className="min-h-[260px] bg-[var(--style-card-bg,#101018)] p-6"
+              className="min-h-[260px] bg-[var(--style-card-bg,#101018)] p-8"
             >
               <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--style-badge-bg,rgba(255,255,255,0.10))] text-sm font-black text-[var(--style-icon-color,var(--brand-primary,#f24171))]">
                 {String(index + 1).padStart(2, '0')}
