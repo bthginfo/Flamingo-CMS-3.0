@@ -240,7 +240,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
           saved={saved}
           saving={saving}
           publishing={publishing}
-          onTogglePreview={() => { preview.isOpen ? preview.close() : preview.open('/live-preview'); }}
+          onTogglePreview={() => { preview.isOpen ? preview.close() : preview.open(); }}
           onSave={handleSaveAll}
           onPublish={handlePublish}
         />

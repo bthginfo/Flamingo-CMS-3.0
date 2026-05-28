@@ -38,9 +38,9 @@ export function PreviewProvider({ children, tenantId }: { children: React.ReactN
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const open = useCallback((previewUrl?: string) => {
-    if (previewUrl) setUrlState(previewUrl);
+    setUrlState(previewUrl || defaultUrl);
     setIsOpen(true);
-  }, []);
+  }, [defaultUrl]);
 
   const close = useCallback(() => setIsOpen(false), []);
   const refresh = useCallback(() => setRefreshKey(k => k + 1), []);

@@ -64,7 +64,7 @@ export function PreviewPanel({ url, onClose, iframeRef: externalRef }: Props) {
           </button>
         </div>
         <div className="flex-1 overflow-hidden">
-          <iframe key={refreshKey} src={url} className="w-full h-full border-0" />
+          <iframe key={refreshKey} ref={iframeRef} src={url} className="w-full h-full border-0" />
         </div>
       </div>
 

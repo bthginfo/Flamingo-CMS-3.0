@@ -13,8 +13,8 @@ export function GlowHeroSection({ data }: Props) {
   const eyebrow = (data.eyebrow as string) || '';
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
-  const image = (data.image as string) || '';
-  const imagePosition = (data.imagePosition as string) || 'center';
+  const image = (data.image as string) || (data.bgImage as string) || '';
+  const imagePosition = (data.imagePosition as string) || (data.bgPosition as string) || 'center';
   const glowColor = (data.glowColor as string) || 'rgba(242,65,113,0.45)';
   const primaryCta = (data.primaryCta as Cta) || {};
   const secondaryCta = (data.secondaryCta as Cta) || {};

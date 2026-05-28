@@ -263,10 +263,10 @@ function HeroEditor({ data, onChange }: EditorProps) {
     badgeIcon: (data.badgeIcon as string) || '',
     badgeStarsIcon: (data.badgeStarsIcon as string) || '',
     bgMode: (data.bgMode as string) || 'image',
-    bgImage: (data.bgImage as string) || '',
+    bgImage: (data.bgImage as string) || (data.image as string) || '',
     bgImageMobile: (data.bgImageMobile as string) || '',
     bgColor: (data.bgColor as string) || '#1a1a2e',
-    bgPosition: (data.bgPosition as string) || 'center',
+    bgPosition: (data.bgPosition as string) || (data.imagePosition as string) || 'center',
     bgPositionMobile: (data.bgPositionMobile as string) || 'center',
     overlayColor: (data.overlayColor as string) || '#000000',
     overlayOpacity: (data.overlayOpacity as number) ?? -1,
@@ -277,7 +277,7 @@ function HeroEditor({ data, onChange }: EditorProps) {
     imageEffect: (data.imageEffect as string) || 'none',
     imageEffectIntensity: (data.imageEffectIntensity as string) || 'medium',
   });
-  useReport(d as unknown as Record<string, unknown>, onChange);
+  useReport({ ...d, image: d.bgImage, imagePosition: d.bgPosition } as unknown as Record<string, unknown>, onChange);
 
   return (
     <div className="space-y-3">
@@ -294,8 +294,8 @@ function HeroEditor({ data, onChange }: EditorProps) {
         </div>
         {d.bgMode === 'image' ? (
           <>
-            <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} />
-            <ImageUploadField label="Hintergrundbild (Mobil, optional)" value={d.bgImageMobile} onChange={(v) => setD({ ...d, bgImageMobile: v })} />
+            <ImageUploadField label="Hintergrundbild" value={d.bgImage} onChange={(v) => setD({ ...d, bgImage: v })} position={d.bgPosition} onPositionChange={(v) => setD({ ...d, bgPosition: v })} />
+            <ImageUploadField label="Hintergrundbild (Mobil, optional)" value={d.bgImageMobile} onChange={(v) => setD({ ...d, bgImageMobile: v })} position={d.bgPositionMobile} onPositionChange={(v) => setD({ ...d, bgPositionMobile: v })} />
             {d.bgImage && (
               <>
               <div className="mt-3">

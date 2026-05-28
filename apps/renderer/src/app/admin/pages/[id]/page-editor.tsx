@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { usePreview } from '@/components/admin/preview-context';
 import { updatePageAction, addSectionAction, deleteSectionAction, updateSectionAction, updateSectionMetaAction, reorderSectionsAction } from '../actions';
 import { publishAction } from '../../actions/publish';
@@ -187,8 +187,6 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     }
   }
 
-  const previewUrl = `/preview/${page.slug === 'home' ? '' : page.slug}?token=preview`;
-
   const sectionAnchors = sections.map(s => ({ id: s.id, type: s.type, anchorId: s.anchorId || null }));
 
   return (
@@ -246,7 +244,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         saved={saved}
         saving={saving}
         publishing={publishing}
-        onTogglePreview={() => { preview.isOpen ? preview.close() : preview.open('/live-preview'); }}
+        onTogglePreview={() => { preview.isOpen ? preview.close() : preview.open(); }}
         onSave={handleSaveAll}
         onPublish={handlePublish}
       />
