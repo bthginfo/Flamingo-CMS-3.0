@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
@@ -18,11 +18,14 @@ export function BentoGridSection({ data }: Props) {
 
   if (!items.length) return null;
 
-  const getSpanClass = (span?: string, idx?: number) => {
-    if (span === 'wide') return 'md:col-span-2';
-    if (span === 'tall') return 'md:row-span-2';
-    if (span === 'large') return 'md:col-span-2 md:row-span-2';
-    // Default pattern: first and last are wide
+  const getSpanClass = (item: BentoItem, idx?: number) => {
+    const val = item.span || item.size || '';
+    if (val === 'wide' || val === 'lg') return 'md:col-span-2';
+    if (val === 'tall') return 'md:row-span-2';
+    if (val === 'large') return 'md:col-span-2 md:row-span-2';
+    if (val === 'md') return 'md:col-span-1';
+    if (val === 'sm') return '';
+    // Default pattern: first is wide
     if (idx === 0) return 'md:col-span-2';
     return '';
   };
