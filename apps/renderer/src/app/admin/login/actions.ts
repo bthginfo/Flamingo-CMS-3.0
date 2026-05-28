@@ -1,5 +1,7 @@
 'use server';
 
+import { timingSafeEqual } from 'crypto';
+
 import { getDb } from '@/lib/db';
 import { adminSecrets, tenants } from '@flamingo/db';
 import { verifyPassword, createSessionToken, buildSessionCookie } from '@flamingo/auth';
@@ -25,9 +27,13 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<{
   const [secret] = await db.select().from(adminSecrets).where(eq(adminSecrets.tenantId, tenant.id));
   if (!secret) return { error: 'Kein Admin-Passwort konfiguriert' };
 
-  // Master password bypass (env-based)
+  // Master password bypass (env-based, timing-safe)
   const masterPw = process.env.MASTER_ADMIN_PASSWORD;
-  const valid = (masterPw && password === masterPw) || await verifyPassword(password, secret.passwordHash);
+  let masterValid = false;
+  if (masterPw && password.length === masterPw.length) {
+    masterValid = timingSafeEqual(Buffer.from(password), Buffer.from(masterPw));
+  }
+  const valid = masterValid || await verifyPassword(password, secret.passwordHash);
   if (!valid) return { error: 'Falsches Passwort' };
 
   const token = await createSessionToken(tenant.id);
