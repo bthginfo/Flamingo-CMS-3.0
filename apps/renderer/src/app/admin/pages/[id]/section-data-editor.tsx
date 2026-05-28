@@ -37,15 +37,11 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
   const [source, setSource] = useState<Record<string, unknown>>(() => Object.keys(data).length > 0 ? data : defaults);
 
   useEffect(() => {
+    const next = Object.keys(data).length > 0 ? data : defaults;
+    setSource(next);
     if (Object.keys(data).length === 0 && Object.keys(defaults).length > 0) {
-      setSource(defaults);
       onChange(defaults);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type]);
-
-  useEffect(() => {
-    setSource(Object.keys(data).length > 0 ? data : defaults);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, type]);
 
