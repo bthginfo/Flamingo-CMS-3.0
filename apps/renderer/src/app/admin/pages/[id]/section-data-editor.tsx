@@ -343,7 +343,6 @@ return FIELD_HELP[key];
 function HelpHint({ fieldKey }: { fieldKey: string }) {
   const help = FIELD_HELP[fieldKey];
   if (!help) return null;
-  return <p className="text-[11px] text-zinc-400 mt-0.5 mb-1">{help}</p>;
 }
 
 // Generic section data editor that renders a form per section type.
@@ -820,7 +819,6 @@ function Field({ label, value, onChange, multiline, placeholder }: { label: stri
     return (
       <div>
         <MiniRichTextField label={label} value={value} onChange={onChange} />
-        {help && <p className="text-[11px] text-zinc-400 mt-1">{help}</p>}
       </div>
     );
   }
@@ -828,7 +826,6 @@ function Field({ label, value, onChange, multiline, placeholder }: { label: stri
     <label className="block text-sm">
       <span className="text-gray-600 text-xs">{label}</span>
       <input className="admin-input mt-1 w-full" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
-      {help && <p className="text-[11px] text-zinc-400 mt-0.5">{help}</p>}
     </label>
   );
 }
