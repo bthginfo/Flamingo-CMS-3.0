@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
 import { pages, pageSections, collections, collectionItems } from '@flamingo/db';
-import { eq, asc, and } from 'drizzle-orm';
+import { eq, asc, and, inArray } from 'drizzle-orm';
 import { revalidatePath, revalidateTag } from 'next/cache';
 
 export async function POST(req: NextRequest) {
@@ -20,9 +20,15 @@ export async function POST(req: NextRequest) {
 
     // Build warnings by scanning sections for incomplete content
     const warnings: string[] = [];
+    const allPageIds = allPages.map(p => p.id);
+    const allSections = allPageIds.length > 0
+      ? await db.select({ pageId: pageSections.pageId, type: pageSections.type, data: pageSections.data })
+          .from(pageSections).where(inArray(pageSections.pageId, allPageIds)).orderBy(asc(pageSections.sortOrder))
+      : [];
+    const sectionsByPage = new Map<string, typeof allSections>();
+    for (const s of allSections) { const arr = sectionsByPage.get(s.pageId) || []; arr.push(s); sectionsByPage.set(s.pageId, arr); }
     for (const p of allPages) {
-      const sections = await db.select({ type: pageSections.type, data: pageSections.data })
-        .from(pageSections).where(eq(pageSections.pageId, p.id)).orderBy(asc(pageSections.sortOrder));
+      const sections = sectionsByPage.get(p.id) || [];
       if (sections.length === 0) {
         warnings.push(`Page "${p.title || p.slug}" has no sections`);
       }
@@ -40,11 +46,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Check collection items for missing images/excerpts
+    // Check collection items for missing images/excerpts (batch query)
     const allCollections = await db.select().from(collections).where(eq(collections.tenantId, auth.tenantId));
+    const collectionIds = allCollections.map(c => c.id);
+    const allColItems = collectionIds.length > 0
+      ? await db.select().from(collectionItems).where(and(inArray(collectionItems.collectionId, collectionIds), eq(collectionItems.tenantId, auth.tenantId), eq(collectionItems.published, true)))
+      : [];
+    const itemsByCollection = new Map<string, typeof allColItems>();
+    for (const item of allColItems) { const arr = itemsByCollection.get(item.collectionId) || []; arr.push(item); itemsByCollection.set(item.collectionId, arr); }
     for (const col of allCollections) {
-      const items = await db.select().from(collectionItems)
-        .where(and(eq(collectionItems.collectionId, col.id), eq(collectionItems.tenantId, auth.tenantId), eq(collectionItems.published, true)));
+      const items = itemsByCollection.get(col.id) || [];
       const withoutImage = items.filter(item => {
         const data = (item.data || {}) as Record<string, unknown>;
         if (data.image) return false;
