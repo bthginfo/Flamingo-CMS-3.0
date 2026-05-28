@@ -7,13 +7,15 @@ export function middleware(request: NextRequest) {
 
   // Allow login page, demo-login and API routes
   if (pathname === '/admin/login' || pathname === '/admin/demo-login' || pathname.startsWith('/api/')) {
-    // If a tenant param is specified and user has an existing session,
-    // clear the old session to prevent tenant cross-contamination
+    // If a tenant param is specified and user has an existing session from a different tenant,
+    // clear the old session and redirect to clean login URL (preserving tenant as cookie hint)
     const tenantParam = searchParams.get('tenant');
     const existingToken = request.cookies.get(getSessionCookieName())?.value;
     if (tenantParam && existingToken) {
-      const response = NextResponse.next();
+      const cleanUrl = new URL('/admin/login', request.url);
+      const response = NextResponse.redirect(cleanUrl);
       response.cookies.delete(getSessionCookieName());
+      response.cookies.set('flamingo_login_tenant', tenantParam, { path: '/admin', maxAge: 300, httpOnly: false });
       return response;
     }
     return NextResponse.next();
