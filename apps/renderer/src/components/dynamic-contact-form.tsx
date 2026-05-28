@@ -37,7 +37,11 @@ export function DynamicContactForm({
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
 
-  const formFields = fields?.length ? fields : DEFAULT_FIELDS;
+  const formFields = (fields?.length ? fields : DEFAULT_FIELDS).map(f => ({
+    ...f,
+    label: f.label || f.name.charAt(0).toUpperCase() + f.name.slice(1).replace(/([A-Z])/g, ' $1'),
+    placeholder: f.placeholder || f.label || f.name.charAt(0).toUpperCase() + f.name.slice(1).replace(/([A-Z])/g, ' $1'),
+  }));
 
   const baseInput = inputClassName || 'w-full bg-white border border-gray-200 rounded-xl px-5 py-4 text-[15px] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary/40 transition-all duration-300 hover:border-gray-300';
 
@@ -135,7 +139,7 @@ function renderFields(fields: FormFieldDef[], inputClass: string) {
 function renderField(field: FormFieldDef, inputClass: string) {
   const labelEl = (
     <span className="block text-sm font-medium text-gray-700 mb-1.5">
-      {field.label}{field.required && <span className="text-red-400 ml-0.5">*</span>}
+      {field.label || field.name.charAt(0).toUpperCase() + field.name.slice(1)}{field.required && <span className="text-red-400 ml-0.5">*</span>}
     </span>
   );
 
