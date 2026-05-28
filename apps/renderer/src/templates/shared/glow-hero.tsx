@@ -14,6 +14,7 @@ export function GlowHeroSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const image = (data.image as string) || '';
+  const imagePosition = (data.imagePosition as string) || 'center';
   const glowColor = (data.glowColor as string) || 'rgba(242,65,113,0.45)';
   const primaryCta = (data.primaryCta as Cta) || {};
   const secondaryCta = (data.secondaryCta as Cta) || {};
@@ -34,7 +35,7 @@ export function GlowHeroSection({ data }: Props) {
 
   return (
     <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-[var(--style-section-bg,#07070a)] text-white">
-      {image && <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70" />}
+      {image && <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70" style={{ objectPosition: imagePosition }} />}
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
       <div
         className="pointer-events-none absolute inset-0 transition duration-150"

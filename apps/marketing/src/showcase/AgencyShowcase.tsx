@@ -1998,9 +1998,10 @@ function Pricing() {
       monthly: '+ 29 € / Monat Hosting & Pflege',
       features: [
         'Eines unserer Branchen-Templates (17 Branchen, 3 Stile)',
-        '6 Farbschemas pro Branche – jederzeit per Klick umstellbar',
-        'Admin-Bereich zum selbst pflegen',
-        'Hosting & Pflege inklusive',
+        'Globales Marke-&-Design-Setup plus Farben je Section fein steuerbar',
+        'Admin-Bereich zum selbst Pflegen von Texten, Bildern, Seiten und Navigation',
+        'Responsive Website mit sauberer SEO-Grundstruktur',
+        'Hosting & kleine Pflege inklusive',
         '1 Stunde Einrichtungs-Support',
         'Online in wenigen Tagen – je nach Verfügbarkeit Deiner Inhalte',
       ],
@@ -2029,17 +2030,18 @@ function Pricing() {
       monthly: 'Hosting individuell',
       features: [
         'Individuelles Design ohne Template-Bindung',
-        'Beliebige Inhalts-Funktionen (Newsletter, Multi-Standort, Mehrsprachigkeit)',
+        'Eigene Sections, besondere Interaktionen und individuelle Seitenlogik',
+        'Erweiterte Inhalts-Funktionen wie Multi-Standort, Mehrsprachigkeit oder Spezialformulare',
         'Persönlicher Projektmanager',
-        'Iterative Design-Schleifen mit Style-Guide',
-        'API-Anbindungen möglich',
+        'Design-System mit klarer Markenlogik für Website und CMS',
+        'API-Anbindungen und komplexere Datenmodelle möglich',
         'Zeitplan nach Absprache',
       ],
     },
   ];
 
   const addons = [
-    { t: 'Shop-Addon', p: 'ab 999 €', d: 'Vollwertiger Online-Shop mit Produktkatalog, Warenkorb, Checkout, Stripe & PayPal, Versandverwaltung, Rechnungen & Gutscheine. Inkl. Einrichtung: 1.450 €.' },
+    { t: 'Shop-Addon', p: 'ab 999 €', d: 'Vollwertiger Online-Shop mit Produkten, Kategorien, Varianten, Warenkorb, Checkout, Stripe & PayPal, Versandverwaltung, Rechnungen und Gutscheinen. Auf Wunsch inkl. Einrichtung: 1.450 €.', featured: true },
     { t: 'Mehrsprachigkeit', p: 'ab 290 €', d: 'DE + EN, weitere Sprachen auf Anfrage. Inkl. Sprach-Switcher.' },
     { t: 'Foto-/Video-Nachshooting', p: '890 €', d: '1 Drehtag light für saisonale Updates, neue Produkte oder Teamwechsel (ca. 25 Bilder + 1 Reel).' },
     { t: 'SEO optimierte Texte', p: 'ab 450 €', d: 'Professionelle Website-Texte mit klarer Struktur, lokaler Suchintention und sauberer Onpage-Grundlage.' },
@@ -2114,12 +2116,13 @@ function Pricing() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 reveal-stagger">
             {addons.map((a) => (
-              <article key={a.t} className="bg-white border border-line rounded-3xl p-7 hover-lift">
+              <article key={a.t} className={`relative rounded-3xl p-7 hover-lift ${a.featured ? 'md:col-span-2 lg:col-span-2 border border-[var(--accent-color)] bg-brand text-white shadow-2xl' : 'bg-white border border-line'}`}>
+                {a.featured && <span className="mb-4 inline-flex rounded-full bg-[var(--accent-color)] px-3 py-1 text-xs font-semibold uppercase tracking-widest text-brand">Beliebtes Add-on</span>}
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="font-display text-2xl">{a.t}</h3>
-                  <span className="text-sm font-mono">{a.p}</span>
+                  <span className={`text-sm font-mono ${a.featured ? 'text-white/80' : ''}`}>{a.p}</span>
                 </div>
-                <p className="text-muted text-sm leading-relaxed">{a.d}</p>
+                <p className={`${a.featured ? 'text-white/78' : 'text-muted'} text-sm leading-relaxed`}>{a.d}</p>
               </article>
             ))}
           </div>

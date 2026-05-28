@@ -8,7 +8,7 @@ import { DynamicIcon, MediaDisplay } from '@/components/ui/icon-map';
 import Link from 'next/link';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
-type CardData = { title: string; text?: string; icon?: string; image?: string; mediaType?: 'icon' | 'image'; href?: string; ctaIcon?: string };
+type CardData = { title: string; text?: string; icon?: string; image?: string; imagePosition?: string; mediaType?: 'icon' | 'image'; href?: string; ctaIcon?: string };
 
 export function ServicesGridSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || '';
@@ -36,6 +36,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
     description: c.text || '',
     icon: c.mediaType === 'image' && c.image ? undefined : (c.icon ? <DynamicIcon name={c.icon} size={24} className="text-brand-primary" /> : undefined),
     image: c.mediaType === 'image' ? c.image : undefined,
+    imagePosition: c.imagePosition || 'center',
     link: c.href || undefined,
   }));
 

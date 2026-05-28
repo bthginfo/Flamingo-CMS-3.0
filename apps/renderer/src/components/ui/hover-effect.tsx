@@ -15,6 +15,7 @@ export function HoverEffect({
     description: string;
     icon?: string | React.ReactNode;
     image?: string;
+    imagePosition?: string;
     link?: string;
   }[];
   className?: string;
@@ -51,6 +52,7 @@ export function HoverEffect({
                       alt={item.title}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      style={{ objectPosition: item.imagePosition || 'center' }}
                       sizes="(max-width: 768px) 100vw, 400px"
                     />
                   </div>
@@ -77,6 +79,7 @@ export function HoverEffect({
                       alt={item.title}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      style={{ objectPosition: item.imagePosition || 'center' }}
                       sizes="(max-width: 768px) 100vw, 400px"
                     />
                   </div>

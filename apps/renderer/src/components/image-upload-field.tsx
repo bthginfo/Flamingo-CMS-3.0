@@ -65,7 +65,25 @@ async function generateBlurDataUrl(file: File): Promise<string | undefined> {
  * Image field with blob upload + URL fallback.
  * Shows preview thumbnail when a URL is set.
  */
-export function ImageUploadField({ label, value, onChange }: { label: string; value: string; onChange: (url: string) => void }) {
+const FOCUS_POINTS = [
+  ['left top', 'top', 'right top'],
+  ['left center', 'center', 'right center'],
+  ['left bottom', 'bottom', 'right bottom'],
+] as const;
+
+export function ImageUploadField({
+  label,
+  value,
+  onChange,
+  position,
+  onPositionChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (url: string) => void;
+  position?: string;
+  onPositionChange?: (position: string) => void;
+}) {
   const [uploading, setUploading] = useState(false);
   const [mode, setMode] = useState<'upload' | 'url' | 'library'>(value && !value.startsWith('blob:') ? 'url' : 'upload');
   const [libraryAssets, setLibraryAssets] = useState<MediaAsset[]>([]);
@@ -167,7 +185,7 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
       {/* Preview */}
       {value && (
         <div className="relative inline-block mb-2">
-          <img src={value} alt="" className="w-20 h-20 object-cover rounded-lg border" />
+          <img src={value} alt="" className="w-20 h-20 object-cover rounded-lg border" style={{ objectPosition: position || 'center' }} />
           <button
             type="button"
             onClick={clearValue}
@@ -254,6 +272,26 @@ export function ImageUploadField({ label, value, onChange }: { label: string; va
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+      {value && onPositionChange && (
+        <div className="mt-3 rounded-lg border border-zinc-200 bg-zinc-50 p-2">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <span className="text-[11px] font-medium text-zinc-600">Fokuspunkt</span>
+            <span className="text-[10px] text-zinc-400">{position || 'center'}</span>
+          </div>
+          <div className="grid w-24 grid-cols-3 gap-1">
+            {FOCUS_POINTS.flat().map(point => (
+              <button
+                key={point}
+                type="button"
+                onClick={() => onPositionChange(point)}
+                className={`h-7 rounded border transition ${((position || 'center') === point) ? 'border-blue-500 bg-blue-500' : 'border-zinc-200 bg-white hover:border-blue-300'}`}
+                aria-label={`Fokuspunkt ${point}`}
+                title={`Fokuspunkt: ${point}`}
+              />
+            ))}
           </div>
         </div>
       )}

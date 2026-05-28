@@ -67,6 +67,31 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
     onChange(update(source, 0) as Record<string, unknown>);
   }
 
+  function valueAtPath(path: Array<string | number>) {
+    return path.reduce<unknown>((current, key) => {
+      if (Array.isArray(current)) return current[key as number];
+      if (isRecord(current)) return current[key as string];
+      return undefined;
+    }, source);
+  }
+
+  function imagePositionPath(path: Array<string | number>) {
+    const fieldName = String(path[path.length - 1] || '');
+    const parentPath = path.slice(0, -1);
+    const candidates = [
+      `${fieldName}Position`,
+      `${fieldName}Focus`,
+      `${fieldName}ObjectPosition`,
+      fieldName === 'image' || fieldName === 'src' ? 'imagePosition' : '',
+      fieldName === 'bgImage' ? 'bgPosition' : '',
+      fieldName === 'bgImageMobile' ? 'bgPositionMobile' : '',
+    ].filter(Boolean);
+    for (const candidate of candidates) {
+      if (valueAtPath([...parentPath, candidate]) !== undefined) return [...parentPath, candidate];
+    }
+    return [...parentPath, candidates[0] || `${fieldName}Position`];
+  }
+
   function createEmptyLike(sample: unknown): unknown {
     if (typeof sample === 'string') return '';
     if (typeof sample === 'number') return 0;
@@ -103,7 +128,18 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
         return <ColorField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} allowEmpty />;
       }
       if (/image|background|photo|avatar|poster|logo/i.test(fieldName)) {
-        return <ImageUploadField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} />;
+        const positionPath = imagePositionPath(path);
+        const positionValue = valueAtPath(positionPath);
+        return (
+          <ImageUploadField
+            key={renderKey}
+            label={label}
+            value={value}
+            onChange={(v) => updateAtPath(path, v)}
+            position={typeof positionValue === 'string' ? positionValue : 'center'}
+            onPositionChange={(v) => updateAtPath(positionPath, v)}
+          />
+        );
       }
       if (/href|link|url/i.test(fieldName)) {
         return <DetailLinkField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} />;
@@ -746,19 +782,20 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
   const [ctaLabel, setCtaLabel] = useState((data.ctaLabel as string) || '');
   const [ctaHref, setCtaHref] = useState((data.ctaHref as string) || '');
-  const [cards, setCards] = useState<{ title: string; text: string; icon: string; image: string; mediaType: string; href: string }[]>(
+  const [cards, setCards] = useState<{ title: string; text: string; icon: string; image: string; imagePosition: string; mediaType: string; href: string }[]>(
     ((data.manualCards as Record<string, unknown>[]) || []).map(c => ({
       title: (c.title as string) || '',
       text: (c.text as string) || '',
       icon: (c.icon as string) || '',
       image: (c.image as string) || '',
+      imagePosition: (c.imagePosition as string) || 'center',
       mediaType: (c.mediaType as string) || 'icon',
       href: (c.href as string) || '',
     }))
   );
   useReport({ headline, subline, badgeText, ctaLabel, ctaHref, manualCards: cards }, onChange);
 
-  function addCard() { setCards([...cards, { title: '', text: '', icon: '', image: '', mediaType: 'icon', href: '' }]); }
+  function addCard() { setCards([...cards, { title: '', text: '', icon: '', image: '', imagePosition: 'center', mediaType: 'icon', href: '' }]); }
   function removeCard(i: number) { setCards(cards.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setCards(cards.map((c, idx) => idx === i ? { ...c, [field]: val } : c)); }
 
@@ -780,7 +817,7 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
             {card.mediaType === 'icon' ? (
               <IconPickerField label="Icon" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
             ) : (
-              <ImageUploadField label="Bild" value={card.image} onChange={(v) => update(i, 'image', v)} />
+              <ImageUploadField label="Bild" value={card.image} onChange={(v) => update(i, 'image', v)} position={card.imagePosition || 'center'} onPositionChange={(v) => update(i, 'imagePosition', v)} />
             )}
           </div>
           <DetailLinkField label="Detail-Link (optional)" value={card.href} onChange={(v) => update(i, 'href', v)} />
