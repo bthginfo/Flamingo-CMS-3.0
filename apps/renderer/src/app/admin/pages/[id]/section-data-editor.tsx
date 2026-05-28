@@ -477,7 +477,7 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       if (/icon/i.test(fieldName)) {
         return <IconPickerField key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} />;
       }
-      return <Field key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} multiline={multiline} help={helpText} />;
+      return <><Field key={renderKey} label={label} value={value} onChange={(v) => updateAtPath(path, v)} multiline={multiline} help={helpText} /><HelpHint fieldKey={String(path[path.length - 1])} /></>;
     }
 
     if (Array.isArray(value)) {
