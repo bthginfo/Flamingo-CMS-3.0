@@ -1,72 +1,80 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Palette } from 'lucide-react';
+import { Palette, ChevronDown } from 'lucide-react';
 
 type ColorOverrides = Record<string, string>;
 
 /* ─── All available color fields with categories ─── */
 export type ColorFieldKey =
-  | 'sectionBg' | 'cardBg'
+  | 'sectionBg' | 'sectionBgAlt' | 'cardBg'
   | 'headingColor' | 'subheadingColor' | 'bodyColor' | 'mutedColor'
   | 'iconColor' | 'accentColor'
-  | 'btnBg' | 'btnText'
-  | 'badgeBg' | 'badgeText'
-  | 'borderColor' | 'dividerColor';
+  | 'btnBg' | 'btnText' | 'btnSecondaryBg' | 'btnSecondaryText'
+  | 'badgeBg' | 'badgeText' | 'badgeBorder'
+  | 'borderColor' | 'dividerColor'
+  | 'cardRadius' | 'cardShadow' | 'buttonRadius';
 
-const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; description: string }> = {
-  sectionBg:      { cssVar: '--style-section-bg',       label: 'Hintergrund',        description: 'Hintergrundfarbe der Sektion' },
-  cardBg:         { cssVar: '--style-card-bg',          label: 'Karten-Hintergrund', description: 'Hintergrund von Karten/Containern' },
-  headingColor:   { cssVar: '--style-heading-color',    label: 'Headline',           description: 'Farbe der Hauptüberschrift' },
-  subheadingColor:{ cssVar: '--style-subheading-color', label: 'Subheadline',        description: 'Farbe der Unterüberschrift' },
-  bodyColor:      { cssVar: '--style-body-color',       label: 'Fließtext',          description: 'Farbe des Fließtexts' },
-  mutedColor:     { cssVar: '--style-text-muted',       label: 'Dezenter Text',      description: 'Dezente Texte, Labels' },
-  iconColor:      { cssVar: '--style-icon-color',       label: 'Icons',              description: 'Farbe der Icons' },
-  accentColor:    { cssVar: '--style-accent-color',     label: 'Akzentfarbe',        description: 'Akzente, Linien, Hervorhebungen' },
-  btnBg:          { cssVar: '--brand-btn-bg',           label: 'Button Hintergrund', description: 'CTA-Button Hintergrund' },
-  btnText:        { cssVar: '--brand-btn-text',         label: 'Button Text',        description: 'CTA-Button Textfarbe' },
-  badgeBg:        { cssVar: '--style-badge-bg',         label: 'Badge Hintergrund',  description: 'Badge/Label Hintergrund' },
-  badgeText:      { cssVar: '--style-badge-text',       label: 'Badge Text',         description: 'Badge/Label Textfarbe' },
-  borderColor:    { cssVar: '--style-border-color',     label: 'Rahmenfarbe',        description: 'Rahmen/Border von Karten' },
-  dividerColor:   { cssVar: '--style-divider-color',    label: 'Trennlinie',         description: 'Trennlinien zwischen Elementen' },
+type FieldType = 'color' | 'size';
+
+const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; description: string; type?: FieldType }> = {
+  sectionBg:        { cssVar: '--style-section-bg',       label: 'Hintergrund',            description: 'Hintergrundfarbe der Sektion' },
+  sectionBgAlt:     { cssVar: '--style-section-bg-alt',   label: 'Hintergrund (Alt)',      description: 'Alternativer Hintergrund (z.B. für gerade/ungerade Sektionen)' },
+  cardBg:           { cssVar: '--style-card-bg',          label: 'Karten-Hintergrund',     description: 'Hintergrund von Karten/Containern' },
+  headingColor:     { cssVar: '--style-heading-color',    label: 'Headline',               description: 'Farbe der Hauptüberschrift' },
+  subheadingColor:  { cssVar: '--style-subheading-color', label: 'Subheadline',            description: 'Farbe der Unterüberschrift' },
+  bodyColor:        { cssVar: '--style-body-color',       label: 'Fließtext',              description: 'Farbe des Fließtexts' },
+  mutedColor:       { cssVar: '--style-text-muted',       label: 'Dezenter Text',          description: 'Dezente Texte, Labels, Eyebrow' },
+  iconColor:        { cssVar: '--style-icon-color',       label: 'Icons',                  description: 'Farbe der Icons' },
+  accentColor:      { cssVar: '--style-accent-color',     label: 'Akzentfarbe',            description: 'Akzente, Linien, Hervorhebungen' },
+  btnBg:            { cssVar: '--brand-btn-bg',           label: 'Button Hintergrund',     description: 'CTA-Button Hintergrund' },
+  btnText:          { cssVar: '--brand-btn-text',         label: 'Button Text',            description: 'CTA-Button Textfarbe' },
+  btnSecondaryBg:   { cssVar: '--brand-btn-secondary-bg', label: 'Sekundär-Button BG',    description: 'Sekundärer Button Hintergrund' },
+  btnSecondaryText: { cssVar: '--brand-btn-secondary-text',label: 'Sekundär-Button Text', description: 'Sekundärer Button Textfarbe' },
+  badgeBg:          { cssVar: '--style-badge-bg',         label: 'Badge/Eyebrow BG',       description: 'Badge/Eyebrow Hintergrund' },
+  badgeText:        { cssVar: '--style-badge-text',       label: 'Badge/Eyebrow Text',     description: 'Badge/Eyebrow Textfarbe' },
+  badgeBorder:      { cssVar: '--style-badge-border',     label: 'Badge/Eyebrow Rahmen',   description: 'Badge/Eyebrow Rahmenfarbe' },
+  borderColor:      { cssVar: '--style-border-color',     label: 'Rahmenfarbe',            description: 'Rahmen/Border von Karten' },
+  dividerColor:     { cssVar: '--style-divider-color',    label: 'Trennlinie',             description: 'Trennlinien zwischen Elementen' },
+  cardRadius:       { cssVar: '--style-card-radius',      label: 'Karten-Radius',          description: 'Abrundung der Kartenecken', type: 'size' },
+  cardShadow:       { cssVar: '--style-card-shadow',      label: 'Karten-Schatten',        description: 'Schatten der Karten', type: 'size' },
+  buttonRadius:     { cssVar: '--style-button-radius',    label: 'Button-Radius',          description: 'Abrundung der Buttons', type: 'size' },
 };
 
 /* ─── Mapping: section type → relevant fields ─── */
-const ALWAYS: ColorFieldKey[] = ['sectionBg'];
-
 const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   // SHARED
-  hero:              ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
-  servicesGrid:      ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
+  hero:              ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder'],
+  servicesGrid:      ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder', 'borderColor', 'cardRadius', 'cardShadow'],
   processSteps:      ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'iconColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor'],
-  textImage:         ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
-  faq:               ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText'],
-  testimonials:      ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
-  ctaBand:           ['sectionBg', 'headingColor', 'bodyColor', 'btnBg', 'btnText'],
-  contact:           ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'borderColor'],
+  textImage:         ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder'],
+  faq:               ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText', 'badgeBorder'],
+  testimonials:      ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText', 'cardRadius', 'cardShadow'],
+  ctaBand:           ['sectionBg', 'headingColor', 'bodyColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
+  contact:           ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
   additionalLocations:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  team:              ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
+  team:              ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText', 'cardRadius'],
   galleryGrid:       ['sectionBg', 'headingColor', 'subheadingColor', 'badgeBg', 'badgeText'],
-  stats:             ['sectionBg', 'headingColor', 'bodyColor', 'accentColor'],
-  statsCounter:      ['sectionBg', 'headingColor', 'bodyColor', 'accentColor'],
+  stats:             ['sectionBg', 'headingColor', 'bodyColor', 'accentColor', 'badgeBg', 'badgeText'],
+  statsCounter:      ['sectionBg', 'headingColor', 'bodyColor', 'accentColor', 'badgeBg', 'badgeText'],
   logoCloud:         ['sectionBg', 'headingColor', 'mutedColor'],
   logoMarquee:       ['sectionBg', 'headingColor', 'mutedColor'],
   uspStrip:          ['sectionBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor'],
-  newsPreview:       ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
-  newsGrid:          ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor'],
-  portfolio:         ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
-  serviceDetail:     ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'borderColor'],
-  servicePackages:   ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
+  newsPreview:       ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText', 'cardRadius'],
+  newsGrid:          ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor', 'cardRadius'],
+  portfolio:         ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText', 'cardRadius'],
+  serviceDetail:     ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'cardRadius'],
+  servicePackages:   ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText', 'cardRadius'],
   comparisonTable:   ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'borderColor'],
   socialProofBar:    ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'borderColor'],
   timeline:          ['sectionBg', 'headingColor', 'bodyColor', 'accentColor', 'iconColor', 'dividerColor'],
-  bentoGrid:         ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'borderColor'],
-  testimonialMarquee:['sectionBg', 'cardBg', 'bodyColor', 'mutedColor', 'borderColor'],
-  featureShowcase:   ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'borderColor'],
+  bentoGrid:         ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'borderColor', 'cardRadius', 'cardShadow'],
+  testimonialMarquee:['sectionBg', 'cardBg', 'bodyColor', 'mutedColor', 'borderColor', 'cardRadius'],
+  featureShowcase:   ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText'],
   verticalTimeline:  ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'dividerColor'],
   beforeAfterSlider: ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'badgeBg', 'badgeText'],
   horizontalScrollShowcase:['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText'],
-  productShowcase:   ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'badgeBg', 'badgeText', 'borderColor'],
+  productShowcase:   ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius'],
   categoryMosaic:    ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'badgeBg', 'badgeText'],
   brandShowroom:     ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
   consultationBooking:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'borderColor'],
@@ -76,13 +84,13 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   richText:          ['sectionBg', 'headingColor', 'bodyColor', 'accentColor'],
   freeText:          ['sectionBg', 'headingColor', 'bodyColor'],
   legalContent:      ['sectionBg', 'headingColor', 'bodyColor'],
-  videoEmbed:        ['sectionBg', 'headingColor', 'subheadingColor'],
-  embed:             ['sectionBg'],
+  videoEmbed:        ['sectionBg', 'headingColor', 'subheadingColor', 'badgeBg', 'badgeText'],
+  embed:             ['sectionBg', 'headingColor'],
   noticeBanner:      ['sectionBg', 'headingColor', 'bodyColor', 'iconColor', 'btnBg', 'btnText'],
   popup:             ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'borderColor'],
   collectionHero:    ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'badgeBg', 'badgeText'],
-  collectionList:    ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  ctaLinks:          ['sectionBg', 'headingColor', 'accentColor'],
+  collectionList:    ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius'],
+  ctaLinks:          ['sectionBg', 'headingColor', 'accentColor', 'iconColor'],
   headerBanner:      ['sectionBg', 'headingColor', 'bodyColor'],
   map:               ['sectionBg', 'headingColor'],
   // RESTAURANT
@@ -149,9 +157,9 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   rsvp:              ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'btnBg', 'btnText'],
   weddingMenu:       ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'borderColor'],
   // PHOTOGRAPHY
-  portfolioGallery:  ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor'],
-  photographerAbout: ['sectionBg', 'headingColor', 'bodyColor', 'accentColor'],
-  shootingProcess:   ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'dividerColor'],
+  portfolioGallery:  ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'badgeBg', 'badgeText'],
+  photographerAbout: ['sectionBg', 'headingColor', 'bodyColor', 'accentColor', 'badgeBg', 'badgeText'],
+  shootingProcess:   ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'dividerColor', 'badgeBg', 'badgeText'],
   // CONSULTING
   practiceAreas:     ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'borderColor'],
   caseResults:       ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'badgeBg', 'badgeText'],
@@ -182,43 +190,46 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   flashDayBanner:    ['sectionBg', 'headingColor', 'bodyColor', 'btnBg', 'btnText', 'accentColor'],
   aftercareSteps:    ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'dividerColor'],
   // SHOP
-  shopProductGrid:   ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
+  shopProductGrid:   ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius'],
   shopProductDetail: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor'],
   shopFeaturedProducts:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
   shopCategoryOverview:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'badgeBg', 'badgeText', 'borderColor'],
   shopCart:          ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'dividerColor'],
   shopCheckout:      ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'dividerColor'],
   shopThankYou:      ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  cinematicHero:     ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
-  spotlightCards:    ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText'],
+  // PREMIUM
+  cinematicHero:     ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder'],
+  spotlightCards:    ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText', 'cardRadius', 'cardShadow'],
   scrollStory:       ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor', 'dividerColor'],
   premiumComparison: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText'],
   immersiveCtaBanner:['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
-  proofWall:         ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText'],
+  proofWall:         ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText', 'cardRadius'],
   editorialFeatureRail:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'borderColor', 'btnBg', 'btnText'],
   offerCampaignStrip:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
   beforeAfterStoryPro:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
-  signatureGrid:     ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText'],
+  signatureGrid:     ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'borderColor', 'badgeBg', 'badgeText', 'cardRadius'],
   comparisonCardsPro:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
   templateAdvantage: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
-  principlesGrid:    ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  glowHero:          ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeText'],
-  floristHero:       ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeText'],
+  principlesGrid:    ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius'],
+  glowHero:          ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder'],
+  floristHero:       ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder'],
   bouquetShowcase:   ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'badgeBg', 'badgeText', 'borderColor'],
   occasionMosaic:    ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'badgeBg', 'badgeText'],
   weddingFloristry:  ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
   workshopBooking:   ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'borderColor'],
   seasonalCampaign:  ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
   floristMaterials:  ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'badgeBg', 'badgeText', 'borderColor'],
-  fitnessHero:       ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeText'],
-  programGrid:       ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
+  // FITNESS
+  fitnessHero:       ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder'],
+  programGrid:       ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius'],
   courseSchedule:    ['sectionBg', 'headingColor', 'bodyColor', 'accentColor', 'iconColor', 'dividerColor'],
   trainerProfiles:   ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
   membershipPlans:   ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
   trialSessionCta:   ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
   transformationStories:['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'badgeBg', 'badgeText'],
   studioAmenities:   ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'borderColor'],
-  locationHero:      ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
+  // LOCATION
+  locationHero:      ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder'],
   spaceShowcase:     ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'badgeBg', 'badgeText', 'borderColor'],
   eventTypes:        ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'badgeBg', 'badgeText'],
   availabilityCta:   ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
@@ -231,21 +242,31 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
 };
 
 function getFieldsForSection(sectionType: string): ColorFieldKey[] {
-  return SECTION_FIELDS[sectionType] || ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText'];
+  return SECTION_FIELDS[sectionType] || ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'];
 }
 
 export function SectionColorEditor({ value, onChange, sectionType, resolvedVars, iframeRef, sectionId }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string; resolvedVars?: Record<string, string>; iframeRef?: React.RefObject<HTMLIFrameElement | null>; sectionId?: string }) {
   const [open, setOpen] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [computedVars, setComputedVars] = useState<Record<string, string>>({});
   const probeRef = useRef<HTMLDivElement>(null);
   const overrides = value || {};
   const activeCount = Object.values(overrides).filter(Boolean).length;
-  const fields = sectionType ? getFieldsForSection(sectionType) : Object.keys(FIELD_DEFS) as ColorFieldKey[];
+  const allFields = sectionType ? getFieldsForSection(sectionType) : Object.keys(FIELD_DEFS) as ColorFieldKey[];
+  
+  // Split into color fields and design token fields
+  const colorFields = allFields.filter(f => FIELD_DEFS[f]?.type !== 'size');
+  const designFields = allFields.filter(f => FIELD_DEFS[f]?.type === 'size');
 
   // All CSS vars we need to read
   const allVarKeys = [
-    ...fields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean),
-    '--style-text-primary', '--style-text-secondary', '--brand-primary', '--brand-accent', '--brand-dark', '--style-card-bg', '--style-section-bg', '--style-card-border', '--style-border-color', '--style-divider-color', '--style-text-muted', '--style-badge-bg', '--style-badge-text',
+    ...allFields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean),
+    '--style-text-primary', '--style-text-secondary', '--brand-primary', '--brand-accent', '--brand-dark', '--brand-secondary',
+    '--style-card-bg', '--style-section-bg', '--style-section-bg-alt', '--style-card-border', '--style-border-color',
+    '--style-divider-color', '--style-text-muted', '--style-badge-bg', '--style-badge-text', '--style-badge-border',
+    '--style-card-radius', '--style-card-shadow', '--style-button-radius', '--style-icon-color', '--style-accent-color',
+    '--style-heading-color', '--style-subheading-color', '--style-body-color', '--brand-btn-bg', '--brand-btn-text',
+    '--brand-btn-secondary-bg', '--brand-btn-secondary-text',
   ];
 
   const readComputedStyles = useCallback(() => {
@@ -283,36 +304,50 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
 
   useEffect(() => {
     if (open) {
-      // Small delay to ensure probe element is rendered with styles
       const t = setTimeout(readComputedStyles, 50);
       return () => clearTimeout(t);
     }
   }, [open, readComputedStyles]);
 
+  // Comprehensive fallback chain for resolving display colors
   const getResolvedColor = (cssVar: string): string | undefined => {
-    // Prefer computed (100% accurate) over static fallback
+    // 1. Computed from iframe/probe (100% accurate)
     if (computedVars[cssVar]) return computedVars[cssVar];
-    if (!resolvedVars) return undefined;
-    if (resolvedVars[cssVar]) return resolvedVars[cssVar];
-    // Fallback chain for granular vars
-    const fallbacks: Record<string, string> = {
-      '--style-heading-color': '--style-text-primary',
-      '--style-subheading-color': '--style-text-secondary',
-      '--style-body-color': '--style-text-secondary',
-      '--style-icon-color': '--brand-primary',
-      '--style-accent-color': '--brand-primary',
-      '--style-border-color': '--style-card-border',
-      '--style-divider-color': '--style-border-color',
-      '--brand-btn-bg': '--brand-accent',
-      '--brand-btn-text': '--brand-dark',
+    // 2. From resolvedVars (style + brand combined)
+    if (resolvedVars?.[cssVar]) return resolvedVars[cssVar];
+    // 3. Fallback chain for vars that derive from others
+    const fallbacks: Record<string, string[]> = {
+      '--style-heading-color': ['--style-text-primary', '--brand-dark'],
+      '--style-subheading-color': ['--style-text-secondary', '--style-text-primary'],
+      '--style-body-color': ['--style-text-secondary', '--style-text-primary'],
+      '--style-text-muted': ['--style-text-secondary'],
+      '--style-icon-color': ['--brand-primary', '--style-accent-color', '--brand-accent'],
+      '--style-accent-color': ['--brand-accent', '--brand-primary'],
+      '--style-border-color': ['--style-card-border'],
+      '--style-divider-color': ['--style-border-color', '--style-card-border'],
+      '--brand-btn-bg': ['--brand-accent', '--brand-primary'],
+      '--brand-btn-text': ['--brand-dark'],
+      '--brand-btn-secondary-bg': ['--style-section-bg'],
+      '--brand-btn-secondary-text': ['--brand-primary'],
+      '--style-badge-bg': ['--brand-primary'],
+      '--style-badge-text': ['--brand-primary'],
+      '--style-badge-border': ['--brand-primary'],
+      '--style-section-bg-alt': ['--style-section-bg'],
+      '--style-card-bg': ['--style-section-bg'],
     };
-    const fb = fallbacks[cssVar];
-    if (fb) return computedVars[fb] || resolvedVars[fb] || undefined;
+    const chain = fallbacks[cssVar];
+    if (chain) {
+      for (const fb of chain) {
+        const val = computedVars[fb] || resolvedVars?.[fb];
+        if (val) return val;
+      }
+    }
     return undefined;
   };
 
   const handleChange = (key: string, color: string) => {
     const next = { ...overrides, [key]: color };
+    // Sync related vars
     if (key === '--style-accent-color') {
       next['--brand-primary'] = color;
       next['--brand-accent'] = color;
@@ -337,6 +372,69 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
     onChange(Object.keys(next).length > 0 ? next : null);
   };
 
+  function renderColorField(fieldKey: ColorFieldKey) {
+    const def = FIELD_DEFS[fieldKey];
+    if (!def) return null;
+    const currentOverride = overrides[def.cssVar]
+      || (def.cssVar === '--style-accent-color' ? overrides['--brand-primary'] : '')
+      || (def.cssVar === '--style-border-color' ? (overrides['--style-card-border'] || '').replace(/^1px solid\s+/, '') : '')
+      || '';
+    const resolved = getResolvedColor(def.cssVar);
+    const displayColor = currentOverride || resolved || '';
+    return (
+      <label key={fieldKey} className="block">
+        <span className="text-gray-600 text-xs" title={def.description}>{def.label}</span>
+        <div className="flex items-center gap-2 mt-1">
+          <div className="relative">
+            <input
+              type="color"
+              className="w-8 h-8 rounded border border-gray-200 cursor-pointer p-0"
+              value={displayColor || '#000000'}
+              onChange={(e) => handleChange(def.cssVar, e.target.value)}
+            />
+            {!currentOverride && resolved && (
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full border border-white" style={{ background: resolved }} title={`Aktuell: ${resolved}`} />
+            )}
+          </div>
+          <input
+            type="text"
+            className="admin-input flex-1 text-xs font-mono"
+            placeholder={resolved || '—'}
+            value={currentOverride}
+            onChange={(e) => handleChange(def.cssVar, e.target.value)}
+          />
+          {currentOverride && (
+            <button type="button" className="text-xs text-red-400 hover:text-red-600" onClick={() => handleClear(def.cssVar)}>✕</button>
+          )}
+        </div>
+      </label>
+    );
+  }
+
+  function renderDesignField(fieldKey: ColorFieldKey) {
+    const def = FIELD_DEFS[fieldKey];
+    if (!def) return null;
+    const currentOverride = overrides[def.cssVar] || '';
+    const resolved = computedVars[def.cssVar] || resolvedVars?.[def.cssVar] || '';
+    return (
+      <label key={fieldKey} className="block">
+        <span className="text-gray-600 text-xs" title={def.description}>{def.label}</span>
+        <div className="flex items-center gap-2 mt-1">
+          <input
+            type="text"
+            className="admin-input flex-1 text-xs font-mono"
+            placeholder={resolved || '—'}
+            value={currentOverride}
+            onChange={(e) => handleChange(def.cssVar, e.target.value)}
+          />
+          {currentOverride && (
+            <button type="button" className="text-xs text-red-400 hover:text-red-600" onClick={() => handleClear(def.cssVar)}>✕</button>
+          )}
+        </div>
+      </label>
+    );
+  }
+
   return (
     <details className="mt-4" open={open} onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
       <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1">
@@ -344,45 +442,21 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
         {activeCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-[10px] font-medium">{activeCount}</span>}
       </summary>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-        {fields.map((fieldKey) => {
-          const def = FIELD_DEFS[fieldKey];
-          if (!def) return null;
-          const currentOverride = overrides[def.cssVar]
-            || (def.cssVar === '--style-accent-color' ? overrides['--brand-primary'] : '')
-            || (def.cssVar === '--style-border-color' ? (overrides['--style-card-border'] || '').replace(/^1px solid\s+/, '') : '')
-            || '';
-          const resolved = getResolvedColor(def.cssVar);
-          const displayColor = currentOverride || resolved || '';
-          return (
-            <label key={fieldKey} className="block">
-              <span className="text-gray-600 text-xs" title={def.description}>{def.label}</span>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="relative">
-                  <input
-                    type="color"
-                    className="w-8 h-8 rounded border border-gray-200 cursor-pointer p-0"
-                    value={displayColor || '#000000'}
-                    onChange={(e) => handleChange(def.cssVar, e.target.value)}
-                  />
-                  {!currentOverride && resolved && (
-                    <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full border border-white" style={{ background: resolved }} title={`Aktuell: ${resolved}`} />
-                  )}
-                </div>
-                <input
-                  type="text"
-                  className="admin-input flex-1 text-xs font-mono"
-                  placeholder={resolved || '—'}
-                  value={currentOverride}
-                  onChange={(e) => handleChange(def.cssVar, e.target.value)}
-                />
-                {currentOverride && (
-                  <button type="button" className="text-xs text-red-400 hover:text-red-600" onClick={() => handleClear(def.cssVar)}>✕</button>
-                )}
-              </div>
-            </label>
-          );
-        })}
+        {colorFields.map(renderColorField)}
       </div>
+      {designFields.length > 0 && (
+        <div className="mt-3 pt-3 border-t border-zinc-100">
+          <button type="button" className="text-xs text-zinc-500 flex items-center gap-1 mb-2" onClick={() => setShowAdvanced(!showAdvanced)}>
+            <ChevronDown size={12} className={`transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+            Design-Tokens (Radius, Schatten)
+          </button>
+          {showAdvanced && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {designFields.map(renderDesignField)}
+            </div>
+          )}
+        </div>
+      )}
       {activeCount > 0 && (
         <button type="button" className="mt-3 text-xs text-red-500 hover:text-red-700" onClick={() => onChange(null)}>
           Alle Farb-Overrides entfernen
