@@ -31,7 +31,7 @@ type Page = {
   type: string;
 };
 
-export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {}, hasShop = false, i18n }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string } }) {
+export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {}, hasShop = false, i18n, collections }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string }; collections?: { key: string; label: string; items: { id: string; title: string; slug: string; data: unknown }[] }[] }) {
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
   const [activeLocale, setActiveLocale] = useState(i18n?.defaultLocale || 'de');
@@ -52,7 +52,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const sendPreviewData = useCallback(() => {
     if (!preview.isOpen) return;
     const liveSections = buildLiveSections(sectionsRef.current, pendingChanges.current);
-    preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale });
+    preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale, collections });
   }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, activeLocale]);
 
   useEffect(() => { sendPreviewData(); }, [sections, sendPreviewData]);
