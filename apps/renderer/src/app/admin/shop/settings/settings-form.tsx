@@ -26,6 +26,7 @@ type Settings = {
   invoicePrefix: string;
   notificationEmail: string | null;
   lowStockThreshold: number;
+  taxClasses: { key: string; label: string; rate: number }[];
   companyInfo: { name: string; street: string; zip: string; city: string; country: string; email?: string; phone?: string; taxId?: string; vatId?: string; registerCourt?: string; registerNumber?: string; ceo?: string } | null;
 };
 
@@ -52,6 +53,11 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
     invoicePrefix: initial?.invoicePrefix || 'RE',
     notificationEmail: initial?.notificationEmail || null,
     lowStockThreshold: initial?.lowStockThreshold || 5,
+    taxClasses: initial?.taxClasses || [
+      { key: 'standard', label: 'Standard', rate: 19 },
+      { key: 'reduced', label: 'Ermäßigt', rate: 7 },
+      { key: 'free', label: 'Steuerfrei', rate: 0 },
+    ],
     companyInfo: initial?.companyInfo || null,
   });
 
@@ -125,6 +131,27 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
         </div>
       </div>
 
+      {/* Tax classes */}
+      <div className="bg-white rounded-xl border border-zinc-200 p-5 space-y-4">
+        <h2 className="font-semibold text-sm text-zinc-700">Steuerklassen</h2>
+        <p className="text-xs text-zinc-500">Definieren Sie die verfügbaren Steuersätze für Ihre Produkte.</p>
+        <div className="space-y-2">
+          {data.taxClasses.map((tc, idx) => (
+            <div key={idx} className="flex items-center gap-2">
+              <input value={tc.label} onChange={e => { const arr = [...data.taxClasses]; arr[idx] = { ...arr[idx], label: e.target.value }; set('taxClasses', arr); }} className="flex-1 px-3 py-2 rounded-lg border border-zinc-200 text-sm" placeholder="Bezeichnung" />
+              <div className="flex items-center gap-1">
+                <input type="number" value={tc.rate} onChange={e => { const arr = [...data.taxClasses]; arr[idx] = { ...arr[idx], rate: Number(e.target.value) }; set('taxClasses', arr); }} className="w-16 px-2 py-2 rounded-lg border border-zinc-200 text-sm text-right" min={0} max={100} />
+                <span className="text-xs text-zinc-500">%</span>
+              </div>
+              {data.taxClasses.length > 1 && (
+                <button type="button" onClick={() => set('taxClasses', data.taxClasses.filter((_, i) => i !== idx))} className="text-xs text-red-500 hover:text-red-700">×</button>
+              )}
+            </div>
+          ))}
+          <button type="button" onClick={() => set('taxClasses', [...data.taxClasses, { key: `custom-${Date.now()}`, label: '', rate: 0 }])} className="text-xs text-blue-600 hover:underline">+ Steuerklasse hinzufügen</button>
+        </div>
+      </div>
+
       {/* Payment methods */}
       <div className="bg-white rounded-xl border border-zinc-200 p-5 space-y-4">
         <h2 className="font-semibold text-sm text-zinc-700">Firmendaten (Rechnungspflichtangaben)</h2>
@@ -151,6 +178,27 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
               <label className="block text-xs font-medium text-zinc-500 mb-1">Ort *</label>
               <input value={data.companyInfo?.city || ''} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), city: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm" />
             </div>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">Land</label>
+            <select value={data.companyInfo?.country || 'DE'} onChange={e => set('companyInfo', { ...(data.companyInfo || { name: '', street: '', zip: '', city: '', country: 'DE' }), country: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm">
+              <option value="DE">Deutschland</option>
+              <option value="AT">Österreich</option>
+              <option value="CH">Schweiz</option>
+              <option value="LU">Luxemburg</option>
+              <option value="LI">Liechtenstein</option>
+              <option value="NL">Niederlande</option>
+              <option value="BE">Belgien</option>
+              <option value="FR">Frankreich</option>
+              <option value="IT">Italien</option>
+              <option value="ES">Spanien</option>
+              <option value="PL">Polen</option>
+              <option value="CZ">Tschechien</option>
+              <option value="DK">Dänemark</option>
+              <option value="SE">Schweden</option>
+              <option value="GB">Vereinigtes Königreich</option>
+              <option value="US">USA</option>
+            </select>
           </div>
           <div>
             <label className="block text-xs font-medium text-zinc-500 mb-1">E-Mail</label>
