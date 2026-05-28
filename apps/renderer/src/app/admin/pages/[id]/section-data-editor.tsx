@@ -29,10 +29,11 @@ function useReport(data: Record<string, unknown>, onChange: (d: Record<string, u
 const FIELD_LABELS: Record<string, string> = {
   // Common / Generic
   headline: 'Überschrift',
+  halfWidth: 'Halbe Breite',
   subline: 'Unterzeile',
-  badgeText: 'Badge-Text',
+  badgeText: 'Badge (kleines Label oben)',
   badge: 'Badge',
-  eyebrow: 'Dachzeile',
+  eyebrow: 'Dachzeile (kleiner Text über Überschrift)',
   text: 'Text',
   content: 'Inhalt',
   intro: 'Einleitung',
@@ -65,13 +66,13 @@ const FIELD_LABELS: Record<string, string> = {
   primaryCta: 'Primärer Button',
   secondaryCta: 'Sekundärer Button',
   ctaPrimary: 'Primärer Button',
-  ctaLabel: 'Button-Text',
-  ctaHref: 'Button-Link',
+  ctaLabel: 'Button-Beschriftung',
+  ctaHref: 'Button-Ziel (URL oder /pfad)',
   cta: 'Call-to-Action',
   label: 'Beschriftung',
-  href: 'Link-Ziel',
+  href: 'Link-Ziel (URL oder /pfad)',
   linkLabel: 'Link-Text',
-  linkHref: 'Link-Ziel',
+  linkHref: 'Link-Ziel (URL oder /pfad)',
   submitLabel: 'Absende-Button',
   continueShoppingLabel: 'Weiter-Einkaufen-Text',
   checkoutLabel: 'Zur-Kasse-Text',
@@ -87,20 +88,20 @@ const FIELD_LABELS: Record<string, string> = {
   logo: 'Logo',
 
   // Lists / Items
-  items: 'Einträge',
+  items: 'Einträge / Elemente',
   links: 'Links',
-  cards: 'Karten',
-  steps: 'Schritte',
-  entries: 'Einträge',
-  features: 'Merkmale',
+  cards: 'Karten (Inhaltsblöcke)',
+  steps: 'Schritte / Abschnitte',
+  entries: 'Einträge (z.B. Zeitstrahl)',
+  features: 'Merkmale / Vorteile',
   facts: 'Fakten',
   values: 'Werte',
   stats: 'Statistiken',
   highlights: 'Highlights',
   logos: 'Logos',
   images: 'Bilder',
-  panels: 'Panels',
-  slides: 'Slides',
+  panels: 'Panels (Scroll-Abschnitte)',
+  slides: 'Slides (Inhaltsblöcke)',
   members: 'Team-Mitglieder',
   projects: 'Projekte',
   categories: 'Kategorien',
@@ -140,7 +141,7 @@ const FIELD_LABELS: Record<string, string> = {
   prefix: 'Präfix',
 
   // Collection
-  collectionKey: 'Collection-Schlüssel',
+  collectionKey: 'Collection (z.B. news, leistungen)',
   sortBy: 'Sortierung',
   showImage: 'Bild anzeigen',
   showDate: 'Datum anzeigen',
@@ -151,7 +152,7 @@ const FIELD_LABELS: Record<string, string> = {
   showSort: 'Sortierung anzeigen',
 
   // Shop
-  mode: 'Modus',
+  mode: 'Anzeigemodus',
   categorySlug: 'Kategorie-Slug',
   productIds: 'Produkt-IDs',
   count: 'Anzahl',
@@ -164,11 +165,11 @@ const FIELD_LABELS: Record<string, string> = {
   frequency: 'Häufigkeit',
 
   // Process / Timeline
-  icon: 'Icon',
+  icon: 'Icon (Lucide Icon-Name)',
   number: 'Nummer',
   year: 'Jahr',
   timeLabel: 'Zeitangabe',
-  kicker: 'Kicker',
+  kicker: 'Kicker (Einleitung über dem Titel)',
   checkmarks: 'Häkchen',
 
   // Before/After
@@ -176,10 +177,10 @@ const FIELD_LABELS: Record<string, string> = {
   imageAfter: 'Bild nachher',
   labelBefore: 'Label vorher',
   labelAfter: 'Label nachher',
-  aspectRatio: 'Seitenverhältnis',
+  aspectRatio: 'Seitenverhältnis (z.B. 16:9)',
 
   // Showcase / Product
-  span: 'Spanne (Grid)',
+  span: 'Breite im Grid (1–3 Spalten)',
   size: 'Größe',
   mediaType: 'Medientyp',
   panelHeight: 'Panel-Höhe',
@@ -233,6 +234,9 @@ const FIELD_LABELS: Record<string, string> = {
 
 // ─── FIELD HELP TEXTS (German) ────────────────────────────────────────────────
 const FIELD_HELP: Record<string, string> = {
+  cards: 'Die einzelnen Karten/Blöcke in der Darstellung.',
+  slides: 'Die einzelnen Inhaltsblöcke die nacheinander angezeigt werden.',
+  kicker: 'Kurzer einleitender Text über dem Titel eines Slides oder einer Karte.',
   headline: 'Die Hauptüberschrift der Section.',
   subline: 'Ergänzender Text unter der Überschrift.',
   badgeText: 'Kleines Label über der Überschrift (z.B. "Neu", "Top bewertet").',
@@ -422,6 +426,7 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       return (
         <label key={renderKey} className="flex items-center justify-between gap-3 py-1 cursor-pointer group">
           <span className="text-sm text-zinc-700">{label}</span>
+          {typeof path[path.length - 1] === 'string' && <HelpHint fieldKey={String(path[path.length - 1])} />}
           <button type="button" role="switch" aria-checked={value} onClick={() => updateAtPath(path, !value)}
             className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${value ? 'bg-blue-600' : 'bg-zinc-300'}`}>
             <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${value ? 'translate-x-6' : 'translate-x-1'}`} />
@@ -476,6 +481,7 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
         <div key={renderKey} className="space-y-2">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs font-semibold text-zinc-600">{label}</span>
+            {typeof path[path.length - 1] === 'string' && <HelpHint fieldKey={String(path[path.length - 1])} />}
             <button type="button" className="text-xs font-medium text-blue-600 hover:underline" onClick={() => updateAtPath(path, [...value, createEmptyLike(sample)])}>+ Eintrag</button>
           </div>
           <div className="space-y-3">
@@ -815,7 +821,7 @@ function Field({ label, value, onChange, multiline, placeholder, help }: { label
   return (
     <label className="block text-sm">
       <span className="text-gray-600 text-xs">{label}</span>
-      {help && <span className="ml-1 text-[10px] text-zinc-400">— {help}</span>}
+      {help && <p className="text-[11px] text-zinc-400 mt-0.5 mb-1">{help}</p>}
       <input className="admin-input mt-1 w-full" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
       {help && <p className="text-[11px] text-zinc-400 mt-0.5">{help}</p>}
     </label>
