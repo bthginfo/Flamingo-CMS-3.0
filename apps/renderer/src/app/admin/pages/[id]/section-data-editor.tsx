@@ -670,7 +670,7 @@ function StatsEditor({ data, onChange }: EditorProps) {
             <Field label="Nachzeichen" value={stat.suffix} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, suffix: v } : s))} placeholder="z.B. +, %, Jahre" help="Wird hinter dem Zahlenwert angezeigt" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Beschriftung" value={stat.label} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} help="Erklärt den Zahlenwert, z.B. \"zufriedene Kunden\"" />
+            <Field label="Beschriftung" value={stat.label} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} help={'Erklärt den Zahlenwert, z.B. "zufriedene Kunden"'} />
             <IconPickerField label="Icon" value={stat.icon} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, icon: v } : s))} />
           </div>
         </div>
