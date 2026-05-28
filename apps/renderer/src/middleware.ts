@@ -7,6 +7,15 @@ export function middleware(request: NextRequest) {
 
   // Allow login page, demo-login and API routes
   if (pathname === '/admin/login' || pathname === '/admin/demo-login' || pathname.startsWith('/api/')) {
+    // If a tenant param is specified and user has an existing session,
+    // clear the old session to prevent tenant cross-contamination
+    const tenantParam = searchParams.get('tenant');
+    const existingToken = request.cookies.get(getSessionCookieName())?.value;
+    if (tenantParam && existingToken) {
+      const response = NextResponse.next();
+      response.cookies.delete(getSessionCookieName());
+      return response;
+    }
     return NextResponse.next();
   }
 
