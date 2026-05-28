@@ -340,6 +340,12 @@ function fieldHelp(key: string): string | undefined {
 return FIELD_HELP[key];
 }
 
+function HelpHint({ fieldKey }: { fieldKey: string }) {
+  const help = FIELD_HELP[fieldKey];
+  if (!help) return null;
+  return <p className="text-[11px] text-zinc-400 mt-0.5 mb-1">{help}</p>;
+}
+
 // Generic section data editor that renders a form per section type.
 export function SectionDataEditor({ type, data, onChange }: { type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void }) {
   const Editor = EDITORS[type] ?? SchemaSectionEditor;
@@ -481,6 +487,7 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
         <div key={renderKey} className="space-y-2">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs font-semibold text-zinc-600">{label}</span>
+            <HelpHint fieldKey={String(path[path.length - 1])} />
             {typeof path[path.length - 1] === 'string' && <HelpHint fieldKey={String(path[path.length - 1])} />}
             <button type="button" className="text-xs font-medium text-blue-600 hover:underline" onClick={() => updateAtPath(path, [...value, createEmptyLike(sample)])}>+ Eintrag</button>
           </div>
