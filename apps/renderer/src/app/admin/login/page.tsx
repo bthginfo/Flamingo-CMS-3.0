@@ -10,7 +10,11 @@ export default function LoginPage() {
   const [tenant, setTenant] = useState('');
 
   useEffect(() => {
-    setTenant(new URLSearchParams(window.location.search).get('tenant') || '');
+    const urlTenant = new URLSearchParams(window.location.search).get('tenant') || '';
+    const cookieTenant = document.cookie.match(/flamingo_login_tenant=([^;]+)/)?.[1] || '';
+    setTenant(urlTenant || cookieTenant);
+    // Clear the hint cookie after reading
+    if (cookieTenant) document.cookie = 'flamingo_login_tenant=; path=/admin; max-age=0';
   }, []);
 
   useEffect(() => {
