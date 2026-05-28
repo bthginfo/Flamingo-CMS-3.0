@@ -1,9 +1,9 @@
 import nodemailer from 'nodemailer';
 import { getDb } from '@/lib/db';
-import { globalSettings, shopSettings } from '@flamingo/db';
+import { shopSettings } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
+import { getEffectiveSmtp, type SmtpConfig } from '@/lib/smtp';
 
-type SmtpConfig = { host: string; port: number; user: string; pass: string; from: string };
 
 type OrderData = {
   orderNumber: string;
@@ -18,24 +18,7 @@ type OrderData = {
 };
 
 async function getSmtp(tenantId: string): Promise<SmtpConfig | null> {
-  const db = getDb();
-  const [settings] = await db.select({ smtp: globalSettings.smtp })
-    .from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
-
-  const smtp = settings?.smtp as SmtpConfig | null;
-  if (smtp?.host && smtp?.user && smtp?.pass && smtp?.from) return smtp;
-
-  // Fallback to platform SMTP
-  if (process.env.PLATFORM_SMTP_HOST && process.env.PLATFORM_SMTP_USER && process.env.PLATFORM_SMTP_PASS && process.env.PLATFORM_SMTP_FROM) {
-    return {
-      host: process.env.PLATFORM_SMTP_HOST,
-      port: Number(process.env.PLATFORM_SMTP_PORT) || 587,
-      user: process.env.PLATFORM_SMTP_USER,
-      pass: process.env.PLATFORM_SMTP_PASS,
-      from: process.env.PLATFORM_SMTP_FROM,
-    };
-  }
-  return null;
+  return getEffectiveSmtp(tenantId);
 }
 
 function formatPrice(cents: number) {
