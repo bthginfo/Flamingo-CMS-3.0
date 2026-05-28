@@ -208,7 +208,10 @@ export async function GET(
   }
 
   const taxCents = order.taxCents;
-  page.drawText('inkl. 19% MwSt.', { x: totalsX, y, font, size: 8, color: gray });
+  // Determine tax label from order items
+    const taxRates = [...new Set((order.items as any[]).map((i: any) => i.taxRate || 19))];
+    const taxLabel = taxRates.length === 1 ? `inkl. ${taxRates[0]}% MwSt.` : 'inkl. MwSt. (gemischt)';
+    page.drawText(taxLabel, { x: totalsX, y, font, size: 8, color: gray });
   page.drawText(fmtPrice(taxCents), { x: totalsValX, y, font, size: 8, color: gray });
   y -= 18;
 
