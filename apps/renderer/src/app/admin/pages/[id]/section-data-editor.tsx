@@ -34,14 +34,20 @@ type EditorProps = { type?: string; data: Record<string, unknown>; onChange: (da
 // Generic structured editor for schema-shaped section data.
 function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
   const defaults = type ? SECTION_PREVIEW_DATA[type] || {} : {};
-  const source = Object.keys(data).length > 0 ? data : defaults;
+  const [source, setSource] = useState<Record<string, unknown>>(() => Object.keys(data).length > 0 ? data : defaults);
 
   useEffect(() => {
     if (Object.keys(data).length === 0 && Object.keys(defaults).length > 0) {
+      setSource(defaults);
       onChange(defaults);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type]);
+
+  useEffect(() => {
+    setSource(Object.keys(data).length > 0 ? data : defaults);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, type]);
 
   function isRecord(value: unknown): value is Record<string, unknown> {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -64,7 +70,9 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       return current;
     };
 
-    onChange(update(source, 0) as Record<string, unknown>);
+    const next = update(source, 0) as Record<string, unknown>;
+    setSource(next);
+    onChange(next);
   }
 
   function valueAtPath(path: Array<string | number>) {

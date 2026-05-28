@@ -124,6 +124,9 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       const entries = Array.from(pendingChanges.current.entries());
       const results = await Promise.all([
         ...entries.map(([sectionId, data]) => updateSectionAction(sectionId, data, page.id)),
+        ...sections
+          .filter(section => section.styleOverrides !== undefined)
+          .map(section => updateSectionMetaAction(section.id, { styleOverrides: section.styleOverrides ?? null }, page.id)),
         seoRef.current?.save(),
       ]);
       const errors = results.filter(r => r && 'error' in r);

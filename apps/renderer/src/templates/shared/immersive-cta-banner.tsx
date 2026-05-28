@@ -17,15 +17,16 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const image = (data.image as string) || '';
+  const imagePosition = (data.imagePosition as string) || 'center';
   const overlay = (data.overlay as string) || 'rgba(0,0,0,0.58)';
   const primaryCta = (data.primaryCta as Cta) || {};
   const secondaryCta = (data.secondaryCta as Cta) || {};
   const metrics = (data.metrics as Metric[]) || [];
 
   return (
-    <section ref={ref} className="relative overflow-hidden bg-[#050505] text-white">
+    <section ref={ref} className="relative overflow-hidden bg-[var(--style-section-bg,#050505)] text-white">
       <motion.div style={{ y }} className="absolute inset-x-0 -top-10 h-[calc(100%+80px)]">
-        {image ? <img src={image} alt="" className="h-full w-full object-cover" /> : <div className="h-full bg-zinc-950" />}
+        {image ? <img src={image} alt="" className="h-full w-full object-cover" style={{ objectPosition: imagePosition }} /> : <div className="h-full bg-zinc-950" />}
         <div className="absolute inset-0" style={{ background: overlay }} />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(255,255,255,0.18),transparent_28%)]" />
       </motion.div>
@@ -36,8 +37,8 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
           {headline && <h2 className="max-w-4xl text-4xl font-black leading-none text-[var(--style-heading-color,#fff)] md:text-6xl lg:text-7xl">{headline}</h2>}
           {subline && <p className="mt-6 max-w-2xl text-base leading-8 text-[var(--style-subheading-color,rgba(255,255,255,0.78))] md:text-xl">{subline}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
-            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-btn-bg,var(--brand-primary,#fff))] px-6 py-3 text-sm font-bold text-[var(--brand-btn-text,#111)] shadow-2xl transition hover:brightness-110">{primaryCta.label}<ArrowRight size={16} /></a>}
-            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-white/20">{secondaryCta.label}</a>}
+            {primaryCta.label && <a href={primaryCta.href || '#'} className="btn-primary inline-flex items-center gap-2 rounded-full bg-[var(--brand-btn-bg,var(--brand-primary,#fff))] px-6 py-3 text-sm font-bold text-[var(--brand-btn-text,#111)] shadow-2xl transition hover:brightness-110">{primaryCta.label}<ArrowRight size={16} /></a>}
+            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="btn-secondary inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-white/20">{secondaryCta.label}</a>}
           </div>
         </div>
 
@@ -53,7 +54,7 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
                 className="rounded-2xl border border-white/14 bg-black/28 p-5 backdrop-blur-xl"
               >
                 <div className="text-3xl font-black text-[var(--style-accent-color,#fff)]">{metric.value}</div>
-                <div className="mt-1 text-sm text-white/68">{metric.label}</div>
+                <div className="mt-1 text-sm text-[var(--style-body-color,rgba(255,255,255,0.68))]">{metric.label}</div>
               </motion.div>
             ))}
           </div>
