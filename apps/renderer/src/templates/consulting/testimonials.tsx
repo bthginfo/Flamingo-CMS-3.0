@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { plain } from '@/lib/strip-html';
 import { motion, useInView } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
 
@@ -39,7 +40,7 @@ export function ConsultingTestimonialsSection({ data }: Props) {
                 ))}
               </div>
             )}
-            <p className="text-slate-700 leading-relaxed italic mb-6">&ldquo;{item.quote}&rdquo;</p>
+            <p className="text-slate-700 leading-relaxed italic mb-6">&ldquo;{plain(item.quote)}&rdquo;</p>
             <div className="border-t border-slate-100 pt-4">
               <div className="font-semibold text-slate-900 text-sm">{item.name}</div>
               {item.context && <div className="text-slate-400 text-xs mt-0.5">{item.context}</div>}
