@@ -112,7 +112,9 @@ export async function GET(
   }
 
   const taxCents = order.taxCents;
-  page.drawText('davon MwSt. 19%:', { x: 350, y, font, size: 9, color: gray });
+  const taxRates = [...new Set((order.items as any[]).map((i: any) => i.taxRate || 19))];
+    const taxLabel = taxRates.length === 1 ? `davon MwSt. ${taxRates[0]}%:` : 'davon MwSt. (gemischt):';
+    page.drawText(taxLabel, { x: 350, y, font, size: 9, color: gray });
   page.drawText(`-${fmtPrice(taxCents)}`, { x: 460, y, font, size: 9, color: gray });
   y -= 18;
 
