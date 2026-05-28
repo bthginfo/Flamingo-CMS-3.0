@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { resolveDemoTenant, resolveDemoTenantBySlug, getActiveSnapshot } from '@/lib/snapshot';
-import type { SnapshotSection } from '@/lib/snapshot';
+import type { SnapshotSection, SnapshotCollection, SnapshotCollectionItem } from '@/lib/snapshot';
 import { getTenantStyle, getTenantNav, getTenantFooter, getTenantBrand } from '@/lib/tenant-data';
 import { DemoPageShell } from '../../demo-page-shell';
 import { getDemoSite } from '../../pages';
@@ -44,6 +44,39 @@ function prefixSections(sections: SnapshotSection[], prefix: string): SnapshotSe
     ...s,
     data: prefixSectionHrefs(s.data, prefix),
   }));
+}
+
+/** Extract best image from a collection item */
+function extractItemImage(item: SnapshotCollectionItem): string | undefined {
+  if (item.data.image) return item.data.image as string;
+  const sections = item.data.sections as Array<{ type: string; data: Record<string, unknown> }> | undefined;
+  if (sections) {
+    const hero = sections.find(s => s.type === 'hero' || s.type === 'collectionHero');
+    if (hero?.data) return (hero.data.backgroundImage as string) || (hero.data.bgImage as string) || (hero.data.image as string) || undefined;
+  }
+  return undefined;
+}
+
+/** Inject collection items into collectionList/newsPreview/newsGrid sections server-side */
+function injectCollections(sections: SnapshotSection[], collections: SnapshotCollection[] | undefined, linkPrefix: string): SnapshotSection[] {
+  if (!collections) return sections;
+  return sections.map(section => {
+    if (section.type === 'newsPreview' || section.type === 'newsGrid') {
+      const key = (section.data.collectionKey as string) || 'news';
+      const col = collections.find(c => c.key === key);
+      if (col) {
+        return { ...section, data: { ...section.data, items: col.items.slice(0, 3).map(item => ({ title: item.title, slug: item.slug, image: extractItemImage(item), excerpt: (item.data.excerpt as string) || undefined, date: item.createdAt })) } };
+      }
+    }
+    if (section.type === 'collectionList') {
+      const key = (section.data.collectionKey as string) || '';
+      const col = collections.find(c => c.key === key);
+      if (col) {
+        return { ...section, data: { ...section.data, items: col.items.map(item => ({ title: item.title, slug: item.slug, image: extractItemImage(item), excerpt: (item.data.excerpt as string) || undefined, date: item.createdAt, priority: item.priority })), collectionBasePath: `${linkPrefix}/c/${key}` } };
+      }
+    }
+    return section;
+  });
 }
 
 export default async function DemoPage({ params }: { params: Promise<{ industry: string; slug?: string[] }> }) {
@@ -171,7 +204,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
 
   return (
     <DemoPageShell
-      sections={prefixSections(page.sections.filter(s => s.visible).map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}) } } : s), demoPrefix)}
+      sections={injectCollections(prefixSections(page.sections.filter(s => s.visible).map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}) } } : s), demoPrefix), snapshot.collections, demoPrefix)}
       industry={tenantStyle.industry}
       industryKey={industry}
       defaultStyle={tenantStyle.activeStyle}
