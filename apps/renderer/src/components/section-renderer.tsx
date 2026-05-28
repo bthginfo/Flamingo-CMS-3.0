@@ -133,7 +133,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   if (isFullBleed) {
     const isDark = !FULL_BLEED_LIGHT.has(section.type);
     return (
-      <section id={section.anchorId ?? undefined} data-section-id={section.id} {...(isDark ? { 'data-theme': 'dark' } : {})} style={overrideStyle}>
+      <section id={section.anchorId ?? undefined} data-section-id={section.id} {...(isDark ? { 'data-theme': 'dark' } : {})} {...(overrideStyle ? { 'data-style': '' } : {})} style={overrideStyle}>
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
         </SectionErrorBoundary>
@@ -146,7 +146,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   const containerClass = CONTAINER[section.container] ?? CONTAINER.default;
 
   return (
-    <section id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass}`} style={overrideStyle}>
+    <section id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass}`} {...(overrideStyle ? { 'data-style': '' } : {})} style={overrideStyle}>
       <div className={containerClass}>
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
