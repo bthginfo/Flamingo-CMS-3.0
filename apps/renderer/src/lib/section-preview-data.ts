@@ -1012,7 +1012,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
     introText: "",
     footnote: "",
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   signatureDishes: {
     headline: 'Empfehlungen des Hauses',
@@ -1031,8 +1031,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     submitLabel: 'Anfrage senden',
     timeHint: 'Küche: 12:00–14:30 & 18:00–22:00',
     introText: "",
-    phoneCta: {"label":"","href":""},
-    externalBookingCta: {"label":"","href":""},
+    phoneCta: { label: '', href: '' },
+    externalBookingCta: { label: '', href: '' },
     partySizeOptions: ["2","4","6","8+"],
     policyText: "",
     image: "",
@@ -1049,7 +1049,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     kitchenHoursText: 'Warme Küche bis 22:00 Uhr',
     subline: "",
     holidayNote: "",
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
     acuteCareText: '',
     bookingNote: '',
   },
@@ -1064,7 +1064,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
     subline: "",
     imageTertiary: "",
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   events: {
     headline: 'Events',
@@ -1084,7 +1084,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     submitCta: { label: 'Suchen', href: '#' },
     bookingNote: 'Bestpreis-Garantie bei Direktbuchung',
     subline: "",
-    secondaryCta: {"label":"","href":""},
+    secondaryCta: { label: '', href: '' },
     trustItems: [{"icon":"shield","text":"Kostenfreie Stornierung"}],
   },
   roomShowcase: {
@@ -1117,7 +1117,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Frühstücksbuffet', icon: 'coffee', description: 'Täglich 7:00–10:30' },
     ],
     subline: "",
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   wellness: {
     headline: 'Wellness & Spa',
@@ -1131,7 +1131,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     features: [{ title: 'Finnische Sauna' }, { title: 'Infinity-Pool' }, { title: 'Dampfbad' }],
     subline: "",
     imageSecondary: "",
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   location: {
     headline: 'Lage & Anreise',
@@ -1145,7 +1145,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     subline: "",
     image: "",
     nearbyItems: [{"label":"Zentrum","distance":"500m"}],
-    routeCta: {"label":"Route planen","href":""},
+    routeCta: { label: 'Route planen', href: '' },
   },
   hotelDining: {
     headline: 'Restaurant & Bar',
@@ -1156,7 +1156,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     menus: [{ title: '3-Gänge-Menü', price: '59 €' }, { title: '5-Gänge-Menü', price: '89 €' }],
     highlights: [{ title: 'Regionale Küche' }, { title: 'Weinbar mit 200+ Positionen' }],
     subline: "",
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   eventSpaces: {
     headline: 'Events & Tagungen',
@@ -1179,7 +1179,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { src: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6f?w=600&q=80', alt: 'Spa', category: 'Wellness' },
     ],
     subline: "",
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
 
   // === TOURISM ===
@@ -1188,14 +1188,14 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Schloss Neuschwanstein', description: 'Das Märchenschloss König Ludwigs II.', image: 'https://images.unsplash.com/photo-1534313314376-a72289b6181e?w=600&q=80', category: 'Kultur' },
       { title: 'Partnachklamm', description: 'Spektakuläre Schlucht bei Garmisch.', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80', category: 'Natur' },
     ],
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   experienceGrid: {
     items: [
       { title: 'Bergwandern', description: 'Über 200 km markierte Wege.', duration: '2–6h', level: 'Mittel', image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=400&q=80' },
       { title: 'Radtouren', description: 'E-Bike-Verleih vor Ort.', duration: '3–5h', level: 'Leicht', image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&q=80' },
     ],
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   seasonTeaser: {
     seasons: [
@@ -1216,7 +1216,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Tourist-Info', address: 'Hauptstraße 1', category: 'Service' },
       { name: 'Bergbahn', address: 'Talstation 5', category: 'Aktivität' },
     ],
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
     mapFallbackText: "",
   },
   sightseeingList: {
@@ -1230,7 +1230,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Panoramaweg', length: '12 km', duration: '4h', difficulty: 'Mittel', description: 'Aussichtsreiche Rundwanderung.' },
       { title: 'Seerundweg', length: '5 km', duration: '1,5h', difficulty: 'Leicht', description: 'Gemütlich um den See.' },
     ],
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   accommodationGrid: {
     items: [
@@ -1262,8 +1262,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
     image: "",
     formFields: [],
-    primaryCta: {"label":"","href":""},
-    secondaryCta: {"label":"","href":""},
+    primaryCta: { label: '', href: '' },
+    secondaryCta: { label: '', href: '' },
   },
 
   // === SALON ===
@@ -1275,7 +1275,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Nägel', items: [{ name: 'Maniküre', price: '35 €', duration: '30 Min.' }] },
     ],
     subline: "",
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   priceList: {
     headline: 'Preisliste',
@@ -1286,7 +1286,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     ],
     subline: "",
     footnote: "",
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   treatmentDetail: {
     headline: 'Behandlungen im Detail',
@@ -1304,7 +1304,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { name: 'Wellness-Paket', price: '99 €', features: ['Kopfmassage', 'Pflege', 'Styling'] },
     ],
     subline: "",
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   teamShowcase: {
     headline: 'Unser Team',
@@ -1344,10 +1344,10 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     phoneCta: { label: 'Anrufen', href: 'tel:+491234567890' },
     notes: ['Terminabsage mindestens 24h vorher', 'Neue Kunden bitte 10 Min. früher da sein'],
     introText: "",
-    whatsappCta: {"label":"","href":""}
+    whatsappCta: { label: '', href: '' },
     ctaLabel: '',
     ctaHref: '',
-    hints: [],,
+    hints: [],
   },
   locationContact: {
     headline: 'Kontakt & Standort',
@@ -1363,8 +1363,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     image: "",
     mapEmbedUrl: "",
     formFields: [],
-    primaryCta: {"label":"","href":""},
-    secondaryCta: {"label":"","href":""},
+    primaryCta: { label: '', href: '' },
+    secondaryCta: { label: '', href: '' },
   },
 
   // === MEDICAL ===
@@ -1374,7 +1374,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Labordiagnostik', description: 'Blutbild, Hormone, Allergietests.', icon: 'flask' },
       { title: 'Impfungen', description: 'Reise- und Standardimpfungen.', icon: 'shield' },
     ],
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   diagnostics: {
     items: [
@@ -1424,8 +1424,8 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     onlineCta: { label: 'Online-Termin', href: '#' },
     phoneCta: { label: 'Anrufen', href: 'tel:+491234567890' },
     notes: ['Akutsprechstunde: Mo–Fr 8:00–9:00', 'Terminabsage bitte 24h vorher'],
-    callbackCta: {"label":"","href":""},
-    externalCta: {"label":"","href":""},
+    callbackCta: { label: '', href: '' },
+    externalCta: { label: '', href: '' },
   },
   emergencyInfo: {
     introText: 'Im Notfall wählen Sie bitte 112.',
@@ -1433,7 +1433,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
       { title: 'Ärztlicher Bereitschaftsdienst', phone: '116 117', description: 'Außerhalb der Sprechzeiten' },
       { title: 'Giftnotruf', phone: '030 19240', description: 'Bei Vergiftungen' },
     ],
-    ctaPrimary: {"label":"","href":""},
+    ctaPrimary: { label: '', href: '' },
   },
   practiceGallery: {
     images: [
