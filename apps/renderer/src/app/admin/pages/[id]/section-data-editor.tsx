@@ -419,6 +419,9 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
     subline: (data.subline as string) || '',
     badgeText: (data.badgeText as string) || '',
     ctaPrimary: (data.ctaPrimary as { label: string; href: string }) || { label: '', href: '' },
+    bgColor: (data.bgColor as string) || '',
+    textColor: (data.textColor as string) || '',
+    accentColor: (data.accentColor as string) || '',
   });
   useReport(d as unknown as Record<string, unknown>, onChange);
 
@@ -428,6 +431,14 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
       <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
+      <details className="border border-zinc-200 rounded-lg p-3">
+        <summary className="text-xs font-medium text-zinc-500 cursor-pointer">Farben anpassen</summary>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
+          <ColorField label="Hintergrund" value={d.bgColor} onChange={(v) => setD({ ...d, bgColor: v })} allowEmpty />
+          <ColorField label="Text" value={d.textColor} onChange={(v) => setD({ ...d, textColor: v })} allowEmpty />
+          <ColorField label="Akzent / Button" value={d.accentColor} onChange={(v) => setD({ ...d, accentColor: v })} allowEmpty />
+        </div>
+      </details>
     </div>
   );
 }
