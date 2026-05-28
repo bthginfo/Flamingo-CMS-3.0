@@ -124,10 +124,10 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     setSaving(true);
     try {
       const result = await saveBrandSettings(form);
-      if (result.verified) {
+      if (result.success) {
         toast.success('Marken-Einstellungen gespeichert ✓');
       } else {
-        toast.error('Speichern fehlgeschlagen — Daten nicht in DB geschrieben!');
+        toast.error('Speichern fehlgeschlagen');
       }
       markSaved();
       router.refresh();
