@@ -737,7 +737,7 @@ function PopupEditor({ data, onChange }: EditorProps) {
       <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs leading-5 text-blue-800">
         <strong>Nur einmal</strong> bedeutet: Nach dem Schließen sieht dieser Besucher das Popup auf diesem Gerät nicht erneut. <strong>Einmal pro Session</strong> bedeutet: Es kann in einer neuen Browser-Sitzung wieder erscheinen, aber nicht ständig beim Seitenwechsel.
       </div>
-      <Field label="Titel" value={d.title} onChange={(v) => setD({ ...d, title: v })} />
+      <Field label={fieldLabel('title')} value={d.title} onChange={(v) => setD({ ...d, title: v })} />
       <Field label="Subtitle / Eyebrow" value={d.subtitle} onChange={(v) => setD({ ...d, subtitle: v })} placeholder="z.B. Kurzer Hinweis, Aktion, Newsletter" />
       <Field label="Fließtext" value={d.text} onChange={(v) => setD({ ...d, text: v })} multiline placeholder="Kurzer erklärender Text im Popup" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -786,8 +786,8 @@ function HeroEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
       <IconPickerField label="Badge-Icon" value={d.badgeIcon} onChange={(v) => setD({ ...d, badgeIcon: v })} />
       <IconPickerField label="Badge-Sterne-Icon (leer = keine Sterne)" value={d.badgeStarsIcon} onChange={(v) => setD({ ...d, badgeStarsIcon: v })} />
@@ -899,12 +899,12 @@ function FaqEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Überschrift" value={headline} onChange={setHeadline} help="Optionale Überschrift über dem Statistik-Bereich" />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline} help="Optionale Überschrift über dem Statistik-Bereich" />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <Field label={`Frage ${i + 1}`} value={item.question} onChange={(v) => updateItem(i, 'question', v)} />
-          <Field label="Antwort" value={item.answer} onChange={(v) => updateItem(i, 'answer', v)} multiline />
+          <Field label={fieldLabel('answer')} value={item.answer} onChange={(v) => updateItem(i, 'answer', v)} multiline />
         </div>
       ))}
       <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Frage hinzufügen</button>
@@ -925,7 +925,7 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
   return (
     <div className="space-y-3">
       <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} help="Optionaler Beschreibungstext" />
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
     </div>
@@ -949,7 +949,7 @@ function TestimonialsEditor({ data, onChange }: EditorProps) {
   return (
     <div className="space-y-3">
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
-      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="Bewertungsdurchschnitt (z.B. 4.9)" value={ratingValue} onChange={setRatingValue} />
         <Field label="Anzahl Bewertungen (z.B. 150)" value={ratingCount} onChange={setRatingCount} />
@@ -957,9 +957,9 @@ function TestimonialsEditor({ data, onChange }: EditorProps) {
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <Field label="Zitat" value={item.quote} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, quote: v } : it))} multiline />
+          <Field label={fieldLabel('quote')} value={item.quote} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, quote: v } : it))} multiline />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Name" value={item.name} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
+            <Field label={fieldLabel('name')} value={item.name} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
             <Field label="Kontext" value={item.context} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, context: v } : it))} />
           </div>
         </div>
@@ -982,7 +982,7 @@ function MapEditor({ data, onChange }: EditorProps) {
     <div className="space-y-3">
       <Field label="Headline (optional)" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Google Maps Embed-URL" value={d.embedUrl} onChange={(v) => setD({ ...d, embedUrl: v })} />
-      <SelectField label="Höhe" value={d.height} options={['s', 'm', 'l']} onChange={(v) => setD({ ...d, height: v })} />
+      <SelectField label={fieldLabel('height')} value={d.height} options={['s', 'm', 'l']} onChange={(v) => setD({ ...d, height: v })} />
     </div>
   );
 }
@@ -1083,15 +1083,15 @@ function CtaLinksEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       {links.map((link, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeLink(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <Field label="Label" value={link.label} onChange={(v) => updateLink(i, 'label', v)} />
+          <Field label={fieldLabel('label')} value={link.label} onChange={(v) => updateLink(i, 'label', v)} />
           <DetailLinkField label="Link" value={link.href} onChange={(v) => updateLink(i, 'href', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <IconPickerField label="Icon" value={link.icon} onChange={(v) => updateLink(i, 'icon', v)} />
+            <IconPickerField label={fieldLabel('icon')} value={link.icon} onChange={(v) => updateLink(i, 'icon', v)} />
             <Field label="Beschreibung" value={link.description} onChange={(v) => updateLink(i, 'description', v)} multiline />
           </div>
         </div>
@@ -1114,7 +1114,7 @@ function NewsPreviewEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Überschrift" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} help="Wird über den News-Karten angezeigt" />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} help="Wird über den News-Karten angezeigt" />
       <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} help="Optionaler Beschreibungstext unter der Überschrift" />
       <CollectionKeySelect value={d.collectionKey} onChange={(v) => setD({ ...d, collectionKey: v })} />
       <ButtonField label="Alle-Beiträge-Link" value={{ label: d.linkLabel, href: d.linkHref }} onChange={(v) => setD({ ...d, linkLabel: v.label, linkHref: v.href })} />
@@ -1136,7 +1136,7 @@ function StatsEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
       {stats.map((stat, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeStat(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -1149,7 +1149,7 @@ function StatsEditor({ data, onChange }: EditorProps) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Beschriftung" value={stat.label} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} help={'Erklärt den Zahlenwert, z.B. "zufriedene Kunden"'} />
-            <IconPickerField label="Icon" value={stat.icon} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, icon: v } : s))} />
+            <IconPickerField label={fieldLabel('icon')} value={stat.icon} onChange={(v) => setStats(stats.map((s, idx) => idx === i ? { ...s, icon: v } : s))} />
           </div>
         </div>
       ))}
@@ -1172,12 +1172,12 @@ function LogoCloudEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       {logos.map((logo, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeLogo(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <ImageUploadField label="Bild" value={logo.src} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, src: v } : l))} />
+          <ImageUploadField label={fieldLabel('image')} value={logo.src} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, src: v } : l))} />
           <Field label="Alt-Text" value={logo.alt} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, alt: v } : l))} />
           <DetailLinkField label="Link (optional)" value={logo.href} onChange={(v) => setLogos(logos.map((l, idx) => idx === i ? { ...l, href: v } : l))} />
         </div>
@@ -1224,12 +1224,12 @@ function GalleryGridEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       {images.map((img, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeImage(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
+          <ImageUploadField label={fieldLabel('image')} value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Alt-Text" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
             <Field label="Bildunterschrift" value={img.caption} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, caption: v } : im))} />
@@ -1265,9 +1265,9 @@ function UspStripEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <IconPickerField label="Icon" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
-            <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
-            <Field label="Text" value={item.text} onChange={(v) => update(i, 'text', v)} multiline />
+            <IconPickerField label={fieldLabel('icon')} value={item.icon} onChange={(v) => update(i, 'icon', v)} />
+            <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label={fieldLabel('text')} value={item.text} onChange={(v) => update(i, 'text', v)} multiline />
           </div>
         </div>
       ))}
@@ -1302,23 +1302,23 @@ function ServicesGridEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       <ButtonField label="CTA-Button" value={{ label: ctaLabel, href: ctaHref }} onChange={(v) => { setCtaLabel(v.label); setCtaHref(v.href); }} />
       {cards.map((card, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Titel" value={card.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label={fieldLabel('title')} value={card.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Beschreibung" value={card.text} onChange={(v) => update(i, 'text', v)} multiline />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <SelectField label="Medientyp" value={card.mediaType} options={['icon', 'image']} onChange={(v) => update(i, 'mediaType', v)} />
             {card.mediaType === 'icon' ? (
-              <IconPickerField label="Icon" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
+              <IconPickerField label={fieldLabel('icon')} value={card.icon} onChange={(v) => update(i, 'icon', v)} />
             ) : (
-              <ImageUploadField label="Bild" value={card.image} onChange={(v) => update(i, 'image', v)} position={card.imagePosition || 'center'} onPositionChange={(v) => update(i, 'imagePosition', v)} />
+              <ImageUploadField label={fieldLabel('image')} value={card.image} onChange={(v) => update(i, 'image', v)} position={card.imagePosition || 'center'} onPositionChange={(v) => update(i, 'imagePosition', v)} />
             )}
           </div>
           <DetailLinkField label="Detail-Link (optional)" value={card.href} onChange={(v) => update(i, 'href', v)} />
@@ -1344,15 +1344,15 @@ function ProcessStepsEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       {steps.map((step, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <Field label="Titel" value={step.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label={fieldLabel('title')} value={step.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Beschreibung" value={step.text} onChange={(v) => update(i, 'text', v)} multiline />
-            <IconPickerField label="Icon" value={step.icon} onChange={(v) => update(i, 'icon', v)} />
+            <IconPickerField label={fieldLabel('icon')} value={step.icon} onChange={(v) => update(i, 'icon', v)} />
           </div>
         </div>
       ))}
@@ -1379,7 +1379,7 @@ function ContactEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
       <Field label="Einleitungstext" value={introText} onChange={setIntroText} multiline />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       <Field label="Button-Text" value={submitLabel} onChange={setSubmitLabel} />
@@ -1392,9 +1392,9 @@ function ContactEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeCard(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <IconPickerField label="Icon" value={card.icon} onChange={(v) => update(i, 'icon', v)} />
-            <Field label="Label" value={card.label} onChange={(v) => update(i, 'label', v)} />
-            <Field label="Wert" value={card.value} onChange={(v) => update(i, 'value', v)} />
+            <IconPickerField label={fieldLabel('icon')} value={card.icon} onChange={(v) => update(i, 'icon', v)} />
+            <Field label={fieldLabel('label')} value={card.label} onChange={(v) => update(i, 'label', v)} />
+            <Field label={fieldLabel('value')} value={card.value} onChange={(v) => update(i, 'value', v)} />
           </div>
         </div>
       ))}
@@ -1431,22 +1431,22 @@ function ServiceDetailEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Beschreibung" value={item.text} onChange={(v) => update(i, 'text', v)} multiline />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <SelectField label="Medientyp" value={item.mediaType} options={['icon', 'image']} onChange={(v) => update(i, 'mediaType', v)} />
             {item.mediaType === 'icon' ? (
-              <IconPickerField label="Icon" value={item.icon} onChange={(v) => update(i, 'icon', v)} />
+              <IconPickerField label={fieldLabel('icon')} value={item.icon} onChange={(v) => update(i, 'icon', v)} />
             ) : (
-              <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
+              <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
             )}
           </div>
           <Field label="Features (eine pro Zeile)" value={item.features} onChange={(v) => update(i, 'features', v)} multiline />
@@ -1483,19 +1483,19 @@ function PortfolioEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
       <ButtonField label="CTA-Button" value={{ label: ctaLabel, href: ctaHref }} onChange={(v) => { setCtaLabel(v.label); setCtaHref(v.href); }} />
       {projects.map((proj, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeProject(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Titel" value={proj.title} onChange={(v) => update(i, 'title', v)} />
-            <Field label="Kategorie" value={proj.category} onChange={(v) => update(i, 'category', v)} />
+            <Field label={fieldLabel('title')} value={proj.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label={fieldLabel('category')} value={proj.category} onChange={(v) => update(i, 'category', v)} />
           </div>
           <Field label="Beschreibung" value={proj.description} onChange={(v) => update(i, 'description', v)} multiline />
-          <ImageUploadField label="Bild" value={proj.image} onChange={(v) => update(i, 'image', v)} />
+          <ImageUploadField label={fieldLabel('image')} value={proj.image} onChange={(v) => update(i, 'image', v)} />
           <DetailLinkField label="Detail-Link (optional)" value={proj.href} onChange={(v) => update(i, 'href', v)} />
           <div className="space-y-2">
             <label className="text-xs font-medium text-zinc-600">Statistiken</label>
@@ -1551,8 +1551,8 @@ function TeamEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-4">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       <Field label="Badge-Text" value={badgeText} onChange={setBadgeText} />
 
       <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Firmengeschichte</h4>
@@ -1563,8 +1563,8 @@ function TeamEditor({ data, onChange }: EditorProps) {
       <h4 className="text-sm font-medium text-gray-700 pt-2 border-t">Statistiken</h4>
       {teamStats.map((s, i) => (
         <div key={i} className="flex gap-3 items-end">
-          <Field label="Wert" value={s.value} onChange={(v) => setTeamStats(teamStats.map((st, idx) => idx === i ? { ...st, value: v } : st))} />
-          <Field label="Label" value={s.label} onChange={(v) => setTeamStats(teamStats.map((st, idx) => idx === i ? { ...st, label: v } : st))} />
+          <Field label={fieldLabel('value')} value={s.value} onChange={(v) => setTeamStats(teamStats.map((st, idx) => idx === i ? { ...st, value: v } : st))} />
+          <Field label={fieldLabel('label')} value={s.label} onChange={(v) => setTeamStats(teamStats.map((st, idx) => idx === i ? { ...st, label: v } : st))} />
           <button onClick={() => setTeamStats(teamStats.filter((_, idx) => idx !== i))} className="text-red-400 hover:text-red-600 text-xs pb-2">×</button>
         </div>
       ))}
@@ -1576,15 +1576,15 @@ function TeamEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Titel" value={v.title} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, title: val } : vl))} />
-            <Field label="Text" value={v.text} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, text: val } : vl))} multiline />
+            <Field label={fieldLabel('title')} value={v.title} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, title: val } : vl))} />
+            <Field label={fieldLabel('text')} value={v.text} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, text: val } : vl))} multiline />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <SelectField label="Medientyp" value={v.mediaType} options={['icon', 'image']} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, mediaType: val } : vl))} />
             {v.mediaType === 'icon' ? (
-              <IconPickerField label="Icon" value={v.icon} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, icon: val } : vl))} />
+              <IconPickerField label={fieldLabel('icon')} value={v.icon} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, icon: val } : vl))} />
             ) : (
-              <ImageUploadField label="Bild" value={v.image} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, image: val } : vl))} />
+              <ImageUploadField label={fieldLabel('image')} value={v.image} onChange={(val) => setValues(values.map((vl, idx) => idx === i ? { ...vl, image: val } : vl))} />
             )}
           </div>
         </div>
@@ -1597,11 +1597,11 @@ function TeamEditor({ data, onChange }: EditorProps) {
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setMembers(members.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Name" value={m.name} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, name: v } : mem))} />
-            <Field label="Rolle" value={m.role} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, role: v } : mem))} />
+            <Field label={fieldLabel('name')} value={m.name} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, name: v } : mem))} />
+            <Field label={fieldLabel('role')} value={m.role} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, role: v } : mem))} />
           </div>
-          <ImageUploadField label="Bild" value={m.image} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, image: v } : mem))} />
-          <Field label="Bio" value={m.bio} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, bio: v } : mem))} multiline />
+          <ImageUploadField label={fieldLabel('image')} value={m.image} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, image: v } : mem))} />
+          <Field label={fieldLabel('bio')} value={m.bio} onChange={(v) => setMembers(members.map((mem, idx) => idx === i ? { ...mem, bio: v } : mem))} multiline />
         </div>
       ))}
       <button onClick={() => setMembers([...members, { name: '', role: '', image: '', bio: '' }])} className="text-sm text-blue-600 hover:underline">+ Mitglied</button>
@@ -1618,7 +1618,7 @@ function RichTextEditor({ data, onChange }: EditorProps) {
   return (
     <div className="space-y-3">
       <Field label="Headline (optional)" value={headline} onChange={setHeadline} />
-      <RichTextEditorField label="Inhalt" value={content} onChange={setContent} />
+      <RichTextEditorField label={fieldLabel('content')} value={content} onChange={setContent} />
     </div>
   );
 }
@@ -1631,7 +1631,7 @@ function FreeTextEditor({ data, onChange }: EditorProps) {
   return (
     <div className="space-y-3">
       <Field label="Headline (optional)" value={headline} onChange={setHeadline} />
-      <RichTextEditorField label="Inhalt" value={content} onChange={setContent} />
+      <RichTextEditorField label={fieldLabel('content')} value={content} onChange={setContent} />
     </div>
   );
 }
@@ -1649,8 +1649,8 @@ function VideoEmbedEditor({ data, onChange }: EditorProps) {
   return (
     <div className="space-y-3">
       <Field label="Eyebrow / Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Titel" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Text" value={d.text} onChange={(v) => setD({ ...d, text: v })} multiline />
+      <Field label={fieldLabel('title')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('text')} value={d.text} onChange={(v) => setD({ ...d, text: v })} multiline />
       <Field label="Video-URL (YouTube / Vimeo)" value={d.videoUrl} onChange={(v) => setD({ ...d, videoUrl: v })} />
       {d.videoUrl && <p className="text-[11px] text-zinc-400">Unterstützt: YouTube, Vimeo – einfach den normalen Link einfügen.</p>}
     </div>
@@ -1764,7 +1764,7 @@ function HeaderBannerEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <SelectField label="Stil" value={style} options={['neutral', 'info', 'warning']} onChange={setStyle} />
+      <SelectField label={fieldLabel('style')} value={style} options={['neutral', 'info', 'warning']} onChange={setStyle} />
       <label className="text-xs font-medium text-zinc-600">Einträge</label>
       {items.map((item, i) => (
         <div key={i} className="flex gap-2 items-start">
@@ -1794,7 +1794,7 @@ function NoticeBannerEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Titel" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('title')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <Field label="Fließtext (HTML)" value={d.text} onChange={(v) => setD({ ...d, text: v })} />
 
@@ -1822,8 +1822,8 @@ function CollectionHeroEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Field label="Kategorie (optional)" value={d.category} onChange={(v) => setD({ ...d, category: v })} />
         <Field label="Datum (optional)" value={d.date} onChange={(v) => setD({ ...d, date: v })} />
@@ -1898,10 +1898,10 @@ function TextImageEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Text" value={d.text} onChange={(v) => setD({ ...d, text: v })} multiline />
-      <ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('text')} value={d.text} onChange={(v) => setD({ ...d, text: v })} multiline />
+      <ImageUploadField label={fieldLabel('image')} value={d.image} onChange={(v) => setD({ ...d, image: v })} />
       <Field label="Bild Alt-Text" value={d.imageAlt} onChange={(v) => setD({ ...d, imageAlt: v })} />
       <SelectField label="Bild-Position" value={d.imagePosition} options={['left', 'right']} onChange={(v) => setD({ ...d, imagePosition: v })} />
       <div>
@@ -1910,10 +1910,10 @@ function TextImageEditor({ data, onChange }: EditorProps) {
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
             <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <Field label="Titel" value={item.title} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, title: v } : it))} />
-              <IconPickerField label="Icon" value={item.icon} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, icon: v } : it))} />
+              <Field label={fieldLabel('title')} value={item.title} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, title: v } : it))} />
+              <IconPickerField label={fieldLabel('icon')} value={item.icon} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, icon: v } : it))} />
             </div>
-            <Field label="Text" value={item.text} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, text: v } : it))} multiline />
+            <Field label={fieldLabel('text')} value={item.text} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, text: v } : it))} multiline />
           </div>
         ))}
         <button onClick={() => setItems([...items, { icon: '', title: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Punkt hinzufügen</button>
@@ -1980,9 +1980,9 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
 
       {/* Category management */}
       <div>
@@ -2014,7 +2014,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
                   return (
                     <div key={i} className="relative border border-zinc-100 rounded p-3">
                       <button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-                      <ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
+                      <ImageUploadField label={fieldLabel('image')} value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                         <Field label="Alt-Text" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
                         <Field label="Ort" value={img.location} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, location: v } : im))} />
@@ -2045,7 +2045,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
             return (
               <div key={i} className="relative border border-zinc-100 rounded p-3 mb-2">
                 <button onClick={() => setImages(images.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-                <ImageUploadField label="Bild" value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
+                <ImageUploadField label={fieldLabel('image')} value={img.src} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, src: v } : im))} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
                   <Field label="Alt-Text" value={img.alt} onChange={(v) => setImages(images.map((im, idx) => idx === i ? { ...im, alt: v } : im))} />
                   <label className="block"><span className="text-gray-600 text-xs">Kategorie</span><select className="admin-input mt-1 w-full" value={img.category} onChange={(e) => setImages(images.map((im, idx) => idx === i ? { ...im, category: e.target.value } : im))}><option value="">—</option>{categories.map(c => <option key={c} value={c}>{c}</option>)}</select></label>
@@ -2087,11 +2087,11 @@ function PhotographerAboutEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Intro" value={d.intro} onChange={(v) => setD({ ...d, intro: v })} multiline />
-      <Field label="Story" value={d.story} onChange={(v) => setD({ ...d, story: v })} multiline />
-      <ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('intro')} value={d.intro} onChange={(v) => setD({ ...d, intro: v })} multiline />
+      <Field label={fieldLabel('story')} value={d.story} onChange={(v) => setD({ ...d, story: v })} multiline />
+      <ImageUploadField label={fieldLabel('image')} value={d.image} onChange={(v) => setD({ ...d, image: v })} />
       <ButtonField label="CTA" value={{ label: d.ctaLabel, href: d.ctaHref }} onChange={(v) => setD({ ...d, ctaLabel: v.label, ctaHref: v.href })} />
       <div>
         <p className="text-xs font-medium text-zinc-600 mb-2">Fakten</p>
@@ -2108,8 +2108,8 @@ function PhotographerAboutEditor({ data, onChange }: EditorProps) {
         {values.map((v, i) => (
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
             <button onClick={() => setValues(values.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-            <Field label="Titel" value={v.title} onChange={(val) => setValues(values.map((x, idx) => idx === i ? { ...x, title: val } : x))} />
-            <Field label="Text" value={v.text} onChange={(val) => setValues(values.map((x, idx) => idx === i ? { ...x, text: val } : x))} multiline />
+            <Field label={fieldLabel('title')} value={v.title} onChange={(val) => setValues(values.map((x, idx) => idx === i ? { ...x, title: val } : x))} />
+            <Field label={fieldLabel('text')} value={v.text} onChange={(val) => setValues(values.map((x, idx) => idx === i ? { ...x, text: val } : x))} multiline />
           </div>
         ))}
         <button onClick={() => setValues([...values, { title: '', text: '' }])} className="text-xs text-blue-600 hover:underline">+ Wert hinzufügen</button>
@@ -2135,17 +2135,17 @@ function ShootingProcessEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <div>
         <p className="text-xs font-medium text-zinc-600 mb-2">Schritte</p>
         {steps.map((step, i) => (
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-2">
             <button onClick={() => setSteps(steps.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <Field label="Titel" value={step.title} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, title: v } : s))} />
-              <IconPickerField label="Icon" value={step.icon} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, icon: v } : s))} />
+              <Field label={fieldLabel('title')} value={step.title} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, title: v } : s))} />
+              <IconPickerField label={fieldLabel('icon')} value={step.icon} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, icon: v } : s))} />
             </div>
             <Field label="Beschreibung" value={step.text} onChange={(v) => setSteps(steps.map((s, idx) => idx === i ? { ...s, text: v } : s))} multiline />
           </div>
@@ -2186,17 +2186,17 @@ function ServicePackagesEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <div>
         <p className="text-xs font-medium text-zinc-600 mb-2">Pakete</p>
         {packages.map((pkg, i) => (
           <div key={i} className="relative border border-zinc-200 rounded-lg p-3 mb-3">
             <button onClick={() => setPackages(packages.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <Field label="Name" value={pkg.name} onChange={(v) => updatePkg(i, 'name', v)} />
-              <Field label="Preis" value={pkg.price} onChange={(v) => updatePkg(i, 'price', v)} placeholder="z.B. ab 490€" />
+              <Field label={fieldLabel('name')} value={pkg.name} onChange={(v) => updatePkg(i, 'name', v)} />
+              <Field label={fieldLabel('price')} value={pkg.price} onChange={(v) => updatePkg(i, 'price', v)} placeholder="z.B. ab 490€" />
             </div>
             <Field label="Beschreibung" value={pkg.description} onChange={(v) => updatePkg(i, 'description', v)} multiline />
             <div className="mt-2">
@@ -2264,8 +2264,8 @@ function ComparisonTableEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-4">
-      <Field label="Badge" value={badge} onChange={setBadge} />
-      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
       <Field label="Beschreibung" value={text} onChange={setText} multiline />
       <div>
         <span className="text-xs font-medium text-gray-600 mb-1 block">Spalten</span>
@@ -2324,7 +2324,7 @@ function SocialProofBarEditor({ data, onChange }: EditorProps) {
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="Wert (z.B. 500+)" value={item.value} onChange={(v) => updateItem(i, 'value', v)} />
-            <Field label="Label" value={item.label} onChange={(v) => updateItem(i, 'label', v)} />
+            <Field label={fieldLabel('label')} value={item.label} onChange={(v) => updateItem(i, 'label', v)} />
             <Field label="Icon (star oder leer)" value={item.icon} onChange={(v) => updateItem(i, 'icon', v)} />
             <Field label="Logo-URL (optional)" value={item.logo} onChange={(v) => updateItem(i, 'logo', v)} />
           </div>
@@ -2351,15 +2351,15 @@ function TimelineEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Badge" value={badge} onChange={setBadge} />
-      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
       <Field label="Unterzeile" value={subline} onChange={setSubline} />
       {entries.map((entry, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => removeEntry(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="Jahr / Datum" value={entry.year} onChange={(v) => updateEntry(i, 'year', v)} />
-            <Field label="Titel" value={entry.title} onChange={(v) => updateEntry(i, 'title', v)} />
+            <Field label={fieldLabel('title')} value={entry.title} onChange={(v) => updateEntry(i, 'title', v)} />
           </div>
           <Field label="Beschreibung" value={entry.text} onChange={(v) => updateEntry(i, 'text', v)} multiline />
         </div>
@@ -2381,9 +2381,9 @@ function StatsCounterEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Badge" value={badge} onChange={setBadge} />
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
       {stats.map((stat, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setStats(stats.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
@@ -2392,7 +2392,7 @@ function StatsCounterEditor({ data, onChange }: EditorProps) {
             <Field label="Wert (Zahl)" value={stat.value} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, value: v } : s))} />
             <Field label="Suffix (z.B. %)" value={stat.suffix} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, suffix: v } : s))} />
           </div>
-          <Field label="Label" value={stat.label} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} />
+          <Field label={fieldLabel('label')} value={stat.label} onChange={v => setStats(stats.map((s, idx) => idx === i ? { ...s, label: v } : s))} />
         </div>
       ))}
       <button onClick={() => setStats([...stats, { value: '', suffix: '', prefix: '', label: '' }])} className="text-sm text-blue-600 hover:underline">+ Stat</button>
@@ -2412,16 +2412,16 @@ function BentoGridEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Badge" value={badge} onChange={setBadge} />
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <Field label="Titel" value={item.title} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, title: v } : it))} />
+          <Field label={fieldLabel('title')} value={item.title} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, title: v } : it))} />
           <Field label="Beschreibung" value={item.description} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, description: v } : it))} multiline />
-          <IconPickerField label="Icon" value={item.icon} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, icon: v } : it))} />
-          <ImageUploadField label="Bild" value={item.image} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, image: v } : it))} />
+          <IconPickerField label={fieldLabel('icon')} value={item.icon} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, icon: v } : it))} />
+          <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, image: v } : it))} />
           <div>
             <label className="text-xs font-medium text-zinc-600">Größe</label>
             <select className="admin-input mt-1" value={item.span} onChange={e => setItems(items.map((it, idx) => idx === i ? { ...it, span: e.target.value } : it))}>
@@ -2448,16 +2448,16 @@ function TestimonialMarqueeEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <Field label="Zitat" value={item.quote} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, quote: v } : it))} multiline />
+          <Field label={fieldLabel('quote')} value={item.quote} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, quote: v } : it))} multiline />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <Field label="Name" value={item.name} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
+            <Field label={fieldLabel('name')} value={item.name} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
             <Field label="Rolle / Kontext" value={item.role} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, role: v } : it))} />
           </div>
-          <ImageUploadField label="Bild" value={item.image} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, image: v } : it))} />
+          <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, image: v } : it))} />
           <div>
             <label className="text-xs font-medium text-zinc-600">Bewertung</label>
             <select className="admin-input mt-1" value={item.rating} onChange={e => setItems(items.map((it, idx) => idx === i ? { ...it, rating: Number(e.target.value) } : it))}>
@@ -2486,18 +2486,18 @@ function FeatureShowcaseEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Badge" value={badge} onChange={setBadge} />
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
-      <Field label="Text" value={text} onChange={setText} multiline />
-      <ImageUploadField label="Bild" value={image} onChange={setImage} />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <Field label={fieldLabel('text')} value={text} onChange={setText} multiline  help={fieldHelp('text')} />
+      <ImageUploadField label={fieldLabel('image')} value={image} onChange={setImage} />
       <div>
         <label className="text-xs font-medium text-zinc-600">Features (eine pro Zeile)</label>
         <textarea className="admin-input mt-1 w-full" rows={4} value={features.join('\n')} onChange={e => setFeatures(e.target.value.split('\n'))} />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <Field label="CTA Label" value={ctaLabel} onChange={setCtaLabel} />
-        <Field label="CTA Link" value={ctaHref} onChange={setCtaHref} />
+        <Field label={fieldLabel('ctaLabel')} value={ctaLabel} onChange={setCtaLabel}  help={fieldHelp('ctaLabel')} />
+        <Field label={fieldLabel('ctaHref')} value={ctaHref} onChange={setCtaHref}  help={fieldHelp('ctaHref')} />
       </div>
       <label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={reversed} onChange={e => setReversed(e.target.checked)} /> Layout spiegeln</label>
     </div>
@@ -2515,12 +2515,12 @@ function LogoMarqueeEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       {items.map((item, i) => (
         <div key={i} className="border rounded p-3 space-y-2 relative">
           <button onClick={() => setItems(items.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <Field label="Name" value={item.name} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
+          <Field label={fieldLabel('name')} value={item.name} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, name: v } : it))} />
           <ImageUploadField label="Logo" value={item.image} onChange={v => setItems(items.map((it, idx) => idx === i ? { ...it, image: v } : it))} />
         </div>
       ))}
@@ -2566,8 +2566,8 @@ function CollectionListEditor({ data, onChange }: EditorProps) {
 
   return (
     <div className="space-y-3">
-      <Field label="Überschrift" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} placeholder="z.B. Alle Beiträge" help="Hauptüberschrift über der Beitragsliste" />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} placeholder="z.B. Alle Beiträge" help="Hauptüberschrift über der Beitragsliste" />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <CollectionKeySelect value={d.collectionKey} onChange={(v) => setD({ ...d, collectionKey: v })} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <label className="block">
@@ -2815,19 +2815,19 @@ function ProductShowcaseEditor({ data, onChange }: EditorProps) {
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
   return (
     <div className="space-y-4">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
-      <SelectField label="Spalten" value={columns} options={['2', '3', '4']} onChange={setColumns} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
+      <SelectField label={fieldLabel('columns')} value={columns} options={['2', '3', '4']} onChange={setColumns} />
       {items.map((item, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
+          <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
-            <Field label="Preis" value={item.price} onChange={(v) => update(i, 'price', v)} placeholder="ab 299 €" />
+            <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label={fieldLabel('price')} value={item.price} onChange={(v) => update(i, 'price', v)} placeholder="ab 299 €" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <Field label="Badge" value={item.badge} onChange={(v) => update(i, 'badge', v)} placeholder="Neu / Sale" />
+            <Field label={fieldLabel('badge')} value={item.badge} onChange={(v) => update(i, 'badge', v)} placeholder="Neu / Sale" />
             <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/produkt" />
           </div>
           <Field label="Beschreibung" value={item.description} onChange={(v) => update(i, 'description', v)} />
@@ -2850,15 +2850,15 @@ function CategoryMosaicEditor({ data, onChange }: EditorProps) {
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
   return (
     <div className="space-y-4">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       <p className="text-xs text-zinc-500">Tipp: Die ersten 2 Einträge mit Größe "Groß" erscheinen als große Kacheln.</p>
       {items.map((item, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
+          <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-            <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/kategorie" />
             <SelectField label="Größe" value={item.size} options={['large', 'small']} onChange={(v) => update(i, 'size', v)} />
           </div>
@@ -2880,16 +2880,16 @@ function BrandShowroomEditor({ data, onChange }: EditorProps) {
   return (
     <div className="space-y-4">
       <ImageUploadField label="Showroom-Bild" value={image} onChange={setImage} />
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       <Field label="Overlay-Stärke (0-1)" value={overlayOpacity} onChange={setOverlayOpacity} placeholder="0.5" />
       <div className="space-y-2">
         <span className="text-xs text-gray-600 font-medium">Highlights</span>
         {highlights.map((h, i) => (
           <div key={i} className="border rounded p-2 space-y-1 relative">
             <button onClick={() => setHighlights(highlights.filter((_, idx) => idx !== i))} className="absolute top-1 right-1 text-red-400 text-xs">×</button>
-            <Field label="Titel" value={h.title} onChange={(v) => setHighlights(highlights.map((x, idx) => idx === i ? { ...x, title: v } : x))} />
-            <Field label="Text" value={h.text} onChange={(v) => setHighlights(highlights.map((x, idx) => idx === i ? { ...x, text: v } : x))} />
+            <Field label={fieldLabel('title')} value={h.title} onChange={(v) => setHighlights(highlights.map((x, idx) => idx === i ? { ...x, title: v } : x))} />
+            <Field label={fieldLabel('text')} value={h.text} onChange={(v) => setHighlights(highlights.map((x, idx) => idx === i ? { ...x, text: v } : x))} />
           </div>
         ))}
         <button onClick={() => setHighlights([...highlights, { title: '', text: '' }])} className="text-sm text-blue-600 hover:underline">+ Highlight</button>
@@ -2911,8 +2911,8 @@ function ConsultationBookingEditor({ data, onChange }: EditorProps) {
   function updateService(i: number, field: string, val: string) { setServices(services.map((s, idx) => idx === i ? { ...s, [field]: val } : s)); }
   return (
     <div className="space-y-4">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       <ImageUploadField label="Seitenbild" value={image} onChange={setImage} />
       <div className="space-y-2">
         <span className="text-xs text-gray-600 font-medium">Services / Beratungsangebote</span>
@@ -2920,8 +2920,8 @@ function ConsultationBookingEditor({ data, onChange }: EditorProps) {
           <div key={i} className="border rounded-lg p-3 space-y-2 relative">
             <button onClick={() => removeService(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-              <IconPickerField label="Icon" value={s.icon} onChange={(v) => updateService(i, 'icon', v)} />
-              <Field label="Titel" value={s.title} onChange={(v) => updateService(i, 'title', v)} />
+              <IconPickerField label={fieldLabel('icon')} value={s.icon} onChange={(v) => updateService(i, 'icon', v)} />
+              <Field label={fieldLabel('title')} value={s.title} onChange={(v) => updateService(i, 'title', v)} />
               <Field label="Beschreibung" value={s.description} onChange={(v) => updateService(i, 'description', v)} />
             </div>
           </div>
@@ -2944,8 +2944,8 @@ function MaterialGalleryEditor({ data, onChange }: EditorProps) {
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
   return (
     <div className="space-y-4">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       <div className="space-y-2">
         <span className="text-xs text-gray-600 font-medium">Kategorien (für Filter)</span>
         {categories.map((cat, i) => (
@@ -2961,10 +2961,10 @@ function MaterialGalleryEditor({ data, onChange }: EditorProps) {
         {items.map((item, i) => (
           <div key={i} className="border rounded-lg p-3 space-y-2 relative">
             <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-            <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
+            <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <Field label="Name" value={item.name} onChange={(v) => update(i, 'name', v)} />
-              <SelectField label="Kategorie" value={item.category} options={['', ...categories]} onChange={(v) => update(i, 'category', v)} />
+              <Field label={fieldLabel('name')} value={item.name} onChange={(v) => update(i, 'name', v)} />
+              <SelectField label={fieldLabel('category')} value={item.category} options={['', ...categories]} onChange={(v) => update(i, 'category', v)} />
             </div>
           </div>
         ))}
@@ -2984,16 +2984,16 @@ function DeliveryTimelineEditor({ data, onChange }: EditorProps) {
   function updateStep(i: number, field: string, val: string) { setSteps(steps.map((s, idx) => idx === i ? { ...s, [field]: val } : s)); }
   return (
     <div className="space-y-4">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       {steps.map((step, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
             <Field label="Nr." value={step.number} onChange={(v) => updateStep(i, 'number', v)} />
-            <IconPickerField label="Icon" value={step.icon} onChange={(v) => updateStep(i, 'icon', v)} />
-            <Field label="Titel" value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
-            <Field label="Text" value={step.text} onChange={(v) => updateStep(i, 'text', v)} />
+            <IconPickerField label={fieldLabel('icon')} value={step.icon} onChange={(v) => updateStep(i, 'icon', v)} />
+            <Field label={fieldLabel('title')} value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
+            <Field label={fieldLabel('text')} value={step.text} onChange={(v) => updateStep(i, 'text', v)} />
           </div>
         </div>
       ))}
@@ -3012,14 +3012,14 @@ function InspirationGridEditor({ data, onChange }: EditorProps) {
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
   return (
     <div className="space-y-4">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline}  help={fieldHelp('subline')} />
       {items.map((item, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button onClick={() => removeItem(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <ImageUploadField label="Bild" value={item.image} onChange={(v) => update(i, 'image', v)} />
+          <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <Field label="Titel" value={item.title} onChange={(v) => update(i, 'title', v)} />
+            <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
             <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/inspiration" />
           </div>
         </div>
@@ -3039,7 +3039,7 @@ function BeforeAfterEditor({ data, onChange }: EditorProps) {
   useReport({ headline, description, imageBefore, imageAfter, labelBefore, labelAfter }, onChange);
   return (
     <div className="space-y-4">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
       <Field label="Beschreibung" value={description} onChange={setDescription} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
@@ -3074,17 +3074,17 @@ function VerticalTimelineEditor({ data, onChange }: EditorProps) {
   function updateStep(i: number, field: string, value: string | string[]) { setSteps(steps.map((step, idx) => idx === i ? { ...step, [field]: value } : step)); }
   return (
     <div className="space-y-4">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
       {steps.map((step, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button type="button" onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <Field label="Nummer" value={step.number} onChange={(v) => updateStep(i, 'number', v)} />
-            <Field label="Zeit / Label" value={step.timeLabel} onChange={(v) => updateStep(i, 'timeLabel', v)} placeholder="z.B. Woche 1" />
+            <Field label={fieldLabel('number')} value={step.number} onChange={(v) => updateStep(i, 'number', v)} />
+            <Field label={fieldLabel('timeLabel')} value={step.timeLabel} onChange={(v) => updateStep(i, 'timeLabel', v)} placeholder="z.B. Woche 1" />
           </div>
-          <Field label="Titel" value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
-          <Field label="Text" value={step.text} onChange={(v) => updateStep(i, 'text', v)} multiline />
+          <Field label={fieldLabel('title')} value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
+          <Field label={fieldLabel('text')} value={step.text} onChange={(v) => updateStep(i, 'text', v)} multiline />
           <Field label="Checkpunkte (eine Zeile pro Punkt)" value={step.checkmarks.join('\n')} onChange={(v) => updateStep(i, 'checkmarks', v.split('\n').map(item => item.trim()).filter(Boolean))} multiline />
         </div>
       ))}
@@ -3112,8 +3112,8 @@ function BeforeAfterSliderEditor({ data, onChange }: EditorProps) {
   function updateSlide(i: number, field: string, value: string) { setSlides(slides.map((slide, idx) => idx === i ? { ...slide, [field]: value } : slide)); }
   return (
     <div className="space-y-4">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
       <SelectField label="Bildformat" value={aspectRatio} options={['16/9', '4/3', '1/1']} onChange={setAspectRatio} />
       {slides.map((slide, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-3 relative">
@@ -3128,7 +3128,7 @@ function BeforeAfterSliderEditor({ data, onChange }: EditorProps) {
               <Field label="Label nachher" value={slide.labelAfter} onChange={(v) => updateSlide(i, 'labelAfter', v)} />
             </div>
           </div>
-          <Field label="Caption" value={slide.caption} onChange={(v) => updateSlide(i, 'caption', v)} />
+          <Field label={fieldLabel('caption')} value={slide.caption} onChange={(v) => updateSlide(i, 'caption', v)} />
         </div>
       ))}
       <button type="button" onClick={addSlide} className="text-sm text-blue-600 hover:underline">+ Vergleich hinzufügen</button>
@@ -3156,18 +3156,18 @@ function HorizontalScrollShowcaseEditor({ data, onChange }: EditorProps) {
   function updatePanel(i: number, field: string, value: string) { setPanels(panels.map((panel, idx) => idx === i ? { ...panel, [field]: value } : panel)); }
   return (
     <div className="space-y-4">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
       <SelectField label="Panel-Höhe" value={panelHeight} options={['full', 'compact']} onChange={setPanelHeight} />
       {panels.map((panel, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button type="button" onClick={() => removePanel(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>
-          <ImageUploadField label="Bild" value={panel.image} onChange={(v) => updatePanel(i, 'image', v)} />
-          <Field label="Titel" value={panel.title} onChange={(v) => updatePanel(i, 'title', v)} />
-          <Field label="Text" value={panel.text} onChange={(v) => updatePanel(i, 'text', v)} multiline />
+          <ImageUploadField label={fieldLabel('image')} value={panel.image} onChange={(v) => updatePanel(i, 'image', v)} />
+          <Field label={fieldLabel('title')} value={panel.title} onChange={(v) => updatePanel(i, 'title', v)} />
+          <Field label={fieldLabel('text')} value={panel.text} onChange={(v) => updatePanel(i, 'text', v)} multiline />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <Field label="CTA Label" value={panel.ctaLabel} onChange={(v) => updatePanel(i, 'ctaLabel', v)} />
-            <Field label="CTA Link" value={panel.ctaHref} onChange={(v) => updatePanel(i, 'ctaHref', v)} />
+            <Field label={fieldLabel('ctaLabel')} value={panel.ctaLabel} onChange={(v) => updatePanel(i, 'ctaLabel', v)} />
+            <Field label={fieldLabel('ctaHref')} value={panel.ctaHref} onChange={(v) => updatePanel(i, 'ctaHref', v)} />
           </div>
           <ColorField label="Overlay-Farbe" value={panel.overlayColor} onChange={(v) => updatePanel(i, 'overlayColor', v)} alpha="always" />
         </div>
@@ -3199,12 +3199,12 @@ function CinematicHeroEditor({ data, onChange }: EditorProps) {
   return (
     <div className="space-y-4">
       <Field label="Eyebrow / Badge" value={d.eyebrow} onChange={(v) => setD({ ...d, eyebrow: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <ImageUploadField label="Hero-Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
       <Field label="Video-URL optional" value={d.videoUrl} onChange={(v) => setD({ ...d, videoUrl: v })} placeholder="https://..." />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <ColorField label="Overlay" value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} alpha="always" />
+        <ColorField label={fieldLabel('overlay')} value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} alpha="always" />
         <SelectField label="Textausrichtung" value={d.align} options={['left', 'center']} onChange={(v) => setD({ ...d, align: v })} />
       </div>
       <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
@@ -3215,8 +3215,8 @@ function CinematicHeroEditor({ data, onChange }: EditorProps) {
           <div key={i} className="relative rounded-lg border p-3">
             <button type="button" onClick={() => removeFact(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <Field label="Wert" value={fact.value} onChange={(v) => updateFact(i, 'value', v)} />
-              <Field label="Label" value={fact.label} onChange={(v) => updateFact(i, 'label', v)} />
+              <Field label={fieldLabel('value')} value={fact.value} onChange={(v) => updateFact(i, 'value', v)} />
+              <Field label={fieldLabel('label')} value={fact.label} onChange={(v) => updateFact(i, 'label', v)} />
             </div>
           </div>
         ))}
@@ -3241,15 +3241,15 @@ function SpotlightCardsEditor({ data, onChange }: EditorProps) {
   }
   return (
     <div className="space-y-4">
-      <Field label="Badge" value={badge} onChange={setBadge} />
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
       {cards.map((card, i) => (
         <div key={i} className="relative rounded-lg border p-3 space-y-2">
           <button type="button" onClick={() => removeCard(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
-          <Field label="Titel" value={card.title} onChange={(v) => updateCard(i, 'title', v)} />
-          <Field label="Text" value={card.text} onChange={(v) => updateCard(i, 'text', v)} multiline />
-          <IconPickerField label="Icon" value={card.icon} onChange={(v) => updateCard(i, 'icon', v)} />
+          <Field label={fieldLabel('title')} value={card.title} onChange={(v) => updateCard(i, 'title', v)} />
+          <Field label={fieldLabel('text')} value={card.text} onChange={(v) => updateCard(i, 'text', v)} multiline />
+          <IconPickerField label={fieldLabel('icon')} value={card.icon} onChange={(v) => updateCard(i, 'icon', v)} />
           <ImageUploadField label="Bild optional" value={card.image} onChange={(v) => updateCard(i, 'image', v)} />
           <Field label="Link optional" value={card.href} onChange={(v) => updateCard(i, 'href', v)} />
         </div>
@@ -3273,15 +3273,15 @@ function ScrollStoryEditor({ data, onChange }: EditorProps) {
   }
   return (
     <div className="space-y-4">
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
       {steps.map((step, i) => (
         <div key={i} className="relative rounded-lg border p-3 space-y-2">
           <button type="button" onClick={() => removeStep(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
-          <Field label="Kicker" value={step.kicker} onChange={(v) => updateStep(i, 'kicker', v)} placeholder="01 / Analyse / Woche 1" />
-          <Field label="Titel" value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
-          <Field label="Text" value={step.text} onChange={(v) => updateStep(i, 'text', v)} multiline />
-          <ImageUploadField label="Bild" value={step.image} onChange={(v) => updateStep(i, 'image', v)} />
+          <Field label={fieldLabel('kicker')} value={step.kicker} onChange={(v) => updateStep(i, 'kicker', v)} placeholder="01 / Analyse / Woche 1" />
+          <Field label={fieldLabel('title')} value={step.title} onChange={(v) => updateStep(i, 'title', v)} />
+          <Field label={fieldLabel('text')} value={step.text} onChange={(v) => updateStep(i, 'text', v)} multiline />
+          <ImageUploadField label={fieldLabel('image')} value={step.image} onChange={(v) => updateStep(i, 'image', v)} />
         </div>
       ))}
       <button type="button" onClick={addStep} className="text-sm text-blue-600 hover:underline">+ Story-Schritt hinzufügen</button>
@@ -3322,9 +3322,9 @@ function PremiumComparisonEditor({ data, onChange }: EditorProps) {
   }
   return (
     <div className="space-y-4">
-      <Field label="Badge" value={badge} onChange={setBadge} />
-      <Field label="Headline" value={headline} onChange={setHeadline} />
-      <Field label="Subline" value={subline} onChange={setSubline} multiline />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge}  help={fieldHelp('badge')} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  help={fieldHelp('headline')} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  help={fieldHelp('subline')} />
       <label className="block text-sm">
         <span className="text-gray-600 text-xs">Highlight-Spalte (0-basiert)</span>
         <input className="admin-input mt-1 w-full" type="number" min={0} value={highlightCol} onChange={(e) => setHighlightCol(Number(e.target.value))} />
@@ -3335,7 +3335,7 @@ function PremiumComparisonEditor({ data, onChange }: EditorProps) {
           <div key={i} className="relative rounded-lg border p-3">
             <button type="button" onClick={() => removeColumn(i)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <Field label="Label" value={column.label} onChange={(v) => updateColumn(i, 'label', v)} />
+              <Field label={fieldLabel('label')} value={column.label} onChange={(v) => updateColumn(i, 'label', v)} />
               <Field label="Notiz" value={column.note} onChange={(v) => updateColumn(i, 'note', v)} />
             </div>
           </div>
@@ -3347,7 +3347,7 @@ function PremiumComparisonEditor({ data, onChange }: EditorProps) {
         {rows.map((row, rowIndex) => (
           <div key={rowIndex} className="relative rounded-lg border p-3 space-y-2">
             <button type="button" onClick={() => removeRow(rowIndex)} className="absolute right-2 top-2 text-xs text-red-400 hover:text-red-600">×</button>
-            <Field label="Feature" value={row.feature} onChange={(v) => updateRow(rowIndex, 'feature', v)} />
+            <Field label={fieldLabel('feature')} value={row.feature} onChange={(v) => updateRow(rowIndex, 'feature', v)} />
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
               {columns.map((column, colIndex) => (
                 <Field key={colIndex} label={column.label || `Spalte ${colIndex + 1}`} value={row.values[colIndex] || ''} onChange={(v) => updateValue(rowIndex, colIndex, v)} placeholder="true, false oder Text" />
@@ -3375,11 +3375,11 @@ function ImmersiveCtaBannerEditor({ data, onChange }: EditorProps) {
   useReport(d as unknown as Record<string, unknown>, onChange);
   return (
     <div className="space-y-4">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <ImageUploadField label="Hintergrundbild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
-      <ColorField label="Overlay" value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} alpha="always" />
+      <ColorField label={fieldLabel('overlay')} value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} alpha="always" />
       <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
       <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />
       <SimplePairs title="Kennzahlen" items={d.metrics} onAdd={() => setD({ ...d, metrics: [...d.metrics, { value: '', label: '' }] })} onRemove={(i) => setD({ ...d, metrics: d.metrics.filter((_, idx) => idx !== i) })} onChange={(i, next) => setD({ ...d, metrics: d.metrics.map((item, idx) => idx === i ? next : item) })} firstLabel="Wert" secondLabel="Label" />
@@ -3399,9 +3399,9 @@ function ProofWallEditor({ data, onChange }: EditorProps) {
   useReport({ ...d, reviews: d.reviews.map(review => ({ ...review, rating: Number(review.rating) || 5 })) }, onChange);
   return (
     <div className="space-y-4">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <ProofList title="Proofs" items={d.proofs} onChange={(items) => setD({ ...d, proofs: items })} />
       <ReviewList title="Bewertungen" items={d.reviews} onChange={(items) => setD({ ...d, reviews: items })} />
       <LogoList title="Logos/Zertifikate" items={d.logos} onChange={(items) => setD({ ...d, logos: items })} />
@@ -3419,9 +3419,9 @@ function EditorialFeatureRailEditor({ data, onChange }: EditorProps) {
   useReport(d as unknown as Record<string, unknown>, onChange);
   return (
     <div className="space-y-4">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <RailItems items={d.items} onChange={(items) => setD({ ...d, items })} />
     </div>
   );
@@ -3441,10 +3441,10 @@ function OfferCampaignStripEditor({ data, onChange }: EditorProps) {
   useReport({ ...d, benefits: d.benefitsText.split('\n').map(v => v.trim()).filter(Boolean), benefitsText: undefined }, onChange);
   return (
     <div className="space-y-4">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
-      <ImageUploadField label="Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <ImageUploadField label={fieldLabel('image')} value={d.image} onChange={(v) => setD({ ...d, image: v })} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3"><Field label="Angebotslabel" value={d.offerLabel} onChange={(v) => setD({ ...d, offerLabel: v })} /><Field label="Deadline" value={d.deadline} onChange={(v) => setD({ ...d, deadline: v })} /></div>
       <Field label="Benefits (eine Zeile pro Punkt)" value={d.benefitsText} onChange={(v) => setD({ ...d, benefitsText: v })} multiline />
       <ButtonField label="CTA" value={d.cta} onChange={(v) => setD({ ...d, cta: v })} />
@@ -3467,8 +3467,8 @@ function BeforeAfterStoryProEditor({ data, onChange }: EditorProps) {
   useReport(d as unknown as Record<string, unknown>, onChange);
   return (
     <div className="space-y-4">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Ausgangslage" value={d.problem} onChange={(v) => setD({ ...d, problem: v })} multiline />
       <Field label="Lösung" value={d.solution} onChange={(v) => setD({ ...d, solution: v })} multiline />
       <Field label="Ergebnis" value={d.result} onChange={(v) => setD({ ...d, result: v })} multiline />
@@ -3492,9 +3492,9 @@ function SignatureGridEditor({ data, onChange }: EditorProps) {
   useReport(d as unknown as Record<string, unknown>, onChange);
   return (
     <div className="space-y-4">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <ImageUploadField label="Signatur-Bild" value={d.image} onChange={(v) => setD({ ...d, image: v })} />
       <TraitList items={d.traits} onChange={(items) => setD({ ...d, traits: items })} />
       <SimplePairs title="Stats" items={d.stats} onAdd={() => setD({ ...d, stats: [...d.stats, { value: '', label: '' }] })} onRemove={(i) => setD({ ...d, stats: d.stats.filter((_, idx) => idx !== i) })} onChange={(i, next) => setD({ ...d, stats: d.stats.map((item, idx) => idx === i ? next : item) })} firstLabel="Wert" secondLabel="Label" />
@@ -3527,9 +3527,9 @@ function ComparisonCardsProEditor({ data, onChange }: EditorProps) {
   useReport({ ...d, plans: d.plans.map((plan: ComparisonCardsProPlanEditor) => ({ name: plan.name, price: plan.price, note: plan.note, highlighted: plan.highlighted, features: linesToList(plan.featuresText), missing: linesToList(plan.missingText), ctaLabel: plan.ctaLabel, ctaHref: plan.ctaHref })) }, onChange);
   return (
     <div className="space-y-4">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <PlanList items={d.plans} onChange={(plans) => setD({ ...d, plans })} />
     </div>
   );
@@ -3540,27 +3540,27 @@ function SimplePairs({ title, items, onAdd, onRemove, onChange, firstLabel, seco
 }
 
 function ProofList({ title, items, onChange }: { title: string; items: { value: string; label: string; note: string }[]; onChange: (items: { value: string; label: string; note: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label="Wert" value={item.value} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, value: v } : x))} /><Field label="Label" value={item.label} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, label: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /></div>)}<button type="button" onClick={() => onChange([...items, { value: '', label: '', note: '' }])} className="text-sm text-blue-600 hover:underline">+ Proof hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('value')} value={item.value} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, value: v } : x))} /><Field label={fieldLabel('label')} value={item.label} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, label: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /></div>)}<button type="button" onClick={() => onChange([...items, { value: '', label: '', note: '' }])} className="text-sm text-blue-600 hover:underline">+ Proof hinzufügen</button></div>;
 }
 
 function ReviewList({ title, items, onChange }: { title: string; items: { quote: string; name: string; context: string; rating: string }[]; onChange: (items: { quote: string; name: string; context: string; rating: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label="Zitat" value={item.quote} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, quote: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Kontext" value={item.context} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, context: v } : x))} /><Field label="Rating" value={item.rating} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, rating: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { quote: '', name: '', context: '', rating: '5' }])} className="text-sm text-blue-600 hover:underline">+ Bewertung hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label={fieldLabel('quote')} value={item.quote} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, quote: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Kontext" value={item.context} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, context: v } : x))} /><Field label={fieldLabel('rating')} value={item.rating} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, rating: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { quote: '', name: '', context: '', rating: '5' }])} className="text-sm text-blue-600 hover:underline">+ Bewertung hinzufügen</button></div>;
 }
 
 function LogoList({ title, items, onChange }: { title: string; items: { name: string; image: string }[]; onChange: (items: { name: string; image: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><ImageUploadField label="Logo optional" value={item.image} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, image: v } : x))} /></div>)}<button type="button" onClick={() => onChange([...items, { name: '', image: '' }])} className="text-sm text-blue-600 hover:underline">+ Logo hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">{title}</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><ImageUploadField label="Logo optional" value={item.image} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, image: v } : x))} /></div>)}<button type="button" onClick={() => onChange([...items, { name: '', image: '' }])} className="text-sm text-blue-600 hover:underline">+ Logo hinzufügen</button></div>;
 }
 
 function RailItems({ items, onChange }: { items: { kicker: string; title: string; text: string; image: string; ctaLabel: string; ctaHref: string }[]; onChange: (items: { kicker: string; title: string; text: string; image: string; ctaLabel: string; ctaHref: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Slides</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label="Kicker" value={item.kicker} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, kicker: v } : x))} /><Field label="Titel" value={item.title} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, title: v } : x))} /><Field label="Text" value={item.text} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, text: v } : x))} multiline /><ImageUploadField label="Bild" value={item.image} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, image: v } : x))} /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { kicker: '', title: '', text: '', image: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Slide hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Slides</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label={fieldLabel('kicker')} value={item.kicker} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, kicker: v } : x))} /><Field label={fieldLabel('title')} value={item.title} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, title: v } : x))} /><Field label={fieldLabel('text')} value={item.text} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, text: v } : x))} multiline /><ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, image: v } : x))} /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('ctaLabel')} value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label={fieldLabel('ctaHref')} value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { kicker: '', title: '', text: '', image: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Slide hinzufügen</button></div>;
 }
 
 function TraitList({ items, onChange }: { items: { title: string; text: string; icon: string }[]; onChange: (items: { title: string; text: string; icon: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Merkmale</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label="Titel" value={item.title} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, title: v } : x))} /><Field label="Text" value={item.text} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, text: v } : x))} multiline /><IconPickerField label="Icon" value={item.icon} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, icon: v } : x))} /></div>)}<button type="button" onClick={() => onChange([...items, { title: '', text: '', icon: '' }])} className="text-sm text-blue-600 hover:underline">+ Merkmal hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Merkmale</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><Field label={fieldLabel('title')} value={item.title} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, title: v } : x))} /><Field label={fieldLabel('text')} value={item.text} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, text: v } : x))} multiline /><IconPickerField label={fieldLabel('icon')} value={item.icon} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, icon: v } : x))} /></div>)}<button type="button" onClick={() => onChange([...items, { title: '', text: '', icon: '' }])} className="text-sm text-blue-600 hover:underline">+ Merkmal hinzufügen</button></div>;
 }
 
 function PlanList({ items, onChange }: { items: { name: string; price: string; note: string; highlighted: boolean; featuresText: string; missingText: string; ctaLabel: string; ctaHref: string }[]; onChange: (items: { name: string; price: string; note: string; highlighted: boolean; featuresText: string; missingText: string; ctaLabel: string; ctaHref: string }[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Pakete</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Preis" value={item.price} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, price: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /><label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={item.highlighted} onChange={(e) => onChange(items.map((x, idx) => idx === i ? { ...x, highlighted: e.target.checked } : x))} /> Empfohlen</label><Field label="Features (eine Zeile pro Punkt)" value={item.featuresText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, featuresText: v } : x))} multiline /><Field label="Nicht enthalten (eine Zeile pro Punkt)" value={item.missingText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, missingText: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', price: '', note: '', highlighted: false, featuresText: '', missingText: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Paket hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Pakete</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label={fieldLabel('price')} value={item.price} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, price: v } : x))} /></div><Field label="Notiz" value={item.note} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, note: v } : x))} multiline /><label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={item.highlighted} onChange={(e) => onChange(items.map((x, idx) => idx === i ? { ...x, highlighted: e.target.checked } : x))} /> Empfohlen</label><Field label="Features (eine Zeile pro Punkt)" value={item.featuresText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, featuresText: v } : x))} multiline /><Field label="Nicht enthalten (eine Zeile pro Punkt)" value={item.missingText} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, missingText: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('ctaLabel')} value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label={fieldLabel('ctaHref')} value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', price: '', note: '', highlighted: false, featuresText: '', missingText: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Paket hinzufügen</button></div>;
 }
 
 type AdditionalLocationDraft = { name: string; address: string; phone: string; email: string; mapEmbedUrl: string; openingHours: string; ctaLabel: string; ctaHref: string };
@@ -3584,16 +3584,16 @@ function AdditionalLocationsEditor({ data, onChange }: EditorProps) {
   useReport(d as unknown as Record<string, unknown>, onChange);
   return (
     <div className="space-y-4">
-      <Field label="Badge" value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label="Headline" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label="Subline" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
       <LocationList items={d.locations} onChange={(locations) => setD({ ...d, locations })} />
     </div>
   );
 }
 
 function LocationList({ items, onChange }: { items: AdditionalLocationDraft[]; onChange: (items: AdditionalLocationDraft[]) => void }) {
-  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Standorte</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label="Name" value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Telefon" value={item.phone} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, phone: v } : x))} /></div><Field label="Adresse" value={item.address} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, address: v } : x))} multiline /><Field label="E-Mail" value={item.email} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, email: v } : x))} /><Field label="Öffnungszeiten" value={item.openingHours} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, openingHours: v } : x))} multiline /><Field label="Google Maps Embed URL" value={item.mapEmbedUrl} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, mapEmbedUrl: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label="CTA Label" value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label="CTA Link" value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', address: '', phone: '', email: '', mapEmbedUrl: '', openingHours: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Standort hinzufügen</button></div>;
+  return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Standorte</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Telefon" value={item.phone} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, phone: v } : x))} /></div><Field label="Adresse" value={item.address} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, address: v } : x))} multiline /><Field label="E-Mail" value={item.email} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, email: v } : x))} /><Field label="Öffnungszeiten" value={item.openingHours} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, openingHours: v } : x))} multiline /><Field label="Google Maps Embed URL" value={item.mapEmbedUrl} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, mapEmbedUrl: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('ctaLabel')} value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label={fieldLabel('ctaHref')} value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', address: '', phone: '', email: '', mapEmbedUrl: '', openingHours: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Standort hinzufügen</button></div>;
 }
 
 const EDITORS: Record<string, React.FC<EditorProps>> = {
