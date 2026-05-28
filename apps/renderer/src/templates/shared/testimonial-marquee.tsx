@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { plain } from '@/lib/strip-html';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -29,7 +30,7 @@ function MarqueeRow({ items, reverse, speed = 30 }: { items: MarqueeItem[]; reve
       >
         {doubled.map((item, i) => (
           <div key={i} className="flex-shrink-0 w-[320px] md:w-[380px] rounded-xl bg-white border border-zinc-100 shadow-sm p-5 hover:shadow-md transition-shadow duration-300">
-            <p className="text-sm text-zinc-700 leading-relaxed mb-4 line-clamp-4">&ldquo;{item.quote}&rdquo;</p>
+            <p className="text-sm text-zinc-700 leading-relaxed mb-4 line-clamp-4">&ldquo;{plain(item.quote)}&rdquo;</p>
             <div className="flex items-center gap-3">
               {item.image && <img src={item.image} alt={item.name} className="w-9 h-9 rounded-full object-cover" />}
               <div className="min-w-0">
