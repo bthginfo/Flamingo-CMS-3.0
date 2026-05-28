@@ -156,9 +156,9 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
 };
 
 function getFieldsForSection(sectionType: string): ColorFieldKey[] {
-  return SECTION_FIELDS[sectionType] || [];
+  return SECTION_FIELDS[sectionType] ?? ['sectionBg', 'headingColor', 'bodyColor'];
 }
-}
+
 
 export function SectionColorEditor({ value, onChange, sectionType, resolvedVars, iframeRef, sectionId }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string; resolvedVars?: Record<string, string>; iframeRef?: React.RefObject<HTMLIFrameElement | null>; sectionId?: string }) {
   const [open, setOpen] = useState(false);
