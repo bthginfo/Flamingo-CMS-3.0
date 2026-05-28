@@ -3265,4 +3265,6 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   galleryMoodboard: GalleryGridEditor,
   locationAccess: MapEditor,
   hostTeam: TeamEditor,
+  faqGallery: SchemaSectionEditor,
+  eventCalendar: SchemaSectionEditor,
 };
