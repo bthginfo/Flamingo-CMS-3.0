@@ -1,18 +1,18 @@
-'use client';
+﻿'use client';
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { getProvider } from '@/lib/embed-providers';
+import Script from 'next/script';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 /** Sanitize standard embed code — only allow iframe tags */
 function sanitizeEmbedCode(html: string): string | null {
   if (!html) return null;
-  const match = html.match(/<iframe\s[^>]*src=["']([^"']+)["'][^>]*>[\s\S]*?<\/iframe>/i)
+  const match = html.match(/<iframe\s[^>]*src=["']([^"']+)["'][^>]*><\/iframe>/i)
     || html.match(/<iframe\s[^>]*src=["']([^"']+)["'][^>]*\/>/i);
   if (!match) return null;
-  // Return only a safe iframe with the extracted src
   return match[1];
 }
 
@@ -29,20 +29,32 @@ export function EmbedSection({ data }: Props) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
-  // Determine iframe URL
+  // Determine embed type and URL
   let iframeSrc: string | null = null;
   let iframeTitle = 'Embed';
+  let scriptSrc: string | null = null;
+  let triggerFn: string | null = null;
+  let isScriptWidget = false;
 
   if (mode === 'preset' && provider) {
     const p = getProvider(provider);
     if (p) {
-      iframeSrc = p.buildUrl(config);
-      iframeTitle = p.label;
+      if (p.type === 'script' && p.buildScriptUrl) {
+        scriptSrc = p.buildScriptUrl(config);
+        triggerFn = p.triggerFunction || null;
+        isScriptWidget = true;
+        iframeTitle = p.label;
+      } else {
+        iframeSrc = p.buildUrl(config);
+        iframeTitle = p.label;
+      }
     }
   } else if (mode === 'standard' && embedCode) {
     iframeSrc = sanitizeEmbedCode(embedCode);
     iframeTitle = 'External Embed';
   }
+
+  const buttonLabel = iframeTitle === 'Dr. Flex' ? 'Termin online buchen' : iframeTitle === 'Doctolib' ? 'Termin buchen' : `${iframeTitle} öffnen`;
 
   return (
     <div ref={ref}>
@@ -58,7 +70,24 @@ export function EmbedSection({ data }: Props) {
         </motion.div>
       )}
 
-      {iframeSrc ? (
+      {isScriptWidget && scriptSrc ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={inView ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="flex justify-center"
+        >
+          <Script src={scriptSrc} strategy="lazyOnload" />
+          {triggerFn && (
+            <button
+              onClick={() => { const fn = triggerFn; if (typeof window !== 'undefined' && fn && (window as any)[fn]) (window as any)[fn](); }}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
+            >
+              {buttonLabel}
+            </button>
+          )}
+        </motion.div>
+      ) : iframeSrc ? (
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={inView ? { opacity: 1, scale: 1 } : {}}

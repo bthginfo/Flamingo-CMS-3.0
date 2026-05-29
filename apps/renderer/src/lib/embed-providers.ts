@@ -1,4 +1,4 @@
-/** Embed Provider Registry � defines available providers, their fields, and how to generate embed URLs. */
+﻿/** Embed Provider Registry — defines available providers, their fields, and how to generate embed URLs. */
 
 export type ProviderField = {
   key: string;
@@ -12,15 +12,52 @@ export type EmbedProvider = {
   id: string;
   label: string;
   category: 'booking' | 'reviews' | 'maps' | 'video' | 'social' | 'forms' | 'other';
-  icon: string; // Lucide icon name
+  icon: string;
+  type?: 'iframe' | 'script';
   fields: ProviderField[];
   buildUrl: (config: Record<string, string>) => string | null;
+  /** For script-type providers: returns the script src URL */
+  buildScriptUrl?: (config: Record<string, string>) => string | null;
+  /** For script-type providers: JS function name to call to open the widget */
+  triggerFunction?: string;
   defaultHeight: number;
-  allowedDomains: string[]; // For CSP / validation
+  allowedDomains: string[];
 };
 
 export const EMBED_PROVIDERS: EmbedProvider[] = [
-  // --- Buchung --------------------------------------------
+  // ─── Buchung (Script-Widgets) ──────────────────────────
+  {
+    id: 'drflex',
+    label: 'Dr. Flex',
+    category: 'booking',
+    icon: 'Stethoscope',
+    type: 'script',
+    fields: [
+      { key: 'practiceId', label: 'Praxis-ID', placeholder: '12345', help: 'Deine Dr. Flex medicalPracticeId (vom Dr. Flex Support erhalten)', required: true },
+    ],
+    buildUrl: () => null,
+    buildScriptUrl: (c) => c.practiceId ? `https://dr-flex.de/embed.js?medicalPracticeId=${encodeURIComponent(c.practiceId)}` : null,
+    triggerFunction: 'toggleDrFlexAppointments',
+    defaultHeight: 0,
+    allowedDomains: ['dr-flex.de'],
+  },
+  {
+    id: 'doctolib',
+    label: 'Doctolib',
+    category: 'booking',
+    icon: 'CalendarCheck',
+    type: 'script',
+    fields: [
+      { key: 'slug', label: 'Praxis-Slug', placeholder: 'dr-mueller-berlin', help: 'Dein Slug aus der Doctolib-URL: doctolib.de/praxis/[DEIN-SLUG]', required: true },
+    ],
+    buildUrl: () => null,
+    buildScriptUrl: (c) => c.slug ? `https://www.doctolib.de/booking/${encodeURIComponent(c.slug)}.js` : null,
+    triggerFunction: 'doctolib_booking',
+    defaultHeight: 0,
+    allowedDomains: ['www.doctolib.de'],
+  },
+
+  // ─── Buchung (iframe) ─────────────────────────────────────
   {
     id: 'calendly',
     label: 'Calendly',
@@ -108,7 +145,7 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     allowedDomains: ['widget.getyourguide.com'],
   },
 
-  // --- Bewertungen ----------------------------------------
+  // ─── Bewertungen ────────────────────────────────────────
   {
     id: 'jameda',
     label: 'Jameda',
@@ -121,8 +158,32 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     defaultHeight: 400,
     allowedDomains: ['www.jameda.de'],
   },
+  {
+    id: 'tripadvisor',
+    label: 'TripAdvisor',
+    category: 'reviews',
+    icon: 'Star',
+    fields: [
+      { key: 'widgetUrl', label: 'Widget-URL', placeholder: 'https://www.tripadvisor.de/WidgetEmbed-...', help: 'Die embed-URL aus dem TripAdvisor Widget-Generator', required: true },
+    ],
+    buildUrl: (c) => c.widgetUrl || null,
+    defaultHeight: 400,
+    allowedDomains: ['www.tripadvisor.de', 'www.tripadvisor.com'],
+  },
+  {
+    id: 'holidaycheck',
+    label: 'HolidayCheck',
+    category: 'reviews',
+    icon: 'Star',
+    fields: [
+      { key: 'hotelId', label: 'Hotel-ID', placeholder: '123456', help: 'Die Hotel-ID aus der HolidayCheck-URL', required: true },
+    ],
+    buildUrl: (c) => c.hotelId ? `https://www.holidaycheck.de/wi/${encodeURIComponent(c.hotelId)}` : null,
+    defaultHeight: 400,
+    allowedDomains: ['www.holidaycheck.de'],
+  },
 
-  // --- Tourismus & Karten ---------------------------------
+  // ─── Tourismus & Karten ─────────────────────────────────
   {
     id: 'outdooractive',
     label: 'Outdooractive',
@@ -149,7 +210,7 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     allowedDomains: ['www.komoot.de', 'www.komoot.com'],
   },
 
-  // --- Video ---------------------------------------------
+  // ─── Video ─────────────────────────────────────────────
   {
     id: 'youtube',
     label: 'YouTube',
@@ -188,7 +249,7 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     allowedDomains: ['open.spotify.com'],
   },
 
-  // --- Formulare ------------------------------------------
+  // ─── Formulare ──────────────────────────────────────────
   {
     id: 'typeform',
     label: 'Typeform',
@@ -202,21 +263,21 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     allowedDomains: ['form.typeform.com'],
   },
 
-  // --- Social ---------------------------------------------
+  // ─── Social ─────────────────────────────────────────────
   {
     id: 'instagram',
     label: 'Instagram Post',
     category: 'social',
     icon: 'Instagram',
     fields: [
-      { key: 'postUrl', label: 'Post-URL', placeholder: 'https://www.instagram.com/p/ABC123/', help: 'Die vollst�ndige URL eines Instagram-Posts (mit / am Ende)', required: true },
+      { key: 'postUrl', label: 'Post-URL', placeholder: 'https://www.instagram.com/p/ABC123/', help: 'Die vollständige URL eines Instagram-Posts (mit / am Ende)', required: true },
     ],
     buildUrl: (c) => c.postUrl ? `${c.postUrl.replace(/\/$/, '')}/embed/` : null,
     defaultHeight: 500,
     allowedDomains: ['www.instagram.com'],
   },
 
-  // --- Sonstige -------------------------------------------
+  // ─── Sonstige ───────────────────────────────────────────
   {
     id: 'matterport',
     label: 'Matterport (3D Tour)',
@@ -228,30 +289,6 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     buildUrl: (c) => c.modelId ? `https://my.matterport.com/show/?m=${encodeURIComponent(c.modelId)}` : null,
     defaultHeight: 500,
     allowedDomains: ['my.matterport.com'],
-  },
-  {
-    id: 'tripadvisor',
-    label: 'TripAdvisor',
-    category: 'reviews',
-    icon: 'Star',
-    fields: [
-      { key: 'widgetUrl', label: 'Widget-URL', placeholder: 'https://www.tripadvisor.de/WidgetEmbed-...', help: 'Die embed-URL aus dem TripAdvisor Widget-Generator', required: true },
-    ],
-    buildUrl: (c) => c.widgetUrl || null,
-    defaultHeight: 400,
-    allowedDomains: ['www.tripadvisor.de', 'www.tripadvisor.com'],
-  },
-  {
-    id: 'holidaycheck',
-    label: 'HolidayCheck',
-    category: 'reviews',
-    icon: 'Star',
-    fields: [
-      { key: 'hotelId', label: 'Hotel-ID', placeholder: '123456', help: 'Die Hotel-ID aus der HolidayCheck-URL', required: true },
-    ],
-    buildUrl: (c) => c.hotelId ? `https://www.holidaycheck.de/wi/${encodeURIComponent(c.hotelId)}` : null,
-    defaultHeight: 400,
-    allowedDomains: ['www.holidaycheck.de'],
   },
 ];
 
@@ -265,12 +302,26 @@ export const EMBED_CATEGORIES = [
   { id: 'other', label: 'Sonstige' },
 ] as const;
 
-/** Industry-based provider suggestions */
-export const INDUSTRY_SUGGESTIONS: Record<string, string[]> = {
-  medical: ['calendly', 'jameda', 'simplybook'],
-  gastro: ['opentable', 'resmio', 'thefork'],
-  beauty: ['treatwell', 'simplybook'],
-  tourism: ['outdooractive', 'komoot', 'getyourguide', 'tripadvisor', 'holidaycheck'],
-  realestate: ['matterport'],
-  default: ['calendly', 'youtube', 'spotify', 'typeform'],
+/** Suggested providers per industry */
+export const INDUSTRY_EMBED_SUGGESTIONS: Record<string, string[]> = {
+  tradesman: ['calendly', 'youtube'],
+  restaurant: ['resmio', 'thefork', 'opentable', 'instagram', 'youtube'],
+  cafe: ['resmio', 'instagram', 'youtube', 'spotify'],
+  bar: ['resmio', 'instagram', 'youtube', 'spotify'],
+  salon: ['treatwell', 'simplybook', 'instagram'],
+  tattoo: ['simplybook', 'instagram', 'youtube'],
+  hotel: ['holidaycheck', 'tripadvisor', 'youtube'],
+  tourism: ['getyourguide', 'outdooractive', 'komoot', 'youtube'],
+  medical: ['drflex', 'doctolib', 'jameda', 'calendly'],
+  consulting: ['calendly', 'youtube', 'typeform'],
+  fitness: ['simplybook', 'calendly', 'instagram', 'youtube'],
+  wedding: ['calendly', 'instagram', 'youtube', 'spotify'],
+  photography: ['instagram', 'youtube', 'vimeo'],
+  realestate: ['matterport', 'calendly', 'youtube'],
+  ecommerce: ['instagram', 'youtube', 'typeform'],
 };
+
+/** Find a provider by ID */
+export function getProvider(id: string): EmbedProvider | undefined {
+  return EMBED_PROVIDERS.find(p => p.id === id);
+}
