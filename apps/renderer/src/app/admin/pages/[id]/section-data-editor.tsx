@@ -1544,15 +1544,26 @@ function EmbedEditor({ data, onChange }: EditorProps) {
           {currentProvider && (
             <div className="border border-zinc-200 rounded-lg p-3 space-y-3 bg-zinc-50/50">
               <p className="text-xs font-medium text-zinc-700">{currentProvider.label} — Konfiguration</p>
-              {currentProvider.fields.map(field => (
+              {currentProvider.fields.map(field => {
+                const isColor = field.key.toLowerCase().includes('color');
+                return (
                 <div key={field.key}>
                   <label className="block text-sm">
                     <span className="text-gray-600 text-xs">{field.label}{field.required && <span className="text-red-400"> *</span>}</span>
-                    <input className="admin-input mt-1 w-full" value={config[field.key] || ''} onChange={(e) => setConfig({ ...config, [field.key]: e.target.value })} placeholder={field.placeholder} />
+                    {isColor ? (
+                      <div className="flex items-center gap-2 mt-1">
+                        <input type="color" className="w-10 h-10 rounded border border-zinc-200 cursor-pointer p-0.5" value={config[field.key] || field.placeholder || '#000000'} onChange={(e) => setConfig({ ...config, [field.key]: e.target.value })} />
+                        <input className="admin-input flex-1" value={config[field.key] || ''} onChange={(e) => setConfig({ ...config, [field.key]: e.target.value })} placeholder={field.placeholder} />
+                        {config[field.key] && <button type="button" onClick={() => { const next = { ...config }; delete next[field.key]; setConfig(next); }} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
+                      </div>
+                    ) : (
+                      <input className="admin-input mt-1 w-full" value={config[field.key] || ''} onChange={(e) => setConfig({ ...config, [field.key]: e.target.value })} placeholder={field.placeholder} />
+                    )}
                   </label>
                   <p className="text-[11px] text-zinc-400 mt-0.5 flex items-center gap-1"><Info size={10} /> {field.help}</p>
                 </div>
-              ))}
+                );
+              })}
               {/* Preview URL */}
               {currentProvider.buildUrl(config) && (
                 <p className="text-[11px] text-emerald-600 mt-1 truncate">✓ URL: {currentProvider.buildUrl(config)}</p>
