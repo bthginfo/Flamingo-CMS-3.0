@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, X } from 'lucide-react';
 import * as icons from 'lucide-react';
@@ -11,56 +11,62 @@ const ALL_ICONS = Object.keys(icons).filter(
     typeof (icons as Record<string, unknown>)[k] === 'object' && k[0] === k[0].toUpperCase()
 );
 
+function renderIcon(name: string, size = 18) {
+  const Icon = (icons as unknown as Record<string, React.FC<{ size?: number }>>)[name];
+  if (!Icon) return null;
+  return <Icon size={size} />;
+}
+
 /**
- * Lucide icon picker with live search and preview.
- * Uses a portal so the dropdown escapes any stacking-context / overflow clipping.
+ * Lucide icon picker presented as a full-screen modal with category-style grid.
  */
 export function IconPickerField({ label, value, onChange }: { label: string; value: string; onChange: (icon: string) => void }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
-  const [pos, setPos] = useState<{ top: number; left: number; width: number }>({ top: 0, left: 0, width: 0 });
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Position dropdown relative to trigger button
   useEffect(() => {
-    if (!open || !triggerRef.current) return;
-    const rect = triggerRef.current.getBoundingClientRect();
-    setPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+    if (open && inputRef.current) {
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
   }, [open]);
 
-  // Close on click outside
+  // Lock body scroll when modal is open
   useEffect(() => {
     if (!open) return;
-    function handler(e: MouseEvent) {
-      const target = e.target as Node;
-      if (triggerRef.current?.contains(target)) return;
-      if (dropdownRef.current?.contains(target)) return;
-      setOpen(false);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [open]);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!open) return;
+    function handler(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false);
     }
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
   }, [open]);
 
   const filtered = useMemo(() => {
-    if (!search) return ALL_ICONS.slice(0, 60);
+    if (!search) return ALL_ICONS.slice(0, 200);
     const q = search.toLowerCase();
-    return ALL_ICONS.filter(k => k.toLowerCase().includes(q)).slice(0, 60);
+    return ALL_ICONS.filter(k => k.toLowerCase().includes(q)).slice(0, 200);
   }, [search]);
 
-  function renderIcon(name: string, size = 18) {
-    const Icon = (icons as unknown as Record<string, React.FC<{ size?: number }>>)[name];
-    if (!Icon) return null;
-    return <Icon size={size} />;
-  }
+  const handleSelect = useCallback((name: string) => {
+    onChange(name);
+    setOpen(false);
+    setSearch('');
+  }, [onChange]);
 
   return (
     <div className="text-sm">
       <span className="text-gray-600 text-xs block mb-1">{label}</span>
       <button
-        ref={triggerRef}
         type="button"
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen(true)}
         className="admin-input w-full flex items-center gap-2 text-left"
       >
         {value ? (
@@ -72,42 +78,63 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
             </button>
           </>
         ) : (
-          <span className="text-xs text-gray-400">Icon auswaehlen...</span>
+          <span className="text-xs text-gray-400">Icon auswählen...</span>
         )}
       </button>
 
       {open && createPortal(
-        <div
-          ref={dropdownRef}
-          className="fixed bg-white border rounded-lg shadow-xl max-h-[320px] flex flex-col"
-          style={{ top: pos.top, left: pos.left, width: pos.width, zIndex: 9999 }}
-        >
-          <div className="p-2 border-b flex items-center gap-2">
-            <Search size={14} className="text-gray-400 shrink-0" />
-            <input
-              autoFocus
-              className="w-full text-xs outline-none"
-              placeholder="Icon suchen..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <div className="overflow-y-auto p-2 grid grid-cols-6 gap-1">
-            {filtered.map(name => (
-              <button
-                key={name}
-                type="button"
-                title={name}
-                onClick={() => { onChange(name); setOpen(false); setSearch(''); }}
-                className={`flex flex-col items-center gap-0.5 p-2 rounded hover:bg-blue-50 transition ${value === name ? 'bg-blue-100 ring-1 ring-blue-300' : ''}`}
-              >
-                {renderIcon(name, 20)}
-                <span className="text-[9px] text-gray-500 truncate w-full text-center">{name}</span>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
+
+          {/* Modal */}
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Header */}
+            <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+              <Search size={18} className="text-gray-400 shrink-0" />
+              <input
+                ref={inputRef}
+                className="flex-1 text-sm outline-none placeholder:text-gray-400"
+                placeholder="Icon suchen..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <button type="button" onClick={() => setOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition">
+                <X size={18} />
               </button>
-            ))}
-            {filtered.length === 0 && (
-              <p className="col-span-6 text-center text-xs text-gray-400 py-4">Kein Icon gefunden</p>
-            )}
+            </div>
+
+            {/* Grid */}
+            <div className="flex-1 overflow-y-auto p-4">
+              {filtered.length === 0 ? (
+                <p className="text-center text-sm text-gray-400 py-12">Kein Icon gefunden für &ldquo;{search}&rdquo;</p>
+              ) : (
+                <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1">
+                  {filtered.map(name => (
+                    <button
+                      key={name}
+                      type="button"
+                      title={name}
+                      onClick={() => handleSelect(name)}
+                      className={`flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all hover:bg-blue-50 hover:scale-105 ${value === name ? 'bg-blue-100 ring-2 ring-blue-400 scale-105' : ''}`}
+                    >
+                      {renderIcon(name, 22)}
+                      <span className="text-[8px] text-gray-500 truncate w-full text-center leading-tight">{name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer with count */}
+            <div className="px-5 py-3 border-t border-gray-100 text-xs text-gray-400 flex items-center justify-between">
+              <span>{filtered.length} Icons{search ? ` für „${search}"` : ''}</span>
+              {value && (
+                <span className="flex items-center gap-1.5 text-gray-600">
+                  Aktuell: {renderIcon(value, 14)} <strong>{value}</strong>
+                </span>
+              )}
+            </div>
           </div>
         </div>,
         document.body
