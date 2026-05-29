@@ -138,6 +138,21 @@ export function NavigationForm({ initial, initialCta, i18n }: { initial: any; in
 
       <div className="border-t pt-5 mt-5 space-y-3">
         <h3 className="font-semibold text-sm">CTA-Button (in der Navigation)</h3>
+        <p className="text-xs text-zinc-400">Auffälliger Button rechts in der Navigation — ideal für Terminbuchung, Reservierung oder externen Anbieter.</p>
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          {[
+            { label: 'Dr. Flex', prefix: 'https://www.dr-flex.de/arzt/', placeholder: 'Online-Termin' },
+            { label: 'Doctolib', prefix: 'https://www.doctolib.de/praxis/', placeholder: 'Termin buchen' },
+            { label: 'Calendly', prefix: 'https://calendly.com/', placeholder: 'Termin vereinbaren' },
+            { label: 'SimplyBook', prefix: 'https://', placeholder: 'Jetzt buchen' },
+            { label: 'Treatwell', prefix: 'https://www.treatwell.de/salon/', placeholder: 'Termin buchen' },
+            { label: 'OpenTable', prefix: 'https://www.opentable.de/r/', placeholder: 'Reservieren' },
+          ].map(preset => (
+            <button key={preset.label} type="button" onClick={() => { setCta({ label: cta.label || preset.placeholder, href: preset.prefix }); }} className="text-[10px] px-2 py-1 rounded-md bg-zinc-100 text-zinc-600 hover:bg-blue-50 hover:text-blue-700 transition-colors">
+              {preset.label}
+            </button>
+          ))}
+        </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs text-zinc-500 mb-1 block">Label</label>
@@ -145,9 +160,10 @@ export function NavigationForm({ initial, initialCta, i18n }: { initial: any; in
           </div>
           <div>
             <label className="text-xs text-zinc-500 mb-1 block">Link</label>
-            <input className="admin-input" value={cta.href} onChange={e => setCta({ ...cta, href: e.target.value })} placeholder="/kontakt" />
+            <input className="admin-input" value={cta.href} onChange={e => setCta({ ...cta, href: e.target.value })} placeholder="/kontakt oder https://..." />
           </div>
         </div>
+        <p className="text-[10px] text-zinc-400">Tipp: Für externe Anbieter die vollständige URL eintragen (z.B. https://www.dr-flex.de/arzt/dein-slug). Der Button öffnet dann direkt die Buchungsseite.</p>
       </div>
     </div>
   );

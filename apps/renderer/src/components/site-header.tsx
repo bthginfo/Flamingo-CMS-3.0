@@ -122,6 +122,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
               ))}
               <Link
                 href={prefixInternalHref(cta?.href || '/kontakt', linkPrefix) as string}
+                {...((cta?.href?.startsWith('http')) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                 className={cn(
                   'inline-flex items-center gap-2 text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-300',
                   (scrolled || (!isHeroDark))
@@ -201,6 +202,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                 >
                   <Link
                     href={prefixInternalHref(cta?.href || '/kontakt', linkPrefix) as string}
+                    {...((cta?.href?.startsWith('http')) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                     onClick={() => setMobileOpen(false)}
                     className="inline-flex items-center justify-center gap-2 w-full text-center bg-brand-primary text-white font-semibold py-4 rounded-full text-lg hover:bg-brand-dark transition"
                   >

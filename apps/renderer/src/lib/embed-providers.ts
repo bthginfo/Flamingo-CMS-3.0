@@ -83,6 +83,18 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     defaultHeight: 700,
     allowedDomains: ['*.simplybook.me'],
   },
+  {
+    id: 'drflex',
+    label: 'Dr. Flex',
+    category: 'booking',
+    icon: 'Stethoscope',
+    fields: [
+      { key: 'slug', label: 'Praxis-Slug', placeholder: 'dr-mueller', help: 'Dein Slug aus der Dr. Flex-URL: dr-flex.de/arzt/[SLUG]', required: true },
+    ],
+    buildUrl: (c) => c.slug ? `https://www.dr-flex.de/arzt/${encodeURIComponent(c.slug)}` : null,
+    defaultHeight: 650,
+    allowedDomains: ['www.dr-flex.de'],
+  },
 
   // ─── Bewertungen ────────────────────────────────────────
   {
@@ -348,7 +360,7 @@ export const INDUSTRY_EMBED_SUGGESTIONS: Record<string, string[]> = {
   tattoo: ['booksy', 'simplybook', 'instagram', 'google-reviews', 'youtube'],
   hotel: ['booking', 'holidaycheck', 'tripadvisor', 'google-reviews', 'youtube'],
   tourism: ['getyourguide', 'outdooractive', 'komoot', 'booking', 'google-reviews', 'youtube'],
-  medical: ['doctolib', 'jameda', 'calendly', 'google-reviews'],
+  medical: ['doctolib', 'drflex', 'jameda', 'calendly', 'google-reviews'],
   consulting: ['calendly', 'google-reviews', 'youtube', 'typeform'],
   fitness: ['simplybook', 'calendly', 'google-reviews', 'instagram', 'youtube'],
   wedding: ['calendly', 'instagram', 'youtube', 'google-reviews', 'spotify'],
