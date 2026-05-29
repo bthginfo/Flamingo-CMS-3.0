@@ -1,4 +1,4 @@
-/** Embed Provider Registry — defines available providers, their fields, and how to generate embed URLs. */
+/** Embed Provider Registry � defines available providers, their fields, and how to generate embed URLs. */
 
 export type ProviderField = {
   key: string;
@@ -20,19 +20,7 @@ export type EmbedProvider = {
 };
 
 export const EMBED_PROVIDERS: EmbedProvider[] = [
-  // ─── Buchung ────────────────────────────────────────────
-  {
-    id: 'doctolib',
-    label: 'Doctolib',
-    category: 'booking',
-    icon: 'CalendarCheck',
-    fields: [
-      { key: 'slug', label: 'Praxis-Slug', placeholder: 'dr-mueller-berlin', help: 'Dein Slug aus der Doctolib-URL: doctolib.de/praxis/[DEIN-SLUG]', required: true },
-    ],
-    buildUrl: (c) => c.slug ? `https://www.doctolib.de/booking/availabilities?practitioner_slug=${encodeURIComponent(c.slug)}` : null,
-    defaultHeight: 600,
-    allowedDomains: ['www.doctolib.de'],
-  },
+  // --- Buchung --------------------------------------------
   {
     id: 'calendly',
     label: 'Calendly',
@@ -84,31 +72,43 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     allowedDomains: ['*.simplybook.me'],
   },
   {
-    id: 'drflex',
-    label: 'Dr. Flex',
+    id: 'resmio',
+    label: 'Resmio',
     category: 'booking',
-    icon: 'Stethoscope',
+    icon: 'UtensilsCrossed',
     fields: [
-      { key: 'slug', label: 'Praxis-Slug', placeholder: 'dr-mueller', help: 'Dein Slug aus der Dr. Flex-URL: dr-flex.de/arzt/[SLUG]', required: true },
+      { key: 'restaurantId', label: 'Restaurant-ID', placeholder: 'mein-restaurant', help: 'Dein Restaurant-Slug aus resmio.com/[ID]', required: true },
     ],
-    buildUrl: (c) => c.slug ? `https://www.dr-flex.de/arzt/${encodeURIComponent(c.slug)}` : null,
-    defaultHeight: 650,
-    allowedDomains: ['www.dr-flex.de'],
+    buildUrl: (c) => c.restaurantId ? `https://app.resmio.com/widget/${encodeURIComponent(c.restaurantId)}` : null,
+    defaultHeight: 600,
+    allowedDomains: ['app.resmio.com'],
+  },
+  {
+    id: 'thefork',
+    label: 'TheFork',
+    category: 'booking',
+    icon: 'UtensilsCrossed',
+    fields: [
+      { key: 'restaurantId', label: 'Restaurant-ID', placeholder: '123456', help: 'Die numerische Restaurant-ID aus TheFork', required: true },
+    ],
+    buildUrl: (c) => c.restaurantId ? `https://module.thefork.com/de_DE/module/${encodeURIComponent(c.restaurantId)}` : null,
+    defaultHeight: 500,
+    allowedDomains: ['module.thefork.com'],
+  },
+  {
+    id: 'getyourguide',
+    label: 'GetYourGuide',
+    category: 'booking',
+    icon: 'MapPin',
+    fields: [
+      { key: 'widgetId', label: 'Widget-ID', placeholder: '12345', help: 'Die Widget-ID aus dem GetYourGuide Partner-Dashboard', required: true },
+    ],
+    buildUrl: (c) => c.widgetId ? `https://widget.getyourguide.com/default/activities.frame?partner_id=${encodeURIComponent(c.widgetId)}` : null,
+    defaultHeight: 500,
+    allowedDomains: ['widget.getyourguide.com'],
   },
 
-  // ─── Bewertungen ────────────────────────────────────────
-  {
-    id: 'provenexpert',
-    label: 'ProvenExpert',
-    category: 'reviews',
-    icon: 'Star',
-    fields: [
-      { key: 'profileId', label: 'Profil-ID / Slug', placeholder: 'mueller-sanitaer', help: 'Dein ProvenExpert-Profil-Slug aus provenexpert.com/[SLUG]', required: true },
-    ],
-    buildUrl: (c) => c.profileId ? `https://www.provenexpert.com/widget/richsnippet?id=${encodeURIComponent(c.profileId)}` : null,
-    defaultHeight: 300,
-    allowedDomains: ['www.provenexpert.com'],
-  },
+  // --- Bewertungen ----------------------------------------
   {
     id: 'jameda',
     label: 'Jameda',
@@ -121,20 +121,8 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     defaultHeight: 400,
     allowedDomains: ['www.jameda.de'],
   },
-  {
-    id: 'google-reviews',
-    label: 'Google Bewertungen',
-    category: 'reviews',
-    icon: 'MessageSquare',
-    fields: [
-      { key: 'placeId', label: 'Google Place-ID', placeholder: 'ChIJ...', help: 'Finde deine Place-ID unter: developers.google.com/maps/documentation/places/web-service/place-id-lookup', required: true },
-    ],
-    buildUrl: (c) => c.placeId ? `https://www.google.com/maps/embed/v1/place?key=GOOGLE_MAPS_KEY&q=place_id:${encodeURIComponent(c.placeId)}` : null,
-    defaultHeight: 400,
-    allowedDomains: ['www.google.com'],
-  },
 
-  // ─── Tourismus & Karten ─────────────────────────────────
+  // --- Tourismus & Karten ---------------------------------
   {
     id: 'outdooractive',
     label: 'Outdooractive',
@@ -161,21 +149,7 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     allowedDomains: ['www.komoot.de', 'www.komoot.com'],
   },
 
-  // ─── Hotel & Buchungsportale ────────────────────────────
-  {
-    id: 'booking',
-    label: 'Booking.com',
-    category: 'booking',
-    icon: 'BedDouble',
-    fields: [
-      { key: 'hotelId', label: 'Hotel-ID', placeholder: '123456', help: 'Deine Booking.com Hotel-ID aus dem Extranet/Partner-Bereich', required: true },
-    ],
-    buildUrl: (c) => c.hotelId ? `https://www.booking.com/hotel/de/.de.html?aid=304142&dest_id=${encodeURIComponent(c.hotelId)}` : null,
-    defaultHeight: 400,
-    allowedDomains: ['www.booking.com'],
-  },
-
-  // ─── Video ─────────────────────────────────────────────
+  // --- Video ---------------------------------------------
   {
     id: 'youtube',
     label: 'YouTube',
@@ -214,7 +188,7 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     allowedDomains: ['open.spotify.com'],
   },
 
-  // ─── Formulare ──────────────────────────────────────────
+  // --- Formulare ------------------------------------------
   {
     id: 'typeform',
     label: 'Typeform',
@@ -228,67 +202,32 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     allowedDomains: ['form.typeform.com'],
   },
 
-  // ─── Social ─────────────────────────────────────────────
+  // --- Social ---------------------------------------------
   {
     id: 'instagram',
     label: 'Instagram Post',
     category: 'social',
     icon: 'Instagram',
     fields: [
-      { key: 'postUrl', label: 'Post-URL', placeholder: 'https://www.instagram.com/p/ABC123/', help: 'Die vollständige URL eines Instagram-Posts', required: true },
+      { key: 'postUrl', label: 'Post-URL', placeholder: 'https://www.instagram.com/p/ABC123/', help: 'Die vollst�ndige URL eines Instagram-Posts (mit / am Ende)', required: true },
     ],
-    buildUrl: (c) => c.postUrl ? `${c.postUrl}embed` : null,
+    buildUrl: (c) => c.postUrl ? `${c.postUrl.replace(/\/$/, '')}/embed/` : null,
     defaultHeight: 500,
     allowedDomains: ['www.instagram.com'],
   },
-  // ─── Neue Provider ──────────────────────────────────────
+
+  // --- Sonstige -------------------------------------------
   {
-    id: 'resmio',
-    label: 'Resmio',
-    category: 'booking',
-    icon: 'UtensilsCrossed',
+    id: 'matterport',
+    label: 'Matterport (3D Tour)',
+    category: 'other',
+    icon: 'Box',
     fields: [
-      { key: 'restaurantId', label: 'Restaurant-ID', placeholder: 'mein-restaurant', help: 'Dein Restaurant-Slug aus resmio.com/[ID]', required: true },
+      { key: 'modelId', label: 'Model-ID', placeholder: 'SxQL3iGyvPk', help: 'Die Model-ID aus der Matterport-URL: my.matterport.com/show/?m=[ID]', required: true },
     ],
-    buildUrl: (c) => c.restaurantId ? `https://app.resmio.com/widget/${encodeURIComponent(c.restaurantId)}` : null,
-    defaultHeight: 600,
-    allowedDomains: ['app.resmio.com'],
-  },
-  {
-    id: 'thefork',
-    label: 'TheFork',
-    category: 'booking',
-    icon: 'UtensilsCrossed',
-    fields: [
-      { key: 'restaurantId', label: 'Restaurant-ID', placeholder: '123456', help: 'Die numerische Restaurant-ID aus TheFork', required: true },
-    ],
-    buildUrl: (c) => c.restaurantId ? `https://module.thefork.com/de_DE/module/${encodeURIComponent(c.restaurantId)}` : null,
+    buildUrl: (c) => c.modelId ? `https://my.matterport.com/show/?m=${encodeURIComponent(c.modelId)}` : null,
     defaultHeight: 500,
-    allowedDomains: ['module.thefork.com'],
-  },
-  {
-    id: 'booksy',
-    label: 'Booksy',
-    category: 'booking',
-    icon: 'Scissors',
-    fields: [
-      { key: 'businessId', label: 'Business-ID', placeholder: 'mein-salon-123', help: 'Deine Booksy Business-URL: booksy.com/de-de/[ID]', required: true },
-    ],
-    buildUrl: (c) => c.businessId ? `https://booksy.com/widget/${encodeURIComponent(c.businessId)}` : null,
-    defaultHeight: 700,
-    allowedDomains: ['booksy.com'],
-  },
-  {
-    id: 'holidaycheck',
-    label: 'HolidayCheck',
-    category: 'reviews',
-    icon: 'Star',
-    fields: [
-      { key: 'hotelId', label: 'Hotel-ID', placeholder: '123456', help: 'Die Hotel-ID aus der HolidayCheck-URL', required: true },
-    ],
-    buildUrl: (c) => c.hotelId ? `https://www.holidaycheck.de/wi/${encodeURIComponent(c.hotelId)}` : null,
-    defaultHeight: 400,
-    allowedDomains: ['www.holidaycheck.de'],
+    allowedDomains: ['my.matterport.com'],
   },
   {
     id: 'tripadvisor',
@@ -303,40 +242,16 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     allowedDomains: ['www.tripadvisor.de', 'www.tripadvisor.com'],
   },
   {
-    id: 'matterport',
-    label: 'Matterport (3D Tour)',
-    category: 'other',
-    icon: 'Box',
+    id: 'holidaycheck',
+    label: 'HolidayCheck',
+    category: 'reviews',
+    icon: 'Star',
     fields: [
-      { key: 'modelId', label: 'Model-ID', placeholder: 'SxQL3iGyvPk', help: 'Die Model-ID aus der Matterport-URL: my.matterport.com/show/?m=[ID]', required: true },
+      { key: 'hotelId', label: 'Hotel-ID', placeholder: '123456', help: 'Die Hotel-ID aus der HolidayCheck-URL', required: true },
     ],
-    buildUrl: (c) => c.modelId ? `https://my.matterport.com/show/?m=${encodeURIComponent(c.modelId)}` : null,
-    defaultHeight: 500,
-    allowedDomains: ['my.matterport.com'],
-  },
-  {
-    id: 'immoscout24',
-    label: 'ImmoScout24',
-    category: 'other',
-    icon: 'Home',
-    fields: [
-      { key: 'embedCode', label: 'Embed-URL', placeholder: 'https://www.immobilienscout24.de/expose/...', help: 'Die Embed-URL oder Exposé-URL von ImmoScout24', required: true },
-    ],
-    buildUrl: (c) => c.embedCode || null,
-    defaultHeight: 600,
-    allowedDomains: ['www.immobilienscout24.de'],
-  },
-  {
-    id: 'getyourguide',
-    label: 'GetYourGuide',
-    category: 'booking',
-    icon: 'MapPin',
-    fields: [
-      { key: 'widgetId', label: 'Widget-ID', placeholder: '12345', help: 'Die Widget-ID aus dem GetYourGuide Partner-Dashboard', required: true },
-    ],
-    buildUrl: (c) => c.widgetId ? `https://widget.getyourguide.com/default/activities.frame?partner_id=${encodeURIComponent(c.widgetId)}` : null,
-    defaultHeight: 500,
-    allowedDomains: ['widget.getyourguide.com'],
+    buildUrl: (c) => c.hotelId ? `https://www.holidaycheck.de/wi/${encodeURIComponent(c.hotelId)}` : null,
+    defaultHeight: 400,
+    allowedDomains: ['www.holidaycheck.de'],
   },
 ];
 
@@ -350,25 +265,12 @@ export const EMBED_CATEGORIES = [
   { id: 'other', label: 'Sonstige' },
 ] as const;
 
-/** Suggested providers per industry — shown first / highlighted in the embed picker */
-export const INDUSTRY_EMBED_SUGGESTIONS: Record<string, string[]> = {
-  tradesman: ['provenexpert', 'google-reviews', 'calendly', 'youtube'],
-  restaurant: ['resmio', 'thefork', 'opentable', 'google-reviews', 'instagram', 'youtube'],
-  cafe: ['resmio', 'google-reviews', 'instagram', 'youtube', 'spotify'],
-  bar: ['resmio', 'google-reviews', 'instagram', 'youtube', 'spotify'],
-  salon: ['booksy', 'treatwell', 'simplybook', 'google-reviews', 'instagram'],
-  tattoo: ['booksy', 'simplybook', 'instagram', 'google-reviews', 'youtube'],
-  hotel: ['booking', 'holidaycheck', 'tripadvisor', 'google-reviews', 'youtube'],
-  tourism: ['getyourguide', 'outdooractive', 'komoot', 'booking', 'google-reviews', 'youtube'],
-  medical: ['doctolib', 'drflex', 'jameda', 'calendly', 'google-reviews'],
-  consulting: ['calendly', 'google-reviews', 'youtube', 'typeform'],
-  fitness: ['simplybook', 'calendly', 'google-reviews', 'instagram', 'youtube'],
-  wedding: ['calendly', 'instagram', 'youtube', 'google-reviews', 'spotify'],
-  photography: ['instagram', 'youtube', 'vimeo', 'google-reviews'],
-  realestate: ['immoscout24', 'matterport', 'google-reviews', 'calendly', 'youtube'],
-  ecommerce: ['google-reviews', 'provenexpert', 'instagram', 'youtube', 'typeform'],
+/** Industry-based provider suggestions */
+export const INDUSTRY_SUGGESTIONS: Record<string, string[]> = {
+  medical: ['calendly', 'jameda', 'simplybook'],
+  gastro: ['opentable', 'resmio', 'thefork'],
+  beauty: ['treatwell', 'simplybook'],
+  tourism: ['outdooractive', 'komoot', 'getyourguide', 'tripadvisor', 'holidaycheck'],
+  realestate: ['matterport'],
+  default: ['calendly', 'youtube', 'spotify', 'typeform'],
 };
-
-export function getProvider(id: string): EmbedProvider | undefined {
-  return EMBED_PROVIDERS.find(p => p.id === id);
-}
