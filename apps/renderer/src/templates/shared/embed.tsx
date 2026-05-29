@@ -35,6 +35,8 @@ export function EmbedSection({ data }: Props) {
   let scriptSrc: string | null = null;
   let triggerFn: string | null = null;
   let isScriptWidget = false;
+  let buttonColor: string | undefined;
+  let buttonTextColor: string | undefined;
 
   if (mode === 'preset' && provider) {
     const p = getProvider(provider);
@@ -44,6 +46,8 @@ export function EmbedSection({ data }: Props) {
         triggerFn = p.triggerFunction || null;
         isScriptWidget = true;
         iframeTitle = p.label;
+        buttonColor = config.buttonColor || undefined;
+        buttonTextColor = config.buttonTextColor || undefined;
       } else {
         iframeSrc = p.buildUrl(config);
         iframeTitle = p.label;
@@ -81,7 +85,11 @@ export function EmbedSection({ data }: Props) {
           {triggerFn && (
             <button
               onClick={() => { const fn = triggerFn; if (typeof window !== 'undefined' && fn && (window as any)[fn]) (window as any)[fn](); }}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
+              className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-200"
+              style={{
+                backgroundColor: buttonColor || 'var(--brand-primary, #0ea5e9)',
+                color: buttonTextColor || '#ffffff',
+              }}
             >
               {buttonLabel}
             </button>

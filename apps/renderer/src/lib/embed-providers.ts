@@ -24,6 +24,42 @@ export type EmbedProvider = {
   allowedDomains: string[];
 };
 
+/** Script-based providers that can be used in the navigation CTA */
+export type NavScriptProvider = {
+  id: string;
+  label: string;
+  icon: string;
+  fields: ProviderField[];
+  buildScriptUrl: (config: Record<string, string>) => string | null;
+  triggerFunction: string;
+  defaultLabel: string;
+};
+
+export const NAV_SCRIPT_PROVIDERS: NavScriptProvider[] = [
+  {
+    id: 'drflex',
+    label: 'Dr. Flex',
+    icon: 'Stethoscope',
+    fields: [
+      { key: 'practiceId', label: 'Praxis-ID', placeholder: '12345', help: 'Deine Dr. Flex medicalPracticeId (vom Dr. Flex Support erhalten)', required: true },
+    ],
+    buildScriptUrl: (c) => c.practiceId ? `https://dr-flex.de/embed.js?medicalPracticeId=${encodeURIComponent(c.practiceId)}` : null,
+    triggerFunction: 'toggleDrFlexAppointments',
+    defaultLabel: 'Termin online buchen',
+  },
+  {
+    id: 'doctolib',
+    label: 'Doctolib',
+    icon: 'CalendarCheck',
+    fields: [
+      { key: 'slug', label: 'Praxis-Slug', placeholder: 'dr-mueller-berlin', help: 'Dein Slug aus der Doctolib-URL: doctolib.de/praxis/[DEIN-SLUG]', required: true },
+    ],
+    buildScriptUrl: (c) => c.slug ? `https://www.doctolib.de/booking/${encodeURIComponent(c.slug)}.js` : null,
+    triggerFunction: 'doctolib_booking',
+    defaultLabel: 'Termin buchen',
+  },
+];
+
 export const EMBED_PROVIDERS: EmbedProvider[] = [
   // ─── Buchung (Script-Widgets) ──────────────────────────
   {
@@ -34,6 +70,8 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     type: 'script',
     fields: [
       { key: 'practiceId', label: 'Praxis-ID', placeholder: '12345', help: 'Deine Dr. Flex medicalPracticeId (vom Dr. Flex Support erhalten)', required: true },
+      { key: 'buttonColor', label: 'Button-Farbe', placeholder: '#0ea5e9', help: 'Hex-Farbe für den Button-Hintergrund (leer = Brand-Farbe)' },
+      { key: 'buttonTextColor', label: 'Button-Textfarbe', placeholder: '#ffffff', help: 'Hex-Farbe für den Button-Text (leer = weiß)' },
     ],
     buildUrl: () => null,
     buildScriptUrl: (c) => c.practiceId ? `https://dr-flex.de/embed.js?medicalPracticeId=${encodeURIComponent(c.practiceId)}` : null,
@@ -49,6 +87,8 @@ export const EMBED_PROVIDERS: EmbedProvider[] = [
     type: 'script',
     fields: [
       { key: 'slug', label: 'Praxis-Slug', placeholder: 'dr-mueller-berlin', help: 'Dein Slug aus der Doctolib-URL: doctolib.de/praxis/[DEIN-SLUG]', required: true },
+      { key: 'buttonColor', label: 'Button-Farbe', placeholder: '#107ACA', help: 'Hex-Farbe für den Button-Hintergrund (leer = Brand-Farbe)' },
+      { key: 'buttonTextColor', label: 'Button-Textfarbe', placeholder: '#ffffff', help: 'Hex-Farbe für den Button-Text (leer = weiß)' },
     ],
     buildUrl: () => null,
     buildScriptUrl: (c) => c.slug ? `https://www.doctolib.de/booking/${encodeURIComponent(c.slug)}.js` : null,
@@ -324,4 +364,9 @@ export const INDUSTRY_EMBED_SUGGESTIONS: Record<string, string[]> = {
 /** Find a provider by ID */
 export function getProvider(id: string): EmbedProvider | undefined {
   return EMBED_PROVIDERS.find(p => p.id === id);
+}
+
+/** Find a nav script provider by ID */
+export function getNavScriptProvider(id: string): NavScriptProvider | undefined {
+  return NAV_SCRIPT_PROVIDERS.find(p => p.id === id);
 }

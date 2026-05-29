@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
@@ -6,11 +6,62 @@ import Link from 'next/link';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Menu, X, Phone, Mail, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import Script from 'next/script';
 import { cn } from '@/lib/utils';
 import { useHeaderContrast } from '@/hooks/use-header-contrast';
 import { LanguageSwitcher } from './language-switcher';
+import { getNavScriptProvider } from '@/lib/embed-providers';
 import type { NavItem, NavCta, BrandData, ContactData } from '@/lib/tenant-data';
 import { prefixInternalHref } from '@/lib/link-prefix';
+
+function NavCtaButton({ cta, scrolled, isHeroDark, linkPrefix, className }: { cta: NavCta; scrolled: boolean; isHeroDark: boolean; linkPrefix: string; className?: string }) {
+  const scriptProvider = cta.scriptProvider ? getNavScriptProvider(cta.scriptProvider) : null;
+
+  if (scriptProvider && cta.scriptConfig) {
+    const scriptUrl = scriptProvider.buildScriptUrl(cta.scriptConfig);
+    const triggerFn = scriptProvider.triggerFunction;
+    const btnStyle: React.CSSProperties = {};
+    if (cta.buttonColor) btnStyle.backgroundColor = cta.buttonColor;
+    if (cta.buttonTextColor) btnStyle.color = cta.buttonTextColor;
+
+    return (
+      <>
+        {scriptUrl && <Script src={scriptUrl} strategy="lazyOnload" />}
+        <button
+          onClick={() => { if (typeof window !== 'undefined' && (window as any)[triggerFn]) (window as any)[triggerFn](); }}
+          className={className || cn(
+            'inline-flex items-center gap-2 text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-300',
+            !cta.buttonColor && ((scrolled || (!isHeroDark))
+              ? 'bg-brand-primary text-white hover:bg-brand-dark shadow-md hover:shadow-lg'
+              : 'bg-white/10 text-white border border-white/25 hover:bg-white/20 backdrop-blur-sm'),
+          )}
+          style={btnStyle}
+        >
+          {cta.label || scriptProvider.defaultLabel}
+          <ArrowRight size={14} />
+        </button>
+      </>
+    );
+  }
+
+  // Default: link-based CTA
+  return (
+    <Link
+      href={prefixInternalHref(cta.href || '/kontakt', linkPrefix) as string}
+      {...((cta.href?.startsWith('http')) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      className={className || cn(
+        'inline-flex items-center gap-2 text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-300',
+        (scrolled || (!isHeroDark))
+          ? 'bg-brand-primary text-white hover:bg-brand-dark shadow-md hover:shadow-lg'
+          : 'bg-white/10 text-white border border-white/25 hover:bg-white/20 backdrop-blur-sm',
+      )}
+      style={cta.buttonColor ? { backgroundColor: cta.buttonColor, color: cta.buttonTextColor || '#fff' } : undefined}
+    >
+      {cta.label || 'Termin vereinbaren'}
+      <ArrowRight size={14} />
+    </Link>
+  );
+}
 
 export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/', i18n, showTopBar = true, forceDarkNav = false, linkPrefix = '' }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string; i18n?: { locales: string[]; currentLocale: string; defaultLocale: string; style?: string }; showTopBar?: boolean; forceDarkNav?: boolean; linkPrefix?: string }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -21,10 +72,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   const measuredHeroDark = useHeaderContrast(darkBg);
   const isHeroDark = forceDarkNav ? true : measuredHeroDark;
 
-  // Close mobile menu on route change
   useEffect(() => { setMobileOpen(false); }, [pathname]);
-
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
@@ -36,14 +84,16 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
     setHidden(latest > 300 && latest > previous);
   });
 
+  const ctaData: NavCta = cta || { label: 'Termin vereinbaren', href: '/kontakt' };
+
   return (
     <>
-      {/* Top bar — fixed, disappears on scroll */}
+      {/* Top bar */}
       {showTopBar && <motion.div
         animate={{ y: scrolled || mobileOpen ? -40 : 0, opacity: scrolled || mobileOpen ? 0 : 1 }}
         transition={{ duration: 0.3 }}
         className="fixed top-0 left-0 right-0 z-[60] text-white/80 text-xs py-2.5"
-      style={{ backgroundColor: 'var(--brand-topbar, var(--brand-dark))' }}
+        style={{ backgroundColor: 'var(--brand-topbar, var(--brand-dark))' }}
       >
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-5">
@@ -62,7 +112,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
         </div>
       </motion.div>}
 
-      {/* Main nav — becomes glassmorphism on scroll */}
+      {/* Main nav */}
       <motion.header
         animate={{ y: hidden ? -100 : 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
@@ -120,19 +170,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                   {item.label}
                 </Link>
               ))}
-              <Link
-                href={prefixInternalHref(cta?.href || '/kontakt', linkPrefix) as string}
-                {...((cta?.href?.startsWith('http')) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                className={cn(
-                  'inline-flex items-center gap-2 text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-300',
-                  (scrolled || (!isHeroDark))
-                    ? 'bg-brand-primary text-white hover:bg-brand-dark shadow-md hover:shadow-lg'
-                    : 'bg-white/10 text-white border border-white/25 hover:bg-white/20 backdrop-blur-sm',
-                )}
-              >
-                {cta?.label || 'Termin vereinbaren'}
-                <ArrowRight size={14} />
-              </Link>
+              <NavCtaButton cta={ctaData} scrolled={scrolled} isHeroDark={isHeroDark} linkPrefix={linkPrefix} />
               {i18n && i18n.locales.length > 1 && (
                 <LanguageSwitcher locales={i18n.locales} currentLocale={i18n.currentLocale} defaultLocale={i18n.defaultLocale} style={(i18n.style as 'dropdown' | 'inline') || 'dropdown'} />
               )}
@@ -151,7 +189,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
           </div>
         </div>
 
-        {/* Mobile menu — full-screen overlay */}
+        {/* Mobile menu */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
@@ -161,7 +199,6 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
               transition={{ duration: 0.3 }}
               className="fixed inset-0 z-[70] bg-white flex flex-col md:hidden"
             >
-              {/* Close button */}
               <div className="flex items-center justify-between h-[72px] px-6">
                 <Link href={prefixInternalHref(homeHref, linkPrefix) as string} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight" style={{ color: brand.navBrandColor || brand.primaryColor }}>
                   {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
@@ -176,7 +213,6 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                 </button>
               </div>
 
-              {/* Nav links */}
               <nav className="flex-1 flex flex-col justify-center px-8 gap-2">
                 {navItems.map((item, i) => (
                   <motion.div
@@ -200,18 +236,16 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                   transition={{ delay: navItems.length * 0.05 + 0.1 }}
                   className="mt-6"
                 >
-                  <Link
-                    href={prefixInternalHref(cta?.href || '/kontakt', linkPrefix) as string}
-                    {...((cta?.href?.startsWith('http')) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                    onClick={() => setMobileOpen(false)}
+                  <NavCtaButton
+                    cta={ctaData}
+                    scrolled={true}
+                    isHeroDark={false}
+                    linkPrefix={linkPrefix}
                     className="inline-flex items-center justify-center gap-2 w-full text-center bg-brand-primary text-white font-semibold py-4 rounded-full text-lg hover:bg-brand-dark transition"
-                  >
-                    {cta?.label || 'Termin vereinbaren'} <ArrowRight size={18} />
-                  </Link>
+                  />
                 </motion.div>
               </nav>
 
-              {/* Contact info at bottom */}
               <div className="px-8 pb-8 flex flex-col gap-2 text-sm text-gray-500">
                 {contact.phone && (
                   <a href={`tel:${contact.phone}`} className="flex items-center gap-2 hover:text-brand-primary">
@@ -229,7 +263,6 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
         </AnimatePresence>
       </motion.header>
 
-      {/* Spacer for top bar */}
       {showTopBar && <div className="h-10" />}
     </>
   );
