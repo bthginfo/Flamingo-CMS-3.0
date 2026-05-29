@@ -3009,6 +3009,8 @@ function CinematicHeroEditor({ data, onChange }: EditorProps) {
     videoUrl: (data.videoUrl as string) || '',
     overlay: (data.overlay as string) || 'rgba(0,0,0,0.52)',
     align: (data.align as string) || 'left',
+    imageEffect: (data.imageEffect as string) || 'parallax',
+    imageEffectIntensity: (data.imageEffectIntensity as string) || 'medium',
     primaryCta: (data.primaryCta as { label: string; href: string }) || { label: '', href: '' },
     secondaryCta: (data.secondaryCta as { label: string; href: string }) || { label: '', href: '' },
     facts: (((data.facts as any[]) || []) as any[]).map((fact) => ({ value: fact.value || '', label: fact.label || '' })),
@@ -3029,6 +3031,21 @@ function CinematicHeroEditor({ data, onChange }: EditorProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <ColorField label={fieldLabel('overlay')} value={d.overlay} onChange={(v) => setD({ ...d, overlay: v })} alpha="always" />
         <SelectField label="Textausrichtung" value={d.align} options={['left', 'center']} onChange={(v) => setD({ ...d, align: v })} />
+      </div>
+      <div>
+        <label className="text-xs font-medium text-zinc-600 mb-1 block">Bild-Effekt</label>
+        <select className="admin-input" value={d.imageEffect} onChange={(e) => setD({ ...d, imageEffect: e.target.value })}>
+          <option value="none">Kein Effekt</option>
+          <option value="parallax">Parallax</option>
+          <option value="kenBurns">Ken Burns (Zoom)</option>
+        </select>
+        {d.imageEffect !== 'none' && (
+          <select className="admin-input mt-2" value={d.imageEffectIntensity} onChange={(e) => setD({ ...d, imageEffectIntensity: e.target.value })}>
+            <option value="subtle">Dezent</option>
+            <option value="medium">Mittel</option>
+            <option value="strong">Stark</option>
+          </select>
+        )}
       </div>
       <ButtonField label="Primärer CTA" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: v })} />
       <ButtonField label="Sekundärer CTA" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: v })} />

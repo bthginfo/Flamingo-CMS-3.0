@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Play } from 'lucide-react';
 import { useRef } from 'react';
+import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
 
 type Cta = { label?: string; href?: string };
 type Fact = { value: string; label: string };
@@ -11,7 +12,12 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 export function CinematicHeroSection({ data }: Props) {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const mediaY = useTransform(scrollYProgress, [0, 1], ['0%', '16%']);
+  const imageEffect = (data.imageEffect as ImageEffect) || 'parallax';
+  const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
+  const parallaxRange = imageEffect === 'parallax'
+    ? (imageEffectIntensity === 'subtle' ? '8%' : imageEffectIntensity === 'strong' ? '24%' : '16%')
+    : '0%';
+  const mediaY = useTransform(scrollYProgress, [0, 1], ['0%', parallaxRange]);
   const copyY = useTransform(scrollYProgress, [0, 1], ['0%', '28%']);
   const opacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
 
@@ -26,19 +32,31 @@ export function CinematicHeroSection({ data }: Props) {
   const align = (data.align as string) || 'left';
   const overlay = (data.overlay as string) || 'rgba(0,0,0,0.48)';
 
+  const mediaContent = (
+    <>
+      {videoUrl ? (
+        <video src={videoUrl} poster={image} autoPlay muted loop playsInline className="h-[110%] w-full object-cover" />
+      ) : image ? (
+        <img src={image} alt="" className="h-[110%] w-full object-cover" />
+      ) : (
+        <div className="h-full w-full bg-[var(--brand-dark,#09090b)]" />
+      )}
+      <div className="absolute inset-0" style={{ background: overlay }} />
+      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black to-transparent" />
+    </>
+  );
+
   return (
     <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-[var(--style-section-bg,#000)] text-[var(--style-body-color,#fff)]">
-      <motion.div className="absolute inset-0" style={{ y: mediaY }}>
-        {videoUrl ? (
-          <video src={videoUrl} poster={image} autoPlay muted loop playsInline className="h-[110%] w-full object-cover" />
-        ) : image ? (
-          <img src={image} alt="" className="h-[110%] w-full object-cover" />
-        ) : (
-          <div className="h-full w-full bg-[var(--brand-dark,#09090b)]" />
-        )}
-        <div className="absolute inset-0" style={{ background: overlay }} />
-        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black to-transparent" />
-      </motion.div>
+      {imageEffect === 'kenBurns' ? (
+        <ImageEffectWrapper effect="kenBurns" intensity={imageEffectIntensity} className="absolute inset-0">
+          {mediaContent}
+        </ImageEffectWrapper>
+      ) : (
+        <motion.div className="absolute inset-0" style={{ y: mediaY }}>
+          {mediaContent}
+        </motion.div>
+      )}
 
       <motion.div style={{ y: copyY, opacity }} className={`relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-6 pb-16 pt-32 md:pb-24 ${align === 'center' ? 'items-center text-center' : 'items-start text-left'}`}>
         {eyebrow && <div className="mb-5 inline-flex rounded-full border border-white/20 bg-[var(--style-badge-bg,rgba(255,255,255,0.10))] px-4 py-2 text-xs font-semibold uppercase text-[var(--style-badge-text,#fff)] backdrop-blur">{eyebrow}</div>}

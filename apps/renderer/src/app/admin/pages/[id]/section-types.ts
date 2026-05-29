@@ -257,7 +257,7 @@ export const CONSULTING_SECTION_TYPES: SectionTypeDefinition[] = [
 export const REALESTATE_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'hero', label: 'Immobilien-Hero', description: 'Premium-Hero mit Overlay, Trust-Elementen und Such-CTA' },
   { type: 'propertyShowcase', label: 'Immobilien-Showcase', description: 'Karten mit Bild, Preis, Fläche, Zimmer und Lage' },
-  { type: 'propertySearch', label: 'Immobiliensuche', description: 'Suchformular mit Filtern (Typ, Ort, Preis)' },
+  { type: 'propertySearch', label: 'Immobiliensuche', description: 'Kategorie-Karten mit Icons und CTA zur Objektübersicht' },
   { type: 'marketReport', label: 'Marktbericht', description: 'Regionale Marktdaten, Statistiken und Trends' },
   { type: 'agentTeam', label: 'Makler-Team', description: 'Makler mit Foto, Spezialisierung und Kontakt' },
   { type: 'valuationCta', label: 'Bewertungs-CTA', description: '"Was ist Ihre Immobilie wert?" — Bewertungsanfrage' },
