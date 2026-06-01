@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
   reactStrictMode: true,
+  outputFileTracingRoot: path.join(__dirname, '../..'),
   experimental: {
     // Prevent Next.js from tree-shaking lucide-react's `icons` record
     // so DynamicIcon can resolve any icon name at runtime

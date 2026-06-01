@@ -2,6 +2,7 @@ import type { SnapshotSection, SnapshotCollection, SnapshotCollectionItem } from
 import { getIndustryTemplates } from '@/templates';
 import { SectionErrorBoundary } from './section-error-boundary';
 import { prefixInternalLinks } from '@/lib/link-prefix';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 /** Extract the best image from a collection item — checks data.image first, then looks into hero section data */
 function extractItemImage(item: SnapshotCollectionItem): string | undefined {
@@ -32,6 +33,17 @@ const CONTAINER: Record<string, string> = {
   full: 'w-full px-6',
 };
 
+function sanitizeRenderValue(value: unknown): unknown {
+  if (typeof value === 'string') {
+    return /<[a-z][\s\S]*>/i.test(value) ? sanitizeHtml(value) : value;
+  }
+  if (Array.isArray(value)) return value.map(sanitizeRenderValue);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, sanitizeRenderValue(child)]));
+  }
+  return value;
+}
+
 export function SectionRenderer({ section, collections, styleVariant, industry = 'tradesman', locale, linkPrefix = '' }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string; industry?: string; locale?: string; linkPrefix?: string }) {
   // i18n locale resolution: if section.data contains locale keys, resolve to the active locale
   if (locale && section.data && typeof section.data[locale] === 'object' && section.data[locale] !== null) {
@@ -43,7 +55,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   }
 
   const Component = getIndustryTemplates(industry)[section.type];
-  section = { ...section, data: prefixInternalLinks(section.data, linkPrefix) };
+  section = { ...section, data: sanitizeRenderValue(prefixInternalLinks(section.data, linkPrefix)) as Record<string, unknown> };
 
   // Inject collection items into newsPreview/newsGrid sections
   if ((section.type === 'newsPreview' || section.type === 'newsGrid') && collections) {

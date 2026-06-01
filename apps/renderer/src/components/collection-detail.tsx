@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { SnapshotCollectionItem, SnapshotCollection, SnapshotSection } from '@/lib/snapshot';
 import { SectionRenderer } from './section-renderer';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 type Props = {
   item: SnapshotCollectionItem;
@@ -115,7 +116,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
             className="text-lg text-gray-600 leading-relaxed mb-8 rt-content"
-            dangerouslySetInnerHTML={{ __html: (description || excerpt)! }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml((description || excerpt)!) }}
           />
         )}
 
@@ -146,7 +147,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
             animate={{ opacity: 1 }}
             transition={{ delay: 0.35 }}
             className="prose prose-lg max-w-none mb-10"
-            dangerouslySetInnerHTML={{ __html: content }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }}
           />
         )}
 
