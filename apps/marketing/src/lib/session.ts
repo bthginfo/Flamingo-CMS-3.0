@@ -5,7 +5,10 @@ const COOKIE_NAME = 'flamingo_crm_session';
 const JWT_ALG = 'HS256';
 
 function getSecret() {
-  const s = process.env.CRM_JWT_SECRET || process.env.ADMIN_JWT_SECRET || 'flamingo-crm-dev';
+  const s = process.env.CRM_JWT_SECRET || process.env.ADMIN_JWT_SECRET;
+  if (!s) {
+    throw new Error('[Flamingo CRM] CRM_JWT_SECRET or ADMIN_JWT_SECRET is not set.');
+  }
   return new TextEncoder().encode(s);
 }
 

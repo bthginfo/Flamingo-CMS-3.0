@@ -1,6 +1,6 @@
 import { getDb } from './db';
-import { tenants, tenantDomains, pages, pageSections, collections, collectionItems } from '@flamingo/db';
-import { eq, and, asc, notInArray } from 'drizzle-orm';
+import { tenants, tenantDomains, pages, pageSections, collections, collectionItems, publishedSnapshots } from '@flamingo/db';
+import { eq, and, asc, desc, notInArray } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { unstable_cache } from 'next/cache';
 
@@ -86,7 +86,20 @@ export async function resolveTenant(candidateSlug?: string): Promise<string | nu
 /** Get live data for the tenant (cached for public frontend, invalidated on publish). */
 export async function getActiveSnapshot(tenantId: string): Promise<Snapshot | null> {
   const cached = unstable_cache(
-    async () => getDraftSnapshot(tenantId),
+    async () => {
+      const db = getDb();
+      const [active] = await db
+        .select({ snapshot: publishedSnapshots.snapshot })
+        .from(publishedSnapshots)
+        .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)))
+        .orderBy(desc(publishedSnapshots.version), desc(publishedSnapshots.createdAt))
+        .limit(1);
+
+      if (active?.snapshot) return active.snapshot as Snapshot;
+
+      // Migration fallback: older tenants can still render until their first publish creates a snapshot.
+      return getDraftSnapshot(tenantId);
+    },
     [`snapshot-${tenantId}`],
     { revalidate: 60, tags: [`tenant-${tenantId}`] }
   );

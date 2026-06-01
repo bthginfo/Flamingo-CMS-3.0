@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPublishedBlogPost } from '@/lib/blog';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 type Params = { slug: string };
 
@@ -82,7 +83,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<Param
             {post.tags?.length ? <div className="mt-8 flex flex-wrap gap-2">{post.tags.map(tag => <span key={tag} className="rounded-full bg-white px-3 py-1 text-xs shadow-sm">{tag}</span>)}</div> : null}
           </aside>
           <div className="min-w-0 rounded-[2rem] bg-white p-6 shadow-sm md:p-12">
-            <div className="prose-blog" dangerouslySetInnerHTML={{ __html: post.content }} />
+            <div className="prose-blog" dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }} />
           </div>
           <aside className="hidden lg:block" />
         </div>

@@ -11,6 +11,7 @@ import { MiniRichTextField } from '@/components/mini-rich-text';
 import { saveMediaRecord } from '@/app/admin/media-actions';
 import { EMBED_PROVIDERS, EMBED_CATEGORIES, getProvider } from '@/lib/embed-providers';
 import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
+import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
 import { getCollectionKeysAction } from '@/app/admin/collections/actions';
 
 // Reports current editor data to parent on every change (skip initial render).
@@ -355,7 +356,7 @@ type EditorProps = { type?: string; data: Record<string, unknown>; onChange: (da
 
 // Generic structured editor for schema-shaped section data.
 function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
-  const defaults = type ? SECTION_PREVIEW_DATA[type] || {} : {};
+  const defaults = type ? { ...(SECTION_EDITOR_FIELD_DEFAULTS[type] || {}), ...(SECTION_PREVIEW_DATA[type] || {}) } : {};
   const [source, setSource] = useState<Record<string, unknown>>(() => Object.keys(data).length > 0 ? data : defaults);
 
   useEffect(() => {

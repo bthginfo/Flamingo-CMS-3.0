@@ -45,7 +45,7 @@ export function BeforeAfterStoryProSection({ data }: Props) {
               <div key={index}>
                 <CheckCircle2 className="mb-2 text-[var(--style-accent-color,var(--brand-primary))]" size={18} />
                 {point.value && <div className="text-2xl font-black text-[var(--style-heading-color,#111)]">{point.value}</div>}
-                <div className="text-sm text-[var(--style-muted-color,#71717a)]">{point.label}</div>
+                <div className="text-sm text-[var(--style-text-muted,#71717a)]">{point.label}</div>
               </div>
             ))}
           </div>

@@ -209,13 +209,57 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // Reduce stock atomically
+  // Reserve stock atomically. Neon HTTP does not provide interactive transactions here,
+  // so each stock mutation guards against concurrent overselling and rolls back earlier reservations on failure.
+  const reservedItems: typeof orderItems = [];
   for (const item of orderItems) {
+    let result: { rows?: unknown[] };
     if (item.variantId) {
-      await db.execute(sql`UPDATE product_variants SET stock = GREATEST(0, stock - ${item.quantity}) WHERE id = ${item.variantId}`);
+      result = await db.execute(sql`
+        UPDATE product_variants
+        SET stock = stock - ${item.quantity}
+        WHERE id = ${item.variantId}
+          AND tenant_id = ${tenantId}
+          AND stock >= ${item.quantity}
+        RETURNING id
+      `);
     } else {
-      await db.execute(sql`UPDATE products SET stock = GREATEST(0, stock - ${item.quantity}) WHERE id = ${item.productId} AND track_stock = true`);
+      result = await db.execute(sql`
+        UPDATE products
+        SET stock = stock - ${item.quantity}
+        WHERE id = ${item.productId}
+          AND tenant_id = ${tenantId}
+          AND track_stock = true
+          AND stock >= ${item.quantity}
+        RETURNING id
+      `);
+      if (!result.rows?.length) {
+        const [untracked] = await db.select({ trackStock: products.trackStock }).from(products)
+          .where(and(eq(products.id, item.productId), eq(products.tenantId, tenantId)))
+          .limit(1);
+        if (untracked && !untracked.trackStock) {
+          reservedItems.push(item);
+          continue;
+        }
+      }
     }
+
+    if (!result.rows?.length) {
+      for (const reserved of reservedItems) {
+        if (reserved.variantId) {
+          await db.execute(sql`UPDATE product_variants SET stock = stock + ${reserved.quantity} WHERE id = ${reserved.variantId} AND tenant_id = ${tenantId}`);
+        } else {
+          await db.execute(sql`UPDATE products SET stock = stock + ${reserved.quantity} WHERE id = ${reserved.productId} AND tenant_id = ${tenantId} AND track_stock = true`);
+        }
+      }
+      await db.update(orders).set({ status: 'cancelled', updatedAt: new Date() }).where(and(eq(orders.id, order.id), eq(orders.tenantId, tenantId)));
+      return NextResponse.json({
+        error: 'Der Bestand hat sich gerade geändert. Bitte Warenkorb prüfen und erneut versuchen.',
+        outOfStock: true,
+        productId: item.productId,
+      }, { status: 409 });
+    }
+    reservedItems.push(item);
   }
 
   // Send order confirmation emails (fire-and-forget) — only for immediate methods (not stripe/paypal/sumup which confirm async)

@@ -12,12 +12,21 @@
     "audit:tenant": "tsx scripts/audit-tenant-content.ts",
     "audit:tenant:diff": "tsx scripts/compare-tenant-audits.ts",
     "audit:sections": "tsx scripts/audit-section-registry.ts",
+    "audit:section-surface": "tsx scripts/audit-section-surface.ts",
+    "check:env-contract": "tsx scripts/check-env-contract.ts",
+    "sync:section-surface": "tsx scripts/sync-section-surface.ts",
     "db:generate": "pnpm --filter @flamingo/db generate",
     "db:push": "pnpm --filter @flamingo/db push"
   },
   "devDependencies": {
     "tsx": "^4.21.0",
-    "turbo": "^2.5.0"
+    "turbo": "^2.9.16"
+  },
+  "pnpm": {
+    "overrides": {
+      "esbuild": "^0.25.12",
+      "postcss": "^8.5.10"
+    }
   },
   "packageManager": "pnpm@9.15.0"
 }

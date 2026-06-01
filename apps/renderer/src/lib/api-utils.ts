@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 type AuthResult = Awaited<ReturnType<typeof validatePat>>;
 
@@ -127,7 +128,7 @@ function validateSectionData(type: string, data: Record<string, unknown>, idx: n
  * Fixes common AI mistakes like using "services" instead of "manualCards".
  */
 export function normalizeSectionData(type: string, data: Record<string, unknown>): Record<string, unknown> {
-  const d = { ...data };
+  const d = sanitizeValue({ ...data }) as Record<string, unknown>;
   if (type === 'servicesGrid') {
     if (Array.isArray(d.services) && !Array.isArray(d.manualCards)) {
       d.manualCards = d.services;
@@ -136,4 +137,13 @@ export function normalizeSectionData(type: string, data: Record<string, unknown>
     if (!d.source) d.source = 'manual';
   }
   return d;
+}
+
+function sanitizeValue(value: unknown): unknown {
+  if (typeof value === 'string') return /<[a-z][\s\S]*>/i.test(value) ? sanitizeHtml(value) : value;
+  if (Array.isArray(value)) return value.map(sanitizeValue);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, sanitizeValue(child)]));
+  }
+  return value;
 }

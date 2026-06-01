@@ -14,6 +14,7 @@ import {
 import { crmBlogPosts } from '@flamingo/db';
 import { desc, eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 export type CrmBlogPost = BlogPost;
 type BlogPayload = Omit<BlogPostInput, 'id' | 'createdAt' | 'updatedAt' | 'readingMinutes' | 'tags' | 'publishedAt'> & {
@@ -34,7 +35,7 @@ function revalidateBlog(slug?: string) {
 }
 
 function cleanPayload(data: BlogPayload): Omit<BlogPostInput, 'id' | 'createdAt' | 'updatedAt'> {
-  const content = data.content || '';
+  const content = sanitizeHtml(data.content || '');
   const title = data.title?.trim() || 'Unbenannter Beitrag';
   const slug = normalizeSlug(data.slug || title);
   const excerpt = data.excerpt?.trim() || excerptFrom(content || title, 170);

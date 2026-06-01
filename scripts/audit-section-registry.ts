@@ -25,6 +25,8 @@ const INTERNAL_RENDERER_ALIASES = new Set([
   'heroTattoo',
   'heroTourism',
   'heroWedding',
+  'eventCalendar',
+  'faqGallery',
   'story',
 ]);
 
@@ -139,7 +141,7 @@ function buildAudit(): RegistryEntry[] {
     if (entry.rendererRegistered && !entry.adminSelectable && !INTERNAL_RENDERER_ALIASES.has(type)) entry.notes.push('Renderer exists but section is not selectable in admin');
     if (entry.adminSelectable && !entry.apiSchema) entry.notes.push('Admin section has no API schema');
     if (entry.adminSelectable && !entry.dataEditor) entry.notes.push('Falls back to generic JSON editor');
-    if (entry.adminSelectable && !entry.colorMapping) entry.notes.push('Uses generic color fields');
+    // Color mappings are now exact per template. Sections without FE color variables intentionally expose no per-section color controls.
 
     return entry;
   });

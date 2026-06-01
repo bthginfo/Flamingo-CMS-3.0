@@ -32,7 +32,7 @@ export function ProofWallSection({ data }: Props) {
               <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--style-badge-bg,rgba(0,0,0,0.06))] text-[var(--style-accent-color,var(--brand-primary))]"><Award size={19} /></div>
               {proof.value && <div className="text-3xl font-black text-[var(--style-heading-color,#111)]">{proof.value}</div>}
               <div className="mt-1 font-semibold text-[var(--style-body-color,#27272a)]">{plain(proof.label)}</div>
-              {proof.note && <div className="mt-2 text-sm leading-6 text-[var(--style-muted-color,#71717a)]">{plain(proof.note)}</div>}
+              {proof.note && <div className="mt-2 text-sm leading-6 text-[var(--style-text-muted,#71717a)]">{plain(proof.note)}</div>}
             </motion.div>
           ))}
         </div>
@@ -46,7 +46,7 @@ export function ProofWallSection({ data }: Props) {
                 <div className="mt-5 flex items-center justify-between gap-3">
                   <div>
                     <div className="font-bold text-[var(--style-heading-color,#111)]">{review.name}</div>
-                    {review.context && <div className="text-xs text-[var(--style-muted-color,#71717a)]">{review.context}</div>}
+                    {review.context && <div className="text-xs text-[var(--style-text-muted,#71717a)]">{review.context}</div>}
                   </div>
                   <div className="flex text-[var(--style-accent-color,var(--brand-primary))]">{Array.from({ length: review.rating || 5 }).slice(0, 5).map((_, i) => <Star key={i} size={14} fill="currentColor" />)}</div>
                 </div>
@@ -56,7 +56,7 @@ export function ProofWallSection({ data }: Props) {
           {logos.length > 0 && (
             <div className="mt-5 grid gap-2 sm:grid-cols-3">
               {logos.map((logo, index) => (
-                <div key={index} className="flex min-h-16 items-center justify-center rounded-xl border border-[var(--style-border-color,rgba(0,0,0,0.08))] px-3 text-center text-xs font-bold uppercase text-[var(--style-muted-color,#71717a)]">
+                <div key={index} className="flex min-h-16 items-center justify-center rounded-xl border border-[var(--style-border-color,rgba(0,0,0,0.08))] px-3 text-center text-xs font-bold uppercase text-[var(--style-text-muted,#71717a)]">
                   {logo.image ? <img src={logo.image} alt={logo.name} className="max-h-8 max-w-full object-contain" /> : <span className="inline-flex items-center gap-2"><CheckCircle2 size={14} />{logo.name}</span>}
                 </div>
               ))}
