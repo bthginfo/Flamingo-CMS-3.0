@@ -6,9 +6,14 @@ import { ImageIcon, Upload, X, Link as LinkIcon, FolderOpen } from 'lucide-react
 import { saveMediaRecord, getMediaAssets, type MediaAsset } from '@/app/admin/media-actions';
 import { toast } from 'sonner';
 
-/** Resize image to maxWidth and convert to WebP. Returns original if SVG or already small. */
+const ALLOWED_IMAGE_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
+
+function isSvgFile(file: File) {
+  return file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg');
+}
+
+/** Resize image to maxWidth and convert to WebP. Returns original if already small. */
 export async function resizeImage(file: File, maxWidth: number, quality: number): Promise<File> {
-  if (file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg')) return file;
   if (file.size < 200 * 1024) return file; // Skip if under 200KB
 
   return new Promise((resolve) => {
@@ -41,7 +46,6 @@ export async function resizeImage(file: File, maxWidth: number, quality: number)
 
 /** Generate a tiny blur placeholder (data URL) for LQIP. */
 async function generateBlurDataUrl(file: File): Promise<string | undefined> {
-  if (file.type === 'image/svg+xml') return undefined;
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
@@ -119,6 +123,10 @@ export function ImageUploadField({
   }
 
   async function handleUpload(file: File) {
+    if (isSvgFile(file)) {
+      toast.error('SVG-Dateien sind aus Sicherheitsgründen nicht als Upload erlaubt. Bitte PNG, WebP, JPG, GIF oder AVIF verwenden.');
+      return;
+    }
     setUploading(true);
     try {
       // Resize image client-side if too large (max 1920px wide, quality 0.85)
@@ -126,8 +134,7 @@ export function ImageUploadField({
         resizeImage(file, 1920, 0.85),
         generateBlurDataUrl(file),
       ]);
-      const isSvg = optimized.type === 'image/svg+xml' || optimized.name.toLowerCase().endsWith('.svg');
-      const uploadName = isSvg ? file.name : file.name.replace(/\.[^.]+$/, '.webp');
+      const uploadName = file.name.replace(/\.[^.]+$/, '.webp');
       const blob = await upload(uploadName, optimized, {
         access: 'public',
         handleUploadUrl: '/api/upload',
@@ -137,7 +144,7 @@ export function ImageUploadField({
         blobUrl: blob.url,
         pathname: blob.pathname,
         filename: optimized.name,
-        mimeType: isSvg ? 'image/svg+xml' : (optimized.type || 'image/webp'),
+        mimeType: optimized.type || 'image/webp',
         size: optimized.size,
         blurDataUrl,
       }).catch(() => {}); // non-blocking
@@ -208,7 +215,7 @@ export function ImageUploadField({
           <input
             ref={inputRef}
             type="file"
-            accept="image/*"
+            accept={ALLOWED_IMAGE_ACCEPT}
             className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0];

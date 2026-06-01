@@ -99,7 +99,7 @@ export function ImagePicker({ value, onChange, label, className }: Props) {
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
         className="hidden"
         onChange={e => e.target.files?.[0] && handleUpload(e.target.files[0])}
       />

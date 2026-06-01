@@ -67,7 +67,8 @@ export async function GET(req: NextRequest) {
     const pathname = new URL(url).pathname.slice(1); // remove leading /
     const filename = pathname.split('/').pop() || 'unknown';
     const ext = filename.split('.').pop()?.toLowerCase() || '';
-    const mimeType = ext === 'webp' ? 'image/webp' : ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : ext === 'svg' ? 'image/svg+xml' : 'image/webp';
+    if (ext === 'svg') continue;
+    const mimeType = ext === 'webp' ? 'image/webp' : ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : ext === 'gif' ? 'image/gif' : ext === 'avif' ? 'image/avif' : 'image/webp';
 
     await db.insert(mediaAssets).values({
       tenantId: tenant.id,

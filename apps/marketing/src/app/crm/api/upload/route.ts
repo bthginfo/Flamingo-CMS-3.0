@@ -18,7 +18,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const sessionValid = await verifyCrmSession();
         if (!sessionValid) throw new Error('Unauthorized');
         return {
-          allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/avif'],
+          allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'],
           maximumSizeInBytes: 10 * 1024 * 1024,
           addRandomSuffix: true,
           tokenPayload: JSON.stringify({ scope: 'crm-blog' }),

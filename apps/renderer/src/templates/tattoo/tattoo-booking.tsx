@@ -77,7 +77,7 @@ export function TattooBookingSection({ data }: Props) {
             <span className="text-white/60 text-sm">Referenzbilder (optional)</span>
             <div className="mt-1 border border-dashed border-white/20 rounded-lg p-6 text-center text-white/30 text-sm">
               Bilder hier ablegen oder klicken zum Hochladen
-              <input type="file" multiple accept="image/*" className="hidden" />
+              <input type="file" multiple accept="image/png,image/jpeg,image/webp,image/gif,image/avif" className="hidden" />
             </div>
           </label>
 

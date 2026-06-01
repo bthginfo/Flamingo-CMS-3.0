@@ -8,6 +8,8 @@ import { toast } from 'sonner';
 import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2, Pencil } from 'lucide-react';
 import Image from 'next/image';
 
+const ALLOWED_IMAGE_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
+
 function formatSize(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -25,9 +27,9 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
 
   const handleUpload = useCallback(async (files: FileList | File[]) => {
     const MAX_SIZE = 1 * 1024 * 1024; // 1 MB
-    const fileArray = Array.from(files).filter(f => f.type.startsWith('image/'));
+    const fileArray = Array.from(files).filter(f => f.type.startsWith('image/') && f.type !== 'image/svg+xml' && !f.name.toLowerCase().endsWith('.svg'));
     if (fileArray.length === 0) {
-      toast.error('Nur Bilddateien sind erlaubt');
+      toast.error('Nur PNG, WebP, JPG, GIF oder AVIF sind erlaubt. SVG-Uploads sind aus Sicherheitsgründen deaktiviert.');
       return;
     }
     const tooLarge = fileArray.filter(f => f.size > MAX_SIZE);
@@ -38,9 +40,8 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
     setUploading(true);
     try {
       for (const file of fileArray) {
-        const isSvg = file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg');
-        const optimized = isSvg ? file : await resizeImage(file, 1920, 0.85);
-        const uploadName = isSvg ? file.name : file.name.replace(/\.[^.]+$/, '.webp');
+        const optimized = await resizeImage(file, 1920, 0.85);
+        const uploadName = file.name.replace(/\.[^.]+$/, '.webp');
         const blob = await upload(uploadName, optimized, {
           access: 'public',
           handleUploadUrl: '/api/upload',
@@ -50,7 +51,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
           blobUrl: blob.url,
           pathname: blob.pathname,
           filename: uploadName,
-          mimeType: isSvg ? 'image/svg+xml' : (optimized.type || 'image/webp'),
+          mimeType: optimized.type || 'image/webp',
           size: optimized.size,
         });
 
@@ -99,7 +100,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
         <input
           ref={inputRef}
           type="file"
-          accept="image/*"
+          accept={ALLOWED_IMAGE_ACCEPT}
           multiple
           className="hidden"
           onChange={e => e.target.files && handleUpload(e.target.files)}
@@ -113,7 +114,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
           <div className="flex flex-col items-center gap-2">
             <Upload size={32} className="text-zinc-400" />
             <p className="text-sm font-medium text-zinc-600">Bilder hierher ziehen oder klicken zum Auswählen</p>
-            <p className="text-xs text-zinc-400">JPG, PNG, WebP, GIF, SVG, AVIF — max. 10 MB</p>
+            <p className="text-xs text-zinc-400">JPG, PNG, WebP, GIF, AVIF — SVG ist deaktiviert</p>
           </div>
         )}
       </div>

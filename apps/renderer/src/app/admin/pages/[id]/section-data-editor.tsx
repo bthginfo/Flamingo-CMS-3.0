@@ -1065,7 +1065,7 @@ function GalleryGridEditor({ data, onChange }: EditorProps) {
         <button onClick={() => bulkInputRef.current?.click()} disabled={bulkUploading} className="text-sm text-blue-600 hover:underline disabled:opacity-50">
           {bulkUploading ? '⏳ Wird hochgeladen...' : '+ Bulk Upload'}
         </button>
-        <input ref={bulkInputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files)} />
+        <input ref={bulkInputRef} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files)} />
         <MediaBulkPickerButton onSelect={(imgs) => setImages(prev => [...prev, ...imgs.map(i => ({ ...i, caption: '' }))])} />
       </div>
     </div>
@@ -1862,7 +1862,7 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
                   <button onClick={() => bulkRefs.current[cat]?.click()} disabled={bulkUploading === cat} className="text-xs text-blue-600 hover:underline disabled:opacity-50">
                     {bulkUploading === cat ? '⏳ Hochladen...' : '+ Bulk Upload'}
                   </button>
-                  <input ref={(el) => { bulkRefs.current[cat] = el; }} type="file" accept="image/*" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files, cat)} />
+                  <input ref={(el) => { bulkRefs.current[cat] = el; }} type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" multiple className="hidden" onChange={(e) => e.target.files && handleBulkUpload(e.target.files, cat)} />
                   <MediaBulkPickerButton onSelect={(imgs) => setImages(prev => [...prev, ...imgs.map(i => ({ src: i.src, alt: i.alt, category: cat, location: '' }))])} />
                 </div>
               </div>

@@ -6,10 +6,10 @@ import { mediaAssets } from '@flamingo/db';
 import { NextRequest } from 'next/server';
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/avif'];
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'];
 const EXT_TO_MIME: Record<string, string> = {
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png',
-  '.gif': 'image/gif', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.avif': 'image/avif',
+  '.gif': 'image/gif', '.webp': 'image/webp', '.avif': 'image/avif',
 };
 
 /** Infer MIME type from file.type, filename extension, or fallback. */

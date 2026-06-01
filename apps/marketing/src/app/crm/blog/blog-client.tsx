@@ -56,6 +56,7 @@ const STATUS_CLASS: Record<Status, string> = {
   published: 'bg-emerald-100 text-emerald-800',
   archived: 'bg-slate-100 text-slate-600',
 };
+const ALLOWED_IMAGE_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
 
 function slugify(value: string) {
   return value
@@ -119,6 +120,9 @@ function errorMessage(error: unknown) {
 
 async function uploadImage(file: File) {
   if (!file.type.startsWith('image/')) throw new Error('Bitte eine Bilddatei auswählen.');
+  if (file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg')) {
+    throw new Error('SVG-Dateien sind aus Sicherheitsgründen nicht als Upload erlaubt. Bitte PNG, WebP, JPG, GIF oder AVIF verwenden.');
+  }
   const blob = await uploadBlob(file.name, file, {
     access: 'public',
     handleUploadUrl: '/crm/api/upload',
@@ -397,7 +401,7 @@ function BlogRichTextEditor({ value, onChange }: { value: string; onChange: (val
           <button type="button" onClick={() => editor?.chain().focus().toggleBlockquote().run()} className={btn(editor?.isActive('blockquote'))} title="Zitat"><Quote size={14} /></button>
           <div className="mx-1 h-5 w-px bg-slate-200" />
           <button type="button" onClick={setLink} className={btn(editor?.isActive('link'))} title="Link"><LinkIcon size={14} /></button>
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={event => handleBodyImage(event.target.files?.[0])} />
+          <input ref={fileRef} type="file" accept={ALLOWED_IMAGE_ACCEPT} className="hidden" onChange={event => handleBodyImage(event.target.files?.[0])} />
           <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className={btn()} title="Bild hochladen"><ImageIcon size={14} /> {uploading ? 'Upload...' : 'Bild'}</button>
           <div className="mx-1 h-5 w-px bg-slate-200" />
           <button type="button" onClick={() => editor?.chain().focus().undo().run()} className={btn()} title="Rückgängig"><Undo size={14} /></button>
@@ -434,7 +438,7 @@ function ImageUploadInput({ label, value, onChange, compact }: { label: string; 
       <span className="text-xs font-medium text-slate-500">{label}</span>
       <div className="mt-1 flex gap-2">
         <input value={value} onChange={event => onChange(event.target.value)} placeholder="https://... oder hochladen" className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm" />
-        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={event => handleFile(event.target.files?.[0])} />
+        <input ref={fileRef} type="file" accept={ALLOWED_IMAGE_ACCEPT} className="hidden" onChange={event => handleFile(event.target.files?.[0])} />
         <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading} className="inline-flex shrink-0 items-center justify-center gap-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50">
           <ImageIcon size={15} />
           {!compact && (uploading ? 'Upload...' : 'Upload')}

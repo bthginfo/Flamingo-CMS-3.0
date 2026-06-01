@@ -18,7 +18,7 @@ function isSafeUrl(value: string) {
     || trimmed.startsWith('https://')
     || trimmed.startsWith('mailto:')
     || trimmed.startsWith('tel:')
-    || trimmed.startsWith('data:image/');
+    || /^data:image\/(png|jpe?g|gif|webp|avif);base64,/.test(trimmed);
 }
 
 function sanitizeAttributes(tag: string, attrs: string) {
