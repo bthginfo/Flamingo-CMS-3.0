@@ -39,6 +39,16 @@ export async function POST(req: NextRequest) {
       ? await db.select().from(bookingServices).where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.id, serviceId), eq(bookingServices.active, true))).limit(1)
       : [];
     if (serviceId && !service) return NextResponse.json({ error: 'Diese Leistung ist nicht verfügbar.' }, { status: 400 });
+    if (service?.minPartySize && partySize < service.minPartySize) {
+      return NextResponse.json({ error: `Mindestens ${service.minPartySize} Person(en)/Einheit(en) erforderlich.` }, { status: 400 });
+    }
+    if (service?.maxPartySize && partySize > service.maxPartySize) {
+      return NextResponse.json({ error: `Maximal ${service.maxPartySize} Person(en)/Einheit(en) möglich.` }, { status: 400 });
+    }
+    const intakeQuestions = Array.isArray(service?.intakeQuestions) ? service.intakeQuestions : [];
+    const intakeAnswers = normalizeIntakeAnswers(body.intakeAnswers, intakeQuestions);
+    const missingQuestion = intakeQuestions.find(question => question.required && !intakeAnswers[question.id]);
+    if (missingQuestion) return NextResponse.json({ error: `Bitte ausfüllen: ${missingQuestion.label}` }, { status: 400 });
 
     const [resource] = resourceId
       ? await db.select({ id: bookingResources.id, name: bookingResources.name, type: bookingResources.type }).from(bookingResources).where(and(eq(bookingResources.tenantId, tenantId), eq(bookingResources.id, resourceId), eq(bookingResources.active, true))).limit(1)
@@ -54,6 +64,8 @@ export async function POST(req: NextRequest) {
       ? clean(body.timeModel, 30) as BookingTimeModel
       : null;
     const timeModel = (service?.timeModelOverride || requestedTimeModel || settings.timeModel) as BookingTimeModel;
+    const bufferBeforeMinutes = Math.max(service?.bufferBeforeMinutes || 0, 0);
+    const bufferAfterMinutes = Math.max(service?.bufferAfterMinutes || 0, 0);
     const { startsAt, endsAt } = parseBookingDateRange({
       date: body.date,
       startDate: body.startDate,
@@ -72,9 +84,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Dieser Termin liegt zu weit in der Zukunft.' }, { status: 400 });
     }
 
-    const available = await isWithinBookingAvailability({ tenantId, serviceId, resourceId, timeModel, startsAt, endsAt, timezone });
+    const blockedStartsAt = addMinutes(startsAt, -bufferBeforeMinutes);
+    const blockedEndsAt = addMinutes(endsAt, bufferAfterMinutes);
+    const available = await isWithinBookingAvailability({ tenantId, serviceId, resourceId, timeModel, startsAt: blockedStartsAt, endsAt: blockedEndsAt, timezone });
     if (!available) return NextResponse.json({ error: 'Dieser Zeitraum ist nicht verfügbar.' }, { status: 409 });
-    const blackout = await hasBookingBlackout({ tenantId, resourceId, startsAt, endsAt });
+    const blackout = await hasBookingBlackout({ tenantId, resourceId, startsAt: blockedStartsAt, endsAt: blockedEndsAt });
     if (blackout) return NextResponse.json({ error: 'Dieser Zeitraum ist gesperrt.' }, { status: 409 });
 
     const cancellationToken = crypto.randomBytes(24).toString('hex');
@@ -83,7 +97,7 @@ export async function POST(req: NextRequest) {
     const booking = await db.transaction(async (tx) => {
       await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${lockKey}))`);
       if (settings.mode === 'instant') {
-        const conflict = await hasBookingConflict({ tenantId, resourceId, timeModel, startsAt, endsAt, timezone });
+        const conflict = await hasBookingConflict({ tenantId, resourceId, timeModel, startsAt, endsAt, timezone, bufferBeforeMinutes, bufferAfterMinutes });
         if (conflict) throw new Error('BOOKING_CONFLICT');
       }
       const [customer] = await tx.insert(bookingCustomers).values({
@@ -106,6 +120,9 @@ export async function POST(req: NextRequest) {
         partySize,
         startsAt,
         endsAt,
+        bufferBeforeMinutes,
+        bufferAfterMinutes,
+        intakeAnswers,
         message,
         cancellationTokenHash,
       }).returning();
@@ -152,4 +169,22 @@ function clean(value: unknown, max: number) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
+}
+
+function normalizeIntakeAnswers(
+  value: unknown,
+  questions: { id: string; label: string; type?: string; required?: boolean; options?: string[] }[],
+) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  const raw = value as Record<string, unknown>;
+  return Object.fromEntries(questions.map((question) => {
+    const answer = clean(raw[question.id], 1000);
+    const options = Array.isArray(question.options) ? question.options : [];
+    const safeAnswer = options.length && answer && !options.includes(answer) ? '' : answer;
+    return [question.id, safeAnswer];
+  }).filter(([, answer]) => Boolean(answer)));
+}
+
+function addMinutes(date: Date, minutes: number) {
+  return new Date(date.getTime() + minutes * 60_000);
 }

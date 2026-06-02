@@ -255,10 +255,15 @@ export async function addBookingServiceAction(formData: FormData) {
     name,
     description: cleanString(formData.get('description'), 2000) || null,
     durationMinutes: intValue(formData.get('durationMinutes'), 30, 0, 1440) || null,
+    bufferBeforeMinutes: intValue(formData.get('bufferBeforeMinutes'), 0, 0, 1440),
+    bufferAfterMinutes: intValue(formData.get('bufferAfterMinutes'), 0, 0, 1440),
     timeModelOverride: timeModelOverrideRaw ? stringOption(timeModelOverrideRaw, BOOKING_TIME_MODELS, 'time_slot') : null,
     priceLabel: cleanString(formData.get('priceLabel'), 100) || null,
     requiresResource: formData.get('requiresResource') === 'on',
+    minPartySize: intOptional(formData.get('minPartySize'), 1, 10000),
+    maxPartySize: intOptional(formData.get('maxPartySize'), 1, 10000),
     allowedResourceTypes: stringList(formData.getAll('allowedResourceTypes'), BOOKING_RESOURCE_TYPES),
+    intakeQuestions: parseIntakeQuestions(formData.get('intakeQuestions')),
   });
   revalidatePath('/admin/functions/booking');
 }
@@ -274,10 +279,15 @@ export async function updateBookingServiceAction(formData: FormData) {
     name,
     description: cleanString(formData.get('description'), 2000) || null,
     durationMinutes: intValue(formData.get('durationMinutes'), 30, 0, 1440) || null,
+    bufferBeforeMinutes: intValue(formData.get('bufferBeforeMinutes'), 0, 0, 1440),
+    bufferAfterMinutes: intValue(formData.get('bufferAfterMinutes'), 0, 0, 1440),
     timeModelOverride: timeModelOverrideRaw ? stringOption(timeModelOverrideRaw, BOOKING_TIME_MODELS, 'time_slot') : null,
     priceLabel: cleanString(formData.get('priceLabel'), 100) || null,
     requiresResource: formData.get('requiresResource') === 'on',
+    minPartySize: intOptional(formData.get('minPartySize'), 1, 10000),
+    maxPartySize: intOptional(formData.get('maxPartySize'), 1, 10000),
     allowedResourceTypes: stringList(formData.getAll('allowedResourceTypes'), BOOKING_RESOURCE_TYPES),
+    intakeQuestions: parseIntakeQuestions(formData.get('intakeQuestions')),
     updatedAt: new Date(),
   }).where(and(eq(bookingServices.id, id), eq(bookingServices.tenantId, tenantId)));
   revalidatePath('/admin/functions/booking');
@@ -618,6 +628,27 @@ function stringOption<const T extends readonly string[]>(value: FormDataEntryVal
 
 function stringList<const T extends readonly string[]>(values: FormDataEntryValue[], allowed: T) {
   return values.filter((value): value is T[number] => typeof value === 'string' && allowed.includes(value as T[number]));
+}
+
+function parseIntakeQuestions(value: FormDataEntryValue | null) {
+  const raw = cleanString(value, 5000);
+  if (!raw) return [];
+  return raw.split('\n').map((line, index) => {
+    const cleaned = line.trim();
+    if (!cleaned) return null;
+    const [labelPart, optionsPart] = cleaned.split('|').map(part => part.trim());
+    const required = labelPart.endsWith('*');
+    const label = required ? labelPart.slice(0, -1).trim() : labelPart;
+    if (!label) return null;
+    const options = optionsPart ? optionsPart.split(',').map(option => option.trim()).filter(Boolean).slice(0, 12) : [];
+    return {
+      id: `q_${index + 1}_${label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40) || 'frage'}`,
+      label,
+      required,
+      type: options.length ? 'select' : 'text',
+      options,
+    };
+  }).filter((item): item is { id: string; label: string; required: boolean; type: string; options: string[] } => Boolean(item));
 }
 
 function bookingEmailValues(booking: typeof bookingRequests.$inferSelect & { cancellationToken?: string | null }, timezone?: string | null, cancellationReason?: string | null) {

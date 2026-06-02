@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
   const tenantId = resolveExplicitTenant(req.nextUrl.searchParams.get('tenantId')) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ enabled: false, slots: [] }, { status: 404 });
   if (!(await hasBookingAddon(tenantId))) return NextResponse.json({ enabled: false, slots: [] });
+  const activeTenantId = tenantId;
 
   const date = req.nextUrl.searchParams.get('date') || '';
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return NextResponse.json({ enabled: true, slots: [] });
@@ -41,50 +42,66 @@ export async function GET(req: NextRequest) {
   if (resource && allowedTypes.length && !allowedTypes.includes(resource.type)) return NextResponse.json({ enabled: true, slots: [] });
 
   const timeModel = (service?.timeModelOverride || settings.timeModel) as BookingTimeModel;
+  const bufferBeforeMinutes = Math.max(service?.bufferBeforeMinutes || 0, 0);
+  const bufferAfterMinutes = Math.max(service?.bufferAfterMinutes || 0, 0);
   if (timeModel === 'full_day' || timeModel === 'date_range') {
     const startsAt = zonedDayStartToUtc(date, timezone);
     const endsAt = zonedDayEndToUtc(date, timezone);
-    const available = await isSlotAvailable({ tenantId, serviceId, resourceId, timeModel, startsAt, endsAt, timezone });
+    const available = await isSlotAvailable({ tenantId, serviceId, resourceId, timeModel, startsAt, endsAt, timezone, bufferBeforeMinutes, bufferAfterMinutes });
     return NextResponse.json({ enabled: true, timeModel, timezone, slots: available ? [{ value: 'full_day', label: 'Ganzer Tag verfügbar' }] : [] });
   }
 
-  const weekday = getZonedWeekday(zonedDayStartToUtc(date, timezone), timezone);
-  const rules = await db.select().from(bookingAvailabilityRules)
-    .where(and(eq(bookingAvailabilityRules.tenantId, tenantId), eq(bookingAvailabilityRules.weekday, weekday), eq(bookingAvailabilityRules.active, true)));
-  const relevantRules = rules.filter((rule) => {
-    const resourceMatches = rule.resourceId ? rule.resourceId === resourceId : true;
-    const serviceMatches = rule.serviceId ? rule.serviceId === serviceId : true;
-    return resourceMatches && serviceMatches;
-  });
-
   const duration = Math.max(service?.durationMinutes || settings.intervalMinutes, 5);
   const interval = Math.max(settings.intervalMinutes, 5);
-  const slots: { value: string; label: string }[] = [];
-  const dayStart = zonedDayStartToUtc(date, timezone);
-  const dayEnd = zonedDayEndToUtc(date, timezone);
-  const calendarBlocks = await getBookingCalendarBlocks({ tenantId, serviceId, resourceId, startsAt: dayStart, endsAt: dayEnd });
-  const availableBlocks = calendarBlocks.filter(block => block.type === 'available');
-  const windows = [
-    ...relevantRules.map(rule => ({ startTime: rule.startTime, endTime: rule.endTime })),
-    ...availableBlocks.map(block => ({ startTime: zonedTimeValue(block.startsAt, timezone), endTime: zonedTimeValue(block.endsAt, timezone) })),
-  ];
+  const uniqueSlots = await computeSlots(date);
+  const suggestions = uniqueSlots.length ? [] : await computeSuggestions(date);
+  return NextResponse.json({ enabled: true, timeModel, timezone, slots: uniqueSlots, suggestions });
 
-  for (const window of windows) {
-    let cursor = minutes(window.startTime);
-    const latestStart = minutes(window.endTime) - duration;
-    while (cursor <= latestStart) {
-      const value = toTime(cursor);
-      const startsAt = zonedDateTimeToUtc(date, value, timezone);
-      const endsAt = new Date(startsAt.getTime() + duration * 60_000);
-      if (await isSlotAvailable({ tenantId, serviceId, resourceId, timeModel, startsAt, endsAt, timezone })) {
-        slots.push({ value, label: `${value} Uhr` });
+  async function computeSlots(day: string) {
+    const weekday = getZonedWeekday(zonedDayStartToUtc(day, timezone), timezone);
+    const rules = await db.select().from(bookingAvailabilityRules)
+      .where(and(eq(bookingAvailabilityRules.tenantId, activeTenantId), eq(bookingAvailabilityRules.weekday, weekday), eq(bookingAvailabilityRules.active, true)));
+    const relevantRules = rules.filter((rule) => {
+      const resourceMatches = rule.resourceId ? rule.resourceId === resourceId : true;
+      const serviceMatches = rule.serviceId ? rule.serviceId === serviceId : true;
+      return resourceMatches && serviceMatches;
+    });
+    const slots: { value: string; label: string }[] = [];
+    const dayStart = zonedDayStartToUtc(day, timezone);
+    const dayEnd = zonedDayEndToUtc(day, timezone);
+    const calendarBlocks = await getBookingCalendarBlocks({ tenantId: activeTenantId, serviceId, resourceId, startsAt: dayStart, endsAt: dayEnd });
+    const availableBlocks = calendarBlocks.filter(block => block.type === 'available');
+    const windows = [
+      ...relevantRules.map(rule => ({ startTime: rule.startTime, endTime: rule.endTime })),
+      ...availableBlocks.map(block => ({ startTime: zonedTimeValue(block.startsAt, timezone), endTime: zonedTimeValue(block.endsAt, timezone) })),
+    ];
+
+    for (const window of windows) {
+      let cursor = minutes(window.startTime);
+      const latestStart = minutes(window.endTime) - duration;
+      while (cursor <= latestStart) {
+        const value = toTime(cursor);
+        const startsAt = zonedDateTimeToUtc(day, value, timezone);
+        const endsAt = new Date(startsAt.getTime() + duration * 60_000);
+        if (await isSlotAvailable({ tenantId: activeTenantId, serviceId, resourceId, timeModel, startsAt, endsAt, timezone, bufferBeforeMinutes, bufferAfterMinutes })) {
+          slots.push({ value, label: `${value} Uhr` });
+        }
+        cursor += interval;
       }
-      cursor += interval;
     }
+
+    return [...new Map(slots.map(slot => [slot.value, slot])).values()].sort((a, b) => a.value.localeCompare(b.value));
   }
 
-  const uniqueSlots = [...new Map(slots.map(slot => [slot.value, slot])).values()].sort((a, b) => a.value.localeCompare(b.value));
-  return NextResponse.json({ enabled: true, timeModel, timezone, slots: uniqueSlots });
+  async function computeSuggestions(fromDate: string) {
+    const results: { date: string; slots: { value: string; label: string }[] }[] = [];
+    for (let offset = 1; offset <= 14 && results.length < 4; offset += 1) {
+      const nextDate = addDays(fromDate, offset);
+      const nextSlots = await computeSlots(nextDate);
+      if (nextSlots.length) results.push({ date: nextDate, slots: nextSlots.slice(0, 3) });
+    }
+    return results;
+  }
 }
 
 async function isSlotAvailable(input: {
@@ -95,9 +112,16 @@ async function isSlotAvailable(input: {
   startsAt: Date;
   endsAt: Date;
   timezone: string;
+  bufferBeforeMinutes?: number;
+  bufferAfterMinutes?: number;
 }) {
-  if (!(await isWithinBookingAvailability(input))) return false;
-  if (await hasBookingBlackout(input)) return false;
+  const blockedInput = {
+    ...input,
+    startsAt: addMinutes(input.startsAt, -Math.max(input.bufferBeforeMinutes || 0, 0)),
+    endsAt: addMinutes(input.endsAt, Math.max(input.bufferAfterMinutes || 0, 0)),
+  };
+  if (!(await isWithinBookingAvailability(blockedInput))) return false;
+  if (await hasBookingBlackout(blockedInput)) return false;
   return !(await hasBookingConflict(input));
 }
 
@@ -119,4 +143,14 @@ function zonedTimeValue(date: Date, timezone: string) {
     minute: '2-digit',
     hour12: false,
   }).format(date);
+}
+
+function addMinutes(date: Date, minutes: number) {
+  return new Date(date.getTime() + minutes * 60_000);
+}
+
+function addDays(date: string, days: number) {
+  const next = new Date(`${date}T00:00:00Z`);
+  next.setUTCDate(next.getUTCDate() + days);
+  return next.toISOString().slice(0, 10);
 }

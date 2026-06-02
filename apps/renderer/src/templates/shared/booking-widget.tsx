@@ -13,7 +13,7 @@ type BookingConfig = {
   timeModel: BookingTimeModel;
   timezone: string;
   intervalMinutes: number;
-  services: { id: string; name: string; durationMinutes: number | null; priceLabel: string | null; timeModelOverride: BookingTimeModel | null; requiresResource?: boolean; allowedResourceTypes?: string[] }[];
+  services: { id: string; name: string; durationMinutes: number | null; bufferBeforeMinutes?: number; bufferAfterMinutes?: number; priceLabel: string | null; timeModelOverride: BookingTimeModel | null; requiresResource?: boolean; minPartySize?: number | null; maxPartySize?: number | null; allowedResourceTypes?: string[]; intakeQuestions?: { id: string; label: string; type?: string; required?: boolean; options?: string[] }[] }[];
   resources: { id: string; name: string; type: string; capacity: number; seats?: number | null }[];
 };
 
@@ -70,19 +70,23 @@ function useBookingSlots(input: {
   resourceRequired: boolean;
 }) {
   const [slots, setSlots] = useState<{ value: string; label: string }[]>([]);
+  const [suggestions, setSuggestions] = useState<{ date: string; slots: { value: string; label: string }[] }[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!input.enabled || !input.date || input.timeModel !== 'time_slot') {
       setSlots([]);
+      setSuggestions([]);
       return;
     }
     if (input.resourceRequired && !input.resourceId) {
       setSlots([]);
+      setSuggestions([]);
       return;
     }
     if (!input.tenantId) {
       setSlots(mockSlots(input.date));
+      setSuggestions([]);
       return;
     }
     const query = new URLSearchParams({
@@ -94,12 +98,18 @@ function useBookingSlots(input: {
     setLoading(true);
     fetch(`/api/booking/availability?${query.toString()}`)
       .then((res) => res.json())
-      .then((json) => setSlots(Array.isArray(json.slots) ? json.slots : []))
-      .catch(() => setSlots([]))
+      .then((json) => {
+        setSlots(Array.isArray(json.slots) ? json.slots : []);
+        setSuggestions(Array.isArray(json.suggestions) ? json.suggestions : []);
+      })
+      .catch(() => {
+        setSlots([]);
+        setSuggestions([]);
+      })
       .finally(() => setLoading(false));
   }, [input.date, input.enabled, input.resourceId, input.resourceRequired, input.serviceId, input.tenantId, input.timeModel]);
 
-  return { slots, loading };
+  return { slots, suggestions, loading };
 }
 
 function mockSlots(date: string) {
@@ -107,6 +117,33 @@ function mockSlots(date: string) {
   const day = new Date(`${date}T00:00:00`).getDay();
   if (day === 0) return [];
   return ['11:30', '12:00', '12:30', '18:00', '18:30', '19:00', '20:00'].map((value) => ({ value, label: `${value} Uhr` }));
+}
+
+function getIntakeAnswers(formData: FormData, service?: BookingConfig['services'][number]) {
+  const questions = Array.isArray(service?.intakeQuestions) ? service.intakeQuestions : [];
+  return Object.fromEntries(questions.map(question => [question.id, String(formData.get(`intake_${question.id}`) || '').trim()]).filter(([, value]) => Boolean(value)));
+}
+
+function IntakeQuestionFields({ service }: { service?: BookingConfig['services'][number] }) {
+  const questions = Array.isArray(service?.intakeQuestions) ? service.intakeQuestions : [];
+  if (!questions.length) return null;
+  return (
+    <div className="grid gap-3">
+      {questions.map((question) => (
+        <label key={question.id} className="grid gap-1 text-sm font-semibold text-zinc-700">
+          {question.label}{question.required ? ' *' : ''}
+          {Array.isArray(question.options) && question.options.length ? (
+            <select name={`intake_${question.id}`} required={question.required} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm font-normal outline-none focus:border-zinc-900">
+              <option value="">Bitte wählen</option>
+              {question.options.map(option => <option key={option} value={option}>{option}</option>)}
+            </select>
+          ) : (
+            <input name={`intake_${question.id}`} required={question.required} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm font-normal outline-none focus:border-zinc-900" />
+          )}
+        </label>
+      ))}
+    </div>
+  );
 }
 
 export function BookingWidgetSection({ data }: SectionProps) {
@@ -142,11 +179,12 @@ export function BookingWidgetSection({ data }: SectionProps) {
     setError('');
     const formData = new FormData(e.currentTarget);
     const payload = Object.fromEntries(formData.entries());
+    const intakeAnswers = getIntakeAnswers(formData, selectedService);
     try {
       const res = await fetch('/api/booking/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...payload, tenantId }),
+        body: JSON.stringify({ ...payload, tenantId, intakeAnswers }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || 'Buchung konnte nicht gesendet werden.');
@@ -261,7 +299,8 @@ export function BookingWidgetSection({ data }: SectionProps) {
               {timeModel === 'time_slot' && selectedDate && !slotsLoading && !slots.length ? (
                 <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">Für diese Auswahl sind aktuell keine freien Slots verfügbar.</p>
               ) : null}
-              {timeModel !== 'full_day' && <input name="partySize" type="number" min={1} defaultValue={1} placeholder="Personen / Menge" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />}
+              {timeModel !== 'full_day' && <input name="partySize" type="number" min={selectedService?.minPartySize || 1} max={selectedService?.maxPartySize || undefined} defaultValue={selectedService?.minPartySize || 1} placeholder="Personen / Menge" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />}
+              <IntakeQuestionFields service={selectedService} />
               <textarea name="message" rows={3} placeholder="Nachricht optional" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
               {status === 'error' && <p className="text-sm text-red-600">{error}</p>}
               <button disabled={status === 'loading'} className="mt-1 inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-60" style={{ background: 'var(--brand-btn-bg, #09090b)', color: 'var(--brand-btn-text, #ffffff)' }}>
@@ -294,7 +333,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
   const allowedResourceTypes = Array.isArray(selectedService?.allowedResourceTypes) ? selectedService.allowedResourceTypes : [];
   const availableResources = (config?.resources || []).filter((resource) => !allowedResourceTypes.length || allowedResourceTypes.includes(resource.type));
   const resourceRequired = Boolean(selectedService?.requiresResource);
-  const { slots, loading } = useBookingSlots({
+  const { slots, suggestions, loading } = useBookingSlots({
     enabled: config?.enabled,
     tenantId,
     date: selectedDate,
@@ -304,7 +343,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
     resourceRequired,
   });
 
-  useEffect(() => setSelectedSlot(''), [selectedDate, selectedResourceId, selectedServiceId]);
+  useEffect(() => setSelectedSlot(''), [selectedResourceId, selectedServiceId]);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -312,11 +351,12 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
     setError('');
     const formData = new FormData(e.currentTarget);
     const payload = Object.fromEntries(formData.entries());
+    const intakeAnswers = getIntakeAnswers(formData, selectedService);
     try {
       const res = await fetch('/api/booking/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...payload, tenantId, time: selectedSlot, timeModel: 'time_slot' }),
+        body: JSON.stringify({ ...payload, tenantId, time: selectedSlot, timeModel: 'time_slot', intakeAnswers }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || 'Anfrage konnte nicht gesendet werden.');
@@ -366,7 +406,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
                   {availableResources.map((resource) => <option key={resource.id} value={resource.id}>{resource.name}{resource.seats ? ` · ${resource.seats} Plätze` : ''}</option>)}
                 </select>
               </div>
-              <input name="date" type="date" required value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+              <input name="date" type="date" required value={selectedDate} onChange={(event) => { setSelectedDate(event.target.value); setSelectedSlot(''); }} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
               <div>
                 <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">Verfügbare Uhrzeiten</p>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -376,6 +416,18 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
                     </button>
                   )) : <p className="col-span-full rounded-xl bg-amber-50 p-4 text-sm text-amber-800">Für diese Auswahl sind keine freien Uhrzeiten verfügbar.</p>}
                 </div>
+                {!loading && !slots.length && suggestions.length ? (
+                  <div className="mt-3 rounded-xl bg-zinc-50 p-3">
+                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">Nächste freie Zeiten</p>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {suggestions.flatMap(suggestion => suggestion.slots.map(slot => (
+                        <button key={`${suggestion.date}-${slot.value}`} type="button" onClick={() => { setSelectedDate(suggestion.date); setSelectedSlot(slot.value); }} className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-left text-xs font-semibold text-zinc-700 transition hover:border-zinc-400">
+                          {formatInputDate(suggestion.date)} · {slot.label}
+                        </button>
+                      )))}
+                    </div>
+                  </div>
+                ) : null}
               </div>
               <input type="hidden" name="time" value={selectedSlot} />
               <div className="grid gap-3 sm:grid-cols-2">
@@ -384,8 +436,9 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <input name="customerPhone" type="tel" placeholder="Telefon" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
-                <input name="partySize" type="number" min={1} defaultValue={2} placeholder="Personen / Menge" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="partySize" type="number" min={selectedService?.minPartySize || 1} max={selectedService?.maxPartySize || undefined} defaultValue={selectedService?.minPartySize || 2} placeholder="Personen / Menge" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
               </div>
+              <IntakeQuestionFields service={selectedService} />
               <textarea name="message" rows={3} placeholder="Nachricht optional" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
               {status === 'error' && <p className="text-sm text-red-600">{error}</p>}
               <button disabled={status === 'loading' || !selectedSlot} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-50" style={{ background: 'var(--brand-btn-bg, #09090b)', color: 'var(--brand-btn-text, #ffffff)' }}>
@@ -424,11 +477,12 @@ export function BookingDateRangeSection({ data }: SectionProps) {
     setError('');
     const formData = new FormData(e.currentTarget);
     const payload = Object.fromEntries(formData.entries());
+    const intakeAnswers = getIntakeAnswers(formData, selectedService);
     try {
       const res = await fetch('/api/booking/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...payload, tenantId, date: startDate, startDate, endDate, timeModel: 'date_range' }),
+        body: JSON.stringify({ ...payload, tenantId, date: startDate, startDate, endDate, timeModel: 'date_range', intakeAnswers }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || 'Anfrage konnte nicht gesendet werden.');
@@ -484,8 +538,9 @@ export function BookingDateRangeSection({ data }: SectionProps) {
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 <input name="customerPhone" type="tel" placeholder="Telefon" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
-                <input name="partySize" type="number" min={1} defaultValue={2} placeholder="Personen / Menge" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="partySize" type="number" min={selectedService?.minPartySize || 1} max={selectedService?.maxPartySize || undefined} defaultValue={selectedService?.minPartySize || 2} placeholder="Personen / Menge" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
               </div>
+              <IntakeQuestionFields service={selectedService} />
               <textarea name="message" rows={3} placeholder="Wünsche, Anlass oder weitere Infos" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
               {status === 'error' && <p className="text-sm text-red-600">{error}</p>}
               <button disabled={status === 'loading'} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-60" style={{ background: 'var(--brand-btn-bg, #09090b)', color: 'var(--brand-btn-text, #ffffff)' }}>

@@ -492,15 +492,30 @@ function ResourcesPanel({ resources, services }: { resources: BookingResource[];
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Dauer in Minuten"><input name="durationMinutes" type="number" min={0} placeholder="z.B. 60" className="admin-input" /></Field>
             <TimeModelSelect />
+            <Field label="Puffer davor (Min.)"><input name="bufferBeforeMinutes" type="number" min={0} placeholder="z.B. 10" className="admin-input" /></Field>
+            <Field label="Puffer danach (Min.)"><input name="bufferAfterMinutes" type="number" min={0} placeholder="z.B. 15" className="admin-input" /></Field>
+            <Field label="Min. Personen/Menge"><input name="minPartySize" type="number" min={1} placeholder="optional" className="admin-input" /></Field>
+            <Field label="Max. Personen/Menge"><input name="maxPartySize" type="number" min={1} placeholder="optional" className="admin-input" /></Field>
           </div>
           <Field label="Preislabel optional"><input name="priceLabel" placeholder="z.B. ab 89 €, kostenlos, auf Anfrage" className="admin-input" /></Field>
           <Field label="Beschreibung optional"><textarea name="description" placeholder="Kurz erklären, was gebucht wird" className="admin-input min-h-20" /></Field>
+          <Field label="Zusatzfragen optional">
+            <textarea name="intakeQuestions" placeholder={'Eine Frage pro Zeile. Stern = Pflicht. Optionen mit | trennen.\nAllergien oder Wünsche *\nBereich | Innen, Terrasse, Egal'} className="admin-input min-h-24" />
+          </Field>
           <label className="flex items-center gap-2 text-sm"><input name="requiresResource" type="checkbox" /> Benötigt Ressource</label>
           <AllowedResourceTypesField />
           <button className="admin-btn-secondary">Leistung hinzufügen</button>
         </form>
         <div className="mt-4 space-y-3">
-          {services.length ? services.map(service => (
+          {services.length ? services.map((service) => {
+            const serviceRules = service as BookingService & {
+              bufferBeforeMinutes?: number | null;
+              bufferAfterMinutes?: number | null;
+              minPartySize?: number | null;
+              maxPartySize?: number | null;
+              intakeQuestions?: unknown;
+            };
+            return (
             <details key={service.id} className="rounded-2xl border border-zinc-200 bg-white">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4">
                 <div>
@@ -515,8 +530,15 @@ function ResourcesPanel({ resources, services }: { resources: BookingResource[];
                   <Field label="Name"><input name="name" defaultValue={service.name} className="admin-input" /></Field>
                   <Field label="Dauer in Minuten"><input name="durationMinutes" type="number" min={0} defaultValue={service.durationMinutes || ''} className="admin-input" /></Field>
                   <TimeModelSelect value={service.timeModelOverride || ''} />
+                  <Field label="Puffer davor (Min.)"><input name="bufferBeforeMinutes" type="number" min={0} defaultValue={serviceRules.bufferBeforeMinutes || 0} className="admin-input" /></Field>
+                  <Field label="Puffer danach (Min.)"><input name="bufferAfterMinutes" type="number" min={0} defaultValue={serviceRules.bufferAfterMinutes || 0} className="admin-input" /></Field>
+                  <Field label="Min. Personen/Menge"><input name="minPartySize" type="number" min={1} defaultValue={serviceRules.minPartySize || ''} className="admin-input" /></Field>
+                  <Field label="Max. Personen/Menge"><input name="maxPartySize" type="number" min={1} defaultValue={serviceRules.maxPartySize || ''} className="admin-input" /></Field>
                   <Field label="Preislabel"><input name="priceLabel" defaultValue={service.priceLabel || ''} className="admin-input" /></Field>
                   <Field label="Beschreibung"><textarea name="description" defaultValue={service.description || ''} className="admin-input min-h-20" /></Field>
+                  <Field label="Zusatzfragen">
+                    <textarea name="intakeQuestions" defaultValue={formatIntakeQuestions(serviceRules.intakeQuestions)} className="admin-input min-h-24" />
+                  </Field>
                   <label className="flex items-center gap-2 self-end text-sm"><input name="requiresResource" type="checkbox" defaultChecked={service.requiresResource} /> Benötigt Ressource</label>
                   <AllowedResourceTypesField value={Array.isArray(service.allowedResourceTypes) ? service.allowedResourceTypes : []} />
                 </div>
@@ -526,7 +548,7 @@ function ResourcesPanel({ resources, services }: { resources: BookingResource[];
                 </div>
               </form>
             </details>
-          )) : <EmptyText>Noch keine Leistungen.</EmptyText>}
+          ); }) : <EmptyText>Noch keine Leistungen.</EmptyText>}
         </div>
       </section>
     </div>
@@ -691,7 +713,7 @@ function BookingCard({ request, resources, compact }: { request: EnrichedRequest
         </div>
         <div className="flex flex-col items-start gap-3 md:items-end">
           <AssignmentForm request={request} resources={resources} />
-          <StatusActions request={request} />
+          <StatusActions request={request} returnTo="/admin/functions/booking?tab=inbox" />
         </div>
       </div>
     </div>
@@ -699,6 +721,7 @@ function BookingCard({ request, resources, compact }: { request: EnrichedRequest
 }
 
 function BookingMiniRow({ request, resources }: { request: EnrichedRequest; resources?: BookingResource[] }) {
+  const returnTo = `/admin/functions/booking?tab=day&day=${request.startsAt.toISOString().slice(0, 10)}`;
   return (
     <div className="rounded-xl bg-white p-3 text-sm shadow-sm ring-1 ring-zinc-200">
       <div className="flex items-center justify-between gap-3">
@@ -707,6 +730,9 @@ function BookingMiniRow({ request, resources }: { request: EnrichedRequest; reso
       </div>
       <p className="mt-1 text-zinc-500">{[request.service?.name, request.resource?.name, `${request.partySize} Person(en)/Einheit(en)`].filter(Boolean).join(' · ')}</p>
       {resources?.length ? <AssignmentForm request={request} resources={resources} compact /> : null}
+      <div className="mt-2">
+        <StatusActions request={request} returnTo={returnTo} compact />
+      </div>
     </div>
   );
 }
@@ -725,33 +751,36 @@ function AssignmentForm({ request, resources, compact }: { request: EnrichedRequ
   );
 }
 
-function StatusActions({ request }: { request: EnrichedRequest }) {
+function StatusActions({ request, returnTo, compact }: { request: EnrichedRequest; returnTo?: string; compact?: boolean }) {
   return (
     <div className="flex flex-wrap gap-2">
       {request.status === 'requested' ? (
         <>
-          <StatusAction id={request.id} status="confirmed" label="Bestätigen" />
-          <StatusAction id={request.id} status="cancelled_by_admin" label="Absagen" danger />
+          <StatusAction id={request.id} status="confirmed" label="Bestätigen" returnTo={returnTo} compact={compact} />
+          <StatusAction id={request.id} status="cancelled_by_admin" label="Absagen" returnTo={returnTo} compact={compact} danger />
         </>
       ) : null}
       {request.status === 'confirmed' ? (
         <>
-          <StatusAction id={request.id} status="completed" label="Erledigt" />
-          <StatusAction id={request.id} status="no_show" label="No-show" />
-          <StatusAction id={request.id} status="cancelled_by_admin" label="Absagen" danger />
+          <StatusAction id={request.id} status="completed" label="Erledigt" returnTo={returnTo} compact={compact} />
+          <StatusAction id={request.id} status="no_show" label="No-show" returnTo={returnTo} compact={compact} />
+          <StatusAction id={request.id} status="cancelled_by_admin" label="Absagen" returnTo={returnTo} compact={compact} danger />
         </>
       ) : null}
     </div>
   );
 }
 
-function StatusAction({ id, status, label, danger }: { id: string; status: string; label: string; danger?: boolean }) {
+function StatusAction({ id, status, label, returnTo = '/admin/functions/booking?tab=inbox', compact, danger }: { id: string; status: string; label: string; returnTo?: string; compact?: boolean; danger?: boolean }) {
   return (
     <form action={updateBookingStatusAction}>
       <input type="hidden" name="id" value={id} />
       <input type="hidden" name="status" value={status} />
-      <input type="hidden" name="returnTo" value="/admin/functions/booking?tab=inbox" />
-      <button className={danger ? 'admin-btn-secondary text-red-600 hover:border-red-200 hover:bg-red-50' : 'admin-btn-secondary'}>{label}</button>
+      <input type="hidden" name="returnTo" value={returnTo} />
+      <button className={[
+        danger ? 'admin-btn-secondary text-red-600 hover:border-red-200 hover:bg-red-50' : 'admin-btn-secondary',
+        compact ? 'px-2 py-1 text-xs' : '',
+      ].filter(Boolean).join(' ')}>{label}</button>
     </form>
   );
 }
@@ -873,6 +902,18 @@ function TimeModelSelect({ value }: { value?: string }) {
       </select>
     </Field>
   );
+}
+
+function formatIntakeQuestions(value: unknown) {
+  if (!Array.isArray(value)) return '';
+  return value.map((question) => {
+    if (!question || typeof question !== 'object') return '';
+    const item = question as { label?: unknown; required?: unknown; options?: unknown };
+    const label = typeof item.label === 'string' ? item.label.trim() : '';
+    if (!label) return '';
+    const options = Array.isArray(item.options) ? item.options.filter((option): option is string => typeof option === 'string' && Boolean(option.trim())) : [];
+    return `${label}${item.required ? ' *' : ''}${options.length ? ` | ${options.join(', ')}` : ''}`;
+  }).filter(Boolean).join('\n');
 }
 
 function WeekdayField({ value }: { value?: number }) {

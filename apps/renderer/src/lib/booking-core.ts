@@ -93,14 +93,18 @@ export async function hasBookingConflict(input: {
   startsAt: Date;
   endsAt: Date;
   timezone?: string | null;
+  bufferBeforeMinutes?: number | null;
+  bufferAfterMinutes?: number | null;
 }) {
   const db = getDb();
   const timezone = normalizeTimezone(input.timezone);
+  const requestedStartsAt = addMinutes(input.startsAt, -Math.max(input.bufferBeforeMinutes || 0, 0));
+  const requestedEndsAt = addMinutes(input.endsAt, Math.max(input.bufferAfterMinutes || 0, 0));
   const predicates: SQL[] = [
     eq(bookingRequests.tenantId, input.tenantId),
     eq(bookingRequests.status, 'confirmed'),
-    lt(bookingRequests.startsAt, input.endsAt),
-    gt(bookingRequests.endsAt, input.startsAt),
+    lt(bookingRequests.startsAt, addMinutes(requestedEndsAt, 1440)),
+    gt(bookingRequests.endsAt, addMinutes(requestedStartsAt, -1440)),
   ];
   if (input.excludeBookingId) predicates.push(ne(bookingRequests.id, input.excludeBookingId));
 
@@ -131,8 +135,19 @@ export async function hasBookingConflict(input: {
     }
   }
 
-  const rows = await db.select({ id: bookingRequests.id }).from(bookingRequests).where(and(...predicates)).limit(capacity);
-  return rows.length >= capacity;
+  const rows = await db.select({
+    id: bookingRequests.id,
+    startsAt: bookingRequests.startsAt,
+    endsAt: bookingRequests.endsAt,
+    bufferBeforeMinutes: bookingRequests.bufferBeforeMinutes,
+    bufferAfterMinutes: bookingRequests.bufferAfterMinutes,
+  }).from(bookingRequests).where(and(...predicates));
+  const overlaps = rows.filter((row) => {
+    const rowStartsAt = addMinutes(row.startsAt, -Math.max(row.bufferBeforeMinutes || 0, 0));
+    const rowEndsAt = addMinutes(row.endsAt, Math.max(row.bufferAfterMinutes || 0, 0));
+    return rowStartsAt < requestedEndsAt && rowEndsAt > requestedStartsAt;
+  });
+  return overlaps.length >= capacity;
 }
 
 export async function getBookingCalendarBlocks(input: {
@@ -223,4 +238,8 @@ function stringValue(value: unknown) {
 
 function isValidRange(startsAt: Date, endsAt: Date) {
   return Number.isFinite(startsAt.getTime()) && Number.isFinite(endsAt.getTime()) && endsAt > startsAt;
+}
+
+function addMinutes(date: Date, minutes: number) {
+  return new Date(date.getTime() + minutes * 60_000);
 }
