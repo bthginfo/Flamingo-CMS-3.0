@@ -53,6 +53,7 @@ import { SignatureGridSection } from './shared/signature-grid';
 import { ComparisonCardsProSection } from './shared/comparison-cards-pro';
 import { AdditionalLocationsSection } from './shared/additional-locations';
 import { PopupSection } from './shared/popup';
+import { AvailabilityCalendarSection, BookingCtaProSection, BookingWidgetSection, ResourceBookingShowcaseSection } from './shared/booking-widget';
 import { TemplateAdvantageSection } from './shared/template-advantage';
 import { PrinciplesGridSection } from './shared/principles-grid';
 import { GlowHeroSection } from './shared/glow-hero';
@@ -735,6 +736,10 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   comparisonCardsPro: ComparisonCardsProSection,
   additionalLocations: AdditionalLocationsSection,
   popup: PopupSection,
+  bookingWidget: BookingWidgetSection,
+  availabilityCalendar: AvailabilityCalendarSection,
+  resourceBookingShowcase: ResourceBookingShowcaseSection,
+  bookingCtaPro: BookingCtaProSection,
   templateAdvantage: TemplateAdvantageSection,
   principlesGrid: PrinciplesGridSection,
   glowHero: GlowHeroSection,

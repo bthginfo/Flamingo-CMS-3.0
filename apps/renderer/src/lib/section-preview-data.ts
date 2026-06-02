@@ -3,6 +3,30 @@
  * Used by the section-preview route to render isolated section previews.
  */
 export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
+  bookingWidget: {
+    badge: 'Booking',
+    headline: 'Termin oder Anfrage senden',
+    subline: 'Ein flexibles Booking-Modul für Anfrage oder direkte Buchung.',
+    submitLabel: '',
+  },
+  availabilityCalendar: {
+    badge: 'Verfügbarkeit',
+    headline: 'Freie Termine auf einen Blick',
+    subline: 'Für Zeitslots, ganze Tage oder Datumsbereiche.',
+    submitLabel: '',
+  },
+  resourceBookingShowcase: {
+    badge: 'Ressourcen',
+    headline: 'Passende Ressource auswählen',
+    subline: 'Räume, Tische, Zimmer, Mitarbeiter oder Leistungen.',
+    submitLabel: '',
+  },
+  bookingCtaPro: {
+    badge: 'Direkt buchen',
+    headline: 'Jetzt passenden Termin sichern',
+    subline: 'Der Einstieg in den Buchungsflow als kompakte Conversion-Section.',
+    submitLabel: '',
+  },
   popup: {
     title: 'Sichern Sie sich Ihren Beratungstermin.',
     subtitle: 'Kurzer Hinweis',

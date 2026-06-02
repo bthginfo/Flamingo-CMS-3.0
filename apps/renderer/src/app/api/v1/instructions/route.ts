@@ -16,13 +16,16 @@ export async function GET(req: NextRequest) {
   const [shopAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
     .where(and(eq(tenantAddons.tenantId, auth.tenantId), eq(tenantAddons.addonKey, 'shop')));
   const hasShop = shopAddon?.active === true;
+  const [bookingAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, auth.tenantId), eq(tenantAddons.addonKey, 'booking')));
+  const hasBooking = bookingAddon?.active === true;
 
   // Ensure shop pages exist when shop is active
   if (hasShop) await ensureShopPages(auth.tenantId);
 
   const tenantPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title }).from(pages).where(eq(pages.tenantId, auth.tenantId));
 
-  const sectionTypes = getSectionTypesForIndustry(auth.tenant.industry);
+  const sectionTypes = getSectionTypesForIndustry(auth.tenant.industry, { hasShop, hasBooking });
   // Exclude HTML-Block (freeHtml) from AI usage
   const allowedSectionTypes = sectionTypes.filter((s: { type?: string; id?: string }) => {
     const key = s.type || s.id || '';
@@ -33,6 +36,7 @@ export async function GET(req: NextRequest) {
     tenant: auth.tenant,
     tenantId: auth.tenantId,
     hasShopAddon: hasShop,
+    hasBookingAddon: hasBooking,
     i18n: {
       enabled: auth.tenant.i18nEnabled,
       locales: auth.tenant.i18nLocales.split(','),
@@ -95,6 +99,7 @@ export async function GET(req: NextRequest) {
       'The footer MUST contain columns with items arrays. Each item needs text and optionally href. Never send empty columns or columns without items.',
       'Navigation items MUST link to existing pages using their slug (e.g. href: "/leistungen", NOT href: "/services").',
       ...(hasShop ? ['This tenant has the SHOP addon active. Include shop pages (slug: "shop", "warenkorb") with shopProductGrid and shopCart sections. Add a "Shop" / "Produkte" link in the navigation. Create product categories and products via the shop endpoints.'] : ['This tenant does NOT have the shop addon. Do NOT create shop pages or use shop section types.']),
+      ...(hasBooking ? ['This tenant has the BOOKING addon active. You may use bookingWidget, availabilityCalendar, resourceBookingShowcase and bookingCtaPro sections where they make sense. The actual booking logic is configured in Admin > Funktionen > Buchungen.'] : ['This tenant does NOT have the booking addon. Do NOT use bookingWidget, availabilityCalendar, resourceBookingShowcase or bookingCtaPro. Keep simple reservation/contact sections if needed.']),
     ],
     instructions: `Du bist ein AI-Assistent der eine "${auth.tenant.industry}"-Website für "${auth.tenant.name}" mit deutschsprachigem Content füllt.
 
@@ -374,6 +379,10 @@ function getSectionSchemas(industry: string): Record<string, object> {
     collectionHero: { fields: { headline: 'string', subline: 'string?', bgImage: 'url?', category: 'string?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string?', imageEffect: '"none"|"parallax"|"kenBurns"?', imageEffectIntensity: '"subtle"|"medium"|"strong"?' } },
     noticeBanner: { fields: { headline: 'string', subline: 'string?', text: 'string? (html)', bgColor: 'hex?', textColor: 'hex? (default white)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
     popup: { fields: { title: 'string', subtitle: 'string?', text: 'string? (html)', delayMs: 'number? milliseconds until popup opens (1000 = 1 second, default 2500)', frequency: '"once"|"session" (once = after closing, do not show again on same device; session = can appear again in a new browser session)', primaryCta: '{ label?: string, href?: string }?', secondaryCta: '{ label?: string, href?: string }?' } },
+    bookingWidget: { fields: { badge: 'string?', headline: 'string', subline: 'string?', submitLabel: 'string? (leer = automatisch je Booking-Modus: Anfrage senden oder Jetzt buchen)' }, note: 'Premium Booking Add-on Section. Die echte Buchungslogik kommt aus Admin > Funktionen > Buchungen.' },
+    availabilityCalendar: { fields: { badge: 'string?', headline: 'string', subline: 'string?', submitLabel: 'string?' }, note: 'Premium Booking Add-on Section für Kalender-/Verfügbarkeits-Einstieg.' },
+    resourceBookingShowcase: { fields: { badge: 'string?', headline: 'string', subline: 'string?', submitLabel: 'string?' }, note: 'Premium Booking Add-on Section für Ressourcen/Services als Buchungseinstieg.' },
+    bookingCtaPro: { fields: { badge: 'string?', headline: 'string', subline: 'string?', submitLabel: 'string?' }, note: 'Premium Booking Add-on Section für kompakten Buchungs-CTA.' },
     statsCounter: { fields: { headline: 'string', subline: 'string?', stats: '{ value: number|string, suffix?: string, prefix?: string, label: string }[] (4 items recommended, value can be a number for animated counter OR a string like "seit 2019" for non-numeric facts)' } },
     bentoGrid: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text: string, icon?: lucide-icon-name, image?: url, span?: "1"|"2" }[] (asymmetric grid with hover spotlight)' } },
     testimonialMarquee: { fields: { headline: 'string?', items: '{ quote: string, name: string, role?: string, image?: url, rating?: 1-5 }[] (min 6 items, auto-scrolling in 2 rows)' } },
@@ -401,7 +410,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
     shopFeaturedProducts: { fields: { headline: 'string?', mode: '"latest"|"category"|"manual"?', categorySlug: 'string?', productIds: 'string[]?', count: 'number?', columns: '2|3|4?', basePath: 'string? (default "/shop")' } },
     shopCategoryOverview: { fields: { headline: 'string?', subline: 'string?', columns: '2|3|4?', basePath: 'string? (default "/shop")', shopGridPath: 'string? (default basePath)' } },
     shopCart: { fields: { headline: 'string?', checkoutPath: 'string? (default "/checkout")', continueShoppingPath: 'string? (default "/shop")' } },
-    shopCheckout: { fields: { headline: 'string?', thankYouPath: 'string? (default "/danke")', requirePhone: 'boolean?', showCompanyField: 'boolean?' } },
+    shopCheckout: { fields: { headline: 'string?', thankYouPath: 'string? (default "/danke")', requirePhone: 'boolean?', showCompanyField: 'boolean?', tenantId: 'string? (usually injected by checkout route/page renderer)' } },
     shopThankYou: { fields: { headline: 'string?', subline: 'string?', orderNumberLabel: 'string?', continueShoppingPath: 'string? (default "/shop")', ctaLabel: 'string?' } },
     // Additional shared sections
     timeline: { fields: { badge: 'string?', headline: 'string', subline: 'string?', entries: '{ year: string, title: string, text: string }[]' } },

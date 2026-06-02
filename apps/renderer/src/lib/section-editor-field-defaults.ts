@@ -131,6 +131,7 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "stripeUrl": "",
     "success": false,
     "sumupUrl": "",
+    "tenantId": "",
     "valid": false
   },
   "shopFeaturedProducts": {
@@ -337,5 +338,29 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
   "glowHero": {
     "bgImage": "",
     "bgPosition": ""
+  },
+  "bookingWidget": {
+    "badge": "Booking",
+    "headline": "Termin oder Anfrage senden",
+    "subline": "Wählen Sie aus, was Sie buchen möchten. Wir melden uns mit allen Details.",
+    "submitLabel": ""
+  },
+  "availabilityCalendar": {
+    "badge": "Verfügbarkeit",
+    "headline": "Verfügbare Termine finden",
+    "subline": "Prüfen Sie freie Zeiten, ganze Tage oder Datumsbereiche.",
+    "submitLabel": ""
+  },
+  "resourceBookingShowcase": {
+    "badge": "Buchen",
+    "headline": "Ressource auswählen",
+    "subline": "Wählen Sie den passenden Raum, Tisch, Mitarbeiter oder Service.",
+    "submitLabel": ""
+  },
+  "bookingCtaPro": {
+    "badge": "Direkt buchen",
+    "headline": "Jetzt passenden Termin sichern",
+    "subline": "Senden Sie eine Anfrage oder buchen Sie direkt, je nachdem wie diese Website eingerichtet ist.",
+    "submitLabel": ""
   }
 };

@@ -34,6 +34,7 @@ export const PAKET_OPTIONS = [
 export const ADDON_OPTIONS = [
   { value: 'shop-self', label: 'Shop-Addon (999 €)' },
   { value: 'shop-setup', label: 'Shop-Addon inkl. Einrichtung (1.450 €)' },
+  { value: 'booking-addon', label: 'Booking-Addon (399 € + 20 €/Monat)' },
   { value: 'multilang', label: 'Mehrsprachigkeit (ab 290 €)' },
   { value: 'content-reshoot', label: 'Foto-/Video-Nachshooting (890 €)' },
   { value: 'seo-texte', label: 'SEO optimierte Texte (ab 450 €)' },

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Heart, CalendarDays, Inbox, ShoppingBag, Sparkles, X, Globe, Lock, Check } from 'lucide-react';
+import { Heart, CalendarDays, Inbox, ShoppingBag, Sparkles, X, Globe, Lock, Check, CalendarCheck } from 'lucide-react';
 
 const FEATURES = [
   {
@@ -43,7 +43,7 @@ const FEATURES = [
   },
 ];
 
-export function FunctionsClient({ i18nEnabled }: { i18nEnabled: boolean }) {
+export function FunctionsClient({ i18nEnabled, bookingEnabled }: { i18nEnabled: boolean; bookingEnabled: boolean }) {
   const [showModal, setShowModal] = useState(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -101,6 +101,22 @@ export function FunctionsClient({ i18nEnabled }: { i18nEnabled: boolean }) {
       {/* Premium Addons */}
       <h2 className="text-lg font-semibold mt-10 mb-4">Premium-Erweiterungen</h2>
       <div className="grid gap-4 sm:grid-cols-2">
+        <Link
+          href="/admin/functions/booking"
+          className={`admin-card p-5 flex items-start gap-4 transition hover:ring-2 ${bookingEnabled ? 'hover:ring-pink-300' : 'opacity-80 hover:ring-amber-300'}`}
+        >
+          <CalendarCheck className="w-6 h-6 mt-0.5 shrink-0 text-pink-500" />
+          <div>
+            <div className="flex items-center gap-2">
+              <p className="font-semibold">Booking</p>
+              {bookingEnabled ? <Check size={12} className="text-green-500" /> : <Lock size={12} className="text-zinc-400" />}
+            </div>
+            <p className="text-sm text-zinc-500 mt-0.5">Anfragen oder direkte Buchungen mit Ressourcen, Leistungen, Kalender und E-Mails.</p>
+            <p className={`text-xs mt-2 font-medium ${bookingEnabled ? 'text-green-600' : 'text-zinc-400'}`}>
+              {bookingEnabled ? 'Aktiv · Einstellungen verwalten →' : 'Premium Add-on · Anfragen →'}
+            </p>
+          </div>
+        </Link>
         {i18nEnabled ? (
           <Link
             href="/admin/functions/i18n"

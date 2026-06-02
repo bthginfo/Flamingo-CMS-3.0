@@ -4,11 +4,19 @@ import { coupons } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 
-export async function POST(req: NextRequest) {
-  const tenantId = await resolveTenant();
-  if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-  const { code, subtotalCents } = await req.json();
+function resolveExplicitTenant(queryTenantId: unknown) {
+  const fixedTenantId = process.env.FIXED_TENANT_ID;
+  if (typeof queryTenantId !== 'string' || !UUID_RE.test(queryTenantId)) return null;
+  if (fixedTenantId) return queryTenantId === fixedTenantId ? queryTenantId : null;
+  return queryTenantId;
+}
+
+export async function POST(req: NextRequest) {
+  const { code, subtotalCents, tenantId: bodyTenantId } = await req.json();
+  const tenantId = resolveExplicitTenant(bodyTenantId) || await resolveTenant();
+  if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
   if (!code) return NextResponse.json({ error: 'Code required' }, { status: 400 });
 
   const db = getDb();

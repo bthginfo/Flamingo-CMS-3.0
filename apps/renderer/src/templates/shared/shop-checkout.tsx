@@ -33,6 +33,7 @@ const STEPS = ['Kontakt', 'Versand', 'Zahlung', 'Bestätigung'];
 
 export function ShopCheckoutSection({ data }: Props) {
   const headline = (data.headline as string) || 'Kasse';
+  const tenantId = (data.tenantId as string) || '';
   const router = useRouter();
   const { items, totalCents, clearCart } = useCart();
   const isDemo = ((data.basePath as string) || '').startsWith('/demo/');
@@ -60,7 +61,9 @@ export function ShopCheckoutSection({ data }: Props) {
 
   // Fetch shipping methods and payment methods when country changes
   useEffect(() => {
-    fetch(`/api/shop/shipping?country=${form.country}`)
+    const params = new URLSearchParams({ country: form.country });
+    if (tenantId) params.set('tenantId', tenantId);
+    fetch(`/api/shop/shipping?${params.toString()}`)
       .then(r => r.json())
       .then(d => {
         setShippingMethods(d.methods || []);
@@ -74,7 +77,7 @@ export function ShopCheckoutSection({ data }: Props) {
           }
         }
       });
-  }, [form.country]);
+  }, [form.country, tenantId]);
 
   // Calculate shipping cost
   const selectedShipping = shippingMethods.find(m => m.id === form.shippingMethod);
@@ -90,7 +93,7 @@ export function ShopCheckoutSection({ data }: Props) {
     const res = await fetch('/api/shop/coupon', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: couponInput, subtotalCents: totalCents }),
+      body: JSON.stringify({ code: couponInput, subtotalCents: totalCents, tenantId }),
     });
     const data = await res.json();
     if (res.ok && data.valid) {
@@ -120,6 +123,7 @@ export function ShopCheckoutSection({ data }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
+          tenantId,
           idempotencyKey,
           shippingCents,
           discountCents,

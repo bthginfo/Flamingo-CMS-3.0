@@ -4,7 +4,7 @@ import { PreisePage } from './preise-client';
 export const metadata: Metadata = {
   title: 'Preise & Pakete – Website ab 1.490 €',
   description:
-    'Transparente Website-Pakete für lokale Betriebe: Template ab 1.490 €, Content Kit ab 2.400 €, Shop-Addon, SEO-Texte und Hosting ab 29 €/Monat.',
+    'Transparente Website-Pakete für lokale Betriebe: Template ab 1.490 €, Content Kit ab 2.400 €, Shop-Addon, Booking-Addon, SEO-Texte und Hosting ab 29 €/Monat.',
   alternates: { canonical: '/preise' },
   openGraph: {
     title: 'Preise & Pakete · FlamingoMedia',

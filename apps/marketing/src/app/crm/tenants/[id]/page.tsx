@@ -10,7 +10,7 @@ import { DomainManager } from './domain-manager';
 import { DesignEditor } from './design-editor';
 import { PatManager } from './pat-manager';
 import { getActiveToken } from './pat-actions';
-import { getShopAddonStatus } from '../actions';
+import { getBookingAddonStatus, getShopAddonStatus } from '../actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,13 +21,14 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
   const [tenant] = await db.select().from(tenants).where(eq(tenants.id, id));
   if (!tenant) notFound();
 
-  const [domains, tenantPages, [snapCount], settings, activeToken, shopActive] = await Promise.all([
+  const [domains, tenantPages, [snapCount], settings, activeToken, shopActive, bookingActive] = await Promise.all([
     db.select().from(tenantDomains).where(eq(tenantDomains.tenantId, id)),
     db.select().from(pages).where(eq(pages.tenantId, id)),
     db.select({ count: count() }).from(publishedSnapshots).where(eq(publishedSnapshots.tenantId, id)),
     db.select().from(globalSettings).where(eq(globalSettings.tenantId, id)),
     getActiveToken(id),
     getShopAddonStatus(id),
+    getBookingAddonStatus(id),
   ]);
 
   const brand = settings[0]?.brand as Record<string, unknown> | undefined;
@@ -113,7 +114,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
 
         {/* Right sidebar */}
         <div className="space-y-6">
-          <TenantActions tenantId={id} currentStatus={tenant.status} currentStyle={tenant.activeStyle} isDemo={tenant.isDemo} isLead={tenant.isLead} deploymentMode={tenant.deploymentMode} shopActive={shopActive} i18nEnabled={tenant.i18nEnabled} i18nMaxLanguages={tenant.i18nMaxLanguages} />
+          <TenantActions tenantId={id} currentStatus={tenant.status} currentStyle={tenant.activeStyle} isDemo={tenant.isDemo} isLead={tenant.isLead} deploymentMode={tenant.deploymentMode} shopActive={shopActive} bookingActive={bookingActive} i18nEnabled={tenant.i18nEnabled} i18nMaxLanguages={tenant.i18nMaxLanguages} />
 
           {/* Info */}
           <div className="crm-card p-5 space-y-3 text-sm">

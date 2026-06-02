@@ -6,6 +6,15 @@ import { resolveTenant } from '@/lib/snapshot';
 import { sendOrderEmails } from '@/lib/shop-email';
 import Stripe from 'stripe';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function resolveExplicitTenant(queryTenantId: unknown) {
+  const fixedTenantId = process.env.FIXED_TENANT_ID;
+  if (typeof queryTenantId !== 'string' || !UUID_RE.test(queryTenantId)) return null;
+  if (fixedTenantId) return queryTenantId === fixedTenantId ? queryTenantId : null;
+  return queryTenantId;
+}
+
 // Map taxClass to rate percentage
 function getTaxRate(taxClass: string): number {
   switch (taxClass) {
@@ -82,10 +91,9 @@ async function reserveOrderNumber(db: ReturnType<typeof getDb>, tenantId: string
 }
 
 export async function POST(req: NextRequest) {
-  const tenantId = await resolveTenant();
-  if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
-
   const body = await req.json();
+  const tenantId = resolveExplicitTenant(body.tenantId) || await resolveTenant();
+  if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
   const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingMethod: shippingMethodId, couponCode, idempotencyKey } = body;
 
   if (!name || !email || !items?.length) {

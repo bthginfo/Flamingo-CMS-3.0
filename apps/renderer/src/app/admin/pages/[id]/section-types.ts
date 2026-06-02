@@ -51,6 +51,10 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'shopCheckout', label: 'Shop: Checkout', description: 'Multi-Step Kasse (Kontakt, Versand, Zahlung)', category: 'Shop' },
   { type: 'shopThankYou', label: 'Shop: Danke-Seite', description: 'Bestellbestätigung nach Kauf', category: 'Shop' },
   { type: 'shopFeaturedProducts', label: 'Shop: Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben', category: 'Shop' },
+  { type: 'bookingWidget', label: 'Booking: Buchungsformular', description: 'Echte Anfrage oder Self-Service-Buchung mit Datum, Zeitmodell und Kundendaten', category: 'Booking' },
+  { type: 'availabilityCalendar', label: 'Booking: Verfügbarkeitskalender', description: 'Kalenderansicht für verfügbare Zeitslots, Tage oder Datumsbereiche', category: 'Booking' },
+  { type: 'resourceBookingShowcase', label: 'Booking: Ressourcen', description: 'Räume, Tische, Mitarbeiter oder Leistungen mit Buchungs-CTA anzeigen', category: 'Booking' },
+  { type: 'bookingCtaPro', label: 'Booking: CTA', description: 'Kompakter Einstieg in den Buchungsflow', category: 'Booking' },
   { type: 'verticalTimeline', label: 'Prozess-Timeline', description: 'Vertikale Scroll-Timeline mit nummerierten Steps und Progress-Linie', category: 'Inhalt' },
   { type: 'beforeAfterSlider', label: 'Vorher/Nachher-Slider', description: 'Draggbarer Vergleichs-Slider für zwei Bilder', category: 'Medien' },
   { type: 'horizontalScrollShowcase', label: 'Horizontal-Scroll Showcase', description: 'Sticky Fullscreen-Panels die per Scroll horizontal gleiten', category: 'Marketing' },
@@ -453,7 +457,7 @@ const INDUSTRY_LABELS: Record<string, string> = {
   location: 'Location',
 };
 
-export function getSectionTypesForIndustry(industry: string, options?: { hasShop?: boolean }): SectionTypeDefinition[] {
+export function getSectionTypesForIndustry(industry: string, options?: { hasShop?: boolean; hasBooking?: boolean }): SectionTypeDefinition[] {
   const specific = ALL_INDUSTRY_SECTIONS[industry] ?? TRADESMAN_SECTION_TYPES;
 
   // Merge: industry-specific first, then shared (skip duplicates)
@@ -463,6 +467,10 @@ export function getSectionTypesForIndustry(industry: string, options?: { hasShop
   // Hide shop sections if tenant doesn't have shop addon
   if (!options?.hasShop) {
     shared = shared.filter(s => s.category !== 'Shop');
+  }
+
+  if (!options?.hasBooking) {
+    shared = shared.filter(s => s.category !== 'Booking');
   }
 
   // Collect foreign sections from other industries

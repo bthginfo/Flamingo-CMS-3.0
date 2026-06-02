@@ -1,8 +1,25 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { PILOT_SECTION_CONTRACTS } from '../apps/renderer/src/lib/section-contracts';
+import { getAllSectionContracts } from '../apps/renderer/src/lib/section-contracts';
 
 const ROOT = process.cwd();
+const INTERNAL_RENDERER_ALIASES = new Set([
+  'heroCafe',
+  'heroConsulting',
+  'heroEcommerce',
+  'heroHandwerk',
+  'heroHotel',
+  'heroMedical',
+  'heroRealestate',
+  'heroRestaurant',
+  'heroSalon',
+  'heroTattoo',
+  'heroTourism',
+  'heroWedding',
+  'eventCalendar',
+  'faqGallery',
+  'story',
+]);
 
 function read(relativePath: string) {
   return readFileSync(resolve(ROOT, relativePath), 'utf8');
@@ -74,17 +91,20 @@ function main() {
   const colorTypes = extractObjectKeysAfter(colorEditorSource, 'const SECTION_FIELDS');
   const apiSchemaTypes = extractApiSchemas(instructionsSource);
 
-  const contracts = PILOT_SECTION_CONTRACTS.map(contract => {
+  const contracts = getAllSectionContracts().map(contract => {
     const issues: string[] = [];
-    if (!adminTypes.includes(contract.type)) issues.push('Contract section is not selectable in admin');
+    const isInternalAlias = INTERNAL_RENDERER_ALIASES.has(contract.type);
+    if (!isInternalAlias && !adminTypes.includes(contract.type)) issues.push('Contract section is not selectable in admin');
     if (!rendererTypes.includes(contract.type)) issues.push('Contract section is not registered in renderer');
-    if (!apiSchemaTypes.includes(contract.type)) issues.push('Contract section is missing from AI/API schema');
-    if (!dataEditorTypes.includes(contract.type)) issues.push('Contract section has no curated data editor');
+    if (!isInternalAlias && !apiSchemaTypes.includes(contract.type)) issues.push('Contract section is missing from AI/API schema');
+    if (!isInternalAlias && !dataEditorTypes.includes(contract.type)) issues.push('Contract section has no curated data editor');
     if (contract.colorSlots.length > 0 && !colorTypes.includes(contract.type)) issues.push('Contract defines color slots but no section color mapping exists');
 
     return {
       type: contract.type,
       label: contract.label,
+      maturity: contract.maturity || 'formal',
+      internalAlias: isInternalAlias,
       fields: contract.fields.length,
       requiredFields: contract.fields.filter(field => field.required).map(field => field.key),
       colorSlots: contract.colorSlots,

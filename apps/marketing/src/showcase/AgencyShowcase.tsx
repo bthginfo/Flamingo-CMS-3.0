@@ -643,6 +643,7 @@ function Landing({ newsSlot }: { newsSlot?: ReactNode } = {}) {
       <AdminPreviewSection />
       <CmsFeaturesTeaserSection />
       <ShopFeaturesTeaserSection />
+      <BookingAddonTeaserSection />
       <ProcessTimelineSection />
       <ProductionSection />
       <NumbersSection />
@@ -650,6 +651,55 @@ function Landing({ newsSlot }: { newsSlot?: ReactNode } = {}) {
       {newsSlot}
       <CalloutFooter />
     </>
+  );
+}
+
+function BookingAddonTeaserSection() {
+  const items = [
+    'Anfrage oder direkte Buchung',
+    'Zeitslots, ganze Tage oder Datumsbereiche',
+    'Tische, Räume, Mitarbeiter oder Equipment',
+    'Automatische E-Mails über Kunden- oder Flamingo-SMTP',
+  ];
+
+  return (
+    <section className="py-20 md:py-24 surface">
+      <div className="container-x grid gap-10 md:grid-cols-12 md:items-center">
+        <div className="md:col-span-6 reveal">
+          <p className="eyebrow mb-5">Neu als Add-on</p>
+          <h2 className="headline-lg">
+            Buchungen.<br />
+            <em className="italic-pop">Direkt in Deiner Website.</em>
+          </h2>
+          <p className="mt-6 max-w-xl text-lg text-muted leading-relaxed">
+            Für Restaurants, Cafés, Salons, Hotels, Fotografen, Locations und alle, die Termine oder Ressourcen nicht mehr per E-Mail-Chaos koordinieren wollen.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link to="/preise" className="btn-primary">Preise ansehen <span aria-hidden>→</span></Link>
+            <Link to="/kontakt" className="btn-outline">Booking anfragen</Link>
+          </div>
+        </div>
+        <div className="md:col-span-6 reveal">
+          <div className="rounded-3xl bg-brand p-6 text-white shadow-2xl">
+            <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-5">
+              <div>
+                <p className="font-mono text-xs uppercase tracking-widest text-white/50">/ Booking-Addon</p>
+                <h3 className="mt-2 font-display text-3xl">399 € Setup</h3>
+                <p className="mt-1 text-sm text-white/65">+ 20 € / Monat für Buchungslogik und Betrieb</p>
+              </div>
+              <span className="rounded-full bg-[var(--accent-color)] px-3 py-1 text-xs font-semibold uppercase tracking-widest text-white">Paid Feature</span>
+            </div>
+            <div className="mt-6 grid gap-3">
+              {items.map((item) => (
+                <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/82">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -2042,6 +2092,7 @@ function Pricing() {
 
   const addons = [
     { t: 'Shop-Addon', p: 'ab 999 €', d: 'Vollwertiger Online-Shop mit Produkten, Kategorien, Varianten, Warenkorb, Checkout, Stripe & PayPal, Versandverwaltung, Rechnungen und Gutscheinen. Auf Wunsch inkl. Einrichtung: 1.450 €.', featured: true },
+    { t: 'Booking-Addon', p: '399 € + 20 € / Monat', d: 'Flexibles Buchungssystem für Termine, Tische, Räume, ganze Tage oder Datumsbereiche. Inkl. Ressourcen, Verfügbarkeiten, Anfrage- oder Direktbuchung und automatischen E-Mails.', featured: true },
     { t: 'Mehrsprachigkeit', p: 'ab 290 €', d: 'DE + EN, weitere Sprachen auf Anfrage. Inkl. Sprach-Switcher.' },
     { t: 'Foto-/Video-Nachshooting', p: '890 €', d: '1 Drehtag light für saisonale Updates, neue Produkte oder Teamwechsel (ca. 25 Bilder + 1 Reel).' },
     { t: 'SEO optimierte Texte', p: 'ab 450 €', d: 'Professionelle Website-Texte mit klarer Struktur, lokaler Suchintention und sauberer Onpage-Grundlage.' },

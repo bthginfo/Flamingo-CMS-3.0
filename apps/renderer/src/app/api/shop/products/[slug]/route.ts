@@ -8,8 +8,9 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
 function resolveExplicitTenant(queryTenantId: string | null) {
   const fixedTenantId = process.env.FIXED_TENANT_ID;
-  if (!fixedTenantId || !queryTenantId || !UUID_RE.test(queryTenantId)) return null;
-  return queryTenantId === fixedTenantId ? queryTenantId : null;
+  if (!queryTenantId || !UUID_RE.test(queryTenantId)) return null;
+  if (fixedTenantId) return queryTenantId === fixedTenantId ? queryTenantId : null;
+  return queryTenantId;
 }
 
 export async function GET(

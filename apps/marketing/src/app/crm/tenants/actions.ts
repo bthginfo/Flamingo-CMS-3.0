@@ -2,7 +2,7 @@
 
 import { provisionTenant, type ProvisionInput } from '@/lib/provisioning';
 import { getDb } from '@/lib/db';
-import { tenants, tenantDomains, globalSettings, tenantAddons, shopSettings, pages, pageSections } from '@flamingo/db';
+import { tenants, tenantDomains, globalSettings, tenantAddons, shopSettings, bookingSettings, pages, pageSections } from '@flamingo/db';
 import { eq, and, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { addDomainToRenderer, addDomainToProject, removeDomainFromRenderer, checkDomainStatus, deleteVercelProject, configureBlobForProject, createStandaloneProject } from '@/lib/vercel';
@@ -200,6 +200,40 @@ export async function getShopAddonStatus(tenantId: string): Promise<boolean> {
   const db = getDb();
   const [row] = await db.select().from(tenantAddons)
     .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'shop')))
+    .limit(1);
+  return row?.active ?? false;
+}
+
+export async function toggleBookingAddonAction(tenantId: string, activate: boolean) {
+  const db = getDb();
+  const now = new Date();
+
+  const [existing] = await db.select().from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'booking')))
+    .limit(1);
+
+  if (activate) {
+    if (existing) {
+      await db.update(tenantAddons).set({ active: true, activatedAt: now }).where(eq(tenantAddons.id, existing.id));
+    } else {
+      await db.insert(tenantAddons).values({ tenantId, addonKey: 'booking', active: true, activatedAt: now });
+    }
+    const [settings] = await db.select().from(bookingSettings).where(eq(bookingSettings.tenantId, tenantId)).limit(1);
+    if (!settings) {
+      await db.insert(bookingSettings).values({ tenantId });
+    }
+  } else if (existing) {
+    await db.update(tenantAddons).set({ active: false }).where(eq(tenantAddons.id, existing.id));
+  }
+
+  revalidatePath(`/crm/tenants/${tenantId}`);
+  return { success: true };
+}
+
+export async function getBookingAddonStatus(tenantId: string): Promise<boolean> {
+  const db = getDb();
+  const [row] = await db.select().from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, tenantId), eq(tenantAddons.addonKey, 'booking')))
     .limit(1);
   return row?.active ?? false;
 }

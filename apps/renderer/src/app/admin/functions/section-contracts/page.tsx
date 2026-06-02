@@ -1,18 +1,27 @@
-import { PILOT_SECTION_CONTRACTS } from '@/lib/section-contracts';
+import { getAllSectionContracts } from '@/lib/section-contracts';
 
 export default function SectionContractsPage() {
+  const contracts = getAllSectionContracts();
+  const curatedCount = contracts.filter(contract => contract.source !== 'registry').length;
+
   return (
     <div className="space-y-6">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">Intern</p>
         <h1 className="mt-2 text-2xl font-bold">Section Contract Studio</h1>
         <p className="mt-2 max-w-3xl text-sm text-zinc-500">
-          Read-only Übersicht der pilotierten Section Contracts. Ein Contract beschreibt, welche Inhalte, Medien und Farbslots eine Section offiziell unterstützt.
+          Read-only Übersicht aller bekannten Section Contracts. Jeder Contract beschreibt offiziell, welche Inhalte, Medien und Farbslots eine Section unterstützt. Kuratierte Contracts sind handgeschärft; Registry-Contracts werden aus Section-Auswahl, Defaults und Preview-Daten erzeugt.
         </p>
+        <div className="mt-4 flex flex-wrap gap-2 text-xs">
+          <span className="rounded-full bg-zinc-100 px-3 py-1.5 text-zinc-600">{contracts.length} Sections</span>
+          <span className="rounded-full bg-emerald-50 px-3 py-1.5 font-medium text-emerald-700">{contracts.length} formal</span>
+          <span className="rounded-full bg-blue-50 px-3 py-1.5 font-medium text-blue-700">{curatedCount} kuratiert</span>
+          <span className="rounded-full bg-zinc-100 px-3 py-1.5 font-medium text-zinc-600">{contracts.length - curatedCount} Registry-Contracts</span>
+        </div>
       </div>
 
       <div className="grid gap-4">
-        {PILOT_SECTION_CONTRACTS.map(contract => (
+        {contracts.map(contract => (
           <article key={contract.type} className="admin-card p-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
@@ -20,6 +29,10 @@ export default function SectionContractsPage() {
                   <h2 className="text-lg font-semibold">{contract.label}</h2>
                   <code className="rounded-full bg-zinc-100 px-2 py-1 text-xs text-zinc-500">{contract.type}</code>
                   <span className="rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700">{contract.category}</span>
+                  <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">formal</span>
+                  <span className={contract.source === 'registry' ? 'rounded-full bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600' : 'rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700'}>
+                    {contract.source === 'registry' ? 'Registry' : 'kuratiert'}
+                  </span>
                 </div>
                 <p className="mt-1 text-sm text-zinc-500">
                   Wrapper: {contract.wrapper || 'standard'} · Theme: {contract.defaultTheme || 'auto'}
@@ -53,11 +66,17 @@ export default function SectionContractsPage() {
 
               <div>
                 <h3 className="text-sm font-semibold text-zinc-700">Farbslots</h3>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {contract.colorSlots.map(slot => (
-                    <code key={slot} className="rounded-full bg-zinc-100 px-3 py-1.5 text-xs text-zinc-600">{slot}</code>
-                  ))}
-                </div>
+                {contract.colorSlots.length ? (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {contract.colorSlots.map(slot => (
+                      <code key={slot} className="rounded-full bg-zinc-100 px-3 py-1.5 text-xs text-zinc-600">{slot}</code>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-2 rounded-xl bg-zinc-50 p-3 text-xs leading-5 text-zinc-600">
+                    Kein eigener Farbslot im Contract. Die tatsächlichen Section-Farben werden über das Section-Farbmapping geprüft.
+                  </p>
+                )}
                 <h3 className="mt-5 text-sm font-semibold text-zinc-700">Preview-Daten</h3>
                 <pre className="mt-2 max-h-64 overflow-auto rounded-xl bg-zinc-950 p-3 text-xs text-zinc-100">
                   {JSON.stringify(contract.previewData, null, 2)}

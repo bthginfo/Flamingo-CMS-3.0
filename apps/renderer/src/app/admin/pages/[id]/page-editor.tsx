@@ -31,11 +31,11 @@ type Page = {
   type: string;
 };
 
-export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {}, hasShop = false, i18n, collections }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string }; collections?: { key: string; label: string; items: { id: string; title: string; slug: string; data: unknown }[] }[] }) {
+export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {}, hasShop = false, hasBooking = false, i18n, collections }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; hasBooking?: boolean; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string }; collections?: { key: string; label: string; items: { id: string; title: string; slug: string; data: unknown }[] }[] }) {
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
   const [activeLocale, setActiveLocale] = useState(i18n?.defaultLocale || 'de');
-  const sectionTypes = getSectionTypesForIndustry(industry, { hasShop });
+  const sectionTypes = getSectionTypesForIndustry(industry, { hasShop, hasBooking });
   const resolvedVars = { ...getStyleCssVars(industry, styleVariant), ...getBrandCssVars(brand) };
   const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);
