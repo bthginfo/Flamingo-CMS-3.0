@@ -4,6 +4,7 @@ import { and, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
 import { bookingRequests, bookingSettings, bookingStatusHistory } from '@flamingo/db';
 import { getBookingNotificationEmail, sendBookingEmail } from '@/lib/booking-email';
+import { formatBookingDate } from '@/lib/booking-time';
 
 export async function GET(req: NextRequest) {
   const bookingId = req.nextUrl.searchParams.get('booking') || '';
@@ -44,8 +45,8 @@ export async function GET(req: NextRequest) {
     customerName: booking.customerName,
     customerEmail: booking.customerEmail,
     customerPhone: booking.customerPhone,
-    bookingDate: formatDate(booking.startsAt),
-    bookingSummary: `Zeitraum: ${formatDate(booking.startsAt)} bis ${formatDate(booking.endsAt)}\nPersonen/Menge: ${booking.partySize}`,
+    bookingDate: formatBookingDate(booking.startsAt, settings.timezone),
+    bookingSummary: `Zeitraum: ${formatBookingDate(booking.startsAt, settings.timezone)} bis ${formatBookingDate(booking.endsAt, settings.timezone)}\nPersonen/Menge: ${booking.partySize}`,
     cancellationReason: 'Online-Storno durch Kunden',
   };
   if (booking.customerEmail) {
@@ -55,8 +56,4 @@ export async function GET(req: NextRequest) {
   sendBookingEmail({ tenantId: booking.tenantId, trigger: 'booking_cancelled_admin', to: adminEmail, values }).catch(console.error);
 
   return NextResponse.json({ success: true, status: 'cancelled_by_customer' });
-}
-
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat('de-DE', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
 }

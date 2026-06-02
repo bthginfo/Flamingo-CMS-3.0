@@ -1022,8 +1022,8 @@ function ManifestoSection() {
               d: 'Du hast jederzeit Zugriff auf Deinen Code, Deine Inhalte und Deine Bilder. Keine Geiselhaft, kein Lock-in.',
             },
             {
-              t: 'Geschwindigkeit ist Respekt.',
-              d: 'Schnelle Ladezeiten, sauberes Mobile-Design, gute Auffindbarkeit bei Google. Damit Menschen Dich finden, verstehen und anfragen.',
+              t: 'Funktionen, die Alltag sparen.',
+              d: 'CMS, Shop, Booking, Formulare, SEO und Live-Vorschau sitzen in einem System. Du pflegst nicht nur Texte, sondern echte Workflows.',
             },
           ].map((b, i) => (
             <div key={i} className="border-t border-white/15 pt-8">
@@ -1050,7 +1050,7 @@ type DeviceItem = {
 const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'https://www.demo.flamingomedia.online';
 
 const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://www.demo.flamingomedia.online';
-const demoAdminUrl = (next = '/admin') => `${ADMIN_URL_SHOWCASE}/admin/demo-login?industry=handwerk&embed=1&next=${encodeURIComponent(next)}`;
+const demoAdminUrl = (next = '/admin') => `${ADMIN_URL_SHOWCASE}/admin/demo-login?industry=handwerk&public=1&embed=1&next=${encodeURIComponent(next)}`;
 
 const DEVICE_ITEMS: DeviceItem[] = [
   {

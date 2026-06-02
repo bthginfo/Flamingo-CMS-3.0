@@ -1,10 +1,11 @@
 import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
 import { resolveTenant } from '@/lib/snapshot';
 import { getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isWithinBookingAvailability, parseBookingDateRange, type BookingTimeModel } from '@/lib/booking-core';
 import { getBookingNotificationEmail, sendBookingEmail } from '@/lib/booking-email';
+import { formatBookingDate, normalizeTimezone } from '@/lib/booking-time';
 import { bookingCustomers, bookingRequests, bookingResources, bookingServices } from '@flamingo/db';
 
 function resolveExplicitTenant(value: unknown) {
@@ -33,15 +34,21 @@ export async function POST(req: NextRequest) {
 
     const db = getDb();
     const settings = await getOrCreateBookingSettings(tenantId);
+    const timezone = normalizeTimezone(settings.timezone);
     const [service] = serviceId
       ? await db.select().from(bookingServices).where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.id, serviceId), eq(bookingServices.active, true))).limit(1)
       : [];
     if (serviceId && !service) return NextResponse.json({ error: 'Diese Leistung ist nicht verfügbar.' }, { status: 400 });
 
     const [resource] = resourceId
-      ? await db.select({ id: bookingResources.id }).from(bookingResources).where(and(eq(bookingResources.tenantId, tenantId), eq(bookingResources.id, resourceId), eq(bookingResources.active, true))).limit(1)
+      ? await db.select({ id: bookingResources.id, name: bookingResources.name, type: bookingResources.type }).from(bookingResources).where(and(eq(bookingResources.tenantId, tenantId), eq(bookingResources.id, resourceId), eq(bookingResources.active, true))).limit(1)
       : [];
     if (resourceId && !resource) return NextResponse.json({ error: 'Diese Ressource ist nicht verfügbar.' }, { status: 400 });
+    if (service?.requiresResource && !resourceId) return NextResponse.json({ error: 'Diese Leistung benötigt eine Ressource.' }, { status: 400 });
+    const allowedTypes = Array.isArray(service?.allowedResourceTypes) ? service.allowedResourceTypes : [];
+    if (resource && allowedTypes.length && !allowedTypes.includes(resource.type)) {
+      return NextResponse.json({ error: 'Diese Ressource passt nicht zur gewählten Leistung.' }, { status: 400 });
+    }
 
     const timeModel = (service?.timeModelOverride || settings.timeModel) as BookingTimeModel;
     const { startsAt, endsAt } = parseBookingDateRange({
@@ -51,6 +58,7 @@ export async function POST(req: NextRequest) {
       time: body.time,
       timeModel,
       durationMinutes: service?.durationMinutes || settings.intervalMinutes,
+      timezone,
     });
 
     const now = Date.now();
@@ -61,47 +69,50 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Dieser Termin liegt zu weit in der Zukunft.' }, { status: 400 });
     }
 
-    const available = await isWithinBookingAvailability({ tenantId, serviceId, resourceId, timeModel, startsAt, endsAt });
+    const available = await isWithinBookingAvailability({ tenantId, serviceId, resourceId, timeModel, startsAt, endsAt, timezone });
     if (!available) return NextResponse.json({ error: 'Dieser Zeitraum ist nicht verfügbar.' }, { status: 409 });
-
     const blackout = await hasBookingBlackout({ tenantId, resourceId, startsAt, endsAt });
     if (blackout) return NextResponse.json({ error: 'Dieser Zeitraum ist gesperrt.' }, { status: 409 });
 
-    if (settings.mode === 'instant') {
-      const conflict = await hasBookingConflict({ tenantId, resourceId, timeModel, startsAt, endsAt });
-      if (conflict) return NextResponse.json({ error: 'Dieser Zeitraum ist nicht mehr verfügbar.' }, { status: 409 });
-    }
-
-    const [customer] = await db.insert(bookingCustomers).values({
-      tenantId,
-      name: customerName,
-      email: customerEmail || null,
-      phone: customerPhone || null,
-    }).returning();
-
     const cancellationToken = crypto.randomBytes(24).toString('hex');
     const cancellationTokenHash = crypto.createHash('sha256').update(cancellationToken).digest('hex');
-    const [booking] = await db.insert(bookingRequests).values({
-      tenantId,
-      customerId: customer.id,
-      serviceId,
-      resourceId,
-      mode: settings.mode,
-      timeModel,
-      status: settings.mode === 'instant' ? 'confirmed' : 'requested',
-      customerName,
-      customerEmail: customerEmail || null,
-      customerPhone: customerPhone || null,
-      partySize,
-      startsAt,
-      endsAt,
-      message,
-      cancellationTokenHash,
-    }).returning();
+    const lockKey = `${tenantId}:${resourceId || 'global'}:${startsAt.toISOString()}:${endsAt.toISOString()}`;
+    const booking = await db.transaction(async (tx) => {
+      await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${lockKey}))`);
+      if (settings.mode === 'instant') {
+        const conflict = await hasBookingConflict({ tenantId, resourceId, timeModel, startsAt, endsAt, timezone });
+        if (conflict) throw new Error('BOOKING_CONFLICT');
+      }
+      const [customer] = await tx.insert(bookingCustomers).values({
+        tenantId,
+        name: customerName,
+        email: customerEmail || null,
+        phone: customerPhone || null,
+      }).returning();
+      const [created] = await tx.insert(bookingRequests).values({
+        tenantId,
+        customerId: customer.id,
+        serviceId,
+        resourceId,
+        mode: settings.mode,
+        timeModel,
+        status: settings.mode === 'instant' ? 'confirmed' : 'requested',
+        customerName,
+        customerEmail: customerEmail || null,
+        customerPhone: customerPhone || null,
+        partySize,
+        startsAt,
+        endsAt,
+        message,
+        cancellationTokenHash,
+      }).returning();
+      return created;
+    });
 
     const bookingSummary = [
       service?.name ? `Leistung: ${service.name}` : null,
-      `Zeitraum: ${formatDate(startsAt)} bis ${formatDate(endsAt)}`,
+      resource?.name ? `Ressource: ${resource.name}` : null,
+      `Zeitraum: ${formatBookingDate(startsAt, timezone)} bis ${formatBookingDate(endsAt, timezone)}`,
       `Personen/Menge: ${partySize}`,
     ].filter(Boolean).join('\n');
     const baseUrl = process.env.SITE_URL || req.nextUrl.origin;
@@ -110,7 +121,7 @@ export async function POST(req: NextRequest) {
       customerName,
       customerEmail,
       customerPhone,
-      bookingDate: formatDate(startsAt),
+      bookingDate: formatBookingDate(startsAt, timezone),
       bookingSummary,
       message,
       cancellationUrl: `${baseUrl}/api/booking/cancel?booking=${booking.id}&token=${cancellationToken}`,
@@ -127,6 +138,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, id: booking.id, status: booking.status });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Interner Fehler';
+    if (message === 'BOOKING_CONFLICT') return NextResponse.json({ error: 'Dieser Zeitraum ist nicht mehr verfügbar.' }, { status: 409 });
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
@@ -137,8 +149,4 @@ function clean(value: unknown, max: number) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
-}
-
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat('de-DE', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
 }

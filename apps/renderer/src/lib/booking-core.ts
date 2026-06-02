@@ -1,6 +1,7 @@
 import { getDb } from '@/lib/db';
 import { bookingAvailabilityRules, bookingBlackouts, bookingRequests, bookingResources, bookingSettings, tenantAddons } from '@flamingo/db';
 import { and, eq, gt, lt, ne, type SQL } from 'drizzle-orm';
+import { getTouchedZonedWeekdays, getZonedTime, getZonedWeekday, normalizeTimezone, zonedDateTimeToUtc, zonedDayEndToUtc, zonedDayStartToUtc } from '@/lib/booking-time';
 
 export const BOOKING_ADDON_KEY = 'booking';
 
@@ -53,28 +54,30 @@ export function parseBookingDateRange(input: {
   time?: unknown;
   timeModel: BookingTimeModel;
   durationMinutes?: number | null;
+  timezone?: string | null;
 }) {
   const date = stringValue(input.date || input.startDate);
   if (!date) throw new Error('DATE_REQUIRED');
+  const timezone = normalizeTimezone(input.timezone);
 
   if (input.timeModel === 'date_range') {
     const endDate = stringValue(input.endDate);
     if (!endDate) throw new Error('END_DATE_REQUIRED');
-    const startsAt = new Date(`${date}T00:00:00.000Z`);
-    const endsAt = new Date(`${endDate}T00:00:00.000Z`);
+    const startsAt = zonedDayStartToUtc(date, timezone);
+    const endsAt = zonedDayEndToUtc(endDate, timezone);
     if (!isValidRange(startsAt, endsAt)) throw new Error('INVALID_DATE_RANGE');
     return { startsAt, endsAt };
   }
 
   if (input.timeModel === 'full_day') {
-    const startsAt = new Date(`${date}T00:00:00.000Z`);
-    const endsAt = new Date(`${date}T23:59:59.999Z`);
+    const startsAt = zonedDayStartToUtc(date, timezone);
+    const endsAt = zonedDayEndToUtc(date, timezone);
     return { startsAt, endsAt };
   }
 
   const time = stringValue(input.time);
   if (!time) throw new Error('TIME_REQUIRED');
-  const startsAt = new Date(`${date}T${time}:00.000Z`);
+  const startsAt = zonedDateTimeToUtc(date, time, timezone);
   const endsAt = new Date(startsAt.getTime() + Math.max(input.durationMinutes || 30, 5) * 60_000);
   if (!isValidRange(startsAt, endsAt)) throw new Error('INVALID_TIME_RANGE');
   return { startsAt, endsAt };
@@ -87,8 +90,10 @@ export async function hasBookingConflict(input: {
   timeModel: BookingTimeModel;
   startsAt: Date;
   endsAt: Date;
+  timezone?: string | null;
 }) {
   const db = getDb();
+  const timezone = normalizeTimezone(input.timezone);
   const predicates: SQL[] = [
     eq(bookingRequests.tenantId, input.tenantId),
     eq(bookingRequests.status, 'confirmed'),
@@ -106,7 +111,7 @@ export async function hasBookingConflict(input: {
     predicates.push(eq(bookingRequests.resourceId, input.resourceId));
   } else {
     predicates.push(eq(bookingRequests.timeModel, input.timeModel));
-    const weekday = input.startsAt.getUTCDay();
+    const weekday = getZonedWeekday(input.startsAt, timezone);
     const rules = await db.select({ capacity: bookingAvailabilityRules.capacity }).from(bookingAvailabilityRules)
       .where(and(
         eq(bookingAvailabilityRules.tenantId, input.tenantId),
@@ -136,7 +141,7 @@ export async function hasBookingBlackout(input: {
       gt(bookingBlackouts.endsAt, input.startsAt),
     ));
 
-  return blackouts.some((blackout) => !blackout.resourceId || !input.resourceId || blackout.resourceId === input.resourceId);
+  return blackouts.some((blackout) => !blackout.resourceId || (input.resourceId && blackout.resourceId === input.resourceId));
 }
 
 export async function isWithinBookingAvailability(input: {
@@ -146,28 +151,30 @@ export async function isWithinBookingAvailability(input: {
   timeModel: BookingTimeModel;
   startsAt: Date;
   endsAt: Date;
+  timezone?: string | null;
 }) {
   const db = getDb();
+  const timezone = normalizeTimezone(input.timezone);
   const rules = await db.select().from(bookingAvailabilityRules)
     .where(and(eq(bookingAvailabilityRules.tenantId, input.tenantId), eq(bookingAvailabilityRules.active, true)));
 
   if (rules.length === 0) return true;
 
   const relevantRules = rules.filter((rule) => {
-    const resourceMatches = !rule.resourceId || !input.resourceId || rule.resourceId === input.resourceId;
-    const serviceMatches = !rule.serviceId || !input.serviceId || rule.serviceId === input.serviceId;
+    const resourceMatches = rule.resourceId ? rule.resourceId === input.resourceId : true;
+    const serviceMatches = rule.serviceId ? rule.serviceId === input.serviceId : true;
     return resourceMatches && serviceMatches;
   });
   if (relevantRules.length === 0) return false;
 
   if (input.timeModel === 'time_slot') {
-    const weekday = input.startsAt.getUTCDay();
-    const startTime = toUtcTime(input.startsAt);
-    const endTime = toUtcTime(input.endsAt);
+    const weekday = getZonedWeekday(input.startsAt, timezone);
+    const startTime = getZonedTime(input.startsAt, timezone);
+    const endTime = getZonedTime(input.endsAt, timezone);
     return relevantRules.some((rule) => rule.weekday === weekday && rule.startTime <= startTime && rule.endTime >= endTime);
   }
 
-  return getTouchedUtcWeekdays(input.startsAt, input.endsAt).every((weekday) => relevantRules.some((rule) => rule.weekday === weekday));
+  return getTouchedZonedWeekdays(input.startsAt, input.endsAt, timezone).every((weekday) => relevantRules.some((rule) => rule.weekday === weekday));
 }
 
 function stringValue(value: unknown) {
@@ -176,20 +183,4 @@ function stringValue(value: unknown) {
 
 function isValidRange(startsAt: Date, endsAt: Date) {
   return Number.isFinite(startsAt.getTime()) && Number.isFinite(endsAt.getTime()) && endsAt > startsAt;
-}
-
-function toUtcTime(date: Date) {
-  return date.toISOString().slice(11, 16);
-}
-
-function getTouchedUtcWeekdays(startsAt: Date, endsAt: Date) {
-  const days = new Set<number>();
-  const cursor = new Date(Date.UTC(startsAt.getUTCFullYear(), startsAt.getUTCMonth(), startsAt.getUTCDate()));
-  const inclusiveEnd = new Date(Math.max(startsAt.getTime(), endsAt.getTime() - 1));
-  const endDay = Date.UTC(inclusiveEnd.getUTCFullYear(), inclusiveEnd.getUTCMonth(), inclusiveEnd.getUTCDate());
-  while (cursor.getTime() <= endDay) {
-    days.add(cursor.getUTCDay());
-    cursor.setUTCDate(cursor.getUTCDate() + 1);
-  }
-  return [...days];
 }

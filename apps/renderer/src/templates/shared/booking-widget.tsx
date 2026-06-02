@@ -11,9 +11,10 @@ type BookingConfig = {
   enabled: boolean;
   mode: 'request' | 'instant';
   timeModel: BookingTimeModel;
+  timezone: string;
   intervalMinutes: number;
-  services: { id: string; name: string; durationMinutes: number | null; priceLabel: string | null; timeModelOverride: BookingTimeModel | null }[];
-  resources: { id: string; name: string; type: string; capacity: number }[];
+  services: { id: string; name: string; durationMinutes: number | null; priceLabel: string | null; timeModelOverride: BookingTimeModel | null; requiresResource?: boolean; allowedResourceTypes?: string[] }[];
+  resources: { id: string; name: string; type: string; capacity: number; seats?: number | null }[];
 };
 
 export function BookingWidgetSection({ data }: SectionProps) {
@@ -24,6 +25,10 @@ export function BookingWidgetSection({ data }: SectionProps) {
   const tenantId = (data.tenantId as string) || '';
   const [config, setConfig] = useState<BookingConfig | null>(null);
   const [selectedServiceId, setSelectedServiceId] = useState('');
+  const [selectedResourceId, setSelectedResourceId] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [slots, setSlots] = useState<{ value: string; label: string }[]>([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
 
@@ -32,7 +37,7 @@ export function BookingWidgetSection({ data }: SectionProps) {
     fetch(`/api/booking/config${query}`)
       .then((res) => res.json())
       .then(setConfig)
-      .catch(() => setConfig({ enabled: false, mode: 'request', timeModel: 'time_slot', intervalMinutes: 30, services: [], resources: [] }));
+      .catch(() => setConfig({ enabled: false, mode: 'request', timezone: 'Europe/Berlin', timeModel: 'time_slot', intervalMinutes: 30, services: [], resources: [] }));
   }, [tenantId]);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
@@ -52,6 +57,9 @@ export function BookingWidgetSection({ data }: SectionProps) {
       setStatus('success');
       e.currentTarget.reset();
       setSelectedServiceId('');
+      setSelectedResourceId('');
+      setSelectedDate('');
+      setSlots([]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unbekannter Fehler');
       setStatus('error');
@@ -64,9 +72,36 @@ export function BookingWidgetSection({ data }: SectionProps) {
   );
   const timeModel = selectedService?.timeModelOverride || config?.timeModel || 'time_slot';
   const actionLabel = submitLabel || (config?.mode === 'instant' ? 'Jetzt buchen' : 'Anfrage senden');
+  const allowedResourceTypes = Array.isArray(selectedService?.allowedResourceTypes) ? selectedService.allowedResourceTypes : [];
+  const availableResources = config?.resources.filter(resource => !allowedResourceTypes.length || allowedResourceTypes.includes(resource.type)) || [];
+  const resourceRequired = Boolean(selectedService?.requiresResource);
+
+  useEffect(() => {
+    if (!config?.enabled || !selectedDate || timeModel !== 'time_slot') {
+      setSlots([]);
+      return;
+    }
+    if (resourceRequired && !selectedResourceId) {
+      setSlots([]);
+      return;
+    }
+    const query = new URLSearchParams({
+      date: selectedDate,
+      serviceId: selectedServiceId,
+      resourceId: selectedResourceId,
+      tenantId,
+    });
+    setSlotsLoading(true);
+    fetch(`/api/booking/availability?${query.toString()}`)
+      .then(res => res.json())
+      .then(json => setSlots(Array.isArray(json.slots) ? json.slots : []))
+      .catch(() => setSlots([]))
+      .finally(() => setSlotsLoading(false));
+  }, [config?.enabled, resourceRequired, selectedDate, selectedResourceId, selectedServiceId, tenantId, timeModel]);
 
   return (
     <section
+      id="booking"
       className="relative overflow-hidden rounded-[var(--style-card-radius,2rem)] px-5 py-10 shadow-2xl sm:px-8 md:px-12"
       style={{ background: 'var(--style-section-bg, #09090b)', color: 'var(--style-text-primary, #ffffff)' }}
     >
@@ -105,25 +140,31 @@ export function BookingWidgetSection({ data }: SectionProps) {
               </div>
               <input name="customerPhone" type="tel" placeholder="Telefon" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
               <div className="grid gap-3 sm:grid-cols-2">
-                <select name="serviceId" value={selectedServiceId} onChange={(event) => setSelectedServiceId(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
+                <select name="serviceId" value={selectedServiceId} onChange={(event) => { setSelectedServiceId(event.target.value); setSelectedResourceId(''); }} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
                   <option value="">Leistung auswählen</option>
                   {config?.services.map((service) => <option key={service.id} value={service.id}>{service.name}{service.priceLabel ? ` · ${service.priceLabel}` : ''}</option>)}
                 </select>
-                <select name="resourceId" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
-                  <option value="">Ressource optional</option>
-                  {config?.resources.map((resource) => <option key={resource.id} value={resource.id}>{resource.name}</option>)}
+                <select name="resourceId" value={selectedResourceId} required={resourceRequired} onChange={(event) => setSelectedResourceId(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
+                  <option value="">{resourceRequired ? 'Ressource auswählen *' : 'Ressource optional'}</option>
+                  {availableResources.map((resource) => <option key={resource.id} value={resource.id}>{resource.name}{resource.seats ? ` · ${resource.seats} Plätze` : ''}</option>)}
                 </select>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <input name="date" type="date" required className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="date" type="date" required value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
                 {timeModel === 'date_range' ? (
                   <input name="endDate" type="date" required className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
                 ) : timeModel === 'time_slot' ? (
-                  <input name="time" type="time" required className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                  <select name="time" required disabled={!selectedDate || slotsLoading || (resourceRequired && !selectedResourceId)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900 disabled:bg-zinc-50 disabled:text-zinc-400">
+                    <option value="">{slotsLoading ? 'Slots laden...' : selectedDate ? 'Zeit auswählen' : 'Erst Datum wählen'}</option>
+                    {slots.map(slot => <option key={slot.value} value={slot.value}>{slot.label}</option>)}
+                  </select>
                 ) : (
                   <input name="partySize" type="number" min={1} defaultValue={1} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
                 )}
               </div>
+              {timeModel === 'time_slot' && selectedDate && !slotsLoading && !slots.length ? (
+                <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">Für diese Auswahl sind aktuell keine freien Slots verfügbar.</p>
+              ) : null}
               {timeModel !== 'full_day' && <input name="partySize" type="number" min={1} defaultValue={1} placeholder="Personen / Menge" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />}
               <textarea name="message" rows={3} placeholder="Nachricht optional" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
               {status === 'error' && <p className="text-sm text-red-600">{error}</p>}
@@ -140,13 +181,40 @@ export function BookingWidgetSection({ data }: SectionProps) {
 }
 
 export function AvailabilityCalendarSection({ data }: SectionProps) {
+  const tenantId = (data.tenantId as string) || '';
+  const [counts, setCounts] = useState<Record<string, number | null>>({});
+  const days = useMemo(() => {
+    const today = new Date();
+    const list = [
+      { label: 'Heute', date: toInputDate(today) },
+      { label: 'Morgen', date: toInputDate(addDays(today, 1)) },
+      { label: 'Wochenende', date: toInputDate(nextWeekend(today)) },
+    ];
+    return list;
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all(days.map(async day => {
+      const query = new URLSearchParams({ date: day.date, tenantId });
+      const res = await fetch(`/api/booking/availability?${query.toString()}`);
+      const json = await res.json().catch(() => ({}));
+      return [day.label, Array.isArray(json.slots) ? json.slots.length : 0] as const;
+    })).then(entries => {
+      if (!cancelled) setCounts(Object.fromEntries(entries));
+    }).catch(() => {
+      if (!cancelled) setCounts(Object.fromEntries(days.map(day => [day.label, null])));
+    });
+    return () => { cancelled = true; };
+  }, [days, tenantId]);
+
   return (
     <BookingShell data={data} icon={<Clock3 size={18} />} defaultBadge="Verfügbarkeit" defaultHeadline="Freie Zeiten auf einen Blick">
       <div className="grid gap-2 sm:grid-cols-3">
-        {['Heute', 'Morgen', 'Wochenende'].map((label, index) => (
-          <div key={label} className="rounded-2xl border p-4" style={{ borderColor: 'var(--style-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--style-card-bg, #ffffff) 10%, transparent)' }}>
-            <p className="text-xs font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--style-text-muted, rgba(255,255,255,.62))' }}>{label}</p>
-            <p className="mt-3 text-2xl font-black" style={{ color: 'var(--style-heading-color, #ffffff)' }}>{index === 0 ? '3' : index === 1 ? '5' : '8'}</p>
+        {days.map((day) => (
+          <div key={day.label} className="rounded-2xl border p-4" style={{ borderColor: 'var(--style-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--style-card-bg, #ffffff) 10%, transparent)' }}>
+            <p className="text-xs font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--style-text-muted, rgba(255,255,255,.62))' }}>{day.label}</p>
+            <p className="mt-3 text-2xl font-black" style={{ color: 'var(--style-heading-color, #ffffff)' }}>{counts[day.label] ?? '–'}</p>
             <p className="text-sm" style={{ color: 'var(--style-body-color, rgba(255,255,255,.74))' }}>Slots möglich</p>
           </div>
         ))}
@@ -202,10 +270,28 @@ function BookingShell({ data, icon, defaultBadge, defaultHeadline, children }: {
           <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--style-badge-bg, rgba(255,255,255,.1))', color: 'var(--style-badge-text, rgba(255,255,255,.8))' }}>{icon}{(data.badge as string) || defaultBadge}</p>
           <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--style-heading-color, #ffffff)' }}>{(data.headline as string) || defaultHeadline}</h2>
           <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--style-body-color, rgba(255,255,255,.72))' }}>{(data.subline as string) || 'Ein flexibler Booking-Einstieg für Termine, Tage, Räume, Ressourcen oder Anfragen.'}</p>
-          <a href="#booking-form" className="mt-6 inline-flex items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--brand-btn-bg, #ffffff)', color: 'var(--brand-btn-text, #09090b)' }}>{(data.submitLabel as string) || 'Anfrage starten'}</a>
+          <a href="#booking" className="mt-6 inline-flex items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--brand-btn-bg, #ffffff)', color: 'var(--brand-btn-text, #09090b)' }}>{(data.submitLabel as string) || 'Anfrage starten'}</a>
         </div>
         {children}
       </div>
     </section>
   );
+}
+
+function addDays(date: Date, days: number) {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+function nextWeekend(date: Date) {
+  const next = new Date(date);
+  const day = next.getDay();
+  const daysUntilSaturday = (6 - day + 7) % 7 || 7;
+  next.setDate(next.getDate() + daysUntilSaturday);
+  return next;
+}
+
+function toInputDate(date: Date) {
+  return date.toISOString().slice(0, 10);
 }

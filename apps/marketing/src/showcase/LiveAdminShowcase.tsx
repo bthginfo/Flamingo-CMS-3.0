@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   BarChart3,
   Brush,
+  CalendarDays,
   Contact,
   ExternalLink,
   FileText,
@@ -23,6 +24,7 @@ import {
   ShoppingBag,
   Smartphone,
   Tablet,
+  Users,
 } from 'lucide-react';
 
 const DEMO_BASE = 'https://www.demo.flamingomedia.online';
@@ -30,7 +32,7 @@ const PREVIEW_TENANT_ID = 'f50cbf53-279d-43f3-b58b-f5ae3d550ab2';
 const demoAdminUrl = (next = '/admin') => `${DEMO_BASE}/admin/demo-login?industry=handwerk&public=1&next=${encodeURIComponent(next)}`;
 
 type Viewport = 'desktop' | 'tablet' | 'mobile';
-type ShowcaseMode = 'demo' | 'cms' | 'shop';
+type ShowcaseMode = 'demo' | 'cms' | 'shop' | 'booking';
 type AdminTab = {
   label: string;
   href: string;
@@ -59,6 +61,15 @@ const SHOP_TABS: AdminTab[] = [
   { label: 'Gutscheine', href: '/admin/shop/coupons', icon: ShoppingBag, note: 'Rabatte, Limits und Laufzeiten' },
   { label: 'Versand', href: '/admin/shop/shipping', icon: Rocket, note: 'Versandzonen, Preise und Lieferzeiten' },
   { label: 'Einstellungen', href: '/admin/shop/settings', icon: Settings, note: 'Zahlung, Versand und Rechnungsdaten' },
+];
+
+const BOOKING_TABS: AdminTab[] = [
+  { label: 'Booking', href: '/admin/functions/booking', icon: CalendarDays, note: 'Übersicht, Inbox und Tagesplanung' },
+  { label: 'Anfragen', href: '/admin/functions/booking?tab=inbox', icon: Mail, note: 'Filtern, bestätigen und absagen' },
+  { label: 'Tagesplan', href: '/admin/functions/booking?tab=day', icon: CalendarDays, note: 'Buchungen pro Tag und Ressource sehen' },
+  { label: 'Ressourcen', href: '/admin/functions/booking?tab=resources', icon: Users, note: 'Tische, Räume, Mitarbeiter oder Equipment' },
+  { label: 'Sperrzeiten', href: '/admin/functions/booking?tab=blackouts', icon: Settings, note: 'Urlaub, Feiertage und blockierte Zeiten' },
+  { label: 'E-Mails', href: '/admin/functions/booking?tab=emails', icon: Mail, note: 'Automatische Buchungs-Mails anpassen' },
 ];
 
 function viewportSize(viewport: Viewport) {
@@ -107,7 +118,7 @@ function AdminFrame({ src, viewport, framed = true, small = false }: { src: stri
 
 export function LiveAdminShowcase({ mode = 'cms', compact = false, showTabs = true, smallPreview = false }: { mode?: ShowcaseMode; compact?: boolean; showTabs?: boolean; smallPreview?: boolean }) {
   const [viewport, setViewport] = useState<Viewport>('desktop');
-  const tabs = mode === 'shop' ? SHOP_TABS : CMS_TABS;
+  const tabs = mode === 'shop' ? SHOP_TABS : mode === 'booking' ? BOOKING_TABS : CMS_TABS;
   const [activeTab, setActiveTab] = useState(0);
   const active = tabs[activeTab] || tabs[0];
   const src = active.href.startsWith('/admin') ? demoAdminUrl(active.href) : `${DEMO_BASE}${active.href}`;
@@ -119,6 +130,14 @@ export function LiveAdminShowcase({ mode = 'cms', compact = false, showTabs = tr
         title: 'Produkte, Bestellungen und Zahlungen im gleichen Admin.',
         text: 'Das Shop-Addon sitzt nicht daneben, sondern direkt im Flamingo CMS: Produkte pflegen, Bestellungen prüfen, Gutscheine erstellen und Rechnungsdaten verwalten.',
         cta: 'Demo ansehen',
+      };
+    }
+    if (mode === 'booking') {
+      return {
+        eyebrow: 'Booking-Admin',
+        title: 'Anfragen, Kalender und Ressourcen sauber im Griff.',
+        text: 'Das Booking-Addon erweitert den Flamingo Admin um Anfrage-Inbox, Tagesplan, Ressourcen, Sperrzeiten und automatische E-Mails.',
+        cta: 'Booking-Demo ansehen',
       };
     }
     if (mode === 'demo') {

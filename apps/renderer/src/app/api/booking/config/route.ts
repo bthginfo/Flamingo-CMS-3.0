@@ -27,12 +27,15 @@ export async function GET(req: NextRequest) {
       durationMinutes: bookingServices.durationMinutes,
       priceLabel: bookingServices.priceLabel,
       timeModelOverride: bookingServices.timeModelOverride,
+      requiresResource: bookingServices.requiresResource,
+      allowedResourceTypes: bookingServices.allowedResourceTypes,
     }).from(bookingServices).where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.active, true))).orderBy(asc(bookingServices.sortOrder), asc(bookingServices.name)),
     db.select({
       id: bookingResources.id,
       name: bookingResources.name,
       type: bookingResources.type,
       capacity: bookingResources.capacity,
+      seats: bookingResources.seats,
     }).from(bookingResources).where(and(eq(bookingResources.tenantId, tenantId), eq(bookingResources.active, true))).orderBy(asc(bookingResources.sortOrder), asc(bookingResources.name)),
   ]);
 
@@ -40,6 +43,7 @@ export async function GET(req: NextRequest) {
     enabled: true,
     mode: settings.mode,
     timeModel: settings.timeModel,
+    timezone: settings.timezone,
     intervalMinutes: settings.intervalMinutes,
     services,
     resources,

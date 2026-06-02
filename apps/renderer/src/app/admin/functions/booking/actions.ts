@@ -1,5 +1,6 @@
 'use server';
 
+import crypto from 'crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { and, asc, eq } from 'drizzle-orm';
@@ -7,7 +8,8 @@ import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { BOOKING_ADDON_KEY, getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isWithinBookingAvailability } from '@/lib/booking-core';
 import { getBookingNotificationEmail, getDefaultBookingEmailTemplate, sendBookingEmail, type BookingEmailTrigger } from '@/lib/booking-email';
-import { bookingAvailabilityRules, bookingRequests, bookingResources, bookingServices, bookingSettings, bookingStatusHistory, emailTemplates, tenantAddons } from '@flamingo/db';
+import { bookingAvailabilityRules, bookingBlackouts, bookingRequests, bookingResources, bookingServices, bookingSettings, bookingStatusHistory, emailTemplates, tenantAddons } from '@flamingo/db';
+import { formatBookingDate, normalizeTimezone, zonedDateTimeToUtc } from '@/lib/booking-time';
 
 const BOOKING_MODES = ['request', 'instant'] as const;
 const BOOKING_TIME_MODELS = ['time_slot', 'full_day', 'date_range'] as const;
@@ -41,21 +43,23 @@ export async function getBookingAdminData() {
       resources: [],
       services: [],
       availabilityRules: [],
+      blackouts: [],
       requests: [],
       templates: [],
     };
   }
 
   const settings = await getOrCreateBookingSettings(tenantId);
-  const [resources, services, availabilityRules, requests, templates] = await Promise.all([
+  const [resources, services, availabilityRules, blackouts, requests, templates] = await Promise.all([
     db.select().from(bookingResources).where(and(eq(bookingResources.tenantId, tenantId), eq(bookingResources.active, true))).orderBy(asc(bookingResources.sortOrder), asc(bookingResources.name)),
     db.select().from(bookingServices).where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.active, true))).orderBy(asc(bookingServices.sortOrder), asc(bookingServices.name)),
     db.select().from(bookingAvailabilityRules).where(and(eq(bookingAvailabilityRules.tenantId, tenantId), eq(bookingAvailabilityRules.active, true))).orderBy(asc(bookingAvailabilityRules.weekday), asc(bookingAvailabilityRules.startTime)),
+    db.select().from(bookingBlackouts).where(eq(bookingBlackouts.tenantId, tenantId)).orderBy(asc(bookingBlackouts.startsAt)),
     db.select().from(bookingRequests).where(eq(bookingRequests.tenantId, tenantId)).orderBy(asc(bookingRequests.startsAt)),
     db.select().from(emailTemplates).where(eq(emailTemplates.tenantId, tenantId)),
   ]);
 
-  return { addonActive, settings, resources, services, availabilityRules, requests, templates };
+  return { addonActive, settings, resources, services, availabilityRules, blackouts, requests, templates };
 }
 
 export async function requestBookingAddonAction() {
@@ -78,6 +82,7 @@ export async function saveBookingSettingsAction(formData: FormData) {
   await db.update(bookingSettings).set({
     mode: stringOption(formData.get('mode'), BOOKING_MODES, 'request'),
     timeModel: stringOption(formData.get('timeModel'), BOOKING_TIME_MODELS, 'time_slot'),
+    timezone: normalizeTimezone(cleanString(formData.get('timezone'), 80)),
     intervalMinutes: intValue(formData.get('intervalMinutes'), 30, 5, 1440),
     minNoticeHours: intValue(formData.get('minNoticeHours'), 12, 0, 8760),
     maxAdvanceDays: intValue(formData.get('maxAdvanceDays'), 90, 1, 730),
@@ -101,8 +106,26 @@ export async function addBookingResourceAction(formData: FormData) {
     name,
     type: stringOption(formData.get('type'), BOOKING_RESOURCE_TYPES, 'generic'),
     capacity: intValue(formData.get('capacity'), 1, 1, 10000),
+    seats: intOptional(formData.get('seats'), 1, 10000),
     description: cleanString(formData.get('description'), 2000) || null,
   });
+  revalidatePath('/admin/functions/booking');
+}
+
+export async function updateBookingResourceAction(formData: FormData) {
+  const tenantId = await requireTenant();
+  await requireBooking(tenantId);
+  const id = cleanString(formData.get('id'), 80);
+  const name = cleanString(formData.get('name'), 255);
+  if (!id || !name) return;
+  await getDb().update(bookingResources).set({
+    name,
+    type: stringOption(formData.get('type'), BOOKING_RESOURCE_TYPES, 'generic'),
+    capacity: intValue(formData.get('capacity'), 1, 1, 10000),
+    seats: intOptional(formData.get('seats'), 1, 10000),
+    description: cleanString(formData.get('description'), 2000) || null,
+    updatedAt: new Date(),
+  }).where(and(eq(bookingResources.id, id), eq(bookingResources.tenantId, tenantId)));
   revalidatePath('/admin/functions/booking');
 }
 
@@ -120,7 +143,28 @@ export async function addBookingServiceAction(formData: FormData) {
     timeModelOverride: timeModelOverrideRaw ? stringOption(timeModelOverrideRaw, BOOKING_TIME_MODELS, 'time_slot') : null,
     priceLabel: cleanString(formData.get('priceLabel'), 100) || null,
     requiresResource: formData.get('requiresResource') === 'on',
+    allowedResourceTypes: stringList(formData.getAll('allowedResourceTypes'), BOOKING_RESOURCE_TYPES),
   });
+  revalidatePath('/admin/functions/booking');
+}
+
+export async function updateBookingServiceAction(formData: FormData) {
+  const tenantId = await requireTenant();
+  await requireBooking(tenantId);
+  const id = cleanString(formData.get('id'), 80);
+  const name = cleanString(formData.get('name'), 255);
+  if (!id || !name) return;
+  const timeModelOverrideRaw = cleanString(formData.get('timeModelOverride'), 20);
+  await getDb().update(bookingServices).set({
+    name,
+    description: cleanString(formData.get('description'), 2000) || null,
+    durationMinutes: intValue(formData.get('durationMinutes'), 30, 0, 1440) || null,
+    timeModelOverride: timeModelOverrideRaw ? stringOption(timeModelOverrideRaw, BOOKING_TIME_MODELS, 'time_slot') : null,
+    priceLabel: cleanString(formData.get('priceLabel'), 100) || null,
+    requiresResource: formData.get('requiresResource') === 'on',
+    allowedResourceTypes: stringList(formData.getAll('allowedResourceTypes'), BOOKING_RESOURCE_TYPES),
+    updatedAt: new Date(),
+  }).where(and(eq(bookingServices.id, id), eq(bookingServices.tenantId, tenantId)));
   revalidatePath('/admin/functions/booking');
 }
 
@@ -132,11 +176,58 @@ export async function addBookingAvailabilityRuleAction(formData: FormData) {
   if (!startTime || !endTime) return;
   await getDb().insert(bookingAvailabilityRules).values({
     tenantId,
+    resourceId: uuidOrNull(formData.get('resourceId')),
+    serviceId: uuidOrNull(formData.get('serviceId')),
     weekday: intValue(formData.get('weekday'), 1, 0, 6),
     startTime,
     endTime,
     capacity: intValue(formData.get('capacity'), 1, 1, 10000),
   });
+  revalidatePath('/admin/functions/booking');
+}
+
+export async function updateBookingAvailabilityRuleAction(formData: FormData) {
+  const tenantId = await requireTenant();
+  await requireBooking(tenantId);
+  const id = cleanString(formData.get('id'), 80);
+  const startTime = cleanString(formData.get('startTime'), 10);
+  const endTime = cleanString(formData.get('endTime'), 10);
+  if (!id || !startTime || !endTime) return;
+  await getDb().update(bookingAvailabilityRules).set({
+    resourceId: uuidOrNull(formData.get('resourceId')),
+    serviceId: uuidOrNull(formData.get('serviceId')),
+    weekday: intValue(formData.get('weekday'), 1, 0, 6),
+    startTime,
+    endTime,
+    capacity: intValue(formData.get('capacity'), 1, 1, 10000),
+  }).where(and(eq(bookingAvailabilityRules.id, id), eq(bookingAvailabilityRules.tenantId, tenantId)));
+  revalidatePath('/admin/functions/booking');
+}
+
+export async function addBookingBlackoutAction(formData: FormData) {
+  const tenantId = await requireTenant();
+  await requireBooking(tenantId);
+  const settings = await getOrCreateBookingSettings(tenantId);
+  const startsAt = dateTimeValue(formData.get('startsAt'), settings.timezone);
+  const endsAt = dateTimeValue(formData.get('endsAt'), settings.timezone);
+  if (!startsAt || !endsAt || endsAt <= startsAt) return;
+  await getDb().insert(bookingBlackouts).values({
+    tenantId,
+    resourceId: uuidOrNull(formData.get('resourceId')),
+    startsAt,
+    endsAt,
+    reason: cleanString(formData.get('reason'), 255) || null,
+  });
+  revalidatePath('/admin/functions/booking');
+  redirectWithFeedback(formData, 'Sperrzeit gespeichert.', 'success');
+}
+
+export async function deleteBookingBlackoutAction(formData: FormData) {
+  const tenantId = await requireTenant();
+  await requireBooking(tenantId);
+  const id = cleanString(formData.get('id'), 80);
+  if (!id) return;
+  await getDb().delete(bookingBlackouts).where(and(eq(bookingBlackouts.id, id), eq(bookingBlackouts.tenantId, tenantId)));
   revalidatePath('/admin/functions/booking');
 }
 
@@ -167,6 +258,46 @@ export async function deleteBookingAvailabilityRuleAction(formData: FormData) {
   revalidatePath('/admin/functions/booking');
 }
 
+export async function updateBookingAssignmentAction(formData: FormData) {
+  const tenantId = await requireTenant();
+  await requireBooking(tenantId);
+  const id = cleanString(formData.get('id'), 80);
+  const resourceId = uuidOrNull(formData.get('resourceId'));
+  if (!id) return;
+  const db = getDb();
+  const [booking] = await db.select().from(bookingRequests).where(and(eq(bookingRequests.id, id), eq(bookingRequests.tenantId, tenantId))).limit(1);
+  if (!booking) return;
+  if (resourceId) {
+    const [resource] = await db.select({ id: bookingResources.id, type: bookingResources.type }).from(bookingResources)
+      .where(and(eq(bookingResources.id, resourceId), eq(bookingResources.tenantId, tenantId), eq(bookingResources.active, true)))
+      .limit(1);
+    if (!resource) return;
+    const [service] = booking.serviceId
+      ? await db.select({ allowedResourceTypes: bookingServices.allowedResourceTypes }).from(bookingServices)
+        .where(and(eq(bookingServices.id, booking.serviceId), eq(bookingServices.tenantId, tenantId), eq(bookingServices.active, true)))
+        .limit(1)
+      : [];
+    const allowedTypes = Array.isArray(service?.allowedResourceTypes) ? service.allowedResourceTypes : [];
+    if (allowedTypes.length && !allowedTypes.includes(resource.type)) redirectWithFeedback(formData, 'Diese Ressource passt nicht zur Leistung.', 'error');
+    const blackout = await hasBookingBlackout({ tenantId, resourceId, startsAt: booking.startsAt, endsAt: booking.endsAt });
+    if (blackout) redirectWithFeedback(formData, 'Diese Ressource ist in diesem Zeitraum gesperrt.', 'error');
+    const settings = await getOrCreateBookingSettings(tenantId);
+    const conflict = await hasBookingConflict({ tenantId, excludeBookingId: booking.id, resourceId, timeModel: booking.timeModel, startsAt: booking.startsAt, endsAt: booking.endsAt, timezone: settings.timezone });
+    if (conflict) redirectWithFeedback(formData, 'Diese Ressource ist in diesem Zeitraum bereits belegt.', 'error');
+  }
+  await db.update(bookingRequests).set({ resourceId, updatedAt: new Date() }).where(and(eq(bookingRequests.id, id), eq(bookingRequests.tenantId, tenantId)));
+  await db.insert(bookingStatusHistory).values({
+    tenantId,
+    bookingId: booking.id,
+    fromStatus: booking.status,
+    toStatus: booking.status,
+    actor: 'admin',
+    note: resourceId ? 'Ressource manuell zugeordnet.' : 'Ressourcenzuordnung entfernt.',
+  });
+  revalidatePath('/admin/functions/booking');
+  redirectWithFeedback(formData, 'Ressource zugeordnet.', 'success');
+}
+
 export async function updateBookingStatusAction(formData: FormData) {
   const tenantId = await requireTenant();
   await requireBooking(tenantId);
@@ -178,8 +309,22 @@ export async function updateBookingStatusAction(formData: FormData) {
   const db = getDb();
   const [booking] = await db.select().from(bookingRequests).where(and(eq(bookingRequests.id, id), eq(bookingRequests.tenantId, tenantId))).limit(1);
   if (!booking) return;
+  const [service] = booking.serviceId
+    ? await db.select({ requiresResource: bookingServices.requiresResource, allowedResourceTypes: bookingServices.allowedResourceTypes }).from(bookingServices)
+      .where(and(eq(bookingServices.id, booking.serviceId), eq(bookingServices.tenantId, tenantId), eq(bookingServices.active, true)))
+      .limit(1)
+    : [];
 
   if (nextStatus === 'confirmed') {
+    if (service?.requiresResource && !booking.resourceId) redirectWithFeedback(formData, 'Diese Leistung benötigt vor der Bestätigung eine Ressource.', 'error');
+    if (booking.resourceId && service) {
+      const [resource] = await db.select({ type: bookingResources.type }).from(bookingResources)
+        .where(and(eq(bookingResources.id, booking.resourceId), eq(bookingResources.tenantId, tenantId), eq(bookingResources.active, true)))
+        .limit(1);
+      const allowedTypes = Array.isArray(service.allowedResourceTypes) ? service.allowedResourceTypes : [];
+      if (resource && allowedTypes.length && !allowedTypes.includes(resource.type)) redirectWithFeedback(formData, 'Die zugeordnete Ressource passt nicht zur Leistung.', 'error');
+    }
+    const settings = await getOrCreateBookingSettings(tenantId);
     const available = await isWithinBookingAvailability({
       tenantId,
       serviceId: booking.serviceId,
@@ -187,8 +332,9 @@ export async function updateBookingStatusAction(formData: FormData) {
       timeModel: booking.timeModel,
       startsAt: booking.startsAt,
       endsAt: booking.endsAt,
+      timezone: settings.timezone,
     });
-    if (!available) return;
+    if (!available) redirectWithFeedback(formData, 'Diese Buchung liegt außerhalb der Verfügbarkeiten.', 'error');
 
     const blackout = await hasBookingBlackout({
       tenantId,
@@ -196,7 +342,7 @@ export async function updateBookingStatusAction(formData: FormData) {
       startsAt: booking.startsAt,
       endsAt: booking.endsAt,
     });
-    if (blackout) return;
+    if (blackout) redirectWithFeedback(formData, 'Dieser Zeitraum ist gesperrt.', 'error');
 
     const conflict = await hasBookingConflict({
       tenantId,
@@ -205,13 +351,17 @@ export async function updateBookingStatusAction(formData: FormData) {
       timeModel: booking.timeModel,
       startsAt: booking.startsAt,
       endsAt: booking.endsAt,
+      timezone: settings.timezone,
     });
-    if (conflict) return;
+    if (conflict) redirectWithFeedback(formData, 'Dieser Zeitraum ist bereits belegt.', 'error');
   }
 
+  const cancellationToken = nextStatus === 'confirmed' ? crypto.randomBytes(24).toString('hex') : null;
+  const cancellationTokenHash = cancellationToken ? crypto.createHash('sha256').update(cancellationToken).digest('hex') : booking.cancellationTokenHash;
   await db.update(bookingRequests).set({
     status: nextStatus,
     cancellationReason: nextStatus === 'cancelled_by_admin' ? note : booking.cancellationReason,
+    cancellationTokenHash,
     updatedAt: new Date(),
   }).where(and(eq(bookingRequests.id, id), eq(bookingRequests.tenantId, tenantId)));
 
@@ -224,7 +374,8 @@ export async function updateBookingStatusAction(formData: FormData) {
     note,
   });
 
-  const values = bookingEmailValues(booking, note);
+  const settings = await getOrCreateBookingSettings(tenantId);
+  const values = bookingEmailValues({ ...booking, cancellationToken }, settings.timezone, note);
   if (nextStatus === 'confirmed' && booking.customerEmail) {
     sendBookingEmail({ tenantId, trigger: 'booking_confirmed_customer', to: booking.customerEmail, values }).catch(console.error);
   }
@@ -235,6 +386,7 @@ export async function updateBookingStatusAction(formData: FormData) {
   }
 
   revalidatePath('/admin/functions/booking');
+  redirectWithFeedback(formData, 'Änderung gespeichert.', 'success');
 }
 
 export async function saveBookingEmailTemplateAction(formData: FormData) {
@@ -260,9 +412,30 @@ function cleanString(value: FormDataEntryValue | null, max: number) {
   return typeof value === 'string' ? value.trim().slice(0, max) : '';
 }
 
+function uuidOrNull(value: FormDataEntryValue | null) {
+  const cleaned = cleanString(value, 80);
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cleaned) ? cleaned : null;
+}
+
+function dateTimeValue(value: FormDataEntryValue | null, timezone: string) {
+  const cleaned = cleanString(value, 40);
+  if (!cleaned) return null;
+  const [datePart, timePart] = cleaned.split('T');
+  const date = datePart && timePart ? zonedDateTimeToUtc(datePart, timePart, timezone) : new Date(cleaned);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
 function intValue(value: FormDataEntryValue | null, fallback: number, min: number, max: number) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(Math.max(Math.round(parsed), min), max);
+}
+
+function intOptional(value: FormDataEntryValue | null, min: number, max: number) {
+  const raw = cleanString(value, 20);
+  if (!raw) return null;
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) return null;
   return Math.min(Math.max(Math.round(parsed), min), max);
 }
 
@@ -270,21 +443,29 @@ function stringOption<const T extends readonly string[]>(value: FormDataEntryVal
   return allowed.includes(value as T[number]) ? value as T[number] : fallback;
 }
 
-function bookingEmailValues(booking: typeof bookingRequests.$inferSelect, cancellationReason?: string | null) {
-  const summary = `Zeitraum: ${formatDate(booking.startsAt)} bis ${formatDate(booking.endsAt)}\nPersonen/Menge: ${booking.partySize}`;
+function stringList<const T extends readonly string[]>(values: FormDataEntryValue[], allowed: T) {
+  return values.filter((value): value is T[number] => typeof value === 'string' && allowed.includes(value as T[number]));
+}
+
+function bookingEmailValues(booking: typeof bookingRequests.$inferSelect & { cancellationToken?: string | null }, timezone?: string | null, cancellationReason?: string | null) {
+  const summary = `Zeitraum: ${formatBookingDate(booking.startsAt, timezone)} bis ${formatBookingDate(booking.endsAt, timezone)}\nPersonen/Menge: ${booking.partySize}`;
+  const siteUrl = process.env.SITE_URL || '';
   return {
     companyName: 'Ihre Website',
     customerName: booking.customerName,
     customerEmail: booking.customerEmail,
     customerPhone: booking.customerPhone,
-    bookingDate: formatDate(booking.startsAt),
+    bookingDate: formatBookingDate(booking.startsAt, timezone),
     bookingSummary: summary,
     message: booking.message,
-    cancellationUrl: '',
+    cancellationUrl: booking.cancellationToken && siteUrl ? `${siteUrl}/api/booking/cancel?booking=${booking.id}&token=${booking.cancellationToken}` : '',
     cancellationReason,
   };
 }
 
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat('de-DE', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+function redirectWithFeedback(formData: FormData, message: string, type: 'success' | 'error') {
+  const returnTo = cleanString(formData.get('returnTo'), 300) || '/admin/functions/booking';
+  const safePath = returnTo.startsWith('/admin/functions/booking') ? returnTo : '/admin/functions/booking';
+  const join = safePath.includes('?') ? '&' : '?';
+  redirect(`${safePath}${join}${type}=${encodeURIComponent(message)}`);
 }

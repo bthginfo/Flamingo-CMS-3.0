@@ -41,10 +41,20 @@ function applyShowcasePalette() {
   document.body.style.color = '';
 }
 
-const NAV = [
+type NavLinkItem = { href: string; label: string };
+type NavDropdownItem = { label: string; children: Array<NavLinkItem & { description: string }> };
+type NavItem = NavLinkItem | NavDropdownItem;
+
+const NAV: NavItem[] = [
   { href: '/templates', label: 'Templates' },
-  { href: '/shop', label: 'Shop-Addon' },
-  { href: '/cms', label: 'CMS' },
+  {
+    label: 'Funktionen',
+    children: [
+      { href: '/cms', label: 'CMS', description: 'Inhalte, Design und SEO selbst pflegen' },
+      { href: '/shop', label: 'Shop-Addon', description: 'Produkte, Checkout und Bestellungen' },
+      { href: '/booking', label: 'Booking-Addon', description: 'Anfragen, Kalender und Ressourcen' },
+    ],
+  },
   { href: '/foerderrechner', label: 'Förderrechner' },
   { href: '/prozess', label: 'Ablauf' },
   { href: '/preise', label: 'Preise' },
@@ -52,6 +62,10 @@ const NAV = [
   { href: '/ueber-uns', label: 'Über uns' },
   { href: '/kontakt', label: 'Kontakt' },
 ];
+
+function isDropdown(item: NavItem): item is NavDropdownItem {
+  return 'children' in item;
+}
 
 function MarketingAnchor({
   href,
@@ -137,7 +151,26 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               />
             </MarketingAnchor>
             <nav className="hidden lg:flex items-center gap-0.5">
-              {NAV.map((n) => (
+              {NAV.map((n) => (isDropdown(n) ? (
+                <div key={n.label} className="group relative">
+                  <button
+                    type="button"
+                    className={`px-3 py-1.5 text-[13px] font-medium rounded-full transition-colors ${
+                      n.children.some(child => pathname === child.href) ? 'bg-white/15 text-white' : 'text-white/70 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    {n.label} <span aria-hidden>▾</span>
+                  </button>
+                  <div className="pointer-events-none absolute left-0 top-full z-50 w-72 translate-y-2 rounded-2xl border border-white/10 bg-[#0b0810]/95 p-2 opacity-0 shadow-2xl backdrop-blur-xl transition group-hover:pointer-events-auto group-hover:translate-y-1 group-hover:opacity-100">
+                    {n.children.map(child => (
+                      <MarketingAnchor key={child.href} href={child.href} className="block rounded-xl px-3 py-3 text-left transition hover:bg-white/10">
+                        <span className="block text-sm font-semibold text-white">{child.label}</span>
+                        <span className="mt-1 block text-xs leading-5 text-white/55">{child.description}</span>
+                      </MarketingAnchor>
+                    ))}
+                  </div>
+                </div>
+              ) : (
                 <MarketingAnchor
                   key={n.href}
                   href={n.href}
@@ -147,7 +180,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 >
                   {n.label}
                 </MarketingAnchor>
-              ))}
+              )))}
               <span className="w-px h-5 bg-white/20 mx-2" />
               <MarketingAnchor href="/kontakt" className="btn-accent !py-1.5 !px-4 text-[13px]">
                 Beratung <span aria-hidden>→</span>
@@ -181,7 +214,23 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               </button>
             </div>
             <nav className="container-x flex flex-col gap-0.5 mt-6">
-              {NAV.map((n) => (
+              {NAV.map((n) => (isDropdown(n) ? (
+                <div key={n.label} className="border-b border-line py-3">
+                  <p className="text-xs uppercase tracking-widest text-slate-400">{n.label}</p>
+                  <div className="mt-2 flex flex-col gap-2">
+                    {n.children.map(child => (
+                      <MarketingAnchor
+                        key={child.href}
+                        href={child.href}
+                        onClick={() => setMobile(false)}
+                        className="text-2xl font-display transition-transform hover:translate-x-2 text-slate-800"
+                      >
+                        {child.label}
+                      </MarketingAnchor>
+                    ))}
+                  </div>
+                </div>
+              ) : (
                 <MarketingAnchor
                   key={n.href}
                   href={n.href}
@@ -190,7 +239,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 >
                   {n.label}
                 </MarketingAnchor>
-              ))}
+              )))}
               <div className="flex items-center gap-3 mt-8">
                 <MarketingAnchor href="/kontakt" onClick={() => setMobile(false)} className="btn-accent">
                   Beratung anfragen <span aria-hidden>→</span>
@@ -230,6 +279,9 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 <p className="text-xs uppercase tracking-widest text-white/50 mb-4">Angebot</p>
                 <ul className="space-y-2">
                   <li><MarketingAnchor href="/templates" className="hover:text-accent">Templates</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/cms" className="hover:text-accent">CMS</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/shop" className="hover:text-accent">Shop-Addon</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/booking" className="hover:text-accent">Booking-Addon</MarketingAnchor></li>
                   <li><MarketingAnchor href="/prozess" className="hover:text-accent">Ablauf</MarketingAnchor></li>
                   <li><MarketingAnchor href="/preise" className="hover:text-accent">Preise</MarketingAnchor></li>
                   <li><MarketingAnchor href="/blog" className="hover:text-accent">Blog</MarketingAnchor></li>
