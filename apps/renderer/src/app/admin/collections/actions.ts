@@ -2,7 +2,7 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { collections, collectionItems, tenants, globalSettings, pages, pageSections } from '@flamingo/db';
+import { collections, collectionItems, tenants, globalSettings, pages, pageSections, tenantAddons } from '@flamingo/db';
 import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -146,11 +146,23 @@ export async function getItemWithIndustryAction(itemId: string) {
     i18nLocales: tenants.i18nLocales,
     i18nDefaultLocale: tenants.i18nDefaultLocale,
   }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1);
-  const [brandResult] = await db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1);
+  const [brandResult, shopAddonResult, bookingAddonResult] = await Promise.all([
+    db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1),
+    db.select({ active: tenantAddons.active }).from(tenantAddons).where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'shop'))).limit(1),
+    db.select({ active: tenantAddons.active }).from(tenantAddons).where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'booking'))).limit(1),
+  ]);
   const i18n = tenant?.i18nEnabled
     ? { enabled: true, locales: (tenant.i18nLocales || 'de').split(','), defaultLocale: tenant.i18nDefaultLocale || 'de' }
     : undefined;
-  return { item, industry: tenant?.industry ?? 'tradesman', styleVariant: tenant?.activeStyle ?? 'classic', brand: (brandResult?.brand as Record<string, string>) || {}, i18n };
+  return {
+    item,
+    industry: tenant?.industry ?? 'tradesman',
+    styleVariant: tenant?.activeStyle ?? 'classic',
+    brand: (brandResult[0]?.brand as Record<string, string>) || {},
+    hasShop: !!shopAddonResult[0]?.active,
+    hasBooking: !!bookingAddonResult[0]?.active,
+    i18n,
+  };
 }
 
 // ─── Collection Overview Page ──────────────────────────────────────

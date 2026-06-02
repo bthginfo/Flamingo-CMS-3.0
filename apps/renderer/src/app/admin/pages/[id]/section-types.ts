@@ -3,6 +3,9 @@ export type SectionTypeDefinition = {
   label: string;
   description: string;
   category?: string;
+  requiresAddon?: 'shop' | 'booking';
+  locked?: boolean;
+  lockReason?: string;
 };
 
 // Shared sections available to all templates
@@ -45,16 +48,16 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'testimonialMarquee', label: 'Bewertungs-Marquee', description: 'Endlos-scrollende Bewertungskarten in 2 Reihen', category: 'Social Proof' },
   { type: 'featureShowcase', label: 'Feature-Showcase', description: 'Großbild mit Parallax + Feature-Liste + CTA', category: 'Marketing' },
   { type: 'logoMarquee', label: 'Logo-Marquee', description: 'Endlos-scrollende Partner/Kunden-Logos', category: 'Social Proof' },
-  { type: 'shopProductGrid', label: 'Shop: Produkte', description: 'Produktübersicht mit Kategorie-Filter & Suche', category: 'Shop' },
-  { type: 'shopProductDetail', label: 'Shop: Produkt-Detail', description: 'Einzelprodukt mit Galerie, Varianten & Warenkorb', category: 'Shop' },
-  { type: 'shopCart', label: 'Shop: Warenkorb', description: 'Warenkorb-Übersicht mit Mengen & Coupon', category: 'Shop' },
-  { type: 'shopCheckout', label: 'Shop: Checkout', description: 'Multi-Step Kasse (Kontakt, Versand, Zahlung)', category: 'Shop' },
-  { type: 'shopThankYou', label: 'Shop: Danke-Seite', description: 'Bestellbestätigung nach Kauf', category: 'Shop' },
-  { type: 'shopFeaturedProducts', label: 'Shop: Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben', category: 'Shop' },
-  { type: 'bookingWidget', label: 'Booking: Buchungsformular', description: 'Echte Anfrage oder Self-Service-Buchung mit Datum, Zeitmodell und Kundendaten', category: 'Booking' },
-  { type: 'availabilityCalendar', label: 'Booking: Verfügbarkeitskalender', description: 'Kalenderansicht für verfügbare Zeitslots, Tage oder Datumsbereiche', category: 'Booking' },
-  { type: 'resourceBookingShowcase', label: 'Booking: Ressourcen', description: 'Räume, Tische, Mitarbeiter oder Leistungen mit Buchungs-CTA anzeigen', category: 'Booking' },
-  { type: 'bookingCtaPro', label: 'Booking: CTA', description: 'Kompakter Einstieg in den Buchungsflow', category: 'Booking' },
+  { type: 'shopProductGrid', label: 'Shop: Produkte', description: 'Produktübersicht mit Kategorie-Filter & Suche', category: 'Shop', requiresAddon: 'shop' },
+  { type: 'shopProductDetail', label: 'Shop: Produkt-Detail', description: 'Einzelprodukt mit Galerie, Varianten & Warenkorb', category: 'Shop', requiresAddon: 'shop' },
+  { type: 'shopCart', label: 'Shop: Warenkorb', description: 'Warenkorb-Übersicht mit Mengen & Coupon', category: 'Shop', requiresAddon: 'shop' },
+  { type: 'shopCheckout', label: 'Shop: Checkout', description: 'Multi-Step Kasse (Kontakt, Versand, Zahlung)', category: 'Shop', requiresAddon: 'shop' },
+  { type: 'shopThankYou', label: 'Shop: Danke-Seite', description: 'Bestellbestätigung nach Kauf', category: 'Shop', requiresAddon: 'shop' },
+  { type: 'shopFeaturedProducts', label: 'Shop: Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben', category: 'Shop', requiresAddon: 'shop' },
+  { type: 'bookingWidget', label: 'Booking: Buchungsformular', description: 'Echte Anfrage oder Self-Service-Buchung mit Datum, Zeitmodell und Kundendaten', category: 'Booking', requiresAddon: 'booking' },
+  { type: 'availabilityCalendar', label: 'Booking: Verfügbarkeitskalender', description: 'Kalenderansicht für verfügbare Zeitslots, Tage oder Datumsbereiche', category: 'Booking', requiresAddon: 'booking' },
+  { type: 'resourceBookingShowcase', label: 'Booking: Ressourcen', description: 'Räume, Tische, Mitarbeiter oder Leistungen mit Buchungs-CTA anzeigen', category: 'Booking', requiresAddon: 'booking' },
+  { type: 'bookingCtaPro', label: 'Booking: CTA', description: 'Kompakter Einstieg in den Buchungsflow', category: 'Booking', requiresAddon: 'booking' },
   { type: 'verticalTimeline', label: 'Prozess-Timeline', description: 'Vertikale Scroll-Timeline mit nummerierten Steps und Progress-Linie', category: 'Inhalt' },
   { type: 'beforeAfterSlider', label: 'Vorher/Nachher-Slider', description: 'Draggbarer Vergleichs-Slider für zwei Bilder', category: 'Medien' },
   { type: 'horizontalScrollShowcase', label: 'Horizontal-Scroll Showcase', description: 'Sticky Fullscreen-Panels die per Scroll horizontal gleiten', category: 'Marketing' },
@@ -316,12 +319,12 @@ export const TATTOO_SECTION_TYPES: SectionTypeDefinition[] = [
 
 export const ECOMMERCE_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'hero', label: 'Shop-Hero', description: 'Hauptbanner mit Produkthighlight oder Aktion' },
-  { type: 'shopProductGrid', label: 'Produkte', description: 'Produktübersicht mit Kategorie-Filter & Suche' },
-  { type: 'shopFeaturedProducts', label: 'Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben' },
-  { type: 'shopProductDetail', label: 'Produkt-Detail', description: 'Einzelprodukt mit Galerie, Varianten & Warenkorb' },
-  { type: 'shopCart', label: 'Warenkorb', description: 'Warenkorb-Übersicht mit Mengen & Coupon' },
-  { type: 'shopCheckout', label: 'Checkout', description: 'Multi-Step Kasse (Kontakt, Versand, Zahlung)' },
-  { type: 'shopThankYou', label: 'Danke-Seite', description: 'Bestellbestätigung nach Kauf' },
+  { type: 'shopProductGrid', label: 'Produkte', description: 'Produktübersicht mit Kategorie-Filter & Suche', requiresAddon: 'shop' },
+  { type: 'shopFeaturedProducts', label: 'Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben', requiresAddon: 'shop' },
+  { type: 'shopProductDetail', label: 'Produkt-Detail', description: 'Einzelprodukt mit Galerie, Varianten & Warenkorb', requiresAddon: 'shop' },
+  { type: 'shopCart', label: 'Warenkorb', description: 'Warenkorb-Übersicht mit Mengen & Coupon', requiresAddon: 'shop' },
+  { type: 'shopCheckout', label: 'Checkout', description: 'Multi-Step Kasse (Kontakt, Versand, Zahlung)', requiresAddon: 'shop' },
+  { type: 'shopThankYou', label: 'Danke-Seite', description: 'Bestellbestätigung nach Kauf', requiresAddon: 'shop' },
   { type: 'shopCategoryOverview', label: 'Kategorien', description: 'Kategorieübersicht mit Bildern' },
   { type: 'uspStrip', label: 'USP-Leiste', description: 'Versand, Retoure, Zahlung — Vertrauens-Icons' },
   { type: 'ctaBand', label: 'CTA-Band', description: 'Aktionsbanner / Sale-Hinweis' },
@@ -462,16 +465,7 @@ export function getSectionTypesForIndustry(industry: string, options?: { hasShop
 
   // Merge: industry-specific first, then shared (skip duplicates)
   const types = new Set(specific.map(s => s.type));
-  let shared = SHARED_SECTION_TYPES.filter(s => !types.has(s.type));
-
-  // Hide shop sections if tenant doesn't have shop addon
-  if (!options?.hasShop) {
-    shared = shared.filter(s => s.category !== 'Shop');
-  }
-
-  if (!options?.hasBooking) {
-    shared = shared.filter(s => s.category !== 'Booking');
-  }
+  const shared = SHARED_SECTION_TYPES.filter(s => !types.has(s.type)).map(section => withAddonLock(section, options));
 
   // Collect foreign sections from other industries
   const foreign: SectionTypeDefinition[] = [];
@@ -485,4 +479,14 @@ export function getSectionTypesForIndustry(industry: string, options?: { hasShop
   }
 
   return [...specific, ...shared, ...foreign];
+}
+
+function withAddonLock(section: SectionTypeDefinition, options?: { hasShop?: boolean; hasBooking?: boolean }): SectionTypeDefinition {
+  if (section.requiresAddon === 'shop' && !options?.hasShop) {
+    return { ...section, locked: true, lockReason: 'Shop-Addon erforderlich' };
+  }
+  if (section.requiresAddon === 'booking' && !options?.hasBooking) {
+    return { ...section, locked: true, lockReason: 'Booking-Addon erforderlich' };
+  }
+  return section;
 }

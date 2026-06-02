@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, X, FileText, Megaphone, Star, Image, Mail, Users, Wrench, MoreHorizontal, Layers, Eye } from 'lucide-react';
+import { Search, X, FileText, Megaphone, Star, Image, Mail, Users, Wrench, MoreHorizontal, Layers, Lock, CalendarDays } from 'lucide-react';
 import type { SectionTypeDefinition } from '../pages/[id]/section-types';
 import { SectionPreviewButton } from './section-preview-button';
 
@@ -15,6 +15,8 @@ const CATEGORY_META: Record<string, { icon: typeof FileText; color: string; desc
   'Leistungen': { icon: Wrench, color: 'text-red-600 bg-red-50', description: 'Services, Preise & Prozesse' },
   'Branchenspezifisch': { icon: MoreHorizontal, color: 'text-gray-600 bg-gray-50', description: 'Sektionen passend zur aktuellen Branche' },
   'Premium': { icon: Star, color: 'text-fuchsia-600 bg-fuchsia-50', description: 'Visuell starke Premium-Sektionen' },
+  'Booking': { icon: CalendarDays, color: 'text-emerald-600 bg-emerald-50', description: 'Buchung, Verfügbarkeit & Ressourcen' },
+  'Shop': { icon: Layers, color: 'text-cyan-600 bg-cyan-50', description: 'Produkte, Warenkorb & Checkout' },
 };
 
 function getCategoryMeta(cat: string) {
@@ -28,6 +30,7 @@ function getCategoryMeta(cat: string) {
 const CATEGORY_ORDER = [
   'Branchenspezifisch',
   'Premium',
+  'Booking',
   'Inhalt',
   'Marketing',
   'Leistungen',
@@ -163,13 +166,21 @@ export function SectionPickerModal({ sectionTypes, onSelect, onClose, industry, 
                   </div>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
                     {items.map(st => (
-                      <div key={st.type} className="relative flex items-stretch rounded-lg border border-gray-100 hover:border-blue-300 hover:bg-blue-50/50 transition-all group">
+                      <div key={st.type} className={[
+                        'relative flex items-stretch rounded-lg border transition-all group',
+                        st.locked ? 'border-gray-100 bg-gray-50/80 opacity-80' : 'border-gray-100 hover:border-blue-300 hover:bg-blue-50/50',
+                      ].join(' ')}>
                         <button
-                          onClick={() => onSelect(st.type)}
-                          className="text-left p-3 flex-1 min-w-0"
+                          onClick={() => { if (!st.locked) onSelect(st.type); }}
+                          disabled={st.locked}
+                          className="text-left p-3 flex-1 min-w-0 disabled:cursor-not-allowed"
                         >
-                          <div className="font-medium text-sm text-gray-900 group-hover:text-blue-700 transition-colors">{st.label}</div>
+                          <div className="flex items-center gap-2 font-medium text-sm text-gray-900 group-hover:text-blue-700 transition-colors">
+                            {st.label}
+                            {st.locked ? <span className="inline-flex items-center gap-1 rounded-full bg-gray-200 px-1.5 py-0.5 text-[10px] font-semibold text-gray-600"><Lock size={10} /> Gesperrt</span> : null}
+                          </div>
                           <div className="text-xs text-gray-400 mt-0.5 line-clamp-2">{st.description}</div>
+                          {st.locked && st.lockReason ? <div className="mt-1 text-[11px] font-medium text-gray-500">{st.lockReason}</div> : null}
                         </button>
                         {industry && (
                           <div className="flex items-center pr-2">

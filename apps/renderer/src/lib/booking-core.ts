@@ -1,5 +1,5 @@
 import { getDb } from '@/lib/db';
-import { bookingAvailabilityRules, bookingBlackouts, bookingRequests, bookingResources, bookingSettings, tenantAddons } from '@flamingo/db';
+import { bookingAvailabilityRules, bookingBlackouts, bookingCalendarBlocks, bookingRequests, bookingResources, bookingSettings, tenantAddons } from '@flamingo/db';
 import { and, eq, gt, lt, ne, type SQL } from 'drizzle-orm';
 import { getTouchedZonedWeekdays, getZonedTime, getZonedWeekday, normalizeTimezone, zonedDateTimeToUtc, zonedDayEndToUtc, zonedDayStartToUtc } from '@/lib/booking-time';
 
@@ -111,18 +111,49 @@ export async function hasBookingConflict(input: {
     predicates.push(eq(bookingRequests.resourceId, input.resourceId));
   } else {
     predicates.push(eq(bookingRequests.timeModel, input.timeModel));
-    const weekday = getZonedWeekday(input.startsAt, timezone);
-    const rules = await db.select({ capacity: bookingAvailabilityRules.capacity }).from(bookingAvailabilityRules)
-      .where(and(
-        eq(bookingAvailabilityRules.tenantId, input.tenantId),
-        eq(bookingAvailabilityRules.weekday, weekday),
-        eq(bookingAvailabilityRules.active, true),
-      ));
-    capacity = Math.max(rules.find(rule => (rule.capacity || 0) > 0)?.capacity || 1, 1);
+    const calendarBlocks = await getBookingCalendarBlocks(input);
+    const calendarCapacity = calendarBlocks
+      .filter(block => block.type === 'available' && block.startsAt <= input.startsAt && block.endsAt >= input.endsAt)
+      .find(block => (block.capacity || 0) > 0)?.capacity;
+    if (calendarCapacity) {
+      capacity = Math.max(calendarCapacity, 1);
+    } else {
+      const weekday = getZonedWeekday(input.startsAt, timezone);
+      const rules = await db.select({ capacity: bookingAvailabilityRules.capacity }).from(bookingAvailabilityRules)
+        .where(and(
+          eq(bookingAvailabilityRules.tenantId, input.tenantId),
+          eq(bookingAvailabilityRules.weekday, weekday),
+          eq(bookingAvailabilityRules.active, true),
+        ));
+      capacity = Math.max(rules.find(rule => (rule.capacity || 0) > 0)?.capacity || 1, 1);
+    }
   }
 
   const rows = await db.select({ id: bookingRequests.id }).from(bookingRequests).where(and(...predicates)).limit(capacity);
   return rows.length >= capacity;
+}
+
+export async function getBookingCalendarBlocks(input: {
+  tenantId: string;
+  serviceId?: string | null;
+  resourceId?: string | null;
+  startsAt: Date;
+  endsAt: Date;
+}) {
+  const db = getDb();
+  const blocks = await db.select().from(bookingCalendarBlocks)
+    .where(and(
+      eq(bookingCalendarBlocks.tenantId, input.tenantId),
+      eq(bookingCalendarBlocks.active, true),
+      lt(bookingCalendarBlocks.startsAt, input.endsAt),
+      gt(bookingCalendarBlocks.endsAt, input.startsAt),
+    ));
+
+  return blocks.filter((block) => {
+    const resourceMatches = block.resourceId ? block.resourceId === input.resourceId : true;
+    const serviceMatches = block.serviceId ? block.serviceId === input.serviceId : true;
+    return resourceMatches && serviceMatches;
+  });
 }
 
 export async function hasBookingBlackout(input: {
@@ -155,6 +186,13 @@ export async function isWithinBookingAvailability(input: {
 }) {
   const db = getDb();
   const timezone = normalizeTimezone(input.timezone);
+  const calendarBlocks = await getBookingCalendarBlocks(input);
+  if (calendarBlocks.some(block => block.type === 'blocked')) return false;
+  const availableCalendarBlocks = calendarBlocks.filter(block => block.type === 'available');
+  if (availableCalendarBlocks.length > 0) {
+    return availableCalendarBlocks.some(block => block.startsAt <= input.startsAt && block.endsAt >= input.endsAt);
+  }
+
   const rules = await db.select().from(bookingAvailabilityRules)
     .where(and(eq(bookingAvailabilityRules.tenantId, input.tenantId), eq(bookingAvailabilityRules.active, true)));
 

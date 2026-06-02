@@ -4,10 +4,12 @@ import type { ReactNode } from 'react';
 import {
   addBookingAvailabilityRuleAction,
   addBookingBlackoutAction,
+  addBookingCalendarBlockAction,
   addBookingResourceAction,
   addBookingServiceAction,
   deleteBookingAvailabilityRuleAction,
   deleteBookingBlackoutAction,
+  deleteBookingCalendarBlockAction,
   deleteBookingResourceAction,
   deleteBookingServiceAction,
   getBookingAdminData,
@@ -16,6 +18,7 @@ import {
   saveBookingSettingsAction,
   updateBookingAssignmentAction,
   updateBookingAvailabilityRuleAction,
+  updateBookingCalendarBlockAction,
   updateBookingResourceAction,
   updateBookingServiceAction,
   updateBookingStatusAction,
@@ -60,6 +63,7 @@ const TABS = [
   { key: 'overview', label: 'Übersicht', icon: SlidersHorizontal },
   { key: 'inbox', label: 'Anfragen', icon: Inbox },
   { key: 'day', label: 'Tagesplan', icon: CalendarDays },
+  { key: 'calendar', label: 'Kalender', icon: CalendarDays },
   { key: 'resources', label: 'Ressourcen & Leistungen', icon: Users },
   { key: 'availability', label: 'Verfügbarkeiten', icon: Clock },
   { key: 'blackouts', label: 'Sperrzeiten', icon: Lock },
@@ -73,6 +77,7 @@ type BookingRequest = Awaited<ReturnType<typeof getBookingAdminData>>['requests'
 type BookingResource = Awaited<ReturnType<typeof getBookingAdminData>>['resources'][number];
 type BookingService = Awaited<ReturnType<typeof getBookingAdminData>>['services'][number];
 type BookingAvailabilityRule = Awaited<ReturnType<typeof getBookingAdminData>>['availabilityRules'][number];
+type BookingCalendarBlock = Awaited<ReturnType<typeof getBookingAdminData>>['calendarBlocks'][number];
 type BookingBlackout = Awaited<ReturnType<typeof getBookingAdminData>>['blackouts'][number];
 
 export default async function BookingAdminPage({ searchParams }: { searchParams?: Promise<SearchParams> }) {
@@ -173,6 +178,10 @@ export default async function BookingAdminPage({ searchParams }: { searchParams?
 
       {activeTab === 'day' ? (
         <DayPanel day={selectedDay} requests={dayRequests} resources={data.resources} />
+      ) : null}
+
+      {activeTab === 'calendar' ? (
+        <CalendarBlocksPanel day={selectedDay} blocks={data.calendarBlocks} resources={data.resources} services={data.services} timezone={data.settings.timezone} />
       ) : null}
 
       {activeTab === 'resources' ? (
@@ -316,6 +325,113 @@ function DayPanel({ day, requests, resources }: { day: string; requests: Enriche
             {unassigned.length ? unassigned.map(request => <BookingMiniRow key={request.id} request={request} resources={resources} />) : <p className="text-sm text-zinc-400">Keine Buchungen.</p>}
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function CalendarBlocksPanel({ day, blocks, resources, services, timezone }: { day: string; blocks: BookingCalendarBlock[]; resources: BookingResource[]; services: BookingService[]; timezone?: string | null }) {
+  const resourceById = new Map(resources.map(resource => [resource.id, resource]));
+  const serviceById = new Map(services.map(service => [service.id, service]));
+  const dayBlocks = blocks
+    .filter(block => sameDate(block.startsAt, day))
+    .sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
+  const availableCount = dayBlocks.filter(block => block.type === 'available').length;
+  const blockedCount = dayBlocks.filter(block => block.type === 'blocked').length;
+
+  return (
+    <section className="admin-card p-5">
+      <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h2 className="font-semibold">Kalenderbasierte Verfügbarkeit</h2>
+          <p className="mt-1 text-sm leading-6 text-zinc-500">
+            Nutze konkrete Tagesblöcke für Schichten, Sonderzeiten, Urlaub oder einzelne ganztägige Angebote. Diese Blöcke haben Vorrang vor den regelmäßigen Wochenregeln.
+          </p>
+        </div>
+        <form method="get" className="flex gap-2">
+          <input type="hidden" name="tab" value="calendar" />
+          <input name="day" type="date" defaultValue={day} className="admin-input" />
+          <button className="admin-btn-secondary">Tag anzeigen</button>
+        </form>
+      </div>
+
+      <div className="mb-5 grid gap-3 sm:grid-cols-3">
+        <MetricCard label="Blöcke an diesem Tag" value={String(dayBlocks.length)} />
+        <MetricCard label="Verfügbar" value={String(availableCount)} />
+        <MetricCard label="Gesperrt" value={String(blockedCount)} />
+      </div>
+
+      <form action={addBookingCalendarBlockAction} className="grid gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-4 lg:grid-cols-6">
+        <Field label="Typ">
+          <select name="type" defaultValue="available" className="admin-input">
+            <option value="available">Verfügbar</option>
+            <option value="blocked">Gesperrt</option>
+          </select>
+        </Field>
+        <Field label="Start">
+          <input name="startsAt" type="datetime-local" defaultValue={`${day}T10:00`} className="admin-input" />
+        </Field>
+        <Field label="Ende">
+          <input name="endsAt" type="datetime-local" defaultValue={`${day}T15:00`} className="admin-input" />
+        </Field>
+        <CapacitySlotField />
+        <ResourceSelect resources={resources} />
+        <ServiceSelect services={services} />
+        <Field label="Notiz optional">
+          <input name="note" placeholder="z.B. Maria Frühschicht, Feiertag, Event" className="admin-input" />
+        </Field>
+        <div className="flex items-end lg:col-span-5">
+          <button className="admin-btn-primary w-full sm:w-auto">Kalenderblock hinzufügen</button>
+        </div>
+      </form>
+      <p className="mt-2 text-xs leading-5 text-zinc-400">
+        Zeitzone: {timezone || 'Europe/Berlin'}. Verfügbare Blöcke ergänzen oder überschreiben die Wochenregeln für konkrete Tage; gesperrte Blöcke blockieren immer.
+      </p>
+
+      <div className="mt-5 grid gap-4 xl:grid-cols-2">
+        {dayBlocks.length ? dayBlocks.map(block => {
+          const title = block.note || (block.type === 'available' ? 'Verfügbarer Block' : 'Sperrblock');
+          return (
+            <form key={block.id} action={updateBookingCalendarBlockAction} className={[
+              'rounded-2xl border p-4',
+              block.type === 'available' ? 'border-emerald-200 bg-emerald-50/30' : 'border-red-200 bg-red-50/30',
+            ].join(' ')}>
+              <input type="hidden" name="id" value={block.id} />
+              <div className="mb-3 flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="font-semibold text-zinc-950">{title}</h3>
+                  <p className="text-sm text-zinc-500">
+                    {[resourceById.get(block.resourceId || '')?.name, serviceById.get(block.serviceId || '')?.name].filter(Boolean).join(' · ') || 'Global'}
+                  </p>
+                </div>
+                <span className={[
+                  'inline-flex w-fit rounded-full px-2 py-1 text-xs font-medium',
+                  block.type === 'available' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700',
+                ].join(' ')}>
+                  {block.type === 'available' ? 'Verfügbar' : 'Gesperrt'}
+                </span>
+              </div>
+              <div className="grid gap-3 md:grid-cols-2">
+                <Field label="Typ">
+                  <select name="type" defaultValue={block.type} className="admin-input">
+                    <option value="available">Verfügbar</option>
+                    <option value="blocked">Gesperrt</option>
+                  </select>
+                </Field>
+                <CapacitySlotField value={block.capacity || 1} />
+                <Field label="Start"><input name="startsAt" type="datetime-local" defaultValue={toDateTimeLocal(block.startsAt, timezone)} className="admin-input" /></Field>
+                <Field label="Ende"><input name="endsAt" type="datetime-local" defaultValue={toDateTimeLocal(block.endsAt, timezone)} className="admin-input" /></Field>
+                <ResourceSelect resources={resources} value={block.resourceId || ''} />
+                <ServiceSelect services={services} value={block.serviceId || ''} />
+                <Field label="Notiz"><input name="note" defaultValue={block.note || ''} className="admin-input" /></Field>
+              </div>
+              <div className="mt-3 flex justify-end gap-2">
+                <DeleteButton action={deleteBookingCalendarBlockAction} id={block.id} label="Kalenderblock löschen" subject={title} />
+                <button className="admin-btn-primary">Speichern</button>
+              </div>
+            </form>
+          );
+        }) : <EmptyText>Für diesen Tag sind noch keine Kalenderblöcke gepflegt. Es gelten die regelmäßigen Wochenregeln.</EmptyText>}
       </div>
     </section>
   );
@@ -804,6 +920,20 @@ function tabParam(value: string): BookingTab {
 
 function todayInput() {
   return new Date().toISOString().slice(0, 10);
+}
+
+function toDateTimeLocal(date: Date, timezone?: string | null) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: timezone || 'Europe/Berlin',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(date);
+  const value = (type: string) => parts.find(part => part.type === type)?.value || '';
+  return `${value('year')}-${value('month')}-${value('day')}T${value('hour')}:${value('minute')}`;
 }
 
 function sameDate(date: Date, input: string) {

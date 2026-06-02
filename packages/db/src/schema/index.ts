@@ -929,6 +929,24 @@ export const bookingAvailabilityRules = pgTable('booking_availability_rules', {
   index('booking_availability_lookup_idx').on(t.tenantId, t.weekday, t.active),
 ]);
 
+export const bookingCalendarBlocks = pgTable('booking_calendar_blocks', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  resourceId: uuid('resource_id').references(() => bookingResources.id, { onDelete: 'cascade' }),
+  serviceId: uuid('service_id').references(() => bookingServices.id, { onDelete: 'cascade' }),
+  type: varchar('type', { length: 20 }).notNull().default('available'),
+  startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
+  endsAt: timestamp('ends_at', { withTimezone: true }).notNull(),
+  capacity: integer('capacity'),
+  note: varchar('note', { length: 255 }),
+  active: boolean('active').notNull().default(true),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('booking_calendar_blocks_tenant_idx').on(t.tenantId),
+  index('booking_calendar_blocks_lookup_idx').on(t.tenantId, t.startsAt, t.endsAt, t.active),
+]);
+
 export const bookingBlackouts = pgTable('booking_blackouts', {
   id: uuid('id').primaryKey().defaultRandom(),
   tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),

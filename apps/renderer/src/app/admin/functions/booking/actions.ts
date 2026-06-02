@@ -8,12 +8,13 @@ import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { BOOKING_ADDON_KEY, getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isWithinBookingAvailability } from '@/lib/booking-core';
 import { getBookingNotificationEmail, getDefaultBookingEmailTemplate, sendBookingEmail, type BookingEmailTrigger } from '@/lib/booking-email';
-import { bookingAvailabilityRules, bookingBlackouts, bookingRequests, bookingResources, bookingServices, bookingSettings, bookingStatusHistory, emailTemplates, tenantAddons } from '@flamingo/db';
+import { bookingAvailabilityRules, bookingBlackouts, bookingCalendarBlocks, bookingRequests, bookingResources, bookingServices, bookingSettings, bookingStatusHistory, emailTemplates, tenantAddons } from '@flamingo/db';
 import { formatBookingDate, normalizeTimezone, zonedDateTimeToUtc } from '@/lib/booking-time';
 
 const BOOKING_MODES = ['request', 'instant'] as const;
 const BOOKING_TIME_MODELS = ['time_slot', 'full_day', 'date_range'] as const;
 const BOOKING_RESOURCE_TYPES = ['table', 'room', 'space', 'room_unit', 'staff', 'equipment', 'generic'] as const;
+const BOOKING_CALENDAR_BLOCK_TYPES = ['available', 'blocked'] as const;
 const BOOKING_EMAIL_TRIGGERS = [
   'booking_requested_customer',
   'booking_requested_admin',
@@ -43,6 +44,7 @@ export async function getBookingAdminData() {
       resources: [],
       services: [],
       availabilityRules: [],
+      calendarBlocks: [],
       blackouts: [],
       requests: [],
       templates: [],
@@ -50,16 +52,17 @@ export async function getBookingAdminData() {
   }
 
   const settings = await getOrCreateBookingSettings(tenantId);
-  const [resources, services, availabilityRules, blackouts, requests, templates] = await Promise.all([
+  const [resources, services, availabilityRules, calendarBlocks, blackouts, requests, templates] = await Promise.all([
     db.select().from(bookingResources).where(and(eq(bookingResources.tenantId, tenantId), eq(bookingResources.active, true))).orderBy(asc(bookingResources.sortOrder), asc(bookingResources.name)),
     db.select().from(bookingServices).where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.active, true))).orderBy(asc(bookingServices.sortOrder), asc(bookingServices.name)),
     db.select().from(bookingAvailabilityRules).where(and(eq(bookingAvailabilityRules.tenantId, tenantId), eq(bookingAvailabilityRules.active, true))).orderBy(asc(bookingAvailabilityRules.weekday), asc(bookingAvailabilityRules.startTime)),
+    db.select().from(bookingCalendarBlocks).where(and(eq(bookingCalendarBlocks.tenantId, tenantId), eq(bookingCalendarBlocks.active, true))).orderBy(asc(bookingCalendarBlocks.startsAt)),
     db.select().from(bookingBlackouts).where(eq(bookingBlackouts.tenantId, tenantId)).orderBy(asc(bookingBlackouts.startsAt)),
     db.select().from(bookingRequests).where(eq(bookingRequests.tenantId, tenantId)).orderBy(asc(bookingRequests.startsAt)),
     db.select().from(emailTemplates).where(eq(emailTemplates.tenantId, tenantId)),
   ]);
 
-  return { addonActive, settings, resources, services, availabilityRules, blackouts, requests, templates };
+  return { addonActive, settings, resources, services, availabilityRules, calendarBlocks, blackouts, requests, templates };
 }
 
 export async function requestBookingAddonAction() {
@@ -255,6 +258,64 @@ export async function deleteBookingAvailabilityRuleAction(formData: FormData) {
   const id = cleanString(formData.get('id'), 80);
   if (!id) return;
   await getDb().update(bookingAvailabilityRules).set({ active: false }).where(and(eq(bookingAvailabilityRules.id, id), eq(bookingAvailabilityRules.tenantId, tenantId)));
+  revalidatePath('/admin/functions/booking');
+}
+
+export async function addBookingCalendarBlockAction(formData: FormData) {
+  const tenantId = await requireTenant();
+  await requireBooking(tenantId);
+  const settings = await getOrCreateBookingSettings(tenantId);
+  const startsAt = dateTimeValue(formData.get('startsAt'), settings.timezone);
+  const endsAt = dateTimeValue(formData.get('endsAt'), settings.timezone);
+  if (!startsAt || !endsAt || endsAt <= startsAt) {
+    redirectWithFeedback(formData, 'Bitte einen gültigen Zeitraum eintragen.', 'error');
+    return;
+  }
+  await getDb().insert(bookingCalendarBlocks).values({
+    tenantId,
+    resourceId: uuidOrNull(formData.get('resourceId')),
+    serviceId: uuidOrNull(formData.get('serviceId')),
+    type: stringOption(formData.get('type'), BOOKING_CALENDAR_BLOCK_TYPES, 'available'),
+    startsAt,
+    endsAt,
+    capacity: intOptional(formData.get('capacity'), 1, 10000),
+    note: cleanString(formData.get('note'), 255) || null,
+  });
+  revalidatePath('/admin/functions/booking');
+  redirectWithFeedback(formData, 'Kalenderblock gespeichert.', 'success');
+}
+
+export async function updateBookingCalendarBlockAction(formData: FormData) {
+  const tenantId = await requireTenant();
+  await requireBooking(tenantId);
+  const id = cleanString(formData.get('id'), 80);
+  const settings = await getOrCreateBookingSettings(tenantId);
+  const startsAt = dateTimeValue(formData.get('startsAt'), settings.timezone);
+  const endsAt = dateTimeValue(formData.get('endsAt'), settings.timezone);
+  if (!id || !startsAt || !endsAt || endsAt <= startsAt) {
+    redirectWithFeedback(formData, 'Bitte einen gültigen Zeitraum eintragen.', 'error');
+    return;
+  }
+  await getDb().update(bookingCalendarBlocks).set({
+    resourceId: uuidOrNull(formData.get('resourceId')),
+    serviceId: uuidOrNull(formData.get('serviceId')),
+    type: stringOption(formData.get('type'), BOOKING_CALENDAR_BLOCK_TYPES, 'available'),
+    startsAt,
+    endsAt,
+    capacity: intOptional(formData.get('capacity'), 1, 10000),
+    note: cleanString(formData.get('note'), 255) || null,
+    updatedAt: new Date(),
+  }).where(and(eq(bookingCalendarBlocks.id, id), eq(bookingCalendarBlocks.tenantId, tenantId)));
+  revalidatePath('/admin/functions/booking');
+  redirectWithFeedback(formData, 'Kalenderblock aktualisiert.', 'success');
+}
+
+export async function deleteBookingCalendarBlockAction(formData: FormData) {
+  const tenantId = await requireTenant();
+  await requireBooking(tenantId);
+  const id = cleanString(formData.get('id'), 80);
+  if (!id) return;
+  await getDb().update(bookingCalendarBlocks).set({ active: false, updatedAt: new Date() }).where(and(eq(bookingCalendarBlocks.id, id), eq(bookingCalendarBlocks.tenantId, tenantId)));
   revalidatePath('/admin/functions/booking');
 }
 

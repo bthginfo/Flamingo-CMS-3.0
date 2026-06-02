@@ -36,14 +36,14 @@ function generateId() {
   return crypto.randomUUID();
 }
 
-export function ItemEditor({ item: initial, collectionKey, industry, styleVariant = 'classic', brand = {}, i18n }: { item: Item; collectionKey: string; industry: string; styleVariant?: string; brand?: Record<string, string>; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string } }) {
+export function ItemEditor({ item: initial, collectionKey, industry, styleVariant = 'classic', brand = {}, hasShop = false, hasBooking = false, i18n }: { item: Item; collectionKey: string; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; hasBooking?: boolean; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string } }) {
   const [item, setItem] = useState(initial);
   const [sections, setSections] = useState<Section[]>(
     collectionItemSectionsToEditableSections(initial.data.sections, generateId)
   );
   const [activeLocale, setActiveLocale] = useState(i18n?.defaultLocale || 'de');
   const preview = usePreview();
-  const sectionTypes = getSectionTypesForIndustry(industry);
+  const sectionTypes = getSectionTypesForIndustry(industry, { hasShop, hasBooking });
   const resolvedVars = { ...getStyleCssVars(industry, styleVariant), ...getBrandCssVars(brand) };
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);

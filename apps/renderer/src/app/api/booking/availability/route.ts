@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { and, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
 import { resolveTenant } from '@/lib/snapshot';
-import { getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isWithinBookingAvailability, type BookingTimeModel } from '@/lib/booking-core';
+import { getBookingCalendarBlocks, getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBookingConflict, isWithinBookingAvailability, type BookingTimeModel } from '@/lib/booking-core';
 import { getZonedWeekday, normalizeTimezone, zonedDateTimeToUtc, zonedDayEndToUtc, zonedDayStartToUtc } from '@/lib/booking-time';
 import { bookingAvailabilityRules, bookingResources, bookingServices } from '@flamingo/db';
 
@@ -60,9 +60,18 @@ export async function GET(req: NextRequest) {
   const duration = Math.max(service?.durationMinutes || settings.intervalMinutes, 5);
   const interval = Math.max(settings.intervalMinutes, 5);
   const slots: { value: string; label: string }[] = [];
-  for (const rule of relevantRules) {
-    let cursor = minutes(rule.startTime);
-    const latestStart = minutes(rule.endTime) - duration;
+  const dayStart = zonedDayStartToUtc(date, timezone);
+  const dayEnd = zonedDayEndToUtc(date, timezone);
+  const calendarBlocks = await getBookingCalendarBlocks({ tenantId, serviceId, resourceId, startsAt: dayStart, endsAt: dayEnd });
+  const availableBlocks = calendarBlocks.filter(block => block.type === 'available');
+  const windows = [
+    ...relevantRules.map(rule => ({ startTime: rule.startTime, endTime: rule.endTime })),
+    ...availableBlocks.map(block => ({ startTime: zonedTimeValue(block.startsAt, timezone), endTime: zonedTimeValue(block.endsAt, timezone) })),
+  ];
+
+  for (const window of windows) {
+    let cursor = minutes(window.startTime);
+    const latestStart = minutes(window.endTime) - duration;
     while (cursor <= latestStart) {
       const value = toTime(cursor);
       const startsAt = zonedDateTimeToUtc(date, value, timezone);
@@ -101,4 +110,13 @@ function toTime(total: number) {
   const hour = Math.floor(total / 60);
   const minute = total % 60;
   return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
+
+function zonedTimeValue(date: Date, timezone: string) {
+  return new Intl.DateTimeFormat('de-DE', {
+    timeZone: timezone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date);
 }
