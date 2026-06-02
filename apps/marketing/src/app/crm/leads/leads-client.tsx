@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo, useState, useTransition } from 'react';
-import { Plus, Trash2, ExternalLink, Mail, Search, X } from 'lucide-react';
-import { createLead, updateLead, deleteLead, type Lead } from './actions';
+import { Plus, Trash2, ExternalLink, Mail, Search, X, Sparkles } from 'lucide-react';
+import { createLead, updateLead, deleteLead, createLeadDemoTenant, type Lead } from './actions';
 import { toast } from 'sonner';
 
 type LeadStatus = 'offen' | 'kontaktiert' | 'angenommen' | 'abgelehnt';
@@ -14,8 +14,11 @@ const STATUS_COLORS: Record<LeadStatus, string> = {
   abgelehnt: 'bg-red-100 text-red-800',
 };
 
-export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[]; leadTenants: { id: string; name: string; slug: string }[] }) {
+type LeadTenantOption = { id: string; name: string; slug: string };
+
+export function LeadsClient({ initialLeads, leadTenants, rendererBaseUrl }: { initialLeads: Lead[]; leadTenants: LeadTenantOption[]; rendererBaseUrl: string }) {
   const [leads, setLeads] = useState(initialLeads);
+  const [tenantOptions, setTenantOptions] = useState(leadTenants);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -23,6 +26,7 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
   const [filterStatus, setFilterStatus] = useState<LeadStatus | ''>('');
   const [filterIndustry, setFilterIndustry] = useState('');
   const [filterLocation, setFilterLocation] = useState('');
+  const rendererBase = rendererBaseUrl.replace(/\/$/, '');
 
   const industries = [...new Set(leads.map(l => l.industry).filter(Boolean))] as string[];
   const locations = [...new Set(leads.map(l => l.location).filter(Boolean))] as string[];
@@ -105,6 +109,36 @@ export function LeadsClient({ initialLeads, leadTenants }: { initialLeads: Lead[
     startTransition(async () => {
       const updated = await updateLead(id, { status });
       setLeads(leads.map(l => l.id === id ? updated : l));
+    });
+  }
+
+  function getTenantUrls(tenant?: LeadTenantOption) {
+    if (!tenant) return { siteUrl: '[LINK ZUR SEITE]', adminUrl: '[LINK ZUM ADMIN]' };
+    return {
+      siteUrl: `${rendererBase}/${tenant.slug}`,
+      adminUrl: `${rendererBase}/admin/login?tenant=${tenant.slug}`,
+    };
+  }
+
+  function handleCreateLeadDemoTenant() {
+    if (!editId) return;
+    startTransition(async () => {
+      const result = await createLeadDemoTenant(editId);
+      if (!result.success || !result.lead || !result.tenant) {
+        toast.error(result.error || 'Lead-Demo konnte nicht erstellt werden');
+        return;
+      }
+
+      setLeads(current => current.map(lead => lead.id === editId ? result.lead! : lead));
+      setTenantOptions(current => current.some(tenant => tenant.id === result.tenant!.id) ? current : [...current, result.tenant!]);
+      setForm(current => ({
+        ...current,
+        tenantId: result.tenant!.id,
+        flamingoLink: result.rendererUrl || current.flamingoLink,
+        adminPassword: result.password || current.adminPassword,
+        industry: result.lead!.industry || current.industry,
+      }));
+      toast.success('Lead-Demo wurde erstellt');
     });
   }
 
@@ -217,9 +251,8 @@ Flamingo Media`;
     }
 
     if (variant === 'demo-seite') {
-      const linkedTenant = leadTenants.find(t => t.id === lead.tenantId);
-      const siteUrl = linkedTenant ? `https://${linkedTenant.slug}.flamingo-cms.app` : '[LINK ZUR SEITE]';
-      const adminUrl = linkedTenant ? `https://${linkedTenant.slug}.flamingo-cms.app/admin` : '[LINK ZUM ADMIN]';
+      const linkedTenant = tenantOptions.find(t => t.id === lead.tenantId);
+      const { siteUrl, adminUrl } = getTenantUrls(linkedTenant);
       const pw = lead.adminPassword || 'flamingo2025';
 
       if (du) {
@@ -457,8 +490,23 @@ Flamingo Media`;
                 <label className="text-xs font-medium text-slate-500">Verknüpfter Tenant (Lead)</label>
                 <select className="w-full border rounded-lg px-3 py-2 text-sm mt-1" value={form.tenantId} onChange={e => setForm({ ...form, tenantId: e.target.value })}>
                   <option value="">— Keiner —</option>
-                  {leadTenants.map(t => <option key={t.id} value={t.id}>{t.name} ({t.slug})</option>)}
+                  {tenantOptions.map(t => <option key={t.id} value={t.id}>{t.name} ({t.slug})</option>)}
                 </select>
+                {editId && !form.tenantId && (
+                  <button
+                    type="button"
+                    onClick={handleCreateLeadDemoTenant}
+                    disabled={isPending || !form.company.trim()}
+                    className="mt-2 inline-flex items-center gap-2 rounded-lg bg-pink-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-pink-700 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <Sparkles size={14} /> Lead-Demo erstellen
+                  </button>
+                )}
+                {form.tenantId && (
+                  <p className="mt-1.5 text-xs leading-5 text-slate-500">
+                    Demo ist verknüpft. Die Mail-Vorlage nutzt automatisch die Shared-Renderer-URL und den Admin-Login.
+                  </p>
+                )}
               </div>
             </div>
             <div className="flex justify-end gap-2 pt-2">

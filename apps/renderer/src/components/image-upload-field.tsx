@@ -12,6 +12,13 @@ function isSvgFile(file: File) {
   return file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg');
 }
 
+function getImageQualityHint(value: string, hasPositionControl: boolean) {
+  if (!value) return 'Empfohlen: WebP/JPG ab ca. 1600 px Breite, klares Motiv und keine Schrift im Bild.';
+  if (value.startsWith('http://')) return 'HTTP-Bild erkannt. Bitte eine HTTPS-URL oder einen Upload nutzen, damit die Seite sicher geladen wird.';
+  if (!hasPositionControl) return 'Tipp: Prüfe nach dem Speichern die Vorschau. Stark zugeschnittene Motive sollten im Bild selbst genug Rand haben.';
+  return 'Tipp: Setze den Fokuspunkt auf das wichtigste Motiv, damit Zuschnitt auf Mobil und Desktop sauber wirkt.';
+}
+
 /** Resize image to maxWidth and convert to WebP. Returns original if already small. */
 export async function resizeImage(file: File, maxWidth: number, quality: number): Promise<File> {
   if (file.size < 200 * 1024) return file; // Skip if under 200KB
@@ -209,6 +216,7 @@ export function ImageUploadField({
           </button>
         </div>
       )}
+      <p className="mt-1.5 text-[11px] leading-4 text-zinc-400">{getImageQualityHint(value, Boolean(onPositionChange))}</p>
 
       {mode === 'upload' ? (
         <div>

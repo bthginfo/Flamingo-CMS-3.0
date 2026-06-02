@@ -5,7 +5,7 @@ import { upload } from '@vercel/blob/client';
 import { resizeImage } from '@/components/image-upload-field';
 import { saveMediaRecord, deleteMediaAsset, updateMediaAlt, type MediaAsset } from '../media-actions';
 import { toast } from 'sonner';
-import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2, Pencil } from 'lucide-react';
+import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2, Pencil, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 
 const ALLOWED_IMAGE_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
@@ -16,6 +16,33 @@ function formatSize(bytes: number) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+async function getImageDimensions(file: File): Promise<{ width: number; height: number } | null> {
+  if (!file.type.startsWith('image/')) return null;
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    img.onload = () => {
+      URL.revokeObjectURL(img.src);
+      resolve({ width: img.naturalWidth, height: img.naturalHeight });
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(img.src);
+      resolve(null);
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+function getMediaWarnings(asset: MediaAsset) {
+  const warnings: string[] = [];
+  if (!asset.alt?.trim()) warnings.push('Alt-Text fehlt');
+  if (asset.blobUrl.startsWith('http://')) warnings.push('Unsichere HTTP-URL');
+  if (asset.size > 600 * 1024) warnings.push('Datei größer als 600 KB');
+  if (asset.width && asset.width < 1200) warnings.push('Breite unter 1200 px');
+  if (asset.height && asset.height < 700) warnings.push('Höhe unter 700 px');
+  if (!asset.width || !asset.height) warnings.push('Bildmaße unbekannt');
+  return warnings;
+}
+
 export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] }) {
   const [assets, setAssets] = useState<MediaAsset[]>(initialAssets);
   const [uploading, setUploading] = useState(false);
@@ -24,6 +51,10 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const inputRef = useRef<HTMLInputElement>(null);
   const [altModalAsset, setAltModalAsset] = useState<MediaAsset | null>(null);
   const [altValue, setAltValue] = useState('');
+  const missingAlt = assets.filter(asset => !asset.alt?.trim()).length;
+  const largeFiles = assets.filter(asset => asset.size > 600 * 1024).length;
+  const unknownDimensions = assets.filter(asset => !asset.width || !asset.height).length;
+  const cleanAssets = assets.filter(asset => getMediaWarnings(asset).length === 0).length;
 
   const handleUpload = useCallback(async (files: FileList | File[]) => {
     const MAX_SIZE = 1 * 1024 * 1024; // 1 MB
@@ -41,6 +72,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
     try {
       for (const file of fileArray) {
         const optimized = await resizeImage(file, 1920, 0.85);
+        const dimensions = await getImageDimensions(optimized);
         const uploadName = file.name.replace(/\.[^.]+$/, '.webp');
         const blob = await upload(uploadName, optimized, {
           access: 'public',
@@ -53,9 +85,11 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
           filename: uploadName,
           mimeType: optimized.type || 'image/webp',
           size: optimized.size,
+          width: dimensions?.width,
+          height: dimensions?.height,
         });
 
-        setAssets(prev => [{ ...record, alt: null, createdAt: new Date() }, ...prev]);
+        setAssets(prev => [{ ...record, alt: null, createdAt: new Date(), width: dimensions?.width || null, height: dimensions?.height || null }, ...prev]);
       }
       toast.success(`${fileArray.length} Bild${fileArray.length > 1 ? 'er' : ''} hochgeladen`);
     } catch (err) {
@@ -84,6 +118,27 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
 
   return (
     <div className="space-y-6">
+      {/* Alt-text info */}
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="admin-card p-4">
+          <p className="text-xs text-zinc-500">Bilder</p>
+          <p className="mt-1 text-2xl font-bold text-zinc-900">{assets.length}</p>
+        </div>
+        <div className="admin-card p-4">
+          <p className="text-xs text-zinc-500">Ohne Alt-Text</p>
+          <p className={`mt-1 text-2xl font-bold ${missingAlt ? 'text-amber-600' : 'text-emerald-600'}`}>{missingAlt}</p>
+        </div>
+        <div className="admin-card p-4">
+          <p className="text-xs text-zinc-500">Große Dateien</p>
+          <p className={`mt-1 text-2xl font-bold ${largeFiles ? 'text-amber-600' : 'text-emerald-600'}`}>{largeFiles}</p>
+        </div>
+        <div className="admin-card p-4">
+          <p className="text-xs text-zinc-500">Sauber</p>
+          <p className="mt-1 text-2xl font-bold text-emerald-600">{cleanAssets}</p>
+          {unknownDimensions > 0 && <p className="mt-1 text-[11px] text-zinc-400">{unknownDimensions} ohne Bildmaße</p>}
+        </div>
+      </div>
+
       {/* Alt-text info */}
       <div className="admin-card p-4 bg-blue-50 border-blue-200">
         <p className="text-sm text-blue-800"><strong>Tipp:</strong> Hinterlegen Sie für jedes Bild einen Alt-Text (Bildbeschreibung). Dieser wird automatisch für SEO und Barrierefreiheit verwendet, wenn das Bild auf Ihrer Website eingesetzt wird. Klicken Sie auf das <Pencil size={12} className="inline" />-Icon oder wählen Sie ein Bild aus, um den Alt-Text zu bearbeiten.</p>
@@ -128,6 +183,9 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {assets.map(asset => (
+            (() => {
+              const warnings = getMediaWarnings(asset);
+              return (
             <div
               key={asset.id}
               className={`group relative aspect-square rounded-xl overflow-hidden border-2 cursor-pointer transition-all ${selected?.id === asset.id ? 'border-admin-accent shadow-lg ring-2 ring-admin-accent/30' : 'border-transparent hover:border-zinc-200'}`}
@@ -145,6 +203,10 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
                 />
               )}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
+              <div className={`absolute left-2 top-2 flex items-center gap-1 rounded-full px-2 py-1 text-[10px] font-semibold ${warnings.length ? 'bg-amber-500 text-white' : 'bg-emerald-500 text-white'}`}>
+                {warnings.length ? <AlertTriangle size={11} /> : <CheckCircle2 size={11} />}
+                {warnings.length ? warnings.length : 'OK'}
+              </div>
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <p className="text-white text-xs truncate">{asset.filename}</p>
                 <p className="text-white/60 text-[10px]">{formatSize(asset.size)}</p>
@@ -162,6 +224,8 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
                 <Pencil size={14} />
               </button>
             </div>
+              );
+            })()
           ))}
         </div>
       )}
@@ -189,6 +253,14 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
                 <span>{selected.mimeType}</span>
                 {selected.width && selected.height && <span>{selected.width}×{selected.height}</span>}
               </div>
+              {getMediaWarnings(selected).length > 0 && (
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+                  <p className="text-xs font-semibold text-amber-900">Qualitätshinweise</p>
+                  <ul className="mt-1 list-disc space-y-1 pl-4 text-xs text-amber-800">
+                    {getMediaWarnings(selected).map(warning => <li key={warning}>{warning}</li>)}
+                  </ul>
+                </div>
+              )}
               <div>
                 <label className="admin-label">Bild-URL</label>
                 <div className="flex gap-2">

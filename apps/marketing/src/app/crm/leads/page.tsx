@@ -10,5 +10,5 @@ export default async function LeadsPage() {
   const leads = await getLeads();
   const db = getDb();
   const leadTenants = await db.select({ id: tenants.id, name: tenants.name, slug: tenants.slug }).from(tenants).where(eq(tenants.isLead, true));
-  return <LeadsClient initialLeads={leads} leadTenants={leadTenants} />;
+  return <LeadsClient initialLeads={leads} leadTenants={leadTenants} rendererBaseUrl={process.env.RENDERER_URL || 'https://flamingo-renderer.vercel.app'} />;
 }

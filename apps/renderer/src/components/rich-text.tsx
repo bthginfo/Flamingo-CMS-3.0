@@ -1,4 +1,4 @@
-import { sanitizeHtml } from '@/lib/sanitize-html';
+import { SafeHtml } from './safe-html';
 
 /**
  * Renders a string that may contain HTML (from the mini rich text editor).
@@ -7,7 +7,7 @@ import { sanitizeHtml } from '@/lib/sanitize-html';
 export function RichText({ html, className }: { html: string; className?: string }) {
   if (!html) return null;
   if (/<[a-z][\s\S]*>/i.test(html)) {
-    return <span className={className} dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }} />;
+    return <SafeHtml as="span" className={className} html={html} />;
   }
   return <span className={className}>{html}</span>;
 }

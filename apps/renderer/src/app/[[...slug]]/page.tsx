@@ -134,7 +134,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   if (!result) notFound();
 
   const { tenantId, snapshot, page, locale, i18n, linkPrefix } = result;
-  const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle, seoGlobal] = await Promise.all([
+  const [navData, footerData, { brand, contact, openingHours, socialLinks, design }, tenantStyle, seoGlobal] = await Promise.all([
     getTenantNav(tenantId, locale),
     getTenantFooter(tenantId, locale),
     getTenantBrand(tenantId),
@@ -206,12 +206,20 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   });
 
   const jsonLdList: Record<string, unknown>[] = [];
+  const openingHoursSpecification = buildOpeningHoursSpecification(openingHours);
+  const specialOpeningHoursSpecification = buildSpecialOpeningHoursSpecification(openingHours);
+  const localSeo = isRecord(brand.localSeo) ? brand.localSeo : {};
+  const localBusinessType = getLocalBusinessType(typeof localSeo.businessType === 'string' ? localSeo.businessType : undefined);
+  const sameAs = [
+    ...(typeof localSeo.googleBusinessUrl === 'string' && localSeo.googleBusinessUrl ? [localSeo.googleBusinessUrl] : []),
+    ...(Array.isArray(localSeo.sameAs) ? localSeo.sameAs.filter((url): url is string => typeof url === 'string' && url.length > 0) : []),
+  ];
 
   // Main entity
   if (isHome) {
     jsonLdList.push({
       '@context': 'https://schema.org',
-      '@type': 'LocalBusiness',
+      '@type': localBusinessType,
       '@id': `${canonicalBase}/#business`,
       name: brand.companyName || '',
       url: canonicalBase,
@@ -219,6 +227,11 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       ...(contact.phone && { telephone: contact.phone }),
       ...(contact.email && { email: contact.email }),
       ...(structuredAddress && { address: structuredAddress }),
+      ...(openingHoursSpecification.length > 0 && { openingHoursSpecification }),
+      ...(specialOpeningHoursSpecification.length > 0 && { specialOpeningHoursSpecification }),
+      ...(typeof localSeo.priceRange === 'string' && localSeo.priceRange && { priceRange: localSeo.priceRange }),
+      ...(typeof localSeo.serviceArea === 'string' && localSeo.serviceArea && { areaServed: localSeo.serviceArea }),
+      ...(sameAs.length > 0 && { sameAs }),
     });
   } else {
     jsonLdList.push({
@@ -273,4 +286,109 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       {contact.whatsappEnabled && contact.whatsapp && <WhatsAppFab phone={contact.whatsapp} color={contact.whatsappColor} />}
     </div>
   );
+}
+
+type OpeningHoursInput = { day?: string; hours?: string; note?: string; closed?: boolean; type?: string; date?: string };
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+const LOCAL_BUSINESS_TYPES = new Set([
+  'LocalBusiness',
+  'Restaurant',
+  'MedicalBusiness',
+  'Store',
+  'LodgingBusiness',
+  'HealthAndBeautyBusiness',
+  'HomeAndConstructionBusiness',
+  'ProfessionalService',
+  'Florist',
+  'EventVenue',
+  'SportsActivityLocation',
+]);
+
+function getLocalBusinessType(value?: string) {
+  return value && LOCAL_BUSINESS_TYPES.has(value) ? value : 'LocalBusiness';
+}
+
+const DAY_MAP: Record<string, string> = {
+  mo: 'Monday',
+  montag: 'Monday',
+  di: 'Tuesday',
+  dienstag: 'Tuesday',
+  mi: 'Wednesday',
+  mittwoch: 'Wednesday',
+  do: 'Thursday',
+  donnerstag: 'Thursday',
+  fr: 'Friday',
+  freitag: 'Friday',
+  sa: 'Saturday',
+  samstag: 'Saturday',
+  so: 'Sunday',
+  sonntag: 'Sunday',
+};
+
+const WEEKDAY_ORDER = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+function parseDayToken(value: string) {
+  const token = value.trim().toLowerCase().replace(/\.$/, '');
+  return DAY_MAP[token] || null;
+}
+
+function expandDays(day: string | undefined) {
+  if (!day) return [];
+  const normalized = day.replace(/[–—]/g, '-').trim();
+  const range = normalized.split('-').map(part => parseDayToken(part));
+  if (range.length === 2 && range[0] && range[1]) {
+    const start = WEEKDAY_ORDER.indexOf(range[0]);
+    const end = WEEKDAY_ORDER.indexOf(range[1]);
+    if (start >= 0 && end >= 0) {
+      return start <= end
+        ? WEEKDAY_ORDER.slice(start, end + 1)
+        : [...WEEKDAY_ORDER.slice(start), ...WEEKDAY_ORDER.slice(0, end + 1)];
+    }
+  }
+  return normalized
+    .split(/[,/&]+|\s+und\s+/i)
+    .map(parseDayToken)
+    .filter(Boolean) as string[];
+}
+
+function parseTimeRange(hours: string | undefined) {
+  if (!hours) return null;
+  const match = hours.match(/(\d{1,2})(?::(\d{2}))?\s*(?:-|–|—|bis)\s*(\d{1,2})(?::(\d{2}))?/i);
+  if (!match) return null;
+  const opens = `${match[1].padStart(2, '0')}:${match[2] || '00'}`;
+  const closes = `${match[3].padStart(2, '0')}:${match[4] || '00'}`;
+  return { opens, closes };
+}
+
+function buildOpeningHoursSpecification(rows: OpeningHoursInput[] = []) {
+  return rows.flatMap(row => {
+    if (row.type === 'special' || row.closed) return [];
+    const days = expandDays(row.day);
+    const range = parseTimeRange(row.hours);
+    if (days.length === 0 || !range) return [];
+    return [{
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: days,
+      opens: range.opens,
+      closes: range.closes,
+    }];
+  });
+}
+
+function buildSpecialOpeningHoursSpecification(rows: OpeningHoursInput[] = []) {
+  return rows.flatMap(row => {
+    if (row.type !== 'special' || !row.date) return [];
+    const range = parseTimeRange(row.hours);
+    return [{
+      '@type': 'OpeningHoursSpecification',
+      validFrom: row.date,
+      validThrough: row.date,
+      ...(row.closed ? { opens: '00:00', closes: '00:00' } : range ? { opens: range.opens, closes: range.closes } : {}),
+      ...(row.note ? { description: row.note } : {}),
+    }];
+  });
 }

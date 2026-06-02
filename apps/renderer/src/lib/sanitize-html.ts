@@ -4,7 +4,7 @@ const ALLOWED_TAGS = new Set([
   'a', 'img', 'figure', 'figcaption', 'code', 'pre',
 ]);
 
-const GLOBAL_ATTRS = new Set(['class']);
+const GLOBAL_ATTRS = new Set<string>();
 const TAG_ATTRS: Record<string, Set<string>> = {
   a: new Set(['href', 'title', 'target', 'rel']),
   img: new Set(['src', 'alt', 'title', 'width', 'height', 'loading']),
@@ -14,7 +14,6 @@ function isSafeUrl(value: string) {
   const trimmed = value.trim().toLowerCase();
   return trimmed.startsWith('/')
     || trimmed.startsWith('#')
-    || trimmed.startsWith('http://')
     || trimmed.startsWith('https://')
     || trimmed.startsWith('mailto:')
     || trimmed.startsWith('tel:')

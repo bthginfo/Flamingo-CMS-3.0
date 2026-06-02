@@ -9,10 +9,14 @@ export const PUT = withApiHandler(async (req, auth) => {
   const db = getDb();
 
   const [existing] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, auth.tenantId));
+  const existingBrand = (existing?.brand as Record<string, unknown>) || {};
+  const nextBrand = { ...body };
+  if (existingBrand.localSeo && !nextBrand.localSeo) nextBrand.localSeo = existingBrand.localSeo;
+
   if (existing) {
-    await db.update(globalSettings).set({ brand: body }).where(eq(globalSettings.tenantId, auth.tenantId));
+    await db.update(globalSettings).set({ brand: nextBrand }).where(eq(globalSettings.tenantId, auth.tenantId));
   } else {
-    await db.insert(globalSettings).values({ tenantId: auth.tenantId, brand: body });
+    await db.insert(globalSettings).values({ tenantId: auth.tenantId, brand: nextBrand });
   }
 
   return NextResponse.json({ success: true });

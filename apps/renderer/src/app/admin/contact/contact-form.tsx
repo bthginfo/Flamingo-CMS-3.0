@@ -7,7 +7,7 @@ import { useSaveState, useRegisterSave } from '@/components/save-context';
 import { Plus, Trash2 } from 'lucide-react';
 
 type ContactData = { phone?: string; email?: string; address?: string; whatsapp?: string; whatsappEnabled?: boolean; whatsappColor?: string };
-type HoursRow = { day: string; hours: string };
+type HoursRow = { day?: string; hours?: string; note?: string; closed?: boolean; type?: 'regular' | 'special'; date?: string };
 
 export function ContactForm({ initialContact, initialHours }: { initialContact: ContactData; initialHours: HoursRow[] }) {
   const [contact, setContact] = useState({
@@ -18,7 +18,7 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
     whatsappEnabled: initialContact.whatsappEnabled ?? false,
     whatsappColor: initialContact.whatsappColor || '',
   });
-  const [hours, setHours] = useState<HoursRow[]>(initialHours.length > 0 ? initialHours : [{ day: '', hours: '' }]);
+  const [hours, setHours] = useState<HoursRow[]>(initialHours.length > 0 ? initialHours : [{ type: 'regular', day: '', hours: '' }]);
   const [saving, setSaving] = useState(false);
   const { markDirty, markSaved } = useSaveState();
   const mounted = useRef(false);
@@ -28,7 +28,8 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
     setSaving(true);
     try {
       await saveContactSettings(contact);
-      toast.success('Kontaktdaten gespeichert');
+      await saveOpeningHours(hours.filter(h => h.type === 'special' ? h.date?.trim() || h.note?.trim() : h.day?.trim() || h.hours?.trim()));
+      toast.success('Kontakt und Öffnungszeiten gespeichert');
       markSaved();
     } catch {
       toast.error('Fehler beim Speichern');
@@ -43,7 +44,7 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
   const handleSaveHours = async () => {
     setSaving(true);
     try {
-      await saveOpeningHours(hours.filter(h => h.day.trim()));
+      await saveOpeningHours(hours.filter(h => h.type === 'special' ? h.date?.trim() || h.note?.trim() : h.day?.trim() || h.hours?.trim()));
       toast.success('Öffnungszeiten gespeichert');
     } catch {
       toast.error('Fehler beim Speichern');
@@ -99,21 +100,44 @@ export function ContactForm({ initialContact, initialHours }: { initialContact: 
       </form>
 
       <div className="admin-card p-6 space-y-5">
-        <h2 className="font-semibold text-lg">Öffnungszeiten</h2>
+        <div>
+          <h2 className="font-semibold text-lg">Öffnungszeiten</h2>
+          <p className="mt-1 text-sm text-zinc-500">
+            Reguläre Zeiten werden für die Website und Local-SEO-Daten genutzt. Sonderzeiten sind für Feiertage, Urlaub oder einzelne geänderte Tage gedacht.
+          </p>
+        </div>
         <div className="space-y-3">
           {hours.map((row, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <input className="admin-input w-40" value={row.day} onChange={e => { const u = [...hours]; u[i] = { ...u[i], day: e.target.value }; setHours(u); }} placeholder="Mo–Fr" />
-              <input className="admin-input flex-1" value={row.hours} onChange={e => { const u = [...hours]; u[i] = { ...u[i], hours: e.target.value }; setHours(u); }} placeholder="08:00 – 17:00 Uhr" />
-              <button type="button" onClick={() => setHours(hours.filter((_, j) => j !== i))} className="admin-btn-ghost text-red-500 p-2">
+            <div key={i} className="grid grid-cols-1 gap-3 rounded-xl border border-zinc-200 p-3 sm:grid-cols-[130px_1fr_1fr_auto]">
+              <select className="admin-input" value={row.type || 'regular'} onChange={e => { const u = [...hours]; u[i] = { ...u[i], type: e.target.value as 'regular' | 'special' }; setHours(u); }}>
+                <option value="regular">Regulär</option>
+                <option value="special">Sonderzeit</option>
+              </select>
+              {row.type === 'special' ? (
+                <input type="date" className="admin-input" value={row.date || ''} onChange={e => { const u = [...hours]; u[i] = { ...u[i], date: e.target.value }; setHours(u); }} />
+              ) : (
+                <input className="admin-input" value={row.day || ''} onChange={e => { const u = [...hours]; u[i] = { ...u[i], day: e.target.value }; setHours(u); }} placeholder="Mo-Fr" />
+              )}
+              <input className="admin-input" value={row.hours || ''} onChange={e => { const u = [...hours]; u[i] = { ...u[i], hours: e.target.value }; setHours(u); }} placeholder="08:00 - 17:00 Uhr" disabled={row.closed} />
+              <button type="button" onClick={() => setHours(hours.filter((_, j) => j !== i))} className="admin-btn-ghost text-red-500 p-2 sm:self-start">
                 <Trash2 size={16} />
               </button>
+              <label className="flex items-center gap-2 text-xs text-zinc-600 sm:col-start-2">
+                <input type="checkbox" checked={Boolean(row.closed)} onChange={e => { const u = [...hours]; u[i] = { ...u[i], closed: e.target.checked, hours: e.target.checked ? '' : u[i].hours }; setHours(u); }} />
+                Geschlossen
+              </label>
+              <input className="admin-input sm:col-span-2" value={row.note || ''} onChange={e => { const u = [...hours]; u[i] = { ...u[i], note: e.target.value }; setHours(u); }} placeholder="Hinweis optional, z.B. Feiertag, Urlaub, Küche bis 21 Uhr" />
             </div>
           ))}
         </div>
-        <button type="button" onClick={() => setHours([...hours, { day: '', hours: '' }])} className="admin-btn-secondary">
-          <Plus size={16} /> Zeile hinzufügen
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={() => setHours([...hours, { type: 'regular', day: '', hours: '' }])} className="admin-btn-secondary">
+            <Plus size={16} /> Zeile hinzufügen
+          </button>
+          <button type="button" onClick={handleSaveHours} disabled={saving} className="admin-btn-primary">
+            Öffnungszeiten speichern
+          </button>
+        </div>
       </div>
     </div>
   );

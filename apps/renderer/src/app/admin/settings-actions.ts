@@ -6,6 +6,8 @@ import { globalSettings, navigation, footer, tenants } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 
+type OpeningHoursRow = { day?: string; hours?: string; note?: string; closed?: boolean; type?: 'regular' | 'special'; date?: string };
+
 export async function requireTenant() {
   const session = await getSession();
   if (!session) throw new Error('Unauthorized');
@@ -29,14 +31,17 @@ export async function saveBrandSettings(data: Record<string, unknown>) {
   const db = getDb();
 
   // Check if row exists
-  const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
+  const [existing] = await db.select({ id: globalSettings.id, brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
+  const existingBrand = (existing?.brand as Record<string, unknown>) || {};
+  const nextBrand = { ...data };
+  if (existingBrand.localSeo && !nextBrand.localSeo) nextBrand.localSeo = existingBrand.localSeo;
 
   if (existing) {
     await db.update(globalSettings)
-      .set({ brand: data, updatedAt: new Date() })
+      .set({ brand: nextBrand, updatedAt: new Date() })
       .where(eq(globalSettings.tenantId, tenantId));
   } else {
-    await db.insert(globalSettings).values({ tenantId, brand: data });
+    await db.insert(globalSettings).values({ tenantId, brand: nextBrand });
   }
 
 
@@ -54,7 +59,7 @@ export async function getContactSettings() {
   const [row] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
   return {
     contact: (row?.contact as { phone?: string; email?: string; address?: string }) || {},
-    openingHours: (row?.openingHours as { day: string; hours: string }[]) || [],
+    openingHours: (row?.openingHours as OpeningHoursRow[]) || [],
     socialLinks: (row?.socialLinks as Record<string, string>) || {},
   };
 }
@@ -72,7 +77,7 @@ export async function saveContactSettings(data: { phone: string; email: string; 
   return { success: true };
 }
 
-export async function saveOpeningHours(hours: { day: string; hours: string }[]) {
+export async function saveOpeningHours(hours: OpeningHoursRow[]) {
   const tenantId = await requireTenant();
   const db = getDb();
   const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
