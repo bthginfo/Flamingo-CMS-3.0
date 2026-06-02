@@ -63,9 +63,8 @@ const TABS = [
   { key: 'overview', label: 'Übersicht', icon: SlidersHorizontal },
   { key: 'inbox', label: 'Anfragen', icon: Inbox },
   { key: 'day', label: 'Tagesplan', icon: CalendarDays },
-  { key: 'calendar', label: 'Kalender', icon: CalendarDays },
+  { key: 'calendar', label: 'Kalender & Verfügbarkeiten', icon: CalendarDays },
   { key: 'resources', label: 'Ressourcen & Leistungen', icon: Users },
-  { key: 'availability', label: 'Verfügbarkeiten', icon: Clock },
   { key: 'blackouts', label: 'Sperrzeiten', icon: Lock },
   { key: 'emails', label: 'E-Mails', icon: Mail },
   { key: 'settings', label: 'Einstellungen', icon: Settings },
@@ -181,15 +180,11 @@ export default async function BookingAdminPage({ searchParams }: { searchParams?
       ) : null}
 
       {activeTab === 'calendar' ? (
-        <CalendarBlocksPanel day={selectedDay} blocks={data.calendarBlocks} resources={data.resources} services={data.services} timezone={data.settings.timezone} />
+        <CalendarAvailabilityPanel day={selectedDay} blocks={data.calendarBlocks} rules={data.availabilityRules} resources={data.resources} services={data.services} timezone={data.settings.timezone} />
       ) : null}
 
       {activeTab === 'resources' ? (
         <ResourcesPanel resources={data.resources} services={data.services} />
-      ) : null}
-
-      {activeTab === 'availability' ? (
-        <AvailabilityPanel rules={data.availabilityRules} resources={data.resources} services={data.services} />
       ) : null}
 
       {activeTab === 'blackouts' ? (
@@ -330,6 +325,15 @@ function DayPanel({ day, requests, resources }: { day: string; requests: Enriche
   );
 }
 
+function CalendarAvailabilityPanel({ day, blocks, rules, resources, services, timezone }: { day: string; blocks: BookingCalendarBlock[]; rules: BookingAvailabilityRule[]; resources: BookingResource[]; services: BookingService[]; timezone?: string | null }) {
+  return (
+    <div className="space-y-6">
+      <CalendarBlocksPanel day={day} blocks={blocks} resources={resources} services={services} timezone={timezone} />
+      <AvailabilityPanel rules={rules} resources={resources} services={services} />
+    </div>
+  );
+}
+
 function CalendarBlocksPanel({ day, blocks, resources, services, timezone }: { day: string; blocks: BookingCalendarBlock[]; resources: BookingResource[]; services: BookingService[]; timezone?: string | null }) {
   const resourceById = new Map(resources.map(resource => [resource.id, resource]));
   const serviceById = new Map(services.map(service => [service.id, service]));
@@ -454,20 +458,29 @@ function ResourcesPanel({ resources, services }: { resources: BookingResource[];
         </form>
         <div className="mt-4 space-y-3">
           {resources.length ? resources.map(resource => (
-            <form key={resource.id} action={updateBookingResourceAction} className="rounded-2xl border border-zinc-200 p-4">
-              <input type="hidden" name="id" value={resource.id} />
-              <div className="grid gap-3 md:grid-cols-2">
-                <Field label="Name"><input name="name" defaultValue={resource.name} className="admin-input" /></Field>
-                <ResourceTypeSelect value={resource.type} />
-                <CapacityField value={resource.capacity} />
-                <SeatsField value={resource.seats || undefined} />
-                <Field label="Beschreibung"><textarea name="description" defaultValue={resource.description || ''} className="admin-input min-h-20" /></Field>
-              </div>
-              <div className="mt-3 flex justify-end gap-2">
-                <DeleteButton action={deleteBookingResourceAction} id={resource.id} label="Ressource löschen" subject={resource.name} />
-                <button className="admin-btn-primary">Speichern</button>
-              </div>
-            </form>
+            <details key={resource.id} className="rounded-2xl border border-zinc-200 bg-white">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4">
+                <div>
+                  <h3 className="font-semibold text-zinc-950">{resource.name}</h3>
+                  <p className="text-sm text-zinc-500">{resource.type} · Kapazität {resource.capacity}{resource.seats ? ` · ${resource.seats} Plätze` : ''}</p>
+                </div>
+                <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600">Bearbeiten</span>
+              </summary>
+              <form action={updateBookingResourceAction} className="border-t border-zinc-100 p-4">
+                <input type="hidden" name="id" value={resource.id} />
+                <div className="grid gap-3 md:grid-cols-2">
+                  <Field label="Name"><input name="name" defaultValue={resource.name} className="admin-input" /></Field>
+                  <ResourceTypeSelect value={resource.type} />
+                  <CapacityField value={resource.capacity} />
+                  <SeatsField value={resource.seats || undefined} />
+                  <Field label="Beschreibung"><textarea name="description" defaultValue={resource.description || ''} className="admin-input min-h-20" /></Field>
+                </div>
+                <div className="mt-3 flex justify-end gap-2">
+                  <DeleteButton action={deleteBookingResourceAction} id={resource.id} label="Ressource löschen" subject={resource.name} />
+                  <button className="admin-btn-primary">Speichern</button>
+                </div>
+              </form>
+            </details>
           )) : <EmptyText>Noch keine Ressourcen.</EmptyText>}
         </div>
       </section>
@@ -488,22 +501,31 @@ function ResourcesPanel({ resources, services }: { resources: BookingResource[];
         </form>
         <div className="mt-4 space-y-3">
           {services.length ? services.map(service => (
-            <form key={service.id} action={updateBookingServiceAction} className="rounded-2xl border border-zinc-200 p-4">
-              <input type="hidden" name="id" value={service.id} />
-              <div className="grid gap-3 md:grid-cols-2">
-                <Field label="Name"><input name="name" defaultValue={service.name} className="admin-input" /></Field>
-                <Field label="Dauer in Minuten"><input name="durationMinutes" type="number" min={0} defaultValue={service.durationMinutes || ''} className="admin-input" /></Field>
-                <TimeModelSelect value={service.timeModelOverride || ''} />
-                <Field label="Preislabel"><input name="priceLabel" defaultValue={service.priceLabel || ''} className="admin-input" /></Field>
-                <Field label="Beschreibung"><textarea name="description" defaultValue={service.description || ''} className="admin-input min-h-20" /></Field>
-                <label className="flex items-center gap-2 self-end text-sm"><input name="requiresResource" type="checkbox" defaultChecked={service.requiresResource} /> Benötigt Ressource</label>
-                <AllowedResourceTypesField value={Array.isArray(service.allowedResourceTypes) ? service.allowedResourceTypes : []} />
-              </div>
-              <div className="mt-3 flex justify-end gap-2">
-                <DeleteButton action={deleteBookingServiceAction} id={service.id} label="Leistung löschen" subject={service.name} />
-                <button className="admin-btn-primary">Speichern</button>
-              </div>
-            </form>
+            <details key={service.id} className="rounded-2xl border border-zinc-200 bg-white">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4">
+                <div>
+                  <h3 className="font-semibold text-zinc-950">{service.name}</h3>
+                  <p className="text-sm text-zinc-500">{service.durationMinutes ? `${service.durationMinutes} Min.` : 'Flexible Dauer'}{service.priceLabel ? ` · ${service.priceLabel}` : ''}</p>
+                </div>
+                <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600">Bearbeiten</span>
+              </summary>
+              <form action={updateBookingServiceAction} className="border-t border-zinc-100 p-4">
+                <input type="hidden" name="id" value={service.id} />
+                <div className="grid gap-3 md:grid-cols-2">
+                  <Field label="Name"><input name="name" defaultValue={service.name} className="admin-input" /></Field>
+                  <Field label="Dauer in Minuten"><input name="durationMinutes" type="number" min={0} defaultValue={service.durationMinutes || ''} className="admin-input" /></Field>
+                  <TimeModelSelect value={service.timeModelOverride || ''} />
+                  <Field label="Preislabel"><input name="priceLabel" defaultValue={service.priceLabel || ''} className="admin-input" /></Field>
+                  <Field label="Beschreibung"><textarea name="description" defaultValue={service.description || ''} className="admin-input min-h-20" /></Field>
+                  <label className="flex items-center gap-2 self-end text-sm"><input name="requiresResource" type="checkbox" defaultChecked={service.requiresResource} /> Benötigt Ressource</label>
+                  <AllowedResourceTypesField value={Array.isArray(service.allowedResourceTypes) ? service.allowedResourceTypes : []} />
+                </div>
+                <div className="mt-3 flex justify-end gap-2">
+                  <DeleteButton action={deleteBookingServiceAction} id={service.id} label="Leistung löschen" subject={service.name} />
+                  <button className="admin-btn-primary">Speichern</button>
+                </div>
+              </form>
+            </details>
           )) : <EmptyText>Noch keine Leistungen.</EmptyText>}
         </div>
       </section>

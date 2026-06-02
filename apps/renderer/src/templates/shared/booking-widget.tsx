@@ -197,7 +197,7 @@ export function BookingWidgetSection({ data }: SectionProps) {
 
   return (
     <section
-      id="booking"
+      id="booking-form"
       className="relative overflow-hidden rounded-[var(--style-card-radius,2rem)] px-5 py-10 shadow-2xl sm:px-8 md:px-12"
       style={{ background: 'var(--booking-section-bg, #09090b)', color: 'var(--booking-text-primary, #ffffff)' }}
     >
@@ -371,7 +371,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
                 <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">Verfügbare Uhrzeiten</p>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {loading ? <p className="col-span-full rounded-xl bg-zinc-50 p-4 text-sm text-zinc-500">Slots werden geladen...</p> : slots.length ? slots.map((slot) => (
-                    <button key={slot.value} type="button" onClick={() => setSelectedSlot(slot.value)} className={`rounded-xl border px-3 py-3 text-sm font-bold transition ${selectedSlot === slot.value ? 'border-zinc-950 bg-zinc-950 text-white' : 'border-zinc-200 bg-white text-zinc-800 hover:border-zinc-400'}`}>
+                    <button key={slot.value} type="button" onClick={() => setSelectedSlot(slot.value)} className={`rounded-xl border px-3 py-3 text-sm font-bold transition ${selectedSlot === slot.value ? '' : 'border-zinc-200 bg-white text-zinc-800 hover:border-zinc-400'}`} style={selectedSlot === slot.value ? { borderColor: 'var(--brand-btn-bg, #09090b)', background: 'var(--brand-btn-bg, #09090b)', color: 'var(--brand-btn-text, #ffffff)' } : undefined}>
                       {slot.label}
                     </button>
                   )) : <p className="col-span-full rounded-xl bg-amber-50 p-4 text-sm text-amber-800">Für diese Auswahl sind keine freien Uhrzeiten verfügbar.</p>}
@@ -505,6 +505,10 @@ export function AvailabilityCalendarSection({ data }: SectionProps) {
   const [counts, setCounts] = useState<Record<string, number | null>>({});
   const [monthOffset, setMonthOffset] = useState(0);
   const [selectedDate, setSelectedDate] = useState(() => toInputDate(new Date()));
+  const config = useBookingConfig(tenantId);
+  const calendarService = (config?.services || []).find(service => service.timeModelOverride !== 'date_range') || config?.services?.[0];
+  const allowedResourceTypes = Array.isArray(calendarService?.allowedResourceTypes) ? calendarService.allowedResourceTypes : [];
+  const calendarResource = (config?.resources || []).find(resource => !allowedResourceTypes.length || allowedResourceTypes.includes(resource.type));
   const days = useMemo(() => {
     const today = new Date();
     const visibleMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
@@ -539,7 +543,7 @@ export function AvailabilityCalendarSection({ data }: SectionProps) {
     }
     let cancelled = false;
     Promise.all(days.map(async day => {
-      const query = new URLSearchParams({ date: day.date, tenantId });
+      const query = new URLSearchParams({ date: day.date, tenantId, serviceId: calendarService?.id || '', resourceId: calendarResource?.id || '' });
       const res = await fetch(`/api/booking/availability?${query.toString()}`);
       const json = await res.json().catch(() => ({}));
       return [day.date, Array.isArray(json.slots) ? json.slots.length : 0] as const;
@@ -549,11 +553,11 @@ export function AvailabilityCalendarSection({ data }: SectionProps) {
       if (!cancelled) setCounts(Object.fromEntries(days.map(day => [day.date, null])));
     });
     return () => { cancelled = true; };
-  }, [days, tenantId]);
+  }, [calendarResource?.id, calendarService?.id, days, tenantId]);
 
   return (
     <BookingShell data={data} icon={<Clock3 size={18} />} defaultBadge="Verfügbarkeit" defaultHeadline="Freie Zeiten auf einen Blick">
-      <div className="rounded-[var(--style-card-radius,1.5rem)] border p-3 sm:p-4" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 10%, transparent)' }}>
+      <div className="mx-auto w-full max-w-sm rounded-2xl border p-3 shadow-xl" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 10%, transparent)' }}>
         <div className="mb-4 flex items-center justify-between gap-3">
           <button type="button" onClick={() => setMonthOffset((value) => value - 1)} className="grid h-9 w-9 place-items-center rounded-full border transition hover:brightness-110" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.18))', color: 'var(--booking-heading-color, #ffffff)' }} aria-label="Vorheriger Monat">
             <ChevronLeft size={18} />
@@ -568,19 +572,15 @@ export function AvailabilityCalendarSection({ data }: SectionProps) {
             <ChevronRight size={18} />
           </button>
         </div>
-        <div className="grid grid-cols-7 gap-1.5">
+        <div className="grid grid-cols-7 gap-1">
           {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((label) => (
             <div key={label} className="py-1 text-center text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--booking-muted-color, rgba(255,255,255,.52))' }}>{label}</div>
           ))}
           {days.map((day) => (
-          <button key={day.date} type="button" onClick={() => setSelectedDate(day.date)} className="min-h-[76px] rounded-2xl border p-2 text-left transition hover:-translate-y-0.5 hover:brightness-110" style={{ borderColor: selectedDate === day.date ? 'var(--booking-accent-color, #f43f5e)' : 'var(--booking-border-color, rgba(255,255,255,.14))', background: selectedDate === day.date ? 'color-mix(in srgb, var(--booking-accent-color, #f43f5e) 22%, transparent)' : day.inMonth ? 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)' : 'rgba(255,255,255,.03)', opacity: day.inMonth ? 1 : 0.42 }} aria-label={`${day.label}, ${day.day}. ${counts[day.date] ?? 0} freie Slots`}>
-            <span className="flex items-start justify-between gap-1">
-              <span className="text-xs font-bold uppercase tracking-[0.08em]" style={{ color: 'var(--booking-muted-color, rgba(255,255,255,.62))' }}>{day.label}</span>
-              {day.isToday ? <span className="h-2 w-2 rounded-full" style={{ background: 'var(--booking-accent-color, #f43f5e)' }} /> : null}
-            </span>
-            <span className="mt-1 block text-lg font-black" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{day.day}</span>
-            <p className="mt-3 text-2xl font-black" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{counts[day.date] ?? '–'}</p>
-            <p className="text-sm" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.74))' }}>Slots möglich</p>
+          <button key={day.date} type="button" onClick={() => setSelectedDate(day.date)} className="relative grid aspect-square place-items-center rounded-lg border text-sm font-bold transition hover:brightness-110" style={{ borderColor: selectedDate === day.date ? 'var(--brand-btn-bg, #ffffff)' : 'var(--booking-border-color, rgba(255,255,255,.14))', background: selectedDate === day.date ? 'var(--brand-btn-bg, #ffffff)' : day.inMonth ? 'transparent' : 'rgba(255,255,255,.03)', color: selectedDate === day.date ? 'var(--brand-btn-text, #09090b)' : 'var(--booking-heading-color, #ffffff)', opacity: day.inMonth ? 1 : 0.42 }} aria-label={`${day.label}, ${day.day}. ${counts[day.date] ?? 0} freie Slots`}>
+            {day.day}
+            {day.isToday ? <span className="absolute left-1 top-1 h-1.5 w-1.5 rounded-full" style={{ background: selectedDate === day.date ? 'var(--brand-btn-text, #09090b)' : 'var(--booking-accent-color, #f43f5e)' }} /> : null}
+            {(counts[day.date] || 0) > 0 ? <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full" style={{ background: selectedDate === day.date ? 'var(--brand-btn-text, #09090b)' : 'var(--booking-accent-color, #f43f5e)' }} /> : null}
           </button>
           ))}
         </div>
@@ -636,7 +636,7 @@ function BookingShell({ data, icon, defaultBadge, defaultHeadline, children }: {
           <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}>{icon}{(data.badge as string) || defaultBadge}</p>
           <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{(data.headline as string) || defaultHeadline}</h2>
           <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{(data.subline as string) || 'Ein flexibler Booking-Einstieg für Termine, Tage, Räume, Ressourcen oder Anfragen.'}</p>
-          <a href="#booking" className="mt-6 inline-flex items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--brand-btn-bg, #ffffff)', color: 'var(--brand-btn-text, #09090b)' }}>{(data.submitLabel as string) || 'Anfrage starten'}</a>
+          <a href={(data.ctaHref as string) || '#booking-form'} className="mt-6 inline-flex items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--brand-btn-bg, #ffffff)', color: 'var(--brand-btn-text, #09090b)' }}>{(data.submitLabel as string) || 'Anfrage starten'}</a>
         </div>
         {children}
       </div>
