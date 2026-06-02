@@ -29,7 +29,7 @@ import {
 
 const DEMO_BASE = 'https://www.demo.flamingomedia.online';
 const PREVIEW_TENANT_ID = 'f50cbf53-279d-43f3-b58b-f5ae3d550ab2';
-const demoAdminUrl = (next = '/admin') => `${DEMO_BASE}/admin/demo-login?industry=handwerk&public=1&next=${encodeURIComponent(next)}`;
+const demoAdminUrl = (next = '/admin', industry = 'handwerk') => `${DEMO_BASE}/admin/demo-login?industry=${industry}&public=1&embed=1&next=${encodeURIComponent(next)}`;
 
 type Viewport = 'desktop' | 'tablet' | 'mobile';
 type ShowcaseMode = 'demo' | 'cms' | 'shop' | 'booking';
@@ -121,7 +121,7 @@ export function LiveAdminShowcase({ mode = 'cms', compact = false, showTabs = tr
   const tabs = mode === 'shop' ? SHOP_TABS : mode === 'booking' ? BOOKING_TABS : CMS_TABS;
   const [activeTab, setActiveTab] = useState(0);
   const active = tabs[activeTab] || tabs[0];
-  const src = active.href.startsWith('/admin') ? demoAdminUrl(active.href) : `${DEMO_BASE}${active.href}`;
+  const src = active.href.startsWith('/admin') ? demoAdminUrl(active.href, mode === 'booking' ? 'restaurant' : 'handwerk') : `${DEMO_BASE}${active.href}`;
 
   const copy = useMemo(() => {
     if (mode === 'shop') {

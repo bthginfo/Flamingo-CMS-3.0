@@ -76,7 +76,7 @@ export function BookingPage() {
         </div>
       </section>
 
-      <LiveAdminShowcase mode="booking" compact />
+      <LiveAdminShowcase mode="booking" compact showTabs={false} smallPreview />
 
       <section className="py-20 md:py-28 surface">
         <div className="container-x">

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
-import { CalendarCheck, CheckCircle, Clock3, Loader2, MapPin, Sparkles } from 'lucide-react';
+import { CalendarCheck, CheckCircle, ChevronLeft, ChevronRight, Clock3, Loader2, MapPin, Sparkles } from 'lucide-react';
 import type { SectionProps } from '../restaurant';
 
 type BookingTimeModel = 'time_slot' | 'full_day' | 'date_range';
@@ -213,21 +213,38 @@ export function BookingWidgetSection({ data }: SectionProps) {
 export function AvailabilityCalendarSection({ data }: SectionProps) {
   const tenantId = (data.tenantId as string) || '';
   const [counts, setCounts] = useState<Record<string, number | null>>({});
+  const [monthOffset, setMonthOffset] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(() => toInputDate(new Date()));
   const days = useMemo(() => {
     const today = new Date();
-    return Array.from({ length: 14 }, (_, index) => {
-      const date = addDays(today, index);
+    const visibleMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+    const monthStart = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1);
+    const monthEnd = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 0);
+    const start = addDays(monthStart, -((monthStart.getDay() + 6) % 7));
+    const end = addDays(monthEnd, 6 - ((monthEnd.getDay() + 6) % 7));
+    const length = Math.round((end.getTime() - start.getTime()) / 86400000) + 1;
+    return Array.from({ length }, (_, index) => {
+      const date = addDays(start, index);
+      const dateKey = toInputDate(date);
       return {
-        label: index === 0 ? 'Heute' : new Intl.DateTimeFormat('de-DE', { weekday: 'short' }).format(date),
-        date: toInputDate(date),
-        day: new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit' }).format(date),
+        label: new Intl.DateTimeFormat('de-DE', { weekday: 'short' }).format(date),
+        date: dateKey,
+        day: date.getDate(),
+        inMonth: date.getMonth() === visibleMonth.getMonth(),
+        isToday: dateKey === toInputDate(today),
       };
     });
-  }, []);
+  }, [monthOffset]);
+  const visibleMonthLabel = useMemo(() => {
+    const today = new Date();
+    const visibleMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+    return new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric' }).format(visibleMonth);
+  }, [monthOffset]);
+  const selectedCount = counts[selectedDate];
 
   useEffect(() => {
     if (!tenantId) {
-      setCounts(Object.fromEntries(days.map((day, index) => [day.date, index % 4 === 0 ? 0 : 3 + (index % 5)])));
+      setCounts(Object.fromEntries(days.map((day, index) => [day.date, !day.inMonth ? null : index % 6 === 0 ? 0 : 2 + (index % 7)])));
       return;
     }
     let cancelled = false;
@@ -246,15 +263,37 @@ export function AvailabilityCalendarSection({ data }: SectionProps) {
 
   return (
     <BookingShell data={data} icon={<Clock3 size={18} />} defaultBadge="Verfügbarkeit" defaultHeadline="Freie Zeiten auf einen Blick">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
-        {days.map((day) => (
-          <div key={day.date} className="rounded-2xl border p-4" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 10%, transparent)' }}>
-            <p className="text-xs font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--booking-muted-color, rgba(255,255,255,.62))' }}>{day.label}</p>
-            <p className="mt-1 text-sm font-semibold" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.74))' }}>{day.day}</p>
+      <div className="rounded-[var(--style-card-radius,1.5rem)] border p-3 sm:p-4" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 10%, transparent)' }}>
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <button type="button" onClick={() => setMonthOffset((value) => value - 1)} className="grid h-9 w-9 place-items-center rounded-full border transition hover:brightness-110" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.18))', color: 'var(--booking-heading-color, #ffffff)' }} aria-label="Vorheriger Monat">
+            <ChevronLeft size={18} />
+          </button>
+          <div className="text-center">
+            <p className="text-sm font-black capitalize" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{visibleMonthLabel}</p>
+            <p className="text-xs" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.68))' }}>
+              {selectedCount == null ? 'Datum auswählen' : selectedCount > 0 ? `${selectedCount} freie Slots am ausgewählten Tag` : 'An diesem Tag aktuell nichts frei'}
+            </p>
+          </div>
+          <button type="button" onClick={() => setMonthOffset((value) => value + 1)} className="grid h-9 w-9 place-items-center rounded-full border transition hover:brightness-110" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.18))', color: 'var(--booking-heading-color, #ffffff)' }} aria-label="Nächster Monat">
+            <ChevronRight size={18} />
+          </button>
+        </div>
+        <div className="grid grid-cols-7 gap-1.5">
+          {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((label) => (
+            <div key={label} className="py-1 text-center text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--booking-muted-color, rgba(255,255,255,.52))' }}>{label}</div>
+          ))}
+          {days.map((day) => (
+          <button key={day.date} type="button" onClick={() => setSelectedDate(day.date)} className="min-h-[76px] rounded-2xl border p-2 text-left transition hover:-translate-y-0.5 hover:brightness-110" style={{ borderColor: selectedDate === day.date ? 'var(--booking-accent-color, #f43f5e)' : 'var(--booking-border-color, rgba(255,255,255,.14))', background: selectedDate === day.date ? 'color-mix(in srgb, var(--booking-accent-color, #f43f5e) 22%, transparent)' : day.inMonth ? 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)' : 'rgba(255,255,255,.03)', opacity: day.inMonth ? 1 : 0.42 }} aria-label={`${day.label}, ${day.day}. ${counts[day.date] ?? 0} freie Slots`}>
+            <span className="flex items-start justify-between gap-1">
+              <span className="text-xs font-bold uppercase tracking-[0.08em]" style={{ color: 'var(--booking-muted-color, rgba(255,255,255,.62))' }}>{day.label}</span>
+              {day.isToday ? <span className="h-2 w-2 rounded-full" style={{ background: 'var(--booking-accent-color, #f43f5e)' }} /> : null}
+            </span>
+            <span className="mt-1 block text-lg font-black" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{day.day}</span>
             <p className="mt-3 text-2xl font-black" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{counts[day.date] ?? '–'}</p>
             <p className="text-sm" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.74))' }}>Slots möglich</p>
-          </div>
-        ))}
+          </button>
+          ))}
+        </div>
       </div>
     </BookingShell>
   );

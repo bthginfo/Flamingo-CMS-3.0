@@ -2,6 +2,7 @@
 
 import crypto from 'crypto';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { and, asc, eq } from 'drizzle-orm';
 import { getDb } from '@/lib/db';
@@ -38,6 +39,10 @@ export async function getBookingAdminData() {
   const db = getDb();
   const addonActive = await hasBookingAddon(tenantId);
   if (!addonActive) {
+    const cookieStore = await cookies();
+    if (cookieStore.get('flamingo_public_demo')?.value === tenantId) {
+      return getPublicDemoBookingAdminData(tenantId);
+    }
     return {
       addonActive,
       settings: null,
@@ -63,6 +68,113 @@ export async function getBookingAdminData() {
   ]);
 
   return { addonActive, settings, resources, services, availabilityRules, calendarBlocks, blackouts, requests, templates };
+}
+
+function getPublicDemoBookingAdminData(tenantId: string) {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(now.getDate() + 1);
+  tomorrow.setHours(19, 0, 0, 0);
+  const tomorrowEnd = new Date(tomorrow);
+  tomorrowEnd.setHours(21, 0, 0, 0);
+  const nextWeek = new Date(now);
+  nextWeek.setDate(now.getDate() + 7);
+  nextWeek.setHours(10, 0, 0, 0);
+  const nextWeekEnd = new Date(nextWeek);
+  nextWeekEnd.setHours(11, 0, 0, 0);
+  const resourceTable = {
+    id: 'demo-booking-resource-table',
+    tenantId,
+    type: 'table' as const,
+    name: 'Tisch 4',
+    description: 'Fensterplatz für kleinere Gruppen',
+    capacity: 1,
+    seats: 4,
+    image: null,
+    active: true,
+    sortOrder: 1,
+    createdAt: now,
+    updatedAt: now,
+  };
+  const resourceRoom = {
+    id: 'demo-booking-resource-room',
+    tenantId,
+    type: 'room' as const,
+    name: 'Private Dining Raum',
+    description: 'Separater Bereich für Feiern und Business-Dinner',
+    capacity: 1,
+    seats: 12,
+    image: null,
+    active: true,
+    sortOrder: 2,
+    createdAt: now,
+    updatedAt: now,
+  };
+  const serviceDinner = {
+    id: 'demo-booking-service-dinner',
+    tenantId,
+    name: 'Dinner-Reservierung',
+    description: 'Tischreservierung mit manueller Bestätigung',
+    durationMinutes: 120,
+    timeModelOverride: null,
+    priceLabel: null,
+    requiresResource: true,
+    allowedResourceTypes: ['table', 'room'],
+    active: true,
+    sortOrder: 1,
+    createdAt: now,
+    updatedAt: now,
+  };
+  const serviceConsulting = {
+    id: 'demo-booking-service-consulting',
+    tenantId,
+    name: 'Event-Anfrage',
+    description: 'Datumsbereich oder ganzer Abend für Events',
+    durationMinutes: null,
+    timeModelOverride: 'date_range' as const,
+    priceLabel: 'auf Anfrage',
+    requiresResource: true,
+    allowedResourceTypes: ['room'],
+    active: true,
+    sortOrder: 2,
+    createdAt: now,
+    updatedAt: now,
+  };
+  return {
+    addonActive: true,
+    settings: {
+      id: 'demo-booking-settings',
+      tenantId,
+      mode: 'request' as const,
+      timeModel: 'time_slot' as const,
+      timezone: 'Europe/Berlin',
+      intervalMinutes: 30,
+      minNoticeHours: 12,
+      maxAdvanceDays: 90,
+      cancellationAllowed: true,
+      cancellationDeadlineHours: 24,
+      notificationEmail: 'booking@demo.flamingomedia.online',
+      customerEmailEnabled: true,
+      adminEmailEnabled: true,
+      createdAt: now,
+      updatedAt: now,
+    },
+    resources: [resourceTable, resourceRoom],
+    services: [serviceDinner, serviceConsulting],
+    availabilityRules: [
+      { id: 'demo-rule-1', tenantId, resourceId: resourceTable.id, serviceId: serviceDinner.id, weekday: 5, startTime: '18:00', endTime: '22:00', capacity: 1, active: true, createdAt: now },
+      { id: 'demo-rule-2', tenantId, resourceId: resourceRoom.id, serviceId: serviceConsulting.id, weekday: 6, startTime: '10:00', endTime: '18:00', capacity: 1, active: true, createdAt: now },
+    ],
+    calendarBlocks: [
+      { id: 'demo-block-1', tenantId, resourceId: resourceRoom.id, serviceId: serviceConsulting.id, type: 'available', startsAt: nextWeek, endsAt: nextWeekEnd, capacity: 1, note: 'Event-Slot verfügbar', active: true, createdAt: now, updatedAt: now },
+    ],
+    blackouts: [],
+    requests: [
+      { id: 'demo-request-1', tenantId, customerId: null, serviceId: serviceDinner.id, resourceId: resourceTable.id, mode: 'request' as const, timeModel: 'time_slot' as const, status: 'requested' as const, customerName: 'Anna Beispiel', customerEmail: 'anna@example.com', customerPhone: '+49 89 123456', partySize: 4, startsAt: tomorrow, endsAt: tomorrowEnd, message: 'Fensterplatz wäre schön.', cancellationTokenHash: null, cancellationReason: null, createdAt: now, updatedAt: now },
+      { id: 'demo-request-2', tenantId, customerId: null, serviceId: serviceConsulting.id, resourceId: resourceRoom.id, mode: 'request' as const, timeModel: 'date_range' as const, status: 'confirmed' as const, customerName: 'Max Muster', customerEmail: 'max@example.com', customerPhone: '+49 30 555000', partySize: 12, startsAt: nextWeek, endsAt: nextWeekEnd, message: 'Business-Dinner mit Menü.', cancellationTokenHash: null, cancellationReason: null, createdAt: now, updatedAt: now },
+    ],
+    templates: [],
+  };
 }
 
 export async function requestBookingAddonAction() {
