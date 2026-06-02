@@ -7,13 +7,20 @@ import { getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBoo
 import { getBookingNotificationEmail, sendBookingEmail } from '@/lib/booking-email';
 import { bookingCustomers, bookingRequests, bookingResources, bookingServices } from '@flamingo/db';
 
+function resolveExplicitTenant(value: unknown) {
+  if (typeof value !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) return null;
+  const fixedTenantId = process.env.FIXED_TENANT_ID;
+  if (fixedTenantId) return value === fixedTenantId ? value : null;
+  return value;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const tenantId = await resolveTenant();
+    const body = await req.json();
+    const tenantId = resolveExplicitTenant(body.tenantId) || await resolveTenant();
     if (!tenantId) return NextResponse.json({ error: 'Tenant nicht gefunden.' }, { status: 404 });
     if (!(await hasBookingAddon(tenantId))) return NextResponse.json({ error: 'Booking ist nicht aktiviert.' }, { status: 403 });
 
-    const body = await req.json();
     const customerName = clean(body.customerName, 255);
     const customerEmail = clean(body.customerEmail, 320);
     const customerPhone = clean(body.customerPhone, 80);

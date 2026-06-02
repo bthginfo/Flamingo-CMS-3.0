@@ -261,6 +261,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   }
 
   const brandCssVars = getBrandCssVars(brand);
+  const sectionsNeedingTenantId = new Set(['bookingWidget', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 
   // Build dynamic style overrides that need !important to beat Tailwind utilities
   const importantOverrides: string[] = [];
@@ -279,7 +280,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} i18n={i18n ? { locales: i18n.locales, currentLocale: locale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} linkPrefix={linkPrefix} />
       <main>
         {visibleSections.map((section) => (
-          <SectionRenderer key={section.id} section={section.type.startsWith('shop') ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={locale} linkPrefix={linkPrefix} />
+          <SectionRenderer key={section.id} section={(section.type.startsWith('shop') || sectionsNeedingTenantId.has(section.type)) ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={locale} linkPrefix={linkPrefix} />
         ))}
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} />

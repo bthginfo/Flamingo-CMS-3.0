@@ -186,17 +186,19 @@ const editorBlock = extractBalanced(dataEditorSource, editorBlockStart);
 const dataEditorTypes = new Set([...editorBlock.matchAll(/^\s*([a-zA-Z]\w*)\s*:/gm)].map((match) => match[1]));
 
 const allTypes = unique([...mappings.keys(), ...Object.keys(SECTION_PREVIEW_DATA), ...sectionFields.keys(), ...dataEditorTypes]);
+const SYSTEM_INJECTED_FIELDS = new Set(['tenantId']);
 
 const reports: SectionReport[] = allTypes.map((type) => {
   const component = mappings.get(type) || null;
   const file = resolveTemplateFile(component ? imports.get(component) : undefined);
   const source = file ? read(file) : '';
   const feDataFields = parseFeDataFields(source).filter((field) => field !== 'id' && field !== 'type');
+  const cmsRelevantFeDataFields = feDataFields.filter((field) => !SYSTEM_INJECTED_FIELDS.has(field));
   const cmsPreviewFields = unique([
     ...flattenFields(SECTION_EDITOR_FIELD_DEFAULTS[type] || {}).map(topLevel),
     ...flattenFields(SECTION_PREVIEW_DATA[type] || {}).map(topLevel),
   ]);
-  const missingCmsFields = feDataFields.filter((field) => !cmsPreviewFields.includes(field));
+  const missingCmsFields = cmsRelevantFeDataFields.filter((field) => !cmsPreviewFields.includes(field));
   const feCssVars = unique([
     ...parseCssVars(source),
     ...fieldsForHardcodedColorClasses(source).map((field) => cssVarByField.get(field) || ''),

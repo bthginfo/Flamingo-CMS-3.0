@@ -201,10 +201,11 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
   if (!page) return notFound();
 
   const firstIsHero = page.sections[0]?.type === 'hero';
+  const sectionsNeedingTenantId = new Set(['bookingWidget', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 
   return (
     <DemoPageShell
-      sections={injectCollections(prefixSections(page.sections.filter(s => s.visible).map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}) } } : s), demoPrefix), snapshot.collections, demoPrefix)}
+      sections={injectCollections(prefixSections(page.sections.filter(s => s.visible).map(s => (s.type.startsWith('shop') || sectionsNeedingTenantId.has(s.type)) ? { ...s, data: { ...s.data, tenantId, ...(s.type.startsWith('shop') ? { basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}) } : {}) } } : s), demoPrefix), snapshot.collections, demoPrefix)}
       industry={tenantStyle.industry}
       industryKey={industry}
       defaultStyle={tenantStyle.activeStyle}

@@ -21,17 +21,19 @@ export function BookingWidgetSection({ data }: SectionProps) {
   const subline = (data.subline as string) || 'Wählen Sie aus, was Sie buchen möchten. Wir melden uns mit allen Details.';
   const badge = (data.badge as string) || 'Booking';
   const submitLabel = (data.submitLabel as string) || '';
+  const tenantId = (data.tenantId as string) || '';
   const [config, setConfig] = useState<BookingConfig | null>(null);
   const [selectedServiceId, setSelectedServiceId] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/api/booking/config')
+    const query = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : '';
+    fetch(`/api/booking/config${query}`)
       .then((res) => res.json())
       .then(setConfig)
       .catch(() => setConfig({ enabled: false, mode: 'request', timeModel: 'time_slot', intervalMinutes: 30, services: [], resources: [] }));
-  }, []);
+  }, [tenantId]);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -43,7 +45,7 @@ export function BookingWidgetSection({ data }: SectionProps) {
       const res = await fetch('/api/booking/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...payload, tenantId }),
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error || 'Buchung konnte nicht gesendet werden.');
