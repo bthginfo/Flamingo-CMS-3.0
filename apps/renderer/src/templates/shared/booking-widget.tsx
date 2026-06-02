@@ -17,6 +17,32 @@ type BookingConfig = {
   resources: { id: string; name: string; type: string; capacity: number; seats?: number | null }[];
 };
 
+const PREVIEW_CONFIG: BookingConfig = {
+  enabled: true,
+  mode: 'request',
+  timeModel: 'time_slot',
+  timezone: 'Europe/Berlin',
+  intervalMinutes: 30,
+  services: [
+    { id: 'preview-service-1', name: 'Erstgespräch', durationMinutes: 30, priceLabel: 'kostenlos', timeModelOverride: null, requiresResource: false, allowedResourceTypes: [] },
+    { id: 'preview-service-2', name: 'Beratung vor Ort', durationMinutes: 60, priceLabel: 'auf Anfrage', timeModelOverride: null, requiresResource: true, allowedResourceTypes: ['staff', 'room', 'generic'] },
+  ],
+  resources: [
+    { id: 'preview-resource-1', name: 'Team Slot 1', type: 'staff', capacity: 1, seats: null },
+    { id: 'preview-resource-2', name: 'Beratungsraum', type: 'room', capacity: 1, seats: 4 },
+  ],
+};
+
+function normalizeConfig(value: Partial<BookingConfig> | null | undefined): BookingConfig {
+  return {
+    ...PREVIEW_CONFIG,
+    ...value,
+    enabled: value?.enabled ?? false,
+    services: Array.isArray(value?.services) ? value.services : [],
+    resources: Array.isArray(value?.resources) ? value.resources : [],
+  };
+}
+
 export function BookingWidgetSection({ data }: SectionProps) {
   const headline = (data.headline as string) || 'Termin oder Anfrage senden';
   const subline = (data.subline as string) || 'Wählen Sie aus, was Sie buchen möchten. Wir melden uns mit allen Details.';
@@ -33,11 +59,15 @@ export function BookingWidgetSection({ data }: SectionProps) {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!tenantId) {
+      setConfig(PREVIEW_CONFIG);
+      return;
+    }
     const query = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : '';
     fetch(`/api/booking/config${query}`)
       .then((res) => res.json())
-      .then(setConfig)
-      .catch(() => setConfig({ enabled: false, mode: 'request', timezone: 'Europe/Berlin', timeModel: 'time_slot', intervalMinutes: 30, services: [], resources: [] }));
+      .then((json) => setConfig(normalizeConfig(json)))
+      .catch(() => setConfig(normalizeConfig({ enabled: false })));
   }, [tenantId]);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
@@ -67,13 +97,13 @@ export function BookingWidgetSection({ data }: SectionProps) {
   }
 
   const selectedService = useMemo(
-    () => config?.services.find((service) => service.id === selectedServiceId),
+    () => (config?.services || []).find((service) => service.id === selectedServiceId),
     [config?.services, selectedServiceId],
   );
   const timeModel = selectedService?.timeModelOverride || config?.timeModel || 'time_slot';
   const actionLabel = submitLabel || (config?.mode === 'instant' ? 'Jetzt buchen' : 'Anfrage senden');
   const allowedResourceTypes = Array.isArray(selectedService?.allowedResourceTypes) ? selectedService.allowedResourceTypes : [];
-  const availableResources = config?.resources.filter(resource => !allowedResourceTypes.length || allowedResourceTypes.includes(resource.type)) || [];
+  const availableResources = (config?.resources || []).filter(resource => !allowedResourceTypes.length || allowedResourceTypes.includes(resource.type));
   const resourceRequired = Boolean(selectedService?.requiresResource);
 
   useEffect(() => {
@@ -103,27 +133,27 @@ export function BookingWidgetSection({ data }: SectionProps) {
     <section
       id="booking"
       className="relative overflow-hidden rounded-[var(--style-card-radius,2rem)] px-5 py-10 shadow-2xl sm:px-8 md:px-12"
-      style={{ background: 'var(--style-section-bg, #09090b)', color: 'var(--style-text-primary, #ffffff)' }}
+      style={{ background: 'var(--booking-section-bg, #09090b)', color: 'var(--booking-text-primary, #ffffff)' }}
     >
       <div
         className="absolute inset-0"
-        style={{ background: 'radial-gradient(circle at 20% 10%, rgba(255,255,255,.18), transparent 28%), radial-gradient(circle at 80% 10%, color-mix(in srgb, var(--style-accent-color, #ec4899) 22%, transparent), transparent 30%)' }}
+        style={{ background: 'radial-gradient(circle at 20% 10%, rgba(255,255,255,.18), transparent 28%), radial-gradient(circle at 80% 10%, color-mix(in srgb, var(--booking-accent-color, #f43f5e) 22%, transparent), transparent 30%)' }}
       />
       <div className="relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div className="space-y-5">
-          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--style-badge-bg, rgba(255,255,255,.1))', color: 'var(--style-badge-text, rgba(255,255,255,.8))' }}>
+          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}>
             <CalendarCheck size={15} /> {badge}
           </p>
-          <h2 className="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--style-heading-color, var(--style-text-primary, #ffffff))' }}>{headline}</h2>
-          <p className="max-w-xl text-base leading-7" style={{ color: 'var(--style-body-color, rgba(255,255,255,.72))' }}>{subline}</p>
-          <div className="rounded-2xl border p-4 text-sm" style={{ borderColor: 'var(--style-border-color, rgba(255,255,255,.12))', background: 'color-mix(in srgb, var(--style-card-bg, #ffffff) 8%, transparent)', color: 'var(--style-text-muted, rgba(255,255,255,.7))' }}>
+          <h2 className="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, var(--booking-text-primary, #ffffff))' }}>{headline}</h2>
+          <p className="max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{subline}</p>
+          <div className="rounded-2xl border p-4 text-sm" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.12))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)', color: 'var(--booking-muted-color, rgba(255,255,255,.7))' }}>
             {timeModel === 'full_day' && 'Diese Buchung blockiert einen ganzen Tag.'}
             {timeModel === 'date_range' && 'Diese Buchung prüft einen Datumsbereich, z.B. für Zimmer, Locations oder mehrtägige Leistungen.'}
             {timeModel === 'time_slot' && `Diese Buchung nutzt Zeitslots${config?.intervalMinutes ? ` im ${config.intervalMinutes}-Minuten-Raster` : ''}.`}
           </div>
         </div>
 
-        <div className="rounded-[var(--style-card-radius,1.5rem)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--style-border-color, rgba(255,255,255,.1))', background: 'var(--style-card-bg, #ffffff)', color: 'var(--style-text-secondary, #09090b)' }}>
+        <div className="rounded-[var(--style-card-radius,1.5rem)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.1))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }}>
           {config && !config.enabled ? (
             <div className="rounded-2xl bg-amber-50 p-5 text-sm text-amber-800">Booking ist für diese Website noch nicht aktiviert.</div>
           ) : status === 'success' ? (
@@ -185,37 +215,44 @@ export function AvailabilityCalendarSection({ data }: SectionProps) {
   const [counts, setCounts] = useState<Record<string, number | null>>({});
   const days = useMemo(() => {
     const today = new Date();
-    const list = [
-      { label: 'Heute', date: toInputDate(today) },
-      { label: 'Morgen', date: toInputDate(addDays(today, 1)) },
-      { label: 'Wochenende', date: toInputDate(nextWeekend(today)) },
-    ];
-    return list;
+    return Array.from({ length: 14 }, (_, index) => {
+      const date = addDays(today, index);
+      return {
+        label: index === 0 ? 'Heute' : new Intl.DateTimeFormat('de-DE', { weekday: 'short' }).format(date),
+        date: toInputDate(date),
+        day: new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit' }).format(date),
+      };
+    });
   }, []);
 
   useEffect(() => {
+    if (!tenantId) {
+      setCounts(Object.fromEntries(days.map((day, index) => [day.date, index % 4 === 0 ? 0 : 3 + (index % 5)])));
+      return;
+    }
     let cancelled = false;
     Promise.all(days.map(async day => {
       const query = new URLSearchParams({ date: day.date, tenantId });
       const res = await fetch(`/api/booking/availability?${query.toString()}`);
       const json = await res.json().catch(() => ({}));
-      return [day.label, Array.isArray(json.slots) ? json.slots.length : 0] as const;
+      return [day.date, Array.isArray(json.slots) ? json.slots.length : 0] as const;
     })).then(entries => {
       if (!cancelled) setCounts(Object.fromEntries(entries));
     }).catch(() => {
-      if (!cancelled) setCounts(Object.fromEntries(days.map(day => [day.label, null])));
+      if (!cancelled) setCounts(Object.fromEntries(days.map(day => [day.date, null])));
     });
     return () => { cancelled = true; };
   }, [days, tenantId]);
 
   return (
     <BookingShell data={data} icon={<Clock3 size={18} />} defaultBadge="Verfügbarkeit" defaultHeadline="Freie Zeiten auf einen Blick">
-      <div className="grid gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
         {days.map((day) => (
-          <div key={day.label} className="rounded-2xl border p-4" style={{ borderColor: 'var(--style-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--style-card-bg, #ffffff) 10%, transparent)' }}>
-            <p className="text-xs font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--style-text-muted, rgba(255,255,255,.62))' }}>{day.label}</p>
-            <p className="mt-3 text-2xl font-black" style={{ color: 'var(--style-heading-color, #ffffff)' }}>{counts[day.label] ?? '–'}</p>
-            <p className="text-sm" style={{ color: 'var(--style-body-color, rgba(255,255,255,.74))' }}>Slots möglich</p>
+          <div key={day.date} className="rounded-2xl border p-4" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 10%, transparent)' }}>
+            <p className="text-xs font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--booking-muted-color, rgba(255,255,255,.62))' }}>{day.label}</p>
+            <p className="mt-1 text-sm font-semibold" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.74))' }}>{day.day}</p>
+            <p className="mt-3 text-2xl font-black" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{counts[day.date] ?? '–'}</p>
+            <p className="text-sm" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.74))' }}>Slots möglich</p>
           </div>
         ))}
       </div>
@@ -228,9 +265,9 @@ export function ResourceBookingShowcaseSection({ data }: SectionProps) {
     <BookingShell data={data} icon={<MapPin size={18} />} defaultBadge="Ressourcen" defaultHeadline="Räume, Tische oder Teams direkt anfragen">
       <div className="grid gap-3">
         {['Ressource wählen', 'Zeitraum prüfen', 'Anfrage senden'].map((label, index) => (
-          <div key={label} className="flex items-center gap-3 rounded-2xl border p-4" style={{ borderColor: 'var(--style-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--style-card-bg, #ffffff) 10%, transparent)' }}>
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-black" style={{ background: 'var(--style-accent-color, #ec4899)', color: 'var(--brand-btn-text, #09090b)' }}>{index + 1}</span>
-            <p className="font-semibold" style={{ color: 'var(--style-heading-color, #ffffff)' }}>{label}</p>
+          <div key={label} className="flex items-center gap-3 rounded-2xl border p-4" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 10%, transparent)' }}>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-black" style={{ background: 'var(--booking-accent-color, #f43f5e)', color: 'var(--brand-btn-text, #09090b)' }}>{index + 1}</span>
+            <p className="font-semibold" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{label}</p>
           </div>
         ))}
       </div>
@@ -242,16 +279,16 @@ export function BookingCtaProSection({ data }: SectionProps) {
   return (
     <section
       className="relative overflow-hidden rounded-[var(--style-card-radius,2rem)] px-5 py-8 shadow-2xl sm:px-8"
-      style={{ background: 'var(--style-section-bg, #09090b)', color: 'var(--style-text-primary, #ffffff)' }}
+      style={{ background: 'var(--booking-section-bg, #09090b)', color: 'var(--booking-text-primary, #ffffff)' }}
     >
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(120deg, color-mix(in srgb, var(--style-accent-color, #ec4899) 26%, transparent), transparent 48%)' }} />
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(120deg, color-mix(in srgb, var(--booking-accent-color, #f43f5e) 26%, transparent), transparent 48%)' }} />
       <div className="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
         <div className="max-w-2xl">
-          <p className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--style-badge-bg, rgba(255,255,255,.1))', color: 'var(--style-badge-text, rgba(255,255,255,.8))' }}>
+          <p className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}>
             <Sparkles size={14} /> {(data.badge as string) || 'Booking'}
           </p>
-          <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl" style={{ color: 'var(--style-heading-color, #ffffff)' }}>{(data.headline as string) || 'Jetzt Wunschtermin sichern'}</h2>
-          <p className="mt-2 text-sm leading-6" style={{ color: 'var(--style-body-color, rgba(255,255,255,.74))' }}>{(data.subline as string) || 'Direkt buchen oder erst unverbindlich anfragen. Das System passt sich dem freigeschalteten Booking-Modus an.'}</p>
+          <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{(data.headline as string) || 'Jetzt Wunschtermin sichern'}</h2>
+          <p className="mt-2 text-sm leading-6" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.74))' }}>{(data.subline as string) || 'Direkt buchen oder erst unverbindlich anfragen. Das System passt sich dem freigeschalteten Booking-Modus an.'}</p>
         </div>
         <a href="#booking" className="inline-flex shrink-0 items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-6 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--brand-btn-bg, #ffffff)', color: 'var(--brand-btn-text, #09090b)' }}>
           {(data.submitLabel as string) || 'Zum Booking'}
@@ -263,13 +300,13 @@ export function BookingCtaProSection({ data }: SectionProps) {
 
 function BookingShell({ data, icon, defaultBadge, defaultHeadline, children }: { data: SectionProps['data']; icon: ReactNode; defaultBadge: string; defaultHeadline: string; children: ReactNode }) {
   return (
-    <section id="booking" className="relative overflow-hidden rounded-[var(--style-card-radius,2rem)] px-5 py-10 shadow-2xl sm:px-8 md:px-12" style={{ background: 'var(--style-section-bg, #09090b)', color: 'var(--style-text-primary, #ffffff)' }}>
-      <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--style-accent-color, #ec4899) 28%, transparent), transparent 28%)' }} />
+    <section id="booking" className="relative overflow-hidden rounded-[var(--style-card-radius,2rem)] px-5 py-10 shadow-2xl sm:px-8 md:px-12" style={{ background: 'var(--booking-section-bg, #09090b)', color: 'var(--booking-text-primary, #ffffff)' }}>
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--booking-accent-color, #f43f5e) 28%, transparent), transparent 28%)' }} />
       <div className="relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--style-badge-bg, rgba(255,255,255,.1))', color: 'var(--style-badge-text, rgba(255,255,255,.8))' }}>{icon}{(data.badge as string) || defaultBadge}</p>
-          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--style-heading-color, #ffffff)' }}>{(data.headline as string) || defaultHeadline}</h2>
-          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--style-body-color, rgba(255,255,255,.72))' }}>{(data.subline as string) || 'Ein flexibler Booking-Einstieg für Termine, Tage, Räume, Ressourcen oder Anfragen.'}</p>
+          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}>{icon}{(data.badge as string) || defaultBadge}</p>
+          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{(data.headline as string) || defaultHeadline}</h2>
+          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{(data.subline as string) || 'Ein flexibler Booking-Einstieg für Termine, Tage, Räume, Ressourcen oder Anfragen.'}</p>
           <a href="#booking" className="mt-6 inline-flex items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--brand-btn-bg, #ffffff)', color: 'var(--brand-btn-text, #09090b)' }}>{(data.submitLabel as string) || 'Anfrage starten'}</a>
         </div>
         {children}

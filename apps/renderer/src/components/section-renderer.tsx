@@ -33,6 +33,27 @@ const CONTAINER: Record<string, string> = {
   full: 'w-full px-6',
 };
 
+const BOOKING_SECTION_TYPES = new Set(['bookingWidget', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
+
+function withBookingStyleAliases(sectionType: string, style?: React.CSSProperties): React.CSSProperties | undefined {
+  if (!style || !BOOKING_SECTION_TYPES.has(sectionType)) return style;
+  const source = style as Record<string, string>;
+  return {
+    ...style,
+    ...(source['--style-section-bg'] ? { '--booking-section-bg': source['--style-section-bg'] } : {}),
+    ...(source['--style-card-bg'] ? { '--booking-card-bg': source['--style-card-bg'] } : {}),
+    ...(source['--style-heading-color'] ? { '--booking-heading-color': source['--style-heading-color'] } : {}),
+    ...(source['--style-body-color'] ? { '--booking-body-color': source['--style-body-color'] } : {}),
+    ...(source['--style-text-muted'] ? { '--booking-muted-color': source['--style-text-muted'] } : {}),
+    ...(source['--style-text-primary'] ? { '--booking-text-primary': source['--style-text-primary'] } : {}),
+    ...(source['--style-text-secondary'] ? { '--booking-text-secondary': source['--style-text-secondary'] } : {}),
+    ...(source['--style-badge-bg'] ? { '--booking-badge-bg': source['--style-badge-bg'] } : {}),
+    ...(source['--style-badge-text'] ? { '--booking-badge-text': source['--style-badge-text'] } : {}),
+    ...(source['--style-border-color'] ? { '--booking-border-color': source['--style-border-color'] } : {}),
+    ...(source['--style-accent-color'] ? { '--booking-accent-color': source['--style-accent-color'] } : {}),
+  } as React.CSSProperties;
+}
+
 function sanitizeRenderValue(value: unknown): unknown {
   if (typeof value === 'string') {
     return /<[a-z][\s\S]*>/i.test(value) ? sanitizeHtml(value) : value;
@@ -141,11 +162,12 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   const overrideStyle = section.styleOverrides
     ? Object.fromEntries(Object.entries(section.styleOverrides).filter(([, v]) => v)) as React.CSSProperties
     : undefined;
+  const sectionStyle = withBookingStyleAliases(section.type, overrideStyle);
 
   if (isFullBleed) {
     const isDark = !FULL_BLEED_LIGHT.has(section.type);
     return (
-      <section id={section.anchorId ?? undefined} data-section-id={section.id} {...(isDark ? { 'data-theme': 'dark' } : {})} {...(overrideStyle ? { 'data-style': '' } : {})} style={overrideStyle}>
+      <section id={section.anchorId ?? undefined} data-section-id={section.id} {...(isDark ? { 'data-theme': 'dark' } : {})} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
         </SectionErrorBoundary>
@@ -158,7 +180,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   const containerClass = CONTAINER[section.container] ?? CONTAINER.default;
 
   return (
-    <section id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass}`} {...(overrideStyle ? { 'data-style': '' } : {})} style={overrideStyle}>
+    <section id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass}`} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
       <div className={containerClass}>
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
