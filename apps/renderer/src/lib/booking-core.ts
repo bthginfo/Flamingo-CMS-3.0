@@ -7,6 +7,8 @@ export const BOOKING_ADDON_KEY = 'booking';
 
 export const BOOKING_SECTION_TYPES = new Set([
   'bookingWidget',
+  'bookingSlotPicker',
+  'bookingDateRange',
   'availabilityCalendar',
   'resourceBookingShowcase',
   'bookingCtaPro',

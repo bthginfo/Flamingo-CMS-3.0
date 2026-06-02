@@ -113,6 +113,8 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   offerCampaignStrip: ['sectionBg', 'sectionBgAlt', 'cardBg', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'textPrimary', 'brandPrimary'],
   popup: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'cardRadius', 'buttonRadius', 'textPrimary', 'textSecondary', 'brandPrimary'],
   bookingWidget: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius', 'buttonRadius', 'textPrimary', 'textSecondary'],
+  bookingSlotPicker: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius', 'buttonRadius', 'textPrimary', 'textSecondary'],
+  bookingDateRange: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius', 'buttonRadius', 'textPrimary', 'textSecondary'],
   availabilityCalendar: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius', 'buttonRadius', 'textPrimary', 'textSecondary'],
   resourceBookingShowcase: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius', 'buttonRadius', 'textPrimary', 'textSecondary'],
   bookingCtaPro: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius', 'buttonRadius', 'textPrimary', 'textSecondary'],

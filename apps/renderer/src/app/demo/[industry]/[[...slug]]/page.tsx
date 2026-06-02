@@ -201,7 +201,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
   if (!page) return notFound();
 
   const firstIsHero = page.sections[0]?.type === 'hero';
-  const sectionsNeedingTenantId = new Set(['bookingWidget', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
+  const sectionsNeedingTenantId = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 
   return (
     <DemoPageShell

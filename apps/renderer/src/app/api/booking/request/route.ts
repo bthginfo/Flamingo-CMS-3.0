@@ -50,7 +50,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Diese Ressource passt nicht zur gewählten Leistung.' }, { status: 400 });
     }
 
-    const timeModel = (service?.timeModelOverride || settings.timeModel) as BookingTimeModel;
+    const requestedTimeModel = ['time_slot', 'full_day', 'date_range'].includes(clean(body.timeModel, 30))
+      ? clean(body.timeModel, 30) as BookingTimeModel
+      : null;
+    const timeModel = (service?.timeModelOverride || requestedTimeModel || settings.timeModel) as BookingTimeModel;
     const { startsAt, endsAt } = parseBookingDateRange({
       date: body.date,
       startDate: body.startDate,

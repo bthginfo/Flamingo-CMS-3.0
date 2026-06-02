@@ -345,6 +345,18 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "subline": "Wählen Sie aus, was Sie buchen möchten. Wir melden uns mit allen Details.",
     "submitLabel": ""
   },
+  "bookingSlotPicker": {
+    "badge": "Tages-Slots",
+    "headline": "Datum wählen und freie Uhrzeiten sehen",
+    "subline": "Perfekt für Restaurants, Cafés, Salons, Kurse oder Probetrainings mit konkreten Uhrzeiten.",
+    "submitLabel": "Slot anfragen"
+  },
+  "bookingDateRange": {
+    "badge": "Zeitraum",
+    "headline": "Aufenthalt, Raum oder Location anfragen",
+    "subline": "Für Hotel, Apartment, Eventraum, Location oder mehrtägige Leistungen mit Start- und Enddatum.",
+    "submitLabel": "Zeitraum anfragen"
+  },
   "availabilityCalendar": {
     "badge": "Verfügbarkeit",
     "headline": "Verfügbare Termine finden",

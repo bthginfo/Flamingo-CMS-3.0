@@ -33,7 +33,7 @@ const CONTAINER: Record<string, string> = {
   full: 'w-full px-6',
 };
 
-const BOOKING_SECTION_TYPES = new Set(['bookingWidget', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
+const BOOKING_SECTION_TYPES = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 
 function withBookingStyleAliases(sectionType: string, style?: React.CSSProperties): React.CSSProperties | undefined {
   if (!style || !BOOKING_SECTION_TYPES.has(sectionType)) return style;

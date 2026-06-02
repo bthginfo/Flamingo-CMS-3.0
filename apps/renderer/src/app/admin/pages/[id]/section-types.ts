@@ -55,6 +55,8 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'shopThankYou', label: 'Shop: Danke-Seite', description: 'Bestellbestätigung nach Kauf', category: 'Shop', requiresAddon: 'shop' },
   { type: 'shopFeaturedProducts', label: 'Shop: Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben', category: 'Shop', requiresAddon: 'shop' },
   { type: 'bookingWidget', label: 'Booking: Buchungsformular', description: 'Echte Anfrage oder Self-Service-Buchung mit Datum, Zeitmodell und Kundendaten', category: 'Booking', requiresAddon: 'booking' },
+  { type: 'bookingSlotPicker', label: 'Booking: Tages-Slots', description: 'Datum wählen, verfügbare Uhrzeiten sehen und direkt anfragen', category: 'Booking', requiresAddon: 'booking' },
+  { type: 'bookingDateRange', label: 'Booking: Zeitraum', description: 'Start- und Enddatum für Hotel, Location, Raum oder mehrtägige Leistungen', category: 'Booking', requiresAddon: 'booking' },
   { type: 'availabilityCalendar', label: 'Booking: Verfügbarkeitskalender', description: 'Kalenderansicht für verfügbare Zeitslots, Tage oder Datumsbereiche', category: 'Booking', requiresAddon: 'booking' },
   { type: 'resourceBookingShowcase', label: 'Booking: Ressourcen', description: 'Räume, Tische, Mitarbeiter oder Leistungen mit Buchungs-CTA anzeigen', category: 'Booking', requiresAddon: 'booking' },
   { type: 'bookingCtaPro', label: 'Booking: CTA', description: 'Kompakter Einstieg in den Buchungsflow', category: 'Booking', requiresAddon: 'booking' },

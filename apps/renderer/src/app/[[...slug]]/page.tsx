@@ -261,7 +261,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   }
 
   const brandCssVars = getBrandCssVars(brand);
-  const sectionsNeedingTenantId = new Set(['bookingWidget', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
+  const sectionsNeedingTenantId = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 
   // Build dynamic style overrides that need !important to beat Tailwind utilities
   const importantOverrides: string[] = [];

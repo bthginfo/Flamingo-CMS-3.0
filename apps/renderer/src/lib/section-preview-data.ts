@@ -9,6 +9,18 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     subline: 'Ein flexibles Booking-Modul für Anfrage oder direkte Buchung.',
     submitLabel: '',
   },
+  bookingSlotPicker: {
+    badge: 'Tages-Slots',
+    headline: 'Datum wählen und freie Uhrzeiten sehen',
+    subline: 'Perfekt für Restaurants, Cafés, Salons, Kurse oder Probetrainings mit konkreten Uhrzeiten.',
+    submitLabel: 'Slot anfragen',
+  },
+  bookingDateRange: {
+    badge: 'Zeitraum',
+    headline: 'Aufenthalt, Raum oder Location anfragen',
+    subline: 'Für Hotel, Apartment, Eventraum, Location oder mehrtägige Leistungen mit Start- und Enddatum.',
+    submitLabel: 'Zeitraum anfragen',
+  },
   availabilityCalendar: {
     badge: 'Verfügbarkeit',
     headline: 'Freie Termine auf einen Blick',

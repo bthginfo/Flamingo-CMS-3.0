@@ -43,6 +43,72 @@ function normalizeConfig(value: Partial<BookingConfig> | null | undefined): Book
   };
 }
 
+function useBookingConfig(tenantId: string) {
+  const [config, setConfig] = useState<BookingConfig | null>(null);
+
+  useEffect(() => {
+    if (!tenantId) {
+      setConfig(PREVIEW_CONFIG);
+      return;
+    }
+    fetch(`/api/booking/config?tenantId=${encodeURIComponent(tenantId)}`)
+      .then((res) => res.json())
+      .then((json) => setConfig(normalizeConfig(json)))
+      .catch(() => setConfig(normalizeConfig({ enabled: false })));
+  }, [tenantId]);
+
+  return config;
+}
+
+function useBookingSlots(input: {
+  enabled?: boolean;
+  tenantId: string;
+  date: string;
+  serviceId: string;
+  resourceId: string;
+  timeModel: BookingTimeModel;
+  resourceRequired: boolean;
+}) {
+  const [slots, setSlots] = useState<{ value: string; label: string }[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!input.enabled || !input.date || input.timeModel !== 'time_slot') {
+      setSlots([]);
+      return;
+    }
+    if (input.resourceRequired && !input.resourceId) {
+      setSlots([]);
+      return;
+    }
+    if (!input.tenantId) {
+      setSlots(mockSlots(input.date));
+      return;
+    }
+    const query = new URLSearchParams({
+      date: input.date,
+      serviceId: input.serviceId,
+      resourceId: input.resourceId,
+      tenantId: input.tenantId,
+    });
+    setLoading(true);
+    fetch(`/api/booking/availability?${query.toString()}`)
+      .then((res) => res.json())
+      .then((json) => setSlots(Array.isArray(json.slots) ? json.slots : []))
+      .catch(() => setSlots([]))
+      .finally(() => setLoading(false));
+  }, [input.date, input.enabled, input.resourceId, input.resourceRequired, input.serviceId, input.tenantId, input.timeModel]);
+
+  return { slots, loading };
+}
+
+function mockSlots(date: string) {
+  if (!date) return [];
+  const day = new Date(`${date}T00:00:00`).getDay();
+  if (day === 0) return [];
+  return ['11:30', '12:00', '12:30', '18:00', '18:30', '19:00', '20:00'].map((value) => ({ value, label: `${value} Uhr` }));
+}
+
 export function BookingWidgetSection({ data }: SectionProps) {
   const headline = (data.headline as string) || 'Termin oder Anfrage senden';
   const subline = (data.subline as string) || 'Wählen Sie aus, was Sie buchen möchten. Wir melden uns mit allen Details.';
@@ -210,6 +276,230 @@ export function BookingWidgetSection({ data }: SectionProps) {
   );
 }
 
+export function BookingSlotPickerSection({ data }: SectionProps) {
+  const tenantId = (data.tenantId as string) || '';
+  const badge = (data.badge as string) || 'Tisch & Termin';
+  const headline = (data.headline as string) || 'Tag wählen, freie Uhrzeiten sehen.';
+  const subline = (data.subline as string) || 'Ideal für Restaurants, Cafés, Salons, Trainings und Termine mit konkreten Uhrzeiten.';
+  const submitLabel = (data.submitLabel as string) || 'Anfrage senden';
+  const config = useBookingConfig(tenantId);
+  const [selectedServiceId, setSelectedServiceId] = useState('');
+  const [selectedResourceId, setSelectedResourceId] = useState('');
+  const [selectedDate, setSelectedDate] = useState(() => toInputDate(addDays(new Date(), 1)));
+  const [selectedSlot, setSelectedSlot] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [error, setError] = useState('');
+  const selectedService = (config?.services || []).find((service) => service.id === selectedServiceId);
+  const timeModel = selectedService?.timeModelOverride || config?.timeModel || 'time_slot';
+  const allowedResourceTypes = Array.isArray(selectedService?.allowedResourceTypes) ? selectedService.allowedResourceTypes : [];
+  const availableResources = (config?.resources || []).filter((resource) => !allowedResourceTypes.length || allowedResourceTypes.includes(resource.type));
+  const resourceRequired = Boolean(selectedService?.requiresResource);
+  const { slots, loading } = useBookingSlots({
+    enabled: config?.enabled,
+    tenantId,
+    date: selectedDate,
+    serviceId: selectedServiceId,
+    resourceId: selectedResourceId,
+    timeModel,
+    resourceRequired,
+  });
+
+  useEffect(() => setSelectedSlot(''), [selectedDate, selectedResourceId, selectedServiceId]);
+
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus('loading');
+    setError('');
+    const formData = new FormData(e.currentTarget);
+    const payload = Object.fromEntries(formData.entries());
+    try {
+      const res = await fetch('/api/booking/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...payload, tenantId, time: selectedSlot, timeModel: 'time_slot' }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error || 'Anfrage konnte nicht gesendet werden.');
+      setStatus('success');
+      e.currentTarget.reset();
+    } catch (err) {
+      setStatus('error');
+      setError(err instanceof Error ? err.message : 'Unbekannter Fehler');
+    }
+  }
+
+  return (
+    <section id="booking" className="relative overflow-hidden rounded-[var(--style-card-radius,2rem)] px-5 py-10 shadow-2xl sm:px-8 md:px-12" style={{ background: 'var(--booking-section-bg, #09090b)', color: 'var(--booking-text-primary, #ffffff)' }}>
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 16% 0%, color-mix(in srgb, var(--booking-accent-color, #f43f5e) 28%, transparent), transparent 30%)' }} />
+      <div className="relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <div>
+          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}><Clock3 size={15} /> {badge}</p>
+          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{headline}</h2>
+          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{subline}</p>
+          <div className="mt-6 grid gap-3 text-sm sm:grid-cols-3">
+            {['Datum wählen', 'Slots prüfen', config?.mode === 'instant' ? 'Direkt buchen' : 'Anfrage senden'].map((item, index) => (
+              <div key={item} className="rounded-2xl border p-3" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)', color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>
+                <span className="mb-2 grid h-7 w-7 place-items-center rounded-full text-xs font-black" style={{ background: 'var(--booking-accent-color, #f43f5e)', color: 'var(--brand-btn-text, #09090b)' }}>{index + 1}</span>
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <form onSubmit={submit} className="rounded-[var(--style-card-radius,1.5rem)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.1))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }}>
+          {config && !config.enabled ? <div className="rounded-2xl bg-amber-50 p-5 text-sm text-amber-800">Booking ist für diese Website noch nicht aktiviert.</div> : null}
+          {status === 'success' ? (
+            <div className="flex min-h-80 flex-col items-center justify-center gap-3 text-center">
+              <CheckCircle className="text-emerald-500" size={44} />
+              <p className="text-xl font-bold">Anfrage gesendet</p>
+              <p className="text-sm text-zinc-500">Wir melden uns mit der Bestätigung.</p>
+            </div>
+          ) : (
+            <div className="grid gap-4">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <select name="serviceId" value={selectedServiceId} onChange={(event) => { setSelectedServiceId(event.target.value); setSelectedResourceId(''); }} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
+                  <option value="">Leistung wählen</option>
+                  {config?.services.map((service) => <option key={service.id} value={service.id}>{service.name}{service.priceLabel ? ` · ${service.priceLabel}` : ''}</option>)}
+                </select>
+                <select name="resourceId" value={selectedResourceId} required={resourceRequired} onChange={(event) => setSelectedResourceId(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
+                  <option value="">{resourceRequired ? 'Ressource wählen *' : 'Ressource optional'}</option>
+                  {availableResources.map((resource) => <option key={resource.id} value={resource.id}>{resource.name}{resource.seats ? ` · ${resource.seats} Plätze` : ''}</option>)}
+                </select>
+              </div>
+              <input name="date" type="date" required value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+              <div>
+                <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">Verfügbare Uhrzeiten</p>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  {loading ? <p className="col-span-full rounded-xl bg-zinc-50 p-4 text-sm text-zinc-500">Slots werden geladen...</p> : slots.length ? slots.map((slot) => (
+                    <button key={slot.value} type="button" onClick={() => setSelectedSlot(slot.value)} className={`rounded-xl border px-3 py-3 text-sm font-bold transition ${selectedSlot === slot.value ? 'border-zinc-950 bg-zinc-950 text-white' : 'border-zinc-200 bg-white text-zinc-800 hover:border-zinc-400'}`}>
+                      {slot.label}
+                    </button>
+                  )) : <p className="col-span-full rounded-xl bg-amber-50 p-4 text-sm text-amber-800">Für diese Auswahl sind keine freien Uhrzeiten verfügbar.</p>}
+                </div>
+              </div>
+              <input type="hidden" name="time" value={selectedSlot} />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <input name="customerName" required placeholder="Name *" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="customerEmail" type="email" placeholder="E-Mail" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <input name="customerPhone" type="tel" placeholder="Telefon" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="partySize" type="number" min={1} defaultValue={2} placeholder="Personen / Menge" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+              </div>
+              <textarea name="message" rows={3} placeholder="Nachricht optional" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+              {status === 'error' && <p className="text-sm text-red-600">{error}</p>}
+              <button disabled={status === 'loading' || !selectedSlot} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-50" style={{ background: 'var(--brand-btn-bg, #09090b)', color: 'var(--brand-btn-text, #ffffff)' }}>
+                {status === 'loading' && <Loader2 className="animate-spin" size={17} />}
+                {submitLabel}
+              </button>
+            </div>
+          )}
+        </form>
+      </div>
+    </section>
+  );
+}
+
+export function BookingDateRangeSection({ data }: SectionProps) {
+  const tenantId = (data.tenantId as string) || '';
+  const badge = (data.badge as string) || 'Zeitraum';
+  const headline = (data.headline as string) || 'Zeitraum anfragen oder direkt buchen.';
+  const subline = (data.subline as string) || 'Für Zimmer, Apartments, Locations, Räume, mehrtägige Leistungen oder ganze Projektzeiträume.';
+  const submitLabel = (data.submitLabel as string) || 'Zeitraum anfragen';
+  const config = useBookingConfig(tenantId);
+  const [selectedServiceId, setSelectedServiceId] = useState('');
+  const [selectedResourceId, setSelectedResourceId] = useState('');
+  const [startDate, setStartDate] = useState(() => toInputDate(addDays(new Date(), 7)));
+  const [endDate, setEndDate] = useState(() => toInputDate(addDays(new Date(), 9)));
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [error, setError] = useState('');
+  const selectedService = (config?.services || []).find((service) => service.id === selectedServiceId);
+  const allowedResourceTypes = Array.isArray(selectedService?.allowedResourceTypes) ? selectedService.allowedResourceTypes : [];
+  const availableResources = (config?.resources || []).filter((resource) => !allowedResourceTypes.length || allowedResourceTypes.includes(resource.type));
+  const resourceRequired = Boolean(selectedService?.requiresResource);
+
+  async function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus('loading');
+    setError('');
+    const formData = new FormData(e.currentTarget);
+    const payload = Object.fromEntries(formData.entries());
+    try {
+      const res = await fetch('/api/booking/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...payload, tenantId, date: startDate, startDate, endDate, timeModel: 'date_range' }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error || 'Anfrage konnte nicht gesendet werden.');
+      setStatus('success');
+      e.currentTarget.reset();
+    } catch (err) {
+      setStatus('error');
+      setError(err instanceof Error ? err.message : 'Unbekannter Fehler');
+    }
+  }
+
+  return (
+    <section id="booking" className="relative overflow-hidden rounded-[var(--style-card-radius,2rem)] px-5 py-10 shadow-2xl sm:px-8 md:px-12" style={{ background: 'var(--booking-section-bg, #09090b)', color: 'var(--booking-text-primary, #ffffff)' }}>
+      <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--booking-accent-color, #f43f5e) 22%, transparent), transparent 45%)' }} />
+      <div className="relative grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-start">
+        <div>
+          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}><CalendarCheck size={15} /> {badge}</p>
+          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{headline}</h2>
+          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{subline}</p>
+          <div className="mt-6 rounded-2xl border p-4" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)' }}>
+            <p className="text-xs font-bold uppercase tracking-[0.16em]" style={{ color: 'var(--booking-muted-color, rgba(255,255,255,.56))' }}>Ausgewählter Zeitraum</p>
+            <p className="mt-2 text-2xl font-black" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{formatInputDate(startDate)} - {formatInputDate(endDate)}</p>
+            <p className="mt-1 text-sm" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>Verfügbarkeit wird beim Absenden serverseitig geprüft.</p>
+          </div>
+        </div>
+
+        <form onSubmit={submit} className="grid gap-4 rounded-[var(--style-card-radius,1.5rem)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.1))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }}>
+          {status === 'success' ? (
+            <div className="flex min-h-80 flex-col items-center justify-center gap-3 text-center">
+              <CheckCircle className="text-emerald-500" size={44} />
+              <p className="text-xl font-bold">Zeitraum angefragt</p>
+              <p className="text-sm text-zinc-500">Wir prüfen die Verfügbarkeit und melden uns.</p>
+            </div>
+          ) : (
+            <>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <input name="startDate" type="date" required value={startDate} onChange={(event) => setStartDate(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="endDate" type="date" required value={endDate} onChange={(event) => setEndDate(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <select name="serviceId" value={selectedServiceId} onChange={(event) => { setSelectedServiceId(event.target.value); setSelectedResourceId(''); }} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
+                  <option value="">Leistung wählen</option>
+                  {config?.services.map((service) => <option key={service.id} value={service.id}>{service.name}{service.priceLabel ? ` · ${service.priceLabel}` : ''}</option>)}
+                </select>
+                <select name="resourceId" value={selectedResourceId} required={resourceRequired} onChange={(event) => setSelectedResourceId(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
+                  <option value="">{resourceRequired ? 'Zimmer / Raum wählen *' : 'Zimmer / Raum optional'}</option>
+                  {availableResources.map((resource) => <option key={resource.id} value={resource.id}>{resource.name}{resource.seats ? ` · ${resource.seats} Plätze` : ''}</option>)}
+                </select>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <input name="customerName" required placeholder="Name *" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="customerEmail" type="email" placeholder="E-Mail" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <input name="customerPhone" type="tel" placeholder="Telefon" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="partySize" type="number" min={1} defaultValue={2} placeholder="Personen / Menge" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+              </div>
+              <textarea name="message" rows={3} placeholder="Wünsche, Anlass oder weitere Infos" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+              {status === 'error' && <p className="text-sm text-red-600">{error}</p>}
+              <button disabled={status === 'loading'} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-60" style={{ background: 'var(--brand-btn-bg, #09090b)', color: 'var(--brand-btn-text, #ffffff)' }}>
+                {status === 'loading' && <Loader2 className="animate-spin" size={17} />}
+                {submitLabel}
+              </button>
+            </>
+          )}
+        </form>
+      </div>
+    </section>
+  );
+}
+
 export function AvailabilityCalendarSection({ data }: SectionProps) {
   const tenantId = (data.tenantId as string) || '';
   const [counts, setCounts] = useState<Record<string, number | null>>({});
@@ -370,4 +660,9 @@ function nextWeekend(date: Date) {
 
 function toInputDate(date: Date) {
   return date.toISOString().slice(0, 10);
+}
+
+function formatInputDate(value: string) {
+  if (!value) return '';
+  return new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(`${value}T00:00:00`));
 }

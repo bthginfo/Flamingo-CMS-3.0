@@ -53,7 +53,7 @@ import { SignatureGridSection } from './shared/signature-grid';
 import { ComparisonCardsProSection } from './shared/comparison-cards-pro';
 import { AdditionalLocationsSection } from './shared/additional-locations';
 import { PopupSection } from './shared/popup';
-import { AvailabilityCalendarSection, BookingCtaProSection, BookingWidgetSection, ResourceBookingShowcaseSection } from './shared/booking-widget';
+import { AvailabilityCalendarSection, BookingCtaProSection, BookingDateRangeSection, BookingSlotPickerSection, BookingWidgetSection, ResourceBookingShowcaseSection } from './shared/booking-widget';
 import { TemplateAdvantageSection } from './shared/template-advantage';
 import { PrinciplesGridSection } from './shared/principles-grid';
 import { GlowHeroSection } from './shared/glow-hero';
@@ -737,6 +737,8 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   additionalLocations: AdditionalLocationsSection,
   popup: PopupSection,
   bookingWidget: BookingWidgetSection,
+  bookingSlotPicker: BookingSlotPickerSection,
+  bookingDateRange: BookingDateRangeSection,
   availabilityCalendar: AvailabilityCalendarSection,
   resourceBookingShowcase: ResourceBookingShowcaseSection,
   bookingCtaPro: BookingCtaProSection,
