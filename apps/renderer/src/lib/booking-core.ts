@@ -135,13 +135,7 @@ export async function hasBookingConflict(input: {
     }
   }
 
-  const rows = await db.select({
-    id: bookingRequests.id,
-    startsAt: bookingRequests.startsAt,
-    endsAt: bookingRequests.endsAt,
-    bufferBeforeMinutes: bookingRequests.bufferBeforeMinutes,
-    bufferAfterMinutes: bookingRequests.bufferAfterMinutes,
-  }).from(bookingRequests).where(and(...predicates));
+  const rows = await selectBookingConflictRowsCompat(predicates);
   const overlaps = rows.filter((row) => {
     const rowStartsAt = addMinutes(row.startsAt, -Math.max(row.bufferBeforeMinutes || 0, 0));
     const rowEndsAt = addMinutes(row.endsAt, Math.max(row.bufferAfterMinutes || 0, 0));
@@ -242,4 +236,30 @@ function isValidRange(startsAt: Date, endsAt: Date) {
 
 function addMinutes(date: Date, minutes: number) {
   return new Date(date.getTime() + minutes * 60_000);
+}
+
+async function selectBookingConflictRowsCompat(predicates: SQL[]) {
+  const db = getDb();
+  try {
+    return await db.select({
+      id: bookingRequests.id,
+      startsAt: bookingRequests.startsAt,
+      endsAt: bookingRequests.endsAt,
+      bufferBeforeMinutes: bookingRequests.bufferBeforeMinutes,
+      bufferAfterMinutes: bookingRequests.bufferAfterMinutes,
+    }).from(bookingRequests).where(and(...predicates));
+  } catch (error) {
+    if (!isMissingBookingRulesColumn(error)) throw error;
+    const rows = await db.select({
+      id: bookingRequests.id,
+      startsAt: bookingRequests.startsAt,
+      endsAt: bookingRequests.endsAt,
+    }).from(bookingRequests).where(and(...predicates));
+    return rows.map(row => ({ ...row, bufferBeforeMinutes: 0, bufferAfterMinutes: 0 }));
+  }
+}
+
+function isMissingBookingRulesColumn(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error || '');
+  return /buffer_before_minutes|buffer_after_minutes|min_party_size|max_party_size|intake_questions|intake_answers|column .* does not exist/i.test(message);
 }

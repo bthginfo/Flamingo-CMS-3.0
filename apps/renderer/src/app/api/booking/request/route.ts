@@ -35,9 +35,7 @@ export async function POST(req: NextRequest) {
     const db = getDb();
     const settings = await getOrCreateBookingSettings(tenantId);
     const timezone = normalizeTimezone(settings.timezone);
-    const [service] = serviceId
-      ? await db.select().from(bookingServices).where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.id, serviceId), eq(bookingServices.active, true))).limit(1)
-      : [];
+    const service = serviceId ? await selectBookingServiceCompat(tenantId, serviceId) : null;
     if (serviceId && !service) return NextResponse.json({ error: 'Diese Leistung ist nicht verfügbar.' }, { status: 400 });
     if (service?.minPartySize && partySize < service.minPartySize) {
       return NextResponse.json({ error: `Mindestens ${service.minPartySize} Person(en)/Einheit(en) erforderlich.` }, { status: 400 });
@@ -106,14 +104,15 @@ export async function POST(req: NextRequest) {
         email: customerEmail || null,
         phone: customerPhone || null,
       }).returning();
-      const [created] = await tx.insert(bookingRequests).values({
+      const bookingStatus = settings.mode === 'instant' ? 'confirmed' as const : 'requested' as const;
+      const bookingValues = {
         tenantId,
         customerId: customer.id,
         serviceId,
         resourceId,
         mode: settings.mode,
         timeModel,
-        status: settings.mode === 'instant' ? 'confirmed' : 'requested',
+        status: bookingStatus,
         customerName,
         customerEmail: customerEmail || null,
         customerPhone: customerPhone || null,
@@ -125,7 +124,12 @@ export async function POST(req: NextRequest) {
         intakeAnswers,
         message,
         cancellationTokenHash,
-      }).returning();
+      };
+      let [created] = await tx.insert(bookingRequests).values(bookingValues).returning().catch(async (error) => {
+        if (!isMissingBookingRulesColumn(error)) throw error;
+        const { bufferBeforeMinutes: _before, bufferAfterMinutes: _after, intakeAnswers: _answers, ...legacyValues } = bookingValues;
+        return tx.insert(bookingRequests).values(legacyValues).returning();
+      });
       return created;
     });
 
@@ -187,4 +191,39 @@ function normalizeIntakeAnswers(
 
 function addMinutes(date: Date, minutes: number) {
   return new Date(date.getTime() + minutes * 60_000);
+}
+
+async function selectBookingServiceCompat(tenantId: string, serviceId: string) {
+  const db = getDb();
+  try {
+    const [service] = await db.select().from(bookingServices)
+      .where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.id, serviceId), eq(bookingServices.active, true)))
+      .limit(1);
+    return service || null;
+  } catch (error) {
+    if (!isMissingBookingRulesColumn(error)) throw error;
+    const [service] = await db.select({
+      id: bookingServices.id,
+      tenantId: bookingServices.tenantId,
+      name: bookingServices.name,
+      description: bookingServices.description,
+      durationMinutes: bookingServices.durationMinutes,
+      timeModelOverride: bookingServices.timeModelOverride,
+      priceLabel: bookingServices.priceLabel,
+      requiresResource: bookingServices.requiresResource,
+      allowedResourceTypes: bookingServices.allowedResourceTypes,
+      active: bookingServices.active,
+      sortOrder: bookingServices.sortOrder,
+      createdAt: bookingServices.createdAt,
+      updatedAt: bookingServices.updatedAt,
+    }).from(bookingServices)
+      .where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.id, serviceId), eq(bookingServices.active, true)))
+      .limit(1);
+    return service ? { ...service, bufferBeforeMinutes: 0, bufferAfterMinutes: 0, minPartySize: null, maxPartySize: null, intakeQuestions: [] } : null;
+  }
+}
+
+function isMissingBookingRulesColumn(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error || '');
+  return /buffer_before_minutes|buffer_after_minutes|min_party_size|max_party_size|intake_questions|intake_answers|column .* does not exist/i.test(message);
 }

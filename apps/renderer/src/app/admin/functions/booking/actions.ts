@@ -59,15 +59,91 @@ export async function getBookingAdminData() {
   const settings = await getOrCreateBookingSettings(tenantId);
   const [resources, services, availabilityRules, calendarBlocks, blackouts, requests, templates] = await Promise.all([
     db.select().from(bookingResources).where(and(eq(bookingResources.tenantId, tenantId), eq(bookingResources.active, true))).orderBy(asc(bookingResources.sortOrder), asc(bookingResources.name)),
-    db.select().from(bookingServices).where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.active, true))).orderBy(asc(bookingServices.sortOrder), asc(bookingServices.name)),
+    selectBookingServicesCompat(tenantId),
     db.select().from(bookingAvailabilityRules).where(and(eq(bookingAvailabilityRules.tenantId, tenantId), eq(bookingAvailabilityRules.active, true))).orderBy(asc(bookingAvailabilityRules.weekday), asc(bookingAvailabilityRules.startTime)),
     db.select().from(bookingCalendarBlocks).where(and(eq(bookingCalendarBlocks.tenantId, tenantId), eq(bookingCalendarBlocks.active, true))).orderBy(asc(bookingCalendarBlocks.startsAt)),
     db.select().from(bookingBlackouts).where(eq(bookingBlackouts.tenantId, tenantId)).orderBy(asc(bookingBlackouts.startsAt)),
-    db.select().from(bookingRequests).where(eq(bookingRequests.tenantId, tenantId)).orderBy(asc(bookingRequests.startsAt)),
+    selectBookingRequestsCompat(tenantId),
     db.select().from(emailTemplates).where(eq(emailTemplates.tenantId, tenantId)),
   ]);
 
   return { addonActive, settings, resources, services, availabilityRules, calendarBlocks, blackouts, requests, templates };
+}
+
+async function selectBookingServicesCompat(tenantId: string) {
+  const db = getDb();
+  try {
+    return await db.select().from(bookingServices)
+      .where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.active, true)))
+      .orderBy(asc(bookingServices.sortOrder), asc(bookingServices.name));
+  } catch (error) {
+    if (!isMissingBookingRulesColumn(error)) throw error;
+    const rows = await db.select({
+      id: bookingServices.id,
+      tenantId: bookingServices.tenantId,
+      name: bookingServices.name,
+      description: bookingServices.description,
+      durationMinutes: bookingServices.durationMinutes,
+      timeModelOverride: bookingServices.timeModelOverride,
+      priceLabel: bookingServices.priceLabel,
+      requiresResource: bookingServices.requiresResource,
+      allowedResourceTypes: bookingServices.allowedResourceTypes,
+      active: bookingServices.active,
+      sortOrder: bookingServices.sortOrder,
+      createdAt: bookingServices.createdAt,
+      updatedAt: bookingServices.updatedAt,
+    }).from(bookingServices)
+      .where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.active, true)))
+      .orderBy(asc(bookingServices.sortOrder), asc(bookingServices.name));
+    return rows.map(row => ({
+      ...row,
+      bufferBeforeMinutes: 0,
+      bufferAfterMinutes: 0,
+      minPartySize: null,
+      maxPartySize: null,
+      intakeQuestions: [],
+    }));
+  }
+}
+
+async function selectBookingRequestsCompat(tenantId: string) {
+  const db = getDb();
+  try {
+    return await db.select().from(bookingRequests)
+      .where(eq(bookingRequests.tenantId, tenantId))
+      .orderBy(asc(bookingRequests.startsAt));
+  } catch (error) {
+    if (!isMissingBookingRulesColumn(error)) throw error;
+    const rows = await db.select({
+      id: bookingRequests.id,
+      tenantId: bookingRequests.tenantId,
+      customerId: bookingRequests.customerId,
+      serviceId: bookingRequests.serviceId,
+      resourceId: bookingRequests.resourceId,
+      mode: bookingRequests.mode,
+      timeModel: bookingRequests.timeModel,
+      status: bookingRequests.status,
+      customerName: bookingRequests.customerName,
+      customerEmail: bookingRequests.customerEmail,
+      customerPhone: bookingRequests.customerPhone,
+      partySize: bookingRequests.partySize,
+      startsAt: bookingRequests.startsAt,
+      endsAt: bookingRequests.endsAt,
+      message: bookingRequests.message,
+      cancellationTokenHash: bookingRequests.cancellationTokenHash,
+      cancellationReason: bookingRequests.cancellationReason,
+      createdAt: bookingRequests.createdAt,
+      updatedAt: bookingRequests.updatedAt,
+    }).from(bookingRequests)
+      .where(eq(bookingRequests.tenantId, tenantId))
+      .orderBy(asc(bookingRequests.startsAt));
+    return rows.map(row => ({
+      ...row,
+      bufferBeforeMinutes: 0,
+      bufferAfterMinutes: 0,
+      intakeAnswers: {},
+    }));
+  }
 }
 
 function getPublicDemoBookingAdminData(tenantId: string) {
@@ -250,7 +326,7 @@ export async function addBookingServiceAction(formData: FormData) {
   const name = cleanString(formData.get('name'), 255);
   if (!name) return;
   const timeModelOverrideRaw = cleanString(formData.get('timeModelOverride'), 20);
-  await getDb().insert(bookingServices).values({
+  const values = {
     tenantId,
     name,
     description: cleanString(formData.get('description'), 2000) || null,
@@ -264,6 +340,18 @@ export async function addBookingServiceAction(formData: FormData) {
     maxPartySize: intOptional(formData.get('maxPartySize'), 1, 10000),
     allowedResourceTypes: stringList(formData.getAll('allowedResourceTypes'), BOOKING_RESOURCE_TYPES),
     intakeQuestions: parseIntakeQuestions(formData.get('intakeQuestions')),
+  };
+  await getDb().insert(bookingServices).values(values).catch(async (error) => {
+    if (!isMissingBookingRulesColumn(error)) throw error;
+    const {
+      bufferBeforeMinutes: _before,
+      bufferAfterMinutes: _after,
+      minPartySize: _min,
+      maxPartySize: _max,
+      intakeQuestions: _questions,
+      ...legacyValues
+    } = values;
+    await getDb().insert(bookingServices).values(legacyValues);
   });
   revalidatePath('/admin/functions/booking');
 }
@@ -275,7 +363,7 @@ export async function updateBookingServiceAction(formData: FormData) {
   const name = cleanString(formData.get('name'), 255);
   if (!id || !name) return;
   const timeModelOverrideRaw = cleanString(formData.get('timeModelOverride'), 20);
-  await getDb().update(bookingServices).set({
+  const values = {
     name,
     description: cleanString(formData.get('description'), 2000) || null,
     durationMinutes: intValue(formData.get('durationMinutes'), 30, 0, 1440) || null,
@@ -289,7 +377,19 @@ export async function updateBookingServiceAction(formData: FormData) {
     allowedResourceTypes: stringList(formData.getAll('allowedResourceTypes'), BOOKING_RESOURCE_TYPES),
     intakeQuestions: parseIntakeQuestions(formData.get('intakeQuestions')),
     updatedAt: new Date(),
-  }).where(and(eq(bookingServices.id, id), eq(bookingServices.tenantId, tenantId)));
+  };
+  await getDb().update(bookingServices).set(values).where(and(eq(bookingServices.id, id), eq(bookingServices.tenantId, tenantId))).catch(async (error) => {
+    if (!isMissingBookingRulesColumn(error)) throw error;
+    const {
+      bufferBeforeMinutes: _before,
+      bufferAfterMinutes: _after,
+      minPartySize: _min,
+      maxPartySize: _max,
+      intakeQuestions: _questions,
+      ...legacyValues
+    } = values;
+    await getDb().update(bookingServices).set(legacyValues).where(and(eq(bookingServices.id, id), eq(bookingServices.tenantId, tenantId)));
+  });
   revalidatePath('/admin/functions/booking');
 }
 
@@ -649,6 +749,11 @@ function parseIntakeQuestions(value: FormDataEntryValue | null) {
       options,
     };
   }).filter((item): item is { id: string; label: string; required: boolean; type: string; options: string[] } => Boolean(item));
+}
+
+function isMissingBookingRulesColumn(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error || '');
+  return /buffer_before_minutes|buffer_after_minutes|min_party_size|max_party_size|intake_questions|intake_answers|column .* does not exist/i.test(message);
 }
 
 function bookingEmailValues(booking: typeof bookingRequests.$inferSelect & { cancellationToken?: string | null }, timezone?: string | null, cancellationReason?: string | null) {

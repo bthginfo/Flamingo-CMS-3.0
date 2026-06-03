@@ -21,20 +21,7 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   const settings = await getOrCreateBookingSettings(tenantId);
   const [services, resources] = await Promise.all([
-    db.select({
-      id: bookingServices.id,
-      name: bookingServices.name,
-      durationMinutes: bookingServices.durationMinutes,
-      bufferBeforeMinutes: bookingServices.bufferBeforeMinutes,
-      bufferAfterMinutes: bookingServices.bufferAfterMinutes,
-      priceLabel: bookingServices.priceLabel,
-      timeModelOverride: bookingServices.timeModelOverride,
-      requiresResource: bookingServices.requiresResource,
-      minPartySize: bookingServices.minPartySize,
-      maxPartySize: bookingServices.maxPartySize,
-      allowedResourceTypes: bookingServices.allowedResourceTypes,
-      intakeQuestions: bookingServices.intakeQuestions,
-    }).from(bookingServices).where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.active, true))).orderBy(asc(bookingServices.sortOrder), asc(bookingServices.name)),
+    selectBookingServicesCompat(tenantId),
     db.select({
       id: bookingResources.id,
       name: bookingResources.name,
@@ -53,4 +40,48 @@ export async function GET(req: NextRequest) {
     services,
     resources,
   });
+}
+
+async function selectBookingServicesCompat(tenantId: string) {
+  const db = getDb();
+  try {
+    return await db.select({
+      id: bookingServices.id,
+      name: bookingServices.name,
+      durationMinutes: bookingServices.durationMinutes,
+      bufferBeforeMinutes: bookingServices.bufferBeforeMinutes,
+      bufferAfterMinutes: bookingServices.bufferAfterMinutes,
+      priceLabel: bookingServices.priceLabel,
+      timeModelOverride: bookingServices.timeModelOverride,
+      requiresResource: bookingServices.requiresResource,
+      minPartySize: bookingServices.minPartySize,
+      maxPartySize: bookingServices.maxPartySize,
+      allowedResourceTypes: bookingServices.allowedResourceTypes,
+      intakeQuestions: bookingServices.intakeQuestions,
+    }).from(bookingServices).where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.active, true))).orderBy(asc(bookingServices.sortOrder), asc(bookingServices.name));
+  } catch (error) {
+    if (!isMissingBookingRulesColumn(error)) throw error;
+    const rows = await db.select({
+      id: bookingServices.id,
+      name: bookingServices.name,
+      durationMinutes: bookingServices.durationMinutes,
+      priceLabel: bookingServices.priceLabel,
+      timeModelOverride: bookingServices.timeModelOverride,
+      requiresResource: bookingServices.requiresResource,
+      allowedResourceTypes: bookingServices.allowedResourceTypes,
+    }).from(bookingServices).where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.active, true))).orderBy(asc(bookingServices.sortOrder), asc(bookingServices.name));
+    return rows.map(row => ({
+      ...row,
+      bufferBeforeMinutes: 0,
+      bufferAfterMinutes: 0,
+      minPartySize: null,
+      maxPartySize: null,
+      intakeQuestions: [],
+    }));
+  }
+}
+
+function isMissingBookingRulesColumn(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error || '');
+  return /buffer_before_minutes|buffer_after_minutes|min_party_size|max_party_size|intake_questions|intake_answers|column .* does not exist/i.test(message);
 }

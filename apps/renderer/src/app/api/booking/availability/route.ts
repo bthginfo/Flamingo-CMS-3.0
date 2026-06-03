@@ -28,9 +28,7 @@ export async function GET(req: NextRequest) {
   const settings = await getOrCreateBookingSettings(tenantId);
   const timezone = normalizeTimezone(settings.timezone);
 
-  const [service] = serviceId
-    ? await db.select().from(bookingServices).where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.id, serviceId), eq(bookingServices.active, true))).limit(1)
-    : [];
+  const service = serviceId ? await selectBookingServiceCompat(tenantId, serviceId) : null;
   const [resource] = resourceId
     ? await db.select({ id: bookingResources.id, type: bookingResources.type }).from(bookingResources).where(and(eq(bookingResources.tenantId, tenantId), eq(bookingResources.id, resourceId), eq(bookingResources.active, true))).limit(1)
     : [];
@@ -153,4 +151,39 @@ function addDays(date: string, days: number) {
   const next = new Date(`${date}T00:00:00Z`);
   next.setUTCDate(next.getUTCDate() + days);
   return next.toISOString().slice(0, 10);
+}
+
+async function selectBookingServiceCompat(tenantId: string, serviceId: string) {
+  const db = getDb();
+  try {
+    const [service] = await db.select().from(bookingServices)
+      .where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.id, serviceId), eq(bookingServices.active, true)))
+      .limit(1);
+    return service || null;
+  } catch (error) {
+    if (!isMissingBookingRulesColumn(error)) throw error;
+    const [service] = await db.select({
+      id: bookingServices.id,
+      tenantId: bookingServices.tenantId,
+      name: bookingServices.name,
+      description: bookingServices.description,
+      durationMinutes: bookingServices.durationMinutes,
+      timeModelOverride: bookingServices.timeModelOverride,
+      priceLabel: bookingServices.priceLabel,
+      requiresResource: bookingServices.requiresResource,
+      allowedResourceTypes: bookingServices.allowedResourceTypes,
+      active: bookingServices.active,
+      sortOrder: bookingServices.sortOrder,
+      createdAt: bookingServices.createdAt,
+      updatedAt: bookingServices.updatedAt,
+    }).from(bookingServices)
+      .where(and(eq(bookingServices.tenantId, tenantId), eq(bookingServices.id, serviceId), eq(bookingServices.active, true)))
+      .limit(1);
+    return service ? { ...service, bufferBeforeMinutes: 0, bufferAfterMinutes: 0, minPartySize: null, maxPartySize: null, intakeQuestions: [] } : null;
+  }
+}
+
+function isMissingBookingRulesColumn(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error || '');
+  return /buffer_before_minutes|buffer_after_minutes|min_party_size|max_party_size|intake_questions|intake_answers|column .* does not exist/i.test(message);
 }
