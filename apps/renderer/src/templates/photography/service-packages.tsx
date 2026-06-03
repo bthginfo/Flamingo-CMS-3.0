@@ -35,14 +35,14 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
           <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-16 break-words">{headline}</h2>
           <div className={`grid gap-8 ${gridCols}`}>
             {packages.map((pkg, i) => (
-              <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={`border-t ${pkg.highlighted ? 'border-gray-900' : 'border-[color:var(--token-card-border,#e4e4e7)]'} pt-8`}>
+              <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={`border-t ${pkg.highlighted ? 'border-[color:var(--token-card-border,#18181b)]' : 'border-[color:var(--token-card-border,#e4e4e7)]'} pt-8`}>
                 <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]">{pkg.name}</h3>
                 {pkg.price && <p className="text-2xl font-extralight text-[color:var(--token-heading,#18181b)] mt-2">{pkg.price}{pkg.priceNote && <span className="text-sm text-[color:var(--token-on-dark-body,#a1a1aa)] ml-1">{pkg.priceNote}</span>}</p>}
                 {pkg.description && <div className="text-[color:var(--token-on-dark-body,#a1a1aa)] text-sm mt-3" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
                 <ul className="mt-6 space-y-2">
                   {pkg.features.map((f, j) => <li key={j} className="text-[color:var(--token-on-dark-muted,#52525b)] text-sm">— {f}</li>)}
                 </ul>
-                {pkg.ctaHref && <a href={pkg.ctaHref} className="inline-block mt-6 text-sm text-[color:var(--token-heading,#18181b)] border-b border-gray-900 hover:opacity-70">{pkg.ctaLabel || 'Anfragen'} →</a>}
+                {pkg.ctaHref && <a href={pkg.ctaHref} className="inline-block mt-6 text-sm text-[color:var(--token-heading,#18181b)] border-b border-[color:var(--token-card-border,#18181b)] hover:opacity-70">{pkg.ctaLabel || 'Anfragen'} →</a>}
               </motion.div>
             ))}
           </div>

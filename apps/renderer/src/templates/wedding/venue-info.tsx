@@ -38,7 +38,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
             <div className="space-y-4 border-t border-[color:var(--token-card-border,#e4e4e7)] pt-6 md:border-t-0 md:pt-0 md:border-l md:pl-12">
               {address && <p className="text-[color:var(--token-on-dark-muted,#52525b)] text-sm">{address}</p>}
               {contact && <p className="text-[color:var(--token-on-dark-muted,#52525b)] text-sm">{contact}</p>}
-              {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-block text-sm text-[color:var(--token-heading,#18181b)] border-b border-gray-900 hover:opacity-70 transition-opacity mt-4">Route planen →</a>}
+              {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-block text-sm text-[color:var(--token-heading,#18181b)] border-b border-[color:var(--token-card-border,#18181b)] hover:opacity-70 transition-opacity mt-4">Route planen →</a>}
             </div>
           </div>
         </div>
@@ -142,7 +142,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
                   {a.image && <div className="relative h-40 mb-4"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <h4 className="font-medium text-[color:var(--token-heading,#18181b)]">{a.name}</h4>
                   {a.description && <div className="text-[color:var(--token-on-dark-muted,#71717a)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: a.description }} />}
-                  {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-sm text-[color:var(--token-heading,#18181b)] border-b border-gray-900 mt-3 inline-block hover:opacity-70">Details →</a>}
+                  {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-sm text-[color:var(--token-heading,#18181b)] border-b border-[color:var(--token-card-border,#18181b)] mt-3 inline-block hover:opacity-70">Details →</a>}
                 </motion.div>
               ))}
             </div>
@@ -163,7 +163,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
               {directions.map((d, i) => {
                 const Icon = dirIcons[(d.icon || 'car').toLowerCase()] || Car;
                 return (
-                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900 p-6">
+                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6">
                     <Icon className="w-6 h-6 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] mb-3" />
                     <h3 className="font-bold text-[color:var(--token-heading,#18181b)] mb-2">{d.title}</h3>
                     <div className="text-[color:var(--token-on-dark-muted,#52525b)] text-sm rt-content" dangerouslySetInnerHTML={{ __html: d.text }} />
@@ -175,7 +175,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
           {accommodations.length > 0 && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {accommodations.map((a, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900 overflow-hidden">
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border,#18181b)] overflow-hidden">
                   {a.image && <div className="relative h-40"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <div className="p-5">
                     <h4 className="font-bold text-[color:var(--token-heading,#18181b)]">{a.name}</h4>

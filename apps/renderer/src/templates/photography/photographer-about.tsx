@@ -48,7 +48,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                   ))}
                 </div>
               )}
-              {ctaHref && <a href={ctaHref} className="inline-block mt-10 text-sm text-[color:var(--token-heading,#18181b)] border-b border-gray-900 hover:opacity-70 transition-opacity">{ctaLabel || 'Kontakt aufnehmen'} →</a>}
+              {ctaHref && <a href={ctaHref} className="inline-block mt-10 text-sm text-[color:var(--token-heading,#18181b)] border-b border-[color:var(--token-card-border,#18181b)] hover:opacity-70 transition-opacity">{ctaLabel || 'Kontakt aufnehmen'} →</a>}
             </div>
           </div>
         </div>

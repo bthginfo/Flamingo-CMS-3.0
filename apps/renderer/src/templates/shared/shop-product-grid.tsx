@@ -101,7 +101,7 @@ export function ShopProductGridSection({ data }: Props) {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Produkt suchen…"
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[color:var(--token-card-border,#e4e4e7)] bg-[var(--token-section-bg-alt,#fafafa)] text-sm focus:outline-none focus:ring-2 focus:ring-zinc-300 focus:bg-[var(--token-card-bg,#ffffff)] transition"
+              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[color:var(--token-card-border,#e4e4e7)] bg-[var(--token-section-bg-alt,#fafafa)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--token-card-border,#d4d4d8)] focus:bg-[var(--token-card-bg,#ffffff)] transition"
             />
           </div>
         )}
@@ -126,7 +126,7 @@ export function ShopProductGridSection({ data }: Props) {
             min={priceRange[0]} max={priceRange[1]} step={100}
             value={priceFilter[0]}
             onChange={e => setPriceFilter([Math.min(Number(e.target.value), priceFilter[1]), priceFilter[1]])}
-            className="w-24 sm:w-32 accent-zinc-700"
+            className="w-24 sm:w-32 accent-[var(--token-icon,#3f3f46)]"
           />
           <span className="text-[color:var(--token-on-dark-body,#a1a1aa)]">–</span>
           <input
@@ -134,7 +134,7 @@ export function ShopProductGridSection({ data }: Props) {
             min={priceRange[0]} max={priceRange[1]} step={100}
             value={priceFilter[1]}
             onChange={e => setPriceFilter([priceFilter[0], Math.max(Number(e.target.value), priceFilter[0])])}
-            className="w-24 sm:w-32 accent-zinc-700"
+            className="w-24 sm:w-32 accent-[var(--token-icon,#3f3f46)]"
           />
           <span className="text-[color:var(--token-on-dark-muted,#3f3f46)] font-medium">{formatPrice(priceFilter[1])}</span>
           {(priceFilter[0] > priceRange[0] || priceFilter[1] < priceRange[1]) && (

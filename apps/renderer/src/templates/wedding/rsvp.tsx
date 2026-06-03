@@ -66,32 +66,32 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
             {status === 'error' && <p className="text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errorMsg}</p>}
             <div>
               <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-on-dark-body,#a1a1aa)] mb-2">Name(n)</label>
-              <input name="name" type="text" required className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border,#e4e4e7)] focus:border-gray-900 outline-none bg-transparent text-[color:var(--token-heading,#18181b)]" placeholder="Vor- und Nachname" />
+              <input name="name" type="text" required className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border,#e4e4e7)] focus:border-[color:var(--token-card-border,#18181b)] outline-none bg-transparent text-[color:var(--token-heading,#18181b)]" placeholder="Vor- und Nachname" />
             </div>
             <div>
               <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-on-dark-body,#a1a1aa)] mb-2">E-Mail</label>
-              <input name="email" type="email" required className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border,#e4e4e7)] focus:border-gray-900 outline-none bg-transparent text-[color:var(--token-heading,#18181b)]" placeholder="eure@email.de" />
+              <input name="email" type="email" required className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border,#e4e4e7)] focus:border-[color:var(--token-card-border,#18181b)] outline-none bg-transparent text-[color:var(--token-heading,#18181b)]" placeholder="eure@email.de" />
             </div>
             <div>
               <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-on-dark-body,#a1a1aa)] mb-2">Zusage</label>
               <div className="flex gap-6 py-2">
-                <label className="flex items-center gap-2 text-sm text-[color:var(--token-on-dark-muted,#3f3f46)]"><input type="radio" name="attending" value="yes" defaultChecked className="accent-gray-900" /> Wir kommen</label>
-                <label className="flex items-center gap-2 text-sm text-[color:var(--token-on-dark-muted,#3f3f46)]"><input type="radio" name="attending" value="no" className="accent-gray-900" /> Leider nicht</label>
+                <label className="flex items-center gap-2 text-sm text-[color:var(--token-on-dark-muted,#3f3f46)]"><input type="radio" name="attending" value="yes" defaultChecked className="accent-[var(--token-icon,#18181b)]" /> Wir kommen</label>
+                <label className="flex items-center gap-2 text-sm text-[color:var(--token-on-dark-muted,#3f3f46)]"><input type="radio" name="attending" value="no" className="accent-[var(--token-icon,#18181b)]" /> Leider nicht</label>
               </div>
             </div>
             <div>
               <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-on-dark-body,#a1a1aa)] mb-2">Anzahl Personen</label>
-              <input name="guestCount" type="number" min={1} max={10} defaultValue={1} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border,#e4e4e7)] focus:border-gray-900 outline-none bg-transparent text-[color:var(--token-heading,#18181b)]" />
+              <input name="guestCount" type="number" min={1} max={10} defaultValue={1} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border,#e4e4e7)] focus:border-[color:var(--token-card-border,#18181b)] outline-none bg-transparent text-[color:var(--token-heading,#18181b)]" />
             </div>
             <div>
               <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-on-dark-body,#a1a1aa)] mb-2">Essenswünsche / Allergien</label>
-              <textarea name="dietary" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border,#e4e4e7)] focus:border-gray-900 outline-none bg-transparent text-[color:var(--token-heading,#18181b)] resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
+              <textarea name="dietary" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border,#e4e4e7)] focus:border-[color:var(--token-card-border,#18181b)] outline-none bg-transparent text-[color:var(--token-heading,#18181b)] resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
             </div>
             <div>
               <label className="block text-[10px] uppercase tracking-[0.2em] text-[color:var(--token-on-dark-body,#a1a1aa)] mb-2">Nachricht (optional)</label>
-              <textarea name="comment" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border,#e4e4e7)] focus:border-gray-900 outline-none bg-transparent text-[color:var(--token-heading,#18181b)] resize-none" placeholder="Eure Nachricht an uns..." />
+              <textarea name="comment" rows={2} className="w-full px-0 py-3 border-0 border-b border-[color:var(--token-card-border,#e4e4e7)] focus:border-[color:var(--token-card-border,#18181b)] outline-none bg-transparent text-[color:var(--token-heading,#18181b)] resize-none" placeholder="Eure Nachricht an uns..." />
             </div>
-            <button type="submit" disabled={status === 'loading'} className="w-full py-3 border border-gray-900 text-[color:var(--token-heading,#18181b)] text-sm uppercase tracking-[0.2em] hover:bg-[var(--token-section-bg-alt,#18181b)] hover:text-[color:var(--token-on-dark-heading,#ffffff)] transition-colors mt-8 disabled:opacity-50">
+            <button type="submit" disabled={status === 'loading'} className="w-full py-3 border border-[color:var(--token-card-border,#18181b)] text-[color:var(--token-heading,#18181b)] text-sm uppercase tracking-[0.2em] hover:bg-[var(--token-section-bg-alt,#18181b)] hover:text-[color:var(--token-on-dark-heading,#ffffff)] transition-colors mt-8 disabled:opacity-50">
               {status === 'loading' ? 'Wird gesendet…' : 'Zusagen'}
             </button>
           </form>
@@ -108,15 +108,15 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wide mb-4 break-words">{headline}</h2>
           {subline && <p className="text-[color:var(--token-on-dark-muted,#71717a)] mb-2">{plain(subline)}</p>}
           {deadlineStr && <p className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] text-sm font-bold mb-10">Bis {deadlineStr}</p>}
-          <form onSubmit={handleSubmit} className="space-y-5 border-2 border-gray-900 p-8">
+          <form onSubmit={handleSubmit} className="space-y-5 border-2 border-[color:var(--token-card-border,#18181b)] p-8">
             {status === 'error' && <p className="text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errorMsg}</p>}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-on-dark-muted,#71717a)] mb-2">Name(n)</label>
-              <input name="name" type="text" required className="w-full px-4 py-3 bg-[var(--token-section-bg-alt,#fafafa)] border-2 border-[color:var(--token-card-border,#e4e4e7)] text-[color:var(--token-heading,#18181b)] placeholder-gray-400 outline-none focus:border-[var(--token-card-border,var(--brand-accent,#f39c12))]" placeholder="Vor- und Nachname" />
+              <input name="name" type="text" required className="w-full px-4 py-3 bg-[var(--token-section-bg-alt,#fafafa)] border-2 border-[color:var(--token-card-border,#e4e4e7)] text-[color:var(--token-heading,#18181b)] placeholder:text-[color:var(--token-muted,#a1a1aa)] outline-none focus:border-[var(--token-card-border,var(--brand-accent,#f39c12))]" placeholder="Vor- und Nachname" />
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-on-dark-muted,#71717a)] mb-2">E-Mail</label>
-              <input name="email" type="email" required className="w-full px-4 py-3 bg-[var(--token-section-bg-alt,#fafafa)] border-2 border-[color:var(--token-card-border,#e4e4e7)] text-[color:var(--token-heading,#18181b)] placeholder-gray-400 outline-none focus:border-[var(--token-card-border,var(--brand-accent,#f39c12))]" placeholder="eure@email.de" />
+              <input name="email" type="email" required className="w-full px-4 py-3 bg-[var(--token-section-bg-alt,#fafafa)] border-2 border-[color:var(--token-card-border,#e4e4e7)] text-[color:var(--token-heading,#18181b)] placeholder:text-[color:var(--token-muted,#a1a1aa)] outline-none focus:border-[var(--token-card-border,var(--brand-accent,#f39c12))]" placeholder="eure@email.de" />
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-on-dark-muted,#71717a)] mb-2">Zusage</label>
@@ -131,11 +131,11 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-on-dark-muted,#71717a)] mb-2">Essenswünsche / Allergien</label>
-              <textarea name="dietary" rows={3} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt,#fafafa)] border-2 border-[color:var(--token-card-border,#e4e4e7)] text-[color:var(--token-heading,#18181b)] placeholder-gray-400 outline-none focus:border-[var(--token-card-border,var(--brand-accent,#f39c12))] resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
+              <textarea name="dietary" rows={3} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt,#fafafa)] border-2 border-[color:var(--token-card-border,#e4e4e7)] text-[color:var(--token-heading,#18181b)] placeholder:text-[color:var(--token-muted,#a1a1aa)] outline-none focus:border-[var(--token-card-border,var(--brand-accent,#f39c12))] resize-none" placeholder="z.B. vegetarisch, glutenfrei..." />
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[color:var(--token-on-dark-muted,#71717a)] mb-2">Nachricht (optional)</label>
-              <textarea name="comment" rows={2} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt,#fafafa)] border-2 border-[color:var(--token-card-border,#e4e4e7)] text-[color:var(--token-heading,#18181b)] placeholder-gray-400 outline-none focus:border-[var(--token-card-border,var(--brand-accent,#f39c12))] resize-none" placeholder="Eure Nachricht an uns..." />
+              <textarea name="comment" rows={2} className="w-full px-4 py-3 bg-[var(--token-section-bg-alt,#fafafa)] border-2 border-[color:var(--token-card-border,#e4e4e7)] text-[color:var(--token-heading,#18181b)] placeholder:text-[color:var(--token-muted,#a1a1aa)] outline-none focus:border-[var(--token-card-border,var(--brand-accent,#f39c12))] resize-none" placeholder="Eure Nachricht an uns..." />
             </div>
             <button type="submit" disabled={status === 'loading'} className="w-full flex items-center justify-center gap-2 py-3 px-6 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity disabled:opacity-50">
               <Send className="w-4 h-4" /> {status === 'loading' ? 'Wird gesendet…' : 'Zusagen'}

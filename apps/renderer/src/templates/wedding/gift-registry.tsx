@@ -32,7 +32,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
                     <h3 className="font-light text-[color:var(--token-heading,#18181b)]">{item.title}</h3>
                     {item.description && <p className="text-[color:var(--token-on-dark-body,#a1a1aa)] text-sm mt-1">{plain(item.description)}</p>}
                   </div>
-                  {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-sm text-[color:var(--token-heading,#18181b)] border-b border-gray-900 hover:opacity-70">Link →</a>}
+                  {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-sm text-[color:var(--token-heading,#18181b)] border-b border-[color:var(--token-card-border,#18181b)] hover:opacity-70">Link →</a>}
                 </motion.div>
               ))}
             </div>
@@ -63,7 +63,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
           {items.length > 0 && (
             <div className="grid sm:grid-cols-2 gap-4 mb-12">
               {items.map((item, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900 p-6 flex items-start gap-4">
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6 flex items-start gap-4">
                   <Gift className="w-5 h-5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <h3 className="font-bold text-[color:var(--token-heading,#18181b)]">{item.title}</h3>
@@ -75,7 +75,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
             </div>
           )}
           {bankDetails && (
-            <div className="border-2 border-gray-900 p-8">
+            <div className="border-2 border-[color:var(--token-card-border,#18181b)] p-8">
               <p className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] font-bold mb-4">Bankverbindung</p>
               <div className="text-[color:var(--token-on-dark-muted,#52525b)] text-sm space-y-1">
                 {bankDetails.holder && <p>Kontoinhaber: {bankDetails.holder}</p>}

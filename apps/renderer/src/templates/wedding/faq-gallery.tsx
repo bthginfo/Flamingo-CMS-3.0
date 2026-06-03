@@ -81,7 +81,7 @@ function FaqItem({ question, answer, index, variant }: { question: string; answe
 
   if (variant === 'bold') {
     return (
-      <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900">
+      <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border,#18181b)]">
         <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between p-5 text-left">
           <span className="font-bold text-[color:var(--token-heading,#18181b)]">{question}</span>
           <ChevronDown className={`w-5 h-5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-transform ${open ? 'rotate-180' : ''}`} />

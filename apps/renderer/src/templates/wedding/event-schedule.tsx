@@ -94,7 +94,7 @@ function ScheduleBold({ badge, headline, events }: P) {
           {events.map((event, i) => {
             const Icon = ICONS[(event.icon || 'heart').toLowerCase()] || Heart;
             return (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="border-2 border-gray-900 p-6 hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))/50] transition-colors">
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6 hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))/50] transition-colors">
                 <div className="flex items-center gap-3 mb-3">
                   <Icon className="w-5 h-5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
                   <span className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] font-bold text-sm">{event.time}</span>

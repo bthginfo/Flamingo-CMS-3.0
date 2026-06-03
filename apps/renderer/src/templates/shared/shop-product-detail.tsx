@@ -109,7 +109,7 @@ export function ShopProductDetailSection({ data }: Props) {
           {images.length > 1 && (
             <div className="flex gap-3">
               {images.slice(0, 4).map((img, i) => (
-                <button key={i} onClick={() => setSelectedImage(i)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${i === selectedImage ? 'border-zinc-900 ring-2 ring-zinc-900/20' : 'border-[color:var(--token-card-border,#e4e4e7)] hover:border-zinc-400'}`}>
+                <button key={i} onClick={() => setSelectedImage(i)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${i === selectedImage ? 'border-[color:var(--token-card-border,#18181b)] ring-2 ring-zinc-900/20' : 'border-[color:var(--token-card-border,#e4e4e7)] hover:border-[color:var(--token-card-border,#a1a1aa)]'}`}>
                   <img src={img} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
@@ -169,7 +169,7 @@ export function ShopProductDetailSection({ data }: Props) {
                     <button
                       key={val}
                       onClick={() => setSelectedVariant(matchVariant?.id || null)}
-                      className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${isSelected ? 'border-zinc-900 bg-[var(--token-section-bg-alt,#18181b)] text-[color:var(--token-on-dark-heading,#ffffff)]' : 'border-[color:var(--token-card-border,#e4e4e7)] hover:border-zinc-400'}`}
+                      className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${isSelected ? 'border-[color:var(--token-card-border,#18181b)] bg-[var(--token-section-bg-alt,#18181b)] text-[color:var(--token-on-dark-heading,#ffffff)]' : 'border-[color:var(--token-card-border,#e4e4e7)] hover:border-[color:var(--token-card-border,#a1a1aa)]'}`}
                     >
                       {val}
                     </button>

@@ -166,7 +166,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta.label && (
               <a href={primaryCta.href || '#'}
-                className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 text-[color:var(--token-heading,#18181b)] font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))] hover:text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-colors w-full sm:w-auto">
+                className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 text-[color:var(--token-heading,#18181b)] font-medium text-base border-b-2 border-[color:var(--token-card-border,#18181b)] pb-1 hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))] hover:text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-colors w-full sm:w-auto">
                 {primaryCta.label}
                 {primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
               </a>

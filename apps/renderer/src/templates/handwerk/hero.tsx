@@ -165,12 +165,12 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
           {subline && <div className="text-lg text-[color:var(--token-on-dark-body,#a1a1aa)] leading-relaxed mt-8 max-w-lg [&_p]:inline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta?.label && (
-              <a href={primaryCta.href} className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto text-[color:var(--token-heading,#18181b)] font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))] hover:text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-colors">
+              <a href={primaryCta.href} className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto text-[color:var(--token-heading,#18181b)] font-medium text-base border-b-2 border-[color:var(--token-card-border,#18181b)] pb-1 hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))] hover:text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-colors">
                 {primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
               </a>
             )}
             {secondaryCta?.label && (
-              <a href={secondaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-card-border,#d4d4d8)] px-7 py-3 text-[color:var(--token-on-dark-muted,#71717a)] hover:text-[color:var(--token-on-dark-muted,#3f3f46)] hover:border-gray-400 transition-colors text-sm w-full sm:w-auto">
+              <a href={secondaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-card-border,#d4d4d8)] px-7 py-3 text-[color:var(--token-on-dark-muted,#71717a)] hover:text-[color:var(--token-on-dark-muted,#3f3f46)] hover:border-[color:var(--token-card-border,#a1a1aa)] transition-colors text-sm w-full sm:w-auto">
                 <Phone size={14} />{secondaryCta.label}
               </a>
             )}

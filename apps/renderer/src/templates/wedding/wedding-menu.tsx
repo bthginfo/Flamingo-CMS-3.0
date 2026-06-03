@@ -94,7 +94,7 @@ function Bold({ badge, headline, courses, note }: P) {
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
         <div className="grid md:grid-cols-2 gap-8">
           {courses.map((course, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900 p-6">
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6">
               <h3 className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] font-bold uppercase tracking-wider text-sm mb-5 flex items-center gap-2">
                 <UtensilsCrossed className="w-4 h-4" /> {course.title}
               </h3>

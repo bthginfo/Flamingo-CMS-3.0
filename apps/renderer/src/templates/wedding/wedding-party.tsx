@@ -76,7 +76,7 @@ function Bold({ badge, headline, members }: P) {
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {members.map((m, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-2 border-gray-900 p-6 text-center hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))/50] transition-colors">
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6 text-center hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))/50] transition-colors">
               <div className="relative w-24 h-24 mx-auto mb-4">
                 {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full bg-[var(--token-section-bg-alt,#f4f4f5)] flex items-center justify-center text-3xl text-[color:var(--token-on-dark-body,#d4d4d8)]">{m.name[0]}</div>}
               </div>
