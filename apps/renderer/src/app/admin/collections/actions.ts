@@ -175,7 +175,6 @@ export async function getOrCreateOverviewPageAction(collectionKey: string): Prom
   const existing = await db.select({ id: pages.id }).from(pages)
     .where(and(
       eq(pages.tenantId, session.tenantId),
-      eq(pages.type, 'collection_overview'),
       or(eq(pages.slug, collectionKey), eq(pages.slug, overviewSlug))
     ))
     .limit(1);

@@ -17,6 +17,7 @@ export function NewsPreviewSection({ data }: Props) {
   const items = (data.items as NewsItem[]) || [];
   const collectionKey = (data.collectionKey as string) || 'news';
   const collectionBasePath = (data.collectionBasePath as string) || '';
+  const linkPrefix = (data.linkPrefix as string) || '';
   const linkLabel = (data.linkLabel as string) || 'Alle Beiträge';
   const linkIcon = (data.linkIcon as string) || '';
   const ref = useRef(null);
@@ -25,7 +26,7 @@ export function NewsPreviewSection({ data }: Props) {
   // Derive base path for demo routes (e.g. /demo/tourism)
   const pathname = usePathname();
   const demoMatch = pathname.match(/^(\/demo\/[^/]+)/);
-  const basePath = demoMatch ? demoMatch[1] : '';
+  const basePath = linkPrefix || (demoMatch ? demoMatch[1] : '');
   const detailBasePath = collectionBasePath || `${basePath}/c/${collectionKey}`;
   const linkHref = (data.linkHref as string) || (collectionBasePath ? collectionBasePath.replace(/\/c\//, '/') : `${basePath}/${collectionKey}`);
 

@@ -79,9 +79,10 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   section = { ...section, data: sanitizeRenderValue(prefixInternalLinks(section.data, linkPrefix)) as Record<string, unknown> };
 
   // Inject collection items into newsPreview/newsGrid sections
-  if ((section.type === 'newsPreview' || section.type === 'newsGrid') && collections) {
+  if (section.type === 'newsPreview' || section.type === 'newsGrid') {
     const key = (section.data.collectionKey as string) || 'news';
-    const col = collections.find(c => c.key === key);
+    const col = collections?.find(c => c.key === key);
+    const collectionBasePath = prefixInternalLinks(`/c/${key}`, linkPrefix);
     if (col) {
       section = {
         ...section,
@@ -94,9 +95,12 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
             excerpt: (item.data.excerpt as string) || undefined,
             date: item.createdAt,
           })),
-          collectionBasePath: prefixInternalLinks(`/c/${key}`, linkPrefix),
+          collectionBasePath,
+          linkPrefix,
         },
       };
+    } else {
+      section = { ...section, data: { ...section.data, collectionBasePath, linkPrefix } };
     }
   }
 
