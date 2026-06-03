@@ -36,10 +36,10 @@ export function PrinciplesGridSection({ data }: Props) {
               transition={{ delay: index * 0.05 }}
               className="min-h-[280px] rounded-2xl border border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.12)))] bg-[var(--token-card-bg, var(--style-card-bg,#101018))] px-8 py-10"
             >
-              <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-badge-bg,var(--style-badge-bg,rgba(255,255,255,0.10)))] text-sm font-black text-[var(--token-icon,var(--style-icon-color,var(--brand-primary,#f24171)))]">
+              <div className="mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-badge-bg,var(--style-badge-bg,rgba(255,255,255,0.10)))] text-sm font-black text-[var(--token-icon,var(--style-icon-color,var(--token-icon, var(--brand-primary,#f24171))))]">
                 {String(index + 1).padStart(2, '0')}
               </div>
-              {item.eyebrow && <div className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--token-eyebrow,var(--style-accent-color,var(--brand-primary,#f24171)))]">{item.eyebrow}</div>}
+              {item.eyebrow && <div className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--token-eyebrow,var(--style-accent-color,var(--token-icon, var(--brand-primary,#f24171))))]">{item.eyebrow}</div>}
               {item.title && <h3 className="text-2xl font-black leading-tight text-[var(--token-heading,var(--style-heading-color,#ffffff))]">{item.title}</h3>}
               {item.text && <p className="mt-4 text-sm leading-7 text-[var(--token-body,var(--style-body-color,rgba(255,255,255,0.70)))]">{plain(item.text)}</p>}
             </motion.article>

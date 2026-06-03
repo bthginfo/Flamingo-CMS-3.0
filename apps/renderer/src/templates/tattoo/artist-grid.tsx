@@ -42,7 +42,7 @@ export function ArtistGridSection({ data }: Props) {
                     </div>
                   )}
                 </div>
-                <h3 className="text-white font-bold text-lg group-hover:text-brand-accent transition-colors">{artist.name}</h3>
+                <h3 className="text-white font-bold text-lg group-hover:text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-colors">{artist.name}</h3>
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {artist.styles.map(s => (
                     <span key={s} className="text-[10px] uppercase tracking-wider bg-white/10 text-white/60 px-2 py-0.5 rounded-full">{s}</span>

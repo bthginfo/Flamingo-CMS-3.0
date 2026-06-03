@@ -42,7 +42,7 @@ export function LocationHighlightSection({ data }: Props) {
                   const Icon = ICON_MAP[poi.icon || 'default'] || ICON_MAP.default;
                   return (
                     <div key={i} className="flex items-center gap-3 bg-white p-3 rounded-lg border border-gray-100">
-                      <Icon size={18} className="text-brand-primary shrink-0" />
+                      <Icon size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] shrink-0" />
                       <div>
                         <p className="text-sm font-medium text-gray-900">{poi.label}</p>
                         <p className="text-xs text-gray-500">{poi.distance}</p>

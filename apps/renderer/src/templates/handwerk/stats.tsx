@@ -56,7 +56,7 @@ export function StatsSection({ data }: Props) {
             className="text-center p-6 rounded-2xl bg-[var(--token-card-bg, var(--style-card-bg,#fff))] border border-[var(--style-border,rgba(0,0,0,.08))] shadow-sm"
           >
             {stat.icon && (
-              <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-[color-mix(in_srgb,var(--style-accent,var(--brand-primary))_12%,transparent)] flex items-center justify-center text-[var(--style-accent,var(--brand-primary))]">
+              <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-[color-mix(in_srgb,var(--style-accent,var(--token-icon, var(--brand-primary)))_12%,transparent)] flex items-center justify-center text-[var(--style-accent,var(--token-icon, var(--brand-primary)))]">
                 <DynamicIcon name={stat.icon} size={20} />
               </div>
             )}

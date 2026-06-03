@@ -92,11 +92,11 @@ function TestimonialsBold({ headline, badgeText, ratingValue, ratingCount, items
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-10">
-        <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--brand-accent))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--brand-dark)))]">{badgeText}</span>
+        <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-section-bg-alt, var(--brand-dark))))]">{badgeText}</span>
         {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] lg:text-4xl">{headline}</h2>}
         {(ratingValue || ratingCount) && (
           <div className="flex items-center gap-2 mt-4">
-            <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={16} className="fill-[var(--style-accent-color,var(--brand-accent))] text-[var(--style-accent-color,var(--brand-accent))]" />)}</div>
+            <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={16} className="fill-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))] text-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))]" />)}</div>
             <span className="text-sm font-bold text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#374151)))]">{ratingValue}/5</span>
           </div>
         )}
@@ -110,7 +110,7 @@ function TestimonialsBold({ headline, badgeText, ratingValue, ratingCount, items
             transition={{ duration: 0.4, delay: i * 0.1 }}
             className="w-[320px] shrink-0 snap-start border-3 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-6 shadow-[4px_4px_0_var(--style-text-primary,#0d2137)]"
           >
-            <Quote size={24} className="mb-3 text-[var(--style-accent-color,var(--brand-accent))]" />
+            <Quote size={24} className="mb-3 text-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))]" />
             <div className="rt-content font-medium leading-relaxed text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#1f2937)))]" dangerouslySetInnerHTML={{ __html: item.quote }} />
             <div className="mt-4 border-t-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] pt-3">
               <p className="text-sm font-bold uppercase tracking-wide text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.name}</p>

@@ -100,7 +100,7 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,color-mix(in_srgb,var(--style-accent,var(--brand-primary))_10%,transparent)))] text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent,var(--brand-primary))))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,color-mix(in_srgb,var(--style-accent,var(--token-icon, var(--brand-primary)))_10%,transparent)))] text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent,var(--token-icon, var(--brand-primary)))))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
               {category}
             </span>
           )}

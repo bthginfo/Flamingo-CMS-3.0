@@ -24,7 +24,7 @@ export function CafeFaqSection({ data }: Props) {
             <motion.div key={i} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: i * 0.05 }} className="bg-white rounded-lg border border-stone-100">
               <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between p-5 text-left">
                 <span className="font-medium text-gray-900 pr-4">{item.question}</span>
-                {open === i ? <Minus size={18} className="text-brand-primary shrink-0" /> : <Plus size={18} className="text-gray-400 shrink-0" />}
+                {open === i ? <Minus size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] shrink-0" /> : <Plus size={18} className="text-gray-400 shrink-0" />}
               </button>
               {open === i && <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">{plain(item.answer)}</div>}
             </motion.div>

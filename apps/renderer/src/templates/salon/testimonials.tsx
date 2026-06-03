@@ -35,8 +35,8 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
       <div className="mb-6 flex flex-wrap gap-3 text-sm text-gray-600">{ratingValue && <span>{ratingValue}</span>}{ratingCount && <span>{ratingCount}</span>}</div>
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
-          <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--brand-primary)]/20 bg-white p-5 shadow-md">
-            <div className="flex gap-1 text-[var(--brand-accent)]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={14} />)}</div>
+          <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-white p-5 shadow-md">
+            <div className="flex gap-1 text-[var(--token-eyebrow, var(--brand-accent))]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={14} />)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-gray-900 rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-semibold text-gray-900">{item.name || ''}</p>
             <p className="text-xs text-gray-600">{[item.context, item.sourceLabel].filter(Boolean).join(' / ')}</p>
@@ -60,7 +60,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
       <div className="grid gap-8 md:grid-cols-3">
         {items.map((item, i) => (
           <article key={`${item.name}-${i}`} className="border-t border-black/10 pt-6">
-            <div className="flex gap-1 text-brand-accent">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={12} />)}</div>
+            <div className="flex gap-1 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={12} />)}</div>
             {item.quote && <div className="mt-4 text-sm font-light leading-6 text-gray-900 rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-light text-gray-900">{item.name || ''}</p>
             <p className="text-xs font-light text-gray-600">{[item.context, item.sourceLabel].filter(Boolean).join(' / ')}</p>
@@ -76,22 +76,22 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
         {subline && <div className="mt-4 font-bold text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="mb-6 flex flex-wrap gap-3 text-sm font-bold uppercase text-gray-600">{ratingValue && <span>{ratingValue}</span>}{ratingCount && <span>{ratingCount}</span>}</div>
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
-          <article key={`${item.name}-${i}`} className="border-2 border-[#111827] bg-[#111] p-5 shadow-[4px_4px_0_var(--brand-accent)]">
-            <div className="flex gap-1 text-brand-accent">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={14} />)}</div>
+          <article key={`${item.name}-${i}`} className="border-2 border-[#111827] bg-[#111] p-5 shadow-[4px_4px_0_var(--token-eyebrow, var(--brand-accent))]">
+            <div className="flex gap-1 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={14} />)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-white rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-black uppercase text-white">{item.name || ''}</p>
             <p className="text-xs text-white/60">{[item.context, item.sourceLabel].filter(Boolean).join(' / ')}</p>
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex bg-brand-accent px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{ctaPrimary.label}</a>}
     </div>
   );
 }

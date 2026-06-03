@@ -47,8 +47,8 @@ export function MaterialGallerySection({ data }: Props) {
               onClick={() => setActiveFilter(cat)}
               className={`px-4 py-2 text-sm font-medium rounded-full border transition-all ${
                 activeFilter === cat
-                  ? 'bg-[var(--brand-primary,#2563eb)] text-white border-transparent shadow-md'
-                  : 'bg-white text-[var(--style-text-secondary,#64748b)] border-gray-200 hover:border-[var(--brand-primary,#2563eb)]/30'
+                  ? 'bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-white border-transparent shadow-md'
+                  : 'bg-white text-[var(--style-text-secondary,#64748b)] border-gray-200 hover:border-[var(--token-icon, var(--brand-primary,#2563eb))]/30'
               }`}
             >
               {cat}

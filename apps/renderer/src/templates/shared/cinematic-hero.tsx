@@ -40,7 +40,7 @@ export function CinematicHeroSection({ data }: Props) {
       ) : image ? (
         <img src={image} alt="" className="h-[110%] w-full object-cover" />
       ) : (
-        <div className="h-full w-full bg-[var(--brand-dark,#09090b)]" />
+        <div className="h-full w-full bg-[var(--token-section-bg-alt, var(--brand-dark,#09090b))]" />
       )}
       <div className="absolute inset-0" style={{ background: overlay }} />
       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black to-transparent" />
@@ -65,7 +65,7 @@ export function CinematicHeroSection({ data }: Props) {
         {subline && <p className={`mt-6 max-w-2xl text-base leading-8 text-[var(--token-subheading, var(--style-subheading-color,rgba(255,255,255,0.78)))] md:text-xl ${align === 'center' ? 'mx-auto' : ''}`}>{plain(subline)}</p>}
 
         <div className="mt-9 flex flex-wrap items-center gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--brand-primary,#fff)))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#111))] shadow-xl transition hover:brightness-110">{primaryCta.label}<ArrowRight size={16} /></a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--token-icon, var(--brand-primary,#fff))))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#111))] shadow-xl transition hover:brightness-110">{primaryCta.label}<ArrowRight size={16} /></a>}
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.25)))] bg-[var(--token-card-bg, var(--style-card-bg,rgba(255,255,255,0.10)))] px-6 py-3 text-sm font-bold text-[var(--style-text-primary,#ffffff)] backdrop-blur transition hover:brightness-110"><Play size={15} />{secondaryCta.label}</a>}
         </div>
 

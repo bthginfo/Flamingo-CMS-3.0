@@ -37,7 +37,7 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
       <div className="mb-10 max-w-3xl">
         {badgeText && (
           <motion.p initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600">
-            <Star size={12} className="text-brand-primary" />{badgeText}
+            <Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{badgeText}
           </motion.p>
         )}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
@@ -45,11 +45,11 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
-          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} className="rounded-xl border border-[var(--brand-primary)]/20 bg-white p-5 shadow-md">
+          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-white p-5 shadow-md">
             {item.mediaType === 'image' && item.image ? (
               <div className="relative mb-4 aspect-[16/10] overflow-hidden rounded-xl"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-brand-primary/10/10 text-brand-primary"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10]/10 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
             )}
             <h3 className="font-bold text-gray-900">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
@@ -93,7 +93,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
+        {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
         {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
@@ -103,14 +103,14 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
             {item.mediaType === 'image' && item.image ? (
               <div className="relative mb-4 aspect-[16/10] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
-              <div className="mb-4 inline-block border-2 border-[var(--brand-primary)] p-2 text-brand-primary"><DynamicIcon name={item.icon || 'star'} size={22} /></div>
+              <div className="mb-4 inline-block border-2 border-[var(--token-icon, var(--brand-primary))] p-2 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={item.icon || 'star'} size={22} /></div>
             )}
             <h3 className="font-black uppercase text-gray-900">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--brand-primary)]">{ctaPrimary.label}<ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--token-icon, var(--brand-primary))]">{ctaPrimary.label}<ArrowRight size={16} /></a>}
     </div>
   );
 }

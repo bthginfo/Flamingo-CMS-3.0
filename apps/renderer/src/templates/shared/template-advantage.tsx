@@ -22,7 +22,7 @@ export function TemplateAdvantageSection({ data }: Props) {
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-end">
           <div>
-            {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--token-badge-text, var(--style-badge-text,var(--brand-primary,#f24171)))]">{badge}</div>}
+            {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--token-badge-text, var(--style-badge-text,var(--token-icon, var(--brand-primary,#f24171))))]">{badge}</div>}
             {headline && <h2 className="max-w-3xl text-4xl font-black leading-none text-[var(--token-heading, var(--style-heading-color,#14111a))] md:text-6xl">{headline}</h2>}
           </div>
           <div>
@@ -31,7 +31,7 @@ export function TemplateAdvantageSection({ data }: Props) {
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {bullets.map((item, index) => (
                   <div key={index} className="flex items-center gap-2 text-sm font-semibold text-[var(--token-body, var(--style-body-color,#14111a))]">
-                    <CheckCircle2 size={18} className="text-[var(--token-icon, var(--style-icon-color,var(--brand-primary,#f24171)))]" />
+                    <CheckCircle2 size={18} className="text-[var(--token-icon, var(--style-icon-color,var(--token-icon, var(--brand-primary,#f24171))))]" />
                     {item}
                   </div>
                 ))}
@@ -66,7 +66,7 @@ export function TemplateAdvantageSection({ data }: Props) {
 
         {cta.label && (
           <div className="mt-10">
-            <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--brand-primary,#f24171)))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#ffffff))]">
+            <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--token-icon, var(--brand-primary,#f24171))))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#ffffff))]">
               {cta.label}<ArrowRight size={16} />
             </a>
           </div>

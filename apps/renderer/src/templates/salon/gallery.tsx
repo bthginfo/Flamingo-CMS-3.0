@@ -31,10 +31,10 @@ function GalleryClassic({ headline, subline, badgeText, images }: Props) {
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((img, i) => (
-          <motion.article key={`${img.src}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }} className="group overflow-hidden rounded-xl border border-[var(--brand-primary)]/20 bg-white shadow-md">
+          <motion.article key={`${img.src}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }} className="group overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-white shadow-md">
             {img.src && <div className="relative aspect-[4/3] overflow-hidden"><Image src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-4">
-              {img.category && <span className="inline-block rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase text-[var(--brand-accent)]">{img.category}</span>}
+              {img.category && <span className="inline-block rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase text-[var(--token-eyebrow, var(--brand-accent))]">{img.category}</span>}
               {(img.caption || img.alt) && <p className="mt-2 text-sm text-gray-900">{img.caption || img.alt}</p>}
             </div>
           </motion.article>
@@ -71,16 +71,16 @@ function GalleryBold({ headline, subline, badgeText, images }: Props) {
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
         {subline && <div className="mt-4 font-bold text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((img, i) => (
-          <article key={`${img.src}-${i}`} className="group overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--brand-accent)]">
+          <article key={`${img.src}-${i}`} className="group overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow, var(--brand-accent))]">
             {img.src && <div className="relative aspect-[4/3] overflow-hidden"><Image src={img.src} alt={img.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-4">
-              {img.category && <span className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase text-white">{img.category}</span>}
+              {img.category && <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase text-white">{img.category}</span>}
               {(img.caption || img.alt) && <p className="mt-2 text-sm font-bold uppercase text-white">{img.caption || img.alt}</p>}
             </div>
           </article>

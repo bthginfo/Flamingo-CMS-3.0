@@ -31,10 +31,10 @@ function ExpertiseClassic({ headline, subline, badgeText, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
-          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--brand-primary)]/20 bg-white p-6 shadow-md">
-            {item.metaLabel && <span className="inline-block rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase text-[var(--brand-accent)]">{item.metaLabel}</span>}
+          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-white p-6 shadow-md">
+            {item.metaLabel && <span className="inline-block rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase text-[var(--token-eyebrow, var(--brand-accent))]">{item.metaLabel}</span>}
             <div className="mt-4 flex gap-4">
-              <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-brand-accent" />
+              <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
               <div>
                 <h3 className="font-semibold text-gray-900">{item.title || ''}</h3>
                 {item.text && <div className="mt-1 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
@@ -60,7 +60,7 @@ function ExpertiseModern({ headline, subline, badgeText, items }: Props) {
           <article key={`${item.title}-${i}`} className="border-t border-black/10 pt-6">
             {item.metaLabel && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{item.metaLabel}</p>}
             <div className="mt-3 flex gap-4">
-              <DynamicIcon name={item.icon || 'sparkles'} size={18} className="text-brand-accent" />
+              <DynamicIcon name={item.icon || 'sparkles'} size={18} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
               <div>
                 <h3 className="font-light text-gray-900">{item.title || ''}</h3>
                 {item.text && <div className="mt-2 text-sm font-light leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
@@ -77,16 +77,16 @@ function ExpertiseBold({ headline, subline, badgeText, items }: Props) {
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
         {subline && <div className="mt-4 font-bold text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
-          <article key={`${item.title}-${i}`} className="border-2 border-[#111827] bg-[#111] p-6 shadow-[4px_4px_0_var(--brand-accent)]">
-            {item.metaLabel && <span className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase text-white">{item.metaLabel}</span>}
+          <article key={`${item.title}-${i}`} className="border-2 border-[#111827] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow, var(--brand-accent))]">
+            {item.metaLabel && <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase text-white">{item.metaLabel}</span>}
             <div className="mt-4 flex gap-4">
-              <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-brand-accent" />
+              <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
               <div>
                 <h3 className="font-black uppercase text-white">{item.title || ''}</h3>
                 {item.text && <div className="mt-1 text-sm leading-6 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}

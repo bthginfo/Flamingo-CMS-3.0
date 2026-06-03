@@ -31,18 +31,18 @@ export function FeeTableSection({ data }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
-            className={`relative p-8 rounded-xl border ${fee.highlighted ? 'border-brand-primary bg-brand-primary/5 ring-1 ring-brand-primary/20' : 'border-slate-200 bg-white'} text-center`}
+            className={`relative p-8 rounded-xl border ${fee.highlighted ? 'border-[var(--token-card-border,var(--brand-primary,#1a5276))] bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/5] ring-1 ring-brand-primary/20' : 'border-slate-200 bg-white'} text-center`}
           >
             {fee.highlighted && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-primary text-white text-xs font-semibold px-3 py-1 rounded-full">Empfohlen</div>
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-white text-xs font-semibold px-3 py-1 rounded-full">Empfohlen</div>
             )}
             {fee.icon && (
-              <div className="w-12 h-12 mx-auto mb-4 rounded-lg bg-brand-primary/10 flex items-center justify-center text-brand-primary">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-lg bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] flex items-center justify-center text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">
                 <DynamicIcon name={fee.icon} size={24} />
               </div>
             )}
             <h3 className="text-lg font-semibold text-slate-900 mb-2">{fee.title}</h3>
-            {fee.price && <div className="text-2xl font-bold text-brand-primary mb-3">{fee.price}</div>}
+            {fee.price && <div className="text-2xl font-bold text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mb-3">{fee.price}</div>}
             {fee.description && <p className="text-slate-500 text-sm leading-relaxed">{plain(fee.description)}</p>}
           </motion.div>
         ))}

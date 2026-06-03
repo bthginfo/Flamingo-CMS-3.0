@@ -38,7 +38,7 @@ export function TextImageSection({ data, variant }: Props) {
             <ul className="mt-6 space-y-3">
               {items.map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <span className="w-2 h-2 mt-2 rounded-full bg-[var(--style-accent,var(--brand-primary))] shrink-0" />
+                  <span className="w-2 h-2 mt-2 rounded-full bg-[var(--style-accent,var(--token-icon, var(--brand-primary)))] shrink-0" />
                   <div>
                     <span className="font-medium text-[var(--style-text-primary,#111827)]">{item.title}</span>
                     {item.text && <span className="text-[var(--style-text-secondary,#4b5563)]"> - {plain(item.text)}</span>}
@@ -50,12 +50,12 @@ export function TextImageSection({ data, variant }: Props) {
           {(primaryCta.label || secondaryCta.label) && (
             <div className="mt-8 flex flex-wrap gap-3">
               {primaryCta.label && (
-                <Link href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--style-button-bg,var(--brand-primary))] px-6 py-3 font-semibold text-[var(--style-button-text,#fff)] shadow-md transition-colors">
+                <Link href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--style-button-bg,var(--token-icon, var(--brand-primary)))] px-6 py-3 font-semibold text-[var(--style-button-text,#fff)] shadow-md transition-colors">
                   {primaryCta.label} {primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} />}
                 </Link>
               )}
               {secondaryCta.label && (
-                <Link href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--style-border,rgba(0,0,0,.16))] px-6 py-3 font-semibold text-[var(--style-text-primary,#374151)] hover:border-[var(--style-accent,var(--brand-primary))] hover:text-[var(--style-accent,var(--brand-primary))] transition-colors">
+                <Link href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--style-border,rgba(0,0,0,.16))] px-6 py-3 font-semibold text-[var(--style-text-primary,#374151)] hover:border-[var(--style-accent,var(--token-icon, var(--brand-primary)))] hover:text-[var(--style-accent,var(--token-icon, var(--brand-primary)))] transition-colors">
                   {secondaryCta.label} {secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={16} />}
                 </Link>
               )}

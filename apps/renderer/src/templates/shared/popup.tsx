@@ -54,7 +54,7 @@ export function PopupSection({ data }: SectionProps) {
         className="absolute inset-0 bg-black/62 backdrop-blur-[2px]"
       />
       <div className="relative w-full max-w-xl overflow-hidden rounded-[var(--style-card-radius,1.5rem)] border border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.18)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-6 text-[var(--token-body, var(--style-body-color,var(--style-text-primary,#18181b)))] shadow-[0_30px_120px_rgba(0,0,0,0.35)] md:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-[var(--style-accent-color,var(--brand-primary,#f24171))]/20 blur-3xl" />
+        <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-[var(--style-accent-color,var(--token-icon, var(--brand-primary,#f24171)))]/20 blur-3xl" />
         <button
           type="button"
           onClick={close}
@@ -65,7 +65,7 @@ export function PopupSection({ data }: SectionProps) {
         </button>
 
         <div className="relative pr-10">
-          {subtitle && <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[var(--token-eyebrow,var(--style-accent-color,var(--brand-primary,#f24171)))]">{subtitle}</p>}
+          {subtitle && <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[var(--token-eyebrow,var(--style-accent-color,var(--token-icon, var(--brand-primary,#f24171))))]">{subtitle}</p>}
           <h2 className="max-w-lg text-3xl font-black leading-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] md:text-4xl">{title}</h2>
           {text && <div className="rt-content mt-5 text-base leading-8 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b)))]" dangerouslySetInnerHTML={{ __html: text }} />}
         </div>
@@ -73,7 +73,7 @@ export function PopupSection({ data }: SectionProps) {
         {(primaryCta.label || secondaryCta.label) && (
           <div className="relative mt-7 flex flex-col gap-3 sm:flex-row">
             {primaryCta.label && (
-              <a href={primaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,9999px)] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--brand-primary,#f24171)))] px-5 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#ffffff))] shadow-lg transition hover:brightness-110">
+              <a href={primaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,9999px)] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--token-icon, var(--brand-primary,#f24171))))] px-5 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#ffffff))] shadow-lg transition hover:brightness-110">
                 {primaryCta.label}
                 <ArrowRight size={16} />
               </a>

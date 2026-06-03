@@ -50,7 +50,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
     return (
       <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
-          <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
+          <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
           <div className="grid md:grid-cols-2 gap-8">
             {image && (
@@ -61,11 +61,11 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
             )}
             <div className={image ? '' : 'md:col-span-2'}>
               {description && <div className="text-gray-700 text-lg leading-relaxed mb-8 rt-content" dangerouslySetInnerHTML={{ __html: description }} />}
-              <div className="space-y-4 border-l-4 border-brand-accent pl-6">
-                {address && <p className="text-gray-700 flex items-center gap-2"><MapPin className="w-4 h-4 text-brand-accent" />{address}</p>}
-                {contact && <p className="text-gray-700 flex items-center gap-2"><Phone className="w-4 h-4 text-brand-accent" />{contact}</p>}
+              <div className="space-y-4 border-l-4 border-[var(--token-card-border,var(--brand-accent,#f39c12))] pl-6">
+                {address && <p className="text-gray-700 flex items-center gap-2"><MapPin className="w-4 h-4 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />{address}</p>}
+                {contact && <p className="text-gray-700 flex items-center gap-2"><Phone className="w-4 h-4 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />{contact}</p>}
               </div>
-              {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-brand-accent text-black font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-opacity"><MapPin className="w-4 h-4" /> Route planen</a>}
+              {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-black font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-opacity"><MapPin className="w-4 h-4" /> Route planen</a>}
             </div>
           </div>
         </div>
@@ -90,10 +90,10 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
           <div className={image ? '' : 'md:col-span-2 max-w-3xl mx-auto text-center'}>
             {description && <div className="text-gray-600 text-lg leading-relaxed mb-8 rt-content" dangerouslySetInnerHTML={{ __html: description }} />}
             <div className="space-y-4">
-              {address && <div className="flex items-start gap-3"><MapPin className="w-5 h-5 text-brand-primary mt-0.5 shrink-0" /><p className="text-gray-700">{address}</p></div>}
-              {contact && <div className="flex items-start gap-3"><Phone className="w-5 h-5 text-brand-primary mt-0.5 shrink-0" /><p className="text-gray-700">{contact}</p></div>}
+              {address && <div className="flex items-start gap-3"><MapPin className="w-5 h-5 text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-0.5 shrink-0" /><p className="text-gray-700">{address}</p></div>}
+              {contact && <div className="flex items-start gap-3"><Phone className="w-5 h-5 text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-0.5 shrink-0" /><p className="text-gray-700">{contact}</p></div>}
             </div>
-            {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-brand-primary text-white rounded-full text-sm font-medium hover:bg-brand-dark transition-colors"><MapPin className="w-4 h-4" /> Route planen</a>}
+            {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-white rounded-full text-sm font-medium hover:bg-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))] transition-colors"><MapPin className="w-4 h-4" /> Route planen</a>}
           </div>
         </div>
       </div>
@@ -156,7 +156,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
     return (
       <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
-          <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
+          <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
           {directions.length > 0 && (
             <div className="grid md:grid-cols-3 gap-4 mb-12">
@@ -164,7 +164,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
                 const Icon = dirIcons[(d.icon || 'car').toLowerCase()] || Car;
                 return (
                   <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900 p-6">
-                    <Icon className="w-6 h-6 text-brand-accent mb-3" />
+                    <Icon className="w-6 h-6 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] mb-3" />
                     <h3 className="font-bold text-gray-900 mb-2">{d.title}</h3>
                     <div className="text-gray-600 text-sm rt-content" dangerouslySetInnerHTML={{ __html: d.text }} />
                   </motion.div>
@@ -180,7 +180,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
                   <div className="p-5">
                     <h4 className="font-bold text-gray-900">{a.name}</h4>
                     {a.description && <div className="text-gray-600 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: a.description }} />}
-                    {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-brand-accent text-sm font-bold mt-3 inline-block hover:opacity-70">Details →</a>}
+                    {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] text-sm font-bold mt-3 inline-block hover:opacity-70">Details →</a>}
                   </div>
                 </motion.div>
               ))}
@@ -192,7 +192,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
   }
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))]/[0.02]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
@@ -205,8 +205,8 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
               const Icon = dirIcons[(d.icon || 'car').toLowerCase()] || Car;
               return (
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center p-6 rounded-xl bg-white shadow-sm">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-brand-primary/10 flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-brand-primary" />
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] flex items-center justify-center">
+                    <Icon className="w-5 h-5 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">{d.title}</h3>
                   <div className="text-gray-600 text-sm rt-content" dangerouslySetInnerHTML={{ __html: d.text }} />
@@ -225,7 +225,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
                   <div className="p-5">
                     <h4 className="font-semibold text-gray-900">{a.name}</h4>
                     {a.description && <div className="text-gray-600 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: a.description }} />}
-                    {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-brand-primary text-sm font-medium mt-3 inline-block hover:underline">Mehr erfahren →</a>}
+                    {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] text-sm font-medium mt-3 inline-block hover:underline">Mehr erfahren →</a>}
                   </div>
                 </motion.div>
               ))}

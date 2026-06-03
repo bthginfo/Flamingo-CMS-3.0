@@ -53,13 +53,13 @@ export function PropertyShowcaseSection({ data }: Props) {
                 )}
               </div>
               <div className="p-6">
-                <h3 className="font-semibold text-gray-900 text-lg group-hover:text-brand-primary transition-colors">{property.title}</h3>
+                <h3 className="font-semibold text-gray-900 text-lg group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors">{property.title}</h3>
                 <p className="text-sm text-gray-500 mt-1">{property.location}</p>
                 <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100">
                   <span className="text-sm text-gray-600"><strong>{property.rooms}</strong> Zimmer</span>
                   <span className="text-sm text-gray-600"><strong>{property.size}</strong></span>
                 </div>
-                <p className="text-xl font-bold text-brand-primary mt-3">{property.price}</p>
+                <p className="text-xl font-bold text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-3">{property.price}</p>
               </div>
             </motion.a>
           ))}

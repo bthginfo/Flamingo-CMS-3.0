@@ -38,7 +38,7 @@ export function CafeContactSection({ data }: Props) {
     <section ref={ref} className="py-20 md:py-28">
       <div className="max-w-5xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
-          {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">{badgeText}</p>}
+          {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mb-3">{badgeText}</p>}
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
           {subline && <p className="text-gray-600 mt-3">{plain(subline)}</p>}
           {introText && <div className="text-gray-600 mt-4 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
@@ -56,7 +56,7 @@ export function CafeContactSection({ data }: Props) {
                   transition={{ delay: 0.1 * i }}
                   className="flex items-center gap-4 p-5 rounded-2xl bg-stone-50 border border-stone-100"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary">
+                  <div className="w-10 h-10 rounded-xl bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] flex items-center justify-center text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">
                     <DynamicIcon name={item.icon} size={18} />
                   </div>
                   <div>

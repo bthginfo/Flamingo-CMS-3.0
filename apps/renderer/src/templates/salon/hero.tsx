@@ -107,15 +107,15 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageM
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
           <h1 className="mt-6 text-3xl md:text-5xl font-light leading-[1.05] text-gray-900 sm:text-6xl lg:text-7xl">{headline}</h1>
           {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
-          <div className="mt-3 h-px w-16 bg-brand-accent" />
+          <div className="mt-3 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
           <div className="mt-8 flex flex-wrap gap-3">
             {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border border-[#111827] px-6 py-3 font-light text-gray-900">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} />}</a>}
             {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-gray-600">{secondaryCta.label}</a>}
           </div>
           <div className="mt-10 flex flex-wrap gap-3 text-sm text-gray-600">
-            {bookingHint && <span className="border-b border-brand-accent pb-1">{bookingHint}</span>}
-            {ratingText && <span className="border-b border-brand-accent pb-1">{ratingText}</span>}
-            {trustItems.map((item) => <span key={item} className="border-b border-brand-accent pb-1">{item}</span>)}
+            {bookingHint && <span className="border-b border-[var(--token-card-border,var(--brand-accent,#f39c12))] pb-1">{bookingHint}</span>}
+            {ratingText && <span className="border-b border-[var(--token-card-border,var(--brand-accent,#f39c12))] pb-1">{ratingText}</span>}
+            {trustItems.map((item) => <span key={item} className="border-b border-[var(--token-card-border,var(--brand-accent,#f39c12))] pb-1">{item}</span>)}
           </div>
         </div>
       </div>
@@ -137,13 +137,13 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMob
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
       ) : null}
       {/* Diagonal hot-pink stripe */}
-      <div className="absolute inset-0 overflow-hidden"><div className="absolute -right-20 top-[20%] h-24 w-[140%] rotate-[-8deg] bg-brand-accent" /></div>
+      <div className="absolute inset-0 overflow-hidden"><div className="absolute -right-20 top-[20%] h-24 w-[140%] rotate-[-8deg] bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" /></div>
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-12 md:py-20">
-        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
         <h1 className="mt-5 text-3xl md:text-5xl font-black uppercase leading-[0.95] text-white sm:text-7xl lg:text-9xl">{headline}</h1>
         {subline && <div className="mt-7 max-w-2xl text-lg font-bold uppercase leading-8 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-wrap gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 bg-brand-accent px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-white px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{secondaryCta.label}</a>}
         </div>
         <div className="mt-10 flex flex-wrap gap-3 text-sm font-bold uppercase text-white/60">

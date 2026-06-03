@@ -30,7 +30,7 @@ export function ReferencesSoldSection({ data }: Props) {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
           {subline && <p className="text-lg text-gray-600 mt-4">{plain(subline)}</p>}
-          {totalSold && <p className="text-sm text-brand-primary font-semibold mt-2">{totalSold}</p>}
+          {totalSold && <p className="text-sm text-[color:var(--token-icon,var(--brand-primary,#1a5276))] font-semibold mt-2">{totalSold}</p>}
         </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

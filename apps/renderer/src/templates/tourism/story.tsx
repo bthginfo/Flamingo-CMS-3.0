@@ -57,18 +57,18 @@ function Classic(p: Props) {
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
             <motion.div key={`${v.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-black/10 bg-white p-5 shadow-sm">
-              <div className="shrink-0 text-[var(--brand-accent))]"><DynamicIcon name={v.icon || 'map-pin'} size={20} /></div>
+              <div className="shrink-0 text-[var(--token-eyebrow, var(--brand-accent)))]"><DynamicIcon name={v.icon || 'map-pin'} size={20} /></div>
               <div><h3 className="font-semibold text-gray-900">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
             </motion.div>
           ))}
         </div>
       )}
       {p.milestones.length > 0 && (
-        <div className="mt-16 relative border-l-2 border-[var(--brand-accent))]/30 pl-8">
+        <div className="mt-16 relative border-l-2 border-[var(--token-eyebrow, var(--brand-accent)))]/30 pl-8">
           {p.milestones.map((m, i) => (
             <motion.div key={`${m.year}-${i}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="relative mb-8 last:mb-0">
-              <div className="absolute -left-[2.55rem] top-1 h-4 w-4 rounded-full border-2 border-[var(--brand-accent))] bg-white" />
-              {m.year && <p className="text-xs font-bold uppercase tracking-widest text-[var(--brand-accent))]">{m.year}</p>}
+              <div className="absolute -left-[2.55rem] top-1 h-4 w-4 rounded-full border-2 border-[var(--token-eyebrow, var(--brand-accent)))] bg-white" />
+              {m.year && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-eyebrow, var(--brand-accent)))]">{m.year}</p>}
               <h3 className="mt-1 font-semibold text-gray-900">{m.title || ''}</h3>
               {m.text && <div className="mt-1 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </motion.div>
@@ -134,13 +134,13 @@ function Bold(p: Props) {
           <SectionHeader headline={p.headline} subline={plain(p.subline)} badgeText={p.badgeText} />
           {p.storyText && <p className="whitespace-pre-line leading-7 text-gray-600">{plain(p.storyText)}</p>}
           {p.founderQuote && (
-            <div className="mt-8 border-l-4 border-[var(--brand-accent))] bg-black/5 p-5">
+            <div className="mt-8 border-l-4 border-[var(--token-eyebrow, var(--brand-accent)))] bg-black/5 p-5">
               <p className="text-sm italic font-bold text-gray-900">&ldquo;{p.founderQuote}&rdquo;</p>
               {p.founderName && <p className="mt-3 font-black uppercase text-gray-900">{p.founderName}</p>}
               {p.founderRole && <p className="text-xs font-bold text-gray-600">{p.founderRole}</p>}
             </div>
           )}
-          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--brand-primary)]">{p.ctaPrimary.label}</a>}
+          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--token-icon, var(--brand-primary))]">{p.ctaPrimary.label}</a>}
         </div>
         <div className="grid gap-2">
           {p.imagePrimary && <div className="relative aspect-[16/10] overflow-hidden border-2 border-[#111827]"><Image src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
@@ -150,8 +150,8 @@ function Bold(p: Props) {
       {p.values.length > 0 && (
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
-            <div key={`${v.title}-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_var(--brand-accent))]">
-              <DynamicIcon name={v.icon || 'map-pin'} size={20} className="text-[var(--brand-accent))]" />
+            <div key={`${v.title}-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_var(--token-eyebrow, var(--brand-accent)))]">
+              <DynamicIcon name={v.icon || 'map-pin'} size={20} className="text-[var(--token-eyebrow, var(--brand-accent)))]" />
               <h3 className="mt-2 font-black uppercase text-gray-900">{v.title || ''}</h3>
               {v.text && <div className="mt-1 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
@@ -162,7 +162,7 @@ function Bold(p: Props) {
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {p.milestones.map((m, i) => (
             <div key={`${m.year}-${i}`} className="border-2 border-[#111827] p-5">
-              {m.year && <p className="text-xs font-black uppercase tracking-widest text-[var(--brand-accent))]">{m.year}</p>}
+              {m.year && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-eyebrow, var(--brand-accent)))]">{m.year}</p>}
               <h3 className="mt-1 font-black uppercase text-gray-900">{m.title || ''}</h3>
               {m.text && <div className="mt-1 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </div>

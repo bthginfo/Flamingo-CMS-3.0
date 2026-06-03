@@ -42,13 +42,13 @@ export function PublicationsSection({ data }: Props) {
             )}
             <div className="p-6">
               <div className="flex items-center gap-3 text-xs text-slate-400 mb-3">
-                {article.category && <span className="bg-brand-primary/10 text-brand-primary px-2 py-0.5 rounded font-medium">{article.category}</span>}
+                {article.category && <span className="bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] text-[color:var(--token-icon,var(--brand-primary,#1a5276))] px-2 py-0.5 rounded font-medium">{article.category}</span>}
                 {article.date && <span>{article.date}</span>}
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 group-hover:text-brand-primary transition-colors mb-2">{article.title}</h3>
+              <h3 className="text-lg font-semibold text-slate-900 group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors mb-2">{article.title}</h3>
               {article.excerpt && <p className="text-slate-500 text-sm leading-relaxed line-clamp-3">{article.excerpt}</p>}
               {article.href && (
-                <Link href={article.href} className="inline-flex items-center gap-1 text-sm font-medium text-brand-primary mt-4">
+                <Link href={article.href} className="inline-flex items-center gap-1 text-sm font-medium text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-4">
                   Weiterlesen <DynamicIcon name="arrow-right" size={14} />
                 </Link>
               )}
@@ -58,7 +58,7 @@ export function PublicationsSection({ data }: Props) {
       </div>
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.4 }} className="text-center mt-10">
-          <Link href={ctaHref} className="inline-flex items-center gap-2 px-6 py-3 border border-brand-primary text-brand-primary font-medium rounded-lg hover:bg-brand-primary hover:text-white transition-all">
+          <Link href={ctaHref} className="inline-flex items-center gap-2 px-6 py-3 border border-[var(--token-card-border,var(--brand-primary,#1a5276))] text-[color:var(--token-icon,var(--brand-primary,#1a5276))] font-medium rounded-lg hover:bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] hover:text-white transition-all">
             {ctaLabel} <DynamicIcon name="arrow-right" size={16} />
           </Link>
         </motion.div>

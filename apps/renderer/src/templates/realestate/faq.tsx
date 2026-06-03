@@ -41,7 +41,7 @@ export function RealestateFaqSection({ data }: Props) {
                 className="w-full flex items-center justify-between p-5 text-left"
               >
                 <span className="font-medium text-gray-900 pr-4">{item.question}</span>
-                {openIndex === i ? <Minus size={18} className="text-brand-primary shrink-0" /> : <Plus size={18} className="text-gray-400 shrink-0" />}
+                {openIndex === i ? <Minus size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] shrink-0" /> : <Plus size={18} className="text-gray-400 shrink-0" />}
               </button>
               {openIndex === i && (
                 <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">

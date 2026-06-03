@@ -38,19 +38,19 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
-        {badgeText && <p className="inline-block rounded-full bg-brand-accent/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-accent">{badgeText}</p>}
+        {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</h2>
         {subline && <div className="mt-4 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         {kitchenHoursHeadline && <h3 className="mt-8 font-semibold text-gray-900">{kitchenHoursHeadline}</h3>}
         {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-gray-500">{kitchenHoursText}</p>}
         {holidayNote && <p className="mt-4 text-xs text-gray-500">{holidayNote}</p>}
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-brand-primary px-6 py-3 font-semibold text-white shadow-md">{ctaPrimary.label}</a>}
+        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] px-6 py-3 font-semibold text-white shadow-md">{ctaPrimary.label}</a>}
       </div>
       <div className="overflow-hidden rounded-xl border border-black/10 bg-white shadow-lg">
         {days.map((day, index) => (
           <motion.div key={`${day.label}-${index}`} initial={{ opacity: 0, x: 12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="flex items-center justify-between gap-4 border-b border-black/10 px-6 py-4 last:border-b-0">
             <div className="flex items-center gap-3">
-              <div className="rounded-full bg-brand-accent/10 p-1.5 text-brand-accent"><Clock size={15} /></div>
+              <div className="rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] p-1.5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Clock size={15} /></div>
               <div>
                 <p className="font-semibold text-gray-900">{day.label || ''}</p>
                 {day.note && <p className="text-xs text-gray-500">{day.note}</p>}
@@ -70,7 +70,7 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
       <div>
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-gray-500">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light text-gray-900 sm:text-3xl md:text-5xl">{headline}</h2>
-        <div className="mt-2 h-px w-16 bg-brand-accent" />
+        <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
         {subline && <div className="mt-6 font-light text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         {kitchenHoursHeadline && <h3 className="mt-8 font-medium text-gray-900">{kitchenHoursHeadline}</h3>}
         {kitchenHoursText && <p className="mt-2 text-sm font-light leading-6 text-gray-500">{kitchenHoursText}</p>}
@@ -100,9 +100,9 @@ function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHead
     <div className="bg-[#111827] p-6 text-white sm:p-10">
       <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
-          {badgeText && <p className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase tracking-widest text-gray-900">{badgeText}</p>}
+          {badgeText && <p className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase tracking-widest text-gray-900">{badgeText}</p>}
           <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl">{headline}</h2>
-          <div className="mt-2 h-1.5 w-20 bg-brand-accent" />
+          <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
           {subline && <div className="mt-4 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           {kitchenHoursHeadline && <h3 className="mt-8 font-bold uppercase">{kitchenHoursHeadline}</h3>}
           {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-white/60">{kitchenHoursText}</p>}
@@ -113,7 +113,7 @@ function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHead
           {days.map((day, index) => (
             <div key={`${day.label}-${index}`} className="flex items-center justify-between gap-4 border-b-2 border-white/10 px-5 py-4 last:border-b-0">
               <div className="flex items-center gap-3">
-                <Clock size={17} className="text-brand-accent" />
+                <Clock size={17} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
                 <div>
                   <p className="font-bold uppercase">{day.label || ''}</p>
                   {day.note && <p className="text-xs text-white/50">{day.note}</p>}

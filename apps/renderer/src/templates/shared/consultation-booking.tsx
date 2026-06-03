@@ -44,12 +44,12 @@ export function ConsultationBookingSection({ data }: Props) {
               transition={{ duration: 0.4, delay: i * 0.08 }}
               className={`w-full text-left flex items-start gap-4 p-5 rounded-[var(--style-card-radius,1rem)] border transition-all duration-300 ${
                 selected === i
-                  ? 'bg-[var(--brand-primary,#2563eb)]/5 border-[var(--brand-primary,#2563eb)]/30 shadow-md'
-                  : 'bg-[var(--token-card-bg, var(--style-card-bg,#fff))] border-[rgba(0,0,0,0.06)] hover:border-[var(--brand-primary,#2563eb)]/20'
+                  ? 'bg-[var(--token-icon, var(--brand-primary,#2563eb))]/5 border-[var(--token-icon, var(--brand-primary,#2563eb))]/30 shadow-md'
+                  : 'bg-[var(--token-card-bg, var(--style-card-bg,#fff))] border-[rgba(0,0,0,0.06)] hover:border-[var(--token-icon, var(--brand-primary,#2563eb))]/20'
               }`}
             >
               {service.icon && (
-                <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--brand-primary,#2563eb)] text-white' : 'bg-gray-100 text-[var(--brand-primary,#2563eb)]'} transition-colors`}>
+                <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-white' : 'bg-gray-100 text-[var(--token-icon, var(--brand-primary,#2563eb))]'} transition-colors`}>
                   <DynamicIcon name={service.icon} size={20} />
                 </div>
               )}
@@ -77,7 +77,7 @@ export function ConsultationBookingSection({ data }: Props) {
                 {services[selected]?.title ? `Beratung: ${services[selected].title}` : 'Individuelle Beratung'}
               </p>
               {cta?.label && (
-                <a href={cta.href || '#'} className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[var(--brand-primary,#2563eb)] text-white font-semibold rounded-[var(--style-button-radius,0.75rem)] hover:brightness-110 transition-all shadow-lg">
+                <a href={cta.href || '#'} className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-white font-semibold rounded-[var(--style-button-radius,0.75rem)] hover:brightness-110 transition-all shadow-lg">
                   {cta.label}
                 </a>
               )}

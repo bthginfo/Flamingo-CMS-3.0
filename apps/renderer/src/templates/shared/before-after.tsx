@@ -64,8 +64,8 @@ export function BeforeAfterSection({ data }: Props) {
         {/* Slider handle */}
         <div className="absolute top-0 bottom-0" style={{ left: `${sliderPos}%` }}>
           <div className="absolute inset-y-0 -translate-x-1/2 w-1 bg-white shadow-lg" />
-          <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center border-2 border-[var(--brand-primary,#2563eb)]">
-            <svg width="16" height="16" viewBox="0 0 16 16" className="text-[var(--brand-primary,#2563eb)]">
+          <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center border-2 border-[var(--token-icon, var(--brand-primary,#2563eb))]">
+            <svg width="16" height="16" viewBox="0 0 16 16" className="text-[var(--token-icon, var(--brand-primary,#2563eb))]">
               <path d="M4 8L1 5.5V10.5L4 8ZM12 8L15 5.5V10.5L12 8Z" fill="currentColor" />
             </svg>
           </div>

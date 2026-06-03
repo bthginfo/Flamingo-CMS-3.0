@@ -23,7 +23,7 @@ export function BrandShowroomSection({ data }: Props) {
       {image ? (
         <img src={image} alt={headline} className="absolute inset-0 w-full h-full object-cover" />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--brand-primary,#1e3a5f)] to-[var(--brand-secondary,#0f172a)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--token-icon, var(--brand-primary,#1e3a5f))] to-[var(--token-subheading, var(--brand-secondary,#0f172a))]" />
       )}
       <div className="absolute inset-0" style={{ background: `linear-gradient(to top, rgba(0,0,0,${overlayOpacity}) 0%, rgba(0,0,0,${overlayOpacity * 0.3}) 50%, transparent 100%)` }} />
 
@@ -55,7 +55,7 @@ export function BrandShowroomSection({ data }: Props) {
           )}
 
           {cta?.label && (
-            <a href={cta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--brand-primary,#2563eb)] text-white font-semibold rounded-[var(--style-button-radius,0.75rem)] hover:brightness-110 transition-all shadow-lg">
+            <a href={cta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-white font-semibold rounded-[var(--style-button-radius,0.75rem)] hover:brightness-110 transition-all shadow-lg">
               {cta.label}
             </a>
           )}

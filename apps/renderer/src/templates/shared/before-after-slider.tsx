@@ -18,7 +18,7 @@ export function BeforeAfterSliderSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const slides = (data.slides as Slide[]) || [];
-  const handleColor = (data.handleColor as string) || 'var(--brand-primary, #18181b)';
+  const handleColor = (data.handleColor as string) || 'var(--token-icon, var(--brand-primary, #18181b))';
   const bgColor = (data.bgColor as string) || 'var(--token-section-bg, var(--style-section-bg, transparent))';
   const textColor = (data.textColor as string) || 'var(--token-body, var(--style-body-color, inherit))';
   const aspectRatio = (data.aspectRatio as string) || '16/9';

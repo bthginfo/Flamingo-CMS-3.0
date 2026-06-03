@@ -55,15 +55,15 @@ export function ProductShowcaseSection({ data }: Props) {
                   </div>
                 )}
                 {item.badge && (
-                  <span className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full bg-[var(--brand-primary,#2563eb)] text-white shadow-md">
+                  <span className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-white shadow-md">
                     {item.badge}
                   </span>
                 )}
               </div>
               <div className="p-5">
-                <h3 className="font-display font-semibold text-lg text-[var(--style-text-primary,#0f172a)] group-hover:text-[var(--brand-primary,#2563eb)] transition-colors">{item.title}</h3>
+                <h3 className="font-display font-semibold text-lg text-[var(--style-text-primary,#0f172a)] group-hover:text-[var(--token-icon, var(--brand-primary,#2563eb))] transition-colors">{item.title}</h3>
                 {item.description && <p className="mt-1.5 text-sm text-[var(--style-text-secondary,#64748b)] line-clamp-2">{plain(item.description)}</p>}
-                {item.price && <p className="mt-3 text-lg font-bold text-[var(--brand-primary,#2563eb)]">{item.price}</p>}
+                {item.price && <p className="mt-3 text-lg font-bold text-[var(--token-icon, var(--brand-primary,#2563eb))]">{item.price}</p>}
               </div>
             </a>
           </motion.div>

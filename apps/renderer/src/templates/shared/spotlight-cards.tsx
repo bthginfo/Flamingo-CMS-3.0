@@ -39,7 +39,7 @@ export function SpotlightCardsSection({ data }: Props) {
               <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100" style={{ background: 'radial-gradient(720px circle at var(--x,50%) var(--y,30%), rgb(var(--brand-primary-rgb,0 0 0) / 0.12), transparent 42%)' }} />
               {card.image && <img src={card.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-12 transition duration-500 group-hover:opacity-20" />}
               <div className="relative z-10 flex h-full flex-col justify-end">
-                {card.icon && <DynamicIcon name={card.icon} size={34} className="mb-6 text-[var(--token-icon, var(--style-icon-color,var(--brand-primary)))]" />}
+                {card.icon && <DynamicIcon name={card.icon} size={34} className="mb-6 text-[var(--token-icon, var(--style-icon-color,var(--token-icon, var(--brand-primary))))]" />}
                 <h3 className="text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111)))]">{card.title}</h3>
                 {card.text && <p className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b)))]">{plain(card.text)}</p>}
               </div>

@@ -39,7 +39,7 @@ function Classic({ header, introText, image, mapEmbedUrl, formEnabled, submitLab
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4">
-              <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))]" />
+              <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
               <div className="min-w-0 flex-1"><p className="text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{card.label || ''}</p><p className="break-words font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{card.value || ''}</p></div>
             </div>
           ))}
@@ -64,13 +64,13 @@ function Modern({ header, introText, image, mapEmbedUrl, formEnabled, submitLabe
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4">
-              <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))]" />
+              <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
               <div className="min-w-0 flex-1"><p className="text-xs font-light text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{card.label || ''}</p><p className="break-words font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{card.value || ''}</p></div>
             </div>
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary))))] px-5 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}<ArrowRight size={16} /></a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}<ArrowRight size={16} /></a>}
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.15)))] px-5 py-3 font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{secondaryCta.label}</a>}
         </div>
       </div>
@@ -88,7 +88,7 @@ function Bold({ header, introText, image, mapEmbedUrl, formEnabled, submitLabel,
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <div className="mb-10 max-w-3xl">
-          {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--brand-primary))))]">{header.badgeText}</p>}
+          {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{header.badgeText}</p>}
           <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-3xl md:text-5xl">{header.headline}</h2>
           {header.subline && <div className="mt-4 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
         </div>
@@ -96,13 +96,13 @@ function Bold({ header, introText, image, mapEmbedUrl, formEnabled, submitLabel,
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] pt-4">
-              <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))]" />
+              <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
               <div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{card.label || ''}</p><p className="break-words font-black text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{card.value || ''}</p></div>
             </div>
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary))))] px-5 py-3 font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}<ArrowRight size={16} /></a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-3 font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}<ArrowRight size={16} /></a>}
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] px-5 py-3 font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] shadow-[4px_4px_0_var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))]">{secondaryCta.label}</a>}
         </div>
       </div>

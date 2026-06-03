@@ -36,13 +36,13 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-brand-primary" />{badgeText}</motion.p>}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
         {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         {spaces.map((space, index) => (
-          <motion.article key={`${space.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[var(--brand-primary)]/20 bg-white shadow-md">
+          <motion.article key={`${space.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-white shadow-md">
             {space.image && <div className="relative aspect-[4/3]"><Image src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <h3 className="text-xl font-bold text-gray-900">{space.name || ''}</h3>
@@ -50,7 +50,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
               <p className="mt-3 text-xs text-gray-600">{[space.capacityLabel, space.sizeLabel].filter(Boolean).join(' / ')}</p>
               {asList<string>(space.seatingOptions).length > 0 && <p className="mt-2 text-xs text-gray-600">{asList<string>(space.seatingOptions).join(' / ')}</p>}
               {asList<string>(space.features).length > 0 && <p className="mt-2 text-xs text-gray-600">{asList<string>(space.features).join(' / ')}</p>}
-              {space.inquiryCta?.label && <a href={space.inquiryCta.href || '#'} className="mt-4 inline-flex font-semibold text-brand-primary">{space.inquiryCta.label}</a>}
+              {space.inquiryCta?.label && <a href={space.inquiryCta.href || '#'} className="mt-4 inline-flex font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{space.inquiryCta.label}</a>}
             </div>
           </motion.article>
         ))}
@@ -58,8 +58,8 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
       {processHeadline && <h3 className="mt-10 text-2xl font-bold text-gray-900">{processHeadline}</h3>}
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {processSteps.map((step, index) => (
-          <motion.div key={`${step.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--brand-primary)]/20 p-5">
-            <div className="text-brand-primary"><DynamicIcon name={step.icon || 'clipboard'} size={22} /></div>
+          <motion.div key={`${step.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 p-5">
+            <div className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={step.icon || 'clipboard'} size={22} /></div>
             <h4 className="mt-3 font-semibold text-gray-900">{step.title || ''}</h4>
             {step.text && <div className="mt-2 text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />}
           </motion.div>
@@ -114,7 +114,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
+        {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
         {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
@@ -128,7 +128,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
               <p className="mt-3 text-xs font-bold uppercase text-gray-600">{[space.capacityLabel, space.sizeLabel].filter(Boolean).join(' / ')}</p>
               {asList<string>(space.seatingOptions).length > 0 && <p className="mt-2 text-xs text-gray-600">{asList<string>(space.seatingOptions).join(' / ')}</p>}
               {asList<string>(space.features).length > 0 && <p className="mt-2 text-xs text-gray-600">{asList<string>(space.features).join(' / ')}</p>}
-              {space.inquiryCta?.label && <a href={space.inquiryCta.href || '#'} className="mt-4 inline-flex font-black uppercase text-brand-primary">{space.inquiryCta.label}</a>}
+              {space.inquiryCta?.label && <a href={space.inquiryCta.href || '#'} className="mt-4 inline-flex font-black uppercase text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{space.inquiryCta.label}</a>}
             </div>
           </article>
         ))}
@@ -137,13 +137,13 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {processSteps.map((step, index) => (
           <div key={`${step.title}-${index}`} className="border-2 border-[#111827] p-5">
-            <div className="text-brand-primary"><DynamicIcon name={step.icon || 'clipboard'} size={22} /></div>
+            <div className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={step.icon || 'clipboard'} size={22} /></div>
             <h4 className="mt-3 font-black uppercase text-gray-900">{step.title || ''}</h4>
             {step.text && <div className="mt-2 text-sm text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />}
           </div>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--brand-primary)]">{ctaPrimary.label}<ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--token-icon, var(--brand-primary))]">{ctaPrimary.label}<ArrowRight size={16} /></a>}
     </div>
   );
 }

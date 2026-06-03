@@ -36,7 +36,7 @@ export function InspirationGridSection({ data }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: i * 0.06 }}
-            className="group relative aspect-[3/4] md:aspect-square rounded-[var(--style-card-radius,1rem)] overflow-hidden ring-2 ring-transparent hover:ring-[var(--brand-primary,var(--style-brand,#2563eb))] transition-all duration-300"
+            className="group relative aspect-[3/4] md:aspect-square rounded-[var(--style-card-radius,1rem)] overflow-hidden ring-2 ring-transparent hover:ring-[var(--token-icon, var(--brand-primary,var(--style-brand,#2563eb)))] transition-all duration-300"
           >
             {item.image ? (
               <img src={item.image} alt={item.title || ''} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -47,7 +47,7 @@ export function InspirationGridSection({ data }: Props) {
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-end">
               {item.title && (
                 <div className="p-4 md:p-6 w-full translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  <span className="inline-block w-8 h-0.5 rounded bg-[var(--brand-primary,var(--style-brand,#2563eb))] mb-2" />
+                  <span className="inline-block w-8 h-0.5 rounded bg-[var(--token-icon, var(--brand-primary,var(--style-brand,#2563eb)))] mb-2" />
                   <h3 className="text-white font-semibold text-sm md:text-base">{item.title}</h3>
                 </div>
               )}

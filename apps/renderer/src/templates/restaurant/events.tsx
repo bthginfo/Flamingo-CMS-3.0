@@ -33,7 +33,7 @@ function EventsClassic({ headline, subline, badgeText, events, fallbackText }: E
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
       <div className="mb-10 max-w-3xl text-center mx-auto">
-        {badgeText && <p className="inline-block rounded-full bg-brand-accent/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-accent">{badgeText}</p>}
+        {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</h2>
         {subline && <div className="mt-4 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
@@ -44,14 +44,14 @@ function EventsClassic({ headline, subline, badgeText, events, fallbackText }: E
             {event.image && <div className="relative min-h-48"><Image src={event.image} alt={event.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-widest text-gray-500">
-                {event.dateLabel && <span className="inline-flex items-center gap-1 rounded-full bg-brand-accent/10 px-3 py-1 text-brand-accent"><CalendarDays size={13} />{event.dateLabel}</span>}
+                {event.dateLabel && <span className="inline-flex items-center gap-1 rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-3 py-1 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><CalendarDays size={13} />{event.dateLabel}</span>}
                 {event.timeLabel && <span className="rounded-full bg-black/5 px-3 py-1">{event.timeLabel}</span>}
                 {event.priceLabel && <span className="rounded-full bg-black/5 px-3 py-1">{event.priceLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-bold text-gray-900">{event.title || ''}</h3>
               {event.description && <div className="mt-3 text-sm leading-6 text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
               <div className="mt-5 flex flex-wrap gap-4">
-                {event.cta?.label && <a href={event.cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-brand-primary px-4 py-2 text-sm font-semibold text-white">{event.cta.label}</a>}
+                {event.cta?.label && <a href={event.cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] px-4 py-2 text-sm font-semibold text-white">{event.cta.label}</a>}
                 {event.detailHref && event.detailLabel && <a href={event.detailHref} className="inline-flex items-center gap-1 text-sm text-gray-500">{event.detailLabel}<ArrowRight size={14} /></a>}
               </div>
             </div>
@@ -68,7 +68,7 @@ function EventsModern({ headline, subline, badgeText, events, fallbackText }: Ev
       <div className="mb-12 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-gray-500">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light text-gray-900 sm:text-3xl md:text-5xl">{headline}</h2>
-        <div className="mt-2 h-px w-16 bg-brand-accent" />
+        <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
         {subline && <div className="mt-6 font-light text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {events.length === 0 && fallbackText ? <p className="font-light text-gray-500">{fallbackText}</p> : null}
@@ -100,9 +100,9 @@ function EventsBold({ headline, subline, badgeText, events, fallbackText }: Even
   return (
     <div className="bg-[#111827] p-6 text-white sm:p-10">
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase tracking-widest text-gray-900">{badgeText}</p>}
+        {badgeText && <p className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase tracking-widest text-gray-900">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl">{headline}</h2>
-        <div className="mt-2 h-1.5 w-20 bg-brand-accent" />
+        <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
         {subline && <div className="mt-4 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {events.length === 0 && fallbackText ? <p className="text-white/60">{fallbackText}</p> : null}
@@ -112,7 +112,7 @@ function EventsBold({ headline, subline, badgeText, events, fallbackText }: Even
             {event.image && <div className="relative min-h-48"><Image src={event.image} alt={event.title || ''} fill className="object-cover" sizes="200px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-widest text-white/50">
-                {event.dateLabel && <span className="inline-flex items-center gap-1 text-brand-accent"><CalendarDays size={13} />{event.dateLabel}</span>}
+                {event.dateLabel && <span className="inline-flex items-center gap-1 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><CalendarDays size={13} />{event.dateLabel}</span>}
                 {event.timeLabel && <span>{event.timeLabel}</span>}
                 {event.priceLabel && <span>{event.priceLabel}</span>}
               </div>

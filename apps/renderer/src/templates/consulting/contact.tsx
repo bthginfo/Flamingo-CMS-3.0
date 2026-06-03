@@ -37,7 +37,7 @@ export function ConsultingContactSection({ data }: Props) {
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
-        {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mb-3">{badgeText}</p>}
         {headline && <h2 className="section-headline">{headline}</h2>}
         {subline && <p className="section-subline">{plain(subline)}</p>}
         {introText && <div className="text-gray-600 mt-4 rt-content max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: introText }} />}
@@ -45,8 +45,8 @@ export function ConsultingContactSection({ data }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.2 }} className="space-y-4">
           {contactItems.map((item, i) => (
-            <div key={i} className="flex items-center gap-4 p-4 rounded-lg border border-slate-200 hover:border-brand-primary/30 transition-colors">
-              <div className="w-10 h-10 rounded-lg bg-brand-primary/10 flex items-center justify-center text-brand-primary">
+            <div key={i} className="flex items-center gap-4 p-4 rounded-lg border border-slate-200 hover:border-[var(--token-card-border,var(--brand-primary,#1a5276))/30] transition-colors">
+              <div className="w-10 h-10 rounded-lg bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] flex items-center justify-center text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">
                 <DynamicIcon name={item.icon} size={20} />
               </div>
               <div>

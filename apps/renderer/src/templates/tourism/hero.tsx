@@ -67,20 +67,20 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgC
       </svg>
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-7xl flex-col items-center justify-center px-6 py-12 md:py-20 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-4 flex items-center gap-2">
-          <Compass className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))]" size={20} />
-          {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--brand-primary))))]">{badgeText}</p>}
-          <Mountain className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))]" size={20} />
+          <Compass className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" size={20} />
+          {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{badgeText}</p>}
+          <Mountain className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" size={20} />
         </motion.div>
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-[var(--token-heading, var(--style-heading-color,#fff))] sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>{headline}</motion.h1>
         {subline && <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-7 max-w-2xl text-lg leading-8 text-[var(--token-body, var(--style-body-color,rgba(255,255,255,.8)))] rt-content" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }} dangerouslySetInnerHTML={{ __html: subline }} />}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary))))] px-6 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-6 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,.35)))] px-6 py-3 font-semibold text-[var(--token-heading, var(--style-heading-color,#fff))]">{secondaryCta.label}</a>}
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-[var(--token-body, var(--style-body-color,rgba(255,255,255,.8)))]">
           {locationLabel && <span className="inline-flex items-center gap-2 rounded-full bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(0,0,0,.25)))] px-4 py-2"><MapPin size={15} />{locationLabel}</span>}
           {seasonLabel && <span className="rounded-full bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(0,0,0,.25)))] px-4 py-2">{seasonLabel}</span>}
-          {trustItems.map((item) => <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(0,0,0,.25)))] px-4 py-2"><CheckCircle size={14} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))]" />{item}</span>)}
+          {trustItems.map((item) => <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(0,0,0,.25)))] px-4 py-2"><CheckCircle size={14} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />{item}</span>)}
         </motion.div>
       </div>
     </section>
@@ -93,11 +93,11 @@ function HeroModern({ headline, subline, badgeText, bgImage, bgImageMobile, bgCo
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-section-bg, var(--style-section-bg,#fff))]">
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-10 px-6 py-12 md:py-20 lg:grid-cols-2">
         <div className="max-w-xl">
-          {badgeText && <p className="text-xs font-light uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--brand-primary))))]">{badgeText}</p>}
+          {badgeText && <p className="text-xs font-light uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{badgeText}</p>}
           <h1 className="mt-5 text-3xl md:text-5xl font-light leading-[0.95] text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-6xl lg:text-7xl">{headline}</h1>
           {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="mt-8 flex flex-wrap gap-3">
-            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary))))] px-5 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
             {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.15)))] px-5 py-3 font-semibold text-[var(--style-text-primary,#111827)]">{secondaryCta.label}</a>}
           </div>
           <div className="mt-10 flex flex-wrap gap-3 text-sm text-[var(--style-text-secondary,#4b5563)]">
@@ -134,16 +134,16 @@ function HeroBold({ headline, subline, badgeText, bgImage, bgImageMobile, bgColo
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
       ) : null}
-      <div className="absolute right-0 top-0 h-full w-1/3 origin-top-right skew-x-[-8deg] bg-[var(--style-accent-color,var(--brand-primary))] opacity-20" aria-hidden="true" />
+      <div className="absolute right-0 top-0 h-full w-1/3 origin-top-right skew-x-[-8deg] bg-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))] opacity-20" aria-hidden="true" />
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-7xl flex-col justify-center px-6 py-12 md:py-20">
         <div className="flex items-center gap-3">
-          <Compass className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))]" size={28} />
-          {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--brand-primary))))]">{badgeText}</p>}
+          <Compass className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" size={28} />
+          {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{badgeText}</p>}
         </div>
         <h1 className="mt-5 max-w-5xl text-3xl md:text-5xl font-black uppercase leading-[0.95] text-[var(--token-heading, var(--style-heading-color,#fff))] sm:text-6xl lg:text-8xl">{headline}</h1>
         {subline && <div className="mt-7 max-w-2xl text-lg leading-8 text-[var(--token-body, var(--style-body-color,rgba(255,255,255,.7)))] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-wrap gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary))))] px-6 py-3 font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-6 py-3 font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,.4)))] px-6 py-3 font-black uppercase text-[var(--token-heading, var(--style-heading-color,#fff))]">{secondaryCta.label}</a>}
         </div>
         <div className="mt-10 flex flex-wrap gap-3 text-sm text-[var(--token-body, var(--style-body-color,rgba(255,255,255,.7)))]">

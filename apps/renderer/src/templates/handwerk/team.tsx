@@ -63,7 +63,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 md:mb-24">
           {stats.map((s, i) => (
             <div key={i} className="rounded-2xl border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,rgba(0,0,0,0.03)))] p-6 text-center">
-              <div className="font-display mb-1 text-3xl font-bold text-[var(--style-accent-color,var(--brand-primary))] lg:text-4xl">{s.value}</div>
+              <div className="font-display mb-1 text-3xl font-bold text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))] lg:text-4xl">{s.value}</div>
               <div className="text-sm text-[var(--style-text-secondary,var(--token-muted, var(--style-text-muted,#6b7280)))]">{s.label}</div>
             </div>
           ))}
@@ -75,7 +75,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {values.map((v, i) => (
               <div key={i} className="group rounded-2xl border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-8 shadow-sm transition-all hover:shadow-lg">
-                {v.icon && <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--style-accent-color,var(--brand-primary))]/10 transition-transform group-hover:scale-110"><DynamicIcon name={v.icon} size={28} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))]" /></div>}
+                {v.icon && <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]/10 transition-transform group-hover:scale-110"><DynamicIcon name={v.icon} size={28} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" /></div>}
                 <h4 className="mb-2 text-lg font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{v.title}</h4>
                 <div className="rt-content text-sm leading-relaxed text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: v.text }} />
               </div>
@@ -90,10 +90,10 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
             {members.map((m, i) => (
               <div key={i} className="text-center group">
                 <div className="relative w-48 h-48 mx-auto mb-5 rounded-3xl overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow">
-                  {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover transition-transform group-hover:scale-105" sizes="200px" /> : <div className="flex h-full w-full items-center justify-center bg-[var(--style-accent-color,var(--brand-primary))]/5"><DynamicIcon name="users" size={48} className="text-[var(--style-accent-color,var(--brand-primary))]/30" /></div>}
+                  {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover transition-transform group-hover:scale-105" sizes="200px" /> : <div className="flex h-full w-full items-center justify-center bg-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]/5"><DynamicIcon name="users" size={48} className="text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]/30" /></div>}
                 </div>
                 <h4 className="text-lg font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{m.name}</h4>
-                <p className="mb-2 text-sm font-medium text-[var(--style-accent-color,var(--brand-primary))]">{m.role}</p>
+                <p className="mb-2 text-sm font-medium text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">{m.role}</p>
                 {m.bio && <div className="rt-content mx-auto max-w-xs text-sm text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: m.bio }} />}
               </div>
             ))}
@@ -152,7 +152,7 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12">
-        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--brand-accent))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--brand-dark)))]">{badgeText}</span>}
+        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-section-bg-alt, var(--brand-dark))))]">{badgeText}</span>}
         {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] lg:text-4xl">{headline}</h2>}
         {subline && <div className="rt-content mt-3 font-medium text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
@@ -168,8 +168,8 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
       {stats.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 md:mb-16">
           {stats.map((s, i) => (
-            <div key={i} className="bg-[var(--token-card-bg, var(--style-card-bg,var(--brand-dark)))] p-5 text-center text-[var(--style-text-primary,#ffffff)]">
-              <div className="text-2xl font-black text-[var(--style-accent-color,var(--brand-accent))]">{s.value}</div>
+            <div key={i} className="bg-[var(--token-card-bg, var(--style-card-bg,var(--token-section-bg-alt, var(--brand-dark))))] p-5 text-center text-[var(--style-text-primary,#ffffff)]">
+              <div className="text-2xl font-black text-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))]">{s.value}</div>
               <div className="mt-1 text-xs uppercase tracking-wider text-[var(--token-muted, var(--style-text-muted,rgba(255,255,255,0.60)))]">{s.label}</div>
             </div>
           ))}
@@ -186,7 +186,7 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
                 </div>
                 <div>
                   <h4 className="text-sm font-bold uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{m.name}</h4>
-                  <p className="text-xs font-bold uppercase text-[var(--style-accent-color,var(--brand-accent))]">{m.role}</p>
+                  <p className="text-xs font-bold uppercase text-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))]">{m.role}</p>
                   {m.bio && <div className="rt-content mt-1 text-xs text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: m.bio }} />}
                 </div>
               </div>

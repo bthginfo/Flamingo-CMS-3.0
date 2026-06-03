@@ -32,7 +32,7 @@ export function DeliveryTimelineSection({ data }: Props) {
 
       <div className="relative">
         {/* Connecting line */}
-        <div className="absolute top-12 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[var(--brand-primary,#2563eb)]/20 to-transparent hidden md:block" />
+        <div className="absolute top-12 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[var(--token-icon, var(--brand-primary,#2563eb))]/20 to-transparent hidden md:block" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-4">
           {steps.map((step, i) => (
@@ -44,17 +44,17 @@ export function DeliveryTimelineSection({ data }: Props) {
               className="text-center relative"
             >
               {/* Step circle */}
-              <div className="relative mx-auto w-24 h-24 rounded-full bg-[var(--brand-primary,#2563eb)]/5 border-2 border-[var(--brand-primary,#2563eb)]/20 flex flex-col items-center justify-center mb-5">
+              <div className="relative mx-auto w-24 h-24 rounded-full bg-[var(--token-icon, var(--brand-primary,#2563eb))]/5 border-2 border-[var(--token-icon, var(--brand-primary,#2563eb))]/20 flex flex-col items-center justify-center mb-5">
                 {step.icon ? (
-                  <DynamicIcon name={step.icon} size={28} className="text-[var(--brand-primary,#2563eb)]" />
+                  <DynamicIcon name={step.icon} size={28} className="text-[var(--token-icon, var(--brand-primary,#2563eb))]" />
                 ) : (
-                  <span className="text-2xl font-bold text-[var(--brand-primary,#2563eb)]">{step.number || i + 1}</span>
+                  <span className="text-2xl font-bold text-[var(--token-icon, var(--brand-primary,#2563eb))]">{step.number || i + 1}</span>
                 )}
               </div>
 
               {/* Arrow between steps (desktop) */}
               {i < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 -right-2 text-[var(--brand-primary,#2563eb)]/30 text-xl">→</div>
+                <div className="hidden lg:block absolute top-12 -right-2 text-[var(--token-icon, var(--brand-primary,#2563eb))]/30 text-xl">→</div>
               )}
 
               <h3 className="font-display font-semibold text-lg text-[var(--style-text-primary,#0f172a)] mb-2">{step.title}</h3>

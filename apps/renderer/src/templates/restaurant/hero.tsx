@@ -75,7 +75,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
       {/* SVG grain texture */}
       <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC43IiBudW1PY3RhdmVzPSI0IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI24pIi8+PC9zdmc+')] bg-repeat" />
       {/* Warm spotlight */}
-      <div className="absolute top-1/4 left-1/3 w-[700px] h-[700px] rounded-full blur-[150px] bg-brand-primary/10 animate-pulse" style={{ animationDuration: '6s' }} />
+      <div className="absolute top-1/4 left-1/3 w-[700px] h-[700px] rounded-full blur-[150px] bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] animate-pulse" style={{ animationDuration: '6s' }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20">
         <div className="max-w-4xl mx-auto text-center">
@@ -83,11 +83,11 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
           {badgeText && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
               className="inline-flex items-center gap-2.5 bg-white/[0.08] backdrop-blur-md border border-white/[0.12] rounded-full px-5 py-2.5 text-sm text-white/90 mb-8">
-              <DynamicIcon name={badgeIcon} size={14} className="text-brand-accent" />
+              <DynamicIcon name={badgeIcon} size={14} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
               <span className="font-medium">{badgeText}</span>
               {badgeStarsIcon && (
                 <div className="flex -space-x-0.5 ml-1">
-                  {[1, 2, 3, 4, 5].map(i => <DynamicIcon key={i} name={badgeStarsIcon} size={11} className="fill-brand-accent text-brand-accent" />)}
+                  {[1, 2, 3, 4, 5].map(i => <DynamicIcon key={i} name={badgeStarsIcon} size={11} className="fill-[var(--token-eyebrow,var(--brand-accent,#f39c12))] text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />)}
                 </div>
               )}
             </motion.div>
@@ -114,7 +114,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
             className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
             {primaryCta.label && (
               <a href={primaryCta.href || '#'}
-                className="group inline-flex items-center justify-between sm:justify-center sm:gap-2 rounded-full bg-brand-accent px-8 py-4 font-semibold text-gray-900 transition-all hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto">
+                className="group inline-flex items-center justify-between sm:justify-center sm:gap-2 rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-8 py-4 font-semibold text-gray-900 transition-all hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto">
                 {primaryCta.label}
                 {primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} className="transition-transform group-hover:translate-x-1" />}
               </a>
@@ -134,7 +134,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
               className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-white/50">
               {trustItems.map((item) => (
                 <span key={item} className="flex items-center gap-2">
-                  <CheckCircle size={14} className="text-brand-accent/70" />{item}
+                  <CheckCircle size={14} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))/70]" />{item}
                 </span>
               ))}
             </motion.div>
@@ -166,7 +166,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta.label && (
               <a href={primaryCta.href || '#'}
-                className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 text-gray-900 font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-brand-accent hover:text-brand-accent transition-colors w-full sm:w-auto">
+                className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 text-gray-900 font-medium text-base border-b-2 border-gray-900 pb-1 hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))] hover:text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-colors w-full sm:w-auto">
                 {primaryCta.label}
                 {primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
               </a>
@@ -220,16 +220,16 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgI
       ) : null}
 
       {/* Diagonal accent stripe */}
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-brand-accent/10 skew-x-[-12deg] translate-x-20" />
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] skew-x-[-12deg] translate-x-20" />
       {/* Thick accent line */}
-      <div className="absolute top-[112px] left-0 w-full h-1.5 bg-brand-accent" />
+      <div className="absolute top-[112px] left-0 w-full h-1.5 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20">
         <div className="max-w-5xl">
           {/* Badge as solid rectangle */}
           {badgeText && (
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
-              className="inline-block bg-brand-accent text-gray-900 font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8">
+              className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-gray-900 font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8">
               {badgeText}
             </motion.div>
           )}
@@ -255,7 +255,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgI
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta.label && (
               <a href={primaryCta.href || '#'}
-                className="inline-flex items-center justify-between sm:justify-center sm:gap-3 bg-brand-accent text-gray-900 font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] w-full sm:w-auto">
+                className="inline-flex items-center justify-between sm:justify-center sm:gap-3 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-gray-900 font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] w-full sm:w-auto">
                 {primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} />}
               </a>
             )}
@@ -273,7 +273,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgI
               className="flex flex-wrap gap-6 mt-16 text-sm text-white/40 font-bold uppercase tracking-wider">
               {trustItems.map((item) => (
                 <span key={item} className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-brand-accent" />{item}
+                  <span className="w-2 h-2 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />{item}
                 </span>
               ))}
             </motion.div>

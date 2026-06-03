@@ -27,18 +27,18 @@ export function OfferCampaignStripSection({ data }: Props) {
             {offerLabel && <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-[var(--token-badge-bg, var(--style-badge-bg,#ffffff))] px-4 py-2 text-xs font-black uppercase text-[var(--token-badge-text, var(--style-badge-text,#111827))]"><BadgePercent size={16} />{offerLabel}</div>}
           </div>
           <div className="p-6 md:p-10">
-            {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--token-eyebrow,var(--style-accent-color,var(--brand-primary,#fff)))]">{badge}</div>}
+            {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--token-eyebrow,var(--style-accent-color,var(--token-icon, var(--brand-primary,#fff))))]">{badge}</div>}
             {headline && <h2 className="text-3xl font-black leading-tight text-[var(--token-heading, var(--style-heading-color,#ffffff))] md:text-5xl">{headline}</h2>}
             {subline && <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--token-body, var(--style-body-color,rgba(255,255,255,0.72)))]">{plain(subline)}</p>}
             <div className="mt-6 grid gap-2 sm:grid-cols-2">
               {benefits.map((benefit, index) => (
                 <motion.div key={index} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.04 }} className="flex items-center gap-2 text-sm text-[var(--token-body,rgba(255,255,255,0.85))]">
-                  <Check size={16} className="text-[var(--token-check,var(--style-accent-color,var(--brand-primary,#fff)))]" />{benefit}
+                  <Check size={16} className="text-[var(--token-check,var(--style-accent-color,var(--token-icon, var(--brand-primary,#fff))))]" />{benefit}
                 </motion.div>
               ))}
             </div>
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              {cta.label && <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--brand-primary,#fff)))] px-5 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#111))]">{cta.label}<ArrowRight size={16} /></a>}
+              {cta.label && <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--token-icon, var(--brand-primary,#fff))))] px-5 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#111))]">{cta.label}<ArrowRight size={16} /></a>}
               {deadline && <div className="text-sm text-[var(--token-muted,rgba(255,255,255,0.65))]">Gültig bis {deadline}</div>}
             </div>
           </div>

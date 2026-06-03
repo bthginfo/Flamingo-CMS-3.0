@@ -53,7 +53,7 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
     ? `text-xs font-bold tracking-[0.4em] uppercase mb-4 ${bgImage ? 'text-white/80' : 'text-gray-700'}`
     : isModern
     ? `text-xs tracking-[0.5em] uppercase mb-8 ${bgImage ? 'text-white/60' : 'text-gray-500'}`
-    : `text-sm tracking-[0.3em] uppercase mb-6 ${bgImage ? 'text-white/70' : 'text-brand-primary'}`;
+    : `text-sm tracking-[0.3em] uppercase mb-6 ${bgImage ? 'text-white/70' : 'text-[color:var(--token-icon,var(--brand-primary,#1a5276))]'}`;
 
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden -mt-[112px] pt-[112px]">
@@ -68,11 +68,11 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
           ) : isModern ? (
             overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-black/30" />
           ) : (
-            overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/60 via-brand-dark/40 to-brand-dark/60" />
+            overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-gradient-to-b from-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))/60] via-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))/40] to-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))/60]" />
           )}
         </>
       ) : (
-        <div className={`absolute inset-0 ${isBold ? 'bg-black' : isModern ? 'bg-white' : 'bg-gradient-to-br from-brand-primary/5 via-white to-brand-secondary/5'}`} />
+        <div className={`absolute inset-0 ${isBold ? 'bg-black' : isModern ? 'bg-white' : 'bg-gradient-to-br from-[var(--token-icon,var(--brand-primary,#1a5276))/5] via-white to-[var(--token-subheading,var(--brand-secondary,#2e86c1))/5]'}`} />
       )}
       <div className={`relative z-10 px-4 py-10 md:px-6 md:py-20 ${isBold ? 'text-left max-w-4xl mx-auto w-full' : 'text-center'}`}>
         <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={`${sublineClass} rt-content`} dangerouslySetInnerHTML={{ __html: subline }} />

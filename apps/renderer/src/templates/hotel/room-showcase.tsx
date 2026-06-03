@@ -31,13 +31,13 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-brand-primary" />{badgeText}</motion.p>}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
         {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         {rooms.map((room, index) => (
-          <motion.article key={`${room.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`overflow-hidden rounded-xl border border-[var(--brand-primary)]/20 bg-white shadow-md ${room.highlighted ? 'ring-2 ring-[var(--brand-primary)]' : ''}`}>
+          <motion.article key={`${room.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-white shadow-md ${room.highlighted ? 'ring-2 ring-[var(--token-icon, var(--brand-primary))]' : ''}`}>
             {room.image && <div className="relative aspect-[4/3]"><Image src={room.image} alt={room.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
@@ -53,7 +53,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
               {asList<string>(room.features).length > 0 && <p className="mt-4 text-xs text-gray-600">{asList<string>(room.features).join(' / ')}</p>}
               {asList<string>(room.galleryImages).length > 0 && <p className="mt-2 text-xs text-gray-600">{asList<string>(room.galleryImages).length} Bilder</p>}
               <div className="mt-5 flex flex-wrap gap-3">
-                {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-semibold text-brand-accent">{room.detailCta.label}<ArrowRight size={15} /></a>}
+                {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-semibold text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{room.detailCta.label}<ArrowRight size={15} /></a>}
                 {room.bookingCta?.label && <a href={room.bookingCta.href || '#'} className="font-semibold text-gray-600">{room.bookingCta.label}</a>}
               </div>
             </div>
@@ -109,13 +109,13 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
+        {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
         {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         {rooms.map((room, index) => (
-          <article key={`${room.name}-${index}`} className={`overflow-hidden border-2 border-[#111827] bg-white shadow-[4px_4px_0_#111827] ${room.highlighted ? 'ring-2 ring-[var(--brand-primary)]' : ''}`}>
+          <article key={`${room.name}-${index}`} className={`overflow-hidden border-2 border-[#111827] bg-white shadow-[4px_4px_0_#111827] ${room.highlighted ? 'ring-2 ring-[var(--token-icon, var(--brand-primary))]' : ''}`}>
             {room.image && <div className="relative aspect-[4/3]"><Image src={room.image} alt={room.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
@@ -131,7 +131,7 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
               {asList<string>(room.features).length > 0 && <p className="mt-4 text-xs text-gray-600">{asList<string>(room.features).join(' / ')}</p>}
               {asList<string>(room.galleryImages).length > 0 && <p className="mt-2 text-xs text-gray-600">{asList<string>(room.galleryImages).length} Bilder</p>}
               <div className="mt-5 flex flex-wrap gap-3">
-                {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-black uppercase text-brand-accent">{room.detailCta.label}<ArrowRight size={15} /></a>}
+                {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-black uppercase text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{room.detailCta.label}<ArrowRight size={15} /></a>}
                 {room.bookingCta?.label && <a href={room.bookingCta.href || '#'} className="font-bold uppercase text-gray-600">{room.bookingCta.label}</a>}
               </div>
             </div>

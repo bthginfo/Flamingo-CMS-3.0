@@ -21,7 +21,7 @@ export function HorizontalScrollShowcaseSection({ data }: Props) {
   const panels = (data.panels as Panel[]) || [];
   const bgColor = (data.bgColor as string) || 'var(--style-section-bg, #09090b)';
   const textColor = (data.textColor as string) || 'var(--style-body-color, #ffffff)';
-  const dotColor = (data.dotColor as string) || 'var(--brand-primary, #ffffff)';
+  const dotColor = (data.dotColor as string) || 'var(--token-icon, var(--brand-primary, #ffffff))';
   const panelHeight = (data.panelHeight as string) || 'full'; // full | compact
 
   const [isMobile, setIsMobile] = useState(false);

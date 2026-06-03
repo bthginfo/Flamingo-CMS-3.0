@@ -34,7 +34,7 @@ export function PremiumComparisonSection({ data }: Props) {
         <div className="grid min-w-[720px]" style={{ gridTemplateColumns: `minmax(180px,1.2fr) repeat(${columns.length}, minmax(140px,1fr))` }}>
           <div className="border-b border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] p-5" />
           {columns.map((col, i) => (
-            <div key={i} className={`border-b border-l border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] p-5 text-center ${i === highlightCol ? 'bg-[var(--brand-primary)] text-white' : ''}`}>
+            <div key={i} className={`border-b border-l border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] p-5 text-center ${i === highlightCol ? 'bg-[var(--token-icon, var(--brand-primary))] text-white' : ''}`}>
               <div className="font-bold">{col.label}</div>
               {col.note && <div className={`mt-1 text-xs ${i === highlightCol ? 'text-white/70' : 'text-[var(--token-muted, var(--style-text-muted,#71717a))]'}`}>{col.note}</div>}
             </div>
@@ -45,8 +45,8 @@ export function PremiumComparisonSection({ data }: Props) {
               {columns.map((_, ci) => {
                 const value = normalizeValue(row.values[ci]);
                 return (
-                  <div key={`${ri}-${ci}`} className={`flex items-center justify-center border-b border-l border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] p-5 text-center text-sm ${ci === highlightCol ? 'bg-[var(--brand-primary)]/5' : ''}`}>
-                    {value === true ? <Check className="text-[var(--brand-primary)]" size={19} /> : value === false ? <Minus className="text-[var(--token-muted, var(--style-text-muted,#a1a1aa))]" size={19} /> : <span>{value}</span>}
+                  <div key={`${ri}-${ci}`} className={`flex items-center justify-center border-b border-l border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] p-5 text-center text-sm ${ci === highlightCol ? 'bg-[var(--token-icon, var(--brand-primary))]/5' : ''}`}>
+                    {value === true ? <Check className="text-[var(--token-icon, var(--brand-primary))]" size={19} /> : value === false ? <Minus className="text-[var(--token-muted, var(--style-text-muted,#a1a1aa))]" size={19} /> : <span>{value}</span>}
                   </div>
                 );
               })}

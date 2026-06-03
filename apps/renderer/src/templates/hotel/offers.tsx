@@ -31,14 +31,14 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-brand-primary" />{badgeText}</motion.p>}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
         {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {offers.length === 0 && fallbackText ? <p className="text-gray-600">{fallbackText}</p> : null}
       <div className="grid gap-6 md:grid-cols-2">
         {offers.map((offer, index) => (
-          <motion.article key={`${offer.title}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`grid overflow-hidden rounded-xl border border-[var(--brand-primary)]/20 bg-white shadow-md sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--brand-primary)]' : ''}`}>
+          <motion.article key={`${offer.title}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`grid overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-white shadow-md sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon, var(--brand-primary))]' : ''}`}>
             {offer.image && <div className="relative min-h-52"><Image src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-widest text-gray-600">
@@ -50,7 +50,7 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
               {offer.description && <div className="mt-3 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: offer.description }} />}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs text-gray-600">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">
-                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-semibold text-brand-accent">{offer.cta.label}</a>}
+                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-semibold text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{offer.cta.label}</a>}
                 {offer.detailHref && offer.detailLabel && <a href={offer.detailHref} className="inline-flex items-center gap-1 text-sm text-gray-600">{offer.detailLabel}<ArrowRight size={14} /></a>}
               </div>
             </div>
@@ -101,14 +101,14 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
+        {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
         {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {offers.length === 0 && fallbackText ? <p className="text-gray-600">{fallbackText}</p> : null}
       <div className="grid gap-4 md:grid-cols-2">
         {offers.map((offer, index) => (
-          <article key={`${offer.title}-${index}`} className={`grid overflow-hidden border-2 border-[#111827] bg-white shadow-[4px_4px_0_#111827] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--brand-primary)]' : ''}`}>
+          <article key={`${offer.title}-${index}`} className={`grid overflow-hidden border-2 border-[#111827] bg-white shadow-[4px_4px_0_#111827] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon, var(--brand-primary))]' : ''}`}>
             {offer.image && <div className="relative min-h-52"><Image src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-widest text-gray-600">
@@ -120,7 +120,7 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
               {offer.description && <div className="mt-3 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: offer.description }} />}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs text-gray-600">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">
-                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-black uppercase text-brand-accent">{offer.cta.label}</a>}
+                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-black uppercase text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{offer.cta.label}</a>}
                 {offer.detailHref && offer.detailLabel && <a href={offer.detailHref} className="inline-flex items-center gap-1 text-sm font-bold text-gray-600">{offer.detailLabel}<ArrowRight size={14} /></a>}
               </div>
             </div>

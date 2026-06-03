@@ -42,7 +42,7 @@ export function DailySpecialsSection({ data }: Props) {
                 <h3 className="font-semibold text-gray-900">{item.title}</h3>
                 <p className="text-sm text-gray-500 mt-0.5">{plain(item.description)}</p>
               </div>
-              {item.price && <span className="font-bold text-brand-primary whitespace-nowrap">{item.price}</span>}
+              {item.price && <span className="font-bold text-[color:var(--token-icon,var(--brand-primary,#1a5276))] whitespace-nowrap">{item.price}</span>}
             </motion.div>
           ))}
         </div>

@@ -48,22 +48,22 @@ export function PropertySearchSection({ data }: Props) {
               <a
                 key={i}
                 href={cat.href || ctaHref}
-                className={`group relative flex flex-col items-center gap-3 rounded-xl border p-6 text-center transition-all hover:shadow-lg hover:border-brand-primary/30 ${i === activeCategory ? 'border-brand-primary/40 bg-brand-primary/5' : 'border-gray-200 bg-white'}`}
+                className={`group relative flex flex-col items-center gap-3 rounded-xl border p-6 text-center transition-all hover:shadow-lg hover:border-[var(--token-card-border,var(--brand-primary,#1a5276))/30] ${i === activeCategory ? 'border-[var(--token-card-border,var(--brand-primary,#1a5276))/40] bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/5]' : 'border-gray-200 bg-white'}`}
                 onMouseEnter={() => setActiveCategory(i)}
               >
-                <div className="rounded-full bg-brand-primary/10 p-3 text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-colors">
+                <div className="rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] p-3 text-[color:var(--token-icon,var(--brand-primary,#1a5276))] group-hover:bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] group-hover:text-white transition-colors">
                   <Icon size={24} />
                 </div>
                 <span className="font-semibold text-gray-900">{cat.label}</span>
                 {cat.count && <span className="text-xs text-gray-500">{cat.count}</span>}
-                <ArrowRight size={16} className="absolute top-4 right-4 text-gray-300 group-hover:text-brand-primary transition-colors" />
+                <ArrowRight size={16} className="absolute top-4 right-4 text-gray-300 group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors" />
               </a>
             );
           })}
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.4 }} className="mt-8 text-center">
-          <a href={ctaHref} className="inline-flex items-center gap-2 px-6 py-3 bg-brand-primary text-white font-semibold rounded-lg hover:bg-brand-dark transition-colors">
+          <a href={ctaHref} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-white font-semibold rounded-lg hover:bg-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))] transition-colors">
             <Search size={18} />
             {ctaLabel}
           </a>

@@ -18,7 +18,7 @@ export function VerticalTimelineSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const steps = (data.steps as Step[]) || [];
-  const accentColor = (data.accentColor as string) || 'var(--brand-primary, #18181b)';
+  const accentColor = (data.accentColor as string) || 'var(--token-icon, var(--brand-primary, #18181b))';
   const lineColor = (data.lineColor as string) || 'var(--token-divider, var(--style-divider-color, #e4e4e7))';
   const bgColor = (data.bgColor as string) || 'var(--token-section-bg, var(--style-section-bg, transparent))';
   const textColor = (data.textColor as string) || 'var(--token-body, var(--style-body-color, inherit))';

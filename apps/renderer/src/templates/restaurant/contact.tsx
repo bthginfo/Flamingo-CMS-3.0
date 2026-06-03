@@ -36,8 +36,8 @@ function InfoCards({ cards }: { cards: InfoCard[] }) {
   return (
     <div className="grid gap-3">
       {cards.map((card, i) => (
-        <div key={`${card.label}-${i}`} className="flex gap-4 border-t border-[var(--brand-primary)]/20 pt-4">
-          <DynamicIcon name={card.icon || 'mail'} size={20} className="text-brand-accent" />
+        <div key={`${card.label}-${i}`} className="flex gap-4 border-t border-[var(--token-icon, var(--brand-primary))]/20 pt-4">
+          <DynamicIcon name={card.icon || 'mail'} size={20} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
           <div>
             <p className="text-xs text-gray-600">{card.label || ''}</p>
             <p className="font-semibold text-gray-900">{card.value || ''}</p>
@@ -61,10 +61,10 @@ function Classic(p: Props) {
         <div className="mt-6"><InfoCards cards={p.infoCards} /></div>
         <div className="mt-8 flex flex-wrap gap-3">
           {p.primaryCta.label && <a href={p.primaryCta.href || '#'} className="inline-flex rounded-full bg-[#111827] px-5 py-3 font-semibold text-white shadow-md">{p.primaryCta.label}</a>}
-          {p.secondaryCta.label && <a href={p.secondaryCta.href || '#'} className="inline-flex rounded-full border border-[var(--brand-primary)]/30 px-5 py-3 font-semibold text-gray-900">{p.secondaryCta.label}</a>}
+          {p.secondaryCta.label && <a href={p.secondaryCta.href || '#'} className="inline-flex rounded-full border border-[var(--token-icon, var(--brand-primary))]/30 px-5 py-3 font-semibold text-gray-900">{p.secondaryCta.label}</a>}
         </div>
       </div>
-      <div className="rounded-xl border border-[var(--brand-primary)]/20 bg-white p-5 shadow-md">
+      <div className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-white p-5 shadow-md">
         {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {p.mapEmbedUrl && <iframe src={p.mapEmbedUrl} title="Standort" className="mb-5 h-56 w-full rounded-xl" loading="lazy" />}
         {p.formEnabled && <DynamicContactForm fields={p.formFields} submitLabel={p.submitLabel} />}
@@ -83,7 +83,7 @@ function Modern(p: Props) {
           {p.subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
         {p.introText && <p className="font-light text-gray-600">{plain(p.introText)}</p>}
-        <div className="mt-6">{p.infoCards.map((c, i) => <div key={`${c.label}-${i}`} className="flex gap-4 border-t border-black/10 pt-4"><DynamicIcon name={c.icon || 'mail'} size={18} className="shrink-0 text-brand-accent" /><div className="min-w-0 flex-1"><p className="text-xs font-light text-gray-600">{c.label || ''}</p><p className="break-words font-light text-gray-900">{c.value || ''}</p></div></div>)}</div>
+        <div className="mt-6">{p.infoCards.map((c, i) => <div key={`${c.label}-${i}`} className="flex gap-4 border-t border-black/10 pt-4"><DynamicIcon name={c.icon || 'mail'} size={18} className="shrink-0 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" /><div className="min-w-0 flex-1"><p className="text-xs font-light text-gray-600">{c.label || ''}</p><p className="break-words font-light text-gray-900">{c.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
           {p.primaryCta.label && <a href={p.primaryCta.href || '#'} className="inline-flex border border-[#111827] px-6 py-3 font-light text-gray-900">{p.primaryCta.label}</a>}
           {p.secondaryCta.label && <a href={p.secondaryCta.href || '#'} className="inline-flex px-6 py-3 font-light text-gray-600">{p.secondaryCta.label}</a>}
@@ -103,18 +103,18 @@ function Bold(p: Props) {
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <div className="mb-10 max-w-3xl">
-          {p.badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{p.badgeText}</p>}
+          {p.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{p.badgeText}</p>}
           <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{p.headline}</h2>
           {p.subline && <div className="mt-4 font-bold text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
         {p.introText && <p className="font-bold text-gray-600">{plain(p.introText)}</p>}
-        <div className="mt-6">{p.infoCards.map((c, i) => <div key={`${c.label}-${i}`} className="flex gap-4 border-t-2 border-[#111827] pt-4"><DynamicIcon name={c.icon || 'mail'} size={20} className="shrink-0 text-brand-accent" /><div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase text-gray-600">{c.label || ''}</p><p className="break-words font-black text-gray-900">{c.value || ''}</p></div></div>)}</div>
+        <div className="mt-6">{p.infoCards.map((c, i) => <div key={`${c.label}-${i}`} className="flex gap-4 border-t-2 border-[#111827] pt-4"><DynamicIcon name={c.icon || 'mail'} size={20} className="shrink-0 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" /><div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase text-gray-600">{c.label || ''}</p><p className="break-words font-black text-gray-900">{c.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {p.primaryCta.label && <a href={p.primaryCta.href || '#'} className="inline-flex bg-brand-accent px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{p.primaryCta.label}</a>}
-          {p.secondaryCta.label && <a href={p.secondaryCta.href || '#'} className="inline-flex border-2 border-[#111827] px-6 py-3 font-black uppercase text-gray-900 shadow-[4px_4px_0_var(--brand-accent)]">{p.secondaryCta.label}</a>}
+          {p.primaryCta.label && <a href={p.primaryCta.href || '#'} className="inline-flex bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{p.primaryCta.label}</a>}
+          {p.secondaryCta.label && <a href={p.secondaryCta.href || '#'} className="inline-flex border-2 border-[#111827] px-6 py-3 font-black uppercase text-gray-900 shadow-[4px_4px_0_var(--token-eyebrow, var(--brand-accent))]">{p.secondaryCta.label}</a>}
         </div>
       </div>
-      <div className="bg-white p-5 shadow-[6px_6px_0_var(--brand-accent)]">
+      <div className="bg-white p-5 shadow-[6px_6px_0_var(--token-eyebrow, var(--brand-accent))]">
         {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {p.mapEmbedUrl && <iframe src={p.mapEmbedUrl} title="Standort" className="mb-5 h-56 w-full" loading="lazy" />}
         {p.formEnabled && <DynamicContactForm fields={p.formFields} submitLabel={p.submitLabel} />}

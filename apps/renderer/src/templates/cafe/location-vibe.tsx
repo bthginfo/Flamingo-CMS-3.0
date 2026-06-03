@@ -32,7 +32,7 @@ export function LocationVibeSection({ data }: Props) {
 
             {address && (
               <div className="flex items-start gap-3 mt-8">
-                <MapPin size={18} className="text-brand-primary mt-0.5 shrink-0" />
+                <MapPin size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-0.5 shrink-0" />
                 <p className="text-gray-700">{address}</p>
               </div>
             )}
@@ -40,7 +40,7 @@ export function LocationVibeSection({ data }: Props) {
             {hours.length > 0 && (
               <div className="mt-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <Clock size={16} className="text-brand-primary" />
+                  <Clock size={16} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />
                   <span className="text-sm font-semibold text-gray-900">Öffnungszeiten</span>
                 </div>
                 <ul className="space-y-1.5">

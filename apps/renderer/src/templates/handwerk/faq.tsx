@@ -88,7 +88,7 @@ function FaqItemModern({ question, answer, defaultOpen }: { question: string; an
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="py-6">
-      <button onClick={() => setOpen(!open)} className="flex w-full items-center justify-between gap-4 text-left font-medium text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] transition-colors hover:text-[var(--style-accent-color,var(--brand-primary))]">
+      <button onClick={() => setOpen(!open)} className="flex w-full items-center justify-between gap-4 text-left font-medium text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] transition-colors hover:text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">
         {question}
         <Plus size={16} className={cn('shrink-0 text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#d1d5db)))] transition-transform', open && 'rotate-45')} />
       </button>
@@ -111,7 +111,7 @@ function FaqBold({ headline, badgeText, items, expandFirst }: FProps) {
   return (
     <div ref={ref} className="max-w-4xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-10">
-        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--brand-accent))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--brand-dark)))]">{badgeText}</span>}
+        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-section-bg-alt, var(--brand-dark))))]">{badgeText}</span>}
         {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] lg:text-4xl">{headline}</h2>}
       </motion.div>
       <div className="space-y-3">
@@ -130,7 +130,7 @@ function FaqItemBold({ question, answer, defaultOpen, num }: { question: string;
   return (
     <div className={cn('border-3 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] transition-all', open ? 'shadow-[4px_4px_0_var(--style-accent-color,#f39c12)]' : 'shadow-[4px_4px_0_var(--style-text-primary,#0d2137)]')}>
       <button onClick={() => setOpen(!open)} className="flex w-full items-center gap-4 px-6 py-5 text-left text-sm font-bold uppercase tracking-wide text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-[var(--style-text-primary,var(--brand-dark))] text-xs font-black text-[var(--token-btn-text, var(--brand-btn-text,#ffffff))]">{num}</span>
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-[var(--style-text-primary,var(--token-section-bg-alt, var(--brand-dark)))] text-xs font-black text-[var(--token-btn-text, var(--brand-btn-text,#ffffff))]">{num}</span>
         <span className="flex-1">{question}</span>
         <Minus size={16} className={cn('shrink-0 transition-transform', !open && 'rotate-90')} />
       </button>

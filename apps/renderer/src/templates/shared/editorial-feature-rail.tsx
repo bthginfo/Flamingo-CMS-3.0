@@ -18,7 +18,7 @@ export function EditorialFeatureRailSection({ data }: Props) {
     <section data-theme="dark" className="overflow-hidden bg-[var(--token-section-bg-alt, var(--style-section-bg-alt,#070707))] py-16 text-[var(--style-text-primary,#ffffff)] md:py-24">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-12 max-w-3xl">
-          {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--token-eyebrow,var(--style-accent-color,var(--brand-primary,#fff)))]">{badge}</div>}
+          {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--token-eyebrow,var(--style-accent-color,var(--token-icon, var(--brand-primary,#fff))))]">{badge}</div>}
           {headline && <h2 className="text-4xl font-black leading-none text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#ffffff)))] md:text-6xl">{headline}</h2>}
           {subline && <p className="mt-5 text-lg leading-8 text-[var(--token-body, var(--style-body-color,rgba(255,255,255,0.72)))]">{plain(subline)}</p>}
         </div>

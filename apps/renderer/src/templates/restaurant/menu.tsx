@@ -100,7 +100,7 @@ function MenuBold(props: MenuViewProps) {
 function MenuHeader({ headline, subline, badgeText, introText, align, inverted }: MenuViewProps & { align: 'left' | 'center'; inverted?: boolean }) {
   return (
     <div className={`${align === 'center' ? 'text-center mx-auto' : ''} max-w-3xl p-6 sm:p-10`}>
-      {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[var(--brand-accent)]' : 'text-gray-600'}`}>{badgeText}</p>}
+      {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[var(--token-eyebrow, var(--brand-accent))]' : 'text-gray-600'}`}>{badgeText}</p>}
       <h2 className={`mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] ${inverted ? 'text-white' : 'text-gray-900'}`}>{headline}</h2>
       {subline && <div className={`mt-4 text-base sm:text-lg ${inverted ? 'text-white/70' : 'text-gray-600'} rt-content`} dangerouslySetInnerHTML={{ __html: subline }} />}
       {introText && <div className={`mt-5 leading-7 ${inverted ? 'text-white/65' : 'text-gray-600'} rt-content`} dangerouslySetInnerHTML={{ __html: introText }} />}
@@ -127,7 +127,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
             <div>
               <div className="flex items-start justify-between gap-4">
                 <h4 className={`font-semibold ${layout === 'bold' ? 'text-white' : 'text-gray-900'}`}>{item.name || ''}</h4>
-                {item.price && <p className={`shrink-0 font-bold ${layout === 'bold' ? 'text-[var(--brand-accent)]' : 'text-gray-900'}`}>{item.price}</p>}
+                {item.price && <p className={`shrink-0 font-bold ${layout === 'bold' ? 'text-[var(--token-eyebrow, var(--brand-accent))]' : 'text-gray-900'}`}>{item.price}</p>}
               </div>
               {item.description && <div className={`mt-1 text-sm leading-6 ${layout === 'bold' ? 'text-white/60' : 'text-gray-600'}`} dangerouslySetInnerHTML={{ __html: item.description }} />}
               <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
@@ -152,7 +152,7 @@ function MenuFooter({ footnote, ctaPrimary, inverted }: MenuViewProps & { invert
   return (
     <div className={`flex flex-col gap-4 p-6 sm:p-10 sm:flex-row sm:items-center sm:justify-between ${inverted ? 'text-white/70' : 'text-gray-600'}`}>
       {footnote && <p className="text-sm">{footnote}</p>}
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 font-semibold text-gray-900 bg-brand-primary/10 px-5 py-3 rounded-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 font-semibold text-gray-900 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-5 py-3 rounded-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
     </div>
   );
 }

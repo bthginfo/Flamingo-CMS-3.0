@@ -45,7 +45,7 @@ export function FoodMenuSection({ data }: Props) {
               <div className="p-5">
                 <div className="flex justify-between items-start gap-2">
                   <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                  <span className="font-bold text-brand-primary whitespace-nowrap">{item.price}</span>
+                  <span className="font-bold text-[color:var(--token-icon,var(--brand-primary,#1a5276))] whitespace-nowrap">{item.price}</span>
                 </div>
                 {item.description && <p className="text-sm text-gray-500 mt-1.5">{plain(item.description)}</p>}
               </div>

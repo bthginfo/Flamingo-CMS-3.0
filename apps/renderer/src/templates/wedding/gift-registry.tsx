@@ -57,18 +57,18 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
     return (
       <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
-          <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
+          <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words">{headline}</h2>
           {text && <div className="text-gray-600 text-lg mb-12 max-w-2xl rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <div className="grid sm:grid-cols-2 gap-4 mb-12">
               {items.map((item, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900 p-6 flex items-start gap-4">
-                  <Gift className="w-5 h-5 text-brand-accent shrink-0 mt-0.5" />
+                  <Gift className="w-5 h-5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <h3 className="font-bold text-gray-900">{item.title}</h3>
                     {item.description && <p className="text-gray-500 text-sm mt-1">{plain(item.description)}</p>}
-                    {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand-accent text-sm font-bold mt-2 hover:opacity-70"><ExternalLink className="w-3 h-3" />Ansehen</a>}
+                    {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] text-sm font-bold mt-2 hover:opacity-70"><ExternalLink className="w-3 h-3" />Ansehen</a>}
                   </div>
                 </motion.div>
               ))}
@@ -76,7 +76,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
           )}
           {bankDetails && (
             <div className="border-2 border-gray-900 p-8">
-              <p className="text-brand-accent font-bold mb-4">Bankverbindung</p>
+              <p className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] font-bold mb-4">Bankverbindung</p>
               <div className="text-gray-600 text-sm space-y-1">
                 {bankDetails.holder && <p>Kontoinhaber: {bankDetails.holder}</p>}
                 {bankDetails.iban && <p>IBAN: {bankDetails.iban}</p>}
@@ -91,7 +91,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
   }
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))]/[0.02]">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
@@ -103,13 +103,13 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
           <div className="grid sm:grid-cols-2 gap-6 mb-12">
             {items.map((item, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center shrink-0">
-                  <Gift className="w-4 h-4 text-brand-primary" />
+                <div className="w-10 h-10 rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] flex items-center justify-center shrink-0">
+                  <Gift className="w-4 h-4 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900">{item.title}</h3>
                   {item.description && <div className="text-gray-600 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
-                  {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand-primary text-sm font-medium mt-2 hover:underline"><ExternalLink className="w-3 h-3" />Ansehen</a>}
+                  {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[color:var(--token-icon,var(--brand-primary,#1a5276))] text-sm font-medium mt-2 hover:underline"><ExternalLink className="w-3 h-3" />Ansehen</a>}
                 </div>
               </motion.div>
             ))}

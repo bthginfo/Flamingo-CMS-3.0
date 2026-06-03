@@ -35,7 +35,7 @@ export function WeddingFaqSection({ data, styleVariant }: Props) {
     return (
       <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-3xl mx-auto">
-          <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
+          <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
           <div className="space-y-2">
             {items.map((item, i) => (
@@ -48,7 +48,7 @@ export function WeddingFaqSection({ data, styleVariant }: Props) {
   }
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))]/[0.02]">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge">{badge}</span>
@@ -84,7 +84,7 @@ function FaqItem({ question, answer, index, variant }: { question: string; answe
       <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900">
         <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between p-5 text-left">
           <span className="font-bold text-gray-900">{question}</span>
-          <ChevronDown className={`w-5 h-5 text-brand-accent transition-transform ${open ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`w-5 h-5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-transform ${open ? 'rotate-180' : ''}`} />
         </button>
         {open && <div className="px-5 pb-5 text-gray-500 text-sm leading-relaxed">{plain(answer)}</div>}
       </motion.div>
@@ -131,7 +131,7 @@ export function WeddingGallerySection({ data, styleVariant }: Props) {
     return (
       <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
-          <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
+          <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
           <div className="columns-2 md:columns-3 gap-2 space-y-2">
             {images.map((img, i) => (

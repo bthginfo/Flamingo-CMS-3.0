@@ -42,15 +42,15 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <div className="mb-6 max-w-3xl">
-          {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-brand-primary" />{badgeText}</motion.p>}
+          {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{badgeText}</motion.p>}
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
           {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {introText && <div className="text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
-            <motion.div key={`${card.label}-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[var(--brand-primary)]/20 pt-4">
-              <div className="text-brand-primary"><DynamicIcon name={card.icon || 'mail'} size={20} /></div>
+            <motion.div key={`${card.label}-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[var(--token-icon, var(--brand-primary))]/20 pt-4">
+              <div className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={card.icon || 'mail'} size={20} /></div>
               <div><p className="text-xs text-gray-600">{card.label || ''}</p><p className="font-semibold text-gray-900">{card.value || ''}</p></div>
             </motion.div>
           ))}
@@ -60,7 +60,7 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
           {routeCta.label && <a href={routeCta.href || '#'} className="rounded-xl border border-black/15 px-5 py-3 font-semibold text-gray-900">{routeCta.label}</a>}
         </div>
       </div>
-      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[var(--brand-primary)]/20 bg-white p-5 shadow-lg">
+      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-white p-5 shadow-lg">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </motion.div>
@@ -106,7 +106,7 @@ function ContactBold({ headline, subline, badgeText, introText, submitLabel, for
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <div className="mb-6 max-w-3xl">
-          {badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{badgeText}</p>}
+          {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{headline}</h2>
           {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
@@ -114,13 +114,13 @@ function ContactBold({ headline, subline, badgeText, introText, submitLabel, for
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4">
-              <div className="text-brand-primary"><DynamicIcon name={card.icon || 'mail'} size={20} /></div>
+              <div className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={card.icon || 'mail'} size={20} /></div>
               <div><p className="text-xs font-bold uppercase text-gray-600">{card.label || ''}</p><p className="font-black text-gray-900">{card.value || ''}</p></div>
             </div>
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {contactCta.label && <a href={contactCta.href || '#'} className="border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--brand-primary)]">{contactCta.label}</a>}
+          {contactCta.label && <a href={contactCta.href || '#'} className="border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_var(--token-icon, var(--brand-primary))]">{contactCta.label}</a>}
           {routeCta.label && <a href={routeCta.href || '#'} className="border-2 border-[#111827] px-5 py-3 font-black uppercase text-gray-900">{routeCta.label}</a>}
         </div>
       </div>

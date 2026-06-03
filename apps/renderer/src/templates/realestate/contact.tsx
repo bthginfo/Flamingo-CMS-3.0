@@ -41,7 +41,7 @@ export function RealestateContactSection({ data }: Props) {
       <div className="max-w-7xl mx-auto px-6">
         <div className={formEnabled ? 'grid lg:grid-cols-2 gap-12' : ''}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}>
-            {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">{badgeText}</p>}
+            {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mb-3">{badgeText}</p>}
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
             {subline && <p className="text-lg text-gray-600 mt-4">{plain(subline)}</p>}
             {introText && <div className="text-gray-600 mt-4 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
@@ -49,7 +49,7 @@ export function RealestateContactSection({ data }: Props) {
             <div className="mt-8 space-y-4">
               {contactItems.map((item, i) => (
                 <div key={i} className="flex items-center gap-3 text-gray-700">
-                  <div className="w-10 h-10 bg-brand-primary/10 rounded-lg flex items-center justify-center text-brand-primary">
+                  <div className="w-10 h-10 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] rounded-lg flex items-center justify-center text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">
                     <DynamicIcon name={item.icon} size={18} />
                   </div>
                   <div>

@@ -38,7 +38,7 @@ function Classic({ badge, headline, text, colors, hints }: P) {
           <div className="mt-10 grid sm:grid-cols-2 gap-4 text-left max-w-lg mx-auto">
             {hints.map((hint, i) => (
               <div key={i} className="flex items-start gap-3 text-gray-700 text-sm">
-                <Shirt className="w-4 h-4 text-brand-primary mt-0.5 shrink-0" />
+                <Shirt className="w-4 h-4 text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-0.5 shrink-0" />
                 <span>{hint}</span>
               </div>
             ))}
@@ -79,7 +79,7 @@ function Bold({ badge, headline, text, colors, hints }: P) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-4xl mx-auto text-center">
-        <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
+        <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words">{headline}</h2>
         {text && <div className="text-gray-600 text-lg leading-relaxed mb-10 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {colors.length > 0 && (
@@ -93,7 +93,7 @@ function Bold({ badge, headline, text, colors, hints }: P) {
           <div className="grid sm:grid-cols-2 gap-4 text-left max-w-lg mx-auto mt-8">
             {hints.map((hint, i) => (
               <div key={i} className="flex items-start gap-3 text-gray-700 text-sm border-2 border-gray-200 p-4">
-                <Shirt className="w-4 h-4 text-brand-accent mt-0.5 shrink-0" />
+                <Shirt className="w-4 h-4 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] mt-0.5 shrink-0" />
                 <span>{hint}</span>
               </div>
             ))}

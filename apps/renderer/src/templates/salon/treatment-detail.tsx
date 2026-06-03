@@ -31,7 +31,7 @@ function TreatmentClassic({ headline, subline, badgeText, treatments }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {treatments.map((item, i) => (
-          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[var(--brand-primary)]/20 bg-white shadow-md">
+          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-white shadow-md">
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="50vw" /></div>}
             <div className="p-5">
               {(item.resultLabel || item.durationLabel || item.priceLabel) && <p className="text-xs font-bold uppercase tracking-widest text-gray-600">{[item.resultLabel, item.durationLabel, item.priceLabel].filter(Boolean).join(' / ')}</p>}
@@ -66,7 +66,7 @@ function TreatmentModern({ headline, subline, badgeText, treatments }: Props) {
               {item.text && <div className="mt-3 text-sm font-light leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {asList<string>(item.steps).length > 0 && <p className="mt-2 text-sm font-light text-gray-600">{asList<string>(item.steps).join(' / ')}</p>}
               {asList<string>(item.careTips).length > 0 && <p className="mt-2 text-sm font-light text-gray-600">{asList<string>(item.careTips).join(' / ')}</p>}
-              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex border-b border-brand-accent pb-1 text-sm font-light text-gray-900">{item.cta.label}</a>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex border-b border-[var(--token-card-border,var(--brand-accent,#f39c12))] pb-1 text-sm font-light text-gray-900">{item.cta.label}</a>}
             </div>
           </article>
         ))}
@@ -79,21 +79,21 @@ function TreatmentBold({ headline, subline, badgeText, treatments }: Props) {
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
         {subline && <div className="mt-4 font-bold text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {treatments.map((item, i) => (
-          <article key={`${item.title}-${i}`} className="group overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--brand-accent)]">
+          <article key={`${item.title}-${i}`} className="group overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow, var(--brand-accent))]">
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="p-5">
-              {(item.resultLabel || item.durationLabel || item.priceLabel) && <span className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase text-white">{[item.resultLabel, item.durationLabel, item.priceLabel].filter(Boolean).join(' / ')}</span>}
+              {(item.resultLabel || item.durationLabel || item.priceLabel) && <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase text-white">{[item.resultLabel, item.durationLabel, item.priceLabel].filter(Boolean).join(' / ')}</span>}
               <h3 className="mt-2 text-xl font-black uppercase text-white">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm leading-6 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {asList<string>(item.steps).length > 0 && <p className="mt-2 text-sm text-white/60">{asList<string>(item.steps).join(' / ')}</p>}
               {asList<string>(item.careTips).length > 0 && <p className="mt-2 text-sm text-white/60">{asList<string>(item.careTips).join(' / ')}</p>}
-              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex bg-brand-accent px-5 py-2 text-sm font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{item.cta.label}</a>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-5 py-2 text-sm font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{item.cta.label}</a>}
             </div>
           </article>
         ))}

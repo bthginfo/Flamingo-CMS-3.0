@@ -38,7 +38,7 @@ export function ConsultingFaqSection({ data }: Props) {
               className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-slate-50 transition-colors"
             >
               <span className="font-medium text-slate-900 pr-4">{item.question}</span>
-              <DynamicIcon name={open === i ? 'minus' : 'plus'} size={18} className="text-brand-primary shrink-0" />
+              <DynamicIcon name={open === i ? 'minus' : 'plus'} size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] shrink-0" />
             </button>
             <AnimatePresence>
               {open === i && (

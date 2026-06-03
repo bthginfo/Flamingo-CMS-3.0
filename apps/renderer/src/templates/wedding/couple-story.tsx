@@ -37,10 +37,10 @@ function Classic({ badge, headline, story, image, milestones }: P) {
           <div className={image ? '' : 'md:col-span-2 max-w-3xl mx-auto'}>
             {story && <p className="text-gray-600 text-lg leading-relaxed mb-10">{story}</p>}
             {milestones.length > 0 && (
-              <div className="space-y-6 border-l-2 border-brand-primary/20 pl-6">
+              <div className="space-y-6 border-l-2 border-[var(--token-card-border,var(--brand-primary,#1a5276))/20] pl-6">
                 {milestones.map((m, i) => (
                   <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                    <span className="text-sm font-semibold text-brand-primary">{m.date}</span>
+                    <span className="text-sm font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{m.date}</span>
                     <div className="text-gray-700 mt-1 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />
                   </motion.div>
                 ))}
@@ -84,7 +84,7 @@ function Bold({ badge, headline, story, image, milestones }: P) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-6xl mx-auto">
-        <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
+        <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
         <div className="grid md:grid-cols-2 gap-8 items-start">
           {image && (
@@ -98,8 +98,8 @@ function Bold({ badge, headline, story, image, milestones }: P) {
             {milestones.length > 0 && (
               <div className="space-y-6">
                 {milestones.map((m, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-l-4 border-brand-accent pl-5">
-                    <span className="text-xs font-bold uppercase tracking-widest text-brand-accent">{m.date}</span>
+                  <motion.div key={i} initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-l-4 border-[var(--token-card-border,var(--brand-accent,#f39c12))] pl-5">
+                    <span className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{m.date}</span>
                     <div className="text-gray-700 mt-2 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />
                   </motion.div>
                 ))}
