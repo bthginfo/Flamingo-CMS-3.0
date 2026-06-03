@@ -122,6 +122,7 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   // chain stays in place as a fallback in unmigrated templates.
   // ---------------------------------------------------------------------------
   vars['--token-section-bg']    = brand.sectionBg     ?? 'var(--style-section-bg, transparent)';
+  vars['--token-section-bg-alt']= brand.sectionBgAlt  ?? 'var(--style-section-bg-alt, var(--style-section-bg, transparent))';
   vars['--token-card-bg']       = brand.cardBg        ?? 'var(--style-card-bg, #ffffff)';
   vars['--token-card-border']   = brand.borderColor   ?? brand.cardBorder ?? 'var(--style-border-color, rgba(15,23,42,0.08))';
   vars['--token-heading']       = brand.headingColor  ?? 'var(--brand-heading, #0f172a)';

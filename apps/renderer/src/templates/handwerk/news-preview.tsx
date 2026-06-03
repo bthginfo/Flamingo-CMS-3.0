@@ -64,13 +64,13 @@ export function NewsPreviewSection({ data }: Props) {
                 </div>
               )}
               {item.date && (
-                <div className="mb-2 flex items-center gap-1.5 text-xs text-[var(--style-text-muted,var(--style-text-secondary,#9ca3af))]">
+                <div className="mb-2 flex items-center gap-1.5 text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#9ca3af)))]">
                   <Calendar size={12} />
                   {new Date(item.date).toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
               )}
-              <h3 className="line-clamp-2 text-lg font-semibold text-[var(--style-text-primary,var(--style-heading-color,#111827))] transition-colors group-hover:text-[var(--style-accent-color,var(--brand-primary))]">{item.title}</h3>
-              {item.excerpt && <p className="mt-1.5 line-clamp-2 text-sm text-[var(--style-text-secondary,var(--style-text-muted,#6b7280))]">{item.excerpt}</p>}
+              <h3 className="line-clamp-2 text-lg font-semibold text-[var(--style-text-primary,var(--token-heading, var(--style-heading-color,#111827)))] transition-colors group-hover:text-[var(--style-accent-color,var(--brand-primary))]">{item.title}</h3>
+              {item.excerpt && <p className="mt-1.5 line-clamp-2 text-sm text-[var(--style-text-secondary,var(--token-muted, var(--style-text-muted,#6b7280)))]">{item.excerpt}</p>}
             </Link>
           </motion.article>
         ))}

@@ -17,7 +17,7 @@ export function SocialProofBarSection({ data }: Props) {
 
   if (!items.length) return null;
 
-  const bg = bgStyle === 'dark' ? 'bg-zinc-900 text-white' : bgStyle === 'primary' ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--style-card-bg,#f4f4f5)] text-[var(--style-text-primary,#27272a)]';
+  const bg = bgStyle === 'dark' ? 'bg-zinc-900 text-white' : bgStyle === 'primary' ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--token-card-bg, var(--style-card-bg,#f4f4f5))] text-[var(--style-text-primary,#27272a)]';
 
   return (
     <div ref={ref} className={`${bg} py-6 px-4 rounded-xl`} style={{ borderColor: 'var(--style-card-border-color, transparent)', borderWidth: '1px' }}>

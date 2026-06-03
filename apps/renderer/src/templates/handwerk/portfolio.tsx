@@ -54,7 +54,7 @@ export function PortfolioSection({ data }: Props) {
               initial={{ opacity: 0, y: 40 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="group relative rounded-3xl overflow-hidden bg-[var(--style-card-bg,#fff)] border border-[var(--style-border,rgba(0,0,0,.08))] shadow-sm hover:shadow-xl transition-all duration-500"
+              className="group relative rounded-3xl overflow-hidden bg-[var(--token-card-bg, var(--style-card-bg,#fff))] border border-[var(--style-border,rgba(0,0,0,.08))] shadow-sm hover:shadow-xl transition-all duration-500"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
                 <Image
@@ -66,7 +66,7 @@ export function PortfolioSection({ data }: Props) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--style-image-overlay,rgba(0,0,0,.6))] via-black/10 to-transparent" />
                 {project.category && (
-                  <span className="absolute top-4 left-4 bg-[var(--style-badge-bg,rgba(255,255,255,.9))] backdrop-blur-sm text-xs font-medium px-3 py-1.5 rounded-full text-[var(--style-badge-text,#374151)]">
+                  <span className="absolute top-4 left-4 bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,.9)))] backdrop-blur-sm text-xs font-medium px-3 py-1.5 rounded-full text-[var(--token-badge-text, var(--style-badge-text,#374151))]">
                     {project.category}
                   </span>
                 )}

@@ -127,7 +127,7 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
       <div className="space-y-6">
         {items.map((item, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="flex flex-col lg:flex-row gap-6 p-6 border-3 border-[var(--style-border,var(--style-text-primary,#111827))] shadow-[4px_4px_0_var(--style-text-primary,#0d2137)] bg-[var(--style-card-bg,transparent)]">
+            className="flex flex-col lg:flex-row gap-6 p-6 border-3 border-[var(--style-border,var(--style-text-primary,#111827))] shadow-[4px_4px_0_var(--style-text-primary,#0d2137)] bg-[var(--token-card-bg, var(--style-card-bg,transparent))]">
             {item.mediaType === 'image' && item.image && (
               <div className="relative w-full lg:w-64 aspect-[4/3] lg:aspect-square shrink-0 overflow-hidden">
                 <Image src={item.image} alt={item.title} fill className="object-cover" sizes="256px" />
@@ -141,7 +141,7 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
               <p className="text-[var(--style-text-secondary,#4b5563)] leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />
               {item.features && item.features.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {item.features.map((f, fi) => <span key={fi} className="text-xs font-bold uppercase bg-[color-mix(in_srgb,var(--style-card-bg,#fff)_70%,var(--style-accent,var(--brand-accent))_30%)] text-[var(--style-text-primary,#111827)] px-2 py-1">{f}</span>)}
+                  {item.features.map((f, fi) => <span key={fi} className="text-xs font-bold uppercase bg-[color-mix(in_srgb,var(--token-card-bg, var(--style-card-bg,#fff))_70%,var(--style-accent,var(--brand-accent))_30%)] text-[var(--style-text-primary,#111827)] px-2 py-1">{f}</span>)}
                 </div>
               )}
               {item.ctaLabel && item.ctaHref && (

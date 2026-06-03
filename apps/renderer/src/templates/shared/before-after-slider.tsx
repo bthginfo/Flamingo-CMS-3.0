@@ -19,8 +19,8 @@ export function BeforeAfterSliderSection({ data }: Props) {
   const subline = (data.subline as string) || '';
   const slides = (data.slides as Slide[]) || [];
   const handleColor = (data.handleColor as string) || 'var(--brand-primary, #18181b)';
-  const bgColor = (data.bgColor as string) || 'var(--style-section-bg, transparent)';
-  const textColor = (data.textColor as string) || 'var(--style-body-color, inherit)';
+  const bgColor = (data.bgColor as string) || 'var(--token-section-bg, var(--style-section-bg, transparent))';
+  const textColor = (data.textColor as string) || 'var(--token-body, var(--style-body-color, inherit))';
   const aspectRatio = (data.aspectRatio as string) || '16/9';
 
   const [activeSlide, setActiveSlide] = useState(0);
@@ -39,15 +39,15 @@ export function BeforeAfterSliderSection({ data }: Props) {
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
-            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[var(--style-heading-color,var(--style-text-primary,inherit))]">{headline}</h2>}
-            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--style-subheading-color,var(--style-text-secondary,#71717a))]">{plain(subline)}</p>}
+            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,inherit)))]">{headline}</h2>}
+            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--token-subheading, var(--style-subheading-color,var(--style-text-secondary,#71717a)))]">{plain(subline)}</p>}
           </motion.div>
         )}
 
         <SliderWidget slide={currentSlide} handleColor={handleColor} aspectRatio={aspectRatio} />
 
         {currentSlide.caption && (
-          <p className="text-center text-sm text-[var(--style-text-muted,#71717a)] mt-4">{currentSlide.caption}</p>
+          <p className="text-center text-sm text-[var(--token-muted, var(--style-text-muted,#71717a))] mt-4">{currentSlide.caption}</p>
         )}
 
         {slides.length > 1 && (

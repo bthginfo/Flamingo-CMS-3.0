@@ -42,7 +42,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
         </>
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--style-section-bg,#111827)] via-[var(--style-card-bg,#1f2937)] to-[var(--style-section-bg-alt,#374151)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--token-section-bg, var(--style-section-bg,#111827))] via-[var(--token-card-bg, var(--style-card-bg,#1f2937))] to-[var(--token-section-bg-alt, var(--style-section-bg-alt,#374151))]" />
       )}
 
       {/* Content */}
@@ -55,7 +55,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-[var(--style-badge-bg,rgba(255,255,255,.2))] backdrop-blur-sm text-[var(--style-badge-text,#fff)] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,.2)))] backdrop-blur-sm text-[var(--token-badge-text, var(--style-badge-text,#fff))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
               {category}
             </span>
           )}
@@ -100,7 +100,7 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-[var(--style-badge-bg,color-mix(in_srgb,var(--style-accent,var(--brand-primary))_10%,transparent))] text-[var(--style-badge-text,var(--style-accent,var(--brand-primary)))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,color-mix(in_srgb,var(--style-accent,var(--brand-primary))_10%,transparent)))] text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent,var(--brand-primary))))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
               {category}
             </span>
           )}

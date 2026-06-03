@@ -37,7 +37,7 @@ export function CtaLinksSection({ data }: Props) {
           >
             <Link
               href={link.href}
-              className="group flex items-center gap-4 p-6 rounded-2xl border border-[var(--style-border,rgba(0,0,0,.08))] bg-[var(--style-card-bg,#fff)] shadow-sm hover:shadow-lg hover:border-[color-mix(in_srgb,var(--style-accent,var(--brand-primary))_28%,transparent)] transition-all duration-300 hover:-translate-y-1"
+              className="group flex items-center gap-4 p-6 rounded-2xl border border-[var(--style-border,rgba(0,0,0,.08))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-sm hover:shadow-lg hover:border-[color-mix(in_srgb,var(--style-accent,var(--brand-primary))_28%,transparent)] transition-all duration-300 hover:-translate-y-1"
             >
               {link.icon && (
                 <div className="w-12 h-12 rounded-xl bg-[color-mix(in_srgb,var(--style-accent,var(--brand-primary))_12%,transparent)] flex items-center justify-center text-[var(--style-accent,var(--brand-primary))] shrink-0">
