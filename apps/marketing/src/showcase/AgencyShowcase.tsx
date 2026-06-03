@@ -675,7 +675,7 @@ function BookingAddonTeaserSection() {
             Für Restaurants, Cafés, Salons, Hotels, Fotografen, Locations und alle, die Termine oder Ressourcen nicht mehr per E-Mail-Chaos koordinieren wollen.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/preise" className="btn-primary">Preise ansehen <span aria-hidden>→</span></Link>
+            <Link to="/booking" className="btn-primary">Booking-Addon ansehen <span aria-hidden>→</span></Link>
             <Link to="/kontakt" className="btn-outline">Booking anfragen</Link>
           </div>
         </div>
@@ -1049,7 +1049,7 @@ type DeviceItem = {
 
 const RENDERER_URL = process.env.NEXT_PUBLIC_RENDERER_URL || 'https://www.demo.flamingomedia.online';
 
-const ADMIN_URL_SHOWCASE = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://www.demo.flamingomedia.online';
+const ADMIN_URL_SHOWCASE = 'https://www.demo.flamingomedia.online';
 const demoAdminUrl = (next = '/admin') => `${ADMIN_URL_SHOWCASE}/admin/demo-login?industry=handwerk&public=1&embed=1&next=${encodeURIComponent(next)}`;
 
 const DEVICE_ITEMS: DeviceItem[] = [
