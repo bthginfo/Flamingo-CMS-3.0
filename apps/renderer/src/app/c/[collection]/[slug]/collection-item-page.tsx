@@ -3,12 +3,36 @@ import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle, getTenan
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { getDesignCssVars } from '@/lib/design-vars';
+import { getDb } from '@/lib/db';
+import { collections, collectionItems, tenants } from '@flamingo/db';
+import { and, eq } from 'drizzle-orm';
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { CollectionDetail } from '@/components/collection-detail';
 import { WhatsAppFab } from '@/components/whatsapp-fab';
+
+async function resolveTenantSlugForCollectionItem(collection: string, slug: string): Promise<string | null> {
+  const db = getDb();
+  const matches = await db
+    .select({ tenantSlug: tenants.slug })
+    .from(collectionItems)
+    .innerJoin(collections, and(
+      eq(collectionItems.collectionId, collections.id),
+      eq(collectionItems.tenantId, collections.tenantId),
+    ))
+    .innerJoin(tenants, eq(collectionItems.tenantId, tenants.id))
+    .where(and(
+      eq(collections.key, collection),
+      eq(collectionItems.slug, slug),
+      eq(collectionItems.published, true),
+      eq(tenants.status, 'active'),
+    ))
+    .limit(2);
+
+  return matches.length === 1 ? matches[0].tenantSlug : null;
+}
 
 async function resolveItem(params: Promise<{ collection: string; slug: string }>, tenantSlug?: string) {
   const { collection, slug } = await params;
@@ -57,6 +81,10 @@ export async function generateCollectionItemMetadata(params: Promise<{ collectio
 export async function renderCollectionItemPage(params: Promise<{ collection: string; slug: string }>, tenantSlug?: string, linkPrefix = '') {
   const { collection, slug } = await params;
   const tenantId = await resolveTenant(tenantSlug);
+  if (!tenantId && !tenantSlug) {
+    const resolvedTenantSlug = await resolveTenantSlugForCollectionItem(collection, slug);
+    if (resolvedTenantSlug) redirect(`/${resolvedTenantSlug}/c/${collection}/${slug}`);
+  }
   if (!tenantId) notFound();
 
   const [snapshot, navData, footerData, { brand, contact, socialLinks, design }, tenantStyle] = await Promise.all([
