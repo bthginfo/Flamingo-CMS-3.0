@@ -24,52 +24,52 @@ type Props = { header: { headline: string; subline: string; badgeText: string };
 
 function Classic({ header, introText, onlineCta, phoneCta, callbackCta, externalCta, notes }: Props) {
   return (
-    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl bg-white p-6 shadow-lg sm:p-10">
+    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl bg-[var(--style-card-bg,#fff)] p-6 shadow-lg sm:p-10">
       <SectionHeader {...header} />
-      {introText && <div className="max-w-2xl text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+      {introText && <div className="max-w-2xl text-[var(--style-body-color,var(--style-text-secondary,#4b5563))] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
-        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-teal-700 px-5 py-3 font-semibold text-white"><CalendarDays size={17} />{onlineCta.label}</a>}
-        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-teal-700/30 px-5 py-3 font-semibold text-gray-900"><Phone size={17} />{phoneCta.label}</a>}
-        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex rounded-full border border-black/10 px-5 py-3 font-semibold text-gray-900">{callbackCta.label}</a>}
-        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex rounded-full border border-black/10 px-5 py-3 font-semibold text-gray-900">{externalCta.label}</a>}
+        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary)))] px-5 py-3 font-semibold text-[var(--brand-btn-text,#fff)]"><CalendarDays size={17} />{onlineCta.label}</a>}
+        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--style-border-color,color-mix(in_srgb,var(--style-accent-color,var(--brand-primary))_30%,transparent))] px-5 py-3 font-semibold text-[var(--style-heading-color,var(--style-text-primary,#111827))]"><Phone size={17} />{phoneCta.label}</a>}
+        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex rounded-full border border-[var(--style-border-color,rgba(0,0,0,.1))] px-5 py-3 font-semibold text-[var(--style-heading-color,var(--style-text-primary,#111827))]">{callbackCta.label}</a>}
+        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex rounded-full border border-[var(--style-border-color,rgba(0,0,0,.1))] px-5 py-3 font-semibold text-[var(--style-heading-color,var(--style-text-primary,#111827))]">{externalCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="rounded-full bg-teal-50 px-3 py-1 text-xs text-teal-800">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="rounded-full bg-[var(--style-badge-bg,color-mix(in_srgb,var(--style-accent-color,var(--brand-primary))_10%,#fff))] px-3 py-1 text-xs text-[var(--style-badge-text,var(--style-accent-color,var(--brand-primary)))]">{note}</span>)}</div>
     </motion.div>
   );
 }
 
 function Modern({ header, introText, onlineCta, phoneCta, callbackCta, externalCta, notes }: Props) {
   return (
-    <div className="border border-black/10 bg-white p-6 sm:p-10">
+    <div className="border border-[var(--style-border-color,rgba(0,0,0,.1))] bg-[var(--style-card-bg,#fff)] p-6 sm:p-10">
       <SectionHeader {...header} />
-      {introText && <div className="max-w-2xl font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+      {introText && <div className="max-w-2xl font-light text-[var(--style-body-color,var(--style-text-secondary,#4b5563))] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
-        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white"><CalendarDays size={17} />{onlineCta.label}</a>}
-        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-black/15 px-5 py-3 font-light text-gray-900"><Phone size={17} />{phoneCta.label}</a>}
-        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex rounded-lg border border-black/15 px-5 py-3 font-light text-gray-900">{callbackCta.label}</a>}
-        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex rounded-lg border border-black/15 px-5 py-3 font-light text-gray-900">{externalCta.label}</a>}
+        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary)))] bg-[var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary)))] px-5 py-3 font-semibold text-[var(--brand-btn-text,#fff)]"><CalendarDays size={17} />{onlineCta.label}</a>}
+        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--style-border-color,rgba(0,0,0,.15))] px-5 py-3 font-light text-[var(--style-heading-color,var(--style-text-primary,#111827))]"><Phone size={17} />{phoneCta.label}</a>}
+        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex rounded-lg border border-[var(--style-border-color,rgba(0,0,0,.15))] px-5 py-3 font-light text-[var(--style-heading-color,var(--style-text-primary,#111827))]">{callbackCta.label}</a>}
+        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex rounded-lg border border-[var(--style-border-color,rgba(0,0,0,.15))] px-5 py-3 font-light text-[var(--style-heading-color,var(--style-text-primary,#111827))]">{externalCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="border border-black/10 px-3 py-1 text-xs text-gray-600">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="border border-[var(--style-border-color,rgba(0,0,0,.1))] px-3 py-1 text-xs text-[var(--style-text-muted,var(--style-text-secondary,#4b5563))]">{note}</span>)}</div>
     </div>
   );
 }
 
 function Bold({ header, introText, onlineCta, phoneCta, callbackCta, externalCta, notes }: Props) {
   return (
-    <div className="border-2 border-[#111827] bg-gray-950 p-6 shadow-[4px_4px_0_#111827] sm:p-10">
+    <div className="border-2 border-[var(--style-border-color,var(--style-text-primary,#111827))] bg-[var(--style-section-bg,#030712)] p-6 shadow-[4px_4px_0_var(--style-border-color,var(--style-text-primary,#111827))] sm:p-10">
       <div className="mb-10 max-w-3xl">
-        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-teal-400">{header.badgeText}</p>}
-        <h2 className="mt-3 text-3xl font-black uppercase text-white sm:text-3xl md:text-5xl">{header.headline}</h2>
-        {header.subline && <div className="mt-4 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
+        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--style-badge-text,var(--style-accent-color,var(--brand-primary)))]">{header.badgeText}</p>}
+        <h2 className="mt-3 text-3xl font-black uppercase text-[var(--style-heading-color,#fff)] sm:text-3xl md:text-5xl">{header.headline}</h2>
+        {header.subline && <div className="mt-4 text-[var(--style-body-color,rgba(255,255,255,.7))] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
-      {introText && <div className="max-w-2xl text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+      {introText && <div className="max-w-2xl text-[var(--style-body-color,rgba(255,255,255,.7))] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
-        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-teal-400 bg-teal-400 px-5 py-3 font-black uppercase text-gray-950 shadow-[4px_4px_0_theme(colors.teal.700)]"><CalendarDays size={17} />{onlineCta.label}</a>}
-        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-white/40 px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(255,255,255,0.15)]"><Phone size={17} />{phoneCta.label}</a>}
-        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex border-2 border-white/40 px-5 py-3 font-black uppercase text-white">{callbackCta.label}</a>}
-        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex border-2 border-white/40 px-5 py-3 font-black uppercase text-white">{externalCta.label}</a>}
+        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary)))] bg-[var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary)))] px-5 py-3 font-black uppercase text-[var(--brand-btn-text,#fff)]"><CalendarDays size={17} />{onlineCta.label}</a>}
+        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--style-border-color,rgba(255,255,255,.4))] px-5 py-3 font-black uppercase text-[var(--style-heading-color,#fff)]"><Phone size={17} />{phoneCta.label}</a>}
+        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex border-2 border-[var(--style-border-color,rgba(255,255,255,.4))] px-5 py-3 font-black uppercase text-[var(--style-heading-color,#fff)]">{callbackCta.label}</a>}
+        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex border-2 border-[var(--style-border-color,rgba(255,255,255,.4))] px-5 py-3 font-black uppercase text-[var(--style-heading-color,#fff)]">{externalCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="border border-white/20 px-3 py-1 text-xs font-bold uppercase text-white/70">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="border border-[var(--style-border-color,rgba(255,255,255,.2))] px-3 py-1 text-xs font-bold uppercase text-[var(--style-body-color,rgba(255,255,255,.7))]">{note}</span>)}</div>
     </div>
   );
 }
