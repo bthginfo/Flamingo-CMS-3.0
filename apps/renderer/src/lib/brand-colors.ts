@@ -129,6 +129,12 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   vars['--token-subheading']    = brand.headingColor  ?? 'var(--brand-heading, #0f172a)';
   vars['--token-body']          = brand.bodyTextColor ?? 'var(--brand-body-text, #27272a)';
   vars['--token-muted']         = brand.mutedTextColor ?? 'var(--style-text-muted, #71717a)';
+  // Inverse contrast tokens for content on dark backgrounds (Phase 5c).
+  // Defaults are bright values so hardcoded `text-white` / `text-zinc-300` migration
+  // keeps rendering identically when no tenant override is set.
+  vars['--token-on-dark-heading']= 'var(--brand-on-dark-heading, #ffffff)';
+  vars['--token-on-dark-body']   = 'var(--brand-on-dark-body, rgba(255,255,255,0.82))';
+  vars['--token-on-dark-muted']  = 'var(--brand-on-dark-muted, rgba(255,255,255,0.62))';
   // Accent family — independently overridable per section.
   vars['--token-eyebrow']       = 'var(--brand-accent, var(--brand-primary, #f39c12))';
   vars['--token-icon']          = brand.iconColor ?? 'var(--brand-primary, #2563eb)';
