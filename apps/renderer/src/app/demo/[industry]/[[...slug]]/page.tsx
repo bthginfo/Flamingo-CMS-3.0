@@ -28,6 +28,11 @@ const INDUSTRY_MAP: Record<string, string> = {
   location: 'location',
 };
 
+function isHeroSection(type?: string | null): boolean {
+  if (!type) return false;
+  return type === 'hero' || type.endsWith('Hero') || type.startsWith('hero');
+}
+
 /** Recursively prefix internal hrefs in section data with the demo path */
 function prefixSectionHrefs(data: Record<string, unknown>, prefix: string): Record<string, unknown> {
   const json = JSON.stringify(data);
@@ -121,7 +126,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
           socialLinks: siteData.socialLinks,
           footer: siteData.footer,
         }}
-        darkBg={page.sections[0]?.type === 'hero'}
+        darkBg={isHeroSection(page.sections[0]?.type)}
       />
     );
   }
@@ -200,7 +205,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
 
   if (!page) return notFound();
 
-  const firstIsHero = page.sections[0]?.type === 'hero';
+  const firstIsHero = isHeroSection(page.sections[0]?.type);
   const sectionsNeedingTenantId = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
 
   return (
