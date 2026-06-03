@@ -24,7 +24,7 @@ export function RealestateFaqSection({ data }: Props) {
       <div className="max-w-3xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-          {subline && <p className="text-lg text-[color:var(--token-on-dark-muted,#52525b)] mt-4">{plain(subline)}</p>}
+          {subline && <p className="text-lg text-[color:var(--token-muted,#52525b)] mt-4">{plain(subline)}</p>}
         </motion.div>
 
         <div className="space-y-3">
@@ -41,10 +41,10 @@ export function RealestateFaqSection({ data }: Props) {
                 className="w-full flex items-center justify-between p-5 text-left"
               >
                 <span className="font-medium text-[color:var(--token-heading,#18181b)] pr-4">{item.question}</span>
-                {openIndex === i ? <Minus size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] shrink-0" /> : <Plus size={18} className="text-[color:var(--token-on-dark-body,#a1a1aa)] shrink-0" />}
+                {openIndex === i ? <Minus size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] shrink-0" /> : <Plus size={18} className="text-[color:var(--token-body,#a1a1aa)] shrink-0" />}
               </button>
               {openIndex === i && (
-                <div className="px-5 pb-5 text-[color:var(--token-on-dark-muted,#52525b)] text-sm leading-relaxed">
+                <div className="px-5 pb-5 text-[color:var(--token-muted,#52525b)] text-sm leading-relaxed">
                   {plain(item.answer)}
                 </div>
               )}

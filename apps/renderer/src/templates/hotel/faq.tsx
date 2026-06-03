@@ -30,15 +30,15 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-on-dark-muted,#52525b)]"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{badgeText}</motion.p>}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{headline}</motion.h2>
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="divide-y divide-[var(--token-icon, var(--brand-primary))]/20 rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] shadow-md">
         {items.map((item, index) => (
           <motion.details key={`${item.question}-${index}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="group p-5">
             <summary className="cursor-pointer font-semibold text-[color:var(--token-heading,#18181b)]">{item.question || ''}</summary>
-            {item.answer && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
+            {item.answer && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </motion.details>
         ))}
       </div>
@@ -52,15 +52,15 @@ function FaqModern({ headline, subline, badgeText, items, ctaPrimary }: Props) {
   return (
     <div>
       <div className="mb-14 max-w-3xl">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-on-dark-muted,#52525b)]">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-        {subline && <div className="mt-4 font-light text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="divide-y divide-black/10 border-y border-black/10">
         {items.map((item, index) => (
           <details key={`${item.question}-${index}`} className="group py-6">
             <summary className="cursor-pointer font-light text-[color:var(--token-heading,#18181b)]">{item.question || ''}</summary>
-            {item.answer && <div className="mt-4 text-sm font-light leading-7 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
+            {item.answer && <div className="mt-4 text-sm font-light leading-7 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>
         ))}
       </div>
@@ -76,13 +76,13 @@ function FaqBold({ headline, subline, badgeText, items, ctaPrimary }: Props) {
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] shadow-[4px_4px_0_#111827]">
         {items.map((item, index) => (
           <details key={`${item.question}-${index}`} className="group border-b-2 border-[#111827] p-5 last:border-b-0">
             <summary className="cursor-pointer font-black uppercase text-[color:var(--token-heading,#18181b)]">{item.question || ''}</summary>
-            {item.answer && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
+            {item.answer && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>
         ))}
       </div>

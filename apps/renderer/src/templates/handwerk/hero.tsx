@@ -155,14 +155,14 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-12 md:py-20">
         <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
           {badgeText && (
-            <div className="flex items-center gap-3 text-sm text-[color:var(--token-on-dark-body,#a1a1aa)] mb-8 tracking-wide uppercase">
+            <div className="flex items-center gap-3 text-sm text-[color:var(--token-body,#a1a1aa)] mb-8 tracking-wide uppercase">
               <span className="w-8 h-px bg-gray-300" />{badgeText}
             </div>
           )}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-[color:var(--token-heading,#18181b)] !leading-[1.1] tracking-tight break-words">
             {headline}
           </h1>
-          {subline && <div className="text-lg text-[color:var(--token-on-dark-body,#a1a1aa)] leading-relaxed mt-8 max-w-lg [&_p]:inline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="text-lg text-[color:var(--token-body,#a1a1aa)] leading-relaxed mt-8 max-w-lg [&_p]:inline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta?.label && (
               <a href={primaryCta.href} className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto text-[color:var(--token-heading,#18181b)] font-medium text-base border-b-2 border-[color:var(--token-card-border,#18181b)] pb-1 hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))] hover:text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-colors">
@@ -170,13 +170,13 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
               </a>
             )}
             {secondaryCta?.label && (
-              <a href={secondaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-card-border,#d4d4d8)] px-7 py-3 text-[color:var(--token-on-dark-muted,#71717a)] hover:text-[color:var(--token-on-dark-muted,#3f3f46)] hover:border-[color:var(--token-card-border,#a1a1aa)] transition-colors text-sm w-full sm:w-auto">
+              <a href={secondaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-card-border,#d4d4d8)] px-7 py-3 text-[color:var(--token-muted,#71717a)] hover:text-[color:var(--token-muted,#3f3f46)] hover:border-[color:var(--token-card-border,#a1a1aa)] transition-colors text-sm w-full sm:w-auto">
                 <Phone size={14} />{secondaryCta.label}
               </a>
             )}
           </div>
           {trustItems.length > 0 && (
-            <div className="flex flex-wrap gap-6 mt-16 text-xs text-[color:var(--token-on-dark-body,#a1a1aa)] uppercase tracking-wider">
+            <div className="flex flex-wrap gap-6 mt-16 text-xs text-[color:var(--token-body,#a1a1aa)] uppercase tracking-wider">
               {trustItems.map((item, i) => <span key={i}>{item}</span>)}
             </div>
           )}

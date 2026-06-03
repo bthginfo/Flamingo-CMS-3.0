@@ -22,7 +22,7 @@ export function FoodMenuSection({ data }: Props) {
       <div className="max-w-6xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-          {subline && <p className="text-[color:var(--token-on-dark-muted,#52525b)] mt-3">{plain(subline)}</p>}
+          {subline && <p className="text-[color:var(--token-muted,#52525b)] mt-3">{plain(subline)}</p>}
         </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -47,7 +47,7 @@ export function FoodMenuSection({ data }: Props) {
                   <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{item.name}</h3>
                   <span className="font-bold text-[color:var(--token-icon,var(--brand-primary,#1a5276))] whitespace-nowrap">{item.price}</span>
                 </div>
-                {item.description && <p className="text-sm text-[color:var(--token-on-dark-muted,#71717a)] mt-1.5">{plain(item.description)}</p>}
+                {item.description && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1.5">{plain(item.description)}</p>}
               </div>
             </motion.div>
           ))}

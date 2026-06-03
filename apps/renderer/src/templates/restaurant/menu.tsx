@@ -100,10 +100,10 @@ function MenuBold(props: MenuViewProps) {
 function MenuHeader({ headline, subline, badgeText, introText, align, inverted }: MenuViewProps & { align: 'left' | 'center'; inverted?: boolean }) {
   return (
     <div className={`${align === 'center' ? 'text-center mx-auto' : ''} max-w-3xl p-6 sm:p-10`}>
-      {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[var(--token-eyebrow, var(--brand-accent))]' : 'text-[color:var(--token-on-dark-muted,#52525b)]'}`}>{badgeText}</p>}
+      {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[var(--token-eyebrow, var(--brand-accent))]' : 'text-[color:var(--token-muted,#52525b)]'}`}>{badgeText}</p>}
       <h2 className={`mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] ${inverted ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-heading,#18181b)]'}`}>{headline}</h2>
-      {subline && <div className={`mt-4 text-base sm:text-lg ${inverted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-on-dark-muted,#52525b)]'} rt-content`} dangerouslySetInnerHTML={{ __html: subline }} />}
-      {introText && <div className={`mt-5 leading-7 ${inverted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/65]' : 'text-[color:var(--token-on-dark-muted,#52525b)]'} rt-content`} dangerouslySetInnerHTML={{ __html: introText }} />}
+      {subline && <div className={`mt-4 text-base sm:text-lg ${inverted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-muted,#52525b)]'} rt-content`} dangerouslySetInnerHTML={{ __html: subline }} />}
+      {introText && <div className={`mt-5 leading-7 ${inverted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/65]' : 'text-[color:var(--token-muted,#52525b)]'} rt-content`} dangerouslySetInnerHTML={{ __html: introText }} />}
     </div>
   );
 }
@@ -114,7 +114,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
     <div className={`${layout === 'classic' ? 'p-6 sm:p-10' : layout === 'bold' ? 'border-2 border-[color:var(--token-card-border,#ffffff)/20] p-5' : 'border border-black/10 p-6'}`}>
       <div className="mb-6">
         <h3 className={`text-2xl font-bold ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading,#ffffff)] uppercase' : 'text-[color:var(--token-heading,#18181b)]'}`}>{category.title || ''}</h3>
-        {category.description && <div className={`mt-2 text-sm ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading,#ffffff)/60]' : 'text-[color:var(--token-on-dark-muted,#52525b)]'}`} dangerouslySetInnerHTML={{ __html: category.description }} />}
+        {category.description && <div className={`mt-2 text-sm ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading,#ffffff)/60]' : 'text-[color:var(--token-muted,#52525b)]'}`} dangerouslySetInnerHTML={{ __html: category.description }} />}
       </div>
       <div className="space-y-5">
         {items.map((item, index) => (
@@ -129,7 +129,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
                 <h4 className={`font-semibold ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-heading,#18181b)]'}`}>{item.name || ''}</h4>
                 {item.price && <p className={`shrink-0 font-bold ${layout === 'bold' ? 'text-[var(--token-eyebrow, var(--brand-accent))]' : 'text-[color:var(--token-heading,#18181b)]'}`}>{item.price}</p>}
               </div>
-              {item.description && <div className={`mt-1 text-sm leading-6 ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading,#ffffff)/60]' : 'text-[color:var(--token-on-dark-muted,#52525b)]'}`} dangerouslySetInnerHTML={{ __html: item.description }} />}
+              {item.description && <div className={`mt-1 text-sm leading-6 ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading,#ffffff)/60]' : 'text-[color:var(--token-muted,#52525b)]'}`} dangerouslySetInnerHTML={{ __html: item.description }} />}
               <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
                 {asList<string>(item.tags).map((tag) => <Badge key={tag} icon={item.spicy ? <Flame size={12} /> : item.vegetarian || item.vegan ? <Leaf size={12} /> : null} label={tag} />)}
                 {asList<string>(item.allergens).map((allergen) => <Badge key={allergen} icon={<Wheat size={12} />} label={allergen} />)}
@@ -150,7 +150,7 @@ function Badge({ icon, label }: { icon: React.ReactNode; label: string }) {
 function MenuFooter({ footnote, ctaPrimary, inverted }: MenuViewProps & { inverted?: boolean }) {
   if (!footnote && !ctaPrimary.label) return null;
   return (
-    <div className={`flex flex-col gap-4 p-6 sm:p-10 sm:flex-row sm:items-center sm:justify-between ${inverted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-on-dark-muted,#52525b)]'}`}>
+    <div className={`flex flex-col gap-4 p-6 sm:p-10 sm:flex-row sm:items-center sm:justify-between ${inverted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-muted,#52525b)]'}`}>
       {footnote && <p className="text-sm">{footnote}</p>}
       {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 font-semibold text-[color:var(--token-heading,#18181b)] bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-5 py-3 rounded-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
     </div>

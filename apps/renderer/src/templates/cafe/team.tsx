@@ -64,9 +64,9 @@ function Modern({ headline, subline, members, ref, inView }: TProps) {
   return (
     <div ref={ref} className="py-16 md:py-24">
       <motion.div initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="mb-14">
-        <div className="flex items-center gap-3 text-xs text-[color:var(--token-on-dark-body,#a1a1aa)] uppercase tracking-widest mb-3"><span className="w-8 h-px bg-stone-300" />Team</div>
+        <div className="flex items-center gap-3 text-xs text-[color:var(--token-body,#a1a1aa)] uppercase tracking-widest mb-3"><span className="w-8 h-px bg-stone-300" />Team</div>
         <h2 className="text-3xl md:text-4xl font-light text-[color:var(--token-heading,#18181b)] tracking-tight">{headline}</h2>
-        {subline && <p className="text-[color:var(--token-on-dark-body,#a1a1aa)] mt-3 text-lg">{plain(subline)}</p>}
+        {subline && <p className="text-[color:var(--token-body,#a1a1aa)] mt-3 text-lg">{plain(subline)}</p>}
       </motion.div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
@@ -81,8 +81,8 @@ function Modern({ headline, subline, members, ref, inView }: TProps) {
               )}
             </div>
             <h4 className="font-medium text-[color:var(--token-heading,#18181b)] text-sm">{m.name}</h4>
-            <p className="text-xs text-[color:var(--token-on-dark-body,#a1a1aa)] mt-0.5">{m.role}</p>
-            {m.bio && <p className="text-xs text-[color:var(--token-on-dark-muted,#71717a)] mt-1.5 leading-relaxed">{plain(m.bio)}</p>}
+            <p className="text-xs text-[color:var(--token-body,#a1a1aa)] mt-0.5">{m.role}</p>
+            {m.bio && <p className="text-xs text-[color:var(--token-muted,#71717a)] mt-1.5 leading-relaxed">{plain(m.bio)}</p>}
           </motion.div>
         ))}
       </div>
@@ -95,7 +95,7 @@ function Bold({ headline, subline, members, ref, inView }: TProps) {
     <div ref={ref} className="py-16 md:py-24">
       <motion.div initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-14">
         <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-wider">{headline}</h2>
-        {subline && <p className="text-[color:var(--token-on-dark-body,#a1a1aa)] mt-3">{plain(subline)}</p>}
+        {subline && <p className="text-[color:var(--token-body,#a1a1aa)] mt-3">{plain(subline)}</p>}
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

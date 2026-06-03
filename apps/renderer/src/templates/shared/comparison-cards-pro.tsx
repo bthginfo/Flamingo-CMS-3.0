@@ -30,7 +30,7 @@ export function ComparisonCardsProSection({ data }: Props) {
             {plan.note && <p className={`mt-3 text-sm leading-6 ${plan.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/68]' : 'text-[var(--token-muted, var(--style-text-muted,#71717a))]'}`}>{plan.note}</p>}
             <div className="mt-7 space-y-3">
               {(plan.features || []).map((feature, i) => <div key={i} className="flex gap-2 text-sm"><Check size={17} className={plan.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[var(--token-check,var(--style-accent-color,var(--token-icon, var(--brand-primary))))]'} />{feature}</div>)}
-              {(plan.missing || []).map((feature, i) => <div key={i} className={`flex gap-2 text-sm ${plan.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/38]' : 'text-[color:var(--token-on-dark-body,#a1a1aa)]'}`}><Minus size={17} />{feature}</div>)}
+              {(plan.missing || []).map((feature, i) => <div key={i} className={`flex gap-2 text-sm ${plan.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/38]' : 'text-[color:var(--token-body,#a1a1aa)]'}`}><Minus size={17} />{feature}</div>)}
             </div>
             {plan.ctaLabel && <a href={plan.ctaHref || '#'} className={`mt-auto inline-flex justify-center rounded-full px-5 py-3 text-sm font-bold ${plan.highlighted ? 'bg-[var(--token-card-bg,#ffffff)] text-[color:var(--token-heading,#09090b)]' : 'bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--token-icon, var(--brand-primary,#111))))] text-[var(--token-btn-text, var(--brand-btn-text,#fff))]'}`}>{plan.ctaLabel}</a>}
           </motion.article>

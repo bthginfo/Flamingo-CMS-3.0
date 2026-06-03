@@ -23,7 +23,7 @@ export function DailySpecialsSection({ data }: Props) {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-10">
           <Sparkles className="mx-auto text-amber-600 mb-3" size={24} />
           <h2 className="text-2xl md:text-3xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-          {subline && <p className="text-[color:var(--token-on-dark-muted,#52525b)] mt-2">{plain(subline)}</p>}
+          {subline && <p className="text-[color:var(--token-muted,#52525b)] mt-2">{plain(subline)}</p>}
         </motion.div>
 
         <div className="space-y-4">
@@ -40,7 +40,7 @@ export function DailySpecialsSection({ data }: Props) {
               )}
               <div className="flex-1">
                 <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{item.title}</h3>
-                <p className="text-sm text-[color:var(--token-on-dark-muted,#71717a)] mt-0.5">{plain(item.description)}</p>
+                <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-0.5">{plain(item.description)}</p>
               </div>
               {item.price && <span className="font-bold text-[color:var(--token-icon,var(--brand-primary,#1a5276))] whitespace-nowrap">{item.price}</span>}
             </motion.div>

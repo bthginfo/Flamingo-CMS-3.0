@@ -40,7 +40,7 @@ export function ConsultingContactSection({ data }: Props) {
         {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mb-3">{badgeText}</p>}
         {headline && <h2 className="section-headline">{headline}</h2>}
         {subline && <p className="section-subline">{plain(subline)}</p>}
-        {introText && <div className="text-[color:var(--token-on-dark-muted,#52525b)] mt-4 rt-content max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="text-[color:var(--token-muted,#52525b)] mt-4 rt-content max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: introText }} />}
       </motion.div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.2 }} className="space-y-4">
@@ -50,7 +50,7 @@ export function ConsultingContactSection({ data }: Props) {
                 <DynamicIcon name={item.icon} size={20} />
               </div>
               <div>
-                <div className="text-xs text-[color:var(--token-on-dark-body,#a1a1aa)] uppercase tracking-wider">{item.label}</div>
+                <div className="text-xs text-[color:var(--token-body,#a1a1aa)] uppercase tracking-wider">{item.label}</div>
                 <div className="text-[color:var(--token-heading,#18181b)] font-medium">{item.value}</div>
               </div>
             </div>

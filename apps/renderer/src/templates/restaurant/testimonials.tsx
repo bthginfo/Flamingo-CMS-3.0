@@ -35,8 +35,8 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
       <div className="mb-10 max-w-3xl text-center mx-auto">
         {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{headline}</motion.h2>
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
-        {(ratingValue || ratingCount) && <p className="mt-3 text-sm text-[color:var(--token-on-dark-muted,#71717a)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
+        {subline && <div className="mt-4 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {(ratingValue || ratingCount) && <p className="mt-3 text-sm text-[color:var(--token-muted,#71717a)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
@@ -45,7 +45,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
             {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading,#18181b)]">&ldquo;{plain(item.quote)}&rdquo;</p>}
             <div className="mt-4 border-t border-black/10 pt-4">
               <p className="font-semibold text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
-              <p className="text-xs text-[color:var(--token-on-dark-muted,#71717a)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
+              <p className="text-xs text-[color:var(--token-muted,#71717a)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
             </div>
           </motion.article>
         ))}
@@ -59,11 +59,11 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
   return (
     <div>
       <div className="mb-14 max-w-3xl">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-on-dark-muted,#71717a)]">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
-        {subline && <div className="mt-6 font-light text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
-        {(ratingValue || ratingCount) && <p className="mt-3 text-sm font-light text-[color:var(--token-on-dark-muted,#71717a)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
+        {subline && <div className="mt-6 font-light text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {(ratingValue || ratingCount) && <p className="mt-3 text-sm font-light text-[color:var(--token-muted,#71717a)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       </div>
       <div className="grid gap-8 md:grid-cols-3">
         {items.map((item, i) => (
@@ -71,7 +71,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
             <div className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm font-light leading-7 text-[color:var(--token-heading,#18181b)]">&ldquo;{plain(item.quote)}&rdquo;</p>}
             <p className="mt-4 font-medium text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
-            <p className="text-xs font-light text-[color:var(--token-on-dark-muted,#71717a)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
+            <p className="text-xs font-light text-[color:var(--token-muted,#71717a)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
           </article>
         ))}
       </div>

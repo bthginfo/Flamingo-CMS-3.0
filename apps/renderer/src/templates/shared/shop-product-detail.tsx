@@ -49,11 +49,11 @@ export function ShopProductDetailSection({ data }: Props) {
   const [added, setAdded] = useState(false);
 
   if (loading) {
-    return <section className="py-16 text-center text-[color:var(--token-on-dark-body,#a1a1aa)]">Produkt wird geladen…</section>;
+    return <section className="py-16 text-center text-[color:var(--token-body,#a1a1aa)]">Produkt wird geladen…</section>;
   }
 
   if (!product) {
-    return <section className="py-16 text-center text-[color:var(--token-on-dark-body,#a1a1aa)]">Produkt nicht gefunden.</section>;
+    return <section className="py-16 text-center text-[color:var(--token-body,#a1a1aa)]">Produkt nicht gefunden.</section>;
   }
 
   const images = product.images?.length ? product.images : [];
@@ -82,7 +82,7 @@ export function ShopProductDetailSection({ data }: Props) {
   return (
     <section className="py-8 md:py-12">
       {/* Back link */}
-      <Link href={shopBase} className="inline-flex items-center gap-2 text-sm text-[color:var(--token-on-dark-muted,#71717a)] hover:text-[color:var(--token-heading,#27272a)] mb-6 transition-colors">
+      <Link href={shopBase} className="inline-flex items-center gap-2 text-sm text-[color:var(--token-muted,#71717a)] hover:text-[color:var(--token-heading,#27272a)] mb-6 transition-colors">
         <ArrowLeft size={16} /> Zurück zum Shop
       </Link>
 
@@ -93,7 +93,7 @@ export function ShopProductDetailSection({ data }: Props) {
             {images[selectedImage] ? (
               <img src={images[selectedImage]} alt={product.title} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center"><ShoppingBag size={60} className="text-[color:var(--token-on-dark-body,#e4e4e7)]" /></div>
+              <div className="w-full h-full flex items-center justify-center"><ShoppingBag size={60} className="text-[color:var(--token-body,#e4e4e7)]" /></div>
             )}
             {images.length > 1 && (
               <>
@@ -114,7 +114,7 @@ export function ShopProductDetailSection({ data }: Props) {
                 </button>
               ))}
               {images.length > 4 && (
-                <div className="w-20 h-20 rounded-xl border-2 border-[color:var(--token-card-border,#e4e4e7)] flex items-center justify-center text-sm text-[color:var(--token-on-dark-body,#a1a1aa)] font-medium">
+                <div className="w-20 h-20 rounded-xl border-2 border-[color:var(--token-card-border,#e4e4e7)] flex items-center justify-center text-sm text-[color:var(--token-body,#a1a1aa)] font-medium">
                   +{images.length - 4}
                 </div>
               )}
@@ -126,20 +126,20 @@ export function ShopProductDetailSection({ data }: Props) {
         <div className="flex flex-col">
           {/* Category badge */}
           {product.categoryName && (
-            <span className="inline-block text-xs font-medium text-[color:var(--token-on-dark-muted,#71717a)] bg-[var(--token-section-bg-alt,#f4f4f5)] px-3 py-1 rounded-full w-fit mb-3">{product.categoryName}</span>
+            <span className="inline-block text-xs font-medium text-[color:var(--token-muted,#71717a)] bg-[var(--token-section-bg-alt,#f4f4f5)] px-3 py-1 rounded-full w-fit mb-3">{product.categoryName}</span>
           )}
 
           <h1 className="text-2xl md:text-3xl font-bold mb-2">{product.title}</h1>
 
           {product.shortDescription && (
-            <p className="text-[color:var(--token-on-dark-muted,#71717a)] mb-4">{product.shortDescription}</p>
+            <p className="text-[color:var(--token-muted,#71717a)] mb-4">{product.shortDescription}</p>
           )}
 
           {/* Price */}
           <div className="flex items-baseline gap-3 mb-6">
             <span className="text-3xl font-bold">{formatPrice(currentPrice)}</span>
             {product.comparePriceCents && (
-              <span className="text-lg text-[color:var(--token-on-dark-body,#a1a1aa)] line-through">{formatPrice(product.comparePriceCents)}</span>
+              <span className="text-lg text-[color:var(--token-body,#a1a1aa)] line-through">{formatPrice(product.comparePriceCents)}</span>
             )}
           </div>
 
@@ -150,7 +150,7 @@ export function ShopProductDetailSection({ data }: Props) {
                 {highlights.map((h, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm">
                     <Sparkles size={14} className="text-amber-500 shrink-0" />
-                    <span className="text-[color:var(--token-on-dark-muted,#3f3f46)]">{h}</span>
+                    <span className="text-[color:var(--token-muted,#3f3f46)]">{h}</span>
                   </li>
                 ))}
               </ul>
@@ -160,7 +160,7 @@ export function ShopProductDetailSection({ data }: Props) {
           {/* Variant options */}
           {product.variantOptions?.map(opt => (
             <div key={opt.name} className="mb-5">
-              <label className="text-sm font-medium text-[color:var(--token-on-dark-muted,#3f3f46)] mb-2 block">{opt.name}</label>
+              <label className="text-sm font-medium text-[color:var(--token-muted,#3f3f46)] mb-2 block">{opt.name}</label>
               <div className="flex flex-wrap gap-2">
                 {opt.values.map(val => {
                   const matchVariant = variants.find(v => v.name.includes(val));
@@ -202,10 +202,10 @@ export function ShopProductDetailSection({ data }: Props) {
 
           {/* Trust badges */}
           <div className="flex items-center gap-6 mt-6 pt-6 border-t border-[color:var(--token-card-border,#f4f4f5)]">
-            <div className="flex items-center gap-2 text-xs text-[color:var(--token-on-dark-muted,#71717a)]">
+            <div className="flex items-center gap-2 text-xs text-[color:var(--token-muted,#71717a)]">
               <Truck size={14} /> Schneller Versand
             </div>
-            <div className="flex items-center gap-2 text-xs text-[color:var(--token-on-dark-muted,#71717a)]">
+            <div className="flex items-center gap-2 text-xs text-[color:var(--token-muted,#71717a)]">
               <ShieldCheck size={14} /> Sicherer Kauf
             </div>
           </div>
@@ -216,7 +216,7 @@ export function ShopProductDetailSection({ data }: Props) {
       {product.description && (
         <div className="mt-12 pt-8 border-t border-[color:var(--token-card-border,#f4f4f5)]">
           <h2 className="text-lg font-semibold mb-4">Beschreibung</h2>
-          <div className="text-sm text-[color:var(--token-on-dark-muted,#52525b)] whitespace-pre-line leading-relaxed">{plain(product.description)}</div>
+          <div className="text-sm text-[color:var(--token-muted,#52525b)] whitespace-pre-line leading-relaxed">{plain(product.description)}</div>
         </div>
       )}
     </section>

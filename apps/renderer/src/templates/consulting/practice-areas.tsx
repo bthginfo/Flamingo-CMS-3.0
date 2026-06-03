@@ -40,7 +40,7 @@ export function PracticeAreasSection({ data }: Props) {
                 </div>
               )}
               <h3 className="text-lg font-semibold text-[color:var(--token-heading,#18181b)] mb-2">{area.title}</h3>
-              {area.text && <p className="text-[color:var(--token-on-dark-muted,#71717a)] text-sm leading-relaxed">{plain(area.text)}</p>}
+              {area.text && <p className="text-[color:var(--token-muted,#71717a)] text-sm leading-relaxed">{plain(area.text)}</p>}
               {area.href && (
                 <span className="inline-flex items-center gap-1 text-[color:var(--token-icon,var(--brand-primary,#1a5276))] text-sm mt-4 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                   Mehr erfahren <DynamicIcon name="arrow-right" size={14} />

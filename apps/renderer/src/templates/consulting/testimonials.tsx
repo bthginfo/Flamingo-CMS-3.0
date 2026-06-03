@@ -40,10 +40,10 @@ export function ConsultingTestimonialsSection({ data }: Props) {
                 ))}
               </div>
             )}
-            <p className="text-[color:var(--token-on-dark-muted,#3f3f46)] leading-relaxed italic mb-6">&ldquo;{plain(item.quote)}&rdquo;</p>
+            <p className="text-[color:var(--token-muted,#3f3f46)] leading-relaxed italic mb-6">&ldquo;{plain(item.quote)}&rdquo;</p>
             <div className="border-t border-[color:var(--token-card-border,#f4f4f5)] pt-4">
               <div className="font-semibold text-[color:var(--token-heading,#18181b)] text-sm">{item.name}</div>
-              {item.context && <div className="text-[color:var(--token-on-dark-body,#a1a1aa)] text-xs mt-0.5">{item.context}</div>}
+              {item.context && <div className="text-[color:var(--token-body,#a1a1aa)] text-xs mt-0.5">{item.context}</div>}
             </div>
           </motion.div>
         ))}

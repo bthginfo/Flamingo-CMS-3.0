@@ -38,7 +38,7 @@ function Accordion({ items, variant }: { items: FaqItem[]; variant: 'classic' | 
             <AnimatePresence>
               {isOpen && item.answer && (
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }}>
-                  <div className={`pb-5 text-sm leading-6 ${variant === 'modern' ? 'font-light text-[color:var(--token-on-dark-muted,#71717a)]' : 'text-[color:var(--token-on-dark-muted,#71717a)]'}`} dangerouslySetInnerHTML={{ __html: item.answer }} />
+                  <div className={`pb-5 text-sm leading-6 ${variant === 'modern' ? 'font-light text-[color:var(--token-muted,#71717a)]' : 'text-[color:var(--token-muted,#71717a)]'}`} dangerouslySetInnerHTML={{ __html: item.answer }} />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -55,7 +55,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
       <div className="mb-10 text-center">
         {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{headline}</motion.h2>
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="rounded-xl border border-black/10 bg-[var(--token-card-bg,#ffffff)] px-6 shadow-md">
         <Accordion items={items} variant="classic" />
@@ -69,10 +69,10 @@ function FaqModern({ headline, subline, badgeText, items, ctaPrimary }: Props) {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-14">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-on-dark-muted,#71717a)]">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
-        {subline && <div className="mt-6 font-light text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-6 font-light text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <Accordion items={items} variant="modern" />
       {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading,#18181b)]">{ctaPrimary.label}</a>}
@@ -87,7 +87,7 @@ function FaqBold({ headline, subline, badgeText, items, ctaPrimary }: Props) {
         {badgeText && <p className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-on-dark-heading,#ffffff)]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
         <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
-        {subline && <div className="mt-4 font-bold text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 font-bold text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] px-6 shadow-[4px_4px_0_#111827]">
         <Accordion items={items} variant="bold" />

@@ -36,12 +36,12 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
     <div>
       <div className="mb-10 max-w-3xl">
         {badgeText && (
-          <motion.p initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-on-dark-muted,#52525b)]">
+          <motion.p initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">
             <Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{badgeText}
           </motion.p>
         )}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{headline}</motion.h2>
-        {subline && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="mt-4 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }} className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
@@ -52,7 +52,7 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
               <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10]/10 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
             )}
             <h3 className="font-bold text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
-            {item.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
+            {item.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </motion.article>
         ))}
       </div>
@@ -66,9 +66,9 @@ function AmenitiesModern({ headline, subline, badgeText, items, ctaPrimary }: Pr
   return (
     <div>
       <div className="mb-14 max-w-3xl">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-on-dark-muted,#52525b)]">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-        {subline && <div className="mt-4 font-light text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-px border border-black/10 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
@@ -76,10 +76,10 @@ function AmenitiesModern({ headline, subline, badgeText, items, ctaPrimary }: Pr
             {item.mediaType === 'image' && item.image ? (
               <div className="relative mb-6 aspect-[16/10] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
-              <div className="mb-6 text-[color:var(--token-on-dark-muted,#52525b)]"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
+              <div className="mb-6 text-[color:var(--token-muted,#52525b)]"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
             )}
             <h3 className="font-light text-lg text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
-            {item.text && <div className="mt-3 text-sm font-light leading-7 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
+            {item.text && <div className="mt-3 text-sm font-light leading-7 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </article>
         ))}
       </div>
@@ -95,7 +95,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
@@ -106,7 +106,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
               <div className="mb-4 inline-block border-2 border-[var(--token-icon, var(--brand-primary))] p-2 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={item.icon || 'star'} size={22} /></div>
             )}
             <h3 className="font-black uppercase text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
-            {item.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
+            {item.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </article>
         ))}
       </div>

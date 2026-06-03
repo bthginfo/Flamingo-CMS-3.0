@@ -40,10 +40,10 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
       <div>
         {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         {kitchenHoursHeadline && <h3 className="mt-8 font-semibold text-[color:var(--token-heading,#18181b)]">{kitchenHoursHeadline}</h3>}
-        {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-[color:var(--token-on-dark-muted,#71717a)]">{kitchenHoursText}</p>}
-        {holidayNote && <p className="mt-4 text-xs text-[color:var(--token-on-dark-muted,#71717a)]">{holidayNote}</p>}
+        {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-[color:var(--token-muted,#71717a)]">{kitchenHoursText}</p>}
+        {holidayNote && <p className="mt-4 text-xs text-[color:var(--token-muted,#71717a)]">{holidayNote}</p>}
         {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] shadow-md">{ctaPrimary.label}</a>}
       </div>
       <div className="overflow-hidden rounded-xl border border-black/10 bg-[var(--token-card-bg,#ffffff)] shadow-lg">
@@ -53,10 +53,10 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
               <div className="rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] p-1.5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Clock size={15} /></div>
               <div>
                 <p className="font-semibold text-[color:var(--token-heading,#18181b)]">{day.label || ''}</p>
-                {day.note && <p className="text-xs text-[color:var(--token-on-dark-muted,#71717a)]">{day.note}</p>}
+                {day.note && <p className="text-xs text-[color:var(--token-muted,#71717a)]">{day.note}</p>}
               </div>
             </div>
-            <p className={`text-sm font-medium ${day.closed ? 'text-[color:var(--token-on-dark-muted,#71717a)]' : 'text-[color:var(--token-heading,#18181b)]'}`}>{day.closed ? (day.note || '') : day.hours}</p>
+            <p className={`text-sm font-medium ${day.closed ? 'text-[color:var(--token-muted,#71717a)]' : 'text-[color:var(--token-heading,#18181b)]'}`}>{day.closed ? (day.note || '') : day.hours}</p>
           </motion.div>
         ))}
       </div>
@@ -68,26 +68,26 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
   return (
     <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-on-dark-muted,#71717a)]">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
-        {subline && <div className="mt-6 font-light text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-6 font-light text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         {kitchenHoursHeadline && <h3 className="mt-8 font-medium text-[color:var(--token-heading,#18181b)]">{kitchenHoursHeadline}</h3>}
-        {kitchenHoursText && <p className="mt-2 text-sm font-light leading-6 text-[color:var(--token-on-dark-muted,#71717a)]">{kitchenHoursText}</p>}
-        {holidayNote && <p className="mt-4 text-xs font-light text-[color:var(--token-on-dark-muted,#71717a)]">{holidayNote}</p>}
+        {kitchenHoursText && <p className="mt-2 text-sm font-light leading-6 text-[color:var(--token-muted,#71717a)]">{kitchenHoursText}</p>}
+        {holidayNote && <p className="mt-4 text-xs font-light text-[color:var(--token-muted,#71717a)]">{holidayNote}</p>}
         {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading,#18181b)]">{ctaPrimary.label}</a>}
       </div>
       <div className="border border-black/5">
         {days.map((day, index) => (
           <div key={`${day.label}-${index}`} className="flex items-center justify-between gap-4 border-b border-black/5 px-6 py-5 last:border-b-0">
             <div className="flex items-center gap-3">
-              <Clock size={15} className="text-[color:var(--token-on-dark-muted,#71717a)]" />
+              <Clock size={15} className="text-[color:var(--token-muted,#71717a)]" />
               <div>
                 <p className="font-medium text-[color:var(--token-heading,#18181b)]">{day.label || ''}</p>
-                {day.note && <p className="text-xs font-light text-[color:var(--token-on-dark-muted,#71717a)]">{day.note}</p>}
+                {day.note && <p className="text-xs font-light text-[color:var(--token-muted,#71717a)]">{day.note}</p>}
               </div>
             </div>
-            <p className={`text-sm font-light ${day.closed ? 'text-[color:var(--token-on-dark-muted,#71717a)]' : 'text-[color:var(--token-heading,#18181b)]'}`}>{day.closed ? (day.note || '') : day.hours}</p>
+            <p className={`text-sm font-light ${day.closed ? 'text-[color:var(--token-muted,#71717a)]' : 'text-[color:var(--token-heading,#18181b)]'}`}>{day.closed ? (day.note || '') : day.hours}</p>
           </div>
         ))}
       </div>

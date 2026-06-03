@@ -33,8 +33,8 @@ export function LocationHighlightSection({ data }: Props) {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div initial={{ opacity: 0, x: -30 }} animate={inView ? { opacity: 1, x: 0 } : {}}>
             <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-            {subline && <p className="text-lg text-[color:var(--token-on-dark-muted,#52525b)] mt-4">{plain(subline)}</p>}
-            {description && <p className="text-[color:var(--token-on-dark-muted,#71717a)] mt-4 leading-relaxed">{plain(description)}</p>}
+            {subline && <p className="text-lg text-[color:var(--token-muted,#52525b)] mt-4">{plain(subline)}</p>}
+            {description && <p className="text-[color:var(--token-muted,#71717a)] mt-4 leading-relaxed">{plain(description)}</p>}
 
             {pois.length > 0 && (
               <div className="grid sm:grid-cols-2 gap-3 mt-8">
@@ -45,7 +45,7 @@ export function LocationHighlightSection({ data }: Props) {
                       <Icon size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] shrink-0" />
                       <div>
                         <p className="text-sm font-medium text-[color:var(--token-heading,#18181b)]">{poi.label}</p>
-                        <p className="text-xs text-[color:var(--token-on-dark-muted,#71717a)]">{poi.distance}</p>
+                        <p className="text-xs text-[color:var(--token-muted,#71717a)]">{poi.distance}</p>
                       </div>
                     </div>
                   );

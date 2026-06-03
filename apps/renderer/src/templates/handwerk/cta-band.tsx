@@ -81,7 +81,7 @@ function CtaModern({ headline, subline, cta, colors }: CProps) {
       <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight !leading-[1.1] max-w-4xl mx-auto" style={colors?.textColor ? { color: colors.textColor } : undefined}>
         {headline}
       </h2>
-      {subline && <div className="text-lg text-[color:var(--token-on-dark-body,#a1a1aa)] mt-6 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+      {subline && <div className="text-lg text-[color:var(--token-body,#a1a1aa)] mt-6 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       {cta?.label && (
         <a href={cta.href} className="group mt-10 inline-flex items-center gap-3 border-b-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] pb-1 text-lg font-medium text-[var(--token-btn-text, var(--brand-btn-text,var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))))] transition-colors hover:text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">
           {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}

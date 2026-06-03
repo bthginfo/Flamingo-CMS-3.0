@@ -43,14 +43,14 @@ function Classic({ badge, headline, courses, note }: P) {
                       <span className="font-medium text-[color:var(--token-heading,#18181b)]">{item.name}</span>
                       {item.tags?.map(tag => { const Icon = tagIcons[tag.toLowerCase()] || Leaf; return <Icon key={tag} className="w-3.5 h-3.5 text-green-600" title={tag} />; })}
                     </div>
-                    {item.description && <div className="text-[color:var(--token-on-dark-muted,#71717a)] text-sm mt-0.5 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
+                    {item.description && <div className="text-[color:var(--token-muted,#71717a)] text-sm mt-0.5 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
                   </div>
                 ))}
               </div>
             </motion.div>
           ))}
         </div>
-        {note && <p className="text-center text-[color:var(--token-on-dark-muted,#71717a)] text-sm mt-12 italic">{note}</p>}
+        {note && <p className="text-center text-[color:var(--token-muted,#71717a)] text-sm mt-12 italic">{note}</p>}
       </div>
     </section>
   );
@@ -60,27 +60,27 @@ function Modern({ badge, headline, courses, note }: P) {
   return (
     <section className="py-24 md:py-36 px-4 md:px-6">
       <div className="max-w-3xl mx-auto">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-on-dark-body,#a1a1aa)] mb-4">{badge}</p>
+        <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4">{badge}</p>
         <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-16 break-words">{headline}</h2>
         <div className="space-y-16">
           {courses.map((course, i) => (
             <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-              <h3 className="text-xs uppercase tracking-[0.3em] text-[color:var(--token-on-dark-body,#a1a1aa)] mb-6 border-b border-[color:var(--token-card-border,#e4e4e7)] pb-3">{course.title}</h3>
+              <h3 className="text-xs uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-6 border-b border-[color:var(--token-card-border,#e4e4e7)] pb-3">{course.title}</h3>
               <div className="space-y-6">
                 {course.items.map((item, j) => (
                   <div key={j} className="flex justify-between items-start gap-4">
                     <div>
                       <span className="font-light text-[color:var(--token-heading,#18181b)]">{item.name}</span>
-                      {item.description && <div className="text-[color:var(--token-on-dark-body,#a1a1aa)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
+                      {item.description && <div className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
                     </div>
-                    {item.tags && <div className="flex gap-1 shrink-0">{item.tags.map(tag => { const Icon = tagIcons[tag.toLowerCase()] || Leaf; return <Icon key={tag} className="w-3 h-3 text-[color:var(--token-on-dark-body,#d4d4d8)]" />; })}</div>}
+                    {item.tags && <div className="flex gap-1 shrink-0">{item.tags.map(tag => { const Icon = tagIcons[tag.toLowerCase()] || Leaf; return <Icon key={tag} className="w-3 h-3 text-[color:var(--token-body,#d4d4d8)]" />; })}</div>}
                   </div>
                 ))}
               </div>
             </motion.div>
           ))}
         </div>
-        {note && <p className="text-[color:var(--token-on-dark-body,#a1a1aa)] text-xs mt-16 tracking-wider uppercase">{note}</p>}
+        {note && <p className="text-[color:var(--token-body,#a1a1aa)] text-xs mt-16 tracking-wider uppercase">{note}</p>}
       </div>
     </section>
   );
@@ -102,14 +102,14 @@ function Bold({ badge, headline, courses, note }: P) {
                 {course.items.map((item, j) => (
                   <div key={j}>
                     <span className="font-bold text-[color:var(--token-heading,#18181b)]">{item.name}</span>
-                    {item.description && <div className="text-[color:var(--token-on-dark-muted,#71717a)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
+                    {item.description && <div className="text-[color:var(--token-muted,#71717a)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
                   </div>
                 ))}
               </div>
             </motion.div>
           ))}
         </div>
-        {note && <p className="text-[color:var(--token-on-dark-body,#a1a1aa)] text-sm mt-12 text-center italic">{note}</p>}
+        {note && <p className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-12 text-center italic">{note}</p>}
       </div>
     </section>
   );

@@ -59,7 +59,7 @@ export function PopupSection({ data }: SectionProps) {
           type="button"
           onClick={close}
           aria-label="Popup schließen"
-          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.10)))] bg-[var(--token-card-bg,#ffffff)/80] text-[color:var(--token-on-dark-muted,#3f3f46)] shadow-sm backdrop-blur transition hover:bg-[var(--token-card-bg,#ffffff)]"
+          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.10)))] bg-[var(--token-card-bg,#ffffff)/80] text-[color:var(--token-muted,#3f3f46)] shadow-sm backdrop-blur transition hover:bg-[var(--token-card-bg,#ffffff)]"
         >
           <X size={18} />
         </button>

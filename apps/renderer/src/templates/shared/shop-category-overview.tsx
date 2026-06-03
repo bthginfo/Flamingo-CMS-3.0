@@ -29,14 +29,14 @@ export function ShopCategoryOverviewSection({ data }: Props) {
       .finally(() => setLoading(false));
   }, [data.tenantId, previewCategories.length]);
 
-  if (loading) return <section className="py-12 text-center text-[color:var(--token-on-dark-body,#a1a1aa)]">Kategorien werden geladen…</section>;
+  if (loading) return <section className="py-12 text-center text-[color:var(--token-body,#a1a1aa)]">Kategorien werden geladen…</section>;
   if (categories.length === 0) return null;
 
   return (
     <section className="py-12 md:py-16">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold">{headline}</h2>
-        {subline && <p className="text-[color:var(--token-on-dark-muted,#71717a)] mt-2 max-w-lg mx-auto">{plain(subline)}</p>}
+        {subline && <p className="text-[color:var(--token-muted,#71717a)] mt-2 max-w-lg mx-auto">{plain(subline)}</p>}
       </div>
 
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns >= 3 ? 'lg:grid-cols-3' : ''} ${columns >= 4 ? 'xl:grid-cols-4' : ''} gap-6`}>
@@ -48,13 +48,13 @@ export function ShopCategoryOverviewSection({ data }: Props) {
                   <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <FolderOpen size={40} className="text-[color:var(--token-on-dark-body,#e4e4e7)]" />
+                    <FolderOpen size={40} className="text-[color:var(--token-body,#e4e4e7)]" />
                   </div>
                 )}
               </div>
               <div className="p-5 text-center">
-                <h3 className="font-semibold text-lg group-hover:text-[color:var(--token-on-dark-muted,#52525b)] transition">{cat.name}</h3>
-                {cat.description && <p className="text-sm text-[color:var(--token-on-dark-muted,#71717a)] mt-1 line-clamp-2">{plain(cat.description)}</p>}
+                <h3 className="font-semibold text-lg group-hover:text-[color:var(--token-muted,#52525b)] transition">{cat.name}</h3>
+                {cat.description && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1 line-clamp-2">{plain(cat.description)}</p>}
               </div>
             </div>
           </Link>

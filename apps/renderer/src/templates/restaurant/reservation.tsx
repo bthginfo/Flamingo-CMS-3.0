@@ -81,14 +81,14 @@ function ReservationForm({ submitLabel, dark }: { submitLabel: string; dark?: bo
       <div className={`flex flex-col items-center gap-3 rounded-xl p-8 text-center ${dark ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-heading,#18181b)]'}`}>
         <CheckCircle size={40} className="text-green-500" />
         <p className="text-lg font-semibold">Anfrage gesendet!</p>
-        <p className={`text-sm ${dark ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-on-dark-muted,#71717a)]'}`}>Wir melden uns zeitnah bei Ihnen.</p>
+        <p className={`text-sm ${dark ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-muted,#71717a)]'}`}>Wir melden uns zeitnah bei Ihnen.</p>
       </div>
     );
   }
 
   const inputClass = dark
     ? 'w-full rounded-lg border border-[color:var(--token-card-border,#ffffff)/20] bg-[var(--token-card-bg,#ffffff)/10] px-4 py-3 text-sm text-[color:var(--token-on-dark-heading,#ffffff)] placeholder:text-[color:var(--token-on-dark-heading,#ffffff)/50] outline-none focus:border-[color:var(--token-card-border,#ffffff)/40]'
-    : 'w-full rounded-lg border border-[color:var(--token-card-border,#e4e4e7)] bg-[var(--token-card-bg,#ffffff)] px-4 py-3 text-sm text-[color:var(--token-heading,#18181b)] placeholder:text-[color:var(--token-on-dark-body,#a1a1aa)] outline-none focus:border-[var(--token-card-border,var(--brand-primary,#1a5276))] focus:ring-2 focus:ring-brand-primary/10';
+    : 'w-full rounded-lg border border-[color:var(--token-card-border,#e4e4e7)] bg-[var(--token-card-bg,#ffffff)] px-4 py-3 text-sm text-[color:var(--token-heading,#18181b)] placeholder:text-[color:var(--token-body,#a1a1aa)] outline-none focus:border-[var(--token-card-border,var(--brand-primary,#1a5276))] focus:ring-2 focus:ring-brand-primary/10';
 
   return (
     <form onSubmit={handleSubmit} className="grid gap-3">
@@ -102,7 +102,7 @@ function ReservationForm({ submitLabel, dark }: { submitLabel: string; dark?: bo
         <input name="time" type="time" className={inputClass} />
       </div>
       <div>
-        <label className={`text-xs font-medium ${dark ? 'text-[color:var(--token-on-dark-heading,#ffffff)/60]' : 'text-[color:var(--token-on-dark-muted,#71717a)]'}`}>Personen</label>
+        <label className={`text-xs font-medium ${dark ? 'text-[color:var(--token-on-dark-heading,#ffffff)/60]' : 'text-[color:var(--token-muted,#71717a)]'}`}>Personen</label>
         <input name="guests" type="number" min={1} max={20} defaultValue={2} className={inputClass} />
       </div>
       <textarea name="message" rows={2} placeholder="Anmerkungen (optional)" className={inputClass} />
@@ -122,14 +122,14 @@ function ReservationClassic(props: ReservationViewProps) {
       <div className="space-y-6">
         {props.badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{props.badgeText}</p>}
         <h2 className="text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{props.headline}</h2>
-        {props.subline && <div className="text-lg text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: props.subline }} />}
-        {props.introText && <p className="leading-7 text-[color:var(--token-on-dark-muted,#71717a)]">{plain(props.introText)}</p>}
+        {props.subline && <div className="text-lg text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: props.subline }} />}
+        {props.introText && <p className="leading-7 text-[color:var(--token-muted,#71717a)]">{plain(props.introText)}</p>}
         <div className="flex flex-wrap gap-3">
           {props.externalBookingCta.label && <a href={props.externalBookingCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] shadow-md"><CalendarDays size={17} />{props.externalBookingCta.label}</a>}
           {props.phoneCta.label && <a href={props.phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 font-semibold text-[color:var(--token-heading,#18181b)]"><Phone size={17} />{props.phoneCta.label}</a>}
         </div>
-        {props.timeHint && <p className="text-sm text-[color:var(--token-on-dark-muted,#71717a)]">{props.timeHint}</p>}
-        {props.policyText && <p className="text-xs text-[color:var(--token-on-dark-muted,#71717a)] opacity-70">{props.policyText}</p>}
+        {props.timeHint && <p className="text-sm text-[color:var(--token-muted,#71717a)]">{props.timeHint}</p>}
+        {props.policyText && <p className="text-xs text-[color:var(--token-muted,#71717a)] opacity-70">{props.policyText}</p>}
       </div>
       <div className="overflow-hidden rounded-xl border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-5 shadow-lg">
         {props.image && <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-xl"><Image src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
@@ -143,17 +143,17 @@ function ReservationModern(props: ReservationViewProps) {
   return (
     <div className="grid gap-16 lg:grid-cols-[1fr_0.8fr]">
       <div className="space-y-6">
-        {props.badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-on-dark-muted,#71717a)]">{props.badgeText}</p>}
+        {props.badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]">{props.badgeText}</p>}
         <h2 className="text-3xl font-light text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl">{props.headline}</h2>
         <div className="h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
-        {props.subline && <div className="font-light leading-relaxed text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: props.subline }} />}
-        {props.introText && <p className="font-light leading-7 text-[color:var(--token-on-dark-muted,#71717a)]">{plain(props.introText)}</p>}
+        {props.subline && <div className="font-light leading-relaxed text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: props.subline }} />}
+        {props.introText && <p className="font-light leading-7 text-[color:var(--token-muted,#71717a)]">{plain(props.introText)}</p>}
         <div className="flex flex-wrap gap-4">
           {props.externalBookingCta.label && <a href={props.externalBookingCta.href || '#'} className="inline-flex items-center gap-2 border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading,#18181b)]"><CalendarDays size={17} />{props.externalBookingCta.label}</a>}
-          {props.phoneCta.label && <a href={props.phoneCta.href || '#'} className="inline-flex items-center gap-2 font-light text-[color:var(--token-on-dark-muted,#71717a)]"><Phone size={17} />{props.phoneCta.label}</a>}
+          {props.phoneCta.label && <a href={props.phoneCta.href || '#'} className="inline-flex items-center gap-2 font-light text-[color:var(--token-muted,#71717a)]"><Phone size={17} />{props.phoneCta.label}</a>}
         </div>
-        {props.timeHint && <p className="text-sm font-light text-[color:var(--token-on-dark-muted,#71717a)]">{props.timeHint}</p>}
-        {props.policyText && <p className="text-xs font-light text-[color:var(--token-on-dark-muted,#71717a)]">{props.policyText}</p>}
+        {props.timeHint && <p className="text-sm font-light text-[color:var(--token-muted,#71717a)]">{props.timeHint}</p>}
+        {props.policyText && <p className="text-xs font-light text-[color:var(--token-muted,#71717a)]">{props.policyText}</p>}
       </div>
       <div className="border border-black/5 p-6">
         {props.image && <div className="relative mb-6 aspect-[4/3] overflow-hidden border border-black/5"><Image src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}

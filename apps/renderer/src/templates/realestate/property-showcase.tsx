@@ -31,7 +31,7 @@ export function PropertyShowcaseSection({ data }: Props) {
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-          {subline && <p className="text-lg text-[color:var(--token-on-dark-muted,#52525b)] mt-4 max-w-2xl mx-auto">{plain(subline)}</p>}
+          {subline && <p className="text-lg text-[color:var(--token-muted,#52525b)] mt-4 max-w-2xl mx-auto">{plain(subline)}</p>}
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -54,10 +54,10 @@ export function PropertyShowcaseSection({ data }: Props) {
               </div>
               <div className="p-6">
                 <h3 className="font-semibold text-[color:var(--token-heading,#18181b)] text-lg group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors">{property.title}</h3>
-                <p className="text-sm text-[color:var(--token-on-dark-muted,#71717a)] mt-1">{property.location}</p>
+                <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1">{property.location}</p>
                 <div className="flex items-center gap-4 mt-4 pt-4 border-t border-[color:var(--token-card-border,#f4f4f5)]">
-                  <span className="text-sm text-[color:var(--token-on-dark-muted,#52525b)]"><strong>{property.rooms}</strong> Zimmer</span>
-                  <span className="text-sm text-[color:var(--token-on-dark-muted,#52525b)]"><strong>{property.size}</strong></span>
+                  <span className="text-sm text-[color:var(--token-muted,#52525b)]"><strong>{property.rooms}</strong> Zimmer</span>
+                  <span className="text-sm text-[color:var(--token-muted,#52525b)]"><strong>{property.size}</strong></span>
                 </div>
                 <p className="text-xl font-bold text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-3">{property.price}</p>
               </div>

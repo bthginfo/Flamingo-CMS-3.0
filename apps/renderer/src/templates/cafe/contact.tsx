@@ -40,8 +40,8 @@ export function CafeContactSection({ data }: Props) {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
           {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mb-3">{badgeText}</p>}
           <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-          {subline && <p className="text-[color:var(--token-on-dark-muted,#52525b)] mt-3">{plain(subline)}</p>}
-          {introText && <div className="text-[color:var(--token-on-dark-muted,#52525b)] mt-4 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+          {subline && <p className="text-[color:var(--token-muted,#52525b)] mt-3">{plain(subline)}</p>}
+          {introText && <div className="text-[color:var(--token-muted,#52525b)] mt-4 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         </motion.div>
 
         <div className={formEnabled ? 'grid grid-cols-1 lg:grid-cols-5 gap-10' : ''}>
@@ -60,7 +60,7 @@ export function CafeContactSection({ data }: Props) {
                     <DynamicIcon name={item.icon} size={18} />
                   </div>
                   <div>
-                    <div className="text-xs text-[color:var(--token-on-dark-body,#a1a1aa)] uppercase tracking-wider">{item.label}</div>
+                    <div className="text-xs text-[color:var(--token-body,#a1a1aa)] uppercase tracking-wider">{item.label}</div>
                     <div className="text-sm font-medium text-[color:var(--token-heading,#18181b)]">{item.value}</div>
                   </div>
                 </motion.div>

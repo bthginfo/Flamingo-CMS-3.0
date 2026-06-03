@@ -33,7 +33,7 @@ export function PropertySearchSection({ data }: Props) {
       <div className="max-w-4xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-          {subline && <p className="mt-2 text-[color:var(--token-on-dark-muted,#52525b)]">{plain(subline)}</p>}
+          {subline && <p className="mt-2 text-[color:var(--token-muted,#52525b)]">{plain(subline)}</p>}
         </motion.div>
 
         <motion.div
@@ -55,8 +55,8 @@ export function PropertySearchSection({ data }: Props) {
                   <Icon size={24} />
                 </div>
                 <span className="font-semibold text-[color:var(--token-heading,#18181b)]">{cat.label}</span>
-                {cat.count && <span className="text-xs text-[color:var(--token-on-dark-muted,#71717a)]">{cat.count}</span>}
-                <ArrowRight size={16} className="absolute top-4 right-4 text-[color:var(--token-on-dark-body,#d4d4d8)] group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors" />
+                {cat.count && <span className="text-xs text-[color:var(--token-muted,#71717a)]">{cat.count}</span>}
+                <ArrowRight size={16} className="absolute top-4 right-4 text-[color:var(--token-body,#d4d4d8)] group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors" />
               </a>
             );
           })}

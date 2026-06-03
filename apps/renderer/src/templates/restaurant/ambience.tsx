@@ -47,14 +47,14 @@ function AmbienceClassic({ headline, subline, badgeText, imagePrimary, imageSeco
       <div>
         {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-        {subline && <div className="mt-4 text-lg text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-lg text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 grid gap-5">
           {highlights.map((highlight, index) => (
             <motion.div key={`${highlight.title}-${index}`} initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 rounded-xl bg-[var(--token-card-bg,#ffffff)] p-4 shadow-sm">
               <div className="mt-0.5 shrink-0 rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] p-2 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><DynamicIcon name={highlight.icon || 'star'} size={20} /></div>
               <div>
                 <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{highlight.title || ''}</h3>
-                {highlight.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: highlight.text }} />}
+                {highlight.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: highlight.text }} />}
               </div>
             </motion.div>
           ))}
@@ -74,17 +74,17 @@ function AmbienceModern({ headline, subline, badgeText, imagePrimary, imageSecon
         {imageTertiary && <div className="relative aspect-square overflow-hidden border border-black/5"><Image src={imageTertiary} alt="" fill className="object-cover" sizes="25vw" /></div>}
       </div>
       <div>
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-on-dark-muted,#71717a)]">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
-        {subline && <div className="mt-6 font-light leading-relaxed text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-6 font-light leading-relaxed text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-10 grid gap-6">
           {highlights.map((highlight, index) => (
             <div key={`${highlight.title}-${index}`} className="flex gap-4 border-l-2 border-[var(--token-card-border,var(--brand-accent,#f39c12))] pl-5">
-              <div className="mt-0.5 shrink-0 text-[color:var(--token-on-dark-muted,#71717a)]"><DynamicIcon name={highlight.icon || 'star'} size={18} /></div>
+              <div className="mt-0.5 shrink-0 text-[color:var(--token-muted,#71717a)]"><DynamicIcon name={highlight.icon || 'star'} size={18} /></div>
               <div>
                 <h3 className="font-medium text-[color:var(--token-heading,#18181b)]">{highlight.title || ''}</h3>
-                {highlight.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-on-dark-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: highlight.text }} />}
+                {highlight.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: highlight.text }} />}
               </div>
             </div>
           ))}

@@ -27,11 +27,11 @@ function BookingClassic({ headline, subline, badgeText, introText, onlineCta, ph
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-6 shadow-md sm:p-10">
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-on-dark-muted,#52525b)]">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
         <h2 className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      {introText && <div className="max-w-2xl text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+      {introText && <div className="max-w-2xl text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
         {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] shadow-md"><CalendarDays size={17} />{onlineCta.label}</a>}
         {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-icon, var(--brand-primary))]/30 px-5 py-3 font-semibold text-[color:var(--token-heading,#18181b)]"><Phone size={17} />{phoneCta.label}</a>}
@@ -46,17 +46,17 @@ function BookingModern({ headline, subline, badgeText, introText, onlineCta, pho
   return (
     <div className="border-y border-black/10 py-14">
       <div className="mb-14 max-w-3xl">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-on-dark-muted,#52525b)]">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-        {subline && <div className="mt-4 font-light text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      {introText && <div className="max-w-2xl font-light text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+      {introText && <div className="max-w-2xl font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
         {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading,#18181b)]"><CalendarDays size={16} />{onlineCta.label}</a>}
-        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-on-dark-muted,#52525b)]"><Phone size={16} />{phoneCta.label}</a>}
-        {whatsappCta.label && <a href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-on-dark-muted,#52525b)]">{whatsappCta.label}</a>}
+        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted,#52525b)]"><Phone size={16} />{phoneCta.label}</a>}
+        {whatsappCta.label && <a href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted,#52525b)]">{whatsappCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-3">{notes.map((note) => <span key={note} className="border-b border-[var(--token-card-border,var(--brand-accent,#f39c12))] pb-1 text-xs font-light text-[color:var(--token-on-dark-muted,#52525b)]">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-3">{notes.map((note) => <span key={note} className="border-b border-[var(--token-card-border,var(--brand-accent,#f39c12))] pb-1 text-xs font-light text-[color:var(--token-muted,#52525b)]">{note}</span>)}</div>
     </div>
   );
 }

@@ -153,7 +153,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
         {/* Text side */}
         <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
           {badgeText && (
-            <div className="flex items-center gap-3 text-sm text-[color:var(--token-on-dark-muted,#71717a)] mb-8 tracking-wide uppercase">
+            <div className="flex items-center gap-3 text-sm text-[color:var(--token-muted,#71717a)] mb-8 tracking-wide uppercase">
               <span className="w-8 h-px bg-gray-300" />{badgeText}
             </div>
           )}
@@ -161,7 +161,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
             {headline}
           </h1>
           {subline && (
-            <div className="text-lg text-[color:var(--token-on-dark-muted,#71717a)] leading-relaxed mt-8 max-w-lg rt-content" dangerouslySetInnerHTML={{ __html: subline }} />
+            <div className="text-lg text-[color:var(--token-muted,#71717a)] leading-relaxed mt-8 max-w-lg rt-content" dangerouslySetInnerHTML={{ __html: subline }} />
           )}
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta.label && (
@@ -173,13 +173,13 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
             )}
             {secondaryCta.label && (
               <a href={secondaryCta.href || '#'}
-                className="inline-flex items-center gap-2 text-[color:var(--token-on-dark-muted,#71717a)] hover:text-[color:var(--token-on-dark-muted,#52525b)] transition-colors text-sm">
+                className="inline-flex items-center gap-2 text-[color:var(--token-muted,#71717a)] hover:text-[color:var(--token-muted,#52525b)] transition-colors text-sm">
                 {secondaryCta.label}
               </a>
             )}
           </div>
           {trustItems.length > 0 && (
-            <div className="flex flex-wrap gap-6 mt-16 text-xs text-[color:var(--token-on-dark-muted,#71717a)] uppercase tracking-wider">
+            <div className="flex flex-wrap gap-6 mt-16 text-xs text-[color:var(--token-muted,#71717a)] uppercase tracking-wider">
               {trustItems.map((item) => <span key={item}>{item}</span>)}
             </div>
           )}

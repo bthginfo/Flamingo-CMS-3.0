@@ -39,15 +39,15 @@ export function ConsultingTeamSection({ data }: Props) {
             )}
             <h3 className="text-lg font-semibold text-[color:var(--token-heading,#18181b)]">{member.name}</h3>
             {member.role && <p className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] font-medium text-sm mt-1">{member.role}</p>}
-            {member.specialization && <p className="text-[color:var(--token-on-dark-muted,#71717a)] text-sm mt-1">{member.specialization}</p>}
+            {member.specialization && <p className="text-[color:var(--token-muted,#71717a)] text-sm mt-1">{member.specialization}</p>}
             <div className="flex items-center justify-center gap-4 mt-4">
               {member.phone && (
-                <a href={`tel:${member.phone}`} className="text-[color:var(--token-on-dark-body,#a1a1aa)] hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors">
+                <a href={`tel:${member.phone}`} className="text-[color:var(--token-body,#a1a1aa)] hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors">
                   <DynamicIcon name="phone" size={16} />
                 </a>
               )}
               {member.email && (
-                <a href={`mailto:${member.email}`} className="text-[color:var(--token-on-dark-body,#a1a1aa)] hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors">
+                <a href={`mailto:${member.email}`} className="text-[color:var(--token-body,#a1a1aa)] hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors">
                   <DynamicIcon name="mail" size={16} />
                 </a>
               )}

@@ -23,8 +23,8 @@ export function LogoMarqueeSection({ data }: Props) {
     <div ref={ref} className="overflow-hidden -mx-6 md:-mx-12 lg:-mx-20 py-8">
       {(headline || subline) && (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4 }} className="text-center mb-8 px-6">
-          {headline && <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--token-on-dark-body,#a1a1aa)]">{headline}</p>}
-          {subline && <p className="text-xs text-[color:var(--token-on-dark-body,#a1a1aa)] mt-1">{plain(subline)}</p>}
+          {headline && <p className="text-sm font-medium uppercase tracking-widest text-[color:var(--token-body,#a1a1aa)]">{headline}</p>}
+          {subline && <p className="text-xs text-[color:var(--token-body,#a1a1aa)] mt-1">{plain(subline)}</p>}
         </motion.div>
       )}
 
@@ -40,7 +40,7 @@ export function LogoMarqueeSection({ data }: Props) {
                 {item.image ? (
                   <img src={item.image} alt={item.name} className="h-8 md:h-10 w-auto object-contain" />
                 ) : (
-                  <span className="text-lg font-bold text-[color:var(--token-on-dark-body,#a1a1aa)] whitespace-nowrap">{item.name}</span>
+                  <span className="text-lg font-bold text-[color:var(--token-body,#a1a1aa)] whitespace-nowrap">{item.name}</span>
                 )}
               </div>
             ))}

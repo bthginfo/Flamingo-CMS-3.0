@@ -31,22 +31,22 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
     return (
       <section className="py-24 md:py-36 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-on-dark-body,#a1a1aa)] mb-4">{badge}</p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4">{badge}</p>
           <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-16 break-words">{headline}</h2>
           <div className={`grid gap-8 ${gridCols}`}>
             {packages.map((pkg, i) => (
               <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={`border-t ${pkg.highlighted ? 'border-[color:var(--token-card-border,#18181b)]' : 'border-[color:var(--token-card-border,#e4e4e7)]'} pt-8`}>
                 <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]">{pkg.name}</h3>
-                {pkg.price && <p className="text-2xl font-extralight text-[color:var(--token-heading,#18181b)] mt-2">{pkg.price}{pkg.priceNote && <span className="text-sm text-[color:var(--token-on-dark-body,#a1a1aa)] ml-1">{pkg.priceNote}</span>}</p>}
-                {pkg.description && <div className="text-[color:var(--token-on-dark-body,#a1a1aa)] text-sm mt-3" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
+                {pkg.price && <p className="text-2xl font-extralight text-[color:var(--token-heading,#18181b)] mt-2">{pkg.price}{pkg.priceNote && <span className="text-sm text-[color:var(--token-body,#a1a1aa)] ml-1">{pkg.priceNote}</span>}</p>}
+                {pkg.description && <div className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-3" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
                 <ul className="mt-6 space-y-2">
-                  {pkg.features.map((f, j) => <li key={j} className="text-[color:var(--token-on-dark-muted,#52525b)] text-sm">— {f}</li>)}
+                  {pkg.features.map((f, j) => <li key={j} className="text-[color:var(--token-muted,#52525b)] text-sm">— {f}</li>)}
                 </ul>
                 {pkg.ctaHref && <a href={pkg.ctaHref} className="inline-block mt-6 text-sm text-[color:var(--token-heading,#18181b)] border-b border-[color:var(--token-card-border,#18181b)] hover:opacity-70">{pkg.ctaLabel || 'Anfragen'} →</a>}
               </motion.div>
             ))}
           </div>
-          {note && <p className="text-[color:var(--token-on-dark-body,#a1a1aa)] text-sm mt-12">{note}</p>}
+          {note && <p className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-12">{note}</p>}
         </div>
       </section>
     );
@@ -99,15 +99,15 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
               {pkg.price && (
                 <div className="mt-3">
                   <span className={`text-2xl md:text-3xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-icon,var(--brand-primary,#1a5276))]'}`}>{pkg.price}</span>
-                  {pkg.priceNote && <span className={`text-sm ml-1 ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-on-dark-muted,#71717a)]'}`}>{pkg.priceNote}</span>}
+                  {pkg.priceNote && <span className={`text-sm ml-1 ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-muted,#71717a)]'}`}>{pkg.priceNote}</span>}
                 </div>
               )}
-              {pkg.description && <div className={`mt-3 text-sm ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/80]' : 'text-[color:var(--token-on-dark-muted,#52525b)]'}`} dangerouslySetInnerHTML={{ __html: pkg.description }} />}
+              {pkg.description && <div className={`mt-3 text-sm ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/80]' : 'text-[color:var(--token-muted,#52525b)]'}`} dangerouslySetInnerHTML={{ __html: pkg.description }} />}
               <ul className="mt-6 space-y-3">
                 {pkg.features.map((f, j) => (
                   <li key={j} className="flex items-start gap-2 text-sm">
                     <Check className={`w-4 h-4 mt-0.5 shrink-0 ${pkg.highlighted ? 'text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]' : 'text-[color:var(--token-icon,var(--brand-primary,#1a5276))]'}`} />
-                    <span className={pkg.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/90]' : 'text-[color:var(--token-on-dark-muted,#3f3f46)]'}>{f}</span>
+                    <span className={pkg.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/90]' : 'text-[color:var(--token-muted,#3f3f46)]'}>{f}</span>
                   </li>
                 ))}
               </ul>
@@ -119,7 +119,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
             </motion.div>
           ))}
         </div>
-        {note && <p className="text-center text-[color:var(--token-on-dark-muted,#71717a)] text-sm mt-10 italic">{note}</p>}
+        {note && <p className="text-center text-[color:var(--token-muted,#71717a)] text-sm mt-10 italic">{note}</p>}
       </div>
     </section>
   );

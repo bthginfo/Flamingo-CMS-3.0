@@ -30,7 +30,7 @@ function Classic({ header, seasons }: Props) {
             <div className="p-5">
               <p className="text-xs font-bold uppercase tracking-widest text-green-700">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
               <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]">{season.title || ''}</h3>
-              {season.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: season.text }} />}
+              {season.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: season.text }} />}
               {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-green-700">{season.cta.label}<ArrowRight size={14} /></a>}
             </div>
           </motion.article>
@@ -51,7 +51,7 @@ function Modern({ header, seasons }: Props) {
             <div className="p-5">
               <p className="text-xs font-light uppercase tracking-widest text-teal-600">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
               <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading,#18181b)]">{season.title || ''}</h3>
-              {season.text && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: season.text }} />}
+              {season.text && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: season.text }} />}
               {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-teal-600">{season.cta.label}<ArrowRight size={14} /></a>}
             </div>
           </article>
@@ -67,7 +67,7 @@ function Bold({ header, seasons }: Props) {
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-orange-500">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl">{header.headline}</h2>
-        {header.subline && <div className="mt-4 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
+        {header.subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {seasons.map((season, index) => (
@@ -76,7 +76,7 @@ function Bold({ header, seasons }: Props) {
             <div className="p-5">
               <p className="text-xs font-black uppercase tracking-widest text-orange-500">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
               <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{season.title || ''}</h3>
-              {season.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: season.text }} />}
+              {season.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: season.text }} />}
               {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-black uppercase text-orange-500">{season.cta.label}<ArrowRight size={14} /></a>}
             </div>
           </article>

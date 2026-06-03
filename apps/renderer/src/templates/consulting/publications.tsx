@@ -41,12 +41,12 @@ export function PublicationsSection({ data }: Props) {
               </div>
             )}
             <div className="p-6">
-              <div className="flex items-center gap-3 text-xs text-[color:var(--token-on-dark-body,#a1a1aa)] mb-3">
+              <div className="flex items-center gap-3 text-xs text-[color:var(--token-body,#a1a1aa)] mb-3">
                 {article.category && <span className="bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] text-[color:var(--token-icon,var(--brand-primary,#1a5276))] px-2 py-0.5 rounded font-medium">{article.category}</span>}
                 {article.date && <span>{article.date}</span>}
               </div>
               <h3 className="text-lg font-semibold text-[color:var(--token-heading,#18181b)] group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors mb-2">{article.title}</h3>
-              {article.excerpt && <p className="text-[color:var(--token-on-dark-muted,#71717a)] text-sm leading-relaxed line-clamp-3">{article.excerpt}</p>}
+              {article.excerpt && <p className="text-[color:var(--token-muted,#71717a)] text-sm leading-relaxed line-clamp-3">{article.excerpt}</p>}
               {article.href && (
                 <Link href={article.href} className="inline-flex items-center gap-1 text-sm font-medium text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-4">
                   Weiterlesen <DynamicIcon name="arrow-right" size={14} />

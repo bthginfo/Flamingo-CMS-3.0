@@ -34,7 +34,7 @@ function Classic({ badge, headline, members }: P) {
               </div>
               <h3 className="text-lg font-semibold text-[color:var(--token-heading,#18181b)]">{m.name}</h3>
               <p className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] text-sm font-medium mt-1">{m.role}</p>
-              {m.text && <div className="text-[color:var(--token-on-dark-muted,#52525b)] text-sm mt-3 max-w-xs mx-auto rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
+              {m.text && <div className="text-[color:var(--token-muted,#52525b)] text-sm mt-3 max-w-xs mx-auto rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </motion.div>
           ))}
         </div>
@@ -47,18 +47,18 @@ function Modern({ badge, headline, members }: P) {
   return (
     <section className="py-24 md:py-36 px-4 md:px-6">
       <div className="max-w-5xl mx-auto">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-on-dark-body,#a1a1aa)] mb-4">{badge}</p>
+        <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4">{badge}</p>
         <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-16 break-words">{headline}</h2>
         <div className="grid md:grid-cols-2 gap-12">
           {members.map((m, i) => (
             <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex gap-6 items-start border-t border-[color:var(--token-card-border,#e4e4e7)] pt-6">
               <div className="relative w-20 h-20 shrink-0">
-                {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full bg-[var(--token-section-bg-alt,#f4f4f5)] flex items-center justify-center text-2xl text-[color:var(--token-on-dark-body,#d4d4d8)]">{m.name[0]}</div>}
+                {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full bg-[var(--token-section-bg-alt,#f4f4f5)] flex items-center justify-center text-2xl text-[color:var(--token-body,#d4d4d8)]">{m.name[0]}</div>}
               </div>
               <div>
                 <h3 className="text-base font-medium text-[color:var(--token-heading,#18181b)]">{m.name}</h3>
-                <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--token-on-dark-body,#a1a1aa)] mt-1">{m.role}</p>
-                {m.text && <div className="text-[color:var(--token-on-dark-muted,#71717a)] text-sm mt-3 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
+                <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--token-body,#a1a1aa)] mt-1">{m.role}</p>
+                {m.text && <div className="text-[color:var(--token-muted,#71717a)] text-sm mt-3 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
               </div>
             </motion.div>
           ))}
@@ -78,11 +78,11 @@ function Bold({ badge, headline, members }: P) {
           {members.map((m, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6 text-center hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))/50] transition-colors">
               <div className="relative w-24 h-24 mx-auto mb-4">
-                {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full bg-[var(--token-section-bg-alt,#f4f4f5)] flex items-center justify-center text-3xl text-[color:var(--token-on-dark-body,#d4d4d8)]">{m.name[0]}</div>}
+                {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full bg-[var(--token-section-bg-alt,#f4f4f5)] flex items-center justify-center text-3xl text-[color:var(--token-body,#d4d4d8)]">{m.name[0]}</div>}
               </div>
               <h3 className="text-lg font-bold text-[color:var(--token-heading,#18181b)]">{m.name}</h3>
               <p className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] text-xs font-bold uppercase tracking-widest mt-1">{m.role}</p>
-              {m.text && <div className="text-[color:var(--token-on-dark-muted,#71717a)] text-sm mt-3 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
+              {m.text && <div className="text-[color:var(--token-muted,#71717a)] text-sm mt-3 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </motion.div>
           ))}
         </div>

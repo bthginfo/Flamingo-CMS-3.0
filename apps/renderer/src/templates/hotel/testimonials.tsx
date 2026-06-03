@@ -34,11 +34,11 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-on-dark-muted,#52525b)]"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{badgeText}</motion.p>}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{headline}</motion.h2>
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      <div className="mb-6 flex flex-wrap gap-3 text-sm text-[color:var(--token-on-dark-muted,#52525b)]">
+      <div className="mb-6 flex flex-wrap gap-3 text-sm text-[color:var(--token-muted,#52525b)]">
         {ratingValue && <span>{ratingValue}</span>}
         {ratingCount && <span>{ratingCount}</span>}
         {sourceLabel && <span>{sourceLabel}</span>}
@@ -49,7 +49,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
             <div className="flex gap-1 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{Array.from({ length: item.rating || 5 }).map((_, i) => <Star key={i} size={14} fill="currentColor" />)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-[color:var(--token-heading,#18181b)] rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-semibold text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
-            <p className="text-xs text-[color:var(--token-on-dark-muted,#52525b)]">{[item.context, item.stayLabel].filter(Boolean).join(' / ')}</p>
+            <p className="text-xs text-[color:var(--token-muted,#52525b)]">{[item.context, item.stayLabel].filter(Boolean).join(' / ')}</p>
           </motion.article>
         ))}
       </div>
@@ -63,11 +63,11 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
   return (
     <div>
       <div className="mb-14 max-w-3xl">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-on-dark-muted,#52525b)]">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-        {subline && <div className="mt-4 font-light text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      <div className="mb-8 flex flex-wrap gap-3 text-sm font-light text-[color:var(--token-on-dark-muted,#52525b)]">
+      <div className="mb-8 flex flex-wrap gap-3 text-sm font-light text-[color:var(--token-muted,#52525b)]">
         {ratingValue && <span>{ratingValue}</span>}
         {ratingCount && <span>{ratingCount}</span>}
         {sourceLabel && <span>{sourceLabel}</span>}
@@ -75,10 +75,10 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
       <div className="grid gap-px border border-black/10 md:grid-cols-3">
         {items.map((item, index) => (
           <article key={`${item.name}-${index}`} className="border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-6">
-            <div className="flex gap-1 text-[color:var(--token-on-dark-muted,#52525b)]">{Array.from({ length: item.rating || 5 }).map((_, i) => <Star key={i} size={12} />)}</div>
+            <div className="flex gap-1 text-[color:var(--token-muted,#52525b)]">{Array.from({ length: item.rating || 5 }).map((_, i) => <Star key={i} size={12} />)}</div>
             {item.quote && <div className="mt-4 text-sm font-light leading-7 text-[color:var(--token-heading,#18181b)] rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-light text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
-            <p className="text-xs font-light text-[color:var(--token-on-dark-muted,#52525b)]">{[item.context, item.stayLabel].filter(Boolean).join(' / ')}</p>
+            <p className="text-xs font-light text-[color:var(--token-muted,#52525b)]">{[item.context, item.stayLabel].filter(Boolean).join(' / ')}</p>
           </article>
         ))}
       </div>
@@ -94,9 +94,9 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      <div className="mb-6 flex flex-wrap gap-3 text-sm font-bold text-[color:var(--token-on-dark-muted,#52525b)]">
+      <div className="mb-6 flex flex-wrap gap-3 text-sm font-bold text-[color:var(--token-muted,#52525b)]">
         {ratingValue && <span>{ratingValue}</span>}
         {ratingCount && <span>{ratingCount}</span>}
         {sourceLabel && <span>{sourceLabel}</span>}
@@ -107,7 +107,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
             <div className="flex gap-1 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{Array.from({ length: item.rating || 5 }).map((_, i) => <Star key={i} size={14} fill="currentColor" />)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-[color:var(--token-heading,#18181b)] rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-black uppercase text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
-            <p className="text-xs font-bold text-[color:var(--token-on-dark-muted,#52525b)]">{[item.context, item.stayLabel].filter(Boolean).join(' / ')}</p>
+            <p className="text-xs font-bold text-[color:var(--token-muted,#52525b)]">{[item.context, item.stayLabel].filter(Boolean).join(' / ')}</p>
           </article>
         ))}
       </div>

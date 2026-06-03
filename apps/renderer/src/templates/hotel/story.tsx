@@ -40,15 +40,15 @@ function StoryClassic(p: Props) {
     <div>
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-          {p.badgeText && <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-on-dark-muted,#52525b)]"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{p.badgeText}</p>}
+          {p.badgeText && <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{p.badgeText}</p>}
           <h2 className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{p.headline}</h2>
-          {p.subline && <div className="mt-4 text-lg text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
-          {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-on-dark-muted,#52525b)]">{plain(p.storyText)}</p>}
+          {p.subline && <div className="mt-4 text-lg text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
+          {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-muted,#52525b)]">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <blockquote className="mt-8 rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 shadow-sm">
               <p className="text-sm italic leading-6 text-[color:var(--token-heading,#18181b)]">&ldquo;{p.founderQuote}&rdquo;</p>
               {p.founderName && <p className="mt-3 font-semibold text-[color:var(--token-heading,#18181b)]">{p.founderName}</p>}
-              {p.founderRole && <p className="text-xs text-[color:var(--token-on-dark-muted,#52525b)]">{p.founderRole}</p>}
+              {p.founderRole && <p className="text-xs text-[color:var(--token-muted,#52525b)]">{p.founderRole}</p>}
             </blockquote>
           )}
           {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] shadow-md">{p.ctaPrimary.label}</a>}
@@ -63,7 +63,7 @@ function StoryClassic(p: Props) {
           {p.stats.map((s, i) => (
             <motion.div key={`${s.label}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 text-center shadow-sm">
               <p className="text-3xl font-bold text-[color:var(--token-heading,#18181b)]">{s.value || ''}</p>
-              <p className="mt-1 text-xs uppercase tracking-widest text-[color:var(--token-on-dark-muted,#52525b)]">{s.label || ''}</p>
+              <p className="mt-1 text-xs uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">{s.label || ''}</p>
             </motion.div>
           ))}
         </div>
@@ -73,7 +73,7 @@ function StoryClassic(p: Props) {
           {p.values.map((v, i) => (
             <motion.div key={`${v.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 shadow-sm">
               <div className="shrink-0 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={v.icon || 'heart'} size={20} /></div>
-              <div><h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
+              <div><h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
             </motion.div>
           ))}
         </div>
@@ -85,7 +85,7 @@ function StoryClassic(p: Props) {
               <div className="absolute -left-[2.55rem] top-1 h-4 w-4 rounded-full border-2 border-[var(--token-icon, var(--brand-primary))] bg-[var(--token-card-bg,#ffffff)]" />
               {m.year && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{m.year}</p>}
               <h3 className="mt-1 font-semibold text-[color:var(--token-heading,#18181b)]">{m.title || ''}</h3>
-              {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
+              {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </motion.div>
           ))}
         </div>
@@ -99,15 +99,15 @@ function StoryModern(p: Props) {
     <div>
       <div className="grid gap-16 lg:grid-cols-2 lg:items-start">
         <div>
-          {p.badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-on-dark-muted,#52525b)]">{p.badgeText}</p>}
+          {p.badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{p.badgeText}</p>}
           <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{p.headline}</h2>
-          {p.subline && <div className="mt-4 font-light text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
-          {p.storyText && <p className="mt-6 whitespace-pre-line font-light leading-7 text-[color:var(--token-on-dark-muted,#52525b)]">{plain(p.storyText)}</p>}
+          {p.subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
+          {p.storyText && <p className="mt-6 whitespace-pre-line font-light leading-7 text-[color:var(--token-muted,#52525b)]">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <blockquote className="mt-8 border-l border-black/20 pl-5">
               <p className="text-sm italic font-light leading-6 text-[color:var(--token-heading,#18181b)]">&ldquo;{p.founderQuote}&rdquo;</p>
               {p.founderName && <p className="mt-3 font-medium text-[color:var(--token-heading,#18181b)]">{p.founderName}</p>}
-              {p.founderRole && <p className="text-xs font-light text-[color:var(--token-on-dark-muted,#52525b)]">{p.founderRole}</p>}
+              {p.founderRole && <p className="text-xs font-light text-[color:var(--token-muted,#52525b)]">{p.founderRole}</p>}
             </blockquote>
           )}
           {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-10 inline-flex font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4">{p.ctaPrimary.label}</a>}
@@ -122,7 +122,7 @@ function StoryModern(p: Props) {
           {p.stats.map((s, i) => (
             <div key={`${s.label}-${i}`} className="border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-6 text-center">
               <p className="text-3xl font-light text-[color:var(--token-heading,#18181b)]">{s.value || ''}</p>
-              <p className="mt-1 text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-on-dark-muted,#52525b)]">{s.label || ''}</p>
+              <p className="mt-1 text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#52525b)]">{s.label || ''}</p>
             </div>
           ))}
         </div>
@@ -131,9 +131,9 @@ function StoryModern(p: Props) {
         <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
             <div key={`${v.title}-${i}`} className="border-l border-black/20 pl-5">
-              <DynamicIcon name={v.icon || 'heart'} size={18} className="text-[color:var(--token-on-dark-muted,#52525b)]" />
+              <DynamicIcon name={v.icon || 'heart'} size={18} className="text-[color:var(--token-muted,#52525b)]" />
               <h3 className="mt-2 font-medium text-[color:var(--token-heading,#18181b)]">{v.title || ''}</h3>
-              {v.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
+              {v.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
           ))}
         </div>
@@ -142,9 +142,9 @@ function StoryModern(p: Props) {
         <div className="mt-16 grid gap-6 border-t border-black/10 pt-10 sm:grid-cols-2 lg:grid-cols-4">
           {p.milestones.map((m, i) => (
             <div key={`${m.year}-${i}`}>
-              {m.year && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-on-dark-muted,#52525b)]">{m.year}</p>}
+              {m.year && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#52525b)]">{m.year}</p>}
               <h3 className="mt-1 font-medium text-[color:var(--token-heading,#18181b)]">{m.title || ''}</h3>
-              {m.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
+              {m.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </div>
           ))}
         </div>
@@ -160,13 +160,13 @@ function StoryBold(p: Props) {
         <div>
           {p.badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{p.badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{p.headline}</h2>
-          {p.subline && <div className="mt-4 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
-          {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-on-dark-muted,#52525b)]">{plain(p.storyText)}</p>}
+          {p.subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
+          {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-muted,#52525b)]">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <div className="mt-8 border-l-4 border-[var(--token-icon, var(--brand-primary))] bg-[var(--token-section-bg-alt,#000000)/5] p-5">
               <p className="text-sm italic font-bold text-[color:var(--token-heading,#18181b)]">&ldquo;{p.founderQuote}&rdquo;</p>
               {p.founderName && <p className="mt-3 font-black uppercase text-[color:var(--token-heading,#18181b)]">{p.founderName}</p>}
-              {p.founderRole && <p className="text-xs font-bold text-[color:var(--token-on-dark-muted,#52525b)]">{p.founderRole}</p>}
+              {p.founderRole && <p className="text-xs font-bold text-[color:var(--token-muted,#52525b)]">{p.founderRole}</p>}
             </div>
           )}
           {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)] shadow-[4px_4px_0_var(--token-icon, var(--brand-primary))]">{p.ctaPrimary.label}</a>}
@@ -181,7 +181,7 @@ function StoryBold(p: Props) {
           {p.stats.map((s, i) => (
             <div key={`${s.label}-${i}`} className="border-2 border-[#111827] p-5 text-center shadow-[4px_4px_0_var(--token-icon, var(--brand-primary))]">
               <p className="text-3xl font-black text-[color:var(--token-heading,#18181b)]">{s.value || ''}</p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-on-dark-muted,#52525b)]">{s.label || ''}</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">{s.label || ''}</p>
             </div>
           ))}
         </div>
@@ -192,7 +192,7 @@ function StoryBold(p: Props) {
             <div key={`${v.title}-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_#111827]">
               <DynamicIcon name={v.icon || 'heart'} size={20} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />
               <h3 className="mt-2 font-black uppercase text-[color:var(--token-heading,#18181b)]">{v.title || ''}</h3>
-              {v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
+              {v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
           ))}
         </div>
@@ -203,7 +203,7 @@ function StoryBold(p: Props) {
             <div key={`${m.year}-${i}`} className="border-2 border-[#111827] p-5">
               {m.year && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{m.year}</p>}
               <h3 className="mt-1 font-black uppercase text-[color:var(--token-heading,#18181b)]">{m.title || ''}</h3>
-              {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
+              {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </div>
           ))}
         </div>

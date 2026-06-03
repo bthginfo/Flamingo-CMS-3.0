@@ -104,15 +104,15 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageM
       ) : null}
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-8 lg:gap-16 px-6 py-12 md:py-20 lg:grid-cols-2">
         <div className="max-w-xl">
-          {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-on-dark-muted,#52525b)]">{badgeText}</p>}
+          {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
           <h1 className="mt-6 text-3xl md:text-5xl font-light leading-[1.05] text-[color:var(--token-heading,#18181b)] sm:text-6xl lg:text-7xl">{headline}</h1>
-          {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-[color:var(--token-on-dark-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="mt-3 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
           <div className="mt-8 flex flex-wrap gap-3">
             {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading,#18181b)]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} />}</a>}
-            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-on-dark-muted,#52525b)]">{secondaryCta.label}</a>}
+            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted,#52525b)]">{secondaryCta.label}</a>}
           </div>
-          <div className="mt-10 flex flex-wrap gap-3 text-sm text-[color:var(--token-on-dark-muted,#52525b)]">
+          <div className="mt-10 flex flex-wrap gap-3 text-sm text-[color:var(--token-muted,#52525b)]">
             {bookingHint && <span className="border-b border-[var(--token-card-border,var(--brand-accent,#f39c12))] pb-1">{bookingHint}</span>}
             {ratingText && <span className="border-b border-[var(--token-card-border,var(--brand-accent,#f39c12))] pb-1">{ratingText}</span>}
             {trustItems.map((item) => <span key={item} className="border-b border-[var(--token-card-border,var(--brand-accent,#f39c12))] pb-1">{item}</span>)}

@@ -43,12 +43,12 @@ export function FeeTableSection({ data }: Props) {
             )}
             <h3 className="text-lg font-semibold text-[color:var(--token-heading,#18181b)] mb-2">{fee.title}</h3>
             {fee.price && <div className="text-2xl font-bold text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mb-3">{fee.price}</div>}
-            {fee.description && <p className="text-[color:var(--token-on-dark-muted,#71717a)] text-sm leading-relaxed">{plain(fee.description)}</p>}
+            {fee.description && <p className="text-[color:var(--token-muted,#71717a)] text-sm leading-relaxed">{plain(fee.description)}</p>}
           </motion.div>
         ))}
       </div>
       {footnote && (
-        <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.4 }} className="text-center text-xs text-[color:var(--token-on-dark-body,#a1a1aa)] mt-8 max-w-2xl mx-auto">
+        <motion.p initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.4 }} className="text-center text-xs text-[color:var(--token-body,#a1a1aa)] mt-8 max-w-2xl mx-auto">
           {footnote}
         </motion.p>
       )}

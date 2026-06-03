@@ -26,7 +26,7 @@ function Classic({ badge, headline, text, colors, hints }: P) {
       <div className="max-w-3xl mx-auto text-center">
         <span className="section-badge">{badge}</span>
         <h2 className="section-headline">{headline}</h2>
-        {text && <div className="text-[color:var(--token-on-dark-muted,#52525b)] text-lg mt-6 leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+        {text && <div className="text-[color:var(--token-muted,#52525b)] text-lg mt-6 leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {colors.length > 0 && (
           <div className="flex items-center justify-center gap-4 mt-10">
             {colors.map((color, i) => (
@@ -37,7 +37,7 @@ function Classic({ badge, headline, text, colors, hints }: P) {
         {hints.length > 0 && (
           <div className="mt-10 grid sm:grid-cols-2 gap-4 text-left max-w-lg mx-auto">
             {hints.map((hint, i) => (
-              <div key={i} className="flex items-start gap-3 text-[color:var(--token-on-dark-muted,#3f3f46)] text-sm">
+              <div key={i} className="flex items-start gap-3 text-[color:var(--token-muted,#3f3f46)] text-sm">
                 <Shirt className="w-4 h-4 text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-0.5 shrink-0" />
                 <span>{hint}</span>
               </div>
@@ -53,9 +53,9 @@ function Modern({ badge, headline, text, colors, hints }: P) {
   return (
     <section className="py-24 md:py-36 px-4 md:px-6">
       <div className="max-w-3xl mx-auto">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-on-dark-body,#a1a1aa)] mb-4">{badge}</p>
+        <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4">{badge}</p>
         <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-10 break-words">{headline}</h2>
-        {text && <div className="text-[color:var(--token-on-dark-muted,#71717a)] text-base leading-relaxed mb-12 rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+        {text && <div className="text-[color:var(--token-muted,#71717a)] text-base leading-relaxed mb-12 rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {colors.length > 0 && (
           <div className="flex items-center gap-6 mb-12">
             {colors.map((color, i) => (
@@ -66,7 +66,7 @@ function Modern({ badge, headline, text, colors, hints }: P) {
         {hints.length > 0 && (
           <div className="border-t border-[color:var(--token-card-border,#e4e4e7)] pt-8 space-y-4">
             {hints.map((hint, i) => (
-              <p key={i} className="text-[color:var(--token-on-dark-muted,#52525b)] text-sm">{hint}</p>
+              <p key={i} className="text-[color:var(--token-muted,#52525b)] text-sm">{hint}</p>
             ))}
           </div>
         )}
@@ -81,7 +81,7 @@ function Bold({ badge, headline, text, colors, hints }: P) {
       <div className="max-w-4xl mx-auto text-center">
         <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words">{headline}</h2>
-        {text && <div className="text-[color:var(--token-on-dark-muted,#52525b)] text-lg leading-relaxed mb-10 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+        {text && <div className="text-[color:var(--token-muted,#52525b)] text-lg leading-relaxed mb-10 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {colors.length > 0 && (
           <div className="flex items-center justify-center gap-4 mb-10">
             {colors.map((color, i) => (
@@ -92,7 +92,7 @@ function Bold({ badge, headline, text, colors, hints }: P) {
         {hints.length > 0 && (
           <div className="grid sm:grid-cols-2 gap-4 text-left max-w-lg mx-auto mt-8">
             {hints.map((hint, i) => (
-              <div key={i} className="flex items-start gap-3 text-[color:var(--token-on-dark-muted,#3f3f46)] text-sm border-2 border-[color:var(--token-card-border,#e4e4e7)] p-4">
+              <div key={i} className="flex items-start gap-3 text-[color:var(--token-muted,#3f3f46)] text-sm border-2 border-[color:var(--token-card-border,#e4e4e7)] p-4">
                 <Shirt className="w-4 h-4 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] mt-0.5 shrink-0" />
                 <span>{hint}</span>
               </div>

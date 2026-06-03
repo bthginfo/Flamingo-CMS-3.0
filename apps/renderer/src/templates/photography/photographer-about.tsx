@@ -22,7 +22,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
     return (
       <section className="py-24 md:py-36 px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-on-dark-body,#a1a1aa)] mb-4">{badge}</p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4">{badge}</p>
           {headline && <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-16 break-words">{headline}</h2>}
           <div className="grid md:grid-cols-2 gap-16 items-start">
             {image && (
@@ -31,11 +31,11 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
               </motion.div>
             )}
             <div className={image ? '' : 'md:col-span-2 max-w-2xl'}>
-              {intro && <div className="text-[color:var(--token-on-dark-muted,#71717a)] text-lg leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
-              {story && <div className="text-[color:var(--token-on-dark-body,#a1a1aa)] leading-relaxed mt-6 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
+              {intro && <div className="text-[color:var(--token-muted,#71717a)] text-lg leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
+              {story && <div className="text-[color:var(--token-body,#a1a1aa)] leading-relaxed mt-6 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
               {facts.length > 0 && (
                 <ul className="mt-10 space-y-3 border-t border-[color:var(--token-card-border,#e4e4e7)] pt-8">
-                  {facts.map((fact, i) => <li key={i} className="text-[color:var(--token-on-dark-muted,#52525b)] text-sm">{fact}</li>)}
+                  {facts.map((fact, i) => <li key={i} className="text-[color:var(--token-muted,#52525b)] text-sm">{fact}</li>)}
                 </ul>
               )}
               {values.length > 0 && (
@@ -43,7 +43,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                   {values.map((v, i) => (
                     <div key={i}>
                       <h4 className="text-sm font-medium text-[color:var(--token-heading,#18181b)]">{v.title}</h4>
-                      <div className="text-[color:var(--token-on-dark-body,#a1a1aa)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
+                      <div className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                     </div>
                   ))}
                 </div>
@@ -109,12 +109,12 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
           <div className={image ? 'md:col-span-3' : 'md:col-span-5 max-w-3xl mx-auto'}>
             <span className="section-badge">{badge}</span>
             {headline && <h2 className="section-headline">{headline}</h2>}
-            {intro && <div className="text-[color:var(--token-on-dark-muted,#3f3f46)] text-lg leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
-            {story && <div className="text-[color:var(--token-on-dark-muted,#52525b)] leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
+            {intro && <div className="text-[color:var(--token-muted,#3f3f46)] text-lg leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
+            {story && <div className="text-[color:var(--token-muted,#52525b)] leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
             {facts.length > 0 && (
               <ul className="mt-8 space-y-2">
                 {facts.map((fact, i) => (
-                  <motion.li key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="flex items-start gap-2 text-[color:var(--token-on-dark-muted,#3f3f46)] text-sm">
+                  <motion.li key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="flex items-start gap-2 text-[color:var(--token-muted,#3f3f46)] text-sm">
                     <span className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-0.5">•</span>
                     <span>{fact}</span>
                   </motion.li>
@@ -126,7 +126,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                 {values.map((v, i) => (
                   <div key={i} className="p-4 rounded-xl bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))]/[0.03] border border-[var(--token-card-border,var(--brand-primary,#1a5276))/10]">
                     <h4 className="font-semibold text-[color:var(--token-heading,#18181b)] text-sm">{v.title}</h4>
-                    <div className="text-[color:var(--token-on-dark-muted,#52525b)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
+                    <div className="text-[color:var(--token-muted,#52525b)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                   </div>
                 ))}
               </div>
