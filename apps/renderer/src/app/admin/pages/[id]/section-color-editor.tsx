@@ -313,13 +313,14 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
       '--style-divider-color': ['--style-border-color', '--style-card-border'],
       '--brand-btn-bg': ['--brand-accent', '--brand-primary'],
       '--brand-btn-text': ['--brand-dark'],
-      '--brand-btn-secondary-bg': ['--style-section-bg'],
-      '--brand-btn-secondary-text': ['--brand-primary'],
+      // --brand-btn-secondary-* intentionally no fallback: no shared template
+      // reads these from another var, so showing a borrowed swatch is misleading.
       '--style-badge-bg': ['--brand-primary'],
       '--style-badge-text': ['--brand-primary'],
       '--style-badge-border': ['--brand-primary'],
       '--style-section-bg-alt': ['--style-section-bg'],
-      '--style-card-bg': ['--style-section-bg'],
+      // --style-card-bg intentionally no fallback to section-bg: they are
+      // independent in every shared template; suggesting otherwise was confusing.
     };
     const chain = fallbacks[cssVar];
     if (chain) {
@@ -332,15 +333,11 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
   };
 
   const handleChange = (key: string, color: string) => {
+    // Phase 4c: pickers write exactly ONE var — no hidden cross-writes.
+    // (Previously --style-accent-color also wrote --brand-primary + --brand-accent,
+    //  and --style-border-color also wrote --style-card-border; that made
+    //  "Akzentfarbe" recolour brand vars + buttons globally.)
     const next = { ...overrides, [key]: color };
-    // Sync related vars
-    if (key === '--style-accent-color') {
-      next['--brand-primary'] = color;
-      next['--brand-accent'] = color;
-    }
-    if (key === '--style-border-color') {
-      next['--style-card-border'] = `1px solid ${color}`;
-    }
     Object.keys(next).forEach(k => { if (!next[k]) delete next[k]; });
     onChange(Object.keys(next).length > 0 ? next : null);
   };
@@ -348,23 +345,13 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
   const handleClear = (key: string) => {
     const next = { ...overrides };
     delete next[key];
-    if (key === '--style-accent-color') {
-      delete next['--brand-primary'];
-      delete next['--brand-accent'];
-    }
-    if (key === '--style-border-color') {
-      delete next['--style-card-border'];
-    }
     onChange(Object.keys(next).length > 0 ? next : null);
   };
 
   function renderColorField(fieldKey: ColorFieldKey) {
     const def = FIELD_DEFS[fieldKey];
     if (!def) return null;
-    const currentOverride = overrides[def.cssVar]
-      || (def.cssVar === '--style-accent-color' ? overrides['--brand-primary'] : '')
-      || (def.cssVar === '--style-border-color' ? (overrides['--style-card-border'] || '').replace(/^1px solid\s+/, '') : '')
-      || '';
+    const currentOverride = overrides[def.cssVar] || '';
     const resolved = getResolvedColor(def.cssVar);
     const displayColor = currentOverride || resolved || '';
     const { hex, alpha } = parseColorWithAlpha(displayColor);
