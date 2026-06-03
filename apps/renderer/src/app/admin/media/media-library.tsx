@@ -61,10 +61,25 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const inputRef = useRef<HTMLInputElement>(null);
   const [altModalAsset, setAltModalAsset] = useState<MediaAsset | null>(null);
   const [altValue, setAltValue] = useState('');
+  const [selectedAltDraft, setSelectedAltDraft] = useState('');
   const missingAlt = assets.filter(asset => !asset.alt?.trim()).length;
   const largeFiles = assets.filter(asset => asset.size > 600 * 1024).length;
   const unknownDimensions = assets.filter(asset => !asset.width || !asset.height).length;
   const cleanAssets = assets.filter(asset => getMediaWarnings(asset).length === 0).length;
+
+  const rememberDimensions = useCallback((asset: MediaAsset, dimensions: { width: number; height: number }) => {
+    if (!dimensions.width || !dimensions.height) return;
+    if (asset.width === dimensions.width && asset.height === dimensions.height) return;
+
+    setAssets(prev => prev.map(item => item.id === asset.id ? { ...item, ...dimensions } : item));
+    setSelected(prev => prev?.id === asset.id ? { ...prev, ...dimensions } : prev);
+    setAltModalAsset(prev => prev?.id === asset.id ? { ...prev, ...dimensions } : prev);
+    updateMediaDimensions(asset.id, dimensions).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    setSelectedAltDraft(selected?.alt || '');
+  }, [selected?.id, selected?.alt]);
 
   useEffect(() => {
     let cancelled = false;
@@ -75,14 +90,12 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
       for (const asset of missing) {
         const dimensions = await getRemoteImageDimensions(asset.blobUrl);
         if (cancelled || !dimensions) continue;
-        setAssets(prev => prev.map(item => item.id === asset.id ? { ...item, ...dimensions } : item));
-        setSelected(prev => prev?.id === asset.id ? { ...prev, ...dimensions } : prev);
-        updateMediaDimensions(asset.id, dimensions).catch(() => {});
+        rememberDimensions(asset, dimensions);
       }
     })();
 
     return () => { cancelled = true; };
-  }, [assets]);
+  }, [assets, rememberDimensions]);
 
   const handleUpload = useCallback(async (files: FileList | File[]) => {
     const MAX_SIZE = 1 * 1024 * 1024; // 1 MB
@@ -147,11 +160,13 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const setAssetAlt = (asset: MediaAsset, alt: string) => {
     setAssets(prev => prev.map(item => item.id === asset.id ? { ...item, alt } : item));
     setSelected(prev => prev?.id === asset.id ? { ...prev, alt } : prev);
+    setAltModalAsset(prev => prev?.id === asset.id ? { ...prev, alt } : prev);
   };
 
   const saveAlt = async (asset: MediaAsset, alt: string) => {
     try {
       await updateMediaAlt(asset.id, alt);
+      setAssetAlt(asset, alt);
       toast.success(alt.trim() ? 'Alt-Text gespeichert' : 'Alt-Text entfernt');
     } catch {
       toast.error('Alt-Text konnte nicht gespeichert werden');
@@ -234,7 +249,15 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
               onClick={() => setSelected(asset)}
             >
               {(asset.mimeType === 'image/svg+xml' || asset.filename?.toLowerCase().endsWith('.svg') || asset.blobUrl?.toLowerCase().includes('.svg')) ? (
-                <img src={asset.blobUrl} alt={asset.alt || asset.filename} className="absolute inset-0 w-full h-full object-cover" />
+                <img
+                  src={asset.blobUrl}
+                  alt={asset.alt || asset.filename}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onLoad={(event) => rememberDimensions(asset, {
+                    width: event.currentTarget.naturalWidth,
+                    height: event.currentTarget.naturalHeight,
+                  })}
+                />
               ) : (
                 <Image
                   src={asset.blobUrl}
@@ -242,6 +265,10 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
                   fill
                   className="object-cover"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                  onLoad={(event) => rememberDimensions(asset, {
+                    width: event.currentTarget.naturalWidth,
+                    height: event.currentTarget.naturalHeight,
+                  })}
                 />
               )}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
@@ -278,9 +305,27 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
           <div className="flex items-start gap-6">
             <div className="relative w-32 h-32 rounded-xl overflow-hidden shrink-0">
               {(selected.mimeType === 'image/svg+xml' || selected.filename?.toLowerCase().endsWith('.svg') || selected.blobUrl?.toLowerCase().includes('.svg')) ? (
-                <img src={selected.blobUrl} alt={selected.alt || ''} className="absolute inset-0 w-full h-full object-cover" />
+                <img
+                  src={selected.blobUrl}
+                  alt={selected.alt || ''}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onLoad={(event) => rememberDimensions(selected, {
+                    width: event.currentTarget.naturalWidth,
+                    height: event.currentTarget.naturalHeight,
+                  })}
+                />
               ) : (
-                <Image src={selected.blobUrl} alt={selected.alt || ''} fill className="object-cover" sizes="128px" />
+                <Image
+                  src={selected.blobUrl}
+                  alt={selected.alt || ''}
+                  fill
+                  className="object-cover"
+                  sizes="128px"
+                  onLoad={(event) => rememberDimensions(selected, {
+                    width: event.currentTarget.naturalWidth,
+                    height: event.currentTarget.naturalHeight,
+                  })}
+                />
               )}
             </div>
             <div className="flex-1 space-y-3 min-w-0">
@@ -317,13 +362,19 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
                 <div className="flex gap-2">
                   <input
                     className="admin-input flex-1"
-                    value={selected.alt || ''}
-                    onChange={(event) => setAssetAlt(selected, event.target.value)}
-                    onBlur={(event) => saveAlt(selected, event.target.value)}
+                    value={selectedAltDraft}
+                    onChange={(event) => setSelectedAltDraft(event.target.value)}
+                    onBlur={() => saveAlt(selected, selectedAltDraft)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        event.preventDefault();
+                        event.currentTarget.blur();
+                      }
+                    }}
                     placeholder="Alt-Text eingeben..."
                   />
                   <button
-                    onClick={() => { setAltModalAsset(selected); setAltValue(selected.alt || ''); }}
+                    onClick={() => { setAltModalAsset({ ...selected, alt: selectedAltDraft }); setAltValue(selectedAltDraft); }}
                     className="admin-btn-secondary shrink-0"
                   >
                     <Pencil size={14} />
@@ -348,7 +399,17 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
                 </button>
               </div>
               <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-zinc-100">
-                <Image src={altModalAsset.blobUrl} alt={altModalAsset.alt || ''} fill className="object-contain" sizes="400px" />
+                <Image
+                  src={altModalAsset.blobUrl}
+                  alt={altModalAsset.alt || ''}
+                  fill
+                  className="object-contain"
+                  sizes="400px"
+                  onLoad={(event) => rememberDimensions(altModalAsset, {
+                    width: event.currentTarget.naturalWidth,
+                    height: event.currentTarget.naturalHeight,
+                  })}
+                />
               </div>
               <p className="text-xs text-zinc-500 truncate">{altModalAsset.filename}</p>
               <div>
@@ -366,11 +427,9 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
                 {altModalAsset.alt && (
                   <button
                     onClick={() => {
-                      updateMediaAlt(altModalAsset.id, '');
-                      setAssets(prev => prev.map(a => a.id === altModalAsset.id ? { ...a, alt: '' } : a));
-                      if (selected?.id === altModalAsset.id) setSelected({ ...altModalAsset, alt: '' });
+                      saveAlt(altModalAsset, '');
+                      if (selected?.id === altModalAsset.id) setSelectedAltDraft('');
                       setAltModalAsset(null);
-                      toast.success('Alt-Text gelöscht');
                     }}
                     className="admin-btn-secondary text-red-600 hover:bg-red-50 mr-auto"
                   >
@@ -382,11 +441,9 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
                 </button>
                 <button
                   onClick={() => {
-                    updateMediaAlt(altModalAsset.id, altValue);
-                    setAssets(prev => prev.map(a => a.id === altModalAsset.id ? { ...a, alt: altValue } : a));
-                    if (selected?.id === altModalAsset.id) setSelected({ ...altModalAsset, alt: altValue });
+                    saveAlt(altModalAsset, altValue);
+                    if (selected?.id === altModalAsset.id) setSelectedAltDraft(altValue);
                     setAltModalAsset(null);
-                    toast.success('Alt-Text gespeichert');
                   }}
                   className="admin-btn-primary"
                 >
