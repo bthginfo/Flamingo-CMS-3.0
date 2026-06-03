@@ -23,10 +23,11 @@ export function NewsPreviewSection({ data }: Props) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
-  // Derive base path for demo routes (e.g. /demo/tourism)
+  // Derive base path for shared renderer routes (e.g. /spiral-coffee or /demo/tourism)
   const pathname = usePathname();
   const demoMatch = pathname.match(/^(\/demo\/[^/]+)/);
-  const basePath = linkPrefix || (demoMatch ? demoMatch[1] : '');
+  const tenantMatch = pathname.match(/^\/(?!admin(?:\/|$)|api(?:\/|$)|c(?:\/|$)|shop(?:\/|$)|demo(?:\/|$)|_next(?:\/|$))([^/]+)/);
+  const basePath = linkPrefix || (demoMatch ? demoMatch[1] : tenantMatch ? `/${tenantMatch[1]}` : '');
   const detailBasePath = collectionBasePath || `${basePath}/c/${collectionKey}`;
   const linkHref = (data.linkHref as string) || (collectionBasePath ? collectionBasePath.replace(/\/c\//, '/') : `${basePath}/${collectionKey}`);
 
