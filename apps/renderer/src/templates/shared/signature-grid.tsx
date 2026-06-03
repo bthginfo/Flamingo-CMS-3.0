@@ -24,7 +24,7 @@ export function SignatureGridSection({ data }: Props) {
         <div className="absolute bottom-6 left-6 right-6">
           {badge && <div className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-white/65">{badge}</div>}
           {headline && <h2 className="text-4xl font-black leading-none text-white md:text-5xl">{headline}</h2>}
-          {subline && <p className="mt-4 max-w-xl text-sm leading-7 text-white/72">{plain(subline)}</p>}
+          {subline && <p className="mt-4 max-w-xl text-sm leading-7 text-[var(--style-image-text-color,rgba(255,255,255,0.72))]">{plain(subline)}</p>}
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">

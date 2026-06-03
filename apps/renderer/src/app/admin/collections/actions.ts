@@ -3,7 +3,7 @@
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { collections, collectionItems, tenants, globalSettings, pages, pageSections, tenantAddons } from '@flamingo/db';
-import { eq, and, asc, desc } from 'drizzle-orm';
+import { eq, and, asc, desc, or } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -171,8 +171,13 @@ export async function getOrCreateOverviewPageAction(collectionKey: string): Prom
   const db = getDb();
 
   // Check if an overview page already exists for this collection (by type + slug or by type + matching collectionKey in section data)
+  const overviewSlug = `${collectionKey}-uebersicht`;
   const existing = await db.select({ id: pages.id }).from(pages)
-    .where(and(eq(pages.tenantId, session.tenantId), eq(pages.type, 'collection_overview'), eq(pages.slug, collectionKey)))
+    .where(and(
+      eq(pages.tenantId, session.tenantId),
+      eq(pages.type, 'collection_overview'),
+      or(eq(pages.slug, collectionKey), eq(pages.slug, overviewSlug))
+    ))
     .limit(1);
 
   if (existing[0]) return existing[0].id;
@@ -182,7 +187,7 @@ export async function getOrCreateOverviewPageAction(collectionKey: string): Prom
     .where(and(eq(pages.tenantId, session.tenantId), eq(pages.slug, collectionKey)))
     .limit(1);
 
-  const slug = slugTaken[0] ? `${collectionKey}-uebersicht` : collectionKey;
+  const slug = slugTaken[0] ? overviewSlug : collectionKey;
 
   // Get collection label for the page title
   const [col] = await db.select({ label: collections.label }).from(collections)

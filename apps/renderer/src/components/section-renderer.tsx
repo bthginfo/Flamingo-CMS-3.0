@@ -94,6 +94,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
             excerpt: (item.data.excerpt as string) || undefined,
             date: item.createdAt,
           })),
+          collectionBasePath: prefixInternalLinks(`/c/${key}`, linkPrefix),
         },
       };
     }

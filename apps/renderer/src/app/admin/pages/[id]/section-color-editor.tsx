@@ -10,6 +10,7 @@ export type ColorFieldKey =
   | 'sectionBg' | 'sectionBgAlt' | 'cardBg'
   | 'headingColor' | 'subheadingColor' | 'bodyColor' | 'mutedColor'
   | 'textPrimary' | 'textSecondary'
+  | 'imageTextColor'
   | 'iconColor' | 'accentColor'
   | 'styleBrand' | 'brandPrimary' | 'brandAccent' | 'colorPrimary'
   | 'btnBg' | 'btnText' | 'btnSecondaryBg' | 'btnSecondaryText'
@@ -29,6 +30,7 @@ const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; descrip
   mutedColor:       { cssVar: '--style-text-muted',       label: 'Dezenter Text',          description: 'Dezente Texte, Labels, Eyebrow' },
   textPrimary:      { cssVar: '--style-text-primary',     label: 'Primärer Text',          description: 'Primär-Textfarbe innerhalb dieser Section' },
   textSecondary:    { cssVar: '--style-text-secondary',   label: 'Sekundärer Text',        description: 'Sekundär-Textfarbe innerhalb dieser Section' },
+  imageTextColor:   { cssVar: '--style-image-text-color', label: 'Bild-Text',              description: 'Textfarbe für Texte direkt auf Bildern oder Overlays' },
   iconColor:        { cssVar: '--style-icon-color',       label: 'Icons',                  description: 'Farbe der Icons' },
   accentColor:      { cssVar: '--style-accent-color',     label: 'Akzentfarbe',            description: 'Akzente, Linien, Hervorhebungen' },
   styleBrand:       { cssVar: '--style-brand',            label: 'Brand-Akzent',           description: 'Section-spezifischer Markenakzent' },
@@ -137,7 +139,7 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   shopProductDetail: ['sectionBg', 'sectionBgAlt', 'cardBg', 'mutedColor', 'accentColor', 'borderColor', 'textPrimary', 'textSecondary'],
   shopProductGrid: ['sectionBg', 'sectionBgAlt', 'cardBg', 'mutedColor', 'accentColor', 'borderColor', 'textPrimary', 'textSecondary'],
   shopThankYou: ['sectionBg', 'accentColor', 'textPrimary', 'textSecondary'],
-  signatureGrid: ['sectionBg', 'sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'borderColor', 'textPrimary', 'brandPrimary'],
+  signatureGrid: ['sectionBg', 'sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'imageTextColor', 'iconColor', 'accentColor', 'borderColor', 'textPrimary', 'brandPrimary'],
   socialProofBar: ['sectionBg', 'cardBg', 'accentColor', 'textPrimary', 'textSecondary', 'cardBorderColor', 'colorPrimary'],
   spaceShowcase: ['sectionBgAlt', 'cardBg', 'mutedColor', 'cardRadius', 'cardShadow', 'textPrimary', 'textSecondary', 'brandPrimary', 'cardBorder', 'headingWeight', 'headingTracking'],
   spotlightCards: ['cardBg', 'headingColor', 'bodyColor', 'iconColor', 'borderColor', 'cardRadius', 'textPrimary', 'textSecondary', 'brandPrimary'],

@@ -16,6 +16,7 @@ export function NewsPreviewSection({ data }: Props) {
   const subline = (data.subline as string) || '';
   const items = (data.items as NewsItem[]) || [];
   const collectionKey = (data.collectionKey as string) || 'news';
+  const collectionBasePath = (data.collectionBasePath as string) || '';
   const linkLabel = (data.linkLabel as string) || 'Alle Beiträge';
   const linkIcon = (data.linkIcon as string) || '';
   const ref = useRef(null);
@@ -25,7 +26,8 @@ export function NewsPreviewSection({ data }: Props) {
   const pathname = usePathname();
   const demoMatch = pathname.match(/^(\/demo\/[^/]+)/);
   const basePath = demoMatch ? demoMatch[1] : '';
-  const linkHref = (data.linkHref as string) || `${basePath}/${collectionKey}`;
+  const detailBasePath = collectionBasePath || `${basePath}/c/${collectionKey}`;
+  const linkHref = (data.linkHref as string) || (collectionBasePath ? collectionBasePath.replace(/\/c\//, '/') : `${basePath}/${collectionKey}`);
 
   if (items.length === 0) return null;
 
@@ -53,7 +55,7 @@ export function NewsPreviewSection({ data }: Props) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
           >
-            <Link href={`${basePath}/c/${collectionKey}/${item.slug}`} className="group block">
+            <Link href={`${detailBasePath}/${item.slug}`} className="group block">
               {item.image && (
                 <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-4">
                   <Image src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
