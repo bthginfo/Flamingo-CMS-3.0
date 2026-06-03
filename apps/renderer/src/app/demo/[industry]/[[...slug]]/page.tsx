@@ -91,7 +91,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
   try {
     tenantId = SLUG_MAP[industry]
       ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
-      : await resolveDemoTenant(dbIndustry);
+      : await resolveDemoTenant(dbIndustry, industry);
   } catch {
     // DB enum may not include this industry yet — fall through to static
   }

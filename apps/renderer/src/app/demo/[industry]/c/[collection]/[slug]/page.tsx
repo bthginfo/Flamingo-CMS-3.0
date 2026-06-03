@@ -33,7 +33,7 @@ export default async function DemoCollectionDetailPage({
   const dbIndustry = INDUSTRY_MAP[industry];
   if (!dbIndustry) return notFound();
 
-  const tenantId = await resolveDemoTenant(dbIndustry);
+  const tenantId = await resolveDemoTenant(dbIndustry, industry);
   if (!tenantId) return notFound();
 
   const [snapshot, tenantStyle, navData, footerData, brandData] = await Promise.all([

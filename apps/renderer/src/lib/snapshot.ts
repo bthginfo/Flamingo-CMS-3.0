@@ -160,7 +160,7 @@ export async function getDraftSnapshot(tenantId: string): Promise<Snapshot | nul
 }
 
 /** Resolve demo tenant by industry (isDemo=true). Excludes special slug-mapped tenants. */
-export async function resolveDemoTenant(industry: string): Promise<string | null> {
+export async function resolveDemoTenant(industry: string, urlKey?: string): Promise<string | null> {
   const db = getDb();
   const [tenant] = await db
     .select({ id: tenants.id })
@@ -173,7 +173,19 @@ export async function resolveDemoTenant(industry: string): Promise<string | null
     ))
     .orderBy(asc(tenants.createdAt))
     .limit(1);
-  return tenant?.id ?? null;
+  if (tenant) return tenant.id;
+
+  // Fallback: resolve by slug `demo-{urlKey}` without requiring isDemo flag
+  const slugKey = urlKey || industry;
+  const [bySlug] = await db
+    .select({ id: tenants.id })
+    .from(tenants)
+    .where(and(
+      eq(tenants.slug, `demo-${slugKey}`),
+      eq(tenants.status, 'active'),
+    ))
+    .limit(1);
+  return bySlug?.id ?? null;
 }
 
 export async function resolveDemoTenantBySlug(slug: string): Promise<string | null> {
