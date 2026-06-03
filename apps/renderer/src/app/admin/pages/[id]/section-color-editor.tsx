@@ -5,6 +5,46 @@ import { Palette, ChevronDown } from 'lucide-react';
 
 type ColorOverrides = Record<string, string>;
 
+/* ─── Color helpers: rgba ⇆ hex parsing with alpha channel (Phase 4b) ─── */
+function clamp01(n: number): number { return Math.max(0, Math.min(1, n)); }
+function toHex2(n: number): string { return Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0'); }
+
+export function parseColorWithAlpha(value: string | undefined): { hex: string; alpha: number | undefined } {
+  if (!value) return { hex: '', alpha: undefined };
+  const v = value.trim();
+  // rgba(r,g,b,a) / rgb(r,g,b)
+  const rgba = v.match(/^rgba?\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*(?:,\s*(-?\d+(?:\.\d+)?)\s*)?\)$/i);
+  if (rgba) {
+    const r = Number(rgba[1]); const g = Number(rgba[2]); const b = Number(rgba[3]);
+    const a = rgba[4] !== undefined ? clamp01(Number(rgba[4])) : 1;
+    return { hex: `#${toHex2(r)}${toHex2(g)}${toHex2(b)}`, alpha: a };
+  }
+  // #rgb / #rgba / #rrggbb / #rrggbbaa
+  const hex = v.match(/^#([0-9a-f]{3,8})$/i);
+  if (hex) {
+    let h = hex[1];
+    if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+    if (h.length === 4) h = h.split('').map((c) => c + c).join('');
+    const r = parseInt(h.slice(0, 2), 16);
+    const g = parseInt(h.slice(2, 4), 16);
+    const b = parseInt(h.slice(4, 6), 16);
+    const a = h.length >= 8 ? parseInt(h.slice(6, 8), 16) / 255 : 1;
+    return { hex: `#${h.slice(0, 6).toLowerCase()}`, alpha: a };
+  }
+  return { hex: '', alpha: undefined };
+}
+
+export function composeColorWithAlpha(hex: string, alpha: number | undefined): string {
+  const a = alpha === undefined ? 1 : clamp01(alpha);
+  const clean = hex.startsWith('#') ? hex.slice(1) : hex;
+  if (clean.length !== 6) return hex;
+  if (a >= 0.999) return `#${clean.toLowerCase()}`;
+  const r = parseInt(clean.slice(0, 2), 16);
+  const g = parseInt(clean.slice(2, 4), 16);
+  const b = parseInt(clean.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${Number(a.toFixed(3))})`;
+}
+
 /* ─── All available color fields with categories ─── */
 export type ColorFieldKey =
   | 'sectionBg' | 'sectionBgAlt' | 'cardBg'
@@ -327,6 +367,8 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
       || '';
     const resolved = getResolvedColor(def.cssVar);
     const displayColor = currentOverride || resolved || '';
+    const { hex, alpha } = parseColorWithAlpha(displayColor);
+    const overrideAlpha = parseColorWithAlpha(currentOverride).alpha;
     return (
       <label key={fieldKey} className="block">
         <span className="text-gray-600 text-xs" title={def.description}>{def.label}</span>
@@ -335,20 +377,39 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
             <input
               type="color"
               className="w-8 h-8 rounded border border-gray-200 cursor-pointer p-0"
-              value={displayColor || '#000000'}
-              onChange={(e) => handleChange(def.cssVar, e.target.value)}
+              value={hex || '#000000'}
+              onChange={(e) => handleChange(def.cssVar, composeColorWithAlpha(e.target.value, overrideAlpha ?? alpha))}
             />
             {!currentOverride && resolved && (
               <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full border border-white" style={{ background: resolved }} title={`Aktuell: ${resolved}`} />
             )}
           </div>
-          <input
-            type="text"
-            className="admin-input flex-1 text-xs font-mono"
-            placeholder={resolved || '—'}
-            value={currentOverride}
-            onChange={(e) => handleChange(def.cssVar, e.target.value)}
-          />
+          <div className="flex flex-1 flex-col gap-1">
+            <input
+              type="text"
+              className="admin-input w-full text-xs font-mono"
+              placeholder={resolved || '—'}
+              value={currentOverride}
+              onChange={(e) => handleChange(def.cssVar, e.target.value)}
+            />
+            <div className="flex items-center gap-2">
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={Math.round(((overrideAlpha ?? alpha) ?? 1) * 100)}
+                onChange={(e) => {
+                  const a = Number(e.target.value) / 100;
+                  const base = hex || '#000000';
+                  handleChange(def.cssVar, composeColorWithAlpha(base, a));
+                }}
+                className="flex-1 h-1 accent-[var(--brand-primary,#0ea5e9)]"
+                title="Transparenz (Alpha)"
+              />
+              <span className="w-10 text-right text-[10px] font-mono text-zinc-500">{Math.round(((overrideAlpha ?? alpha) ?? 1) * 100)}%</span>
+            </div>
+          </div>
           {currentOverride && (
             <button type="button" className="text-xs text-red-400 hover:text-red-600" onClick={() => handleClear(def.cssVar)}>✕</button>
           )}
