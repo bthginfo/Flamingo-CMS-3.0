@@ -42,7 +42,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
         </>
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--style-section-bg,#111827)] via-[var(--style-card-bg,#1f2937)] to-[var(--style-section-bg-alt,#374151)]" />
       )}
 
       {/* Content */}
@@ -55,12 +55,12 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="inline-block bg-[var(--style-badge-bg,rgba(255,255,255,.2))] backdrop-blur-sm text-[var(--style-badge-text,#fff)] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
               {category}
             </span>
           )}
           {date && (
-            <span className="text-white/70 text-sm">{date}</span>
+            <span className="text-[var(--style-muted,rgba(255,255,255,.7))] text-sm">{date}</span>
           )}
         </motion.div>
 
@@ -69,7 +69,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight break-words"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--style-heading,#fff)] tracking-tight leading-tight break-words"
         >
           {headline}
         </motion.h1>
@@ -80,7 +80,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-4 text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed rt-content"
+            className="mt-4 text-lg md:text-xl text-[var(--style-body,rgba(255,255,255,.8))] max-w-2xl leading-relaxed rt-content"
             dangerouslySetInnerHTML={{ __html: subline }}
           />
         )}
@@ -100,12 +100,12 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-brand-primary/10 text-brand-primary text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="inline-block bg-[var(--style-badge-bg,color-mix(in_srgb,var(--style-accent,var(--brand-primary))_10%,transparent))] text-[var(--style-badge-text,var(--style-accent,var(--brand-primary)))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
               {category}
             </span>
           )}
           {date && (
-            <span className="text-gray-400 text-sm">{date}</span>
+            <span className="text-[var(--style-muted,var(--style-text-secondary,#9ca3af))] text-sm">{date}</span>
           )}
         </motion.div>
 
@@ -113,7 +113,7 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight break-words"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight break-words text-[var(--style-heading,var(--style-text-primary,#111827))]"
         >
           {headline}
         </motion.h1>
@@ -123,12 +123,12 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-4 text-lg md:text-xl text-gray-600 max-w-2xl leading-relaxed rt-content"
+            className="mt-4 text-lg md:text-xl text-[var(--style-body,var(--style-text-secondary,#4b5563))] max-w-2xl leading-relaxed rt-content"
             dangerouslySetInnerHTML={{ __html: subline }}
           />
         )}
 
-        <div className="mt-10 border-b border-gray-200" />
+        <div className="mt-10 border-b border-[var(--style-border,#e5e7eb)]" />
       </div>
     </section>
   );
