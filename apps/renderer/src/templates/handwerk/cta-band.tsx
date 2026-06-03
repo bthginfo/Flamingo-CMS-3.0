@@ -44,9 +44,9 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
       {!colors?.bgColor && <motion.div style={{ y: bgY }} className="absolute inset-0 scale-110 bg-hero-gradient" />}
       <div className="absolute inset-0">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] animate-pulse-slow" style={{ backgroundColor: colors?.accentColor ? `${colors.accentColor}26` : 'var(--brand-accent-15, rgba(243,156,18,0.15))' }} />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-white/5 rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[var(--token-card-bg,#ffffff)/5] rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
       </div>
-      <div className="relative z-10 text-center text-white px-6 py-12 md:py-20 sm:py-16 md:py-24 lg:py-32">
+      <div className="relative z-10 text-center text-[color:var(--token-on-dark-heading,#ffffff)] px-6 py-12 md:py-20 sm:py-16 md:py-24 lg:py-32">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
           className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.20)))] bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,0.10)))] px-5 py-2 text-sm text-[var(--token-badge-text, var(--style-badge-text,#ffffff))] backdrop-blur-sm mb-8">
           <Sparkles size={14} className="text-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))]" /><span>{badgeText || 'Jetzt Termin sichern'}</span>
@@ -81,7 +81,7 @@ function CtaModern({ headline, subline, cta, colors }: CProps) {
       <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight !leading-[1.1] max-w-4xl mx-auto" style={colors?.textColor ? { color: colors.textColor } : undefined}>
         {headline}
       </h2>
-      {subline && <div className="text-lg text-gray-400 mt-6 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+      {subline && <div className="text-lg text-[color:var(--token-on-dark-body,#a1a1aa)] mt-6 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       {cta?.label && (
         <a href={cta.href} className="group mt-10 inline-flex items-center gap-3 border-b-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] pb-1 text-lg font-medium text-[var(--token-btn-text, var(--brand-btn-text,var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))))] transition-colors hover:text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">
           {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
@@ -102,11 +102,11 @@ function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
 
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}
-      className={`text-white p-10 lg:p-16 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 ${!colors?.bgColor ? 'bg-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))]' : ''}`} style={wrapStyle}>
+      className={`text-[color:var(--token-on-dark-heading,#ffffff)] p-10 lg:p-16 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 ${!colors?.bgColor ? 'bg-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))]' : ''}`} style={wrapStyle}>
       <div>
         {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-section-bg-alt, var(--brand-dark))))]">{badgeText}</span>}
         <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tight">{headline}</h2>
-        {subline && <div className="text-white/50 mt-3 font-medium max-w-xl rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="text-[color:var(--token-on-dark-heading,#ffffff)/50] mt-3 font-medium max-w-xl rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {cta?.label && (
         <a href={cta.href} className="inline-flex w-full shrink-0 items-center justify-between bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))] px-8 py-4 text-base font-bold uppercase tracking-wider text-[var(--token-btn-text, var(--brand-btn-text,var(--token-section-bg-alt, var(--brand-dark))))] shadow-[4px_4px_0_rgba(255,255,255,0.2)] transition-transform hover:translate-x-1 lg:w-auto lg:justify-center lg:gap-3">

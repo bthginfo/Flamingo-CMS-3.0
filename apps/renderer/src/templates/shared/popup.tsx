@@ -51,7 +51,7 @@ export function PopupSection({ data }: SectionProps) {
         type="button"
         aria-label="Popup schließen"
         onClick={close}
-        className="absolute inset-0 bg-black/62 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-[var(--token-section-bg-alt,#000000)/62] backdrop-blur-[2px]"
       />
       <div className="relative w-full max-w-xl overflow-hidden rounded-[var(--style-card-radius,1.5rem)] border border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.18)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-6 text-[var(--token-body, var(--style-body-color,var(--style-text-primary,#18181b)))] shadow-[0_30px_120px_rgba(0,0,0,0.35)] md:p-8">
         <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-[var(--style-accent-color,var(--token-icon, var(--brand-primary,#f24171)))]/20 blur-3xl" />
@@ -59,7 +59,7 @@ export function PopupSection({ data }: SectionProps) {
           type="button"
           onClick={close}
           aria-label="Popup schließen"
-          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.10)))] bg-white/80 text-zinc-700 shadow-sm backdrop-blur transition hover:bg-white"
+          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.10)))] bg-[var(--token-card-bg,#ffffff)/80] text-[color:var(--token-on-dark-muted,#3f3f46)] shadow-sm backdrop-blur transition hover:bg-[var(--token-card-bg,#ffffff)]"
         >
           <X size={18} />
         </button>
@@ -79,7 +79,7 @@ export function PopupSection({ data }: SectionProps) {
               </a>
             )}
             {secondaryCta.label && (
-              <a href={secondaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center rounded-[var(--style-button-radius,9999px)] border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.12)))] bg-white/70 px-5 py-3 text-sm font-bold text-[var(--token-heading, var(--style-heading-color,#111827))] transition hover:bg-white">
+              <a href={secondaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center rounded-[var(--style-button-radius,9999px)] border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.12)))] bg-[var(--token-card-bg,#ffffff)/70] px-5 py-3 text-sm font-bold text-[var(--token-heading, var(--style-heading-color,#111827))] transition hover:bg-[var(--token-card-bg,#ffffff)]">
                 {secondaryCta.label}
               </a>
             )}

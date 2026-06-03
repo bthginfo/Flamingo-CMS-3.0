@@ -47,8 +47,8 @@ export function MaterialGallerySection({ data }: Props) {
               onClick={() => setActiveFilter(cat)}
               className={`px-4 py-2 text-sm font-medium rounded-full border transition-all ${
                 activeFilter === cat
-                  ? 'bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-white border-transparent shadow-md'
-                  : 'bg-white text-[var(--style-text-secondary,#64748b)] border-gray-200 hover:border-[var(--token-icon, var(--brand-primary,#2563eb))]/30'
+                  ? 'bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-[color:var(--token-on-dark-heading,#ffffff)] border-transparent shadow-md'
+                  : 'bg-[var(--token-card-bg,#ffffff)] text-[var(--style-text-secondary,#64748b)] border-[color:var(--token-card-border,#e4e4e7)] hover:border-[var(--token-icon, var(--brand-primary,#2563eb))]/30'
               }`}
             >
               {cat}
@@ -67,7 +67,7 @@ export function MaterialGallerySection({ data }: Props) {
             transition={{ duration: 0.4, delay: i * 0.04 }}
             className="group"
           >
-            <div className="aspect-square rounded-[var(--style-card-radius,1rem)] overflow-hidden bg-gray-100 border border-[rgba(0,0,0,0.06)] shadow-sm group-hover:shadow-lg transition-shadow duration-300">
+            <div className="aspect-square rounded-[var(--style-card-radius,1rem)] overflow-hidden bg-[var(--token-section-bg-alt,#f4f4f5)] border border-[rgba(0,0,0,0.06)] shadow-sm group-hover:shadow-lg transition-shadow duration-300">
               {item.image ? (
                 <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               ) : (

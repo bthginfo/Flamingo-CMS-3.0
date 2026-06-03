@@ -29,12 +29,12 @@ export function ConsultingHeroSection({ data }: Props) {
           <Image src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
         </ImageEffectWrapper>
       )}
-      <div className="absolute inset-0 bg-slate-900" style={{ opacity: bgImage ? overlayOpacity : 1 }} />
+      <div className="absolute inset-0 bg-[var(--token-section-bg-alt,#18181b)]" style={{ opacity: bgImage ? overlayOpacity : 1 }} />
 
       {/* Subtle pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/10 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 border border-white/10 rounded-full -translate-x-1/2 translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 border border-[color:var(--token-card-border,#ffffff)/10] rounded-full -translate-x-1/2 translate-y-1/2" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 py-24">
@@ -44,31 +44,31 @@ export function ConsultingHeroSection({ data }: Props) {
           transition={{ duration: 0.8 }}
           className="max-w-3xl mx-auto text-center"
         >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-tight tracking-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[color:var(--token-on-dark-heading,#ffffff)] leading-tight tracking-tight">
             {headline}
           </h1>
           {subline && (
-            <p className="text-lg md:text-xl text-white/80 mt-6 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-[color:var(--token-on-dark-heading,#ffffff)/80] mt-6 max-w-2xl mx-auto leading-relaxed">
               {plain(subline)}
             </p>
           )}
           <div className="flex flex-wrap justify-center gap-4 mt-10">
             {primaryCta && (
-              <a href={primaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-amber-700 hover:bg-amber-800 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+              <a href={primaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-amber-700 hover:bg-amber-800 text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
                 <DynamicIcon name="phone" size={18} />
                 {primaryCta.label}
               </a>
             )}
             {secondaryCta && (
-              <a href={secondaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-all">
+              <a href={secondaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 border-2 border-[color:var(--token-card-border,#ffffff)/30] text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-lg hover:bg-[var(--token-card-bg,#ffffff)/10] transition-all">
                 {secondaryCta.label}
               </a>
             )}
           </div>
           {trustItems.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-6 mt-12 pt-8 border-t border-white/20">
+            <div className="flex flex-wrap justify-center gap-6 mt-12 pt-8 border-t border-[color:var(--token-card-border,#ffffff)/20]">
               {trustItems.map((item, i) => (
-                <div key={i} className="flex items-center gap-2 text-white/70 text-sm">
+                <div key={i} className="flex items-center gap-2 text-[color:var(--token-on-dark-heading,#ffffff)/70] text-sm">
                   <DynamicIcon name="check-circle" size={16} className="text-amber-500" />
                   {item}
                 </div>

@@ -34,8 +34,8 @@ export function BrandShowroomSection({ data }: Props) {
         className="relative z-10 w-full p-8 md:p-12"
       >
         <div className="max-w-5xl">
-          {headline && <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-3">{headline}</h2>}
-          {subline && <p className="text-white/80 text-lg md:text-xl max-w-2xl mb-8">{plain(subline)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-5xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)] mb-3">{headline}</h2>}
+          {subline && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/80] text-lg md:text-xl max-w-2xl mb-8">{plain(subline)}</p>}
 
           {highlights.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -45,17 +45,17 @@ export function BrandShowroomSection({ data }: Props) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-                  className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4"
+                  className="bg-[var(--token-card-bg,#ffffff)/10] backdrop-blur-sm border border-[color:var(--token-card-border,#ffffff)/20] rounded-lg p-4"
                 >
-                  <h4 className="font-semibold text-white text-sm">{h.title}</h4>
-                  <p className="text-white/70 text-xs mt-1">{plain(h.text)}</p>
+                  <h4 className="font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] text-sm">{h.title}</h4>
+                  <p className="text-[color:var(--token-on-dark-heading,#ffffff)/70] text-xs mt-1">{plain(h.text)}</p>
                 </motion.div>
               ))}
             </div>
           )}
 
           {cta?.label && (
-            <a href={cta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-white font-semibold rounded-[var(--style-button-radius,0.75rem)] hover:brightness-110 transition-all shadow-lg">
+            <a href={cta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-[var(--style-button-radius,0.75rem)] hover:brightness-110 transition-all shadow-lg">
               {cta.label}
             </a>
           )}
