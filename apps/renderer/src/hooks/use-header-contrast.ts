@@ -10,43 +10,6 @@ import { useState, useEffect, useCallback } from 'react';
 export function useHeaderContrast(initialDark: boolean): boolean {
   const [isDark, setIsDark] = useState(initialDark);
 
-  const analyze = useCallback(() => {
-    // Find the first <img> inside the first <section> in <main> (the hero image)
-    const main = document.querySelector('main');
-    if (!main) return;
-    const firstSection = main.querySelector('section');
-    if (!firstSection) return;
-
-    // Check if section (or its first child) has a solid background color
-    const checkBg = (el: Element): boolean => {
-      const bg = getComputedStyle(el).backgroundColor;
-      if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
-        const rgb = bg.match(/\d+/g);
-        if (rgb && rgb.length >= 3) {
-          const luminance = (0.299 * +rgb[0] + 0.587 * +rgb[1] + 0.114 * +rgb[2]) / 255;
-          setIsDark(luminance < 0.5);
-          return true;
-        }
-      }
-      return false;
-    };
-    if (checkBg(firstSection)) return;
-    // Also check the first child (hero components often wrap in their own element)
-    const firstChild = firstSection.firstElementChild;
-    if (firstChild && checkBg(firstChild)) return;
-
-    // Try to find the hero background image
-    const img = firstSection.querySelector('img[sizes="100vw"], img[data-nimg]') as HTMLImageElement | null;
-    if (!img) return;
-
-    // If already loaded, sample immediately
-    if (img.complete && img.naturalWidth > 0) {
-      sampleImage(img);
-    } else {
-      img.addEventListener('load', () => sampleImage(img), { once: true });
-    }
-  }, []);
-
   const sampleImage = useCallback((img: HTMLImageElement) => {
     try {
       const canvas = document.createElement('canvas');
@@ -84,6 +47,40 @@ export function useHeaderContrast(initialDark: boolean): boolean {
       // CORS or other error — stick with initial assumption
     }
   }, []);
+
+  const analyze = useCallback(() => {
+    const main = document.querySelector('main');
+    if (!main) return;
+    const firstSection = main.querySelector('section');
+    if (!firstSection) return;
+
+    const img = firstSection.querySelector('img[sizes="100vw"], img[data-nimg]') as HTMLImageElement | null;
+    if (img) {
+      if (img.complete && img.naturalWidth > 0) {
+        sampleImage(img);
+      } else {
+        img.addEventListener('load', () => sampleImage(img), { once: true });
+      }
+      return;
+    }
+
+    const checkBg = (el: Element): boolean => {
+      const bg = getComputedStyle(el).backgroundColor;
+      if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
+        const rgb = bg.match(/\d+/g);
+        if (rgb && rgb.length >= 3) {
+          const luminance = (0.299 * +rgb[0] + 0.587 * +rgb[1] + 0.114 * +rgb[2]) / 255;
+          setIsDark(luminance < 0.5);
+          return true;
+        }
+      }
+      return false;
+    };
+
+    if (checkBg(firstSection)) return;
+    const firstChild = firstSection.firstElementChild;
+    if (firstChild) checkBg(firstChild);
+  }, [sampleImage]);
 
   useEffect(() => {
     // Small delay to ensure DOM is rendered
