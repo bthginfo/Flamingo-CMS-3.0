@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
       deletePage: { method: 'DELETE', path: '/api/v1/content/pages/:id', description: 'Delete a page' },
       seoGlobal: { method: 'PUT', path: '/api/v1/content/seo', description: 'Set global SEO defaults (titleTemplate, defaultDescription, canonicalBase, locale)' },
       seoPage: { method: 'PUT', path: '/api/v1/content/seo/:pageId', description: 'Set page-level SEO (metaTitle, metaDescription, ogImage, canonical, noindex)' },
-      design: { method: 'PUT', path: '/api/v1/content/design', description: 'Set design overrides (textPrimary, textSecondary, sectionBg, sectionBgAlt, cardBg, badgeBg, badgeText, brand, dividerColor)' },
+      design: { method: 'PUT', path: '/api/v1/content/design', description: 'Set GLOBAL design overrides (single hex string per key). Supported keys: textPrimary, textSecondary, sectionBg, sectionBgAlt, cardBg, cardBorder, badgeBg, badgeText, badgeBorder, brand, accent, heading, subheading, body, muted, icon, btnBg, btnText, dividerColor, eyebrow, statValue, quote, ratingStar, check, onDarkHeading, onDarkBody, onDarkMuted. These cascade as fallbacks for every section. For PER-SECTION colour tuning use section.styleOverrides instead.' },
       formFields: { method: 'PUT', path: '/api/v1/content/form-fields', description: 'Set contact form fields: { fields: [{ name, label, type: "text"|"email"|"tel"|"textarea"|"select", placeholder?, required?, options?, halfWidth? }] }' },
       openingHours: { method: 'PUT', path: '/api/v1/content/opening-hours', description: 'Set opening hours: { hours: [{ type?: "regular"|"special", day?: string, date?: "YYYY-MM-DD", hours?: string, closed?: boolean, note?: string }] }. Use regular rows for weekly hours and special rows for holidays, vacations or one-off changes.' },
       listCollections: { method: 'GET', path: '/api/v1/content/collections', description: 'List all collections' },
@@ -98,6 +98,8 @@ export async function GET(req: NextRequest) {
       'Every array field (items, services, steps, etc.) MUST have at least 3 entries unless the real business has fewer.',
       'The footer MUST contain columns with items arrays. Each item needs text and optionally href. Never send empty columns or columns without items.',
       'Navigation items MUST link to existing pages using their slug (e.g. href: "/leistungen", NOT href: "/services").',
+      'When using section.styleOverrides, the keys MUST be EXACTLY one of the documented --token-* slot names (see point 12 in instructions). Unknown keys are ignored by the renderer.',
+      'Per-section styleOverrides values are CSS colour strings — hex (#rrggbb), rgb() or rgba() are all valid. Do NOT pass slot enums or label names like "primary" — these are not colours.',
       ...(hasShop ? ['This tenant has the SHOP addon active. Include shop pages (slug: "shop", "warenkorb") with shopProductGrid and shopCart sections. Add a "Shop" / "Produkte" link in the navigation. Create product categories and products via the shop endpoints.'] : ['This tenant does NOT have the shop addon. Do NOT create shop pages or use shop section types.']),
       ...(hasBooking ? ['This tenant has the BOOKING addon active. You may use bookingWidget, bookingSlotPicker, bookingDateRange, availabilityCalendar, resourceBookingShowcase and bookingCtaPro sections where they make sense. Use bookingSlotPicker for restaurants/cafes/salons/appointments where the visitor chooses a day and sees available times. Use bookingDateRange for hotels, apartments, locations, rooms and multi-day requests. The actual booking logic is configured in Admin > Funktionen > Buchungen.'] : ['This tenant does NOT have the booking addon. Do NOT use bookingWidget, bookingSlotPicker, bookingDateRange, availabilityCalendar, resourceBookingShowcase or bookingCtaPro. Keep simple reservation/contact sections if needed.']),
     ],
@@ -255,6 +257,44 @@ REIHENFOLGE: Immer NACH dem Erstellen aller Inhalte + VOR dem Publish übersetze
 10. STYLE (PUT /api/v1/content/style):
     - Wähle den passenden Stil: { style: "classic" } oder "modern" oder "bold"
     - Empfehlung: Hotels/Restaurants → classic, Handwerk/Medical → modern, Fotografie/Salons → bold
+
+11. DESIGN-FARBEN — GLOBAL (PUT /api/v1/content/design):
+    - Setze die globalen Farbtöne für die gesamte Site. Jeder Wert ist EIN Hex-String (z.B. "#1a5276"):
+      * sectionBg, sectionBgAlt, cardBg, cardBorder
+      * heading, subheading, body, muted
+      * brand, accent, icon
+      * btnBg, btnText
+      * badgeBg, badgeText, badgeBorder
+      * dividerColor
+      * eyebrow, statValue, quote, ratingStar, check  (granulare Slot-Farben)
+      * onDarkHeading, onDarkBody, onDarkMuted  (für Texte auf dunklen Backgrounds, z.B. Hero-Overlays)
+    - Diese Werte gelten als Defaults für ALLE Sections. Für einzelne Sections kannst du sie überschreiben (siehe 12.).
+    - Wichtig: Achte auf WCAG-Kontrast. Bei dunkler sectionBg unbedingt onDarkHeading/Body/Muted setzen, sonst bleiben die Default-Weißtöne aktiv.
+
+12. PER-SECTION FARB-OVERRIDES — section.styleOverrides:
+    - Jede Section kann individuelle CSS-Variablen überschreiben — nutze styleOverrides als zusätzliches Property auf einer section.
+    - Format: { "--token-<slot>": "<hexFarbe>" }
+    - Erlaubte Slot-Variablen (gleicher Namensraum wie unter 11., aber mit --token- prefix und kebab-case):
+      --token-section-bg, --token-section-bg-alt, --token-card-bg, --token-card-border,
+      --token-heading, --token-subheading, --token-body, --token-muted, --token-icon,
+      --token-eyebrow, --token-stat-value, --token-quote, --token-rating-star, --token-check,
+      --token-badge-bg, --token-badge-text, --token-badge-border,
+      --token-btn-bg, --token-btn-text, --token-divider,
+      --token-on-dark-heading, --token-on-dark-body, --token-on-dark-muted
+    - Beispiel:
+      {
+        "type": "ctaBand",
+        "data": { "headline": "...", "subline": "..." },
+        "styleOverrides": {
+          "--token-section-bg": "#0f4c4c",
+          "--token-heading": "#ffffff",
+          "--token-body": "rgba(255,255,255,0.85)",
+          "--token-btn-bg": "#f5e8d8",
+          "--token-btn-text": "#0f4c4c"
+        }
+      }
+    - Nutze styleOverrides SPARSAM und gezielt: typische Einsatzgebiete sind dunkle Hero-Sections, kontrastreiche CTA-Bänder, oder einzelne Karten mit Sonderfarben. Lass sonst die globalen Werte aus DESIGN gewinnen — das hält die Site konsistent.
+    - Setze styleOverrides NUR für Slots die du wirklich ändern willst. Nicht-gesetzte Slots erben automatisch über die Fallback-Kette --token-* → --style-* → --brand-*.
 
 ═══════════════════════════════════════════
 CONTENT-REGELN:
