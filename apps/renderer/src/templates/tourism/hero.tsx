@@ -57,7 +57,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgC
             <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
             {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
           </ImageEffectWrapper>
-          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />) : (<div className="absolute inset-0 bg-[var(--style-section-bg)] opacity-65" />)}
+          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />) : (<div className="absolute inset-0 bg-gradient-to-b from-black/50 via-emerald-950/35 to-black/45" />)}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />

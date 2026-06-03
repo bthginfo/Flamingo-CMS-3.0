@@ -59,7 +59,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
             <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
             {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
           </ImageEffectWrapper>
-          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />) : (<div className="absolute inset-0 bg-gradient-to-b from-[color-mix(in_srgb,var(--style-section-bg,#134e4a)_70%,transparent)] via-[color-mix(in_srgb,var(--style-card-bg,#115e59)_50%,transparent)] to-[color-mix(in_srgb,var(--style-accent-color,#0891b2)_60%,transparent)]" />)}
+          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />) : (<div className="absolute inset-0 bg-gradient-to-b from-black/65 via-slate-950/45 to-cyan-950/55" />)}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
@@ -81,9 +81,9 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--style-border-color,rgba(255,255,255,.35))] px-6 py-3 font-semibold text-[var(--style-heading-color,#fff)]">{secondaryCta.label}</a>}
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-white/80">
-          {specialtyLabel && <span className="inline-flex items-center gap-2 rounded-full bg-[var(--style-card-bg,rgba(0,0,0,.25))] px-4 py-2"><Heart size={15} className="text-[var(--style-icon-color,var(--style-accent-color,#67e8f9))]" />{specialtyLabel}</span>}
+          {specialtyLabel && <span className="inline-flex items-center gap-2 rounded-full bg-[var(--style-badge-bg,rgba(0,0,0,.25))] px-4 py-2"><Heart size={15} className="text-[var(--style-icon-color,var(--style-accent-color,#67e8f9))]" />{specialtyLabel}</span>}
           {emergencyHint && <span className="rounded-full bg-red-900/40 px-4 py-2">{emergencyHint}</span>}
-          {trustItems.map((item) => <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-[var(--style-card-bg,rgba(0,0,0,.25))] px-4 py-2"><CheckCircle size={14} className="text-[var(--style-icon-color,var(--style-accent-color,#67e8f9))]" />{item}</span>)}
+          {trustItems.map((item) => <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-[var(--style-badge-bg,rgba(0,0,0,.25))] px-4 py-2"><CheckCircle size={14} className="text-[var(--style-icon-color,var(--style-accent-color,#67e8f9))]" />{item}</span>)}
         </motion.div>
       </div>
     </section>
