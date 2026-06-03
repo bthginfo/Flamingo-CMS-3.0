@@ -78,7 +78,7 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   ctaBand: ['sectionBg', 'cardBg', 'mutedColor', 'accentColor', 'borderColor', 'textPrimary'],
   ctaLinks: ['sectionBgAlt', 'cardBg', 'mutedColor', 'accentColor', 'borderColor', 'textPrimary', 'textSecondary'],
   deliveryTimeline: ['textPrimary', 'textSecondary', 'brandPrimary', 'headingWeight', 'headingTracking'],
-  editorialFeatureRail: ['sectionBgAlt', 'cardBg', 'accentColor', 'borderColor', 'textPrimary', 'brandPrimary'],
+  editorialFeatureRail: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'imageTextColor', 'textPrimary', 'textSecondary', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'brandPrimary'],
   embed: ['mutedColor', 'brandPrimary'],
   eventTypes: ['sectionBgAlt', 'cardRadius', 'textPrimary', 'textSecondary', 'styleBrand', 'brandPrimary', 'headingWeight', 'headingTracking'],
   faq: ['sectionBg', 'cardBg', 'mutedColor', 'accentColor', 'borderColor', 'textPrimary', 'textSecondary'],
