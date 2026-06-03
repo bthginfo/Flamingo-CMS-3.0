@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Calendar, ArrowUpDown } from 'lucide-react';
 import { useState, useMemo } from 'react';
+import { plain } from '@/lib/strip-html';
 
 type CollectionItem = {
   title: string;
@@ -66,7 +67,7 @@ export function CollectionListSection({ data }: Props) {
       {(headline || subline) && (
         <div className="text-center mb-10">
           {headline && <h2 className="text-3xl md:text-4xl font-bold">{headline}</h2>}
-          {subline && <p className="text-lg text-zinc-500 mt-2">{subline}</p>}
+          {subline && <p className="text-lg text-zinc-500 mt-2">{plain(subline)}</p>}
         </div>
       )}
 

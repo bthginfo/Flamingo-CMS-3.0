@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -24,7 +25,7 @@ export function ArtistGridSection({ data }: Props) {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-14">
           <h2 className="text-3xl sm:text-5xl font-bold text-white">{headline}</h2>
-          {subline && <p className="mt-3 text-white/50 max-w-xl mx-auto">{subline}</p>}
+          {subline && <p className="mt-3 text-white/50 max-w-xl mx-auto">{plain(subline)}</p>}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -47,7 +48,7 @@ export function ArtistGridSection({ data }: Props) {
                     <span key={s} className="text-[10px] uppercase tracking-wider bg-white/10 text-white/60 px-2 py-0.5 rounded-full">{s}</span>
                   ))}
                 </div>
-                {artist.bio && <p className="text-white/40 text-sm mt-2 line-clamp-2">{artist.bio}</p>}
+                {artist.bio && <p className="text-white/40 text-sm mt-2 line-clamp-2">{plain(artist.bio)}</p>}
               </a>
             </motion.div>
           ))}

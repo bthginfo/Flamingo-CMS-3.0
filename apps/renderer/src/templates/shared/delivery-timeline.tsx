@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { DynamicIcon } from '@/components/ui/icon-map';
+import { plain } from '@/lib/strip-html';
 
 type Step = {
   number?: string;
@@ -25,7 +26,7 @@ export function DeliveryTimelineSection({ data }: Props) {
       {(headline || subline) && (
         <div className="text-center mb-12">
           {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{subline}</p>}
+          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{plain(subline)}</p>}
         </div>
       )}
 
@@ -57,7 +58,7 @@ export function DeliveryTimelineSection({ data }: Props) {
               )}
 
               <h3 className="font-display font-semibold text-lg text-[var(--style-text-primary,#0f172a)] mb-2">{step.title}</h3>
-              {step.text && <p className="text-sm text-[var(--style-text-secondary,#64748b)] max-w-[200px] mx-auto">{step.text}</p>}
+              {step.text && <p className="text-sm text-[var(--style-text-secondary,#64748b)] max-w-[200px] mx-auto">{plain(step.text)}</p>}
             </motion.div>
           ))}
         </div>

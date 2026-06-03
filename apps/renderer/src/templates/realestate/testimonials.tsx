@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { Star } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Testimonial = { text: string; name: string; role: string; image?: string; stars?: number };
 
@@ -22,7 +23,7 @@ export function RealestateTestimonialsSection({ data }: Props) {
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
-          {subline && <p className="text-lg text-gray-600 mt-4">{subline}</p>}
+          {subline && <p className="text-lg text-gray-600 mt-4">{plain(subline)}</p>}
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -41,7 +42,7 @@ export function RealestateTestimonialsSection({ data }: Props) {
                   ))}
                 </div>
               )}
-              <p className="text-gray-700 text-sm leading-relaxed italic">&ldquo;{t.text}&rdquo;</p>
+              <p className="text-gray-700 text-sm leading-relaxed italic">&ldquo;{plain(t.text)}&rdquo;</p>
               <div className="flex items-center gap-3 mt-5 pt-4 border-t border-gray-50">
                 {t.image && (
                   <Image src={t.image} alt={t.name} width={36} height={36} className="rounded-full object-cover" />

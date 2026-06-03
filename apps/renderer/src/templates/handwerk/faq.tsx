@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { ChevronDown, HelpCircle, Plus, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -34,7 +35,7 @@ function FaqClassic({ headline, badgeText, items, expandFirst }: FProps) {
       <div className="space-y-3">
         {items.map((item, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }}>
-            <FaqItemClassic question={item.question} answer={item.answer} defaultOpen={expandFirst && i === 0} />
+            <FaqItemClassic question={item.question} answer={plain(item.answer)} defaultOpen={expandFirst && i === 0} />
           </motion.div>
         ))}
       </div>
@@ -53,7 +54,7 @@ function FaqItemClassic({ question, answer, defaultOpen }: { question: string; a
       <AnimatePresence>
         {open && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
-            <div className="px-7 pb-6 text-gray-500 leading-relaxed">{answer}</div>
+            <div className="px-7 pb-6 text-gray-500 leading-relaxed">{plain(answer)}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -75,7 +76,7 @@ function FaqModern({ headline, badgeText, items, expandFirst }: FProps) {
       <div className="divide-y divide-gray-100">
         {items.map((item, i) => (
           <motion.div key={i} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }}>
-            <FaqItemModern question={item.question} answer={item.answer} defaultOpen={expandFirst && i === 0} />
+            <FaqItemModern question={item.question} answer={plain(item.answer)} defaultOpen={expandFirst && i === 0} />
           </motion.div>
         ))}
       </div>
@@ -94,7 +95,7 @@ function FaqItemModern({ question, answer, defaultOpen }: { question: string; an
       <AnimatePresence>
         {open && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
-            <p className="text-gray-400 leading-relaxed mt-4 text-[15px]">{answer}</p>
+            <p className="text-gray-400 leading-relaxed mt-4 text-[15px]">{plain(answer)}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -116,7 +117,7 @@ function FaqBold({ headline, badgeText, items, expandFirst }: FProps) {
       <div className="space-y-3">
         {items.map((item, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }}>
-            <FaqItemBold question={item.question} answer={item.answer} defaultOpen={expandFirst && i === 0} num={i + 1} />
+            <FaqItemBold question={item.question} answer={plain(item.answer)} defaultOpen={expandFirst && i === 0} num={i + 1} />
           </motion.div>
         ))}
       </div>
@@ -136,7 +137,7 @@ function FaqItemBold({ question, answer, defaultOpen, num }: { question: string;
       <AnimatePresence>
         {open && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
-            <div className="px-6 pb-5 text-gray-600 leading-relaxed border-t-2 border-gray-200 pt-4">{answer}</div>
+            <div className="px-6 pb-5 text-gray-600 leading-relaxed border-t-2 border-gray-200 pt-4">{plain(answer)}</div>
           </motion.div>
         )}
       </AnimatePresence>

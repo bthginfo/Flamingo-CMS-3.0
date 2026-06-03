@@ -6,6 +6,7 @@ import { DynamicIcon } from '@/components/ui/icon-map';
 import { asList, asButton } from './types';
 import { SectionHeader, baseHeader } from './shared';
 import type { SectionProps, ButtonValue } from './types';
+import { plain } from '@/lib/strip-html';
 
 type Value = { icon?: string; title?: string; text?: string };
 type Milestone = { year?: string; title?: string; text?: string };
@@ -36,8 +37,8 @@ function Classic(p: Props) {
     <div>
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-          <SectionHeader headline={p.headline} subline={p.subline} badgeText={p.badgeText} />
-          {p.storyText && <p className="whitespace-pre-line leading-7 text-gray-600">{p.storyText}</p>}
+          <SectionHeader headline={p.headline} subline={plain(p.subline)} badgeText={p.badgeText} />
+          {p.storyText && <p className="whitespace-pre-line leading-7 text-gray-600">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <blockquote className="mt-8 rounded-xl border border-black/10 bg-white p-5 shadow-sm">
               <p className="text-sm italic leading-6 text-gray-900">&ldquo;{p.founderQuote}&rdquo;</p>
@@ -83,8 +84,8 @@ function Mod(p: Props) {
     <div>
       <div className="grid gap-16 lg:grid-cols-2 lg:items-start">
         <div>
-          <SectionHeader headline={p.headline} subline={p.subline} badgeText={p.badgeText} />
-          {p.storyText && <p className="whitespace-pre-line font-light leading-7 text-gray-600">{p.storyText}</p>}
+          <SectionHeader headline={p.headline} subline={plain(p.subline)} badgeText={p.badgeText} />
+          {p.storyText && <p className="whitespace-pre-line font-light leading-7 text-gray-600">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <blockquote className="mt-8 border-l border-black/20 pl-5">
               <p className="text-sm italic font-light leading-6 text-gray-900">&ldquo;{p.founderQuote}&rdquo;</p>
@@ -130,8 +131,8 @@ function Bold(p: Props) {
     <div>
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <div>
-          <SectionHeader headline={p.headline} subline={p.subline} badgeText={p.badgeText} />
-          {p.storyText && <p className="whitespace-pre-line leading-7 text-gray-600">{p.storyText}</p>}
+          <SectionHeader headline={p.headline} subline={plain(p.subline)} badgeText={p.badgeText} />
+          {p.storyText && <p className="whitespace-pre-line leading-7 text-gray-600">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <div className="mt-8 border-l-4 border-[var(--brand-accent))] bg-black/5 p-5">
               <p className="text-sm italic font-bold text-gray-900">&ldquo;{p.founderQuote}&rdquo;</p>

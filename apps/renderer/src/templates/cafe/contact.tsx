@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -39,7 +40,7 @@ export function CafeContactSection({ data }: Props) {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
           {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">{badgeText}</p>}
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
-          {subline && <p className="text-gray-600 mt-3">{subline}</p>}
+          {subline && <p className="text-gray-600 mt-3">{plain(subline)}</p>}
           {introText && <div className="text-gray-600 mt-4 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         </motion.div>
 

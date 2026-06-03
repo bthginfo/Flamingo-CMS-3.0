@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Slide = {
   imageBefore: string;
@@ -39,7 +40,7 @@ export function BeforeAfterSliderSection({ data }: Props) {
             className="text-center mb-10"
           >
             {headline && <h2 className="text-3xl md:text-4xl font-bold text-[var(--style-heading-color,var(--style-text-primary,inherit))]">{headline}</h2>}
-            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--style-subheading-color,var(--style-text-secondary,#71717a))]">{subline}</p>}
+            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--style-subheading-color,var(--style-text-secondary,#71717a))]">{plain(subline)}</p>}
           </motion.div>
         )}
 

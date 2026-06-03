@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -22,7 +23,7 @@ export function WeddingFaqSection({ data, styleVariant }: Props) {
           <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-16 break-words">{headline}</h2>
           <div className="space-y-0">
             {items.map((item, i) => (
-              <FaqItem key={i} question={item.question} answer={item.answer} index={i} variant="modern" />
+              <FaqItem key={i} question={item.question} answer={plain(item.answer)} index={i} variant="modern" />
             ))}
           </div>
         </div>
@@ -38,7 +39,7 @@ export function WeddingFaqSection({ data, styleVariant }: Props) {
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
           <div className="space-y-2">
             {items.map((item, i) => (
-              <FaqItem key={i} question={item.question} answer={item.answer} index={i} variant="bold" />
+              <FaqItem key={i} question={item.question} answer={plain(item.answer)} index={i} variant="bold" />
             ))}
           </div>
         </div>
@@ -55,7 +56,7 @@ export function WeddingFaqSection({ data, styleVariant }: Props) {
         </div>
         <div className="space-y-3">
           {items.map((item, i) => (
-            <FaqItem key={i} question={item.question} answer={item.answer} index={i} variant="classic" />
+            <FaqItem key={i} question={item.question} answer={plain(item.answer)} index={i} variant="classic" />
           ))}
         </div>
       </div>
@@ -73,7 +74,7 @@ function FaqItem({ question, answer, index, variant }: { question: string; answe
           <span className="font-light text-gray-900">{question}</span>
           <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`} />
         </button>
-        {open && <div className="pb-5 text-gray-500 text-sm leading-relaxed">{answer}</div>}
+        {open && <div className="pb-5 text-gray-500 text-sm leading-relaxed">{plain(answer)}</div>}
       </motion.div>
     );
   }
@@ -85,7 +86,7 @@ function FaqItem({ question, answer, index, variant }: { question: string; answe
           <span className="font-bold text-gray-900">{question}</span>
           <ChevronDown className={`w-5 h-5 text-brand-accent transition-transform ${open ? 'rotate-180' : ''}`} />
         </button>
-        {open && <div className="px-5 pb-5 text-gray-500 text-sm leading-relaxed">{answer}</div>}
+        {open && <div className="px-5 pb-5 text-gray-500 text-sm leading-relaxed">{plain(answer)}</div>}
       </motion.div>
     );
   }
@@ -96,7 +97,7 @@ function FaqItem({ question, answer, index, variant }: { question: string; answe
         <span className="font-medium text-gray-900">{question}</span>
         <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
-      {open && <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">{answer}</div>}
+      {open && <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">{plain(answer)}</div>}
     </motion.div>
   );
 }

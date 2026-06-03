@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -23,7 +24,7 @@ export function NoticeBannerSection({ data }: Props) {
         className="max-w-5xl mx-auto px-6 py-12 md:py-16 text-center"
       >
         {headline && <h2 className="text-2xl md:text-3xl font-bold mb-3">{headline}</h2>}
-        {subline && <p className="text-lg md:text-xl opacity-80 mb-4">{subline}</p>}
+        {subline && <p className="text-lg md:text-xl opacity-80 mb-4">{plain(subline)}</p>}
         {text && <div className="opacity-70 leading-relaxed max-w-2xl mx-auto mb-6 rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {(primaryCta?.label || secondaryCta?.label) && (
           <div className="flex flex-wrap justify-center gap-4 mt-6">

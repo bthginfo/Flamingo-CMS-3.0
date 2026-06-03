@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
+import { plain } from '@/lib/strip-html';
 
 type InfoCard = { icon?: string; label?: string; value?: string };
 
@@ -56,7 +57,7 @@ function Classic(p: Props) {
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{p.headline}</motion.h2>
           {p.subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
-        {p.introText && <p className="text-gray-600">{p.introText}</p>}
+        {p.introText && <p className="text-gray-600">{plain(p.introText)}</p>}
         <div className="mt-6"><InfoCards cards={p.infoCards} /></div>
         <div className="mt-8 flex flex-wrap gap-3">
           {p.primaryCta.label && <a href={p.primaryCta.href || '#'} className="inline-flex rounded-full bg-[#111827] px-5 py-3 font-semibold text-white shadow-md">{p.primaryCta.label}</a>}
@@ -81,7 +82,7 @@ function Modern(p: Props) {
           <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{p.headline}</h2>
           {p.subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
-        {p.introText && <p className="font-light text-gray-600">{p.introText}</p>}
+        {p.introText && <p className="font-light text-gray-600">{plain(p.introText)}</p>}
         <div className="mt-6">{p.infoCards.map((c, i) => <div key={`${c.label}-${i}`} className="flex gap-4 border-t border-black/10 pt-4"><DynamicIcon name={c.icon || 'mail'} size={18} className="shrink-0 text-brand-accent" /><div className="min-w-0 flex-1"><p className="text-xs font-light text-gray-600">{c.label || ''}</p><p className="break-words font-light text-gray-900">{c.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
           {p.primaryCta.label && <a href={p.primaryCta.href || '#'} className="inline-flex border border-[#111827] px-6 py-3 font-light text-gray-900">{p.primaryCta.label}</a>}
@@ -106,7 +107,7 @@ function Bold(p: Props) {
           <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{p.headline}</h2>
           {p.subline && <div className="mt-4 font-bold text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
-        {p.introText && <p className="font-bold text-gray-600">{p.introText}</p>}
+        {p.introText && <p className="font-bold text-gray-600">{plain(p.introText)}</p>}
         <div className="mt-6">{p.infoCards.map((c, i) => <div key={`${c.label}-${i}`} className="flex gap-4 border-t-2 border-[#111827] pt-4"><DynamicIcon name={c.icon || 'mail'} size={20} className="shrink-0 text-brand-accent" /><div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase text-gray-600">{c.label || ''}</p><p className="break-words font-black text-gray-900">{c.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
           {p.primaryCta.label && <a href={p.primaryCta.href || '#'} className="inline-flex bg-brand-accent px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{p.primaryCta.label}</a>}

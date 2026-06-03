@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
 import { useState } from 'react';
+import { plain } from '@/lib/strip-html';
 
 type FaqItem = { question: string; answer: string };
 
@@ -23,7 +24,7 @@ export function RealestateFaqSection({ data }: Props) {
       <div className="max-w-3xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
-          {subline && <p className="text-lg text-gray-600 mt-4">{subline}</p>}
+          {subline && <p className="text-lg text-gray-600 mt-4">{plain(subline)}</p>}
         </motion.div>
 
         <div className="space-y-3">
@@ -44,7 +45,7 @@ export function RealestateFaqSection({ data }: Props) {
               </button>
               {openIndex === i && (
                 <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">
-                  {item.answer}
+                  {plain(item.answer)}
                 </div>
               )}
             </motion.div>

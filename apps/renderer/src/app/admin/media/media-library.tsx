@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { upload } from '@vercel/blob/client';
 import { resizeImage } from '@/components/image-upload-field';
-import { saveMediaRecord, deleteMediaAsset, updateMediaAlt, type MediaAsset } from '../media-actions';
+import { saveMediaRecord, deleteMediaAsset, updateMediaAlt, updateMediaDimensions, type MediaAsset } from '../media-actions';
 import { toast } from 'sonner';
 import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2, Pencil, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
@@ -32,6 +32,16 @@ async function getImageDimensions(file: File): Promise<{ width: number; height: 
   });
 }
 
+async function getRemoteImageDimensions(src: string): Promise<{ width: number; height: number } | null> {
+  if (!src || src.startsWith('data:')) return null;
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
 function getMediaWarnings(asset: MediaAsset) {
   const warnings: string[] = [];
   if (!asset.alt?.trim()) warnings.push('Alt-Text fehlt');
@@ -55,6 +65,24 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const largeFiles = assets.filter(asset => asset.size > 600 * 1024).length;
   const unknownDimensions = assets.filter(asset => !asset.width || !asset.height).length;
   const cleanAssets = assets.filter(asset => getMediaWarnings(asset).length === 0).length;
+
+  useEffect(() => {
+    let cancelled = false;
+    const missing = assets.filter(asset => !asset.width || !asset.height).slice(0, 12);
+    if (!missing.length) return;
+
+    void (async () => {
+      for (const asset of missing) {
+        const dimensions = await getRemoteImageDimensions(asset.blobUrl);
+        if (cancelled || !dimensions) continue;
+        setAssets(prev => prev.map(item => item.id === asset.id ? { ...item, ...dimensions } : item));
+        setSelected(prev => prev?.id === asset.id ? { ...prev, ...dimensions } : prev);
+        updateMediaDimensions(asset.id, dimensions).catch(() => {});
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [assets]);
 
   const handleUpload = useCallback(async (files: FileList | File[]) => {
     const MAX_SIZE = 1 * 1024 * 1024; // 1 MB
@@ -114,6 +142,20 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const copyUrl = (url: string) => {
     navigator.clipboard.writeText(url);
     toast.success('URL kopiert');
+  };
+
+  const setAssetAlt = (asset: MediaAsset, alt: string) => {
+    setAssets(prev => prev.map(item => item.id === asset.id ? { ...item, alt } : item));
+    setSelected(prev => prev?.id === asset.id ? { ...prev, alt } : prev);
+  };
+
+  const saveAlt = async (asset: MediaAsset, alt: string) => {
+    try {
+      await updateMediaAlt(asset.id, alt);
+      toast.success(alt.trim() ? 'Alt-Text gespeichert' : 'Alt-Text entfernt');
+    } catch {
+      toast.error('Alt-Text konnte nicht gespeichert werden');
+    }
   };
 
   return (
@@ -273,7 +315,13 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
               <div>
                 <label className="admin-label">Alt-Text</label>
                 <div className="flex gap-2">
-                  <input className="admin-input flex-1" value={selected.alt || ''} readOnly placeholder="Kein Alt-Text" />
+                  <input
+                    className="admin-input flex-1"
+                    value={selected.alt || ''}
+                    onChange={(event) => setAssetAlt(selected, event.target.value)}
+                    onBlur={(event) => saveAlt(selected, event.target.value)}
+                    placeholder="Alt-Text eingeben..."
+                  />
                   <button
                     onClick={() => { setAltModalAsset(selected); setAltValue(selected.alt || ''); }}
                     className="admin-btn-secondary shrink-0"

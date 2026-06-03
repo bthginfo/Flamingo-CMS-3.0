@@ -107,10 +107,6 @@ export function ImageUploadField({
     if (position) setInternalPosition(position);
   }, [position]);
 
-  useEffect(() => {
-    if (!value && mode === 'library') setMode('upload');
-  }, [value, mode]);
-
   function clearValue() {
     onChange('');
     if (inputRef.current) inputRef.current.value = '';

@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -46,7 +47,7 @@ export function FeatureShowcaseSection({ data }: Props) {
         )}
         {subline && (
           <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.15 }} className="section-subline mt-2">
-            {subline}
+            {plain(subline)}
           </motion.p>
         )}
         {text && (

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -26,7 +27,7 @@ export function StyleGallerySection({ data }: Props) {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-5xl font-bold text-white">{headline}</h2>
-          {subline && <p className="mt-3 text-white/50 max-w-2xl mx-auto">{subline}</p>}
+          {subline && <p className="mt-3 text-white/50 max-w-2xl mx-auto">{plain(subline)}</p>}
         </div>
 
         {/* Filter pills */}
@@ -56,7 +57,7 @@ export function StyleGallerySection({ data }: Props) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                 <div>
                   <p className="text-white font-medium text-sm">{item.name}</p>
-                  {item.description && <p className="text-white/60 text-xs mt-0.5">{item.description}</p>}
+                  {item.description && <p className="text-white/60 text-xs mt-0.5">{plain(item.description)}</p>}
                 </div>
               </div>
             </motion.div>

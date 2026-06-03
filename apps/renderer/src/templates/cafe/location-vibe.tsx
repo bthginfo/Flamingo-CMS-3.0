@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { MapPin, Clock } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type HoursItem = { day: string; hours: string };
 
@@ -26,8 +27,8 @@ export function LocationVibeSection({ data }: Props) {
         <div className="grid lg:grid-cols-2 gap-12">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}}>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
-            {description && <p className="text-gray-600 mt-4 leading-relaxed">{description}</p>}
-            {vibeText && <p className="text-amber-700 font-medium mt-3 italic">{vibeText}</p>}
+            {description && <p className="text-gray-600 mt-4 leading-relaxed">{plain(description)}</p>}
+            {vibeText && <p className="text-amber-700 font-medium mt-3 italic">{plain(vibeText)}</p>}
 
             {address && (
               <div className="flex items-start gap-3 mt-8">

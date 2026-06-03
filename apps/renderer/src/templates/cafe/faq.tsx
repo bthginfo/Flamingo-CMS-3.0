@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type FaqItem = { question: string; answer: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -25,7 +26,7 @@ export function CafeFaqSection({ data }: Props) {
                 <span className="font-medium text-gray-900 pr-4">{item.question}</span>
                 {open === i ? <Minus size={18} className="text-brand-primary shrink-0" /> : <Plus size={18} className="text-gray-400 shrink-0" />}
               </button>
-              {open === i && <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">{item.answer}</div>}
+              {open === i && <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">{plain(item.answer)}</div>}
             </motion.div>
           ))}
         </div>

@@ -3,6 +3,7 @@
 import { useRef, useEffect } from 'react';
 import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
+import { plain } from '@/lib/strip-html';
 
 type StatItem = { value: number | string; suffix?: string; prefix?: string; label: string; icon?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -42,7 +43,7 @@ export function CaseResultsSection({ data }: Props) {
       <div className="relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
           {headline && <h2 className="text-3xl md:text-4xl font-serif font-bold text-white">{headline}</h2>}
-          {subline && <p className="text-white/60 mt-3 max-w-xl mx-auto">{subline}</p>}
+          {subline && <p className="text-white/60 mt-3 max-w-xl mx-auto">{plain(subline)}</p>}
         </motion.div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, i) => (

@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
+import { plain } from '@/lib/strip-html';
 
 type Trait = { title: string; text?: string; icon?: string };
 type Stat = { value: string; label: string };
@@ -23,7 +24,7 @@ export function SignatureGridSection({ data }: Props) {
         <div className="absolute bottom-6 left-6 right-6">
           {badge && <div className="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-white/65">{badge}</div>}
           {headline && <h2 className="text-4xl font-black leading-none text-white md:text-5xl">{headline}</h2>}
-          {subline && <p className="mt-4 max-w-xl text-sm leading-7 text-white/72">{subline}</p>}
+          {subline && <p className="mt-4 max-w-xl text-sm leading-7 text-white/72">{plain(subline)}</p>}
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
@@ -31,7 +32,7 @@ export function SignatureGridSection({ data }: Props) {
           <motion.article key={index} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-3xl border border-[var(--style-border-color,rgba(0,0,0,0.08))] bg-[var(--style-card-bg,#fff)] p-6 shadow-sm">
             {trait.icon && <DynamicIcon name={trait.icon} size={28} className="mb-6 text-[var(--style-icon-color,var(--brand-primary))]" />}
             <h3 className="text-xl font-black text-[var(--style-heading-color,#111)]">{trait.title}</h3>
-            {trait.text && <p className="mt-3 text-sm leading-7 text-[var(--style-body-color,#52525b)]">{trait.text}</p>}
+            {trait.text && <p className="mt-3 text-sm leading-7 text-[var(--style-body-color,#52525b)]">{plain(trait.text)}</p>}
           </motion.article>
         ))}
         {stats.map((stat, index) => (

@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Item = { kicker?: string; title: string; text?: string; image?: string; ctaLabel?: string; ctaHref?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -19,7 +20,7 @@ export function EditorialFeatureRailSection({ data }: Props) {
         <div className="mb-12 max-w-3xl">
           {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--style-accent-color,var(--brand-primary,#fff))]">{badge}</div>}
           {headline && <h2 className="text-4xl font-black leading-none text-[#ffffff] md:text-6xl">{headline}</h2>}
-          {subline && <p className="mt-5 text-lg leading-8 text-[rgba(255,255,255,0.72)]">{subline}</p>}
+          {subline && <p className="mt-5 text-lg leading-8 text-[rgba(255,255,255,0.72)]">{plain(subline)}</p>}
         </div>
         <div className="flex snap-x gap-5 overflow-x-auto pb-4 [scrollbar-width:thin]">
           {items.map((item, index) => (
@@ -29,7 +30,7 @@ export function EditorialFeatureRailSection({ data }: Props) {
               <div className="relative z-10 flex h-full flex-col justify-end p-6 md:p-8">
                 {item.kicker && <div className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[rgba(255,255,255,0.65)]">{item.kicker}</div>}
                 <h3 className="text-3xl font-black leading-tight text-[#ffffff] md:text-4xl">{item.title}</h3>
-                {item.text && <p className="mt-4 max-w-md text-sm leading-7 text-[rgba(255,255,255,0.72)]">{item.text}</p>}
+                {item.text && <p className="mt-4 max-w-md text-sm leading-7 text-[rgba(255,255,255,0.72)]">{plain(item.text)}</p>}
                 {item.ctaLabel && <a href={item.ctaHref || '#'} className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-zinc-950">{item.ctaLabel}<ArrowRight size={15} /></a>}
               </div>
             </motion.article>

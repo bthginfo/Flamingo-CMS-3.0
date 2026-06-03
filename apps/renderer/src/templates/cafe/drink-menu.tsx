@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type DrinkItem = { name: string; description?: string; price: string };
 type DrinkCategory = { title: string; items: DrinkItem[] };
@@ -21,7 +22,7 @@ export function DrinkMenuSection({ data }: Props) {
       <div className="max-w-5xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
-          {subline && <p className="text-gray-600 mt-3">{subline}</p>}
+          {subline && <p className="text-gray-600 mt-3">{plain(subline)}</p>}
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-12">
@@ -38,7 +39,7 @@ export function DrinkMenuSection({ data }: Props) {
                   <li key={ii} className="flex justify-between items-start gap-4">
                     <div>
                       <span className="font-medium text-gray-900 text-sm">{item.name}</span>
-                      {item.description && <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>}
+                      {item.description && <p className="text-xs text-gray-500 mt-0.5">{plain(item.description)}</p>}
                     </div>
                     <span className="text-sm font-semibold text-gray-700 whitespace-nowrap">{item.price}</span>
                   </li>

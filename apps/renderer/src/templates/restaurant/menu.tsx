@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ArrowRight, Flame, Leaf, Wheat } from 'lucide-react';
 import { asButton, asList, type SectionProps } from './types';
+import { plain } from '@/lib/strip-html';
 
 type MenuItem = {
   name?: string;
@@ -36,12 +37,12 @@ export function MenuSection({ data, styleVariant }: SectionProps) {
   const ctaPrimary = asButton(data.ctaPrimary);
 
   if (styleVariant === 'bold') {
-    return <MenuBold headline={headline} subline={subline} badgeText={badgeText} introText={introText} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
+    return <MenuBold headline={headline} subline={plain(subline)} badgeText={badgeText} introText={plain(introText)} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
   }
   if (styleVariant === 'modern') {
-    return <MenuModern headline={headline} subline={subline} badgeText={badgeText} introText={introText} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
+    return <MenuModern headline={headline} subline={plain(subline)} badgeText={badgeText} introText={plain(introText)} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
   }
-  return <MenuClassic headline={headline} subline={subline} badgeText={badgeText} introText={introText} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
+  return <MenuClassic headline={headline} subline={plain(subline)} badgeText={badgeText} introText={plain(introText)} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
 }
 
 type MenuViewProps = {

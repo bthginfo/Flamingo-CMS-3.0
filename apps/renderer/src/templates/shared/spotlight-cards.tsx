@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
+import { plain } from '@/lib/strip-html';
 
 type Card = { title: string; text?: string; icon?: string; image?: string; href?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -18,7 +19,7 @@ export function SpotlightCardsSection({ data }: Props) {
       <div className="mb-12 max-w-3xl">
         {badge && <span className="section-badge">{badge}</span>}
         {headline && <h2 className="section-headline text-left">{headline}</h2>}
-        {subline && <p className="section-subline mx-0 text-left">{subline}</p>}
+        {subline && <p className="section-subline mx-0 text-left">{plain(subline)}</p>}
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {cards.map((card, i) => {
@@ -40,7 +41,7 @@ export function SpotlightCardsSection({ data }: Props) {
               <div className="relative z-10 flex h-full flex-col justify-end">
                 {card.icon && <DynamicIcon name={card.icon} size={34} className="mb-6 text-[var(--style-icon-color,var(--brand-primary))]" />}
                 <h3 className="text-xl font-bold text-[var(--style-heading-color,var(--style-text-primary,#111))]">{card.title}</h3>
-                {card.text && <p className="mt-3 text-sm leading-6 text-[var(--style-body-color,var(--style-text-secondary,#52525b))]">{card.text}</p>}
+                {card.text && <p className="mt-3 text-sm leading-6 text-[var(--style-body-color,var(--style-text-secondary,#52525b))]">{plain(card.text)}</p>}
               </div>
             </motion.article>
           );

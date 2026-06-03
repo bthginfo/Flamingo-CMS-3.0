@@ -1,5 +1,7 @@
 'use client';
 
+import { plain } from '@/lib/strip-html';
+
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function BookingCtaSection({ data }: Props) {
@@ -13,7 +15,7 @@ export function BookingCtaSection({ data }: Props) {
     <section className="py-16 px-6 bg-neutral-900 border-y border-white/5">
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-3xl sm:text-4xl font-bold text-white">{headline}</h2>
-        {subline && <p className="mt-3 text-white/50">{subline}</p>}
+        {subline && <p className="mt-3 text-white/50">{plain(subline)}</p>}
         {hints.length > 0 && (
           <div className="flex flex-wrap justify-center gap-4 mt-6 text-xs text-white/40">
             {hints.map((h, i) => <span key={i} className="flex items-center gap-1.5">✓ {h}</span>)}

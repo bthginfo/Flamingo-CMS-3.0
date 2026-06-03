@@ -103,3 +103,16 @@ export async function updateMediaAlt(id: string, alt: string) {
   revalidatePath('/admin/media');
   return { success: true };
 }
+
+export async function updateMediaDimensions(id: string, dimensions: { width: number; height: number }) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  const [asset] = await db.select().from(mediaAssets)
+    .where(eq(mediaAssets.id, id))
+    .limit(1);
+  if (!asset || asset.tenantId !== tenantId) throw new Error('Not found');
+
+  await db.update(mediaAssets).set({ width: dimensions.width, height: dimensions.height, updatedAt: new Date() }).where(eq(mediaAssets.id, id));
+  revalidatePath('/admin/media');
+  return { success: true };
+}

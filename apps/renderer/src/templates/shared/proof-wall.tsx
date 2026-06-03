@@ -22,7 +22,7 @@ export function ProofWallSection({ data }: Props) {
       <div className="mx-auto mb-12 max-w-3xl text-center">
         {badge && <span className="section-badge">{badge}</span>}
         {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{subline}</p>}
+        {subline && <p className="section-subline">{plain(subline)}</p>}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">

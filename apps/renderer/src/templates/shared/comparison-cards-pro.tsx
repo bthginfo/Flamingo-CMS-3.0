@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Check, Minus } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Plan = { name: string; price?: string; note?: string; highlighted?: boolean; features?: string[]; missing?: string[]; ctaLabel?: string; ctaHref?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -18,7 +19,7 @@ export function ComparisonCardsProSection({ data }: Props) {
       <div className="mx-auto mb-12 max-w-3xl text-center">
         {badge && <span className="section-badge">{badge}</span>}
         {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{subline}</p>}
+        {subline && <p className="section-subline">{plain(subline)}</p>}
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         {plans.map((plan, index) => (

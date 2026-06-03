@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -16,7 +17,7 @@ export function AftercarStepsSection({ data }: Props) {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-white">{headline}</h2>
-          {subline && <p className="mt-3 text-white/50">{subline}</p>}
+          {subline && <p className="mt-3 text-white/50">{plain(subline)}</p>}
         </div>
 
         <div className="space-y-6">
@@ -28,7 +29,7 @@ export function AftercarStepsSection({ data }: Props) {
               </div>
               <div>
                 <h3 className="text-white font-semibold">{step.title}</h3>
-                <p className="text-white/50 text-sm mt-1">{step.description}</p>
+                <p className="text-white/50 text-sm mt-1">{plain(step.description)}</p>
               </div>
             </motion.div>
           ))}

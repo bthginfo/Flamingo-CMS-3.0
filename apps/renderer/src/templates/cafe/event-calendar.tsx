@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { CalendarDays, Music, Wine } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type CafeEvent = { title: string; date: string; time: string; description?: string; image?: string; category?: string };
 
@@ -28,7 +29,7 @@ export function CafeEventCalendarSection({ data }: Props) {
       <div className="max-w-6xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
-          {subline && <p className="text-gray-600 mt-3">{subline}</p>}
+          {subline && <p className="text-gray-600 mt-3">{plain(subline)}</p>}
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -55,7 +56,7 @@ export function CafeEventCalendarSection({ data }: Props) {
                     <span>{event.time}</span>
                   </div>
                   <h3 className="font-bold text-gray-900">{event.title}</h3>
-                  {event.description && <p className="text-sm text-gray-500 mt-1.5">{event.description}</p>}
+                  {event.description && <p className="text-sm text-gray-500 mt-1.5">{plain(event.description)}</p>}
                 </div>
               </motion.div>
             );

@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
+import { plain } from '@/lib/strip-html';
 
 type FaqItem = { question: string; answer: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -21,7 +22,7 @@ export function ConsultingFaqSection({ data }: Props) {
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
         {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{subline}</p>}
+        {subline && <p className="section-subline">{plain(subline)}</p>}
       </motion.div>
       <div className="space-y-3">
         {items.map((item, i) => (
@@ -48,7 +49,7 @@ export function ConsultingFaqSection({ data }: Props) {
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  <div className="px-6 pb-5 text-slate-600 text-sm leading-relaxed">{item.answer}</div>
+                  <div className="px-6 pb-5 text-slate-600 text-sm leading-relaxed">{plain(item.answer)}</div>
                 </motion.div>
               )}
             </AnimatePresence>

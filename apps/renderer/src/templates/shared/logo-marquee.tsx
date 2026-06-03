@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -23,7 +24,7 @@ export function LogoMarqueeSection({ data }: Props) {
       {(headline || subline) && (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4 }} className="text-center mb-8 px-6">
           {headline && <p className="text-sm font-medium uppercase tracking-widest text-zinc-400">{headline}</p>}
-          {subline && <p className="text-xs text-zinc-400 mt-1">{subline}</p>}
+          {subline && <p className="text-xs text-zinc-400 mt-1">{plain(subline)}</p>}
         </motion.div>
       )}
 

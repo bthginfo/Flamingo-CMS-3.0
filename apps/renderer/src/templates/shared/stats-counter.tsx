@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -58,7 +59,7 @@ export function StatsCounterSection({ data }: Props) {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-16">
             {badge && <span className="inline-block text-xs font-semibold tracking-widest uppercase text-[var(--color-primary)] bg-white/10 rounded-full px-4 py-1.5 mb-4">{badge}</span>}
             {headline && <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">{headline}</h2>}
-            {subline && <p className="mt-3 text-lg text-zinc-400 max-w-xl mx-auto">{subline}</p>}
+            {subline && <p className="mt-3 text-lg text-zinc-400 max-w-xl mx-auto">{plain(subline)}</p>}
           </motion.div>
         )}
 

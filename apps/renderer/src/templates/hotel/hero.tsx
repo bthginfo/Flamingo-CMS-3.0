@@ -6,6 +6,7 @@ import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effe
 import { Star, CheckCircle } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
+import { plain } from '@/lib/strip-html';
 
 export function HotelHeroSection({ data, styleVariant }: SectionProps) {
   const headline = (data.headline as string) || 'Hotel';
@@ -28,9 +29,9 @@ export function HotelHeroSection({ data, styleVariant }: SectionProps) {
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
-  if (styleVariant === 'modern') return <HeroModern headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} overlayColor={overlayColor || undefined} overlayOpacity={overlayOpacity} />;
-  if (styleVariant === 'bold') return <HeroBold headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} overlayColor={overlayColor || undefined} overlayOpacity={overlayOpacity} />;
-  return <HeroClassic headline={headline} subline={subline} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} overlayColor={overlayColor || undefined} overlayOpacity={overlayOpacity} />;
+  if (styleVariant === 'modern') return <HeroModern headline={headline} subline={plain(subline)} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} overlayColor={overlayColor || undefined} overlayOpacity={overlayOpacity} />;
+  if (styleVariant === 'bold') return <HeroBold headline={headline} subline={plain(subline)} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} overlayColor={overlayColor || undefined} overlayOpacity={overlayOpacity} />;
+  return <HeroClassic headline={headline} subline={plain(subline)} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} overlayColor={overlayColor || undefined} overlayOpacity={overlayOpacity} />;
 }
 
 type HeroProps = {

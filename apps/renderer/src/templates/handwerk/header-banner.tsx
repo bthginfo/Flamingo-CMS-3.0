@@ -2,6 +2,7 @@
 
 import { X } from 'lucide-react';
 import { useState } from 'react';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -22,7 +23,7 @@ export function HeaderBannerSection({ data }: Props) {
         {items.map((item, i) => (
           <span key={i}>
             {item.link ? (
-              <a href={item.link} className="hover:underline font-medium">{item.text}</a>
+              <a href={item.link} className="hover:underline font-medium">{plain(item.text)}</a>
             ) : (
               <span className="rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />
             )}

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { DynamicIcon } from '@/components/ui/icon-map';
+import { plain } from '@/lib/strip-html';
 
 type ButtonValue = { label?: string; href?: string; icon?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -40,7 +41,7 @@ export function TextImageSection({ data, variant }: Props) {
                   <span className="w-2 h-2 mt-2 rounded-full bg-brand-primary shrink-0" />
                   <div>
                     <span className="font-medium text-gray-900">{item.title}</span>
-                    {item.text && <span className="text-gray-600"> – {item.text}</span>}
+                    {item.text && <span className="text-gray-600"> – {plain(item.text)}</span>}
                   </div>
                 </li>
               ))}

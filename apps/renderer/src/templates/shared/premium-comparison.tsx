@@ -2,6 +2,7 @@
 
 import { Fragment } from 'react';
 import { Check, Minus } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Column = { label: string; note?: string };
 type Row = { feature: string; values: (string | boolean)[] };
@@ -27,7 +28,7 @@ export function PremiumComparisonSection({ data }: Props) {
       <div className="mx-auto mb-12 max-w-3xl text-center">
         {badge && <span className="section-badge">{badge}</span>}
         {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{subline}</p>}
+        {subline && <p className="section-subline">{plain(subline)}</p>}
       </div>
       <div className="overflow-x-auto rounded-[var(--style-card-radius,1rem)] border border-[var(--style-border-color,rgba(0,0,0,0.08))] bg-[var(--style-card-bg,#fff)] shadow-xl">
         <div className="grid min-w-[720px]" style={{ gridTemplateColumns: `minmax(180px,1.2fr) repeat(${columns.length}, minmax(140px,1fr))` }}>

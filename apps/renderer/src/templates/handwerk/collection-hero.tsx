@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
+import { plain } from '@/lib/strip-html';
 
 type Props = {
   data: Record<string, unknown>;
@@ -27,7 +28,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
   if (styleVariant === 'minimal') {
-    return <CollectionHeroMinimal headline={headline} subline={subline} category={category} date={date} />;
+    return <CollectionHeroMinimal headline={headline} subline={plain(subline)} category={category} date={date} />;
   }
 
   return (

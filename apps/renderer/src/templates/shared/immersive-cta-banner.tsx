@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useRef } from 'react';
+import { plain } from '@/lib/strip-html';
 
 type Cta = { label?: string; href?: string };
 type Metric = { value: string; label: string };
@@ -35,7 +36,7 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
         <div>
           {badge && <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-[var(--style-badge-bg,rgba(255,255,255,0.12))] px-4 py-2 text-xs font-bold uppercase text-[var(--style-badge-text,#fff)] backdrop-blur"><Sparkles size={14} />{badge}</div>}
           {headline && <h2 className="max-w-4xl text-4xl font-black leading-none text-[var(--style-heading-color,#fff)] md:text-6xl lg:text-7xl">{headline}</h2>}
-          {subline && <p className="mt-6 max-w-2xl text-base leading-8 text-[var(--style-subheading-color,rgba(255,255,255,0.78))] md:text-xl">{subline}</p>}
+          {subline && <p className="mt-6 max-w-2xl text-base leading-8 text-[var(--style-subheading-color,rgba(255,255,255,0.78))] md:text-xl">{plain(subline)}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
             {primaryCta.label && <a href={primaryCta.href || '#'} className="btn-primary inline-flex items-center gap-2 rounded-full bg-[var(--brand-btn-bg,var(--brand-primary,#fff))] px-6 py-3 text-sm font-bold text-[var(--brand-btn-text,#111)] shadow-2xl transition hover:brightness-110">{primaryCta.label}<ArrowRight size={16} /></a>}
             {secondaryCta.label && <a href={secondaryCta.href || '#'} className="btn-secondary inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-white/20">{secondaryCta.label}</a>}

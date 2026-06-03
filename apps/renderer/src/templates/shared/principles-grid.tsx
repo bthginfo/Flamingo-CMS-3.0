@@ -2,6 +2,7 @@
 
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Principle = { title?: string; text?: string; eyebrow?: string };
 type Cta = { label?: string; href?: string };
@@ -22,7 +23,7 @@ export function PrinciplesGridSection({ data }: Props) {
         <div className="max-w-4xl">
           {badge && <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[var(--style-badge-text,#ffffff)]"><Sparkles size={14} />{badge}</div>}
           {headline && <h2 className="text-4xl font-black leading-none text-[var(--style-heading-color,#ffffff)] md:text-6xl lg:text-7xl">{headline}</h2>}
-          {subline && <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--style-subheading-color,rgba(255,255,255,0.74))]">{subline}</p>}
+          {subline && <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--style-subheading-color,rgba(255,255,255,0.74))]">{plain(subline)}</p>}
         </div>
 
         <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -40,7 +41,7 @@ export function PrinciplesGridSection({ data }: Props) {
               </div>
               {item.eyebrow && <div className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--style-accent-color,var(--brand-primary,#f24171))]">{item.eyebrow}</div>}
               {item.title && <h3 className="text-2xl font-black leading-tight text-[var(--style-heading-color,#ffffff)]">{item.title}</h3>}
-              {item.text && <p className="mt-4 text-sm leading-7 text-[var(--style-body-color,rgba(255,255,255,0.70))]">{item.text}</p>}
+              {item.text && <p className="mt-4 text-sm leading-7 text-[var(--style-body-color,rgba(255,255,255,0.70))]">{plain(item.text)}</p>}
             </motion.article>
           ))}
         </div>

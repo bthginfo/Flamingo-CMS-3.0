@@ -12,7 +12,7 @@ function extractItemImage(item: SnapshotCollectionItem): string | undefined {
   if (sections) {
     const hero = sections.find(s => s.type === 'hero' || s.type === 'collectionHero');
     if (hero?.data) {
-      return (hero.data.backgroundImage as string) || (hero.data.image as string) || undefined;
+      return (hero.data.backgroundImage as string) || (hero.data.bgImage as string) || (hero.data.image as string) || undefined;
     }
   }
   return undefined;

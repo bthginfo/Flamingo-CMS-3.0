@@ -6,6 +6,7 @@ import { HoverEffect } from '@/components/ui/hover-effect';
 import { DynamicIcon, MediaDisplay } from '@/components/ui/icon-map';
 
 import Link from 'next/link';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 type CardData = { title: string; text?: string; icon?: string; image?: string; imagePosition?: string; mediaType?: 'icon' | 'image'; href?: string; ctaIcon?: string };
@@ -19,9 +20,9 @@ export function ServicesGridSection({ data, styleVariant }: Props) {
   const ctaHref = (data.ctaHref as string) || '';
   const ctaIcon = (data.ctaIcon as string) || '';
 
-  if (styleVariant === 'modern') return <ServicesModern headline={headline} subline={subline} badgeText={badgeText} cards={cards} ctaLabel={ctaLabel} ctaHref={ctaHref} ctaIcon={ctaIcon} />;
-  if (styleVariant === 'bold') return <ServicesBold headline={headline} subline={subline} badgeText={badgeText} cards={cards} ctaLabel={ctaLabel} ctaHref={ctaHref} ctaIcon={ctaIcon} />;
-  return <ServicesClassic headline={headline} subline={subline} badgeText={badgeText} cards={cards} ctaLabel={ctaLabel} ctaHref={ctaHref} ctaIcon={ctaIcon} />;
+  if (styleVariant === 'modern') return <ServicesModern headline={headline} subline={plain(subline)} badgeText={badgeText} cards={cards} ctaLabel={ctaLabel} ctaHref={ctaHref} ctaIcon={ctaIcon} />;
+  if (styleVariant === 'bold') return <ServicesBold headline={headline} subline={plain(subline)} badgeText={badgeText} cards={cards} ctaLabel={ctaLabel} ctaHref={ctaHref} ctaIcon={ctaIcon} />;
+  return <ServicesClassic headline={headline} subline={plain(subline)} badgeText={badgeText} cards={cards} ctaLabel={ctaLabel} ctaHref={ctaHref} ctaIcon={ctaIcon} />;
 }
 
 type SProps = { headline: string; subline: string; badgeText: string; cards: CardData[]; ctaLabel: string; ctaHref: string; ctaIcon: string };

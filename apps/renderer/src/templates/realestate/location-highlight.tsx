@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { MapPin, Train, GraduationCap, ShoppingBag, TreePine } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type PoiItem = { label: string; distance: string; icon?: string };
 
@@ -32,8 +33,8 @@ export function LocationHighlightSection({ data }: Props) {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div initial={{ opacity: 0, x: -30 }} animate={inView ? { opacity: 1, x: 0 } : {}}>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
-            {subline && <p className="text-lg text-gray-600 mt-4">{subline}</p>}
-            {description && <p className="text-gray-500 mt-4 leading-relaxed">{description}</p>}
+            {subline && <p className="text-lg text-gray-600 mt-4">{plain(subline)}</p>}
+            {description && <p className="text-gray-500 mt-4 leading-relaxed">{plain(description)}</p>}
 
             {pois.length > 0 && (
               <div className="grid sm:grid-cols-2 gap-3 mt-8">

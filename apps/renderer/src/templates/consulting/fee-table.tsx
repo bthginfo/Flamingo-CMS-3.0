@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
+import { plain } from '@/lib/strip-html';
 
 type FeeItem = { title: string; price?: string; description?: string; icon?: string; highlighted?: boolean };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -21,7 +22,7 @@ export function FeeTableSection({ data }: Props) {
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
         {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{subline}</p>}
+        {subline && <p className="section-subline">{plain(subline)}</p>}
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {fees.map((fee, i) => (
@@ -42,7 +43,7 @@ export function FeeTableSection({ data }: Props) {
             )}
             <h3 className="text-lg font-semibold text-slate-900 mb-2">{fee.title}</h3>
             {fee.price && <div className="text-2xl font-bold text-brand-primary mb-3">{fee.price}</div>}
-            {fee.description && <p className="text-slate-500 text-sm leading-relaxed">{fee.description}</p>}
+            {fee.description && <p className="text-slate-500 text-sm leading-relaxed">{plain(fee.description)}</p>}
           </motion.div>
         ))}
       </div>

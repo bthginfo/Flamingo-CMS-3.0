@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Send, Check, Users, UtensilsCrossed, AlertCircle } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -59,7 +60,7 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
         <div className="max-w-md mx-auto">
           <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">{badge}</p>
           <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-4 break-words">{headline}</h2>
-          {subline && <p className="text-gray-400 text-sm mb-2">{subline}</p>}
+          {subline && <p className="text-gray-400 text-sm mb-2">{plain(subline)}</p>}
           {deadlineStr && <p className="text-gray-400 text-xs uppercase tracking-wider mb-12">Bis {deadlineStr}</p>}
           <form onSubmit={handleSubmit} className="space-y-6">
             {status === 'error' && <p className="text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errorMsg}</p>}
@@ -105,7 +106,7 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
         <div className="max-w-lg mx-auto">
           <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wide mb-4 break-words">{headline}</h2>
-          {subline && <p className="text-gray-500 mb-2">{subline}</p>}
+          {subline && <p className="text-gray-500 mb-2">{plain(subline)}</p>}
           {deadlineStr && <p className="text-brand-accent text-sm font-bold mb-10">Bis {deadlineStr}</p>}
           <form onSubmit={handleSubmit} className="space-y-5 border-2 border-gray-900 p-8">
             {status === 'error' && <p className="text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errorMsg}</p>}

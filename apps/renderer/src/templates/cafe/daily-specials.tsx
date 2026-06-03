@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Special = { title: string; description: string; price?: string; day?: string };
 
@@ -22,7 +23,7 @@ export function DailySpecialsSection({ data }: Props) {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-10">
           <Sparkles className="mx-auto text-amber-600 mb-3" size={24} />
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{headline}</h2>
-          {subline && <p className="text-gray-600 mt-2">{subline}</p>}
+          {subline && <p className="text-gray-600 mt-2">{plain(subline)}</p>}
         </motion.div>
 
         <div className="space-y-4">
@@ -39,7 +40,7 @@ export function DailySpecialsSection({ data }: Props) {
               )}
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                <p className="text-sm text-gray-500 mt-0.5">{item.description}</p>
+                <p className="text-sm text-gray-500 mt-0.5">{plain(item.description)}</p>
               </div>
               {item.price && <span className="font-bold text-brand-primary whitespace-nowrap">{item.price}</span>}
             </motion.div>

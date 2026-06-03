@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import Link from 'next/link';
+import { plain } from '@/lib/strip-html';
 
 type PracticeArea = { title: string; text?: string; icon?: string; href?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -21,7 +22,7 @@ export function PracticeAreasSection({ data }: Props) {
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-12 md:mb-16">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
         {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{subline}</p>}
+        {subline && <p className="section-subline">{plain(subline)}</p>}
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {areas.map((area, i) => {
@@ -39,7 +40,7 @@ export function PracticeAreasSection({ data }: Props) {
                 </div>
               )}
               <h3 className="text-lg font-semibold text-slate-900 mb-2">{area.title}</h3>
-              {area.text && <p className="text-slate-500 text-sm leading-relaxed">{area.text}</p>}
+              {area.text && <p className="text-slate-500 text-sm leading-relaxed">{plain(area.text)}</p>}
               {area.href && (
                 <span className="inline-flex items-center gap-1 text-brand-primary text-sm mt-4 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                   Mehr erfahren <DynamicIcon name="arrow-right" size={14} />

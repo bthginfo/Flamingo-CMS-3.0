@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Star } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps } from './types';
+import { plain } from '@/lib/strip-html';
 
 type Value = { icon?: string; title?: string; text?: string };
 type Milestone = { year?: string; title?: string; text?: string };
@@ -42,7 +43,7 @@ function StoryClassic(p: Props) {
           {p.badgeText && <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-600"><Star size={12} className="text-brand-primary" />{p.badgeText}</p>}
           <h2 className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{p.headline}</h2>
           {p.subline && <div className="mt-4 text-lg text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
-          {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-gray-600">{p.storyText}</p>}
+          {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-gray-600">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <blockquote className="mt-8 rounded-xl border border-[var(--brand-primary)]/20 bg-white p-5 shadow-sm">
               <p className="text-sm italic leading-6 text-gray-900">&ldquo;{p.founderQuote}&rdquo;</p>
@@ -101,7 +102,7 @@ function StoryModern(p: Props) {
           {p.badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{p.badgeText}</p>}
           <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{p.headline}</h2>
           {p.subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
-          {p.storyText && <p className="mt-6 whitespace-pre-line font-light leading-7 text-gray-600">{p.storyText}</p>}
+          {p.storyText && <p className="mt-6 whitespace-pre-line font-light leading-7 text-gray-600">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <blockquote className="mt-8 border-l border-black/20 pl-5">
               <p className="text-sm italic font-light leading-6 text-gray-900">&ldquo;{p.founderQuote}&rdquo;</p>
@@ -160,7 +161,7 @@ function StoryBold(p: Props) {
           {p.badgeText && <p className="inline-block bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-brand-primary">{p.badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-gray-900">{p.headline}</h2>
           {p.subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
-          {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-gray-600">{p.storyText}</p>}
+          {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-gray-600">{plain(p.storyText)}</p>}
           {p.founderQuote && (
             <div className="mt-8 border-l-4 border-[var(--brand-primary)] bg-black/5 p-5">
               <p className="text-sm italic font-bold text-gray-900">&ldquo;{p.founderQuote}&rdquo;</p>

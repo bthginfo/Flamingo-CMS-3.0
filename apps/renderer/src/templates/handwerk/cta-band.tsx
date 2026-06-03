@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -19,9 +20,9 @@ export function CtaBandSection({ data, styleVariant }: Props) {
     accentColor: undefined as string | undefined,
   };
 
-  if (styleVariant === 'modern') return <CtaModern headline={headline} subline={subline} badgeText={badgeText} cta={cta} colors={colors} />;
-  if (styleVariant === 'bold') return <CtaBold headline={headline} subline={subline} badgeText={badgeText} cta={cta} colors={colors} />;
-  return <CtaClassic headline={headline} subline={subline} badgeText={badgeText} cta={cta} colors={colors} />;
+  if (styleVariant === 'modern') return <CtaModern headline={headline} subline={plain(subline)} badgeText={badgeText} cta={cta} colors={colors} />;
+  if (styleVariant === 'bold') return <CtaBold headline={headline} subline={plain(subline)} badgeText={badgeText} cta={cta} colors={colors} />;
+  return <CtaClassic headline={headline} subline={plain(subline)} badgeText={badgeText} cta={cta} colors={colors} />;
 }
 
 type ColorOverrides = { bgColor?: string; textColor?: string; accentColor?: string };

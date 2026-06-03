@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { TrendingUp, Home, MapPin } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Stat = { label: string; value: string; trend?: string };
 
@@ -26,7 +27,7 @@ export function MarketReportSection({ data }: Props) {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-14">
           <span className="text-amber-500 text-sm font-semibold uppercase tracking-wider">{region}</span>
           <h2 className="text-3xl md:text-4xl font-bold mt-2">{headline}</h2>
-          {subline && <p className="text-lg text-white/70 mt-4 max-w-2xl">{subline}</p>}
+          {subline && <p className="text-lg text-white/70 mt-4 max-w-2xl">{plain(subline)}</p>}
         </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -56,7 +57,7 @@ export function MarketReportSection({ data }: Props) {
             transition={{ delay: 0.5 }}
             className="text-white/60 mt-10 max-w-3xl leading-relaxed"
           >
-            {description}
+            {plain(description)}
           </motion.p>
         )}
       </div>

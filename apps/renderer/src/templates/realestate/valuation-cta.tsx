@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Home, ArrowRight } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -43,7 +44,7 @@ export function ValuationCtaSection({ data }: Props) {
             Immobilienbewertung
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">{headline}</h2>
-          <p className="text-lg text-white/70 mt-5 max-w-2xl mx-auto">{subline}</p>
+          <p className="text-lg text-white/70 mt-5 max-w-2xl mx-auto">{plain(subline)}</p>
 
           {stats.length > 0 && (
             <div className="flex flex-wrap justify-center gap-8 mt-10">

@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { ShoppingBag } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Product = {
   image?: string;
@@ -30,7 +31,7 @@ export function ProductShowcaseSection({ data }: Props) {
       {(headline || subline) && (
         <div className="text-center mb-10">
           {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{subline}</p>}
+          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{plain(subline)}</p>}
         </div>
       )}
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${colClass} gap-6`}>
@@ -61,7 +62,7 @@ export function ProductShowcaseSection({ data }: Props) {
               </div>
               <div className="p-5">
                 <h3 className="font-display font-semibold text-lg text-[var(--style-text-primary,#0f172a)] group-hover:text-[var(--brand-primary,#2563eb)] transition-colors">{item.title}</h3>
-                {item.description && <p className="mt-1.5 text-sm text-[var(--style-text-secondary,#64748b)] line-clamp-2">{item.description}</p>}
+                {item.description && <p className="mt-1.5 text-sm text-[var(--style-text-secondary,#64748b)] line-clamp-2">{plain(item.description)}</p>}
                 {item.price && <p className="mt-3 text-lg font-bold text-[var(--brand-primary,#2563eb)]">{item.price}</p>}
               </div>
             </a>

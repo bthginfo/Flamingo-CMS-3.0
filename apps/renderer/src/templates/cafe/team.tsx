@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 type TeamMember = { name: string; role: string; image?: string; bio?: string };
@@ -14,9 +15,9 @@ export function CafeTeamSection({ data, styleVariant }: Props) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-60px' });
 
-  if (styleVariant === 'modern') return <Modern headline={headline} subline={subline} members={members} ref={ref} inView={inView} />;
-  if (styleVariant === 'bold') return <Bold headline={headline} subline={subline} members={members} ref={ref} inView={inView} />;
-  return <Classic headline={headline} subline={subline} members={members} ref={ref} inView={inView} />;
+  if (styleVariant === 'modern') return <Modern headline={headline} subline={plain(subline)} members={members} ref={ref} inView={inView} />;
+  if (styleVariant === 'bold') return <Bold headline={headline} subline={plain(subline)} members={members} ref={ref} inView={inView} />;
+  return <Classic headline={headline} subline={plain(subline)} members={members} ref={ref} inView={inView} />;
 }
 
 type TProps = { headline: string; subline: string; members: TeamMember[]; ref: React.RefObject<HTMLDivElement | null>; inView: boolean };
@@ -26,7 +27,7 @@ function Classic({ headline, subline, members, ref, inView }: TProps) {
     <div ref={ref} className="py-16 md:py-24">
       <motion.div initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-14">
         <h2 className="section-headline">{headline}</h2>
-        {subline && <p className="section-subline">{subline}</p>}
+        {subline && <p className="section-subline">{plain(subline)}</p>}
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
@@ -44,7 +45,7 @@ function Classic({ headline, subline, members, ref, inView }: TProps) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               {m.bio && (
                 <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                  <p className="text-white/90 text-sm leading-relaxed">{m.bio}</p>
+                  <p className="text-white/90 text-sm leading-relaxed">{plain(m.bio)}</p>
                 </div>
               )}
             </div>
@@ -65,7 +66,7 @@ function Modern({ headline, subline, members, ref, inView }: TProps) {
       <motion.div initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="mb-14">
         <div className="flex items-center gap-3 text-xs text-stone-400 uppercase tracking-widest mb-3"><span className="w-8 h-px bg-stone-300" />Team</div>
         <h2 className="text-3xl md:text-4xl font-light text-stone-900 tracking-tight">{headline}</h2>
-        {subline && <p className="text-stone-400 mt-3 text-lg">{subline}</p>}
+        {subline && <p className="text-stone-400 mt-3 text-lg">{plain(subline)}</p>}
       </motion.div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
@@ -81,7 +82,7 @@ function Modern({ headline, subline, members, ref, inView }: TProps) {
             </div>
             <h4 className="font-medium text-stone-900 text-sm">{m.name}</h4>
             <p className="text-xs text-stone-400 mt-0.5">{m.role}</p>
-            {m.bio && <p className="text-xs text-stone-500 mt-1.5 leading-relaxed">{m.bio}</p>}
+            {m.bio && <p className="text-xs text-stone-500 mt-1.5 leading-relaxed">{plain(m.bio)}</p>}
           </motion.div>
         ))}
       </div>
@@ -94,7 +95,7 @@ function Bold({ headline, subline, members, ref, inView }: TProps) {
     <div ref={ref} className="py-16 md:py-24">
       <motion.div initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-14">
         <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-wider">{headline}</h2>
-        {subline && <p className="text-stone-400 mt-3">{subline}</p>}
+        {subline && <p className="text-stone-400 mt-3">{plain(subline)}</p>}
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -110,7 +111,7 @@ function Bold({ headline, subline, members, ref, inView }: TProps) {
             <div className="absolute bottom-0 left-0 right-0 p-5">
               <h4 className="font-bold text-white text-lg">{m.name}</h4>
               <p className="text-amber-400 text-sm font-medium">{m.role}</p>
-              {m.bio && <p className="text-white/70 text-xs mt-1.5 leading-relaxed">{m.bio}</p>}
+              {m.bio && <p className="text-white/70 text-xs mt-1.5 leading-relaxed">{plain(m.bio)}</p>}
             </div>
           </motion.div>
         ))}

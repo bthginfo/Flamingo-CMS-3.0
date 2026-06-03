@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { CheckCircle } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 type ServiceItem = { title: string; text: string; image?: string; icon?: string; mediaType?: 'icon' | 'image'; features?: string[]; ctaLabel?: string; ctaHref?: string };
@@ -15,9 +16,9 @@ export function ServiceDetailSection({ data, styleVariant }: Props) {
   const badgeText = (data.badgeText as string) || '';
   const items = (data.items as ServiceItem[]) || [];
 
-  if (styleVariant === 'modern') return <ServiceModern headline={headline} subline={subline} badgeText={badgeText} items={items} />;
-  if (styleVariant === 'bold') return <ServiceBold headline={headline} subline={subline} badgeText={badgeText} items={items} />;
-  return <ServiceClassic headline={headline} subline={subline} badgeText={badgeText} items={items} />;
+  if (styleVariant === 'modern') return <ServiceModern headline={headline} subline={plain(subline)} badgeText={badgeText} items={items} />;
+  if (styleVariant === 'bold') return <ServiceBold headline={headline} subline={plain(subline)} badgeText={badgeText} items={items} />;
+  return <ServiceClassic headline={headline} subline={plain(subline)} badgeText={badgeText} items={items} />;
 }
 
 type SProps = { headline: string; subline: string; badgeText: string; items: ServiceItem[] };

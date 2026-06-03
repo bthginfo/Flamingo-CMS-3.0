@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import { plain } from '@/lib/strip-html';
 
 type Step = { kicker?: string; title: string; text?: string; image?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -19,7 +20,7 @@ export function ScrollStorySection({ data }: Props) {
     <div ref={ref} className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
       <div className="lg:sticky lg:top-28 lg:h-fit">
         {headline && <h2 className="section-headline text-left">{headline}</h2>}
-        {subline && <p className="section-subline mx-0 text-left">{subline}</p>}
+        {subline && <p className="section-subline mx-0 text-left">{plain(subline)}</p>}
         <div className="mt-8 h-1 overflow-hidden rounded-full bg-[var(--style-card-bg,#e5e7eb)]">
           <motion.div className="h-full rounded-full bg-[var(--brand-primary)]" style={{ width: progress }} />
         </div>
@@ -31,7 +32,7 @@ export function ScrollStorySection({ data }: Props) {
             <div className="p-6 md:p-8">
               <div className="mb-3 text-xs font-bold uppercase text-[var(--brand-primary)]">{step.kicker || String(i + 1).padStart(2, '0')}</div>
               <h3 className="text-2xl font-bold text-[var(--style-heading-color,var(--style-text-primary,#111))]">{step.title}</h3>
-              {step.text && <p className="mt-3 leading-7 text-[var(--style-body-color,var(--style-text-secondary,#52525b))]">{step.text}</p>}
+              {step.text && <p className="mt-3 leading-7 text-[var(--style-body-color,var(--style-text-secondary,#52525b))]">{plain(step.text)}</p>}
             </div>
           </motion.article>
         ))}

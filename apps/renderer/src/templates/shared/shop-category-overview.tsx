@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { FolderOpen } from 'lucide-react';
 import Link from 'next/link';
+import { plain } from '@/lib/strip-html';
 
 type Category = { id: string; name: string; slug: string; description?: string | null; image?: string | null };
 
@@ -35,7 +36,7 @@ export function ShopCategoryOverviewSection({ data }: Props) {
     <section className="py-12 md:py-16">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold">{headline}</h2>
-        {subline && <p className="text-zinc-500 mt-2 max-w-lg mx-auto">{subline}</p>}
+        {subline && <p className="text-zinc-500 mt-2 max-w-lg mx-auto">{plain(subline)}</p>}
       </div>
 
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns >= 3 ? 'lg:grid-cols-3' : ''} ${columns >= 4 ? 'xl:grid-cols-4' : ''} gap-6`}>
@@ -53,7 +54,7 @@ export function ShopCategoryOverviewSection({ data }: Props) {
               </div>
               <div className="p-5 text-center">
                 <h3 className="font-semibold text-lg group-hover:text-zinc-600 transition">{cat.name}</h3>
-                {cat.description && <p className="text-sm text-zinc-500 mt-1 line-clamp-2">{cat.description}</p>}
+                {cat.description && <p className="text-sm text-zinc-500 mt-1 line-clamp-2">{plain(cat.description)}</p>}
               </div>
             </div>
           </Link>

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { baseHeader, SectionHeader, asList } from './shared';
 import type { SectionProps } from './types';
+import { plain } from '@/lib/strip-html';
 
 type InfoBlock = { title?: string; text?: string; icon?: string; items?: string[] };
 
@@ -12,9 +13,9 @@ export function VisitorInfoSection({ data, styleVariant }: SectionProps) {
   const introText = (data.introText as string) || '';
   const blocks = asList<InfoBlock>(data.blocks);
 
-  if (styleVariant === 'modern') return <Modern header={header} introText={introText} blocks={blocks} />;
-  if (styleVariant === 'bold') return <Bold header={header} introText={introText} blocks={blocks} />;
-  return <Classic header={header} introText={introText} blocks={blocks} />;
+  if (styleVariant === 'modern') return <Modern header={header} introText={plain(introText)} blocks={blocks} />;
+  if (styleVariant === 'bold') return <Bold header={header} introText={plain(introText)} blocks={blocks} />;
+  return <Classic header={header} introText={plain(introText)} blocks={blocks} />;
 }
 
 type Props = { header: { headline: string; subline: string; badgeText: string }; introText: string; blocks: InfoBlock[] };

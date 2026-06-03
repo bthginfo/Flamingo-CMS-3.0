@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { CalendarDays, Phone, CheckCircle, AlertCircle } from 'lucide-react';
 import { asButton, asList, type SectionProps } from './types';
+import { plain } from '@/lib/strip-html';
 
 type ReservationViewProps = {
   headline: string;
@@ -122,7 +123,7 @@ function ReservationClassic(props: ReservationViewProps) {
         {props.badgeText && <p className="inline-block rounded-full bg-brand-accent/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-accent">{props.badgeText}</p>}
         <h2 className="text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{props.headline}</h2>
         {props.subline && <div className="text-lg text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: props.subline }} />}
-        {props.introText && <p className="leading-7 text-gray-500">{props.introText}</p>}
+        {props.introText && <p className="leading-7 text-gray-500">{plain(props.introText)}</p>}
         <div className="flex flex-wrap gap-3">
           {props.externalBookingCta.label && <a href={props.externalBookingCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-brand-primary px-6 py-3 font-semibold text-white shadow-md"><CalendarDays size={17} />{props.externalBookingCta.label}</a>}
           {props.phoneCta.label && <a href={props.phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-black/10 px-6 py-3 font-semibold text-gray-900"><Phone size={17} />{props.phoneCta.label}</a>}
@@ -146,7 +147,7 @@ function ReservationModern(props: ReservationViewProps) {
         <h2 className="text-3xl font-light text-gray-900 sm:text-3xl md:text-5xl">{props.headline}</h2>
         <div className="h-px w-16 bg-brand-accent" />
         {props.subline && <div className="font-light leading-relaxed text-gray-500 rt-content" dangerouslySetInnerHTML={{ __html: props.subline }} />}
-        {props.introText && <p className="font-light leading-7 text-gray-500">{props.introText}</p>}
+        {props.introText && <p className="font-light leading-7 text-gray-500">{plain(props.introText)}</p>}
         <div className="flex flex-wrap gap-4">
           {props.externalBookingCta.label && <a href={props.externalBookingCta.href || '#'} className="inline-flex items-center gap-2 border-b-2 border-[#111827] pb-1 font-medium text-gray-900"><CalendarDays size={17} />{props.externalBookingCta.label}</a>}
           {props.phoneCta.label && <a href={props.phoneCta.href || '#'} className="inline-flex items-center gap-2 font-light text-gray-500"><Phone size={17} />{props.phoneCta.label}</a>}
@@ -171,7 +172,7 @@ function ReservationBold(props: ReservationViewProps) {
           <h2 className="text-3xl font-black uppercase sm:text-3xl md:text-5xl">{props.headline}</h2>
           <div className="h-1.5 w-20 bg-brand-accent" />
           {props.subline && <div className="text-lg text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: props.subline }} />}
-          {props.introText && <p className="leading-7 text-white/65">{props.introText}</p>}
+          {props.introText && <p className="leading-7 text-white/65">{plain(props.introText)}</p>}
           <div className="flex flex-wrap gap-3">
             {props.externalBookingCta.label && <a href={props.externalBookingCta.href || '#'} className="inline-flex items-center gap-2 rounded-none border-2 border-white bg-white px-6 py-3 font-black uppercase text-gray-900 shadow-[4px_4px_0_rgba(255,255,255,0.3)]"><CalendarDays size={17} />{props.externalBookingCta.label}</a>}
             {props.phoneCta.label && <a href={props.phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-none border-2 border-white/40 px-6 py-3 font-bold uppercase"><Phone size={17} />{props.phoneCta.label}</a>}

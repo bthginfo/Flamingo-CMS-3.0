@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -41,7 +42,7 @@ export function RealestateHeroSection({ data }: Props) {
           </h1>
           {subline && (
             <p className="text-lg md:text-xl text-white/80 mt-6 leading-relaxed">
-              {subline}
+              {plain(subline)}
             </p>
           )}
           <div className="flex flex-wrap gap-4 mt-10">

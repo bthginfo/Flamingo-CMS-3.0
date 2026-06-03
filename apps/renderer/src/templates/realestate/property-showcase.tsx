@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
+import { plain } from '@/lib/strip-html';
 
 type Property = {
   title: string;
@@ -30,7 +31,7 @@ export function PropertyShowcaseSection({ data }: Props) {
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
-          {subline && <p className="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">{subline}</p>}
+          {subline && <p className="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">{plain(subline)}</p>}
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

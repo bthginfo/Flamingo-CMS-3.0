@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useCart } from '@/components/shop/cart-context';
 import { ShoppingBag, Minus, Plus, ChevronLeft, ChevronRight, Check, ArrowLeft, Sparkles, Truck, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -215,7 +216,7 @@ export function ShopProductDetailSection({ data }: Props) {
       {product.description && (
         <div className="mt-12 pt-8 border-t border-zinc-100">
           <h2 className="text-lg font-semibold mb-4">Beschreibung</h2>
-          <div className="text-sm text-zinc-600 whitespace-pre-line leading-relaxed">{product.description}</div>
+          <div className="text-sm text-zinc-600 whitespace-pre-line leading-relaxed">{plain(product.description)}</div>
         </div>
       )}
     </section>

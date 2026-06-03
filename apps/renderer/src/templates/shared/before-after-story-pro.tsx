@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Point = { label: string; value?: string };
 type Cta = { label?: string; href?: string };
@@ -27,7 +28,7 @@ export function BeforeAfterStoryProSection({ data }: Props) {
           {[['Ausgangslage', problem], ['Lösung', solution], ['Ergebnis', result]].filter(([, text]) => text).map(([label, text], index) => (
             <motion.div key={label} initial={{ opacity: 0, x: -18 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[var(--style-border-color,rgba(0,0,0,0.08))] bg-[var(--style-card-bg,#fff)] p-5">
               <div className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--style-accent-color,var(--brand-primary))]">{label}</div>
-              <p className="mt-2 text-sm leading-7 text-[var(--style-body-color,#3f3f46)]">{text}</p>
+              <p className="mt-2 text-sm leading-7 text-[var(--style-body-color,#3f3f46)]">{plain(text)}</p>
             </motion.div>
           ))}
         </div>

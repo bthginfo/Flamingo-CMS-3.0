@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ArrowRight, BadgePercent, Check } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Cta = { label?: string; href?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -28,7 +29,7 @@ export function OfferCampaignStripSection({ data }: Props) {
           <div className="p-6 md:p-10">
             {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--style-accent-color,var(--brand-primary,#fff))]">{badge}</div>}
             {headline && <h2 className="text-3xl font-black leading-tight text-[#ffffff] md:text-5xl">{headline}</h2>}
-            {subline && <p className="mt-4 max-w-2xl text-base leading-7 text-[rgba(255,255,255,0.72)]">{subline}</p>}
+            {subline && <p className="mt-4 max-w-2xl text-base leading-7 text-[rgba(255,255,255,0.72)]">{plain(subline)}</p>}
             <div className="mt-6 grid gap-2 sm:grid-cols-2">
               {benefits.map((benefit, index) => (
                 <motion.div key={index} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.04 }} className="flex items-center gap-2 text-sm text-[rgba(255,255,255,0.78)]">

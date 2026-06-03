@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRight, Clock, Mail, MapPin, Navigation, Phone } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type LocationItem = {
   name?: string;
@@ -45,7 +46,7 @@ export function AdditionalLocationsSection({ data }: Props) {
             )}
             {headline && <h2 className="max-w-3xl text-4xl font-black leading-tight text-[var(--style-heading-color,var(--style-text-primary,#0f172a))] md:text-6xl">{headline}</h2>}
           </div>
-          {subline && <p className="max-w-2xl text-base leading-8 text-[var(--style-subheading-color,var(--style-text-secondary,#64748b))] md:text-lg">{subline}</p>}
+          {subline && <p className="max-w-2xl text-base leading-8 text-[var(--style-subheading-color,var(--style-text-secondary,#64748b))] md:text-lg">{plain(subline)}</p>}
         </div>
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">

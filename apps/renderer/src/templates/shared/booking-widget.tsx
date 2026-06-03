@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import { CalendarCheck, CheckCircle, ChevronLeft, ChevronRight, Clock3, Loader2, MapPin, Sparkles } from 'lucide-react';
 import type { SectionProps } from '../restaurant';
+import { plain } from '@/lib/strip-html';
 
 type BookingTimeModel = 'time_slot' | 'full_day' | 'date_range';
 
@@ -249,7 +250,7 @@ export function BookingWidgetSection({ data }: SectionProps) {
             <CalendarCheck size={15} /> {badge}
           </p>
           <h2 className="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, var(--booking-text-primary, #ffffff))' }}>{headline}</h2>
-          <p className="max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{subline}</p>
+          <p className="max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{plain(subline)}</p>
           <div className="rounded-2xl border p-4 text-sm" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.12))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)', color: 'var(--booking-muted-color, rgba(255,255,255,.7))' }}>
             {timeModel === 'full_day' && 'Diese Buchung blockiert einen ganzen Tag.'}
             {timeModel === 'date_range' && 'Diese Buchung prüft einen Datumsbereich, z.B. für Zimmer, Locations oder mehrtägige Leistungen.'}
@@ -375,7 +376,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
         <div>
           <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}><Clock3 size={15} /> {badge}</p>
           <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{headline}</h2>
-          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{subline}</p>
+          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{plain(subline)}</p>
           <div className="mt-6 grid gap-3 text-sm sm:grid-cols-3">
             {['Datum wählen', 'Slots prüfen', config?.mode === 'instant' ? 'Direkt buchen' : 'Anfrage senden'].map((item, index) => (
               <div key={item} className="rounded-2xl border p-3" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)', color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>
@@ -501,7 +502,7 @@ export function BookingDateRangeSection({ data }: SectionProps) {
         <div>
           <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}><CalendarCheck size={15} /> {badge}</p>
           <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{headline}</h2>
-          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{subline}</p>
+          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{plain(subline)}</p>
           <div className="mt-6 rounded-2xl border p-4" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)' }}>
             <p className="text-xs font-bold uppercase tracking-[0.16em]" style={{ color: 'var(--booking-muted-color, rgba(255,255,255,.56))' }}>Ausgewählter Zeitraum</p>
             <p className="mt-2 text-2xl font-black" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{formatInputDate(startDate)} - {formatInputDate(endDate)}</p>

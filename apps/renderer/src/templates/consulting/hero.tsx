@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -48,7 +49,7 @@ export function ConsultingHeroSection({ data }: Props) {
           </h1>
           {subline && (
             <p className="text-lg md:text-xl text-white/80 mt-6 max-w-2xl mx-auto leading-relaxed">
-              {subline}
+              {plain(subline)}
             </p>
           )}
           <div className="flex flex-wrap justify-center gap-4 mt-10">

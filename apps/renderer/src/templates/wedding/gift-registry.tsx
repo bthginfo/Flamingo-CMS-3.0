@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Gift, ExternalLink } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -29,7 +30,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
                 <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-baseline justify-between border-t border-gray-200 pt-4">
                   <div>
                     <h3 className="font-light text-gray-900">{item.title}</h3>
-                    {item.description && <p className="text-gray-400 text-sm mt-1">{item.description}</p>}
+                    {item.description && <p className="text-gray-400 text-sm mt-1">{plain(item.description)}</p>}
                   </div>
                   {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-900 border-b border-gray-900 hover:opacity-70">Link →</a>}
                 </motion.div>
@@ -66,7 +67,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
                   <Gift className="w-5 h-5 text-brand-accent shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <h3 className="font-bold text-gray-900">{item.title}</h3>
-                    {item.description && <p className="text-gray-500 text-sm mt-1">{item.description}</p>}
+                    {item.description && <p className="text-gray-500 text-sm mt-1">{plain(item.description)}</p>}
                     {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand-accent text-sm font-bold mt-2 hover:opacity-70"><ExternalLink className="w-3 h-3" />Ansehen</a>}
                   </div>
                 </motion.div>

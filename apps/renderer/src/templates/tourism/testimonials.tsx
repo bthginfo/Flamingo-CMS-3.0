@@ -32,7 +32,7 @@ function Stars({ count }: { count: number }) {
 function Classic({ headline, subline, badgeText, ratingValue, ratingCount, items, ctaPrimary }: Props) {
   return (
     <div>
-      <SectionHeader headline={headline} subline={subline} badgeText={badgeText} />
+      <SectionHeader headline={headline} subline={plain(subline)} badgeText={badgeText} />
       {(ratingValue || ratingCount) && <p className="mb-6 text-sm text-gray-600">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
@@ -54,7 +54,7 @@ function Classic({ headline, subline, badgeText, ratingValue, ratingCount, items
 function Mod({ headline, subline, badgeText, ratingValue, ratingCount, items, ctaPrimary }: Props) {
   return (
     <div>
-      <SectionHeader headline={headline} subline={subline} badgeText={badgeText} />
+      <SectionHeader headline={headline} subline={plain(subline)} badgeText={badgeText} />
       {(ratingValue || ratingCount) && <p className="mb-8 text-sm font-light text-gray-600">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       <div className="grid gap-8 md:grid-cols-3">
         {items.map((item, i) => (
@@ -74,7 +74,7 @@ function Mod({ headline, subline, badgeText, ratingValue, ratingCount, items, ct
 function Bold({ headline, subline, badgeText, ratingValue, ratingCount, items, ctaPrimary }: Props) {
   return (
     <div>
-      <SectionHeader headline={headline} subline={subline} badgeText={badgeText} />
+      <SectionHeader headline={headline} subline={plain(subline)} badgeText={badgeText} />
       {(ratingValue || ratingCount) && <p className="mb-6 text-sm font-bold uppercase text-gray-600">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (

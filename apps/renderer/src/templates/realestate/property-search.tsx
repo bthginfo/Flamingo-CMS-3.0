@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Search, LayoutGrid, Building2, Home, Landmark, ArrowRight } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Category = { label: string; href?: string; icon?: string; count?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -32,7 +33,7 @@ export function PropertySearchSection({ data }: Props) {
       <div className="max-w-4xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{headline}</h2>
-          {subline && <p className="mt-2 text-gray-600">{subline}</p>}
+          {subline && <p className="mt-2 text-gray-600">{plain(subline)}</p>}
         </motion.div>
 
         <motion.div

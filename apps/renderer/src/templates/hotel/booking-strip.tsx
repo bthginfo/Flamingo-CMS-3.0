@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { CalendarDays, Star, ExternalLink } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps } from './types';
+import { plain } from '@/lib/strip-html';
 
 type TrustItem = { icon?: string; text?: string };
 
@@ -41,7 +42,7 @@ function BookingClassic({ headline, subline, badgeText, submitCta, secondaryCta,
           {trustItems.map((item, i) => (
             <span key={i} className="inline-flex items-center gap-2 text-sm text-gray-600">
               <DynamicIcon name={item.icon || 'check'} size={16} className="text-brand-primary" />
-              {item.text}
+              {plain(item.text)}
             </span>
           ))}
         </div>
@@ -67,7 +68,7 @@ function BookingModern({ headline, subline, badgeText, submitCta, secondaryCta, 
           {trustItems.map((item, i) => (
             <span key={i} className="inline-flex items-center gap-2 text-sm font-light text-gray-600">
               <DynamicIcon name={item.icon || 'check'} size={16} className="text-brand-primary" />
-              {item.text}
+              {plain(item.text)}
             </span>
           ))}
         </div>
@@ -93,7 +94,7 @@ function BookingBold({ headline, subline, badgeText, submitCta, secondaryCta, bo
           {trustItems.map((item, i) => (
             <span key={i} className="inline-flex items-center gap-2 text-sm font-bold text-gray-700">
               <DynamicIcon name={item.icon || 'check'} size={16} className="text-brand-accent" />
-              {item.text}
+              {plain(item.text)}
             </span>
           ))}
         </div>

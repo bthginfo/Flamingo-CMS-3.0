@@ -2,6 +2,7 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
+import { plain } from '@/lib/strip-html';
 
 type Highlight = { title: string; text: string };
 
@@ -34,7 +35,7 @@ export function BrandShowroomSection({ data }: Props) {
       >
         <div className="max-w-5xl">
           {headline && <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-3">{headline}</h2>}
-          {subline && <p className="text-white/80 text-lg md:text-xl max-w-2xl mb-8">{subline}</p>}
+          {subline && <p className="text-white/80 text-lg md:text-xl max-w-2xl mb-8">{plain(subline)}</p>}
 
           {highlights.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -47,7 +48,7 @@ export function BrandShowroomSection({ data }: Props) {
                   className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4"
                 >
                   <h4 className="font-semibold text-white text-sm">{h.title}</h4>
-                  <p className="text-white/70 text-xs mt-1">{h.text}</p>
+                  <p className="text-white/70 text-xs mt-1">{plain(h.text)}</p>
                 </motion.div>
               ))}
             </div>

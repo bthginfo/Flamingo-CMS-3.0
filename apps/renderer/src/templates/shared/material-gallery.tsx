@@ -2,6 +2,7 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState, useMemo } from 'react';
+import { plain } from '@/lib/strip-html';
 
 type MaterialItem = {
   image?: string;
@@ -33,7 +34,7 @@ export function MaterialGallerySection({ data }: Props) {
       {(headline || subline) && (
         <div className="text-center mb-8">
           {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{subline}</p>}
+          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{plain(subline)}</p>}
         </div>
       )}
 

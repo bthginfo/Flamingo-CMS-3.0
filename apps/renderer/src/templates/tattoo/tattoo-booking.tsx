@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -32,7 +33,7 @@ export function TattooBookingSection({ data }: Props) {
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-10">
           <h2 className="text-3xl sm:text-4xl font-bold text-white">{headline}</h2>
-          {subline && <p className="mt-3 text-white/50">{subline}</p>}
+          {subline && <p className="mt-3 text-white/50">{plain(subline)}</p>}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">

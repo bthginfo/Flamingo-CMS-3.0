@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { Star } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Testimonial = { text: string; name: string; source?: string; stars?: number; image?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -29,7 +30,7 @@ export function CafeTestimonialsSection({ data }: Props) {
               {t.stars && (
                 <div className="flex gap-0.5 mb-3">{Array.from({ length: t.stars }).map((_, j) => <Star key={j} size={14} className="fill-amber-400 text-amber-400" />)}</div>
               )}
-              <p className="text-gray-700 text-sm leading-relaxed italic">&ldquo;{t.text}&rdquo;</p>
+              <p className="text-gray-700 text-sm leading-relaxed italic">&ldquo;{plain(t.text)}&rdquo;</p>
               <div className="flex items-center gap-3 mt-4 pt-3 border-t border-stone-200">
                 {t.image && <Image src={t.image} alt={t.name} width={32} height={32} className="rounded-full object-cover" />}
                 <div>

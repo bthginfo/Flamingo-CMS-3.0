@@ -2,6 +2,7 @@
 
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type TemplateCard = { title?: string; text?: string; image?: string; href?: string; label?: string };
 type Cta = { label?: string; href?: string };
@@ -25,7 +26,7 @@ export function TemplateAdvantageSection({ data }: Props) {
             {headline && <h2 className="max-w-3xl text-4xl font-black leading-none text-[var(--style-heading-color,#14111a)] md:text-6xl">{headline}</h2>}
           </div>
           <div>
-            {subline && <p className="text-lg leading-8 text-[var(--style-subheading-color,#585164)]">{subline}</p>}
+            {subline && <p className="text-lg leading-8 text-[var(--style-subheading-color,#585164)]">{plain(subline)}</p>}
             {bullets.length > 0 && (
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {bullets.map((item, index) => (
@@ -57,7 +58,7 @@ export function TemplateAdvantageSection({ data }: Props) {
               </div>
               <div className="p-5">
                 {card.title && <h3 className="text-2xl font-black leading-tight text-[var(--style-heading-color,#14111a)]">{card.title}</h3>}
-                {card.text && <p className="mt-3 text-sm leading-6 text-[var(--style-text-muted,#6b6472)]">{card.text}</p>}
+                {card.text && <p className="mt-3 text-sm leading-6 text-[var(--style-text-muted,#6b6472)]">{plain(card.text)}</p>}
               </div>
             </motion.a>
           ))}
