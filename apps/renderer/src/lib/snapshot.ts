@@ -1,6 +1,6 @@
 import { getDb } from './db';
-import { tenants, tenantDomains, pages, pageSections, collections, collectionItems, publishedSnapshots } from '@flamingo/db';
-import { eq, and, asc, desc, notInArray } from 'drizzle-orm';
+import { tenants, tenantDomains, pages, pageSections, collections, collectionItems } from '@flamingo/db';
+import { eq, and, asc, notInArray } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { unstable_cache } from 'next/cache';
 
@@ -86,20 +86,7 @@ export async function resolveTenant(candidateSlug?: string): Promise<string | nu
 /** Get live data for the tenant (cached for public frontend, invalidated on publish). */
 export async function getActiveSnapshot(tenantId: string): Promise<Snapshot | null> {
   const cached = unstable_cache(
-    async () => {
-      const db = getDb();
-      const [active] = await db
-        .select({ snapshot: publishedSnapshots.snapshot })
-        .from(publishedSnapshots)
-        .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)))
-        .orderBy(desc(publishedSnapshots.version), desc(publishedSnapshots.createdAt))
-        .limit(1);
-
-      if (active?.snapshot) return active.snapshot as Snapshot;
-
-      // Migration fallback: older tenants can still render until their first publish creates a snapshot.
-      return getDraftSnapshot(tenantId);
-    },
+    async () => getDraftSnapshot(tenantId),
     [`snapshot-${tenantId}`],
     { revalidate: 60, tags: [`tenant-${tenantId}`] }
   );
@@ -162,30 +149,44 @@ export async function getDraftSnapshot(tenantId: string): Promise<Snapshot | nul
 /** Resolve demo tenant by industry (isDemo=true). Excludes special slug-mapped tenants. */
 export async function resolveDemoTenant(industry: string, urlKey?: string): Promise<string | null> {
   const db = getDb();
-  const [tenant] = await db
-    .select({ id: tenants.id })
-    .from(tenants)
-    .where(and(
-      eq(tenants.industry, industry as typeof tenants.industry.enumValues[number]),
-      eq(tenants.isDemo, true),
-      eq(tenants.status, 'active'),
-      notInArray(tenants.slug, ['demo-showcase', 'demo-shop']),
-    ))
-    .orderBy(asc(tenants.createdAt))
-    .limit(1);
-  if (tenant) return tenant.id;
 
-  // Fallback: resolve by slug `demo-{urlKey}` without requiring isDemo flag
+  // Step 1: try industry+isDemo lookup. Wrapped because the industry string may not
+  // match the DB enum (e.g. new URL keys without a corresponding enum value), which
+  // would throw at the DB layer and skip the slug fallback below.
+  try {
+    const [tenant] = await db
+      .select({ id: tenants.id })
+      .from(tenants)
+      .where(and(
+        eq(tenants.industry, industry as typeof tenants.industry.enumValues[number]),
+        eq(tenants.isDemo, true),
+        eq(tenants.status, 'active'),
+        notInArray(tenants.slug, ['demo-showcase', 'demo-shop']),
+      ))
+      .orderBy(asc(tenants.createdAt))
+      .limit(1);
+    if (tenant) return tenant.id;
+  } catch (err) {
+    // Invalid enum or DB error — fall through to slug-based lookup.
+    console.warn('[resolveDemoTenant] industry lookup failed for', industry, err instanceof Error ? err.message : err);
+  }
+
+  // Step 2: slug fallback `demo-{urlKey}` (or `demo-{industry}`), without isDemo requirement.
   const slugKey = urlKey || industry;
-  const [bySlug] = await db
-    .select({ id: tenants.id })
-    .from(tenants)
-    .where(and(
-      eq(tenants.slug, `demo-${slugKey}`),
-      eq(tenants.status, 'active'),
-    ))
-    .limit(1);
-  return bySlug?.id ?? null;
+  try {
+    const [bySlug] = await db
+      .select({ id: tenants.id })
+      .from(tenants)
+      .where(and(
+        eq(tenants.slug, `demo-${slugKey}`),
+        eq(tenants.status, 'active'),
+      ))
+      .limit(1);
+    return bySlug?.id ?? null;
+  } catch (err) {
+    console.warn('[resolveDemoTenant] slug lookup failed for demo-', slugKey, err instanceof Error ? err.message : err);
+    return null;
+  }
 }
 
 export async function resolveDemoTenantBySlug(slug: string): Promise<string | null> {
