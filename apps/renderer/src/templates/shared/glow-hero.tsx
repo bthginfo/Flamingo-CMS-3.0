@@ -35,7 +35,7 @@ export function GlowHeroSection({ data }: Props) {
   if (!headline) return null;
 
   return (
-    <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-[var(--style-section-bg,#07070a)] text-white">
+    <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-[var(--style-section-bg,#07070a)] text-[var(--style-body-color,#ffffff)]">
       {image && <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70" style={{ objectPosition: imagePosition }} />}
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
       <div
@@ -51,15 +51,15 @@ export function GlowHeroSection({ data }: Props) {
           {subline && <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--style-subheading-color,rgba(255,255,255,0.76))] md:text-xl">{plain(subline)}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
             {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-btn-bg,#ffffff)] px-6 py-3 text-sm font-bold text-[var(--brand-btn-text,#111111)]">{primaryCta.label}<ArrowRight size={16} /></a>}
-            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-bold text-white backdrop-blur">{secondaryCta.label}</a>}
+            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--style-border-color,rgba(255,255,255,0.20))] bg-[var(--style-card-bg,rgba(255,255,255,0.10))] px-6 py-3 text-sm font-bold text-[var(--style-text-primary,#ffffff)] backdrop-blur">{secondaryCta.label}</a>}
           </div>
         </div>
         {facts.length > 0 && (
-          <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-white/12 bg-white/12 md:grid-cols-3">
+          <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-[var(--style-border-color,rgba(255,255,255,0.12))] bg-[var(--style-border-color,rgba(255,255,255,0.12))] md:grid-cols-3">
             {facts.map((fact, index) => (
-              <div key={index} className="bg-black/30 p-5 backdrop-blur">
+              <div key={index} className="bg-[var(--style-card-bg,rgba(0,0,0,0.30))] p-5 backdrop-blur">
                 {fact.value && <div className="text-3xl font-black text-[var(--style-accent-color,var(--brand-primary,#f24171))]">{fact.value}</div>}
-                {fact.label && <div className="mt-1 text-sm text-white/68">{fact.label}</div>}
+                {fact.label && <div className="mt-1 text-sm text-[var(--style-text-secondary,rgba(255,255,255,0.68))]">{fact.label}</div>}
               </div>
             ))}
           </div>

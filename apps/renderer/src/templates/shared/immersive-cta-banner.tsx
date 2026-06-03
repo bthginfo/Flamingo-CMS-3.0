@@ -39,7 +39,7 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
           {subline && <p className="mt-6 max-w-2xl text-base leading-8 text-[var(--style-subheading-color,rgba(255,255,255,0.78))] md:text-xl">{plain(subline)}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
             {primaryCta.label && <a href={primaryCta.href || '#'} className="btn-primary inline-flex items-center gap-2 rounded-full bg-[var(--brand-btn-bg,var(--brand-primary,#fff))] px-6 py-3 text-sm font-bold text-[var(--brand-btn-text,#111)] shadow-2xl transition hover:brightness-110">{primaryCta.label}<ArrowRight size={16} /></a>}
-            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="btn-secondary inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-white/20">{secondaryCta.label}</a>}
+            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="btn-secondary inline-flex items-center gap-2 rounded-full border border-[var(--style-border-color,rgba(255,255,255,0.25))] bg-[var(--style-card-bg,rgba(255,255,255,0.10))] px-6 py-3 text-sm font-bold text-[var(--style-text-primary,#ffffff)] backdrop-blur transition hover:brightness-110">{secondaryCta.label}</a>}
           </div>
         </div>
 
@@ -52,7 +52,7 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08 }}
-                className="rounded-2xl border border-white/14 bg-black/28 p-5 backdrop-blur-xl"
+                className="rounded-2xl border border-[var(--style-border-color,rgba(255,255,255,0.14))] bg-[var(--style-card-bg,rgba(0,0,0,0.28))] p-5 backdrop-blur-xl"
               >
                 <div className="text-3xl font-black text-[var(--style-accent-color,#fff)]">{metric.value}</div>
                 <div className="mt-1 text-sm text-[var(--style-body-color,rgba(255,255,255,0.68))]">{metric.label}</div>

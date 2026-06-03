@@ -66,14 +66,14 @@ export function CinematicHeroSection({ data }: Props) {
 
         <div className="mt-9 flex flex-wrap items-center gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-btn-bg,var(--brand-primary,#fff))] px-6 py-3 text-sm font-bold text-[var(--brand-btn-text,#111)] shadow-xl transition hover:brightness-110">{primaryCta.label}<ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-sm font-bold text-white backdrop-blur transition hover:bg-white/18"><Play size={15} />{secondaryCta.label}</a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--style-border-color,rgba(255,255,255,0.25))] bg-[var(--style-card-bg,rgba(255,255,255,0.10))] px-6 py-3 text-sm font-bold text-[var(--style-text-primary,#ffffff)] backdrop-blur transition hover:brightness-110"><Play size={15} />{secondaryCta.label}</a>}
         </div>
 
         {facts.length > 0 && (
-          <div className="mt-12 grid w-full max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 backdrop-blur md:grid-cols-4">
+          <div className="mt-12 grid w-full max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[var(--style-border-color,rgba(255,255,255,0.10))] bg-[var(--style-border-color,rgba(255,255,255,0.10))] backdrop-blur md:grid-cols-4">
             {facts.map((fact, i) => (
-              <div key={i} className="bg-black/22 p-4">
-                <div className="text-2xl font-black">{fact.value}</div>
+              <div key={i} className="bg-[var(--style-card-bg,rgba(0,0,0,0.22))] p-4">
+                <div className="text-2xl font-black text-[var(--style-text-primary,#ffffff)]">{fact.value}</div>
                 <div className="mt-1 text-xs text-[var(--style-text-muted,rgba(255,255,255,0.62))]">{fact.label}</div>
               </div>
             ))}
