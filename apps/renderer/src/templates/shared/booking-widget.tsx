@@ -34,6 +34,16 @@ const PREVIEW_CONFIG: BookingConfig = {
   ],
 };
 
+const FORM_CONTROL_CLASS = 'rounded-xl border border-[var(--booking-border-color,rgba(9,9,11,.16))] bg-[var(--booking-card-bg,#fff)] px-4 py-3 text-sm text-[var(--booking-text-secondary,#09090b)] outline-none placeholder:text-[var(--booking-muted-color,rgba(9,9,11,.45))] focus:border-[var(--brand-btn-bg,var(--booking-accent-color,#09090b))]';
+const FORM_LABEL_CLASS = 'grid gap-1 text-sm font-semibold text-[var(--booking-text-secondary,#09090b)]';
+const FORM_MUTED_CLASS = 'text-[var(--booking-muted-color,rgba(9,9,11,.55))]';
+const BOOKING_NOTICE_CLASS = 'rounded-2xl p-5 text-sm';
+const BOOKING_NOTICE_STYLE = {
+  background: 'var(--booking-badge-bg, color-mix(in srgb, var(--booking-accent-color, #f43f5e) 12%, #ffffff))',
+  color: 'var(--booking-badge-text, var(--booking-text-secondary, #09090b))',
+};
+const BOOKING_ERROR_STYLE = { color: 'var(--booking-accent-color, #f43f5e)' };
+
 function normalizeConfig(value: Partial<BookingConfig> | null | undefined): BookingConfig {
   return {
     ...PREVIEW_CONFIG,
@@ -131,15 +141,15 @@ function IntakeQuestionFields({ service }: { service?: BookingConfig['services']
   return (
     <div className="grid gap-3">
       {questions.map((question) => (
-        <label key={question.id} className="grid gap-1 text-sm font-semibold text-zinc-700">
+        <label key={question.id} className={FORM_LABEL_CLASS}>
           {question.label}{question.required ? ' *' : ''}
           {Array.isArray(question.options) && question.options.length ? (
-            <select name={`intake_${question.id}`} required={question.required} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm font-normal outline-none focus:border-zinc-900">
+            <select name={`intake_${question.id}`} required={question.required} className={`${FORM_CONTROL_CLASS} font-normal`}>
               <option value="">Bitte wählen</option>
               {question.options.map(option => <option key={option} value={option}>{option}</option>)}
             </select>
           ) : (
-            <input name={`intake_${question.id}`} required={question.required} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm font-normal outline-none focus:border-zinc-900" />
+            <input name={`intake_${question.id}`} required={question.required} className={`${FORM_CONTROL_CLASS} font-normal`} />
           )}
         </label>
       ))}
@@ -260,50 +270,50 @@ export function BookingWidgetSection({ data }: SectionProps) {
 
         <div className="rounded-[var(--style-card-radius,1.5rem)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.1))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }}>
           {config && !config.enabled ? (
-            <div className="rounded-2xl bg-amber-50 p-5 text-sm text-amber-800">Booking ist für diese Website noch nicht aktiviert.</div>
+            <div className={BOOKING_NOTICE_CLASS} style={BOOKING_NOTICE_STYLE}>Booking ist für diese Website noch nicht aktiviert.</div>
           ) : status === 'success' ? (
             <div className="flex min-h-72 flex-col items-center justify-center gap-3 text-center">
-              <CheckCircle className="text-emerald-500" size={44} />
+              <CheckCircle style={{ color: 'var(--booking-accent-color, #10b981)' }} size={44} />
               <p className="text-xl font-bold">{config?.mode === 'instant' ? 'Buchung eingegangen' : 'Anfrage gesendet'}</p>
-              <p className="text-sm text-zinc-500">Sie erhalten in Kürze eine Bestätigung per E-Mail.</p>
+              <p className={`text-sm ${FORM_MUTED_CLASS}`}>Sie erhalten in Kürze eine Bestätigung per E-Mail.</p>
             </div>
           ) : (
             <form onSubmit={submit} className="grid gap-3">
               <div className="grid gap-3 sm:grid-cols-2">
-                <input name="customerName" required placeholder="Name *" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
-                <input name="customerEmail" type="email" placeholder="E-Mail" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="customerName" required placeholder="Name *" className={FORM_CONTROL_CLASS} />
+                <input name="customerEmail" type="email" placeholder="E-Mail" className={FORM_CONTROL_CLASS} />
               </div>
-              <input name="customerPhone" type="tel" placeholder="Telefon" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+              <input name="customerPhone" type="tel" placeholder="Telefon" className={FORM_CONTROL_CLASS} />
               <div className="grid gap-3 sm:grid-cols-2">
-                <select name="serviceId" value={selectedServiceId} onChange={(event) => { setSelectedServiceId(event.target.value); setSelectedResourceId(''); }} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
+                <select name="serviceId" value={selectedServiceId} onChange={(event) => { setSelectedServiceId(event.target.value); setSelectedResourceId(''); }} className={FORM_CONTROL_CLASS}>
                   <option value="">Leistung auswählen</option>
                   {config?.services.map((service) => <option key={service.id} value={service.id}>{service.name}{service.priceLabel ? ` · ${service.priceLabel}` : ''}</option>)}
                 </select>
-                <select name="resourceId" value={selectedResourceId} required={resourceRequired} onChange={(event) => setSelectedResourceId(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
+                <select name="resourceId" value={selectedResourceId} required={resourceRequired} onChange={(event) => setSelectedResourceId(event.target.value)} className={FORM_CONTROL_CLASS}>
                   <option value="">{resourceRequired ? 'Ressource auswählen *' : 'Ressource optional'}</option>
                   {availableResources.map((resource) => <option key={resource.id} value={resource.id}>{resource.name}{resource.seats ? ` · ${resource.seats} Plätze` : ''}</option>)}
                 </select>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <input name="date" type="date" required value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="date" type="date" required value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} className={FORM_CONTROL_CLASS} />
                 {timeModel === 'date_range' ? (
-                  <input name="endDate" type="date" required className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                  <input name="endDate" type="date" required className={FORM_CONTROL_CLASS} />
                 ) : timeModel === 'time_slot' ? (
-                  <select name="time" required disabled={!selectedDate || slotsLoading || (resourceRequired && !selectedResourceId)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900 disabled:bg-zinc-50 disabled:text-zinc-400">
+                  <select name="time" required disabled={!selectedDate || slotsLoading || (resourceRequired && !selectedResourceId)} className={`${FORM_CONTROL_CLASS} disabled:opacity-55`}>
                     <option value="">{slotsLoading ? 'Slots laden...' : selectedDate ? 'Zeit auswählen' : 'Erst Datum wählen'}</option>
                     {slots.map(slot => <option key={slot.value} value={slot.value}>{slot.label}</option>)}
                   </select>
                 ) : (
-                  <input name="partySize" type="number" min={1} defaultValue={1} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                  <input name="partySize" type="number" min={1} defaultValue={1} className={FORM_CONTROL_CLASS} />
                 )}
               </div>
               {timeModel === 'time_slot' && selectedDate && !slotsLoading && !slots.length ? (
-                <p className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800">Für diese Auswahl sind aktuell keine freien Slots verfügbar.</p>
+                <p className="rounded-xl px-4 py-3 text-sm" style={BOOKING_NOTICE_STYLE}>Für diese Auswahl sind aktuell keine freien Slots verfügbar.</p>
               ) : null}
-              {timeModel !== 'full_day' && <input name="partySize" type="number" min={selectedService?.minPartySize || 1} max={selectedService?.maxPartySize || undefined} defaultValue={selectedService?.minPartySize || 1} placeholder="Personen / Menge" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />}
+              {timeModel !== 'full_day' && <input name="partySize" type="number" min={selectedService?.minPartySize || 1} max={selectedService?.maxPartySize || undefined} defaultValue={selectedService?.minPartySize || 1} placeholder="Personen / Menge" className={FORM_CONTROL_CLASS} />}
               <IntakeQuestionFields service={selectedService} />
-              <textarea name="message" rows={3} placeholder="Nachricht optional" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
-              {status === 'error' && <p className="text-sm text-red-600">{error}</p>}
+              <textarea name="message" rows={3} placeholder="Nachricht optional" className={FORM_CONTROL_CLASS} />
+              {status === 'error' && <p className="text-sm" style={BOOKING_ERROR_STYLE}>{error}</p>}
               <button disabled={status === 'loading'} className="mt-1 inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-60" style={{ background: 'var(--brand-btn-bg, #09090b)', color: 'var(--brand-btn-text, #ffffff)' }}>
                 {status === 'loading' && <Loader2 className="animate-spin" size={17} />}
                 {actionLabel}
@@ -388,41 +398,41 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
         </div>
 
         <form onSubmit={submit} className="rounded-[var(--style-card-radius,1.5rem)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.1))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }}>
-          {config && !config.enabled ? <div className="rounded-2xl bg-amber-50 p-5 text-sm text-amber-800">Booking ist für diese Website noch nicht aktiviert.</div> : null}
+          {config && !config.enabled ? <div className={BOOKING_NOTICE_CLASS} style={BOOKING_NOTICE_STYLE}>Booking ist für diese Website noch nicht aktiviert.</div> : null}
           {status === 'success' ? (
             <div className="flex min-h-80 flex-col items-center justify-center gap-3 text-center">
-              <CheckCircle className="text-emerald-500" size={44} />
+              <CheckCircle style={{ color: 'var(--booking-accent-color, #10b981)' }} size={44} />
               <p className="text-xl font-bold">Anfrage gesendet</p>
-              <p className="text-sm text-zinc-500">Wir melden uns mit der Bestätigung.</p>
+              <p className={`text-sm ${FORM_MUTED_CLASS}`}>Wir melden uns mit der Bestätigung.</p>
             </div>
           ) : (
             <div className="grid gap-4">
               <div className="grid gap-3 sm:grid-cols-2">
-                <select name="serviceId" value={selectedServiceId} onChange={(event) => { setSelectedServiceId(event.target.value); setSelectedResourceId(''); }} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
+                <select name="serviceId" value={selectedServiceId} onChange={(event) => { setSelectedServiceId(event.target.value); setSelectedResourceId(''); }} className={FORM_CONTROL_CLASS}>
                   <option value="">Leistung wählen</option>
                   {config?.services.map((service) => <option key={service.id} value={service.id}>{service.name}{service.priceLabel ? ` · ${service.priceLabel}` : ''}</option>)}
                 </select>
-                <select name="resourceId" value={selectedResourceId} required={resourceRequired} onChange={(event) => setSelectedResourceId(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
+                <select name="resourceId" value={selectedResourceId} required={resourceRequired} onChange={(event) => setSelectedResourceId(event.target.value)} className={FORM_CONTROL_CLASS}>
                   <option value="">{resourceRequired ? 'Ressource wählen *' : 'Ressource optional'}</option>
                   {availableResources.map((resource) => <option key={resource.id} value={resource.id}>{resource.name}{resource.seats ? ` · ${resource.seats} Plätze` : ''}</option>)}
                 </select>
               </div>
-              <input name="date" type="date" required value={selectedDate} onChange={(event) => { setSelectedDate(event.target.value); setSelectedSlot(''); }} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+              <input name="date" type="date" required value={selectedDate} onChange={(event) => { setSelectedDate(event.target.value); setSelectedSlot(''); }} className={FORM_CONTROL_CLASS} />
               <div>
-                <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">Verfügbare Uhrzeiten</p>
+                <p className={`mb-2 text-xs font-bold uppercase tracking-[0.14em] ${FORM_MUTED_CLASS}`}>Verfügbare Uhrzeiten</p>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  {loading ? <p className="col-span-full rounded-xl bg-zinc-50 p-4 text-sm text-zinc-500">Slots werden geladen...</p> : slots.length ? slots.map((slot) => (
-                    <button key={slot.value} type="button" onClick={() => setSelectedSlot(slot.value)} className={`rounded-xl border px-3 py-3 text-sm font-bold transition ${selectedSlot === slot.value ? '' : 'border-zinc-200 bg-white text-zinc-800 hover:border-zinc-400'}`} style={selectedSlot === slot.value ? { borderColor: 'var(--brand-btn-bg, #09090b)', background: 'var(--brand-btn-bg, #09090b)', color: 'var(--brand-btn-text, #ffffff)' } : undefined}>
+                  {loading ? <p className="col-span-full rounded-xl p-4 text-sm" style={BOOKING_NOTICE_STYLE}>Slots werden geladen...</p> : slots.length ? slots.map((slot) => (
+                    <button key={slot.value} type="button" onClick={() => setSelectedSlot(slot.value)} className="rounded-xl border px-3 py-3 text-sm font-bold transition hover:brightness-95" style={selectedSlot === slot.value ? { borderColor: 'var(--brand-btn-bg, #09090b)', background: 'var(--brand-btn-bg, #09090b)', color: 'var(--brand-btn-text, #ffffff)' } : { borderColor: 'var(--booking-border-color, rgba(9,9,11,.16))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }}>
                       {slot.label}
                     </button>
-                  )) : <p className="col-span-full rounded-xl bg-amber-50 p-4 text-sm text-amber-800">Für diese Auswahl sind keine freien Uhrzeiten verfügbar.</p>}
+                  )) : <p className="col-span-full rounded-xl p-4 text-sm" style={BOOKING_NOTICE_STYLE}>Für diese Auswahl sind keine freien Uhrzeiten verfügbar.</p>}
                 </div>
                 {!loading && !slots.length && suggestions.length ? (
-                  <div className="mt-3 rounded-xl bg-zinc-50 p-3">
-                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">Nächste freie Zeiten</p>
+                  <div className="mt-3 rounded-xl p-3" style={{ background: 'color-mix(in srgb, var(--booking-card-bg,#fff) 88%, var(--booking-accent-color,#f43f5e))' }}>
+                    <p className={`mb-2 text-xs font-bold uppercase tracking-[0.14em] ${FORM_MUTED_CLASS}`}>Nächste freie Zeiten</p>
                     <div className="grid gap-2 sm:grid-cols-2">
                       {suggestions.flatMap(suggestion => suggestion.slots.map(slot => (
-                        <button key={`${suggestion.date}-${slot.value}`} type="button" onClick={() => { setSelectedDate(suggestion.date); setSelectedSlot(slot.value); }} className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-left text-xs font-semibold text-zinc-700 transition hover:border-zinc-400">
+                        <button key={`${suggestion.date}-${slot.value}`} type="button" onClick={() => { setSelectedDate(suggestion.date); setSelectedSlot(slot.value); }} className="rounded-lg border px-3 py-2 text-left text-xs font-semibold transition hover:brightness-95" style={{ borderColor: 'var(--booking-border-color, rgba(9,9,11,.16))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }}>
                           {formatInputDate(suggestion.date)} · {slot.label}
                         </button>
                       )))}
@@ -432,16 +442,16 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
               </div>
               <input type="hidden" name="time" value={selectedSlot} />
               <div className="grid gap-3 sm:grid-cols-2">
-                <input name="customerName" required placeholder="Name *" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
-                <input name="customerEmail" type="email" placeholder="E-Mail" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="customerName" required placeholder="Name *" className={FORM_CONTROL_CLASS} />
+                <input name="customerEmail" type="email" placeholder="E-Mail" className={FORM_CONTROL_CLASS} />
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <input name="customerPhone" type="tel" placeholder="Telefon" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
-                <input name="partySize" type="number" min={selectedService?.minPartySize || 1} max={selectedService?.maxPartySize || undefined} defaultValue={selectedService?.minPartySize || 2} placeholder="Personen / Menge" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="customerPhone" type="tel" placeholder="Telefon" className={FORM_CONTROL_CLASS} />
+                <input name="partySize" type="number" min={selectedService?.minPartySize || 1} max={selectedService?.maxPartySize || undefined} defaultValue={selectedService?.minPartySize || 2} placeholder="Personen / Menge" className={FORM_CONTROL_CLASS} />
               </div>
               <IntakeQuestionFields service={selectedService} />
-              <textarea name="message" rows={3} placeholder="Nachricht optional" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
-              {status === 'error' && <p className="text-sm text-red-600">{error}</p>}
+              <textarea name="message" rows={3} placeholder="Nachricht optional" className={FORM_CONTROL_CLASS} />
+              {status === 'error' && <p className="text-sm" style={BOOKING_ERROR_STYLE}>{error}</p>}
               <button disabled={status === 'loading' || !selectedSlot} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-50" style={{ background: 'var(--brand-btn-bg, #09090b)', color: 'var(--brand-btn-text, #ffffff)' }}>
                 {status === 'loading' && <Loader2 className="animate-spin" size={17} />}
                 {submitLabel}
@@ -513,37 +523,37 @@ export function BookingDateRangeSection({ data }: SectionProps) {
         <form onSubmit={submit} className="grid gap-4 rounded-[var(--style-card-radius,1.5rem)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.1))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }}>
           {status === 'success' ? (
             <div className="flex min-h-80 flex-col items-center justify-center gap-3 text-center">
-              <CheckCircle className="text-emerald-500" size={44} />
+              <CheckCircle style={{ color: 'var(--booking-accent-color, #10b981)' }} size={44} />
               <p className="text-xl font-bold">Zeitraum angefragt</p>
-              <p className="text-sm text-zinc-500">Wir prüfen die Verfügbarkeit und melden uns.</p>
+              <p className={`text-sm ${FORM_MUTED_CLASS}`}>Wir prüfen die Verfügbarkeit und melden uns.</p>
             </div>
           ) : (
             <>
               <div className="grid gap-3 sm:grid-cols-2">
-                <input name="startDate" type="date" required value={startDate} onChange={(event) => setStartDate(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
-                <input name="endDate" type="date" required value={endDate} onChange={(event) => setEndDate(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="startDate" type="date" required value={startDate} onChange={(event) => setStartDate(event.target.value)} className={FORM_CONTROL_CLASS} />
+                <input name="endDate" type="date" required value={endDate} onChange={(event) => setEndDate(event.target.value)} className={FORM_CONTROL_CLASS} />
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <select name="serviceId" value={selectedServiceId} onChange={(event) => { setSelectedServiceId(event.target.value); setSelectedResourceId(''); }} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
+                <select name="serviceId" value={selectedServiceId} onChange={(event) => { setSelectedServiceId(event.target.value); setSelectedResourceId(''); }} className={FORM_CONTROL_CLASS}>
                   <option value="">Leistung wählen</option>
                   {config?.services.map((service) => <option key={service.id} value={service.id}>{service.name}{service.priceLabel ? ` · ${service.priceLabel}` : ''}</option>)}
                 </select>
-                <select name="resourceId" value={selectedResourceId} required={resourceRequired} onChange={(event) => setSelectedResourceId(event.target.value)} className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900">
+                <select name="resourceId" value={selectedResourceId} required={resourceRequired} onChange={(event) => setSelectedResourceId(event.target.value)} className={FORM_CONTROL_CLASS}>
                   <option value="">{resourceRequired ? 'Zimmer / Raum wählen *' : 'Zimmer / Raum optional'}</option>
                   {availableResources.map((resource) => <option key={resource.id} value={resource.id}>{resource.name}{resource.seats ? ` · ${resource.seats} Plätze` : ''}</option>)}
                 </select>
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <input name="customerName" required placeholder="Name *" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
-                <input name="customerEmail" type="email" placeholder="E-Mail" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="customerName" required placeholder="Name *" className={FORM_CONTROL_CLASS} />
+                <input name="customerEmail" type="email" placeholder="E-Mail" className={FORM_CONTROL_CLASS} />
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
-                <input name="customerPhone" type="tel" placeholder="Telefon" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
-                <input name="partySize" type="number" min={selectedService?.minPartySize || 1} max={selectedService?.maxPartySize || undefined} defaultValue={selectedService?.minPartySize || 2} placeholder="Personen / Menge" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
+                <input name="customerPhone" type="tel" placeholder="Telefon" className={FORM_CONTROL_CLASS} />
+                <input name="partySize" type="number" min={selectedService?.minPartySize || 1} max={selectedService?.maxPartySize || undefined} defaultValue={selectedService?.minPartySize || 2} placeholder="Personen / Menge" className={FORM_CONTROL_CLASS} />
               </div>
               <IntakeQuestionFields service={selectedService} />
-              <textarea name="message" rows={3} placeholder="Wünsche, Anlass oder weitere Infos" className="rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:border-zinc-900" />
-              {status === 'error' && <p className="text-sm text-red-600">{error}</p>}
+              <textarea name="message" rows={3} placeholder="Wünsche, Anlass oder weitere Infos" className={FORM_CONTROL_CLASS} />
+              {status === 'error' && <p className="text-sm" style={BOOKING_ERROR_STYLE}>{error}</p>}
               <button disabled={status === 'loading'} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-60" style={{ background: 'var(--brand-btn-bg, #09090b)', color: 'var(--brand-btn-text, #ffffff)' }}>
                 {status === 'loading' && <Loader2 className="animate-spin" size={17} />}
                 {submitLabel}
