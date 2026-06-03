@@ -168,11 +168,26 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
     ? Object.fromEntries(Object.entries(section.styleOverrides).filter(([, v]) => v)) as React.CSSProperties
     : undefined;
   const sectionStyle = withBookingStyleAliases(section.type, overrideStyle);
+  const sectionOverrideCss = sectionStyle
+    ? `
+[data-section-id="${section.id}"][data-style] h1,
+[data-section-id="${section.id}"][data-style] h2,
+[data-section-id="${section.id}"][data-style] h3,
+[data-section-id="${section.id}"][data-style] h4,
+[data-section-id="${section.id}"][data-style] h5,
+[data-section-id="${section.id}"][data-style] h6 { color: var(--style-heading-color, var(--style-text-primary, inherit)) !important; }
+[data-section-id="${section.id}"][data-style] p,
+[data-section-id="${section.id}"][data-style] li { color: var(--style-body-color, var(--style-text-secondary, inherit)) !important; }
+[data-section-id="${section.id}"][data-style] .section-badge { color: var(--style-badge-text, var(--style-accent-color, inherit)) !important; background-color: var(--style-badge-bg, transparent) !important; }
+[data-section-id="${section.id}"][data-style] [class*="brand-btn"] { color: var(--brand-btn-text, inherit) !important; background-color: var(--brand-btn-bg, transparent) !important; }
+`
+    : '';
 
   if (isFullBleed) {
     const isDark = !FULL_BLEED_LIGHT.has(section.type);
     return (
       <section id={section.anchorId ?? undefined} data-section-id={section.id} {...(isDark ? { 'data-theme': 'dark' } : {})} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
+        {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
         </SectionErrorBoundary>
@@ -186,6 +201,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
 
   return (
     <section id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass}`} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
+      {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
       <div className={containerClass}>
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />

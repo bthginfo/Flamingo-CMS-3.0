@@ -48,7 +48,7 @@ export function BentoGridSection({ data }: Props) {
             initial={{ opacity: 0, y: 20, scale: 0.97 }}
             animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
             transition={{ duration: 0.4, delay: i * 0.08 }}
-            className={`group relative overflow-hidden rounded-2xl bg-zinc-50 border border-zinc-200/60 p-6 cursor-default transition-all duration-300 hover:shadow-xl hover:shadow-zinc-200/50 hover:border-[var(--color-primary)]/20 hover:-translate-y-1 ${getSpanClass(item, i)}`}
+            className={`group relative overflow-hidden rounded-2xl bg-[var(--style-card-bg,#fafafa)] border border-[var(--style-border-color,rgba(228,228,231,0.6))] p-6 cursor-default transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${getSpanClass(item, i)}`}
           >
             {/* Hover spotlight */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(600px_at_50%_50%,var(--color-primary)/0.04,transparent)]" />
@@ -56,14 +56,14 @@ export function BentoGridSection({ data }: Props) {
             {item.image && (
               <div className="absolute inset-0 z-0">
                 <img src={item.image} alt="" className="w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--style-card-bg,#ffffff)] via-[color-mix(in_srgb,var(--style-card-bg,#ffffff)_80%,transparent)] to-transparent" />
               </div>
             )}
 
             <div className="relative z-10 flex flex-col h-full justify-end">
-              {item.icon && <div className="text-3xl mb-3 text-[var(--color-primary)]"><DynamicIcon name={item.icon} size={32} /></div>}
-              <h3 className="text-lg font-semibold text-zinc-900 mb-1">{item.title}</h3>
-              {item.description && <p className="text-sm text-zinc-600 leading-relaxed">{plain(item.description)}</p>}
+              {item.icon && <div className="text-3xl mb-3 text-[var(--style-icon-color,var(--color-primary))]"><DynamicIcon name={item.icon} size={32} /></div>}
+              <h3 className="text-lg font-semibold text-[var(--style-heading-color,var(--style-text-primary,#18181b))] mb-1">{item.title}</h3>
+              {item.description && <p className="text-sm text-[var(--style-body-color,var(--style-text-secondary,#52525b))] leading-relaxed">{plain(item.description)}</p>}
             </div>
           </motion.div>
         ))}
