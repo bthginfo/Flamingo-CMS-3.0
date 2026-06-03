@@ -166,6 +166,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                     'text-[13px] font-medium tracking-wide uppercase transition-colors duration-300 hover:text-brand-accent',
                     (scrolled || (!isHeroDark)) ? 'text-gray-600' : 'text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]',
                   )}
+                  style={(scrolled || (!isHeroDark)) ? (brand.navLinkColor ? { color: brand.navLinkColor } : undefined) : { color: '#fff' }}
                 >
                   {item.label}
                 </Link>
