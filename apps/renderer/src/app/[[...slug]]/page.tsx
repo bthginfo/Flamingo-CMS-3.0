@@ -266,7 +266,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   // Build dynamic style overrides that need !important to beat Tailwind utilities
   const importantOverrides: string[] = [];
   if (brand.headingColor) importantOverrides.push(`[data-style] main h1, [data-style] main h2, [data-style] main h3, [data-style] main h4, [data-style] main h5, [data-style] main h6 { color: ${brand.headingColor} !important; }`);
-  if (brand.bodyTextColor) importantOverrides.push(`[data-style] main p, [data-style] main li, [data-style] main span:not(.section-badge) { color: ${brand.bodyTextColor} !important; }`);
+  if (brand.bodyTextColor) importantOverrides.push(`[data-style] main p, [data-style] main li { color: ${brand.bodyTextColor} !important; }`);
   if (brand.mutedTextColor) importantOverrides.push(`[data-style] main .text-gray-500, [data-style] main .text-slate-500, [data-style] main .text-gray-600 { color: ${brand.mutedTextColor} !important; }`);
   if (brand.linkColor) importantOverrides.push(`[data-style] main a:not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-brand"]):not([class*="text-white"]) { color: ${brand.linkColor} !important; }`);
 

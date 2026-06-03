@@ -65,7 +65,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
   const importantOverrides: string[] = [];
   const b = brand as Record<string, string | undefined>;
   if (b.headingColor) importantOverrides.push(`[data-style] main h1, [data-style] main h2, [data-style] main h3, [data-style] main h4, [data-style] main h5, [data-style] main h6 { color: ${b.headingColor} !important; }`);
-  if (b.bodyTextColor) importantOverrides.push(`[data-style] main p, [data-style] main li, [data-style] main span:not(.section-badge) { color: ${b.bodyTextColor} !important; }`);
+  if (b.bodyTextColor) importantOverrides.push(`[data-style] main p, [data-style] main li { color: ${b.bodyTextColor} !important; }`);
   if (b.mutedTextColor) importantOverrides.push(`[data-style] main .text-gray-500, [data-style] main .text-slate-500, [data-style] main .text-gray-600 { color: ${b.mutedTextColor} !important; }`);
   if (b.linkColor) importantOverrides.push(`[data-style] main a:not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-brand"]):not([class*="text-white"]) { color: ${b.linkColor} !important; }`);
 

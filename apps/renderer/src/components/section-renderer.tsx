@@ -186,7 +186,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   if (isFullBleed) {
     const isDark = !FULL_BLEED_LIGHT.has(section.type);
     return (
-      <section id={section.anchorId ?? undefined} data-section-id={section.id} {...(isDark ? { 'data-theme': 'dark' } : {})} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
+      <section id={section.anchorId ?? undefined} data-section-id={section.id} className="bg-[var(--style-section-bg,transparent)]" {...(isDark ? { 'data-theme': 'dark' } : {})} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
         {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
@@ -200,7 +200,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   const containerClass = CONTAINER[section.container] ?? CONTAINER.default;
 
   return (
-    <section id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass}`} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
+    <section id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass} bg-[var(--style-section-bg,transparent)]`} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
       {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
       <div className={containerClass}>
         <SectionErrorBoundary sectionType={section.type}>

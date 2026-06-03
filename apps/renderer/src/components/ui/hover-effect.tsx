@@ -34,7 +34,7 @@ export function HoverEffect({
           <AnimatePresence>
             {hovered === idx && (
               <motion.span
-                className="absolute inset-0 h-full w-full bg-brand-primary/5 block rounded-3xl"
+                className="absolute inset-0 block h-full w-full rounded-3xl bg-[var(--style-accent-color,var(--brand-primary))]/5"
                 layoutId="hoverBackground"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, transition: { duration: 0.15 } }}
@@ -42,7 +42,7 @@ export function HoverEffect({
               />
             )}
           </AnimatePresence>
-          <div className="rounded-2xl h-full w-full overflow-hidden bg-white border border-gray-100 shadow-sm group-hover:shadow-lg group-hover:border-gray-200 transition-all duration-300 relative z-20 flex flex-col">
+          <div className="relative z-20 flex h-full w-full flex-col overflow-hidden rounded-2xl border border-[var(--style-border-color,rgba(0,0,0,0.08))] bg-[var(--style-card-bg,#ffffff)] shadow-sm transition-all duration-300 group-hover:border-[var(--style-border-color,rgba(0,0,0,0.16))] group-hover:shadow-lg">
             {item.link ? (
               <a href={item.link} className="block h-full">
                 {item.image && (
@@ -59,13 +59,13 @@ export function HoverEffect({
                 )}
                 <div className="p-6 text-center flex-1 flex flex-col items-center justify-center">
                   {item.icon && !item.image && (
-                    <div className="mb-4 w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform duration-300 group-hover:scale-110">
+                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--style-accent-color,var(--brand-primary))]/10 text-[var(--style-icon-color,var(--style-accent-color,var(--brand-primary)))] transition-transform duration-300 group-hover:scale-110">
                       {typeof item.icon === 'string' ? <DynamicIcon name={item.icon} size={24} /> : item.icon}
                     </div>
                   )}
-                  <h4 className="font-display font-semibold text-lg mb-2 text-gray-900">{item.title}</h4>
-                  <p className="text-gray-500 text-sm leading-relaxed">{item.description}</p>
-                  <span className="inline-flex items-center justify-center text-brand-primary text-sm font-medium mt-4">
+                  <h4 className="font-display mb-2 text-lg font-semibold text-[var(--style-heading-color,var(--style-text-primary,#111827))]">{item.title}</h4>
+                  <p className="text-sm leading-relaxed text-[var(--style-body-color,var(--style-text-secondary,#6b7280))]">{item.description}</p>
+                  <span className="mt-4 inline-flex items-center justify-center text-sm font-medium text-[var(--style-accent-color,var(--brand-primary))]">
                     Mehr erfahren →
                   </span>
                 </div>
@@ -86,12 +86,12 @@ export function HoverEffect({
                 )}
                 <div className="p-6 text-center flex-1 flex flex-col items-center justify-center">
                   {item.icon && !item.image && (
-                    <div className="mb-4 w-12 h-12 mx-auto rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform duration-300 group-hover:scale-110">
+                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--style-accent-color,var(--brand-primary))]/10 text-[var(--style-icon-color,var(--style-accent-color,var(--brand-primary)))] transition-transform duration-300 group-hover:scale-110">
                       {typeof item.icon === 'string' ? <DynamicIcon name={item.icon} size={24} /> : item.icon}
                     </div>
                   )}
-                  <h4 className="font-display font-semibold text-lg mb-2 text-gray-900">{item.title}</h4>
-                  <p className="text-gray-500 text-sm leading-relaxed">{item.description}</p>
+                  <h4 className="font-display mb-2 text-lg font-semibold text-[var(--style-heading-color,var(--style-text-primary,#111827))]">{item.title}</h4>
+                  <p className="text-sm leading-relaxed text-[var(--style-body-color,var(--style-text-secondary,#6b7280))]">{item.description}</p>
                 </div>
               </>
             )}

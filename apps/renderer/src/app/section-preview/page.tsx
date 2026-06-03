@@ -2,22 +2,7 @@ import { notFound } from 'next/navigation';
 import { getIndustryTemplates } from '@/templates';
 import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
 import { getStyleCssVars } from '@/lib/styles';
-
-const FULL_BLEED_TYPES = new Set([
-  'hero', 'collectionHero', 'noticeBanner', 'atmosphereGallery',
-  'styleGallery', 'artistGrid', 'artistHero', 'tattooBookingCta',
-  'aftercareSteps', 'pricingInfo', 'tattooBooking', 'flashDayBanner',
-  'photographerAbout', 'shootingProcess', 'marketReport', 'valuationCta',
-  'eventSchedule', 'faqGallery', 'giftRegistry', 'rsvp', 'venueInfo',
-  'dailySpecials', 'servicePackages', 'ctaBand', 'headerBanner',
-  'bookingStrip', 'statsCounter', 'socialProofBar', 'uspStrip',
-  'testimonialMarquee', 'logoMarquee', 'featureShowcase', 'caseResults',
-  'map', 'stats', 'coupleStory', 'dresscode', 'weddingMenu',
-  'roomShowcase', 'wellness', 'ambience', 'signatureDishes',
-  'portfolioGallery', 'bentoGrid', 'locationVibe',
-  'horizontalScrollShowcase', 'verticalTimeline', 'beforeAfterSlider',
-  'cinematicHero', 'immersiveCtaBanner', 'editorialFeatureRail', 'offerCampaignStrip',
-]);
+import { SectionRenderer } from '@/components/section-renderer';
 
 export default async function SectionPreviewPage({ searchParams }: { searchParams: Promise<{ type?: string; industry?: string; style?: string }> }) {
   const params = await searchParams;
@@ -36,7 +21,20 @@ export default async function SectionPreviewPage({ searchParams }: { searchParam
 
   const data = SECTION_PREVIEW_DATA[type] || {};
   const styleCssVars = getStyleCssVars(industry, style);
-  const isFullBleed = FULL_BLEED_TYPES.has(type);
+  const previewSection = {
+    id: `preview-${type}`,
+    type,
+    variant: null,
+    visible: true,
+    locked: false,
+    container: 'default',
+    spacingTop: 'm',
+    spacingBottom: 'm',
+    anchorId: null,
+    styleOverrides: null,
+    data,
+    sortOrder: 0,
+  };
 
   return (
     <html lang="de">
@@ -48,15 +46,7 @@ export default async function SectionPreviewPage({ searchParams }: { searchParam
         <div data-style={style}>
           <main>
             {type === 'uspStrip' && <div className="h-24" />}
-            {isFullBleed ? (
-              <Component data={data} variant={null} styleVariant={style} />
-            ) : (
-              <section>
-                <div className="max-w-7xl mx-auto px-6 py-12">
-                  <Component data={data} variant={null} styleVariant={style} />
-                </div>
-              </section>
-            )}
+            <SectionRenderer section={previewSection} styleVariant={style} industry={industry} />
           </main>
         </div>
       </body>
