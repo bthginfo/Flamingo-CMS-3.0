@@ -29,15 +29,15 @@ export function SignatureGridSection({ data }: Props) {
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {traits.map((trait, index) => (
-          <motion.article key={index} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-3xl border border-[var(--style-border-color,rgba(0,0,0,0.08))] bg-[var(--style-card-bg,#fff)] p-6 shadow-sm">
-            {trait.icon && <DynamicIcon name={trait.icon} size={28} className="mb-6 text-[var(--style-icon-color,var(--brand-primary))]" />}
-            <h3 className="text-xl font-black text-[var(--style-heading-color,#111)]">{trait.title}</h3>
-            {trait.text && <p className="mt-3 text-sm leading-7 text-[var(--style-body-color,#52525b)]">{plain(trait.text)}</p>}
+          <motion.article key={index} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-3xl border border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg,var(--style-card-bg,#fff))] p-6 shadow-sm">
+            {trait.icon && <DynamicIcon name={trait.icon} size={28} className="mb-6 text-[var(--token-icon,var(--style-icon-color,var(--brand-primary)))]" />}
+            <h3 className="text-xl font-black text-[var(--token-heading,var(--style-heading-color,#111))]">{trait.title}</h3>
+            {trait.text && <p className="mt-3 text-sm leading-7 text-[var(--token-body,var(--style-body-color,#52525b))]">{plain(trait.text)}</p>}
           </motion.article>
         ))}
         {stats.map((stat, index) => (
           <div key={`stat-${index}`} className="rounded-3xl bg-[var(--style-section-bg-alt,#070707)] p-6 text-[var(--style-image-text-color,#ffffff)]">
-            <div className="text-4xl font-black text-[var(--style-accent-color,#fff)]">{stat.value}</div>
+            <div className="text-4xl font-black text-[var(--token-stat-value,var(--style-accent-color,#fff))]">{stat.value}</div>
             <div className="mt-2 text-sm text-[var(--style-text-secondary,rgba(255,255,255,0.62))]">{stat.label}</div>
           </div>
         ))}

@@ -46,8 +46,8 @@ export function GlowHeroSection({ data }: Props) {
 
       <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-6 py-16 md:py-24">
         <div className="max-w-5xl">
-          {eyebrow && <div className="mb-5 text-xs font-bold uppercase tracking-[0.24em] text-[var(--style-badge-text,#ffffff)]">{eyebrow}</div>}
-          <h1 className="text-5xl font-black leading-none text-[var(--style-heading-color,#ffffff)] md:text-7xl lg:text-8xl">{headline}</h1>
+          {eyebrow && <div className="mb-5 text-xs font-bold uppercase tracking-[0.24em] text-[var(--token-eyebrow,var(--style-badge-text,#ffffff))]">{eyebrow}</div>}
+          <h1 className="text-5xl font-black leading-none text-[var(--token-heading,var(--style-heading-color,#ffffff))] md:text-7xl lg:text-8xl">{headline}</h1>
           {subline && <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--style-subheading-color,rgba(255,255,255,0.76))] md:text-xl">{plain(subline)}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
             {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-btn-bg,#ffffff)] px-6 py-3 text-sm font-bold text-[var(--brand-btn-text,#111111)]">{primaryCta.label}<ArrowRight size={16} /></a>}
@@ -58,7 +58,7 @@ export function GlowHeroSection({ data }: Props) {
           <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-[var(--style-border-color,rgba(255,255,255,0.12))] bg-[var(--style-border-color,rgba(255,255,255,0.12))] md:grid-cols-3">
             {facts.map((fact, index) => (
               <div key={index} className="bg-[var(--style-card-bg,rgba(0,0,0,0.30))] p-5 backdrop-blur">
-                {fact.value && <div className="text-3xl font-black text-[var(--style-accent-color,var(--brand-primary,#f24171))]">{fact.value}</div>}
+                {fact.value && <div className="text-3xl font-black text-[var(--token-stat-value,var(--style-accent-color,var(--brand-primary,#f24171)))]">{fact.value}</div>}
                 {fact.label && <div className="mt-1 text-sm text-[var(--style-text-secondary,rgba(255,255,255,0.68))]">{fact.label}</div>}
               </div>
             ))}

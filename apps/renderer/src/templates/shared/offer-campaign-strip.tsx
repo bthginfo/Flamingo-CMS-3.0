@@ -27,13 +27,13 @@ export function OfferCampaignStripSection({ data }: Props) {
             {offerLabel && <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-[var(--style-badge-bg,#ffffff)] px-4 py-2 text-xs font-black uppercase text-[var(--style-badge-text,#111827)]"><BadgePercent size={16} />{offerLabel}</div>}
           </div>
           <div className="p-6 md:p-10">
-            {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--style-accent-color,var(--brand-primary,#fff))]">{badge}</div>}
+            {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--token-eyebrow,var(--style-accent-color,var(--brand-primary,#fff)))]">{badge}</div>}
             {headline && <h2 className="text-3xl font-black leading-tight text-[var(--style-heading-color,#ffffff)] md:text-5xl">{headline}</h2>}
             {subline && <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--style-body-color,rgba(255,255,255,0.72))]">{plain(subline)}</p>}
             <div className="mt-6 grid gap-2 sm:grid-cols-2">
               {benefits.map((benefit, index) => (
                 <motion.div key={index} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.04 }} className="flex items-center gap-2 text-sm text-[var(--style-text-primary,var(--style-body-color,rgba(255,255,255,0.78)))]">
-                  <Check size={16} className="text-[var(--style-accent-color,var(--brand-primary,#fff))]" />{benefit}
+                  <Check size={16} className="text-[var(--token-check,var(--style-accent-color,var(--brand-primary,#fff)))]" />{benefit}
                 </motion.div>
               ))}
             </div>
