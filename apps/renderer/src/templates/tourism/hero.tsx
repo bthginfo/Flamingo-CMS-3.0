@@ -50,37 +50,37 @@ type HeroProps = {
 /* ─── Classic: panoramic bg, green/lime gradient, mountain SVG, stagger ─── */
 function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
-    <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
+    <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[var(--style-section-bg,var(--style-text-primary,#111827))]">
       {(bgMode === 'image' && bgImage) ? (
         <>
           <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
             <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
             {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
           </ImageEffectWrapper>
-          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />) : (<div className="absolute inset-0 bg-gradient-to-b from-green-900/70 via-green-800/50 to-lime-900/60" />)}
+          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />) : (<div className="absolute inset-0 bg-[var(--style-section-bg)] opacity-65" />)}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
       ) : null}
-      <svg className="absolute bottom-0 left-0 w-full text-[#ffffff]" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+      <svg className="absolute bottom-0 left-0 w-full text-[var(--style-section-bg-alt,#ffffff)]" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
         <path fill="currentColor" d="M0,120 L0,80 Q180,20 360,60 Q540,100 720,40 Q900,0 1080,50 Q1260,90 1440,30 L1440,120Z" />
       </svg>
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-7xl flex-col items-center justify-center px-6 py-12 md:py-20 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-4 flex items-center gap-2">
-          <Compass className="text-lime-300" size={20} />
-          {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-lime-300">{badgeText}</p>}
-          <Mountain className="text-lime-300" size={20} />
+          <Compass className="text-[var(--style-icon-color,var(--style-accent-color,var(--brand-primary)))]" size={20} />
+          {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[var(--style-badge-text,var(--style-accent-color,var(--brand-primary)))]">{badgeText}</p>}
+          <Mountain className="text-[var(--style-icon-color,var(--style-accent-color,var(--brand-primary)))]" size={20} />
         </motion.div>
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-white sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>{headline}</motion.h1>
-        {subline && <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-7 max-w-2xl text-lg leading-8 text-white/80 rt-content" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }} dangerouslySetInnerHTML={{ __html: subline }} />}
+        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-[var(--style-heading-color,#fff)] sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>{headline}</motion.h1>
+        {subline && <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-7 max-w-2xl text-lg leading-8 text-[var(--style-body-color,rgba(255,255,255,.8))] rt-content" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }} dangerouslySetInnerHTML={{ __html: subline }} />}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-lime-500 px-6 py-3 font-semibold text-green-950">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-white/35 px-6 py-3 font-semibold text-white">{secondaryCta.label}</a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary)))] px-6 py-3 font-semibold text-[var(--brand-btn-text,#fff)]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--style-border-color,rgba(255,255,255,.35))] px-6 py-3 font-semibold text-[var(--style-heading-color,#fff)]">{secondaryCta.label}</a>}
         </motion.div>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-white/80">
-          {locationLabel && <span className="inline-flex items-center gap-2 rounded-full bg-black/25 px-4 py-2"><MapPin size={15} />{locationLabel}</span>}
-          {seasonLabel && <span className="rounded-full bg-black/25 px-4 py-2">{seasonLabel}</span>}
-          {trustItems.map((item) => <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-black/25 px-4 py-2"><CheckCircle size={14} className="text-lime-300" />{item}</span>)}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-[var(--style-body-color,rgba(255,255,255,.8))]">
+          {locationLabel && <span className="inline-flex items-center gap-2 rounded-full bg-[var(--style-badge-bg,rgba(0,0,0,.25))] px-4 py-2"><MapPin size={15} />{locationLabel}</span>}
+          {seasonLabel && <span className="rounded-full bg-[var(--style-badge-bg,rgba(0,0,0,.25))] px-4 py-2">{seasonLabel}</span>}
+          {trustItems.map((item) => <span key={item} className="inline-flex items-center gap-1.5 rounded-full bg-[var(--style-badge-bg,rgba(0,0,0,.25))] px-4 py-2"><CheckCircle size={14} className="text-[var(--style-icon-color,var(--style-accent-color,var(--brand-primary)))]" />{item}</span>)}
         </motion.div>
       </div>
     </section>
@@ -90,23 +90,23 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgC
 /* ─── Modern: split layout, teal-white, clean/airy ─── */
 function HeroModern({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
-    <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-white">
+    <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[var(--style-section-bg,#fff)]">
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-10 px-6 py-12 md:py-20 lg:grid-cols-2">
         <div className="max-w-xl">
-          {badgeText && <p className="text-xs font-light uppercase tracking-widest text-teal-600">{badgeText}</p>}
-          <h1 className="mt-5 text-3xl md:text-5xl font-light leading-[0.95] text-gray-900 sm:text-6xl lg:text-7xl">{headline}</h1>
-          {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {badgeText && <p className="text-xs font-light uppercase tracking-widest text-[var(--style-badge-text,var(--style-accent-color,var(--brand-primary)))]">{badgeText}</p>}
+          <h1 className="mt-5 text-3xl md:text-5xl font-light leading-[0.95] text-[var(--style-heading-color,var(--style-text-primary,#111827))] sm:text-6xl lg:text-7xl">{headline}</h1>
+          {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-[var(--style-body-color,var(--style-text-secondary,#4b5563))] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="mt-8 flex flex-wrap gap-3">
-            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-teal-600 bg-teal-600 px-5 py-3 font-semibold text-white">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
-            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-black/15 px-5 py-3 font-semibold text-gray-900">{secondaryCta.label}</a>}
+            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary)))] bg-[var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary)))] px-5 py-3 font-semibold text-[var(--brand-btn-text,#fff)]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--style-border-color,rgba(0,0,0,.15))] px-5 py-3 font-semibold text-[var(--style-text-primary,#111827)]">{secondaryCta.label}</a>}
           </div>
-          <div className="mt-10 flex flex-wrap gap-3 text-sm text-gray-600">
-            {locationLabel && <span className="inline-flex items-center gap-2 rounded-full border border-black/10 px-4 py-2"><MapPin size={15} />{locationLabel}</span>}
-            {seasonLabel && <span className="rounded-full border border-black/10 px-4 py-2">{seasonLabel}</span>}
-            {trustItems.map((item) => <span key={item} className="rounded-full border border-black/10 px-4 py-2">{item}</span>)}
+          <div className="mt-10 flex flex-wrap gap-3 text-sm text-[var(--style-text-secondary,#4b5563)]">
+            {locationLabel && <span className="inline-flex items-center gap-2 rounded-full border border-[var(--style-border-color,rgba(0,0,0,.1))] px-4 py-2"><MapPin size={15} />{locationLabel}</span>}
+            {seasonLabel && <span className="rounded-full border border-[var(--style-border-color,rgba(0,0,0,.1))] px-4 py-2">{seasonLabel}</span>}
+            {trustItems.map((item) => <span key={item} className="rounded-full border border-[var(--style-border-color,rgba(0,0,0,.1))] px-4 py-2">{item}</span>)}
           </div>
         </div>
-        <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-black/10">
+        <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-[var(--style-border-color,rgba(0,0,0,.1))]">
           {(bgMode === 'image' && bgImage) ? (
             <>
               <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="50vw" />
@@ -124,32 +124,32 @@ function HeroModern({ headline, subline, badgeText, bgImage, bgImageMobile, bgCo
 /* ─── Bold: fullscreen dark, orange diagonal stripe, brutalist ─── */
 function HeroBold({ headline, subline, badgeText, bgImage, bgImageMobile, bgColor, bgMode, locationLabel, seasonLabel, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
-    <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-gray-950">
+    <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[var(--style-section-bg,var(--style-text-primary,#030712))]">
       {(bgMode === 'image' && bgImage) ? (
         <>
           <Image src={bgImage} alt="" fill priority className={`object-cover opacity-40${bgImageMobile ? ' hidden md:block' : ''}`} sizes="100vw" />
           {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover opacity-40 md:hidden" sizes="100vw" />}
-          <div className="absolute inset-0 bg-gray-950/60" />
+          <div className="absolute inset-0 bg-[var(--style-section-bg,var(--style-text-primary,#030712))] opacity-60" />
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
       ) : null}
-      <div className="absolute right-0 top-0 h-full w-1/3 origin-top-right skew-x-[-8deg] bg-orange-500/20" aria-hidden="true" />
+      <div className="absolute right-0 top-0 h-full w-1/3 origin-top-right skew-x-[-8deg] bg-[var(--style-accent-color,var(--brand-primary))] opacity-20" aria-hidden="true" />
       <div className="relative z-10 mx-auto flex min-h-[calc(100vh-112px)] max-w-7xl flex-col justify-center px-6 py-12 md:py-20">
         <div className="flex items-center gap-3">
-          <Compass className="text-orange-500" size={28} />
-          {badgeText && <p className="text-xs font-black uppercase tracking-widest text-orange-500">{badgeText}</p>}
+          <Compass className="text-[var(--style-icon-color,var(--style-accent-color,var(--brand-primary)))]" size={28} />
+          {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--style-badge-text,var(--style-accent-color,var(--brand-primary)))]">{badgeText}</p>}
         </div>
-        <h1 className="mt-5 max-w-5xl text-3xl md:text-5xl font-black uppercase leading-[0.95] text-white sm:text-6xl lg:text-8xl">{headline}</h1>
-        {subline && <div className="mt-7 max-w-2xl text-lg leading-8 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        <h1 className="mt-5 max-w-5xl text-3xl md:text-5xl font-black uppercase leading-[0.95] text-[var(--style-heading-color,#fff)] sm:text-6xl lg:text-8xl">{headline}</h1>
+        {subline && <div className="mt-7 max-w-2xl text-lg leading-8 text-[var(--style-body-color,rgba(255,255,255,.7))] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-wrap gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-orange-500 bg-orange-500 px-6 py-3 font-black uppercase text-gray-950 shadow-[4px_4px_0_theme(colors.orange.700)]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-white/40 px-6 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(255,255,255,0.15)]">{secondaryCta.label}</a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary)))] bg-[var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary)))] px-6 py-3 font-black uppercase text-[var(--brand-btn-text,#fff)]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--style-border-color,rgba(255,255,255,.4))] px-6 py-3 font-black uppercase text-[var(--style-heading-color,#fff)]">{secondaryCta.label}</a>}
         </div>
-        <div className="mt-10 flex flex-wrap gap-3 text-sm text-white/70">
-          {locationLabel && <span className="inline-flex items-center gap-2 border border-white/20 px-4 py-2 font-bold uppercase"><MapPin size={15} />{locationLabel}</span>}
-          {seasonLabel && <span className="border border-white/20 px-4 py-2 font-bold uppercase">{seasonLabel}</span>}
-          {trustItems.map((item) => <span key={item} className="border border-white/20 px-4 py-2 font-bold uppercase">{item}</span>)}
+        <div className="mt-10 flex flex-wrap gap-3 text-sm text-[var(--style-body-color,rgba(255,255,255,.7))]">
+          {locationLabel && <span className="inline-flex items-center gap-2 border border-[var(--style-border-color,rgba(255,255,255,.2))] px-4 py-2 font-bold uppercase"><MapPin size={15} />{locationLabel}</span>}
+          {seasonLabel && <span className="border border-[var(--style-border-color,rgba(255,255,255,.2))] px-4 py-2 font-bold uppercase">{seasonLabel}</span>}
+          {trustItems.map((item) => <span key={item} className="border border-[var(--style-border-color,rgba(255,255,255,.2))] px-4 py-2 font-bold uppercase">{item}</span>)}
         </div>
       </div>
     </section>
