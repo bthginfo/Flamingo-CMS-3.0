@@ -4,6 +4,7 @@ import { getDb } from '@/lib/db';
 import { collections, collectionItems } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import crypto from 'crypto';
+import { normalizeSectionData, normalizeStyleOverrides } from '@/lib/api-utils';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ key: string }> }) {
   try {
@@ -28,6 +29,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
       itemData.sections = itemData.sections.map((s: Record<string, unknown>) => ({
         ...s,
         id: s.id || crypto.randomUUID(),
+        data: normalizeSectionData(String(s.type || ''), (s.data as Record<string, unknown>) || {}),
+        styleOverrides: normalizeStyleOverrides(s.styleOverrides),
       }));
     }
 

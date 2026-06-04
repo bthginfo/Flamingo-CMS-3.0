@@ -179,8 +179,27 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   workshopBooking: ['sectionBgAlt', 'cardBg', 'cardRadius', 'cardShadow', 'buttonRadius', 'textPrimary', 'textSecondary', 'brandPrimary', 'headingWeight', 'headingTracking'],
 };
 
+const DEFAULT_SECTION_FIELDS: ColorFieldKey[] = [
+  'sectionBg',
+  'sectionBgAlt',
+  'cardBg',
+  'headingColor',
+  'subheadingColor',
+  'bodyColor',
+  'mutedColor',
+  'textPrimary',
+  'textSecondary',
+  'iconColor',
+  'accentColor',
+  'btnBg',
+  'btnText',
+  'badgeBg',
+  'badgeText',
+  'borderColor',
+];
+
 function getFieldsForSection(sectionType: string): ColorFieldKey[] {
-  return SECTION_FIELDS[sectionType] ?? [];
+  return SECTION_FIELDS[sectionType] ?? DEFAULT_SECTION_FIELDS;
 }
 
 

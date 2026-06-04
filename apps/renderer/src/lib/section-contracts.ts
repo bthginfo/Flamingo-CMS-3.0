@@ -32,13 +32,20 @@ export type SectionColorSlot =
   | 'subheadingColor'
   | 'bodyColor'
   | 'mutedColor'
+  | 'textPrimary'
+  | 'textSecondary'
+  | 'imageTextColor'
   | 'accentColor'
   | 'iconColor'
   | 'btnBg'
   | 'btnText'
+  | 'btnSecondaryBg'
+  | 'btnSecondaryText'
   | 'badgeBg'
   | 'badgeText'
+  | 'badgeBorder'
   | 'borderColor'
+  | 'dividerColor'
   | 'overlayColor';
 
 export type SectionContract = {
@@ -178,6 +185,62 @@ const SHOP_TYPES = new Set([
   'shopCategoryOverview',
 ]);
 
+export const SECTION_COLOR_SLOT_DEFINITIONS: Record<SectionColorSlot, { cssVar: string; label: string; description: string; contrastWith?: SectionColorSlot[] }> = {
+  sectionBg: { cssVar: '--style-section-bg', label: 'Section-Hintergrund', description: 'Hintergrundfarbe der gesamten Section', contrastWith: ['headingColor', 'bodyColor', 'textPrimary', 'textSecondary'] },
+  sectionBgAlt: { cssVar: '--style-section-bg-alt', label: 'Alternativer Hintergrund', description: 'Zweiter Section-Hintergrund, z. B. für geteilte Layouts', contrastWith: ['headingColor', 'bodyColor', 'textPrimary', 'textSecondary'] },
+  cardBg: { cssVar: '--style-card-bg', label: 'Karten-Hintergrund', description: 'Hintergrund von Cards, Boxen und Formularflächen', contrastWith: ['headingColor', 'bodyColor', 'textPrimary', 'textSecondary'] },
+  headingColor: { cssVar: '--style-heading-color', label: 'Headline', description: 'Farbe für H1-H6 innerhalb der Section', contrastWith: ['sectionBg', 'sectionBgAlt', 'cardBg'] },
+  subheadingColor: { cssVar: '--style-subheading-color', label: 'Subheadline', description: 'Farbe für Unterzeilen und Lead-Texte', contrastWith: ['sectionBg', 'sectionBgAlt', 'cardBg'] },
+  bodyColor: { cssVar: '--style-body-color', label: 'Fließtext', description: 'Farbe für normale Texte, Beschreibungen und Listen', contrastWith: ['sectionBg', 'sectionBgAlt', 'cardBg'] },
+  mutedColor: { cssVar: '--style-text-muted', label: 'Dezenter Text', description: 'Farbe für Meta-Labels, kleine Hinweise und Nebeninformationen', contrastWith: ['sectionBg', 'sectionBgAlt', 'cardBg'] },
+  textPrimary: { cssVar: '--style-text-primary', label: 'Primärer Text', description: 'Allgemeine primäre Textfarbe innerhalb der Section', contrastWith: ['sectionBg', 'sectionBgAlt', 'cardBg'] },
+  textSecondary: { cssVar: '--style-text-secondary', label: 'Sekundärer Text', description: 'Allgemeine sekundäre Textfarbe innerhalb der Section', contrastWith: ['sectionBg', 'sectionBgAlt', 'cardBg'] },
+  imageTextColor: { cssVar: '--style-image-text-color', label: 'Bild-/Overlay-Text', description: 'Textfarbe direkt auf Bildern, Overlays und dunklen Medienflächen', contrastWith: ['overlayColor'] },
+  accentColor: { cssVar: '--style-accent-color', label: 'Akzentfarbe', description: 'Akzente, Links, Highlights, aktive Zustände und kleine Marker' },
+  iconColor: { cssVar: '--style-icon-color', label: 'Icons', description: 'Farbe für Icons und Symbolflächen' },
+  btnBg: { cssVar: '--brand-btn-bg', label: 'Button-Hintergrund', description: 'Hintergrund des primären CTA-Buttons', contrastWith: ['btnText'] },
+  btnText: { cssVar: '--brand-btn-text', label: 'Button-Text', description: 'Textfarbe des primären CTA-Buttons', contrastWith: ['btnBg'] },
+  btnSecondaryBg: { cssVar: '--brand-btn-secondary-bg', label: 'Sekundär-Button-Hintergrund', description: 'Hintergrund des sekundären CTA-Buttons', contrastWith: ['btnSecondaryText'] },
+  btnSecondaryText: { cssVar: '--brand-btn-secondary-text', label: 'Sekundär-Button-Text', description: 'Textfarbe des sekundären CTA-Buttons', contrastWith: ['btnSecondaryBg'] },
+  badgeBg: { cssVar: '--style-badge-bg', label: 'Badge-Hintergrund', description: 'Hintergrund von Badges, Eyebrows und kleinen Labels', contrastWith: ['badgeText'] },
+  badgeText: { cssVar: '--style-badge-text', label: 'Badge-Text', description: 'Textfarbe von Badges, Eyebrows und kleinen Labels', contrastWith: ['badgeBg'] },
+  badgeBorder: { cssVar: '--style-badge-border', label: 'Badge-Rahmen', description: 'Rahmenfarbe von Badges und Eyebrows' },
+  borderColor: { cssVar: '--style-border-color', label: 'Rahmenfarbe', description: 'Rahmenfarbe von Cards, Boxen, Formularen und Trennern' },
+  dividerColor: { cssVar: '--style-divider-color', label: 'Trennlinien', description: 'Linien zwischen Listeneinträgen oder Layoutbereichen' },
+  overlayColor: { cssVar: '--style-overlay-color', label: 'Overlay', description: 'Overlay-Farbe auf Bildern. Bei Bild-Heroes immer so wählen, dass Text lesbar bleibt.', contrastWith: ['headingColor', 'bodyColor', 'imageTextColor'] },
+};
+
+const BASE_TEXT_SLOTS: SectionColorSlot[] = ['sectionBg', 'headingColor', 'bodyColor', 'textPrimary', 'textSecondary'];
+const CARD_SLOTS: SectionColorSlot[] = ['cardBg', 'borderColor'];
+const CTA_SLOTS: SectionColorSlot[] = ['btnBg', 'btnText'];
+const BADGE_SLOTS: SectionColorSlot[] = ['badgeBg', 'badgeText'];
+const MEDIA_OVERLAY_SLOTS: SectionColorSlot[] = ['overlayColor', 'imageTextColor'];
+
+function inferColorSlotsForSection(type: string, category: SectionContract['category'], fieldKeys: Set<string>): SectionColorSlot[] {
+  const slots = new Set<SectionColorSlot>(BASE_TEXT_SLOTS);
+  const keyText = [...fieldKeys].join(' ').toLowerCase();
+
+  if (category === 'premium' || keyText.includes('card') || keyText.includes('items') || keyText.includes('plans') || keyText.includes('members')) {
+    CARD_SLOTS.forEach(slot => slots.add(slot));
+  }
+  if (keyText.includes('cta') || keyText.includes('button') || keyText.includes('href') || keyText.includes('submit')) {
+    CTA_SLOTS.forEach(slot => slots.add(slot));
+  }
+  if (keyText.includes('badge') || keyText.includes('eyebrow') || keyText.includes('label')) {
+    BADGE_SLOTS.forEach(slot => slots.add(slot));
+  }
+  if (keyText.includes('icon')) slots.add('iconColor');
+  if (keyText.includes('image') || keyText.includes('video') || type.toLowerCase().includes('hero')) {
+    MEDIA_OVERLAY_SLOTS.forEach(slot => slots.add(slot));
+  }
+  if (category === 'premium') {
+    slots.add('accentColor');
+    slots.add('mutedColor');
+  }
+
+  return [...slots];
+}
+
 export function getAllSectionContracts(): SectionContract[] {
   const formalByType = new Map(PILOT_SECTION_CONTRACTS.map((contract) => [contract.type, contract]));
   const definitions = new Map<string, { label: string; category?: string }>();
@@ -216,7 +279,7 @@ export function getAllSectionContracts(): SectionContract[] {
         type: inferFieldType(key, defaultData[key] ?? previewData[key]),
         supportsFocalPoint: key.toLowerCase().includes('image') || key.toLowerCase().includes('logo'),
       })),
-      colorSlots: [],
+      colorSlots: inferColorSlotsForSection(type, categoryFor(type, definition.category), fieldKeys),
       previewData,
       maturity: 'formal',
       source: 'registry',

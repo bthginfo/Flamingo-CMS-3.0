@@ -74,6 +74,12 @@ export function validateSections(sections: unknown): string | null {
     if (s.data !== undefined && (typeof s.data !== 'object' || s.data === null || Array.isArray(s.data))) {
       return `sections[${i}].data must be an object`;
     }
+    if (
+      s.styleOverrides !== undefined
+      && (typeof s.styleOverrides !== 'object' || s.styleOverrides === null || Array.isArray(s.styleOverrides))
+    ) {
+      return `sections[${i}].styleOverrides must be an object`;
+    }
     // Section-specific validation
     const data = s.data || {};
     const err = validateSectionData(s.type, data, i);
@@ -137,6 +143,21 @@ export function normalizeSectionData(type: string, data: Record<string, unknown>
     if (!d.source) d.source = 'manual';
   }
   return d;
+}
+
+export function normalizeStyleOverrides(styleOverrides: unknown): Record<string, string> | null {
+  if (!styleOverrides || typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) return null;
+  const normalized: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(styleOverrides)) {
+    if (!key.startsWith('--')) continue;
+    if (typeof value !== 'string') continue;
+    const trimmed = value.trim();
+    if (!trimmed) continue;
+    normalized[key] = sanitizeHtml(trimmed);
+  }
+
+  return Object.keys(normalized).length ? normalized : null;
 }
 
 function sanitizeValue(value: unknown): unknown {

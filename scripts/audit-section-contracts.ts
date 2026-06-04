@@ -89,6 +89,7 @@ function main() {
   const rendererTypes = extractTemplates(templatesSource);
   const dataEditorTypes = extractObjectKeysAfter(dataEditorSource, 'const EDITORS');
   const colorTypes = extractObjectKeysAfter(colorEditorSource, 'const SECTION_FIELDS');
+  const hasDefaultColorEditorFields = colorEditorSource.includes('const DEFAULT_SECTION_FIELDS');
   const apiSchemaTypes = extractApiSchemas(instructionsSource);
 
   const contracts = getAllSectionContracts().map(contract => {
@@ -98,7 +99,7 @@ function main() {
     if (!rendererTypes.includes(contract.type)) issues.push('Contract section is not registered in renderer');
     if (!isInternalAlias && !apiSchemaTypes.includes(contract.type)) issues.push('Contract section is missing from AI/API schema');
     if (!isInternalAlias && !dataEditorTypes.includes(contract.type)) issues.push('Contract section has no curated data editor');
-    if (contract.colorSlots.length > 0 && !colorTypes.includes(contract.type)) issues.push('Contract defines color slots but no section color mapping exists');
+    if (contract.colorSlots.length > 0 && !colorTypes.includes(contract.type) && !hasDefaultColorEditorFields) issues.push('Contract defines color slots but no section color mapping exists');
 
     return {
       type: contract.type,

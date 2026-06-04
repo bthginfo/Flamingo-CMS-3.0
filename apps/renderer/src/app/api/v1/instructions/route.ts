@@ -5,6 +5,7 @@ import { pages, tenantAddons } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
 import { ensureShopPages } from '@/app/admin/shop/actions';
+import { getAllSectionContracts, SECTION_COLOR_SLOT_DEFINITIONS } from '@/lib/section-contracts';
 
 export async function GET(req: NextRequest) {
   const auth = await validatePat(req.headers.get('authorization'));
@@ -45,6 +46,8 @@ export async function GET(req: NextRequest) {
     existingPages: tenantPages,
     availableSectionTypes: allowedSectionTypes,
     sectionDataSchemas: getSectionSchemas(auth.tenant.industry),
+    styleSystem: getStyleSystemInstructions(),
+    sectionStyleContracts: getSectionStyleContracts(allowedSectionTypes),
     endpoints: {
       brand: { method: 'PUT', path: '/api/v1/content/brand', description: 'Set brand data (companyName, tagline, primaryColor, logo, etc.)' },
       contact: { method: 'PUT', path: '/api/v1/content/contact', description: 'Set contact info (email, phone, address, whatsapp, whatsappEnabled, whatsappColor)' },
@@ -94,6 +97,9 @@ export async function GET(req: NextRequest) {
       'Do NOT use section type "freeHtml" or "htmlBlock" — raw HTML is not allowed.',
       'Only use section types listed in availableSectionTypes.',
       'Only fill fields defined in sectionDataSchemas — do not invent custom fields.',
+      'Section colors are NOT normal data fields. Put per-section colors into section.styleOverrides using CSS variables from sectionStyleContracts.',
+      'For every section with an image, dark background or overlay, explicitly set contrasting text/button colors in styleOverrides. Do not rely on global theme colors when contrast is uncertain.',
+      'Never send text and background colors with low contrast. Use dark text on light backgrounds, light text on dark backgrounds, and pair --brand-btn-bg with a readable --brand-btn-text.',
       'Every section MUST have ALL required fields filled with real content — never leave fields empty or with placeholder text like "Lorem ipsum".',
       'Every array field (items, services, steps, etc.) MUST have at least 3 entries unless the real business has fewer.',
       'The footer MUST contain columns with items arrays. Each item needs text and optionally href. Never send empty columns or columns without items.',
@@ -365,6 +371,82 @@ Folgende Sections speichern echte Nutzerdaten in der Datenbank:
 - propertySearch (Realestate): KEIN Suchformular, zeigt Kategorie-Karten die zu Collections verlinken
 Workflow: 1) POST /collections → { key, label }  2) POST /collections/:key/items für jeden Eintrag  3) Auf Übersichtsseiten servicesGrid mit href="/c/:key/:slug" nutzen`,
   });
+}
+
+function getStyleSystemInstructions() {
+  return {
+    whereToPutSectionColors: 'Set per-section colors on the section object as styleOverrides, not inside section.data.',
+    sectionObjectShape: {
+      type: 'sectionType',
+      data: '{ content fields from sectionDataSchemas }',
+      styleOverrides: {
+        '--style-section-bg': '#ffffff',
+        '--style-heading-color': '#111111',
+        '--style-body-color': '#3f3f46',
+        '--brand-btn-bg': '#111111',
+        '--brand-btn-text': '#ffffff',
+      },
+    },
+    globalVsSection: [
+      'Use /api/v1/content/brand and /api/v1/content/design for global brand defaults.',
+      'Use section.styleOverrides only when a specific section needs its own background, text, card, badge, button or overlay colors.',
+      'Do not place color keys like headingColor, btnBg or cardBg inside data unless that exact field is listed in sectionDataSchemas. Renderer colors are controlled by CSS variables in styleOverrides.',
+    ],
+    contrastRules: [
+      'Every background/text pair must be readable: section/card/image backgrounds must contrast with heading, body and muted text.',
+      'Every primary CTA must define both --brand-btn-bg and --brand-btn-text when overriding one of them.',
+      'Image sections should use a dark overlay with light text OR a light overlay with dark text. Do not use dark text on dark images.',
+      'Badge colors must pair --style-badge-bg with --style-badge-text.',
+      'If a section has cards on a dark section background, set --style-card-bg and text colors independently so card content remains readable.',
+    ],
+    commonCssVariables: Object.fromEntries(
+      Object.entries(SECTION_COLOR_SLOT_DEFINITIONS).map(([slot, def]) => [slot, {
+        cssVar: def.cssVar,
+        label: def.label,
+        description: def.description,
+        contrastWith: def.contrastWith || [],
+      }])
+    ),
+  };
+}
+
+function getSectionStyleContracts(sectionTypes: Array<{ type?: string; id?: string; label?: string }>) {
+  const available = new Set(sectionTypes.map(section => section.type || section.id).filter(Boolean));
+  return getAllSectionContracts()
+    .filter(contract => available.has(contract.type))
+    .map(contract => ({
+      type: contract.type,
+      label: contract.label,
+      category: contract.category,
+      defaultTheme: contract.defaultTheme || 'auto',
+      colorSlots: contract.colorSlots.map(slot => ({
+        slot,
+        ...SECTION_COLOR_SLOT_DEFINITIONS[slot],
+        contrastWith: SECTION_COLOR_SLOT_DEFINITIONS[slot]?.contrastWith || [],
+      })),
+      recommendedMinimum: getRecommendedMinimumStyle(contract.colorSlots),
+    }));
+}
+
+function getRecommendedMinimumStyle(colorSlots: string[]) {
+  const slots = new Set(colorSlots);
+  const style: Record<string, string> = {};
+  if (slots.has('sectionBg')) style['--style-section-bg'] = 'background color';
+  if (slots.has('cardBg')) style['--style-card-bg'] = 'card background color';
+  if (slots.has('headingColor')) style['--style-heading-color'] = 'readable heading color';
+  if (slots.has('bodyColor')) style['--style-body-color'] = 'readable body text color';
+  if (slots.has('textPrimary')) style['--style-text-primary'] = 'readable primary text color';
+  if (slots.has('textSecondary')) style['--style-text-secondary'] = 'readable secondary text color';
+  if (slots.has('imageTextColor')) style['--style-image-text-color'] = 'readable text color on image/overlay';
+  if (slots.has('accentColor')) style['--style-accent-color'] = 'accent color';
+  if (slots.has('iconColor')) style['--style-icon-color'] = 'icon color';
+  if (slots.has('btnBg')) style['--brand-btn-bg'] = 'button background color';
+  if (slots.has('btnText')) style['--brand-btn-text'] = 'button text color';
+  if (slots.has('badgeBg')) style['--style-badge-bg'] = 'badge background color';
+  if (slots.has('badgeText')) style['--style-badge-text'] = 'badge text color';
+  if (slots.has('borderColor')) style['--style-border-color'] = 'border color';
+  if (slots.has('overlayColor')) style['--style-overlay-color'] = 'image overlay color';
+  return style;
 }
 
 function getSectionSchemas(industry: string): Record<string, object> {
