@@ -29,9 +29,10 @@ export function HotelHeroSection({ data, styleVariant }: SectionProps) {
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
-  if (styleVariant === 'modern') return <HeroModern headline={headline} subline={plain(subline)} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} overlayColor={overlayColor || undefined} overlayOpacity={overlayOpacity} />;
-  if (styleVariant === 'bold') return <HeroBold headline={headline} subline={plain(subline)} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} overlayColor={overlayColor || undefined} overlayOpacity={overlayOpacity} />;
-  return <HeroClassic headline={headline} subline={plain(subline)} badgeText={badgeText} badgeIcon={badgeIcon} trustItems={trustItems} bgImage={bgImage} bgImageMobile={bgImageMobile} bgColor={bgColor} bgMode={bgMode} primaryCta={primaryCta} secondaryCta={secondaryCta} availabilityHint={availabilityHint} ratingText={ratingText} bgPosition={bgPosition} bgPositionMobile={bgPositionMobile} overlayColor={overlayColor || undefined} overlayOpacity={overlayOpacity} />;
+  const props: HeroProps = { headline, subline: plain(subline), badgeText, badgeIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, availabilityHint, ratingText, bgPosition, bgPositionMobile, overlayColor: overlayColor || undefined, overlayOpacity, imageEffect, imageEffectIntensity };
+  if (styleVariant === 'modern') return <HeroModern {...props} />;
+  if (styleVariant === 'bold') return <HeroBold {...props} />;
+  return <HeroClassic {...props} />;
 }
 
 type HeroProps = {
@@ -51,7 +52,8 @@ type HeroProps = {
   overlayColor?: string;
   overlayOpacity: number;
   bgPosition?: string;
-  bgPositionMobile?: string;  imageEffect?: ImageEffect;
+  bgPositionMobile?: string;
+  imageEffect?: ImageEffect;
   imageEffectIntensity?: 'subtle' | 'medium' | 'strong';
 };
 
@@ -82,9 +84,9 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
       {/* grain texture */}
       <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE0VjZoLTJWMGgtNHY2aC0ydjhoLTJ2LThoLTJWMGgtNHY2aC0ydjhoNFYyaDRWNmgydi04aDJ6Ii8+PC9nPjwvZz48L3N2Zz4=')]" />
       {/* scattered stars */}
-      <div className="absolute top-1/4 left-[15%] text-[color:var(--token-on-dark-heading,#ffffff)/15]"><Star size={24} /></div>
-      <div className="absolute top-[60%] right-[20%] text-[color:var(--token-on-dark-heading,#ffffff)/10]"><Star size={18} /></div>
-      <div className="absolute top-[35%] right-[10%] text-[color:var(--token-on-dark-heading,#ffffff)/8]"><Star size={32} /></div>
+      <div className="absolute top-1/4 left-[15%] text-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_18%,transparent)]"><Star size={24} /></div>
+      <div className="absolute top-[60%] right-[20%] text-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_14%,transparent)]"><Star size={18} /></div>
+      <div className="absolute top-[35%] right-[10%] text-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_10%,transparent)]"><Star size={32} /></div>
       {/* border lines */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -92,7 +94,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
       <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20 text-center">
         {badgeText && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
-            className="inline-flex items-center gap-2.5 bg-[var(--token-card-bg,#ffffff)/10] backdrop-blur-md border border-[color:var(--token-card-border,#ffffff)/20] rounded-full px-5 py-2.5 text-sm text-[color:var(--token-on-dark-heading,#ffffff)/80] mb-6">
+            className="inline-flex items-center gap-2.5 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_26%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_12%,transparent)] px-5 py-2.5 text-sm text-[color:var(--token-on-dark-heading,#ffffff)] backdrop-blur-md mb-6">
             <DynamicIcon name={badgeIcon} size={14} className="fill-white text-[color:var(--token-on-dark-heading,#ffffff)]" />
             <span className="font-medium">{badgeText}</span>
           </motion.div>
@@ -104,7 +106,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
         </motion.h1>
         {subline && (
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.7 }}
-            className="mt-7 max-w-2xl mx-auto text-lg leading-8 text-[color:var(--token-on-dark-heading,#ffffff)/70] rt-content"
+            className="mt-7 max-w-2xl mx-auto text-lg leading-8 text-[color:var(--token-on-dark-body,rgba(255,255,255,0.84))] rt-content"
             style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
             dangerouslySetInnerHTML={{ __html: subline }}
           />
@@ -112,23 +114,23 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.9 }}
           className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
           {primaryCta.label && (
-              <a href={primaryCta.href || '#'} className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-[var(--token-card-bg,#ffffff)] px-8 py-4 font-semibold text-[#0f1d2e] transition-all hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto">
+              <a href={primaryCta.href || '#'} className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-[var(--token-btn-bg,#ffffff)] px-8 py-4 font-semibold text-[color:var(--token-btn-text,#0f1d2e)] transition-all hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto">
               <span className="relative z-10 flex items-center justify-between sm:justify-center sm:gap-2.5 w-full sm:w-auto">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} className="transition-transform group-hover:translate-x-1" />}</span>
               <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.3),transparent)] bg-[length:200%_100%]" />
             </a>
           )}
           {secondaryCta.label && (
-            <a href={secondaryCta.href || '#'} className="inline-flex items-center justify-center rounded-full border border-[color:var(--token-card-border,#ffffff)/30] px-7 py-4 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] hover:border-[color:var(--token-card-border,#ffffff)/60] transition-colors">
+            <a href={secondaryCta.href || '#'} className="inline-flex items-center justify-center rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_8%,transparent)] px-7 py-4 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] transition-colors hover:border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_62%,transparent)]">
               {secondaryCta.label}
             </a>
           )}
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1.2 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-4 text-sm text-[color:var(--token-on-dark-heading,#ffffff)/50]">
-          {ratingText && <span className="inline-flex items-center gap-2"><Star size={14} className="text-[color:var(--token-on-dark-heading,#ffffff)/70]" />{ratingText}</span>}
-          {availabilityHint && <span className="border border-[color:var(--token-card-border,#ffffff)/15] px-3 py-1 rounded-full">{availabilityHint}</span>}
+          className="mt-10 flex flex-wrap items-center justify-center gap-4 text-sm text-[color:var(--token-on-dark-muted,rgba(255,255,255,0.72))]">
+          {ratingText && <span className="inline-flex items-center gap-2"><Star size={14} className="text-[color:var(--token-on-dark-body,rgba(255,255,255,0.84))]" />{ratingText}</span>}
+          {availabilityHint && <span className="rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_22%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_8%,transparent)] px-3 py-1 text-[color:var(--token-on-dark-heading,#ffffff)]">{availabilityHint}</span>}
           {trustItems.map((item) => (
-            <span key={item} className="flex items-center gap-2"><CheckCircle size={14} className="text-[color:var(--token-on-dark-heading,#ffffff)/60]" />{item}</span>
+            <span key={item} className="flex items-center gap-2"><CheckCircle size={14} className="text-[color:var(--token-on-dark-body,rgba(255,255,255,0.84))]" />{item}</span>
           ))}
         </motion.div>
       </motion.div>
@@ -187,20 +189,24 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, trustItems, bgIma
 }
 
 /* ─── BOLD: Dark bg, diagonal gold stripe, uppercase, brutalist buttons ─── */
-function HeroBold({ headline, subline, badgeText, badgeIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, availabilityHint, ratingText , bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
+function HeroBold({ headline, subline, badgeText, badgeIcon, trustItems, bgImage, bgImageMobile, bgColor, bgMode, primaryCta, secondaryCta, availabilityHint, ratingText, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-section-bg-alt,#09090b)]">
       {(bgMode === 'image' && bgImage) ? (
         <>
           <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
           {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="100vw" />}
-          <div className="absolute inset-0 bg-[var(--token-section-bg-alt,#09090b)/80]" />
+          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (
+            <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
+          ) : (
+            <div className="absolute inset-0 bg-black/75" />
+          )}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
       ) : null}
       {/* diagonal accent stripe */}
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-[var(--token-card-bg,#ffffff)/5] skew-x-[-12deg] translate-x-20" />
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-white/5 skew-x-[-12deg] translate-x-20" />
       {/* thick accent lines */}
       <div className="absolute top-0 left-0 w-full h-1.5 bg-[var(--token-card-bg,#ffffff)]" />
       <div className="absolute bottom-0 left-0 w-full h-1.5 bg-[var(--token-card-bg,#ffffff)]" />
@@ -219,24 +225,24 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, trustItems, bgImage
           </motion.h1>
           {subline && (
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.4 }}
-              className="text-lg text-[color:var(--token-on-dark-heading,#ffffff)/50] mt-8 max-w-2xl font-medium rt-content" dangerouslySetInnerHTML={{ __html: subline }} />
+              className="text-lg text-[color:var(--token-on-dark-body,rgba(255,255,255,0.82))] mt-8 max-w-2xl font-medium rt-content" dangerouslySetInnerHTML={{ __html: subline }} />
           )}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta.label && (
-              <a href={primaryCta.href || '#'} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 bg-[var(--token-card-bg,#ffffff)] text-[color:var(--token-heading,#09090b)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] w-full sm:w-auto">
+              <a href={primaryCta.href || '#'} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 bg-[var(--token-btn-bg,#ffffff)] text-[color:var(--token-btn-text,#09090b)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] w-full sm:w-auto">
                 {primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} />}
               </a>
             )}
             {secondaryCta.label && (
-              <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border,#ffffff)/30] text-[color:var(--token-on-dark-heading,#ffffff)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-card-border,#ffffff)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.1)]">
+              <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_34%,transparent)] text-[color:var(--token-on-dark-heading,#ffffff)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-on-dark-heading,#ffffff)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.1)]">
                 {secondaryCta.label}
               </a>
             )}
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
-            className="flex flex-wrap gap-6 mt-16 text-sm text-[color:var(--token-on-dark-heading,#ffffff)/40] font-bold uppercase tracking-wider">
-            {ratingText && <span className="flex items-center gap-2"><Star size={14} className="text-[color:var(--token-on-dark-heading,#ffffff)/70]" />{ratingText}</span>}
+            className="flex flex-wrap gap-6 mt-16 text-sm text-[color:var(--token-on-dark-muted,rgba(255,255,255,0.70))] font-bold uppercase tracking-wider">
+            {ratingText && <span className="flex items-center gap-2"><Star size={14} className="text-[color:var(--token-on-dark-body,rgba(255,255,255,0.84))]" />{ratingText}</span>}
             {availabilityHint && <span className="flex items-center gap-2"><span className="w-2 h-2 bg-[var(--token-card-bg,#ffffff)]" />{availabilityHint}</span>}
             {trustItems.map((item, i) => (
               <span key={i} className="flex items-center gap-2"><span className="w-2 h-2 bg-[var(--token-card-bg,#ffffff)]" />{item}</span>

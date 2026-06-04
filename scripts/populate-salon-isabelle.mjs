@@ -488,7 +488,7 @@ async function main() {
   const collectionsBefore = await api('GET', '/api/v1/content/collections');
   const existingPages = pagesBefore.pages || [];
 
-  await api('PUT', '/api/v1/content/style', { style: 'bold' });
+  await api('PUT', '/api/v1/content/style', { style: 'classic' });
   await api('PUT', '/api/v1/content/brand', { companyName: 'Atelier Isabelle', tagline: 'Hair Studio für Cut, Color und ruhige Beratung', primaryColor: colors.espresso, secondaryColor: colors.roseDeep, accentColor: colors.caramel, logo: '', logoDisplay: 'name', headingFont: 'Playfair Display', bodyFont: 'Inter', topBarColor: colors.espresso, footerColor: colors.espresso });
   await api('PUT', '/api/v1/content/design', { textPrimary: colors.ink, textSecondary: colors.soft, sectionBg: colors.cream, sectionBgAlt: colors.blush, cardBg: colors.card, cardBorder: colors.border, badgeBg: colors.blush, badgeText: colors.espresso, badgeBorder: colors.border, brand: colors.espresso, accent: colors.rose, heading: colors.ink, subheading: colors.soft, body: colors.soft, muted: colors.muted, icon: colors.roseDeep, btnBg: colors.espresso, btnText: colors.onDark, dividerColor: colors.border, eyebrow: colors.roseDeep, statValue: colors.espresso, quote: colors.ink, ratingStar: colors.caramel, check: colors.roseDeep, onDarkHeading: colors.onDark, onDarkBody: colors.onDarkSoft, onDarkMuted: '#D9BDB4' });
   await api('PUT', '/api/v1/content/contact', { phone, email, address, whatsappEnabled: true, whatsapp: '+498945239018', whatsappColor: colors.roseDeep });

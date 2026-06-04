@@ -36,29 +36,33 @@ type Props = {
 /* --- CLASSIC --- */
 function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary, imageSecondary, treatments, features, ctaPrimary }: Props) {
   return (
-    <div className="grid gap-10 lg:grid-cols-2">
-      <div>
+    <div className="space-y-10">
+      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
         <div className="mb-6 max-w-3xl">
           {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{badgeText}</motion.p>}
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{headline}</motion.h2>
           {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {introText && <div className="mt-6 text-[color:var(--token-muted,#52525b)] leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+          {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--token-btn-bg,#111827)] px-5 py-3 font-semibold text-[color:var(--token-btn-text,#ffffff)] shadow-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
         </div>
-        {introText && <div className="text-[color:var(--token-muted,#52525b)] leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
-        <div className="mt-8 grid gap-4">
-          {features.map((feature, index) => (
-            <motion.div key={`${feature.title}-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[var(--token-icon, var(--brand-primary))]/20 pt-4">
-              <div className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={feature.icon || 'heart'} size={20} /></div>
-              <div><h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{feature.title || ''}</h3>{feature.text && <div className="text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: feature.text }} />}</div>
-            </motion.div>
-          ))}
-        </div>
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] shadow-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
-      </div>
-      <div className="space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-md"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
           {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
+      </div>
+      {features.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {features.map((feature, index) => (
+            <motion.div key={`${feature.title}-${index}`} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[color:var(--token-card-border,rgba(0,0,0,0.10))] bg-[var(--token-card-bg,#ffffff)] p-5 shadow-sm">
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon,var(--brand-primary,#1a5276))_12%,transparent)] text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={feature.icon || 'heart'} size={20} /></div>
+              <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{feature.title || ''}</h3>
+              {feature.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: feature.text }} />}
+            </motion.div>
+          ))}
+        </div>
+      )}
+      {treatments.length > 0 && (
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {treatments.map((treatment, index) => (
           <motion.article key={`${treatment.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 shadow-md">
             {treatment.image && <div className="relative mb-4 aspect-[16/9] overflow-hidden rounded-xl"><Image src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
@@ -68,7 +72,8 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
             {treatment.cta?.label && <a href={treatment.cta.href || '#'} className="mt-4 inline-flex font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{treatment.cta.label}</a>}
           </motion.article>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -119,7 +124,7 @@ function WellnessBold({ headline, subline, badgeText, introText, imagePrimary, i
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <div className="mb-6 max-w-3xl">
-          {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
+          {badgeText && <p className="inline-block bg-[color:color-mix(in_srgb,var(--token-btn-bg,var(--brand-primary,#1a5276))_12%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
           {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
