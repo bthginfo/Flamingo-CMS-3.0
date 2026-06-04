@@ -16,7 +16,49 @@ async function api(method, path, body) {
 }
 
 const uid = () => crypto.randomUUID();
-const section = (type, data, styleOverrides = {}) => ({ id: uid(), type, data, styleOverrides });
+const STYLE_KEY_TO_VARS = {
+  sectionBg: ['--style-section-bg', '--token-section-bg'],
+  sectionBgAlt: ['--style-section-bg-alt', '--token-section-bg-alt'],
+  cardBg: ['--style-card-bg', '--token-card-bg'],
+  cardBorder: ['--style-card-border-color', '--style-border-color', '--token-card-border'],
+  borderColor: ['--style-border-color', '--token-card-border'],
+  cardBorderColor: ['--style-card-border-color', '--style-border-color', '--token-card-border'],
+  dividerColor: ['--style-divider-color', '--token-divider'],
+  heading: ['--style-heading-color', '--style-text-primary', '--token-heading'],
+  heroHeading: ['--style-image-text-color', '--token-on-dark-heading', '--style-heading-color', '--style-text-primary', '--token-heading'],
+  subheading: ['--style-subheading-color', '--style-text-secondary', '--token-subheading'],
+  body: ['--style-body-color', '--style-text-secondary', '--token-body'],
+  heroBody: ['--style-image-body-color', '--token-on-dark-body', '--style-body-color', '--style-text-secondary', '--token-body'],
+  muted: ['--style-text-muted', '--token-muted'],
+  icon: ['--style-icon-color', '--token-icon'],
+  accentColor: ['--style-accent-color', '--style-accent', '--token-eyebrow', '--token-stat-value', '--token-quote', '--token-rating-star', '--token-check'],
+  eyebrow: ['--style-accent-color', '--token-eyebrow'],
+  statValue: ['--token-stat-value'],
+  quote: ['--token-quote'],
+  ratingStar: ['--token-rating-star'],
+  check: ['--token-check'],
+  badgeBg: ['--style-badge-bg', '--token-badge-bg'],
+  badgeText: ['--style-badge-text', '--token-badge-text'],
+  badgeBorder: ['--style-badge-border', '--token-badge-border'],
+  btnBg: ['--style-button-bg', '--brand-btn-bg', '--token-btn-bg'],
+  btnText: ['--style-button-text', '--brand-btn-text', '--token-btn-text'],
+  onDarkHeading: ['--style-image-text-color', '--token-on-dark-heading'],
+  onDarkBody: ['--style-image-body-color', '--token-on-dark-body'],
+  onDarkMuted: ['--style-image-muted-color', '--token-on-dark-muted'],
+};
+
+function styleVars(overrides = {}) {
+  const vars = {};
+  for (const [key, value] of Object.entries(overrides)) {
+    if (value === undefined || value === null || value === '') continue;
+    const targets = key.startsWith('--') ? [key] : STYLE_KEY_TO_VARS[key];
+    if (!targets?.length) continue;
+    for (const target of targets) vars[target] = String(value);
+  }
+  return vars;
+}
+
+const section = (type, data, styleOverrides = {}) => ({ id: uid(), type, data, styleOverrides: styleVars(styleOverrides) });
 
 const img = {
   hero: 'https://images.unsplash.com/photo-1666214280557-f1b5022eb634?w=2200&q=85',
@@ -101,10 +143,16 @@ const heroStyle = {
   ...dark,
   sectionBg: colors.tealDeep,
   heading: colors.onDark,
+  subheading: colors.onDarkBody,
   body: colors.onDarkBody,
   muted: colors.onDarkMuted,
+  icon: colors.sandSoft,
+  accentColor: colors.sandSoft,
   btnBg: colors.sandSoft,
   btnText: colors.tealDeep,
+  badgeBg: 'rgba(255,255,255,0.16)',
+  badgeText: colors.onDark,
+  badgeBorder: 'rgba(255,255,255,0.28)',
   onDarkHeading: colors.onDark,
   onDarkBody: colors.onDarkBody,
   onDarkMuted: colors.onDarkMuted,
@@ -263,7 +311,7 @@ function hero(headline, subline, image, extra = {}) {
     bgImage: image,
     bgPosition: extra.bgPosition || 'center',
     overlayColor: extra.overlayColor || colors.tealDeep,
-    overlayOpacity: extra.overlayOpacity ?? 0.62,
+    overlayOpacity: extra.overlayOpacity ?? 0.72,
     imageEffect: extra.imageEffect || 'kenBurns',
     imageEffectIntensity: extra.imageEffectIntensity || 'subtle',
     specialtyLabel: extra.specialtyLabel || 'Allgemeinmedizin · Vorsorge · Diagnostik',
@@ -334,7 +382,7 @@ function collectionHero(title, excerpt, image, badgeText) {
     backgroundImage: image,
     bgImage: image,
     overlayColor: colors.tealDeep,
-    overlayOpacity: 0.62,
+    overlayOpacity: 0.72,
     imageEffect: 'kenBurns',
     imageEffectIntensity: 'subtle',
   }, heroStyle);

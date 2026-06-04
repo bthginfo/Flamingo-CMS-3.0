@@ -25,7 +25,21 @@ export function ImageCard({ image, title, text, meta, cta }: { image?: string; t
 }
 
 export function IconRows({ items }: { items: unknown }) {
-  return <div className="grid gap-4">{asList<{ icon?: string; title?: string; text?: string }>(items).map((item, index) => <div key={`${item.title}-${index}`} className="flex gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4"><DynamicIcon name={item.icon || 'stethoscope'} size={20} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" /><div><h3 className="font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>{item.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}</div></div>)}</div>;
+  return (
+    <div className="grid gap-4">
+      {asList<{ icon?: string; title?: string; text?: string }>(items).map((item, index) => (
+        <div key={`${item.title}-${index}`} className="flex items-start gap-4 border-t border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,.1)))] pt-4">
+          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--token-icon,var(--style-icon-color,var(--brand-primary,#1f7a74)))_12%,transparent)] text-[var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary,#1f7a74))))]">
+            <DynamicIcon name={item.icon || 'stethoscope'} size={18} />
+          </span>
+          <div className="min-w-0">
+            <h3 className="font-semibold text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
+            {item.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body,var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export { asButton, asList };

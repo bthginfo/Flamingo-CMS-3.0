@@ -50,10 +50,10 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
     : `text-4xl md:text-7xl lg:text-8xl font-serif font-light tracking-tight break-words ${bgImage ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-heading,#18181b)]'}`;
 
   const sublineClass = isBold
-    ? `text-xs font-bold tracking-[0.4em] uppercase mb-4 ${bgImage ? 'text-[color:var(--token-on-dark-heading,#ffffff)/80]' : 'text-[color:var(--token-muted,#3f3f46)]'}`
+    ? `text-xs font-bold tracking-[0.4em] uppercase mb-4 ${bgImage ? 'text-[color:var(--token-on-dark-body,#ffffff)] opacity-90' : 'text-[color:var(--token-muted,#3f3f46)]'}`
     : isModern
-    ? `text-xs tracking-[0.5em] uppercase mb-8 ${bgImage ? 'text-[color:var(--token-on-dark-heading,#ffffff)/60]' : 'text-[color:var(--token-muted,#71717a)]'}`
-    : `text-sm tracking-[0.3em] uppercase mb-6 ${bgImage ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-icon,var(--brand-primary,#1a5276))]'}`;
+    ? `text-xs tracking-[0.5em] uppercase mb-8 ${bgImage ? 'text-[color:var(--token-on-dark-body,#ffffff)] opacity-80' : 'text-[color:var(--token-muted,#71717a)]'}`
+    : `text-sm tracking-[0.3em] uppercase mb-6 ${bgImage ? 'text-[color:var(--token-on-dark-body,#ffffff)] opacity-85' : 'text-[color:var(--token-icon,var(--brand-primary,#1a5276))]'}`;
 
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden -mt-[112px] pt-[112px]">
@@ -79,7 +79,7 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={nameClass}>
           {names}
         </motion.h1>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className={`mt-6 ${isBold ? 'text-sm font-bold uppercase tracking-widest' : isModern ? 'text-sm tracking-[0.15em] uppercase' : 'text-lg'} ${bgImage ? (isBold ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-on-dark-heading,#ffffff)/80]') : 'text-[color:var(--token-muted,#52525b)]'}`}>
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className={`mt-6 ${isBold ? 'text-sm font-bold uppercase tracking-widest' : isModern ? 'text-sm tracking-[0.15em] uppercase' : 'text-lg'} ${bgImage ? 'text-[color:var(--token-on-dark-body,#ffffff)] opacity-90' : 'text-[color:var(--token-muted,#52525b)]'}`}>
           {formattedDate}{venue && ` · ${venue}`}
         </motion.p>
         {showCountdown && (

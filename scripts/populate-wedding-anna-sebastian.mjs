@@ -16,7 +16,49 @@ async function api(method, path, body) {
 }
 
 const uid = () => crypto.randomUUID();
-const section = (type, data, styleOverrides = {}) => ({ id: uid(), type, data, styleOverrides });
+const STYLE_KEY_TO_VARS = {
+  sectionBg: ['--style-section-bg', '--token-section-bg'],
+  sectionBgAlt: ['--style-section-bg-alt', '--token-section-bg-alt'],
+  cardBg: ['--style-card-bg', '--token-card-bg'],
+  cardBorder: ['--style-card-border-color', '--style-border-color', '--token-card-border'],
+  borderColor: ['--style-border-color', '--token-card-border'],
+  cardBorderColor: ['--style-card-border-color', '--style-border-color', '--token-card-border'],
+  dividerColor: ['--style-divider-color', '--token-divider'],
+  heading: ['--style-heading-color', '--style-text-primary', '--token-heading'],
+  heroHeading: ['--style-image-text-color', '--token-on-dark-heading', '--style-heading-color', '--style-text-primary', '--token-heading'],
+  subheading: ['--style-subheading-color', '--style-text-secondary', '--token-subheading'],
+  body: ['--style-body-color', '--style-text-secondary', '--token-body'],
+  heroBody: ['--style-image-body-color', '--token-on-dark-body', '--style-body-color', '--style-text-secondary', '--token-body'],
+  muted: ['--style-text-muted', '--token-muted'],
+  icon: ['--style-icon-color', '--token-icon'],
+  accentColor: ['--style-accent-color', '--style-accent', '--token-eyebrow', '--token-stat-value', '--token-quote', '--token-rating-star', '--token-check'],
+  eyebrow: ['--style-accent-color', '--token-eyebrow'],
+  statValue: ['--token-stat-value'],
+  quote: ['--token-quote'],
+  ratingStar: ['--token-rating-star'],
+  check: ['--token-check'],
+  badgeBg: ['--style-badge-bg', '--token-badge-bg'],
+  badgeText: ['--style-badge-text', '--token-badge-text'],
+  badgeBorder: ['--style-badge-border', '--token-badge-border'],
+  btnBg: ['--style-button-bg', '--brand-btn-bg', '--token-btn-bg'],
+  btnText: ['--style-button-text', '--brand-btn-text', '--token-btn-text'],
+  onDarkHeading: ['--style-image-text-color', '--token-on-dark-heading'],
+  onDarkBody: ['--style-image-body-color', '--token-on-dark-body'],
+  onDarkMuted: ['--style-image-muted-color', '--token-on-dark-muted'],
+};
+
+function styleVars(overrides = {}) {
+  const vars = {};
+  for (const [key, value] of Object.entries(overrides)) {
+    if (value === undefined || value === null || value === '') continue;
+    const targets = key.startsWith('--') ? [key] : STYLE_KEY_TO_VARS[key];
+    if (!targets?.length) continue;
+    for (const target of targets) vars[target] = String(value);
+  }
+  return vars;
+}
+
+const section = (type, data, styleOverrides = {}) => ({ id: uid(), type, data, styleOverrides: styleVars(styleOverrides) });
 
 const img = {
   hero: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=2200&q=85',
@@ -101,6 +143,14 @@ const dark = {
 };
 
 const heroStyle = {
+  ...dark,
+  sectionBg: colors.espresso,
+  heading: colors.onDark,
+  subheading: colors.onDarkBody,
+  body: colors.onDarkBody,
+  muted: colors.onDarkMuted,
+  icon: colors.onDark,
+  accentColor: colors.onDark,
   heroHeading: colors.onDark,
   heroBody: colors.onDarkBody,
   badgeBg: 'rgba(255,249,240,0.18)',
@@ -210,7 +260,7 @@ function hero(names, subline, image, extra = {}) {
     bgImage: image,
     bgPosition: extra.bgPosition || 'center 42%',
     overlayColor: colors.espresso,
-    overlayOpacity: extra.overlayOpacity ?? 0.48,
+    overlayOpacity: extra.overlayOpacity ?? 0.68,
     showCountdown: extra.showCountdown ?? true,
     imageEffect: extra.imageEffect || 'kenBurns',
     imageEffectIntensity: extra.imageEffectIntensity || 'subtle',
@@ -238,7 +288,7 @@ function collectionHero(title, excerpt, image, badgeText) {
     backgroundImage: image,
     bgImage: image,
     overlayColor: colors.espresso,
-    overlayOpacity: 0.50,
+    overlayOpacity: 0.68,
     imageEffect: 'kenBurns',
     imageEffectIntensity: 'subtle',
   }, heroStyle);

@@ -248,8 +248,8 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   const sectionStyle = withBookingStyleAliases(section.type, normalizeSectionStyle(overrideStyle));
   const sectionOverrideCss = sectionStyle
     ? `
-[data-section-id="${section.id}"][data-style] :is(h1,h2,h3,h4,h5,h6):not([class*="text-["]):not([class*="text-white"]):not([class*="text-black"]) { color: ${headingColorVar} !important; }
-[data-section-id="${section.id}"][data-style] :is(p,li):not([class*="text-["]):not([class*="text-white"]):not([class*="text-black"]) { color: ${bodyColorVar} !important; }
+[data-section-id="${section.id}"][data-style] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: ${headingColorVar} !important; }
+[data-section-id="${section.id}"][data-style] :is(p,li):not([class*="text-white"]):not([class*="text-black"]) { color: ${bodyColorVar} !important; }
 [data-section-id="${section.id}"][data-style] .section-badge { color: var(--style-badge-text, var(--style-accent-color, inherit)) !important; background-color: var(--style-badge-bg, transparent) !important; }
 [data-section-id="${section.id}"][data-style] [class*="brand-btn"] { color: var(--brand-btn-text, inherit) !important; background-color: var(--brand-btn-bg, transparent) !important; }
 `
