@@ -25,11 +25,11 @@ function Classic({ header, items }: Props) {
       <div className="grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
           <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="rounded-xl bg-[var(--token-card-bg,#ffffff)] p-5 shadow-lg">
-            <Download size={22} className="text-green-700" />
-            {item.metaLabel && <p className="mt-4 text-xs font-bold uppercase tracking-widest text-green-700">{item.metaLabel}</p>}
+            <Download size={22} className="text-[color:var(--token-icon,var(--style-accent-color,var(--brand-primary,#166534)))]" />
+            {item.metaLabel && <p className="mt-4 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text,var(--style-accent-color,var(--brand-primary,#166534)))]">{item.metaLabel}</p>}
             <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
             {item.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
-            {item.fileLabel && <a href={item.fileHref || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-green-700">{item.fileLabel}<ArrowRight size={14} /></a>}
+            {item.fileLabel && <a href={item.fileHref || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-[color:var(--token-icon,var(--style-accent-color,var(--brand-primary,#166534)))]">{item.fileLabel}<ArrowRight size={14} /></a>}
           </motion.article>
         ))}
       </div>
