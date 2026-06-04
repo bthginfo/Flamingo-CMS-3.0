@@ -158,10 +158,20 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
     'glowHero', 'floristHero', 'fitnessHero', 'locationHero', 'popup',
   ]);
 
-  // Full-bleed sections that have LIGHT backgrounds (don't apply data-theme="dark")
-  const FULL_BLEED_LIGHT = new Set(['dailySpecials', 'servicePackages', 'uspStrip', 'beforeAfterSlider', 'verticalTimeline', 'popup']);
-
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);
+  const hasMediaOverlay = Boolean(
+    section.data.image ||
+    section.data.backgroundImage ||
+    section.data.bgImage ||
+    section.data.videoUrl ||
+    section.data.overlay,
+  );
+  const headingColorVar = hasMediaOverlay
+    ? 'var(--token-on-dark-heading, var(--style-heading-color, var(--style-text-primary, inherit)))'
+    : 'var(--style-heading-color, var(--style-text-primary, inherit))';
+  const bodyColorVar = hasMediaOverlay
+    ? 'var(--token-on-dark-body, var(--style-body-color, var(--style-text-secondary, inherit)))'
+    : 'var(--style-body-color, var(--style-text-secondary, inherit))';
 
   // Per-section color overrides (from CMS) applied as inline CSS vars
   const overrideStyle = section.styleOverrides
@@ -175,18 +185,17 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
 [data-section-id="${section.id}"][data-style] h3,
 [data-section-id="${section.id}"][data-style] h4,
 [data-section-id="${section.id}"][data-style] h5,
-[data-section-id="${section.id}"][data-style] h6 { color: var(--style-heading-color, var(--style-text-primary, inherit)) !important; }
+[data-section-id="${section.id}"][data-style] h6 { color: ${headingColorVar} !important; }
 [data-section-id="${section.id}"][data-style] p,
-[data-section-id="${section.id}"][data-style] li { color: var(--style-body-color, var(--style-text-secondary, inherit)) !important; }
+[data-section-id="${section.id}"][data-style] li { color: ${bodyColorVar} !important; }
 [data-section-id="${section.id}"][data-style] .section-badge { color: var(--style-badge-text, var(--style-accent-color, inherit)) !important; background-color: var(--style-badge-bg, transparent) !important; }
 [data-section-id="${section.id}"][data-style] [class*="brand-btn"] { color: var(--brand-btn-text, inherit) !important; background-color: var(--brand-btn-bg, transparent) !important; }
 `
     : '';
 
   if (isFullBleed) {
-    const isDark = !FULL_BLEED_LIGHT.has(section.type);
     return (
-      <section id={section.anchorId ?? undefined} data-section-id={section.id} className="bg-[var(--style-section-bg,transparent)]" {...(isDark ? { 'data-theme': 'dark' } : {})} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
+      <section id={section.anchorId ?? undefined} data-section-id={section.id} className="bg-[var(--style-section-bg,transparent)]" {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
         {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />

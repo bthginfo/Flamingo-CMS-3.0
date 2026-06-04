@@ -15,7 +15,7 @@ function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
       ref={ref}
       initial={{ opacity: 0 }}
       animate={inView ? { opacity: 1 } : {}}
-      className="font-display font-bold text-4xl lg:text-3xl md:text-5xl text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"
+      className="font-display font-bold text-4xl lg:text-3xl md:text-5xl text-[var(--style-accent-color,var(--brand-primary,#1a5276))]"
     >
       {inView ? (
         <motion.span
@@ -35,11 +35,11 @@ export function UspStripSection({ data }: Props) {
   const inView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <div ref={ref} className="py-12 relative z-20">
+    <div ref={ref} className="relative z-20 py-12">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="bg-[var(--token-card-bg,#ffffff)] rounded-3xl shadow-xl border border-[color:var(--token-card-border,#f4f4f5)/50] p-2">
+        <div className="rounded-3xl border border-[var(--style-border-color,rgba(0,0,0,0.08))] bg-[var(--style-card-bg,#ffffff)] p-3 shadow-xl md:p-4">
         <div className={cn(
-          'grid grid-cols-1 sm:grid-cols-2 gap-px bg-[var(--token-section-bg-alt,#f4f4f5)] rounded-2xl overflow-hidden',
+          'grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-4',
           items.length >= 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3',
         )}>
           {items.map((item, i) => (
@@ -48,15 +48,15 @@ export function UspStripSection({ data }: Props) {
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="bg-[var(--token-card-bg,#ffffff)] p-8 lg:p-10 text-center group hover:bg-gradient-to-br hover:from-[var(--token-icon,var(--brand-primary,#1a5276))]/[0.02] hover:to-[var(--token-subheading,var(--brand-secondary,#2e86c1))]/[0.02] transition-all duration-500"
+              className="group rounded-2xl border border-[var(--style-border-color,rgba(0,0,0,0.06))] p-8 text-center transition-all duration-500 hover:-translate-y-0.5 hover:border-[var(--style-accent-color,var(--brand-primary,#1a5276))] lg:p-10"
             >
               {item.icon && (
                 <div className="flex items-center justify-center text-4xl mb-4 transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1">
-                  <DynamicIcon name={item.icon} size={32} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />
+                  <DynamicIcon name={item.icon} size={32} className="text-[var(--style-accent-color,var(--brand-primary,#1a5276))]" />
                 </div>
               )}
-              <h3 className="font-display font-semibold text-lg mb-1.5 text-[color:var(--token-heading,#18181b)]">{item.title}</h3>
-              <div className="text-[color:var(--token-muted,#71717a)] text-sm leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />
+              <h3 className="font-display mb-1.5 text-lg font-semibold text-[var(--style-heading-color,var(--style-text-primary,#18181b))]">{item.title}</h3>
+              <div className="rt-content text-sm leading-relaxed text-[var(--style-body-color,var(--style-text-secondary,#71717a))]" dangerouslySetInnerHTML={{ __html: item.text }} />
             </motion.div>
           ))}
         </div>

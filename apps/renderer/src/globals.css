@@ -286,12 +286,12 @@ html {
     box-shadow: var(--style-card-shadow, 0 4px 20px rgba(0,0,0,0.06));
   }
 
-  [data-style] main > section:nth-child(even):not([data-theme="dark"]) {
+  [data-style] main > section:nth-child(even) {
     background-color: var(--style-section-bg-alt, #f8fafc);
     color: var(--style-text-on-section-alt, var(--style-text-primary, inherit));
   }
 
-  [data-style] main > section:nth-child(odd):not([data-theme="dark"]) {
+  [data-style] main > section:nth-child(odd) {
     background-color: var(--style-section-bg, #ffffff);
     color: var(--style-text-on-section, var(--style-text-primary, inherit));
   }
@@ -558,47 +558,16 @@ html {
 }
 
 /* Section backgrounds */
-[data-style] section:nth-child(odd):not([data-theme="dark"]) {
+[data-style] section:nth-child(odd) {
   background-color: var(--style-section-bg, #ffffff);
 }
-[data-style] section:nth-child(even):not([data-theme="dark"]) {
+[data-style] section:nth-child(even) {
   background-color: var(--style-section-bg-alt, #f8fafc);
 }
 
 /* Text colors */
 [data-style] {
   color: var(--style-text-primary, #0f172a);
-}
-[data-style] [data-theme="dark"] {
-  color: #ffffff;
-}
-[data-style] [data-theme="dark"] .text-gray-900,
-[data-style] [data-theme="dark"] .text-gray-800,
-[data-style] [data-theme="dark"] .text-gray-700 {
-  color: #ffffff;
-}
-[data-style] [data-theme="dark"] .text-gray-500,
-[data-style] [data-theme="dark"] .text-gray-600 {
-  color: rgba(255,255,255,0.7);
-}
-[data-style] [data-theme="dark"] .text-gray-400,
-[data-style] [data-theme="dark"] .text-gray-300 {
-  color: rgba(255,255,255,0.5);
-}
-[data-style] [data-theme="dark"] .border-gray-900,
-[data-style] [data-theme="dark"] .border-gray-800 {
-  border-color: rgba(255,255,255,0.2);
-}
-[data-style] [data-theme="dark"] .border-gray-200,
-[data-style] [data-theme="dark"] .border-gray-100 {
-  border-color: rgba(255,255,255,0.1);
-}
-[data-style] [data-theme="dark"] .bg-white:not(section) {
-  background-color: rgba(255,255,255,0.05);
-}
-[data-style] [data-theme="dark"] .bg-gray-50,
-[data-style] [data-theme="dark"] .bg-gray-100 {
-  background-color: rgba(255,255,255,0.05);
 }
 [data-style] .text-gray-900,
 [data-style] .text-gray-800,
@@ -695,7 +664,7 @@ html {
   .rt-content p + p { margin-top: 0.5em; }
   .rt-content a { text-decoration: underline; text-underline-offset: 2px; }
   .rt-content strong { font-weight: 700; }
-  [data-theme="dark"] .rt-content strong { color: rgba(255, 255, 255, 1); }
+  .rt-content strong { color: currentColor; }
 }
 
 /* Advanced brand color overrides are applied via inline styles in components */

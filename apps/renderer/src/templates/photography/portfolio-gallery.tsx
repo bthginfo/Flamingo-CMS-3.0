@@ -45,7 +45,7 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
   const sectionClasses = isBold ? 'py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg-alt,#09090b)] text-[color:var(--token-on-dark-heading,#ffffff)]' : isModern ? 'py-24 md:py-36 px-4 md:px-6' : 'py-12 md:py-24 px-4 md:px-6 bg-[var(--token-card-bg,#ffffff)]';
 
   return (
-    <section data-theme={isBold ? 'dark' : undefined} className={sectionClasses}>
+    <section className={sectionClasses}>
       <div className="max-w-7xl mx-auto">
         <div className={isModern ? 'mb-16' : 'text-center mb-12'}>
           {isBold && <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>}

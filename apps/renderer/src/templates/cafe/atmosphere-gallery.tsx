@@ -16,7 +16,7 @@ export function AtmosphereGallerySection({ data }: Props) {
   const inView = useInView(ref, { once: true });
 
   return (
-    <section ref={ref} data-theme="dark" className="py-20 md:py-28 bg-stone-900">
+    <section ref={ref} className="py-20 md:py-28 bg-stone-900">
       <div className="max-w-7xl mx-auto px-6">
         {headline && (
           <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-white text-center mb-12">
