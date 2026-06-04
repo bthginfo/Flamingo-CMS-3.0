@@ -10,7 +10,7 @@ export function NoticeBannerSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const text = (data.text as string) || '';
-  const bgColor = (data.bgColor as string) || 'var(--brand-primary, #2563eb)';
+  const bgColor = (data.bgColor as string) || 'var(--token-icon, var(--brand-primary, #2563eb))';
   const textColor = (data.textColor as string) || '#ffffff';
   const primaryCta = data.primaryCta as { label: string; href: string; icon?: string } | undefined;
   const secondaryCta = data.secondaryCta as { label: string; href: string; icon?: string } | undefined;

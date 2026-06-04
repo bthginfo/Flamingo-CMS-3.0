@@ -35,7 +35,7 @@ export function LegalContentSection({ data }: Props) {
               {block.headline && <h2 className="text-xl font-semibold text-gray-900 mb-3">{block.headline}</h2>}
               {block.text && (
                 <div
-                  className="prose prose-slate max-w-none prose-headings:font-display prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline rt-content"
+                  className="prose prose-slate max-w-none prose-headings:font-display prose-a:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] prose-a:no-underline hover:prose-a:underline rt-content"
                   dangerouslySetInnerHTML={{ __html: sanitizeHtml(block.text) }}
                 />
               )}

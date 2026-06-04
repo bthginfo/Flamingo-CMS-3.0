@@ -35,15 +35,15 @@ export function CaseResultsSection({ data }: Props) {
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <div ref={ref} className="relative overflow-hidden rounded-2xl bg-slate-900 p-10 md:p-16">
+    <div ref={ref} className="relative overflow-hidden rounded-2xl bg-[var(--token-section-bg-alt,#18181b)] p-10 md:p-16">
       <div className="absolute inset-0 opacity-10">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-amber-500 rounded-full blur-[100px]" />
         <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-blue-500 rounded-full blur-[80px]" />
       </div>
       <div className="relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
-          {headline && <h2 className="text-3xl md:text-4xl font-serif font-bold text-white">{headline}</h2>}
-          {subline && <p className="text-white/60 mt-3 max-w-xl mx-auto">{plain(subline)}</p>}
+          {headline && <h2 className="text-3xl md:text-4xl font-serif font-bold text-[color:var(--token-on-dark-heading,#ffffff)]">{headline}</h2>}
+          {subline && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/60] mt-3 max-w-xl mx-auto">{plain(subline)}</p>}
         </motion.div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
@@ -53,10 +53,10 @@ export function CaseResultsSection({ data }: Props) {
                   <DynamicIcon name={stat.icon} size={20} />
                 </div>
               )}
-              <div className="text-3xl md:text-4xl font-bold text-white">
+              <div className="text-3xl md:text-4xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]">
                 <AnimatedNumber value={stat.value} suffix={stat.suffix} prefix={stat.prefix} />
               </div>
-              <div className="text-sm text-white/50 mt-2">{stat.label}</div>
+              <div className="text-sm text-[color:var(--token-on-dark-heading,#ffffff)/50] mt-2">{stat.label}</div>
             </motion.div>
           ))}
         </div>

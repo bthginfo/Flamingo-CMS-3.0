@@ -22,32 +22,32 @@ export function LocationVibeSection({ data }: Props) {
   const inView = useInView(ref, { once: true });
 
   return (
-    <section ref={ref} className="py-20 md:py-28 bg-stone-100">
+    <section ref={ref} className="py-20 md:py-28 bg-[var(--token-section-bg-alt,#f4f4f5)]">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-12">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}}>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
-            {description && <p className="text-gray-600 mt-4 leading-relaxed">{plain(description)}</p>}
+            <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+            {description && <p className="text-[color:var(--token-muted,#52525b)] mt-4 leading-relaxed">{plain(description)}</p>}
             {vibeText && <p className="text-amber-700 font-medium mt-3 italic">{plain(vibeText)}</p>}
 
             {address && (
               <div className="flex items-start gap-3 mt-8">
-                <MapPin size={18} className="text-brand-primary mt-0.5 shrink-0" />
-                <p className="text-gray-700">{address}</p>
+                <MapPin size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-0.5 shrink-0" />
+                <p className="text-[color:var(--token-muted,#3f3f46)]">{address}</p>
               </div>
             )}
 
             {hours.length > 0 && (
               <div className="mt-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <Clock size={16} className="text-brand-primary" />
-                  <span className="text-sm font-semibold text-gray-900">Öffnungszeiten</span>
+                  <Clock size={16} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />
+                  <span className="text-sm font-semibold text-[color:var(--token-heading,#18181b)]">Öffnungszeiten</span>
                 </div>
                 <ul className="space-y-1.5">
                   {hours.map((h, i) => (
                     <li key={i} className="flex justify-between text-sm">
-                      <span className="text-gray-600">{h.day}</span>
-                      <span className="font-medium text-gray-900">{h.hours}</span>
+                      <span className="text-[color:var(--token-muted,#52525b)]">{h.day}</span>
+                      <span className="font-medium text-[color:var(--token-heading,#18181b)]">{h.hours}</span>
                     </li>
                   ))}
                 </ul>

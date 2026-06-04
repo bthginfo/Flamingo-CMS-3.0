@@ -49,7 +49,7 @@ export function StatsCounterSection({ data }: Props) {
   if (!stats.length) return null;
 
   return (
-    <div ref={ref} className="relative overflow-hidden rounded-2xl bg-[var(--style-section-bg-alt,#18181b)] py-20 px-6 text-[var(--style-text-primary,#ffffff)]">
+    <div ref={ref} className="relative overflow-hidden rounded-2xl bg-[var(--token-section-bg-alt, var(--style-section-bg-alt,#18181b))] py-20 px-6 text-[var(--style-text-primary,#ffffff)]">
       {/* Decorative gradient orbs */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary)]/20 rounded-full blur-3xl -translate-y-1/2" />
       <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-[var(--color-primary)]/10 rounded-full blur-3xl translate-y-1/2" />
@@ -57,9 +57,9 @@ export function StatsCounterSection({ data }: Props) {
       <div className="relative z-10">
         {(headline || badge) && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-16">
-            {badge && <span className="inline-block text-xs font-semibold tracking-widest uppercase text-[var(--style-badge-text,var(--color-primary))] bg-[var(--style-badge-bg,rgba(255,255,255,0.10))] rounded-full px-4 py-1.5 mb-4">{badge}</span>}
-            {headline && <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--style-heading-color,var(--style-text-primary,#ffffff))]">{headline}</h2>}
-            {subline && <p className="mt-3 text-lg text-[var(--style-body-color,var(--style-text-secondary,#a1a1aa))] max-w-xl mx-auto">{plain(subline)}</p>}
+            {badge && <span className="inline-block text-xs font-semibold tracking-widest uppercase text-[var(--token-badge-text, var(--style-badge-text,var(--color-primary)))] bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,0.10)))] rounded-full px-4 py-1.5 mb-4">{badge}</span>}
+            {headline && <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#ffffff)))]">{headline}</h2>}
+            {subline && <p className="mt-3 text-lg text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#a1a1aa)))] max-w-xl mx-auto">{plain(subline)}</p>}
           </motion.div>
         )}
 

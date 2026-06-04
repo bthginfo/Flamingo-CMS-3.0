@@ -22,8 +22,8 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
     return (
       <section className="py-24 md:py-36 px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">{badge}</p>
-          {headline && <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-16 break-words">{headline}</h2>}
+          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4">{badge}</p>
+          {headline && <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-16 break-words">{headline}</h2>}
           <div className="grid md:grid-cols-2 gap-16 items-start">
             {image && (
               <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="relative aspect-[3/4]">
@@ -31,24 +31,24 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
               </motion.div>
             )}
             <div className={image ? '' : 'md:col-span-2 max-w-2xl'}>
-              {intro && <div className="text-gray-500 text-lg leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
-              {story && <div className="text-gray-400 leading-relaxed mt-6 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
+              {intro && <div className="text-[color:var(--token-muted,#71717a)] text-lg leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
+              {story && <div className="text-[color:var(--token-body,#a1a1aa)] leading-relaxed mt-6 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
               {facts.length > 0 && (
-                <ul className="mt-10 space-y-3 border-t border-gray-200 pt-8">
-                  {facts.map((fact, i) => <li key={i} className="text-gray-600 text-sm">{fact}</li>)}
+                <ul className="mt-10 space-y-3 border-t border-[color:var(--token-card-border,#e4e4e7)] pt-8">
+                  {facts.map((fact, i) => <li key={i} className="text-[color:var(--token-muted,#52525b)] text-sm">{fact}</li>)}
                 </ul>
               )}
               {values.length > 0 && (
-                <div className="mt-10 space-y-4 border-t border-gray-200 pt-8">
+                <div className="mt-10 space-y-4 border-t border-[color:var(--token-card-border,#e4e4e7)] pt-8">
                   {values.map((v, i) => (
                     <div key={i}>
-                      <h4 className="text-sm font-medium text-gray-900">{v.title}</h4>
-                      <div className="text-gray-400 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
+                      <h4 className="text-sm font-medium text-[color:var(--token-heading,#18181b)]">{v.title}</h4>
+                      <div className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                     </div>
                   ))}
                 </div>
               )}
-              {ctaHref && <a href={ctaHref} className="inline-block mt-10 text-sm text-gray-900 border-b border-gray-900 hover:opacity-70 transition-opacity">{ctaLabel || 'Kontakt aufnehmen'} →</a>}
+              {ctaHref && <a href={ctaHref} className="inline-block mt-10 text-sm text-[color:var(--token-heading,#18181b)] border-b border-[color:var(--token-card-border,#18181b)] hover:opacity-70 transition-opacity">{ctaLabel || 'Kontakt aufnehmen'} →</a>}
             </div>
           </div>
         </div>
@@ -58,36 +58,36 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
 
   if (isBold) {
     return (
-      <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+      <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg-alt,#09090b)] text-[color:var(--token-on-dark-heading,#ffffff)]">
         <div className="max-w-6xl mx-auto">
-          <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
+          <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
           {headline && <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>}
           <div className="grid md:grid-cols-5 gap-8 items-start">
             {image && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="md:col-span-2 relative aspect-[3/4]">
                 <Image src={image} alt={headline || 'Fotograf'} fill className="object-cover" />
-                <div className="absolute inset-0 border-2 border-white/20" />
+                <div className="absolute inset-0 border-2 border-[color:var(--token-card-border,#ffffff)/20]" />
               </motion.div>
             )}
             <div className={image ? 'md:col-span-3' : 'md:col-span-5 max-w-3xl'}>
-              {intro && <div className="text-white/90 text-lg leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
-              {story && <div className="text-white/80 leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
+              {intro && <div className="text-[color:var(--token-on-dark-heading,#ffffff)/90] text-lg leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
+              {story && <div className="text-[color:var(--token-on-dark-heading,#ffffff)/80] leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
               {facts.length > 0 && (
                 <ul className="mt-8 space-y-2">
-                  {facts.map((fact, i) => <li key={i} className="flex items-start gap-2 text-white/70 text-sm"><span className="text-brand-accent">—</span>{fact}</li>)}
+                  {facts.map((fact, i) => <li key={i} className="flex items-start gap-2 text-[color:var(--token-on-dark-heading,#ffffff)/70] text-sm"><span className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">—</span>{fact}</li>)}
                 </ul>
               )}
               {values.length > 0 && (
                 <div className="mt-8 grid sm:grid-cols-2 gap-4">
                   {values.map((v, i) => (
-                    <div key={i} className="border border-white/10 p-4">
-                      <h4 className="font-bold text-brand-accent text-sm">{v.title}</h4>
-                      <div className="text-white/80 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
+                    <div key={i} className="border border-[color:var(--token-card-border,#ffffff)/10] p-4">
+                      <h4 className="font-bold text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] text-sm">{v.title}</h4>
+                      <div className="text-[color:var(--token-on-dark-heading,#ffffff)/80] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                     </div>
                   ))}
                 </div>
               )}
-              {ctaHref && <a href={ctaHref} className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-brand-accent text-black font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-opacity">{ctaLabel || 'Kontakt aufnehmen'}</a>}
+              {ctaHref && <a href={ctaHref} className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-opacity">{ctaLabel || 'Kontakt aufnehmen'}</a>}
             </div>
           </div>
         </div>
@@ -96,7 +96,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
   }
 
   return (
-    <section className="py-12 md:py-24 px-4 md:px-6 bg-white">
+    <section className="py-12 md:py-24 px-4 md:px-6 bg-[var(--token-card-bg,#ffffff)]">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-5 gap-8 md:gap-12 lg:gap-8 lg:gap-16 items-start">
           {image && (
@@ -109,13 +109,13 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
           <div className={image ? 'md:col-span-3' : 'md:col-span-5 max-w-3xl mx-auto'}>
             <span className="section-badge">{badge}</span>
             {headline && <h2 className="section-headline">{headline}</h2>}
-            {intro && <div className="text-gray-700 text-lg leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
-            {story && <div className="text-gray-600 leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
+            {intro && <div className="text-[color:var(--token-muted,#3f3f46)] text-lg leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
+            {story && <div className="text-[color:var(--token-muted,#52525b)] leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
             {facts.length > 0 && (
               <ul className="mt-8 space-y-2">
                 {facts.map((fact, i) => (
-                  <motion.li key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="flex items-start gap-2 text-gray-700 text-sm">
-                    <span className="text-brand-primary mt-0.5">•</span>
+                  <motion.li key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="flex items-start gap-2 text-[color:var(--token-muted,#3f3f46)] text-sm">
+                    <span className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-0.5">•</span>
                     <span>{fact}</span>
                   </motion.li>
                 ))}
@@ -124,15 +124,15 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
             {values.length > 0 && (
               <div className="mt-8 grid sm:grid-cols-2 gap-4">
                 {values.map((v, i) => (
-                  <div key={i} className="p-4 rounded-xl bg-brand-primary/[0.03] border border-brand-primary/10">
-                    <h4 className="font-semibold text-gray-900 text-sm">{v.title}</h4>
-                    <div className="text-gray-600 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
+                  <div key={i} className="p-4 rounded-xl bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))]/[0.03] border border-[var(--token-card-border,var(--brand-primary,#1a5276))/10]">
+                    <h4 className="font-semibold text-[color:var(--token-heading,#18181b)] text-sm">{v.title}</h4>
+                    <div className="text-[color:var(--token-muted,#52525b)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                   </div>
                 ))}
               </div>
             )}
             {ctaHref && (
-              <a href={ctaHref} className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-brand-primary text-white rounded-lg text-sm font-medium hover:bg-brand-dark transition-colors">
+              <a href={ctaHref} className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-[color:var(--token-on-dark-heading,#ffffff)] rounded-lg text-sm font-medium hover:bg-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))] transition-colors">
                 {ctaLabel || 'Kontakt aufnehmen'}
               </a>
             )}

@@ -76,9 +76,9 @@ export function GalleryGridSection({ data }: Props) {
                   style={{ aspectRatio }}
                 >
                   <Image src={img.src} alt={img.alt || ''} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes={`(max-width: 768px) 50vw, ${Math.round(100 / colCount)}vw`} />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                  <div className="absolute inset-0 bg-[var(--token-section-bg-alt,#000000)/0] group-hover:bg-[var(--token-section-bg-alt,#000000)/20] transition-colors" />
                   {img.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 px-3 py-2 bg-gradient-to-t from-black/60 to-transparent text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute bottom-0 left-0 right-0 px-3 py-2 bg-gradient-to-t from-black/60 to-transparent text-[color:var(--token-on-dark-heading,#ffffff)] text-xs opacity-0 group-hover:opacity-100 transition-opacity">
                       {img.caption}
                     </div>
                   )}
@@ -96,16 +96,16 @@ export function GalleryGridSection({ data }: Props) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-[var(--token-section-bg-alt,#000000)/95] flex items-center justify-center p-4"
             onClick={() => setLightbox(null)}
           >
-            <button className="absolute top-4 right-4 text-white/80 hover:text-white z-10" onClick={() => setLightbox(null)}>
+            <button className="absolute top-4 right-4 text-[color:var(--token-on-dark-heading,#ffffff)/80] hover:text-[color:var(--token-on-dark-heading,#ffffff)] z-10" onClick={() => setLightbox(null)}>
               <X size={28} />
             </button>
             {images.length > 1 && (
               <>
-                <button className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white z-10 p-2" onClick={(e) => { e.stopPropagation(); navigate(-1); }}><ChevronLeft size={36} /></button>
-                <button className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white z-10 p-2" onClick={(e) => { e.stopPropagation(); navigate(1); }}><ChevronRight size={36} /></button>
+                <button className="absolute left-4 top-1/2 -translate-y-1/2 text-[color:var(--token-on-dark-heading,#ffffff)/70] hover:text-[color:var(--token-on-dark-heading,#ffffff)] z-10 p-2" onClick={(e) => { e.stopPropagation(); navigate(-1); }}><ChevronLeft size={36} /></button>
+                <button className="absolute right-4 top-1/2 -translate-y-1/2 text-[color:var(--token-on-dark-heading,#ffffff)/70] hover:text-[color:var(--token-on-dark-heading,#ffffff)] z-10 p-2" onClick={(e) => { e.stopPropagation(); navigate(1); }}><ChevronRight size={36} /></button>
               </>
             )}
             <motion.div
@@ -128,8 +128,8 @@ export function GalleryGridSection({ data }: Props) {
             </motion.div>
             {/* Counter + Caption */}
             <div className="absolute bottom-6 left-0 right-0 text-center">
-              {images[lightbox].caption && <p className="text-white text-sm mb-2">{images[lightbox].caption}</p>}
-              <span className="text-white/50 text-xs">{lightbox + 1} / {images.length}</span>
+              {images[lightbox].caption && <p className="text-[color:var(--token-on-dark-heading,#ffffff)] text-sm mb-2">{images[lightbox].caption}</p>}
+              <span className="text-[color:var(--token-on-dark-heading,#ffffff)/50] text-xs">{lightbox + 1} / {images.length}</span>
             </div>
           </motion.div>
         )}

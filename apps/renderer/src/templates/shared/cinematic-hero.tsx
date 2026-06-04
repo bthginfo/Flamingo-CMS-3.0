@@ -40,7 +40,7 @@ export function CinematicHeroSection({ data }: Props) {
       ) : image ? (
         <img src={image} alt="" className="h-[110%] w-full object-cover" />
       ) : (
-        <div className="h-full w-full bg-[var(--brand-dark,#09090b)]" />
+        <div className="h-full w-full bg-[var(--token-section-bg-alt, var(--brand-dark,#09090b))]" />
       )}
       <div className="absolute inset-0" style={{ background: overlay }} />
       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black to-transparent" />
@@ -48,7 +48,7 @@ export function CinematicHeroSection({ data }: Props) {
   );
 
   return (
-    <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-[var(--style-section-bg,#000)] text-[var(--style-body-color,#fff)]">
+    <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-[var(--token-section-bg, var(--style-section-bg,#000))] text-[var(--token-body, var(--style-body-color,#fff))]">
       {imageEffect === 'kenBurns' ? (
         <ImageEffectWrapper effect="kenBurns" intensity={imageEffectIntensity} className="absolute inset-0">
           {mediaContent}
@@ -60,21 +60,21 @@ export function CinematicHeroSection({ data }: Props) {
       )}
 
       <motion.div style={{ y: copyY, opacity }} className={`relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-6 pb-16 pt-32 md:pb-24 ${align === 'center' ? 'items-center text-center' : 'items-start text-left'}`}>
-        {eyebrow && <div className="mb-5 inline-flex rounded-full border border-white/20 bg-[var(--style-badge-bg,rgba(255,255,255,0.10))] px-4 py-2 text-xs font-semibold uppercase text-[var(--style-badge-text,#fff)] backdrop-blur">{eyebrow}</div>}
-        {headline && <h1 className="max-w-5xl text-5xl font-black leading-[0.95] text-[var(--style-heading-color,#fff)] md:text-7xl lg:text-8xl">{headline}</h1>}
-        {subline && <p className={`mt-6 max-w-2xl text-base leading-8 text-[var(--style-subheading-color,rgba(255,255,255,0.78))] md:text-xl ${align === 'center' ? 'mx-auto' : ''}`}>{plain(subline)}</p>}
+        {eyebrow && <div className="mb-5 inline-flex rounded-full border border-white/20 bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,0.10)))] px-4 py-2 text-xs font-semibold uppercase text-[var(--token-badge-text, var(--style-badge-text,#fff))] backdrop-blur">{eyebrow}</div>}
+        {headline && <h1 className="max-w-5xl text-5xl font-black leading-[0.95] text-[var(--token-heading, var(--style-heading-color,#fff))] md:text-7xl lg:text-8xl">{headline}</h1>}
+        {subline && <p className={`mt-6 max-w-2xl text-base leading-8 text-[var(--token-subheading, var(--style-subheading-color,rgba(255,255,255,0.78)))] md:text-xl ${align === 'center' ? 'mx-auto' : ''}`}>{plain(subline)}</p>}
 
         <div className="mt-9 flex flex-wrap items-center gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--brand-btn-bg,var(--brand-primary,#fff))] px-6 py-3 text-sm font-bold text-[var(--brand-btn-text,#111)] shadow-xl transition hover:brightness-110">{primaryCta.label}<ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--style-border-color,rgba(255,255,255,0.25))] bg-[var(--style-card-bg,rgba(255,255,255,0.10))] px-6 py-3 text-sm font-bold text-[var(--style-text-primary,#ffffff)] backdrop-blur transition hover:brightness-110"><Play size={15} />{secondaryCta.label}</a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--token-icon, var(--brand-primary,#fff))))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#111))] shadow-xl transition hover:brightness-110">{primaryCta.label}<ArrowRight size={16} /></a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.25)))] bg-[var(--token-card-bg, var(--style-card-bg,rgba(255,255,255,0.10)))] px-6 py-3 text-sm font-bold text-[var(--style-text-primary,#ffffff)] backdrop-blur transition hover:brightness-110"><Play size={15} />{secondaryCta.label}</a>}
         </div>
 
         {facts.length > 0 && (
-          <div className="mt-12 grid w-full max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[var(--style-border-color,rgba(255,255,255,0.10))] bg-[var(--style-border-color,rgba(255,255,255,0.10))] backdrop-blur md:grid-cols-4">
+          <div className="mt-12 grid w-full max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.10)))] bg-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.10)))] backdrop-blur md:grid-cols-4">
             {facts.map((fact, i) => (
-              <div key={i} className="bg-[var(--style-card-bg,rgba(0,0,0,0.22))] p-4">
+              <div key={i} className="bg-[var(--token-card-bg, var(--style-card-bg,rgba(0,0,0,0.22)))] p-4">
                 <div className="text-2xl font-black text-[var(--style-text-primary,#ffffff)]">{fact.value}</div>
-                <div className="mt-1 text-xs text-[var(--style-text-muted,rgba(255,255,255,0.62))]">{fact.label}</div>
+                <div className="mt-1 text-xs text-[var(--token-muted, var(--style-text-muted,rgba(255,255,255,0.62)))]">{fact.label}</div>
               </div>
             ))}
           </div>

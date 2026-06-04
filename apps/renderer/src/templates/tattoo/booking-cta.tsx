@@ -12,12 +12,12 @@ export function BookingCtaSection({ data }: Props) {
   const hints = (data.hints as string[]) || [];
 
   return (
-    <section className="py-16 px-6 bg-neutral-900 border-y border-white/5">
+    <section className="py-16 px-6 bg-[var(--token-section-bg-alt,#18181b)] border-y border-[color:var(--token-card-border,#ffffff)/5]">
       <div className="max-w-3xl mx-auto text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold text-white">{headline}</h2>
-        {subline && <p className="mt-3 text-white/50">{plain(subline)}</p>}
+        <h2 className="text-3xl sm:text-4xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]">{headline}</h2>
+        {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50]">{plain(subline)}</p>}
         {hints.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-4 mt-6 text-xs text-white/40">
+          <div className="flex flex-wrap justify-center gap-4 mt-6 text-xs text-[color:var(--token-on-dark-heading,#ffffff)/40]">
             {hints.map((h, i) => <span key={i} className="flex items-center gap-1.5">✓ {h}</span>)}
           </div>
         )}

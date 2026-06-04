@@ -44,7 +44,7 @@ export function NewsPreviewSection({ data }: Props) {
           <h2 className="section-headline">{headline}</h2>
           {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        <Link href={linkHref} className="hidden items-center gap-1.5 text-sm font-medium text-[var(--style-accent-color,var(--brand-primary))] hover:underline sm:flex">
+        <Link href={linkHref} className="hidden items-center gap-1.5 text-sm font-medium text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))] hover:underline sm:flex">
           {linkLabel} {linkIcon && <DynamicIcon name={linkIcon} size={14} />}
         </Link>
       </motion.div>
@@ -64,19 +64,19 @@ export function NewsPreviewSection({ data }: Props) {
                 </div>
               )}
               {item.date && (
-                <div className="mb-2 flex items-center gap-1.5 text-xs text-[var(--style-text-muted,var(--style-text-secondary,#9ca3af))]">
+                <div className="mb-2 flex items-center gap-1.5 text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#9ca3af)))]">
                   <Calendar size={12} />
                   {new Date(item.date).toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
               )}
-              <h3 className="line-clamp-2 text-lg font-semibold text-[var(--style-text-primary,var(--style-heading-color,#111827))] transition-colors group-hover:text-[var(--style-accent-color,var(--brand-primary))]">{item.title}</h3>
-              {item.excerpt && <p className="mt-1.5 line-clamp-2 text-sm text-[var(--style-text-secondary,var(--style-text-muted,#6b7280))]">{item.excerpt}</p>}
+              <h3 className="line-clamp-2 text-lg font-semibold text-[var(--style-text-primary,var(--token-heading, var(--style-heading-color,#111827)))] transition-colors group-hover:text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">{item.title}</h3>
+              {item.excerpt && <p className="mt-1.5 line-clamp-2 text-sm text-[var(--style-text-secondary,var(--token-muted, var(--style-text-muted,#6b7280)))]">{item.excerpt}</p>}
             </Link>
           </motion.article>
         ))}
       </div>
 
-      <Link href={linkHref} className="mt-6 flex items-center justify-center gap-1.5 text-sm font-medium text-[var(--style-accent-color,var(--brand-primary))] sm:hidden">
+      <Link href={linkHref} className="mt-6 flex items-center justify-center gap-1.5 text-sm font-medium text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))] sm:hidden">
         {linkLabel} {linkIcon && <DynamicIcon name={linkIcon} size={14} />}
       </Link>
     </div>

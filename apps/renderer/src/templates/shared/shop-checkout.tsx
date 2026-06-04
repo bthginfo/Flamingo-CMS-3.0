@@ -43,8 +43,8 @@ export function ShopCheckoutSection({ data }: Props) {
     return (
       <section className="py-16 text-center">
         <h2 className="text-2xl font-bold mb-4">{headline}</h2>
-        <p className="text-zinc-500 mb-2">Der Checkout ist in der Demo nicht verfügbar.</p>
-        <p className="text-sm text-zinc-400">In einem echten Shop können Kunden hier ihre Bestellung abschließen — mit Stripe, PayPal, SumUp oder Vorkasse.</p>
+        <p className="text-[color:var(--token-muted,#71717a)] mb-2">Der Checkout ist in der Demo nicht verfügbar.</p>
+        <p className="text-sm text-[color:var(--token-body,#a1a1aa)]">In einem echten Shop können Kunden hier ihre Bestellung abschließen — mit Stripe, PayPal, SumUp oder Vorkasse.</p>
       </section>
     );
   }
@@ -165,7 +165,7 @@ export function ShopCheckoutSection({ data }: Props) {
   if (items.length === 0) {
     return (
       <section className="py-16 text-center">
-        <p className="text-zinc-500">Dein Warenkorb ist leer.</p>
+        <p className="text-[color:var(--token-muted,#71717a)]">Dein Warenkorb ist leer.</p>
       </section>
     );
   }
@@ -178,10 +178,10 @@ export function ShopCheckoutSection({ data }: Props) {
       <div className="flex items-center gap-2 mb-8">
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center gap-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= step ? 'bg-[var(--brand-primary)] text-white' : 'bg-zinc-100 text-zinc-400'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= step ? 'bg-[var(--token-icon, var(--brand-primary))] text-[color:var(--token-on-dark-heading,#ffffff)]' : 'bg-[var(--token-section-bg-alt,#f4f4f5)] text-[color:var(--token-body,#a1a1aa)]'}`}>
               {i < step ? <Check size={14} /> : i + 1}
             </div>
-            <span className={`text-sm hidden sm:block ${i <= step ? 'font-medium' : 'text-zinc-400'}`}>{s}</span>
+            <span className={`text-sm hidden sm:block ${i <= step ? 'font-medium' : 'text-[color:var(--token-body,#a1a1aa)]'}`}>{s}</span>
             {i < STEPS.length - 1 && <div className="w-8 h-px bg-zinc-200" />}
           </div>
         ))}
@@ -194,23 +194,23 @@ export function ShopCheckoutSection({ data }: Props) {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Name *</label>
-                  <input value={form.name} onChange={e => set('name', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm" placeholder="Max Mustermann" />
+                  <label className="block text-xs font-medium text-[color:var(--token-muted,#71717a)] mb-1">Name *</label>
+                  <input value={form.name} onChange={e => set('name', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border,#e4e4e7)] text-sm" placeholder="Max Mustermann" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">E-Mail *</label>
-                  <input type="email" value={form.email} onChange={e => set('email', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm" placeholder="max@example.de" />
+                  <label className="block text-xs font-medium text-[color:var(--token-muted,#71717a)] mb-1">E-Mail *</label>
+                  <input type="email" value={form.email} onChange={e => set('email', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border,#e4e4e7)] text-sm" placeholder="max@example.de" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Telefon</label>
-                  <input value={form.phone} onChange={e => set('phone', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm" placeholder="+49 ..." />
+                  <label className="block text-xs font-medium text-[color:var(--token-muted,#71717a)] mb-1">Telefon</label>
+                  <input value={form.phone} onChange={e => set('phone', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border,#e4e4e7)] text-sm" placeholder="+49 ..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Firma</label>
-                  <input value={form.company} onChange={e => set('company', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm" />
+                  <label className="block text-xs font-medium text-[color:var(--token-muted,#71717a)] mb-1">Firma</label>
+                  <input value={form.company} onChange={e => set('company', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border,#e4e4e7)] text-sm" />
                 </div>
               </div>
-              <button onClick={() => setStep(1)} disabled={!form.name || !form.email} className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
+              <button onClick={() => setStep(1)} disabled={!form.name || !form.email} className="px-6 py-3 bg-[var(--token-icon, var(--brand-primary))] text-[color:var(--token-on-dark-heading,#ffffff)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
                 Weiter zu Versand
               </button>
             </div>
@@ -221,20 +221,20 @@ export function ShopCheckoutSection({ data }: Props) {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Straße & Hausnr. *</label>
-                  <input value={form.street} onChange={e => set('street', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm" />
+                  <label className="block text-xs font-medium text-[color:var(--token-muted,#71717a)] mb-1">Straße & Hausnr. *</label>
+                  <input value={form.street} onChange={e => set('street', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border,#e4e4e7)] text-sm" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">PLZ *</label>
-                  <input value={form.zip} onChange={e => set('zip', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm" />
+                  <label className="block text-xs font-medium text-[color:var(--token-muted,#71717a)] mb-1">PLZ *</label>
+                  <input value={form.zip} onChange={e => set('zip', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border,#e4e4e7)] text-sm" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Stadt *</label>
-                  <input value={form.city} onChange={e => set('city', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm" />
+                  <label className="block text-xs font-medium text-[color:var(--token-muted,#71717a)] mb-1">Stadt *</label>
+                  <input value={form.city} onChange={e => set('city', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border,#e4e4e7)] text-sm" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Land</label>
-                  <select value={form.country} onChange={e => set('country', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm bg-white">
+                  <label className="block text-xs font-medium text-[color:var(--token-muted,#71717a)] mb-1">Land</label>
+                  <select value={form.country} onChange={e => set('country', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border,#e4e4e7)] text-sm bg-[var(--token-card-bg,#ffffff)]">
                     <option value="DE">Deutschland</option>
                     <option value="AT">Österreich</option>
                     <option value="CH">Schweiz</option>
@@ -245,16 +245,16 @@ export function ShopCheckoutSection({ data }: Props) {
               {/* Shipping method selection */}
               {shippingMethods.length > 0 && (
                 <div className="space-y-2">
-                  <label className="block text-xs font-medium text-zinc-500 mb-1">Versandart</label>
+                  <label className="block text-xs font-medium text-[color:var(--token-muted,#71717a)] mb-1">Versandart</label>
                   {shippingMethods.map(method => {
                     const isFree = method.freeAboveCents && totalCents >= method.freeAboveCents;
                     return (
-                      <label key={method.id} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition ${form.shippingMethod === method.id ? 'border-[var(--brand-primary)] bg-[var(--brand-primary)]/5' : 'border-zinc-200'}`}>
+                      <label key={method.id} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition ${form.shippingMethod === method.id ? 'border-[var(--token-icon, var(--brand-primary))] bg-[var(--token-icon, var(--brand-primary))]/5' : 'border-[color:var(--token-card-border,#e4e4e7)]'}`}>
                         <div className="flex items-center gap-3">
-                          <input type="radio" name="shipping" value={method.id} checked={form.shippingMethod === method.id} onChange={e => set('shippingMethod', e.target.value)} className="accent-[var(--brand-primary)]" />
+                          <input type="radio" name="shipping" value={method.id} checked={form.shippingMethod === method.id} onChange={e => set('shippingMethod', e.target.value)} className="accent-[var(--token-icon, var(--brand-primary))]" />
                           <div>
                             <p className="text-sm font-medium">{method.name}</p>
-                            {method.estimatedDays && <p className="text-xs text-zinc-400">{method.estimatedDays}</p>}
+                            {method.estimatedDays && <p className="text-xs text-[color:var(--token-body,#a1a1aa)]">{method.estimatedDays}</p>}
                           </div>
                         </div>
                         <span className="text-sm font-medium">{isFree ? <span className="text-green-600">Kostenlos</span> : formatPrice(method.priceCents)}</span>
@@ -264,8 +264,8 @@ export function ShopCheckoutSection({ data }: Props) {
                 </div>
               )}
               <div className="flex gap-3">
-                <button onClick={() => setStep(0)} className="px-6 py-3 border border-zinc-200 rounded-xl text-sm">Zurück</button>
-                <button onClick={() => setStep(2)} disabled={!form.street || !form.zip || !form.city} className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
+                <button onClick={() => setStep(0)} className="px-6 py-3 border border-[color:var(--token-card-border,#e4e4e7)] rounded-xl text-sm">Zurück</button>
+                <button onClick={() => setStep(2)} disabled={!form.street || !form.zip || !form.city} className="px-6 py-3 bg-[var(--token-icon, var(--brand-primary))] text-[color:var(--token-on-dark-heading,#ffffff)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
                   Weiter zu Zahlung
                 </button>
               </div>
@@ -277,13 +277,13 @@ export function ShopCheckoutSection({ data }: Props) {
             <div className="space-y-4">
               <div className="space-y-3">
                 {availablePayments.map(method => (
-                  <label key={method} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition ${form.paymentMethod === method ? 'border-[var(--brand-primary)] bg-[var(--brand-primary)]/5' : 'border-zinc-200'}`}>
-                    <input type="radio" name="payment" value={method} checked={form.paymentMethod === method} onChange={e => set('paymentMethod', e.target.value)} className="accent-[var(--brand-primary)]" />
+                  <label key={method} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition ${form.paymentMethod === method ? 'border-[var(--token-icon, var(--brand-primary))] bg-[var(--token-icon, var(--brand-primary))]/5' : 'border-[color:var(--token-card-border,#e4e4e7)]'}`}>
+                    <input type="radio" name="payment" value={method} checked={form.paymentMethod === method} onChange={e => set('paymentMethod', e.target.value)} className="accent-[var(--token-icon, var(--brand-primary))]" />
                     <div>
                       <p className="text-sm font-medium">
                         {method === 'prepayment' ? 'Vorkasse / Überweisung' : method === 'stripe' ? 'Kreditkarte (Stripe)' : method === 'paypal' ? 'PayPal' : method === 'sumup' ? 'Kartenzahlung (SumUp)' : method === 'pickup' ? 'Abholung & Barzahlung' : method}
                       </p>
-                      <p className="text-xs text-zinc-400">
+                      <p className="text-xs text-[color:var(--token-body,#a1a1aa)]">
                         {method === 'prepayment' ? 'Bankdaten werden nach Bestellung angezeigt' : method === 'stripe' ? 'Sichere Zahlung via Stripe' : method === 'paypal' ? 'Weiterleitung zu PayPal' : method === 'sumup' ? 'Kartenzahlung über SumUp' : method === 'pickup' ? 'Bezahlung bei Abholung' : ''}
                       </p>
                     </div>
@@ -291,12 +291,12 @@ export function ShopCheckoutSection({ data }: Props) {
                 ))}
               </div>
               <div>
-                <label className="block text-xs font-medium text-zinc-500 mb-1">Bemerkungen (optional)</label>
-                <textarea value={form.customerNotes} onChange={e => set('customerNotes', e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm resize-y" />
+                <label className="block text-xs font-medium text-[color:var(--token-muted,#71717a)] mb-1">Bemerkungen (optional)</label>
+                <textarea value={form.customerNotes} onChange={e => set('customerNotes', e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border,#e4e4e7)] text-sm resize-y" />
               </div>
               <div className="flex gap-3">
-                <button onClick={() => setStep(1)} className="px-6 py-3 border border-zinc-200 rounded-xl text-sm">Zurück</button>
-                <button onClick={() => setStep(3)} className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-xl font-medium hover:opacity-90 transition">
+                <button onClick={() => setStep(1)} className="px-6 py-3 border border-[color:var(--token-card-border,#e4e4e7)] rounded-xl text-sm">Zurück</button>
+                <button onClick={() => setStep(3)} className="px-6 py-3 bg-[var(--token-icon, var(--brand-primary))] text-[color:var(--token-on-dark-heading,#ffffff)] rounded-xl font-medium hover:opacity-90 transition">
                   Bestellung prüfen
                 </button>
               </div>
@@ -306,15 +306,15 @@ export function ShopCheckoutSection({ data }: Props) {
           {/* Step 3: Confirmation */}
           {step === 3 && (
             <div className="space-y-4">
-              <div className="bg-zinc-50 rounded-xl p-5 space-y-2 text-sm">
+              <div className="bg-[var(--token-section-bg-alt,#fafafa)] rounded-xl p-5 space-y-2 text-sm">
                 <p><strong>Name:</strong> {form.name}</p>
                 <p><strong>E-Mail:</strong> {form.email}</p>
                 <p><strong>Adresse:</strong> {form.street}, {form.zip} {form.city}, {form.country}</p>
                 <p><strong>Zahlung:</strong> {form.paymentMethod === 'prepayment' ? 'Vorkasse' : form.paymentMethod === 'stripe' ? 'Kreditkarte' : form.paymentMethod === 'paypal' ? 'PayPal' : 'Abholung'}</p>
               </div>
               <div className="flex gap-3">
-                <button onClick={() => setStep(2)} className="px-6 py-3 border border-zinc-200 rounded-xl text-sm">Zurück</button>
-                <button onClick={handleSubmit} disabled={loading} className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2">
+                <button onClick={() => setStep(2)} className="px-6 py-3 border border-[color:var(--token-card-border,#e4e4e7)] rounded-xl text-sm">Zurück</button>
+                <button onClick={handleSubmit} disabled={loading} className="px-6 py-3 bg-[var(--token-icon, var(--brand-primary))] text-[color:var(--token-on-dark-heading,#ffffff)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2">
                   {loading ? <><Loader2 size={16} className="animate-spin" /> Bestellung wird aufgegeben…</> : 'Kostenpflichtig bestellen'}
                 </button>
               </div>
@@ -323,7 +323,7 @@ export function ShopCheckoutSection({ data }: Props) {
         </div>
 
         {/* Order summary sidebar */}
-        <div className="bg-zinc-50 rounded-2xl p-6 h-fit sticky top-4">
+        <div className="bg-[var(--token-section-bg-alt,#fafafa)] rounded-2xl p-6 h-fit sticky top-4">
           <h3 className="font-semibold mb-4">Deine Bestellung</h3>
           <div className="space-y-3 mb-4">
             {items.map(item => (
@@ -356,7 +356,7 @@ export function ShopCheckoutSection({ data }: Props) {
               </div>
             ) : (
               <div className="flex gap-2">
-                <input value={couponInput} onChange={e => { setCouponInput(e.target.value); setCouponError(''); }} placeholder="Gutscheincode" className="flex-1 text-sm border border-zinc-200 rounded-lg px-3 py-2" />
+                <input value={couponInput} onChange={e => { setCouponInput(e.target.value); setCouponError(''); }} placeholder="Gutscheincode" className="flex-1 text-sm border border-[color:var(--token-card-border,#e4e4e7)] rounded-lg px-3 py-2" />
                 <button onClick={applyCoupon} className="text-sm px-3 py-2 bg-zinc-200 rounded-lg hover:bg-zinc-300 font-medium">Einlösen</button>
               </div>
             )}

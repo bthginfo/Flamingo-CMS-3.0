@@ -67,18 +67,18 @@ export function CollectionListSection({ data }: Props) {
       {(headline || subline) && (
         <div className="text-center mb-10">
           {headline && <h2 className="text-3xl md:text-4xl font-bold">{headline}</h2>}
-          {subline && <p className="text-lg text-zinc-500 mt-2">{plain(subline)}</p>}
+          {subline && <p className="text-lg text-[color:var(--token-muted,#71717a)] mt-2">{plain(subline)}</p>}
         </div>
       )}
 
       {showSortControls && items.length > 1 && (
         <div className="flex justify-end mb-6">
           <div className="inline-flex items-center gap-2 text-sm">
-            <ArrowUpDown size={14} className="text-zinc-400" />
+            <ArrowUpDown size={14} className="text-[color:var(--token-body,#a1a1aa)]" />
             <select
               value={sortBy}
               onChange={e => setSortBy(e.target.value as SortOption)}
-              className="border border-zinc-200 rounded-lg px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="border border-[color:var(--token-card-border,#e4e4e7)] rounded-lg px-3 py-1.5 text-sm bg-[var(--token-card-bg,#ffffff)] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               {Object.entries(SORT_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
@@ -89,7 +89,7 @@ export function CollectionListSection({ data }: Props) {
       )}
 
       {sorted.length === 0 ? (
-        <p className="text-center text-zinc-400 py-12">Noch keine Einträge vorhanden.</p>
+        <p className="text-center text-[color:var(--token-body,#a1a1aa)] py-12">Noch keine Einträge vorhanden.</p>
       ) : (
         <div className={`grid grid-cols-1 ${gridCols} gap-6`}>
           {sorted.map((item, i) => (
@@ -100,7 +100,7 @@ export function CollectionListSection({ data }: Props) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05, duration: 0.4 }}
-              className="group block rounded-xl border border-zinc-100 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+              className="group block rounded-xl border border-[color:var(--token-card-border,#f4f4f5)] bg-[var(--token-card-bg,#ffffff)] overflow-hidden shadow-sm hover:shadow-md transition-shadow"
             >
               {showImage && item.image && (
                 <div className="aspect-[16/10] overflow-hidden">
@@ -116,13 +116,13 @@ export function CollectionListSection({ data }: Props) {
                   {item.title}
                 </h3>
                 {showDate && item.date && (
-                  <div className="flex items-center gap-1.5 text-xs text-zinc-400 mt-2">
+                  <div className="flex items-center gap-1.5 text-xs text-[color:var(--token-body,#a1a1aa)] mt-2">
                     <Calendar size={12} />
                     <time>{new Date(item.date).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}</time>
                   </div>
                 )}
                 {showExcerpt && item.excerpt && (
-                  <p className="text-sm text-zinc-500 mt-2 line-clamp-3">{item.excerpt}</p>
+                  <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-2 line-clamp-3">{item.excerpt}</p>
                 )}
               </div>
             </motion.a>

@@ -21,11 +21,11 @@ export function ArtistGridSection({ data }: Props) {
   const artists = (data.artists as Artist[]) || [];
 
   return (
-    <section className="py-20 px-6 bg-neutral-900">
+    <section className="py-20 px-6 bg-[var(--token-section-bg-alt,#18181b)]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-14">
-          <h2 className="text-3xl sm:text-5xl font-bold text-white">{headline}</h2>
-          {subline && <p className="mt-3 text-white/50 max-w-xl mx-auto">{plain(subline)}</p>}
+          <h2 className="text-3xl sm:text-5xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]">{headline}</h2>
+          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50] max-w-xl mx-auto">{plain(subline)}</p>}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -37,18 +37,18 @@ export function ArtistGridSection({ data }: Props) {
                   {artist.image && <Image src={artist.image} alt={artist.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 25vw" />}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   {artist.instagram && (
-                    <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm rounded-full px-2.5 py-1 text-[10px] text-white/70">
+                    <div className="absolute top-3 right-3 bg-[var(--token-section-bg-alt,#000000)/50] backdrop-blur-sm rounded-full px-2.5 py-1 text-[10px] text-[color:var(--token-on-dark-heading,#ffffff)/70]">
                       @{artist.instagram}
                     </div>
                   )}
                 </div>
-                <h3 className="text-white font-bold text-lg group-hover:text-brand-accent transition-colors">{artist.name}</h3>
+                <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-bold text-lg group-hover:text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-colors">{artist.name}</h3>
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {artist.styles.map(s => (
-                    <span key={s} className="text-[10px] uppercase tracking-wider bg-white/10 text-white/60 px-2 py-0.5 rounded-full">{s}</span>
+                    <span key={s} className="text-[10px] uppercase tracking-wider bg-[var(--token-card-bg,#ffffff)/10] text-[color:var(--token-on-dark-heading,#ffffff)/60] px-2 py-0.5 rounded-full">{s}</span>
                   ))}
                 </div>
-                {artist.bio && <p className="text-white/40 text-sm mt-2 line-clamp-2">{plain(artist.bio)}</p>}
+                {artist.bio && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/40] text-sm mt-2 line-clamp-2">{plain(artist.bio)}</p>}
               </a>
             </motion.div>
           ))}

@@ -30,9 +30,9 @@ export function ConsultingTestimonialsSection({ data }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
-            className="bg-white border border-slate-200 rounded-xl p-8 relative"
+            className="bg-[var(--token-card-bg,#ffffff)] border border-[color:var(--token-card-border,#e4e4e7)] rounded-xl p-8 relative"
           >
-            <DynamicIcon name="quote" size={24} className="text-brand-primary/20 absolute top-6 right-6" />
+            <DynamicIcon name="quote" size={24} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))/20] absolute top-6 right-6" />
             {item.rating && (
               <div className="flex gap-0.5 mb-4">
                 {Array.from({ length: item.rating }).map((_, j) => (
@@ -40,10 +40,10 @@ export function ConsultingTestimonialsSection({ data }: Props) {
                 ))}
               </div>
             )}
-            <p className="text-slate-700 leading-relaxed italic mb-6">&ldquo;{plain(item.quote)}&rdquo;</p>
-            <div className="border-t border-slate-100 pt-4">
-              <div className="font-semibold text-slate-900 text-sm">{item.name}</div>
-              {item.context && <div className="text-slate-400 text-xs mt-0.5">{item.context}</div>}
+            <p className="text-[color:var(--token-muted,#3f3f46)] leading-relaxed italic mb-6">&ldquo;{plain(item.quote)}&rdquo;</p>
+            <div className="border-t border-[color:var(--token-card-border,#f4f4f5)] pt-4">
+              <div className="font-semibold text-[color:var(--token-heading,#18181b)] text-sm">{item.name}</div>
+              {item.context && <div className="text-[color:var(--token-body,#a1a1aa)] text-xs mt-0.5">{item.context}</div>}
             </div>
           </motion.div>
         ))}

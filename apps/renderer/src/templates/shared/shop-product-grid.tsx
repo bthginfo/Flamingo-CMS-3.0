@@ -95,19 +95,19 @@ export function ShopProductGridSection({ data }: Props) {
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
         {showSearch && (
           <div className="relative flex-1">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--token-body,#a1a1aa)]" />
             <input
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Produkt suchen…"
-              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-300 focus:bg-white transition"
+              className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-[color:var(--token-card-border,#e4e4e7)] bg-[var(--token-section-bg-alt,#fafafa)] text-sm focus:outline-none focus:ring-2 focus:ring-[color:var(--token-card-border,#d4d4d8)] focus:bg-[var(--token-card-bg,#ffffff)] transition"
             />
           </div>
         )}
         <div className="flex items-center gap-2">
-          <SlidersHorizontal size={14} className="text-zinc-400" />
-          <select value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)} className="text-sm border border-zinc-200 rounded-lg px-3 py-2.5 bg-zinc-50">
+          <SlidersHorizontal size={14} className="text-[color:var(--token-body,#a1a1aa)]" />
+          <select value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)} className="text-sm border border-[color:var(--token-card-border,#e4e4e7)] rounded-lg px-3 py-2.5 bg-[var(--token-section-bg-alt,#fafafa)]">
             <option value="default">Standard</option>
             <option value="price-asc">Preis aufsteigend</option>
             <option value="price-desc">Preis absteigend</option>
@@ -119,26 +119,26 @@ export function ShopProductGridSection({ data }: Props) {
       {/* Price filter */}
       {priceRange[1] > priceRange[0] && (
         <div className="flex flex-wrap items-center gap-3 mb-6 text-sm">
-          <span className="text-zinc-500">Preis:</span>
-          <span className="text-zinc-700 font-medium">{formatPrice(priceFilter[0])}</span>
+          <span className="text-[color:var(--token-muted,#71717a)]">Preis:</span>
+          <span className="text-[color:var(--token-muted,#3f3f46)] font-medium">{formatPrice(priceFilter[0])}</span>
           <input
             type="range"
             min={priceRange[0]} max={priceRange[1]} step={100}
             value={priceFilter[0]}
             onChange={e => setPriceFilter([Math.min(Number(e.target.value), priceFilter[1]), priceFilter[1]])}
-            className="w-24 sm:w-32 accent-zinc-700"
+            className="w-24 sm:w-32 accent-[var(--token-icon,#3f3f46)]"
           />
-          <span className="text-zinc-400">–</span>
+          <span className="text-[color:var(--token-body,#a1a1aa)]">–</span>
           <input
             type="range"
             min={priceRange[0]} max={priceRange[1]} step={100}
             value={priceFilter[1]}
             onChange={e => setPriceFilter([priceFilter[0], Math.max(Number(e.target.value), priceFilter[0])])}
-            className="w-24 sm:w-32 accent-zinc-700"
+            className="w-24 sm:w-32 accent-[var(--token-icon,#3f3f46)]"
           />
-          <span className="text-zinc-700 font-medium">{formatPrice(priceFilter[1])}</span>
+          <span className="text-[color:var(--token-muted,#3f3f46)] font-medium">{formatPrice(priceFilter[1])}</span>
           {(priceFilter[0] > priceRange[0] || priceFilter[1] < priceRange[1]) && (
-            <button onClick={() => setPriceFilter(priceRange)} className="text-xs text-zinc-500 underline">Zurücksetzen</button>
+            <button onClick={() => setPriceFilter(priceRange)} className="text-xs text-[color:var(--token-muted,#71717a)] underline">Zurücksetzen</button>
           )}
         </div>
       )}
@@ -146,11 +146,11 @@ export function ShopProductGridSection({ data }: Props) {
       {/* Category filter */}
       {showCategories && categories.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-6">
-          <button onClick={() => setActiveCategory(null)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${!activeCategory ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>
+          <button onClick={() => setActiveCategory(null)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${!activeCategory ? 'bg-[var(--token-section-bg-alt,#18181b)] text-[color:var(--token-on-dark-heading,#ffffff)]' : 'bg-[var(--token-section-bg-alt,#f4f4f5)] text-[color:var(--token-muted,#52525b)] hover:bg-zinc-200'}`}>
             Alle
           </button>
           {categories.map(c => (
-            <button key={c.slug} onClick={() => setActiveCategory(c.slug)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${activeCategory === c.slug ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}>
+            <button key={c.slug} onClick={() => setActiveCategory(c.slug)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${activeCategory === c.slug ? 'bg-[var(--token-section-bg-alt,#18181b)] text-[color:var(--token-on-dark-heading,#ffffff)]' : 'bg-[var(--token-section-bg-alt,#f4f4f5)] text-[color:var(--token-muted,#52525b)] hover:bg-zinc-200'}`}>
               {c.name}
             </button>
           ))}
@@ -159,9 +159,9 @@ export function ShopProductGridSection({ data }: Props) {
 
       {/* Product grid */}
       {loading ? (
-        <div className="text-center py-16 text-zinc-400">Produkte werden geladen…</div>
+        <div className="text-center py-16 text-[color:var(--token-body,#a1a1aa)]">Produkte werden geladen…</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-zinc-400">
+        <div className="text-center py-16 text-[color:var(--token-body,#a1a1aa)]">
           <ShoppingBag size={40} className="mx-auto mb-3 opacity-50" />
           <p>Keine Produkte gefunden.</p>
         </div>
@@ -169,30 +169,30 @@ export function ShopProductGridSection({ data }: Props) {
         <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns >= 3 ? 'lg:grid-cols-3' : ''} ${columns >= 4 ? 'xl:grid-cols-4' : ''} gap-6 md:gap-8`}>
           {filtered.map(product => (
             <Link key={product.id} href={`${shopBase}/${product.slug}`} className="group">
-              <div className="rounded-2xl border border-zinc-100 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white">
-                <div className="aspect-[4/5] bg-zinc-50 relative overflow-hidden">
+              <div className="rounded-2xl border border-[color:var(--token-card-border,#f4f4f5)] overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-[var(--token-card-bg,#ffffff)]">
+                <div className="aspect-[4/5] bg-[var(--token-section-bg-alt,#fafafa)] relative overflow-hidden">
                   {product.images?.[0] ? (
                     <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <ShoppingBag size={40} className="text-zinc-200" />
+                      <ShoppingBag size={40} className="text-[color:var(--token-body,#e4e4e7)]" />
                     </div>
                   )}
                   {product.stock === 0 && (
-                    <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">Ausverkauft</div>
+                    <div className="absolute top-3 left-3 bg-red-500 text-[color:var(--token-on-dark-heading,#ffffff)] text-xs font-bold px-2.5 py-1 rounded-full">Ausverkauft</div>
                   )}
                   {product.comparePriceCents && (
-                    <div className="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">Sale</div>
+                    <div className="absolute top-3 right-3 bg-green-500 text-[color:var(--token-on-dark-heading,#ffffff)] text-xs font-bold px-2.5 py-1 rounded-full">Sale</div>
                   )}
                 </div>
                 <div className="p-5">
-                  {product.categoryName && <p className="text-xs text-zinc-400 uppercase tracking-wide mb-1">{product.categoryName}</p>}
-                  <h3 className="font-semibold group-hover:text-zinc-600 transition">{product.title}</h3>
-                  {product.shortDescription && <p className="text-sm text-zinc-500 mt-1.5 line-clamp-2">{product.shortDescription}</p>}
+                  {product.categoryName && <p className="text-xs text-[color:var(--token-body,#a1a1aa)] uppercase tracking-wide mb-1">{product.categoryName}</p>}
+                  <h3 className="font-semibold group-hover:text-[color:var(--token-muted,#52525b)] transition">{product.title}</h3>
+                  {product.shortDescription && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1.5 line-clamp-2">{product.shortDescription}</p>}
                   <div className="flex items-center gap-2 mt-3">
                     <span className="font-bold text-lg">{formatPrice(product.priceCents)}</span>
                     {product.comparePriceCents && (
-                      <span className="text-sm text-zinc-400 line-through">{formatPrice(product.comparePriceCents)}</span>
+                      <span className="text-sm text-[color:var(--token-body,#a1a1aa)] line-through">{formatPrice(product.comparePriceCents)}</span>
                     )}
                   </div>
                 </div>
