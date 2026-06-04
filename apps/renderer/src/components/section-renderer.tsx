@@ -55,26 +55,53 @@ function withBookingStyleAliases(sectionType: string, style?: React.CSSPropertie
 }
 
 const SECTION_STYLE_TOKEN_ALIASES: Record<string, string[]> = {
-  '--style-section-bg': ['--token-section-bg'],
-  '--style-section-bg-alt': ['--token-section-bg-alt'],
+  '--style-section-bg': ['--token-section-bg', '--style-section-bg-alt', '--token-section-bg-alt'],
+  '--style-section-bg-alt': ['--token-section-bg-alt', '--style-section-bg', '--token-section-bg'],
   '--style-card-bg': ['--token-card-bg'],
   '--style-border-color': ['--token-card-border', '--token-divider', '--style-border'],
+  '--style-border': ['--token-card-border', '--style-border-color'],
   '--style-card-border-color': ['--token-card-border'],
   '--style-divider-color': ['--token-divider'],
   '--style-heading-color': ['--style-heading', '--token-heading'],
+  '--style-heading': ['--style-heading-color', '--token-heading'],
   '--style-subheading-color': ['--token-subheading'],
   '--style-body-color': ['--style-body', '--token-body'],
+  '--style-body': ['--style-body-color', '--token-body'],
   '--style-text-primary': ['--token-heading'],
   '--style-text-secondary': ['--token-body'],
   '--style-text-muted': ['--style-muted', '--token-muted'],
+  '--style-muted': ['--style-text-muted', '--token-muted'],
   '--style-icon-color': ['--token-icon'],
   '--style-accent-color': ['--style-accent', '--token-eyebrow', '--token-stat-value', '--token-quote', '--token-rating-star', '--token-check'],
+  '--style-accent': ['--style-accent-color', '--token-eyebrow', '--token-stat-value', '--token-quote', '--token-rating-star', '--token-check'],
   '--style-badge-bg': ['--token-badge-bg'],
   '--style-badge-text': ['--token-badge-text'],
   '--style-badge-border': ['--token-badge-border'],
   '--brand-btn-bg': ['--token-btn-bg'],
   '--brand-btn-text': ['--token-btn-text'],
+  '--style-button-bg': ['--token-btn-bg', '--brand-btn-bg'],
+  '--style-button-text': ['--token-btn-text', '--brand-btn-text'],
   '--style-image-text-color': ['--token-on-dark-heading', '--token-on-dark-body', '--token-on-dark-muted'],
+  '--style-image-overlay': ['--style-overlay-color'],
+  '--token-section-bg': ['--style-section-bg', '--style-section-bg-alt', '--token-section-bg-alt'],
+  '--token-section-bg-alt': ['--style-section-bg-alt', '--style-section-bg', '--token-section-bg'],
+  '--token-card-bg': ['--style-card-bg'],
+  '--token-card-border': ['--style-border-color', '--style-card-border-color', '--style-border'],
+  '--token-divider': ['--style-divider-color'],
+  '--token-heading': ['--style-heading-color', '--style-text-primary', '--style-heading'],
+  '--token-subheading': ['--style-subheading-color'],
+  '--token-body': ['--style-body-color', '--style-text-secondary', '--style-body'],
+  '--token-muted': ['--style-text-muted', '--style-muted'],
+  '--token-icon': ['--style-icon-color'],
+  '--token-eyebrow': ['--style-accent-color', '--style-accent'],
+  '--token-btn-bg': ['--brand-btn-bg', '--style-button-bg'],
+  '--token-btn-text': ['--brand-btn-text', '--style-button-text'],
+  '--token-badge-bg': ['--style-badge-bg'],
+  '--token-badge-text': ['--style-badge-text'],
+  '--token-badge-border': ['--style-badge-border'],
+  '--token-on-dark-heading': ['--style-image-text-color'],
+  '--token-on-dark-body': ['--style-image-body-color'],
+  '--token-on-dark-muted': ['--style-image-muted-color'],
 };
 
 function normalizeSectionStyle(style?: React.CSSProperties): React.CSSProperties | undefined {
@@ -208,11 +235,11 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
     section.data.overlay,
   );
   const headingColorVar = hasMediaOverlay
-    ? 'var(--token-on-dark-heading, var(--style-heading-color, var(--style-text-primary, inherit)))'
-    : 'var(--style-heading-color, var(--style-text-primary, inherit))';
+    ? 'var(--token-on-dark-heading, var(--token-heading, var(--style-heading-color, var(--style-text-primary, inherit))))'
+    : 'var(--token-heading, var(--style-heading-color, var(--style-text-primary, inherit)))';
   const bodyColorVar = hasMediaOverlay
-    ? 'var(--token-on-dark-body, var(--style-body-color, var(--style-text-secondary, inherit)))'
-    : 'var(--style-body-color, var(--style-text-secondary, inherit))';
+    ? 'var(--token-on-dark-body, var(--token-body, var(--style-body-color, var(--style-text-secondary, inherit))))'
+    : 'var(--token-body, var(--style-body-color, var(--style-text-secondary, inherit)))';
 
   // Per-section color overrides (from CMS) applied as inline CSS vars
   const overrideStyle = section.styleOverrides

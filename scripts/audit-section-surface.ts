@@ -79,11 +79,27 @@ function parseSectionComponents(indexSource: string) {
   return mappings;
 }
 
-function resolveTemplateFile(importPath: string | undefined) {
+function resolveTemplateFile(importPath: string | undefined, componentName?: string | null) {
   if (!importPath) return null;
   const base = path.join(root, 'apps/renderer/src/templates', importPath);
   const candidates = [`${base}.tsx`, `${base}.ts`, path.join(base, 'index.tsx'), path.join(base, 'index.ts')];
-  return candidates.find((candidate) => fs.existsSync(candidate)) || null;
+  const resolved = candidates.find((candidate) => fs.existsSync(candidate)) || null;
+  if (!resolved || !componentName || !/index\.tsx?$/.test(resolved)) return resolved;
+
+  const index = read(resolved);
+  const exportRegex = /export\s+\{([\s\S]*?)\}\s+from\s+'([^']+)'/g;
+  for (const match of index.matchAll(exportRegex)) {
+    const specifiers = match[1].split(',').map((part) => part.trim()).filter(Boolean);
+    const exportsComponent = specifiers.some((specifier) => {
+      const [imported, alias] = specifier.split(/\s+as\s+/).map((part) => part.trim());
+      return (alias || imported) === componentName;
+    });
+    if (!exportsComponent) continue;
+    const nestedBase = path.join(path.dirname(resolved), match[2]);
+    const nestedCandidates = [`${nestedBase}.tsx`, `${nestedBase}.ts`, path.join(nestedBase, 'index.tsx'), path.join(nestedBase, 'index.ts')];
+    return nestedCandidates.find((candidate) => fs.existsSync(candidate)) || resolved;
+  }
+  return resolved;
 }
 
 function flattenFields(value: unknown, prefix = ''): string[] {
@@ -172,6 +188,14 @@ function parseSectionFields(colorSource: string) {
   return fields;
 }
 
+function parseDefaultSectionFields(colorSource: string) {
+  const start = colorSource.indexOf('const DEFAULT_SECTION_FIELDS');
+  if (start < 0) return [];
+  const assignmentStart = colorSource.indexOf('=', start);
+  const block = extractBalanced(colorSource, assignmentStart > -1 ? assignmentStart : start, '[', ']');
+  return [...block.matchAll(/'([^']+)'/g)].map((item) => item[1]);
+}
+
 const indexSource = read(templatesIndexPath);
 const colorSource = read(colorEditorPath);
 const dataEditorSource = read(dataEditorPath);
@@ -179,7 +203,64 @@ const imports = parseImports(indexSource);
 const mappings = parseSectionComponents(indexSource);
 const fieldDefs = parseFieldDefs(colorSource);
 const sectionFields = parseSectionFields(colorSource);
+const defaultSectionFields = parseDefaultSectionFields(colorSource);
 const cssVarByField = new Map([...fieldDefs.entries()].map(([field, cssVar]) => [field, cssVar]));
+
+const COLOR_VAR_EQUIVALENTS: Record<string, string[]> = {
+  '--style-section-bg': ['--token-section-bg', '--style-section-bg-alt', '--token-section-bg-alt'],
+  '--style-section-bg-alt': ['--token-section-bg-alt', '--style-section-bg', '--token-section-bg'],
+  '--style-card-bg': ['--token-card-bg'],
+  '--style-border-color': ['--token-card-border', '--token-divider', '--style-border', '--style-card-border-color'],
+  '--style-card-border-color': ['--token-card-border', '--style-border-color', '--style-border'],
+  '--style-divider-color': ['--token-divider'],
+  '--style-heading-color': ['--token-heading', '--style-heading', '--style-text-primary'],
+  '--style-subheading-color': ['--token-subheading'],
+  '--style-body-color': ['--token-body', '--style-body', '--style-text-secondary'],
+  '--style-text-primary': ['--token-heading', '--style-heading-color', '--style-heading'],
+  '--style-text-secondary': ['--token-body', '--style-body-color', '--style-body'],
+  '--style-text-muted': ['--token-muted', '--style-muted'],
+  '--style-icon-color': ['--token-icon'],
+  '--style-accent-color': ['--token-eyebrow', '--token-stat-value', '--token-quote', '--token-rating-star', '--token-check', '--style-accent'],
+  '--style-badge-bg': ['--token-badge-bg'],
+  '--style-badge-text': ['--token-badge-text'],
+  '--style-badge-border': ['--token-badge-border'],
+  '--brand-btn-bg': ['--token-btn-bg', '--style-button-bg'],
+  '--brand-btn-text': ['--token-btn-text', '--style-button-text'],
+  '--style-button-bg': ['--token-btn-bg', '--brand-btn-bg'],
+  '--style-button-text': ['--token-btn-text', '--brand-btn-text'],
+  '--style-image-text-color': ['--token-on-dark-heading', '--token-on-dark-body', '--token-on-dark-muted'],
+  '--style-image-overlay': ['--style-overlay-color', '--token-overlay'],
+};
+
+const SECTION_RENDERER_EFFECTIVE_VARS = [
+  '--style-section-bg',
+  '--token-section-bg',
+  '--style-heading-color',
+  '--style-text-primary',
+  '--token-heading',
+  '--style-body-color',
+  '--style-text-secondary',
+  '--token-body',
+  '--style-badge-bg',
+  '--style-badge-text',
+  '--style-accent-color',
+  '--brand-btn-bg',
+  '--brand-btn-text',
+  '--token-btn-bg',
+  '--token-btn-text',
+];
+
+for (const [key, aliases] of Object.entries({ ...COLOR_VAR_EQUIVALENTS })) {
+  for (const alias of aliases) {
+    COLOR_VAR_EQUIVALENTS[alias] = unique([...(COLOR_VAR_EQUIVALENTS[alias] || []), key, ...aliases.filter((item) => item !== alias)]);
+  }
+}
+
+function hasEquivalent(cssVar: string, candidates: string[]) {
+  if (candidates.includes(cssVar)) return true;
+  const equivalents = COLOR_VAR_EQUIVALENTS[cssVar] || [];
+  return equivalents.some((alias) => candidates.includes(alias));
+}
 
 const editorBlockStart = dataEditorSource.indexOf('const EDITORS');
 const editorBlock = extractBalanced(dataEditorSource, editorBlockStart);
@@ -190,7 +271,7 @@ const SYSTEM_INJECTED_FIELDS = new Set(['tenantId']);
 
 const reports: SectionReport[] = allTypes.map((type) => {
   const component = mappings.get(type) || null;
-  const file = resolveTemplateFile(component ? imports.get(component) : undefined);
+  const file = resolveTemplateFile(component ? imports.get(component) : undefined, component);
   const source = file ? read(file) : '';
   const feDataFields = parseFeDataFields(source).filter((field) => field !== 'id' && field !== 'type');
   const cmsRelevantFeDataFields = feDataFields.filter((field) => !SYSTEM_INJECTED_FIELDS.has(field));
@@ -203,10 +284,13 @@ const reports: SectionReport[] = allTypes.map((type) => {
     ...parseCssVars(source),
     ...fieldsForHardcodedColorClasses(source).map((field) => cssVarByField.get(field) || ''),
   ]);
-  const adminColorFields = sectionFields.get(type) || [];
+  const adminColorFields = (sectionFields.get(type) || defaultSectionFields).filter((field) => field !== 'sectionBgAlt');
   const adminColorCssVars = unique(adminColorFields.map((field) => fieldDefs.get(field) || ''));
-  const missingColorCssVars = feCssVars.filter((cssVar) => cssVar.startsWith('--style-') || cssVar.startsWith('--brand-btn-')).filter((cssVar) => !adminColorCssVars.includes(cssVar));
-  const phantomColorCssVars = adminColorCssVars.filter((cssVar) => !feCssVars.includes(cssVar));
+  const missingColorCssVars = feCssVars
+    .filter((cssVar) => cssVar.startsWith('--style-') || cssVar.startsWith('--brand-btn-'))
+    .filter((cssVar) => !hasEquivalent(cssVar, adminColorCssVars));
+  const effectiveFeCssVarsForAdminControls = unique([...feCssVars, ...SECTION_RENDERER_EFFECTIVE_VARS]);
+  const phantomColorCssVars = adminColorCssVars.filter((cssVar) => !hasEquivalent(cssVar, effectiveFeCssVarsForAdminControls));
   const dataColorFields = feDataFields.filter((field) => /color|colour|farbe|overlay/i.test(field));
   const notes: string[] = [];
   if (!component) notes.push('Kein Template-Mapping gefunden');
