@@ -17,7 +17,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
     const [collection] = await db.select().from(collections).where(and(eq(collections.tenantId, auth.tenantId), eq(collections.key, key)));
     if (!collection) return NextResponse.json({ error: 'Collection not found' }, { status: 404 });
 
-    const { title, slug, data, published } = await req.json();
+    const { title, slug, data, published, priority } = await req.json();
     if (!title) return NextResponse.json({ error: 'title required' }, { status: 400 });
 
     const itemSlug = slug || title.toLowerCase().replace(/[^a-z0-9äöüß]+/g, '-').replace(/(^-|-$)/g, '');
@@ -42,6 +42,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
       slug: itemSlug,
       data: itemData,
       published: published ?? false,
+      priority: Number.isFinite(Number(priority)) ? Number(priority) : 0,
     });
 
     return NextResponse.json({ id, slug: itemSlug }, { status: 201 });

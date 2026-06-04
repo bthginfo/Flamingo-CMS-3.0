@@ -495,7 +495,7 @@ const pages = [
         ctaHref: '/ueber-uns',
       }, light),
       section('shootingProcess', { badge: 'Ablauf', headline: 'Ein Prozess, der Sicherheit gibt.', subline: 'Nicht kompliziert, aber sauber vorbereitet.', steps: processSteps }, alt),
-      section('proofWall', { badge: 'Stimmen', headline: 'Ruhig fotografiert. Stark erinnert.', subline: 'Was Kundinnen und Kunden besonders oft nennen: entspannte Atmosphäre, klare Kommunikation und Bilder, die nicht gestellt wirken.', stats: [{ value: '180+', label: 'Reportagen' }, { value: '4,9/5', label: 'Kundenstimmen' }, { value: '48h', label: 'erste Highlights' }], quotes: testimonials }, light),
+      section('proofWall', { badge: 'Stimmen', headline: 'Ruhig fotografiert. Stark erinnert.', subline: 'Was Kundinnen und Kunden besonders oft nennen: entspannte Atmosphäre, klare Kommunikation und Bilder, die nicht gestellt wirken.', stats: [{ value: '180+', label: 'Reportagen', note: 'Hochzeiten, Portraits, Familien und Business' }, { value: '4,9/5', label: 'Kundenstimmen', note: 'Besonders oft genannt: Ruhe und Klarheit' }, { value: '48h', label: 'erste Highlights', note: 'Meist erste Auswahl nach zwei Tagen' }], reviews: testimonials }, light),
       section('newsPreview', { badge: 'Journal', headline: 'Notizen zu Bildern, Planung und Licht.', subline: 'Praktische Gedanken für Paare, Teams und Menschen vor der Kamera.', collectionKey: 'news', limit: 3, cta: { label: 'Alle Beiträge lesen', href: '/news' } }, alt),
       cta('Lassen Sie uns über Bilder sprechen, bevor der Termin voll wird.', 'Schreiben Sie kurz, worum es geht. Ich antworte mit einer klaren Einschätzung zu Ablauf, Licht, Dauer und Budget.'),
     ],
@@ -611,9 +611,22 @@ const pages = [
     title: 'Kontakt',
     sections: [
       hero('Erzählen Sie mir, was fotografiert werden soll.', 'Datum, Ort, Anlass und was Ihnen wichtig ist reichen für den Start. Ich melde mich mit Rückfragen, Einschätzung und nächstem Schritt.', img.home, { badgeText: 'Kontakt', secondaryCta: { label: 'Leistungen ansehen', href: '/leistungen' } }),
-      section('contact', { badge: 'Anfrage', headline: 'Kurze Nachricht, klare Antwort.', subline: 'Bitte nennen Sie Datum, Ort, Anlass und groben Umfang. Wenn etwas noch offen ist, reicht eine erste Idee.', phone, email, address, formEnabled: true, submitLabel: 'Anfrage senden', fields: [{ name: 'name', label: 'Name', type: 'text', required: true }, { name: 'email', label: 'E-Mail', type: 'email', required: true }, { name: 'topic', label: 'Anlass', type: 'select', options: ['Hochzeit', 'Paarshooting', 'Portrait', 'Business', 'Familie', 'Sonstiges'] }, { name: 'date', label: 'Datum', type: 'text' }, { name: 'message', label: 'Nachricht', type: 'textarea', required: true }] }, light),
+      section('contact', {
+        badgeText: 'Anfrage',
+        headline: 'Kurze Nachricht, klare Antwort.',
+        introText: 'Bitte nennen Sie Datum, Ort, Anlass und groben Umfang. Wenn etwas noch offen ist, reicht eine erste Idee.',
+        formEnabled: true,
+        submitLabel: 'Anfrage senden',
+        infoCards: [
+          { icon: 'phone', label: 'Telefon', value: phone },
+          { icon: 'mail', label: 'E-Mail', value: email },
+          { icon: 'map-pin', label: 'Standort', value: address },
+          { icon: 'clock', label: 'Erreichbarkeit', value: 'Mo-Fr 10:00-18:00, Shootings nach Vereinbarung' },
+        ],
+        formFields: [{ name: 'name', label: 'Name', type: 'text', required: true }, { name: 'email', label: 'E-Mail', type: 'email', required: true }, { name: 'topic', label: 'Anlass', type: 'select', options: ['Hochzeit', 'Paarshooting', 'Portrait', 'Business', 'Familie', 'Sonstiges'] }, { name: 'date', label: 'Datum', type: 'text' }, { name: 'message', label: 'Nachricht', type: 'textarea', required: true }],
+      }, light),
       faqSection('Häufige Fragen'),
-      section('map', { badge: 'Standort', headline: 'Frankfurt als Basis, unterwegs dahin, wo Bilder entstehen.', subline: 'Shootings in Frankfurt, Rhein-Main, Hessen und für Hochzeiten auch deutschlandweit.', address, mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2642.0!2d8.6821!3d50.1109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sFrankfurt%20am%20Main!5e0!3m2!1sde!2sde!4v1710000000000' }, alt),
+      section('map', { badge: 'Standort', headline: 'Frankfurt als Basis, unterwegs dahin, wo Bilder entstehen.', subline: 'Shootings in Frankfurt, Rhein-Main, Hessen und für Hochzeiten auch deutschlandweit.', address, embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2642.0!2d8.6821!3d50.1109!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sFrankfurt%20am%20Main!5e0!3m2!1sde!2sde!4v1710000000000' }, alt),
     ],
   },
   {
@@ -651,7 +664,7 @@ function reportageItemSections(item) {
     collectionHero(item.title, item.excerpt, item.image, item.category),
     section('freeText', { content: `<p>${item.excerpt}</p><p>Bei dieser Reportage ging es nicht darum, möglichst viel zu inszenieren. Wichtig waren ein klarer Ablauf, gutes Licht und der Mut, Zwischentöne stehen zu lassen.</p><p>Die Bildstrecke verbindet Details, Portraits und dokumentarische Momente zu einer Geschichte, die sich ruhig und vollständig anfühlt.</p>` }, light),
     section('portfolioGallery', { badge: item.category, headline: 'Aus der Reportage', images: galleryImages.slice(0, 9), categories: ['Hochzeit', 'Paare', 'Portrait', 'Business', 'Familie'] }, alt),
-    section('proofWall', { badge: 'Stimme', headline: 'Was hängen geblieben ist.', quotes: testimonials.slice(0, 2), stats: [{ value: '48h', label: 'erste Vorschau' }, { value: '1', label: 'geschützte Galerie' }] }, light),
+    section('proofWall', { badge: 'Stimme', headline: 'Was hängen geblieben ist.', reviews: testimonials.slice(0, 2), stats: [{ value: '48h', label: 'erste Vorschau' }, { value: '1', label: 'geschützte Galerie' }] }, light),
     cta('Eine ähnliche Reportage planen?', 'Erzählen Sie mir kurz Anlass, Ort und Datum.'),
   ]);
 }
@@ -681,12 +694,13 @@ async function ensureCollection(key, label, collections) {
 async function replaceCollectionItems(key, label, items, makeSections, collections) {
   const collection = await ensureCollection(key, label, collections);
   for (const item of collection.items || []) await api('DELETE', `/api/v1/content/collections/${key}/items/${item.id}`);
-  for (const item of items) {
+  for (const [index, item] of items.entries()) {
     await api('POST', `/api/v1/content/collections/${key}/items`, {
       title: item.title,
       slug: item.slug,
       excerpt: item.excerpt,
       published: true,
+      priority: index,
       data: {
         image: item.image,
         category: item.category,

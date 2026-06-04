@@ -34,6 +34,16 @@ const CONTAINER: Record<string, string> = {
 };
 
 const BOOKING_SECTION_TYPES = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
+const MEDIA_OVERLAY_SECTION_TYPES = new Set([
+  'hero',
+  'collectionHero',
+  'cinematicHero',
+  'glowHero',
+  'floristHero',
+  'fitnessHero',
+  'locationHero',
+  'immersiveCtaBanner',
+]);
 
 function withBookingStyleAliases(sectionType: string, style?: React.CSSProperties): React.CSSProperties | undefined {
   if (!style || !BOOKING_SECTION_TYPES.has(sectionType)) return style;
@@ -227,13 +237,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   ]);
 
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);
-  const hasMediaOverlay = Boolean(
-    section.data.image ||
-    section.data.backgroundImage ||
-    section.data.bgImage ||
-    section.data.videoUrl ||
-    section.data.overlay,
-  );
+  const hasMediaOverlay = MEDIA_OVERLAY_SECTION_TYPES.has(section.type) || Boolean(section.data.overlay);
   const headingColorVar = hasMediaOverlay
     ? 'var(--token-on-dark-heading, var(--token-heading, var(--style-heading-color, var(--style-text-primary, inherit))))'
     : 'var(--token-heading, var(--style-heading-color, var(--style-text-primary, inherit)))';
