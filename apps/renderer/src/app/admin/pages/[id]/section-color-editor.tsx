@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Palette, ChevronDown } from 'lucide-react';
+import { getAllSectionContracts, type SectionColorSlot } from '@/lib/section-contracts';
 
 type ColorOverrides = Record<string, string>;
 
@@ -252,8 +253,41 @@ const DEFAULT_SECTION_FIELDS: ColorFieldKey[] = [
   'borderColor',
 ];
 
+const CONTRACT_FIELD_BY_SLOT: Record<SectionColorSlot, ColorFieldKey> = {
+  sectionBg: 'sectionBg',
+  sectionBgAlt: 'sectionBgAlt',
+  cardBg: 'cardBg',
+  headingColor: 'headingColor',
+  subheadingColor: 'subheadingColor',
+  bodyColor: 'bodyColor',
+  mutedColor: 'mutedColor',
+  textPrimary: 'textPrimary',
+  textSecondary: 'textSecondary',
+  imageTextColor: 'imageTextColor',
+  accentColor: 'accentColor',
+  iconColor: 'iconColor',
+  btnBg: 'btnBg',
+  btnText: 'btnText',
+  btnSecondaryBg: 'btnSecondaryBg',
+  btnSecondaryText: 'btnSecondaryText',
+  badgeBg: 'badgeBg',
+  badgeText: 'badgeText',
+  badgeBorder: 'badgeBorder',
+  borderColor: 'borderColor',
+  dividerColor: 'dividerColor',
+  overlayColor: 'imageOverlay',
+};
+
+const CONTRACT_FIELDS_BY_TYPE = new Map(
+  getAllSectionContracts().map((contract) => [
+    contract.type,
+    contract.colorSlots.map((slot) => CONTRACT_FIELD_BY_SLOT[slot]).filter(Boolean),
+  ]),
+);
+
 function getFieldsForSection(sectionType: string): ColorFieldKey[] {
-  return (SECTION_FIELDS[sectionType] ?? DEFAULT_SECTION_FIELDS).filter((field) => field !== 'sectionBgAlt');
+  const fields = SECTION_FIELDS[sectionType] ?? CONTRACT_FIELDS_BY_TYPE.get(sectionType) ?? DEFAULT_SECTION_FIELDS;
+  return fields.filter((field) => field !== 'sectionBgAlt');
 }
 
 

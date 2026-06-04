@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { SECTION_PREVIEW_DATA } from '../apps/renderer/src/lib/section-preview-data';
 import { SECTION_EDITOR_FIELD_DEFAULTS } from '../apps/renderer/src/lib/section-editor-field-defaults';
+import { getSectionColorSlotForCssVar } from '../apps/renderer/src/lib/section-contracts';
 
 const root = process.cwd();
 const templatesIndexPath = path.join(root, 'apps/renderer/src/templates/index.ts');
@@ -206,32 +207,6 @@ const sectionFields = parseSectionFields(colorSource);
 const defaultSectionFields = parseDefaultSectionFields(colorSource);
 const cssVarByField = new Map([...fieldDefs.entries()].map(([field, cssVar]) => [field, cssVar]));
 
-const COLOR_VAR_EQUIVALENTS: Record<string, string[]> = {
-  '--style-section-bg': ['--token-section-bg', '--style-section-bg-alt', '--token-section-bg-alt'],
-  '--style-section-bg-alt': ['--token-section-bg-alt', '--style-section-bg', '--token-section-bg'],
-  '--style-card-bg': ['--token-card-bg'],
-  '--style-border-color': ['--token-card-border', '--token-divider', '--style-border', '--style-card-border-color'],
-  '--style-card-border-color': ['--token-card-border', '--style-border-color', '--style-border'],
-  '--style-divider-color': ['--token-divider'],
-  '--style-heading-color': ['--token-heading', '--style-heading', '--style-text-primary'],
-  '--style-subheading-color': ['--token-subheading'],
-  '--style-body-color': ['--token-body', '--style-body', '--style-text-secondary'],
-  '--style-text-primary': ['--token-heading', '--style-heading-color', '--style-heading'],
-  '--style-text-secondary': ['--token-body', '--style-body-color', '--style-body'],
-  '--style-text-muted': ['--token-muted', '--style-muted'],
-  '--style-icon-color': ['--token-icon'],
-  '--style-accent-color': ['--token-eyebrow', '--token-stat-value', '--token-quote', '--token-rating-star', '--token-check', '--style-accent'],
-  '--style-badge-bg': ['--token-badge-bg'],
-  '--style-badge-text': ['--token-badge-text'],
-  '--style-badge-border': ['--token-badge-border'],
-  '--brand-btn-bg': ['--token-btn-bg', '--style-button-bg'],
-  '--brand-btn-text': ['--token-btn-text', '--style-button-text'],
-  '--style-button-bg': ['--token-btn-bg', '--brand-btn-bg'],
-  '--style-button-text': ['--token-btn-text', '--brand-btn-text'],
-  '--style-image-text-color': ['--token-on-dark-heading', '--token-on-dark-body', '--token-on-dark-muted'],
-  '--style-image-overlay': ['--style-overlay-color', '--token-overlay'],
-};
-
 const SECTION_RENDERER_EFFECTIVE_VARS = [
   '--style-section-bg',
   '--token-section-bg',
@@ -250,16 +225,10 @@ const SECTION_RENDERER_EFFECTIVE_VARS = [
   '--token-btn-text',
 ];
 
-for (const [key, aliases] of Object.entries({ ...COLOR_VAR_EQUIVALENTS })) {
-  for (const alias of aliases) {
-    COLOR_VAR_EQUIVALENTS[alias] = unique([...(COLOR_VAR_EQUIVALENTS[alias] || []), key, ...aliases.filter((item) => item !== alias)]);
-  }
-}
-
 function hasEquivalent(cssVar: string, candidates: string[]) {
   if (candidates.includes(cssVar)) return true;
-  const equivalents = COLOR_VAR_EQUIVALENTS[cssVar] || [];
-  return equivalents.some((alias) => candidates.includes(alias));
+  const slot = getSectionColorSlotForCssVar(cssVar);
+  return Boolean(slot && candidates.some((candidate) => getSectionColorSlotForCssVar(candidate) === slot));
 }
 
 const editorBlockStart = dataEditorSource.indexOf('const EDITORS');

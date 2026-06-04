@@ -210,6 +210,95 @@ export const SECTION_COLOR_SLOT_DEFINITIONS: Record<SectionColorSlot, { cssVar: 
   overlayColor: { cssVar: '--style-overlay-color', label: 'Overlay', description: 'Overlay-Farbe auf Bildern. Bei Bild-Heroes immer so wählen, dass Text lesbar bleibt.', contrastWith: ['headingColor', 'bodyColor', 'imageTextColor'] },
 };
 
+export const SECTION_COLOR_SLOT_ALIASES: Record<SectionColorSlot, string[]> = {
+  sectionBg: ['--style-section-bg', '--token-section-bg', '--style-section-bg-alt', '--token-section-bg-alt'],
+  sectionBgAlt: ['--style-section-bg-alt', '--token-section-bg-alt', '--style-section-bg', '--token-section-bg'],
+  cardBg: ['--style-card-bg', '--token-card-bg'],
+  headingColor: ['--style-heading-color', '--style-heading', '--style-text-primary', '--token-heading'],
+  subheadingColor: ['--style-subheading-color', '--token-subheading'],
+  bodyColor: ['--style-body-color', '--style-body', '--style-text-secondary', '--token-body'],
+  mutedColor: ['--style-text-muted', '--style-muted', '--token-muted'],
+  textPrimary: ['--style-text-primary', '--style-heading-color', '--style-heading', '--token-heading', '--brand-dark'],
+  textSecondary: ['--style-text-secondary', '--style-body-color', '--style-body', '--token-body', '--brand-secondary'],
+  imageTextColor: ['--style-image-text-color', '--token-on-dark-heading', '--token-on-dark-body', '--token-on-dark-muted'],
+  accentColor: ['--style-accent-color', '--style-accent', '--style-brand', '--brand-accent', '--brand-accent-15', '--brand-primary', '--color-primary', '--token-eyebrow', '--token-stat-value', '--token-quote', '--token-rating-star', '--token-check'],
+  iconColor: ['--style-icon-color', '--token-icon'],
+  btnBg: ['--brand-btn-bg', '--style-button-bg', '--token-btn-bg'],
+  btnText: ['--brand-btn-text', '--style-button-text', '--token-btn-text'],
+  btnSecondaryBg: ['--brand-btn-secondary-bg'],
+  btnSecondaryText: ['--brand-btn-secondary-text'],
+  badgeBg: ['--style-badge-bg', '--token-badge-bg'],
+  badgeText: ['--style-badge-text', '--token-badge-text'],
+  badgeBorder: ['--style-badge-border', '--token-badge-border'],
+  borderColor: ['--style-border-color', '--style-border', '--style-card-border-color', '--style-card-border', '--token-card-border', '--token-divider'],
+  dividerColor: ['--style-divider-color', '--token-divider', '--style-border-color'],
+  overlayColor: ['--style-overlay-color', '--style-image-overlay', '--token-overlay'],
+};
+
+export const SECTION_COLOR_FIELD_TO_SLOT: Record<string, SectionColorSlot> = {
+  sectionBg: 'sectionBg',
+  sectionBgAlt: 'sectionBgAlt',
+  cardBg: 'cardBg',
+  headingColor: 'headingColor',
+  subheadingColor: 'subheadingColor',
+  bodyColor: 'bodyColor',
+  mutedColor: 'mutedColor',
+  textPrimary: 'textPrimary',
+  textSecondary: 'textSecondary',
+  imageTextColor: 'imageTextColor',
+  iconColor: 'iconColor',
+  accentColor: 'accentColor',
+  styleBrand: 'accentColor',
+  brandPrimary: 'accentColor',
+  brandAccent: 'accentColor',
+  colorPrimary: 'accentColor',
+  eyebrow: 'accentColor',
+  statValue: 'accentColor',
+  quoteMark: 'accentColor',
+  ratingStar: 'accentColor',
+  check: 'accentColor',
+  onDarkHeading: 'imageTextColor',
+  onDarkBody: 'imageTextColor',
+  onDarkMuted: 'imageTextColor',
+  btnBg: 'btnBg',
+  btnText: 'btnText',
+  btnSecondaryBg: 'btnSecondaryBg',
+  btnSecondaryText: 'btnSecondaryText',
+  badgeBg: 'badgeBg',
+  badgeText: 'badgeText',
+  badgeBorder: 'badgeBorder',
+  imageOverlay: 'overlayColor',
+  borderColor: 'borderColor',
+  dividerColor: 'dividerColor',
+  cardBorder: 'borderColor',
+  cardBorderColor: 'borderColor',
+};
+
+const SECTION_COLOR_VAR_TO_SLOT = new Map<string, SectionColorSlot>();
+for (const [slot, vars] of Object.entries(SECTION_COLOR_SLOT_ALIASES) as [SectionColorSlot, string[]][]) {
+  for (const cssVar of vars) {
+    if (!SECTION_COLOR_VAR_TO_SLOT.has(cssVar)) SECTION_COLOR_VAR_TO_SLOT.set(cssVar, slot);
+  }
+}
+
+export function getSectionColorSlotForCssVar(cssVar: string): SectionColorSlot | null {
+  return SECTION_COLOR_VAR_TO_SLOT.get(cssVar) || null;
+}
+
+export function getSectionColorSlotForField(field: string): SectionColorSlot | null {
+  return SECTION_COLOR_FIELD_TO_SLOT[field] || null;
+}
+
+export function getCssVarsForSectionColorSlot(slot: SectionColorSlot): string[] {
+  return SECTION_COLOR_SLOT_ALIASES[slot] || [SECTION_COLOR_SLOT_DEFINITIONS[slot].cssVar];
+}
+
+export function areEquivalentSectionColorVars(left: string, right: string): boolean {
+  if (left === right) return true;
+  const leftSlot = getSectionColorSlotForCssVar(left);
+  return Boolean(leftSlot && leftSlot === getSectionColorSlotForCssVar(right));
+}
+
 const BASE_TEXT_SLOTS: SectionColorSlot[] = ['sectionBg', 'headingColor', 'bodyColor', 'textPrimary', 'textSecondary'];
 const CARD_SLOTS: SectionColorSlot[] = ['cardBg', 'borderColor'];
 const CTA_SLOTS: SectionColorSlot[] = ['btnBg', 'btnText'];

@@ -14,6 +14,7 @@
     "audit:sections": "tsx scripts/audit-section-registry.ts",
     "audit:section-surface": "tsx scripts/audit-section-surface.ts",
     "audit:section-contracts": "tsx scripts/audit-section-contracts.ts",
+    "audit:section-colors": "tsx scripts/audit-section-color-contracts.ts",
     "check:env-contract": "tsx scripts/check-env-contract.ts",
     "sync:section-surface": "tsx scripts/sync-section-surface.ts",
     "db:generate": "pnpm --filter @flamingo/db generate",
