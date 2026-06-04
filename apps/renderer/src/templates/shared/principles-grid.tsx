@@ -17,13 +17,13 @@ export function PrinciplesGridSection({ data }: Props) {
   if (!principles.length && !headline) return null;
 
   return (
-    <section className="relative overflow-hidden bg-[var(--token-section-bg, var(--style-section-bg,#0b0b10))] py-24 text-white md:py-32">
-      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.08),transparent_32%,rgba(255,255,255,0.05))]" />
+    <section className="relative overflow-hidden bg-[var(--token-section-bg, var(--style-section-bg,#f8fafc))] py-24 md:py-32">
+      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.18),transparent_32%,rgba(255,255,255,0.10))]" />
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="max-w-4xl">
-          {badge && <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[var(--token-badge-text,var(--style-badge-text,#ffffff))]"><Sparkles size={14} />{badge}</div>}
-          {headline && <h2 className="text-4xl font-black leading-none text-[var(--token-heading,var(--style-heading-color,#ffffff))] md:text-6xl lg:text-7xl">{headline}</h2>}
-          {subline && <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--token-subheading, var(--style-subheading-color,rgba(255,255,255,0.74)))]">{plain(subline)}</p>}
+          {badge && <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--token-badge-border,var(--style-border-color,rgba(15,23,42,0.10)))] bg-[var(--token-badge-bg,var(--style-badge-bg,rgba(15,23,42,0.04)))] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[var(--token-badge-text,var(--style-badge-text,var(--style-accent-color,var(--brand-primary,#0f172a))))]"><Sparkles size={14} />{badge}</div>}
+          {headline && <h2 className="text-4xl font-black leading-none text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#0f172a)))] md:text-6xl lg:text-7xl">{headline}</h2>}
+          {subline && <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--token-body,var(--style-body-color,var(--style-text-secondary,#475569)))]">{plain(subline)}</p>}
         </div>
 
         <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -40,8 +40,8 @@ export function PrinciplesGridSection({ data }: Props) {
                 {String(index + 1).padStart(2, '0')}
               </div>
               {item.eyebrow && <div className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--token-eyebrow,var(--style-accent-color,var(--token-icon, var(--brand-primary,#f24171))))]">{item.eyebrow}</div>}
-              {item.title && <h3 className="text-2xl font-black leading-tight text-[var(--token-heading,var(--style-heading-color,#ffffff))]">{item.title}</h3>}
-              {item.text && <p className="mt-4 text-sm leading-7 text-[var(--token-body,var(--style-body-color,rgba(255,255,255,0.70)))]">{plain(item.text)}</p>}
+              {item.title && <h3 className="text-2xl font-black leading-tight text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#0f172a)))]">{item.title}</h3>}
+              {item.text && <p className="mt-4 text-sm leading-7 text-[var(--token-body,var(--style-body-color,var(--style-text-secondary,#475569)))]">{plain(item.text)}</p>}
             </motion.article>
           ))}
         </div>

@@ -99,7 +99,8 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
       <div className="absolute top-1/4 right-0 w-[600px] h-[600px] bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/8] rounded-full blur-[120px] animate-pulse-slow" />
       <div className="absolute bottom-0 -left-20 w-[500px] h-[500px] bg-[var(--token-section-bg-alt,var(--brand-secondary,#2e86c1))/15] rounded-full blur-[100px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
 
-      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full flex-1 flex items-center py-12 md:py-16">
+      <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full flex-1 flex items-center py-10 md:py-12">
+        <div className="w-full md:-mt-10 lg:-mt-14">
         <div className="max-w-4xl space-y-6">
           <TextGenerateEffect words={headline} className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-[color:var(--token-on-dark-heading,#ffffff)] !leading-[1.02] break-words" duration={0.6} />
           {badgeText && (
@@ -129,6 +130,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
               <a href={secondaryCta.href} className="btn-secondary group !rounded-full sm:w-auto flex items-center justify-between gap-4 sm:justify-center sm:gap-2">{secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={18} />}{secondaryCta.label}</a>
             )}
           </motion.div>
+        </div>
         </div>
       </motion.div>
       {trustItems.length > 0 && (
