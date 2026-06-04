@@ -54,6 +54,47 @@ function withBookingStyleAliases(sectionType: string, style?: React.CSSPropertie
   } as React.CSSProperties;
 }
 
+const SECTION_STYLE_TOKEN_ALIASES: Record<string, string[]> = {
+  '--style-section-bg': ['--token-section-bg'],
+  '--style-section-bg-alt': ['--token-section-bg-alt'],
+  '--style-card-bg': ['--token-card-bg'],
+  '--style-border-color': ['--token-card-border', '--token-divider'],
+  '--style-card-border-color': ['--token-card-border'],
+  '--style-divider-color': ['--token-divider'],
+  '--style-heading-color': ['--token-heading'],
+  '--style-subheading-color': ['--token-subheading'],
+  '--style-body-color': ['--token-body'],
+  '--style-text-primary': ['--token-heading'],
+  '--style-text-secondary': ['--token-body'],
+  '--style-text-muted': ['--token-muted'],
+  '--style-icon-color': ['--token-icon'],
+  '--style-accent-color': ['--token-eyebrow', '--token-stat-value', '--token-quote', '--token-rating-star', '--token-check'],
+  '--style-badge-bg': ['--token-badge-bg'],
+  '--style-badge-text': ['--token-badge-text'],
+  '--style-badge-border': ['--token-badge-border'],
+  '--brand-btn-bg': ['--token-btn-bg'],
+  '--brand-btn-text': ['--token-btn-text'],
+  '--style-image-text-color': ['--token-on-dark-heading', '--token-on-dark-body', '--token-on-dark-muted'],
+};
+
+function normalizeSectionStyle(style?: React.CSSProperties): React.CSSProperties | undefined {
+  if (!style) return undefined;
+  const normalized: Record<string, unknown> = { ...style };
+  const source = style as Record<string, unknown>;
+
+  for (const [sourceVar, targetVars] of Object.entries(SECTION_STYLE_TOKEN_ALIASES)) {
+    const value = source[sourceVar];
+    if (typeof value !== 'string' || !value.trim()) continue;
+    for (const targetVar of targetVars) {
+      if (typeof normalized[targetVar] !== 'string' || !(normalized[targetVar] as string).trim()) {
+        normalized[targetVar] = value;
+      }
+    }
+  }
+
+  return normalized as React.CSSProperties;
+}
+
 function sanitizeRenderValue(value: unknown): unknown {
   if (typeof value === 'string') {
     return /<[a-z][\s\S]*>/i.test(value) ? sanitizeHtml(value) : value;
@@ -177,17 +218,11 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
   const overrideStyle = section.styleOverrides
     ? Object.fromEntries(Object.entries(section.styleOverrides).filter(([, v]) => v)) as React.CSSProperties
     : undefined;
-  const sectionStyle = withBookingStyleAliases(section.type, overrideStyle);
+  const sectionStyle = withBookingStyleAliases(section.type, normalizeSectionStyle(overrideStyle));
   const sectionOverrideCss = sectionStyle
     ? `
-[data-section-id="${section.id}"][data-style] h1,
-[data-section-id="${section.id}"][data-style] h2,
-[data-section-id="${section.id}"][data-style] h3,
-[data-section-id="${section.id}"][data-style] h4,
-[data-section-id="${section.id}"][data-style] h5,
-[data-section-id="${section.id}"][data-style] h6 { color: ${headingColorVar} !important; }
-[data-section-id="${section.id}"][data-style] p,
-[data-section-id="${section.id}"][data-style] li { color: ${bodyColorVar} !important; }
+[data-section-id="${section.id}"][data-style] :is(h1,h2,h3,h4,h5,h6):not([class*="text-["]):not([class*="text-white"]):not([class*="text-black"]) { color: ${headingColorVar} !important; }
+[data-section-id="${section.id}"][data-style] :is(p,li):not([class*="text-["]):not([class*="text-white"]):not([class*="text-black"]) { color: ${bodyColorVar} !important; }
 [data-section-id="${section.id}"][data-style] .section-badge { color: var(--style-badge-text, var(--style-accent-color, inherit)) !important; background-color: var(--style-badge-bg, transparent) !important; }
 [data-section-id="${section.id}"][data-style] [class*="brand-btn"] { color: var(--brand-btn-text, inherit) !important; background-color: var(--brand-btn-bg, transparent) !important; }
 `
