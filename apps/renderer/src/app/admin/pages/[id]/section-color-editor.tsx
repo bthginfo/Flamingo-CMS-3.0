@@ -64,7 +64,7 @@ type FieldType = 'color' | 'size';
 
 const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; description: string; type?: FieldType }> = {
   sectionBg:        { cssVar: '--style-section-bg',       label: 'Hintergrund',            description: 'Hintergrundfarbe der Sektion' },
-  sectionBgAlt:     { cssVar: '--style-section-bg-alt',   label: 'Hintergrund (Alt)',      description: 'Alternativer Hintergrund (z.B. für gerade/ungerade Sektionen)' },
+  sectionBgAlt:     { cssVar: '--style-section-bg-alt',   label: 'Sekundärer Hintergrund', description: 'Nur für Sections mit einem zweiten sichtbaren Hintergrund-Layer' },
   cardBg:           { cssVar: '--style-card-bg',          label: 'Karten-Hintergrund',     description: 'Hintergrund von Karten/Containern' },
   headingColor:     { cssVar: '--style-heading-color',    label: 'Headline',               description: 'Farbe der Hauptüberschrift' },
   subheadingColor:  { cssVar: '--style-subheading-color', label: 'Subheadline',            description: 'Farbe der Unterüberschrift' },
@@ -251,7 +251,7 @@ const DEFAULT_SECTION_FIELDS: ColorFieldKey[] = [
 ];
 
 function getFieldsForSection(sectionType: string): ColorFieldKey[] {
-  return SECTION_FIELDS[sectionType] ?? DEFAULT_SECTION_FIELDS;
+  return (SECTION_FIELDS[sectionType] ?? DEFAULT_SECTION_FIELDS).filter((field) => field !== 'sectionBgAlt');
 }
 
 

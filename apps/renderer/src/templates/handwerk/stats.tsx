@@ -53,17 +53,17 @@ export function StatsSection({ data }: Props) {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: i * 0.1 }}
-            className="text-center p-6 rounded-2xl bg-[var(--token-card-bg, var(--style-card-bg,#fff))] border border-[var(--style-border,rgba(0,0,0,.08))] shadow-sm"
+            className="text-center p-6 rounded-2xl bg-[var(--token-card-bg,var(--style-card-bg,#fff))] border border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,.08)))] shadow-sm"
           >
             {stat.icon && (
-              <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-[color-mix(in_srgb,var(--style-accent,var(--token-icon, var(--brand-primary)))_12%,transparent)] flex items-center justify-center text-[var(--style-accent,var(--token-icon, var(--brand-primary)))]">
+              <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-[color-mix(in_srgb,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))_14%,transparent)] flex items-center justify-center text-[var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))]">
                 <DynamicIcon name={stat.icon} size={20} />
               </div>
             )}
-            <div className="text-3xl md:text-4xl font-bold text-[var(--style-text-primary,#111827)]">
+            <div className="text-3xl md:text-4xl font-bold text-[var(--token-stat-value,var(--token-heading,var(--style-text-primary,#111827)))]">
               <AnimatedNumber value={stat.value} suffix={stat.suffix} prefix={stat.prefix} />
             </div>
-            <div className="text-sm text-[var(--style-text-secondary,#6b7280)] mt-1">{stat.label}</div>
+            <div className="text-sm text-[var(--token-body,var(--style-text-secondary,#6b7280))] mt-1">{stat.label}</div>
           </motion.div>
         ))}
       </div>

@@ -53,7 +53,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
       </motion.div>
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="text-center mt-12">
-          <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-white font-semibold rounded-full hover:bg-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))] transition-all shadow-md hover:shadow-lg">
+          <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-[var(--token-btn-text,var(--brand-btn-text,#ffffff))] font-semibold rounded-full hover:brightness-95 transition-all shadow-md hover:shadow-lg">
             {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={16} />}
           </Link>
         </motion.div>
