@@ -75,7 +75,18 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgC
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-[color:var(--token-on-dark-heading,#ffffff)] sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 24px rgba(0,0,0,0.62)' }}>{headline}</motion.h1>
         {subline && <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-7 max-w-2xl text-lg leading-8 text-[color:var(--token-on-dark-body,rgba(255,255,255,.84))] rt-content" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.55)' }} dangerouslySetInnerHTML={{ __html: subline }} />}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-6 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+          {primaryCta.label && (
+            <a
+              href={primaryCta.href || '#'}
+              className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-semibold shadow-xl transition hover:brightness-110"
+              style={{
+                backgroundColor: 'var(--token-btn-bg,var(--brand-btn-bg,var(--style-accent-color,#D99A3D)))',
+                color: 'var(--token-btn-text,var(--brand-btn-text,#0C211B))',
+              }}
+            >
+              {primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}
+            </a>
+          )}
           {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_8%,transparent)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] backdrop-blur">{secondaryCta.label}</a>}
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-[color:var(--token-on-dark-muted,rgba(255,255,255,.74))]">

@@ -19,7 +19,7 @@ export function CinematicHeroSection({ data }: Props) {
     ? (imageEffectIntensity === 'subtle' ? '8%' : imageEffectIntensity === 'strong' ? '24%' : '16%')
     : '0%';
   const mediaY = useTransform(scrollYProgress, [0, 1], ['0%', parallaxRange]);
-  const copyY = useTransform(scrollYProgress, [0, 1], ['0%', '28%']);
+  const copyY = useTransform(scrollYProgress, [0, 1], ['-7%', '18%']);
   const opacity = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
 
   const eyebrow = (data.eyebrow as string) || '';

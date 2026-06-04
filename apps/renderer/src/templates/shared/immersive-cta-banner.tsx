@@ -26,6 +26,12 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
   const headingColor = image ? 'var(--token-on-dark-heading,var(--style-on-dark-heading,#ffffff))' : 'var(--token-heading,var(--style-heading-color,#111827))';
   const bodyColor = image ? 'var(--token-on-dark-body,var(--style-on-dark-body,rgba(255,255,255,0.84)))' : 'var(--token-body,var(--style-body-color,#3f3f46))';
   const mutedColor = image ? 'var(--token-on-dark-muted,var(--style-on-dark-muted,rgba(255,255,255,0.72)))' : 'var(--token-muted,var(--style-text-muted,#71717a))';
+  const metricCardBg = image
+    ? 'color-mix(in srgb,var(--token-on-dark-heading,#ffffff) 12%,transparent)'
+    : 'var(--token-card-bg,var(--style-card-bg,#ffffff))';
+  const metricBorder = image
+    ? 'color-mix(in srgb,var(--token-on-dark-heading,#ffffff) 24%,transparent)'
+    : 'var(--token-card-border,var(--style-border-color,rgba(0,0,0,0.12)))';
 
   return (
     <section ref={ref} className="relative overflow-hidden bg-[var(--token-section-bg,var(--style-section-bg,#050505))]">
@@ -55,7 +61,8 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08 }}
-                className="rounded-2xl border border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.14)))] bg-[var(--token-card-bg, var(--style-card-bg,rgba(0,0,0,0.28)))] p-5 backdrop-blur-xl"
+                className="rounded-2xl border p-5 backdrop-blur-xl"
+                style={{ background: metricCardBg, borderColor: metricBorder }}
               >
                 <div className="text-3xl font-black text-[var(--token-stat-value,var(--style-accent-color,#fff))]">{metric.value}</div>
                 <div className="mt-1 text-sm" style={{ color: mutedColor }}>{metric.label}</div>
