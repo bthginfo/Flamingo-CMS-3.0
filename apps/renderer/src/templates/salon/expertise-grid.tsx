@@ -27,7 +27,7 @@ function ExpertiseClassic({ headline, subline, badgeText, items }: Props) {
       <div className="mb-10 max-w-3xl">
         {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
-        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
@@ -37,7 +37,7 @@ function ExpertiseClassic({ headline, subline, badgeText, items }: Props) {
               <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-[color:var(--token-eyebrow)]" />
               <div>
                 <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
-                {item.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
+                {item.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
               </div>
             </div>
           </motion.article>
@@ -53,7 +53,7 @@ function ExpertiseModern({ headline, subline, badgeText, items }: Props) {
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-8 md:grid-cols-3">
         {items.map((item, i) => (
@@ -63,7 +63,7 @@ function ExpertiseModern({ headline, subline, badgeText, items }: Props) {
               <DynamicIcon name={item.icon || 'sparkles'} size={18} className="text-[color:var(--token-eyebrow)]" />
               <div>
                 <h3 className="font-light text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
-                {item.text && <div className="mt-2 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
+                {item.text && <div className="mt-2 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
               </div>
             </div>
           </article>
@@ -79,7 +79,7 @@ function ExpertiseBold({ headline, subline, badgeText, items }: Props) {
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 font-bold text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 font-bold text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
@@ -89,7 +89,7 @@ function ExpertiseBold({ headline, subline, badgeText, items }: Props) {
               <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-[color:var(--token-eyebrow)]" />
               <div>
                 <h3 className="font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="title">{item.title || ''}</h3>
-                {item.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-on-dark-heading)/70] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
+                {item.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
               </div>
             </div>
           </article>

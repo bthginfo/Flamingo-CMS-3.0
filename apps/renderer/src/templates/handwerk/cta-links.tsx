@@ -24,7 +24,7 @@ export function CtaLinksSection({ data }: Props) {
           className="text-center mb-10"
         >
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </motion.div>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -46,7 +46,7 @@ export function CtaLinksSection({ data }: Props) {
               )}
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-[var(--token-heading)] group-hover:text-[var(--token-accent)] transition-colors" data-edit-path="label">{link.label}</div>
-                {link.description && <div className="text-sm text-[var(--token-body)] mt-0.5 truncate rt-content" dangerouslySetInnerHTML={{ __html: link.description }} />}
+                {link.description && <div className="text-sm text-[var(--token-body)] mt-0.5 truncate rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: link.description }} />}
               </div>
               {link.icon && <DynamicIcon name={link.icon} size={18} className="text-[var(--token-muted)] group-hover:text-[var(--token-accent)] group-hover:translate-x-1 transition-all shrink-0" />}
             </Link>

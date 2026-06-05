@@ -38,7 +38,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
               <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={`border-t ${pkg.highlighted ? 'border-[color:var(--token-card-border)]' : 'border-[color:var(--token-card-border)]'} pt-8`} data-edit-collection="packages" data-edit-index={i}>
                 <h3 className="text-lg font-light text-[color:var(--token-heading)]" data-edit-path="name">{pkg.name}</h3>
                 {pkg.price && <p className="text-2xl font-extralight text-[color:var(--token-heading)] mt-2"><span data-edit-path="price">{pkg.price}</span>{pkg.priceNote && <span className="text-sm text-[color:var(--token-body)] ml-1">{pkg.priceNote}</span>}</p>}
-                {pkg.description && <div className="text-[color:var(--token-body)] text-sm mt-3" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
+                {pkg.description && <div className="text-[color:var(--token-body)] text-sm mt-3" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
                 <ul className="mt-6 space-y-2">
                   {pkg.features.map((f, j) => <li key={j} className="text-[color:var(--token-muted)] text-sm" data-edit-collection="features" data-edit-index={j}>— {f}</li>)}
                 </ul>
@@ -64,7 +64,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
                 {pkg.highlighted && <span className="absolute -top-3 left-6 bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold px-3 py-1">BELIEBT</span>}
                 <h3 className="text-xl font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="name">{pkg.name}</h3>
                 {pkg.price && <p className="text-3xl font-black text-[color:var(--token-eyebrow)] mt-3"><span data-edit-path="price">{pkg.price}</span>{pkg.priceNote && <span className="text-sm text-[color:var(--token-on-dark-heading)/70] ml-1">{pkg.priceNote}</span>}</p>}
-                {pkg.description && <div className="text-[color:var(--token-on-dark-heading)/80] text-sm mt-3" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
+                {pkg.description && <div className="text-[color:var(--token-on-dark-heading)/80] text-sm mt-3" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
                 <ul className="mt-6 space-y-2">
                   {pkg.features.map((f, j) => (
                     <li key={j} className="flex items-start gap-2 text-sm" data-edit-collection="features" data-edit-index={j}>
@@ -89,7 +89,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         <div className={`grid gap-8 ${gridCols}`}>
           {packages.map((pkg, i) => (
@@ -102,7 +102,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
                   {pkg.priceNote && <span className={`text-sm ml-1 ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)/70]' : 'text-[color:var(--token-muted)]'}`}>{pkg.priceNote}</span>}
                 </div>
               )}
-              {pkg.description && <div className={`mt-3 text-sm ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)/80]' : 'text-[color:var(--token-muted)]'}`} dangerouslySetInnerHTML={{ __html: pkg.description }} />}
+              {pkg.description && <div className={`mt-3 text-sm ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)/80]' : 'text-[color:var(--token-muted)]'}`} data-edit-rich="description" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
               <ul className="mt-6 space-y-3">
                 {pkg.features.map((f, j) => (
                   <li key={j} className="flex items-start gap-2 text-sm" data-edit-collection="features" data-edit-index={j}>

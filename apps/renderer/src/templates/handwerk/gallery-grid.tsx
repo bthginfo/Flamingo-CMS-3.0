@@ -54,7 +54,7 @@ export function GalleryGridSection({ data }: Props) {
           className="text-center mb-10"
         >
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </motion.div>
       )}
 

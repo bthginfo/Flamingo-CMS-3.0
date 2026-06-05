@@ -164,7 +164,7 @@ type FieldType = 'color' | 'size';
 //              templates; surfaced for power users, hidden for normal use)
 type FieldGroup = 'core' | 'special' | 'advanced';
 
-const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; description: string; type?: FieldType; group?: FieldGroup }> = {
+export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; description: string; type?: FieldType; group?: FieldGroup }> = {
   sectionBg:        { cssVar: '--token-section-bg',       label: 'Hintergrund',            description: 'Hintergrundfarbe der Sektion', group: 'core' },
   sectionBgAlt:     { cssVar: '--token-section-bg-alt',   label: 'Sekundärer Hintergrund', description: 'Nur für Sections mit einem zweiten sichtbaren Hintergrund-Layer', group: 'special' },
   cardBg:           { cssVar: '--token-card-bg',          label: 'Karten-Hintergrund',     description: 'Hintergrund von Karten/Containern', group: 'core' },
@@ -199,7 +199,7 @@ const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; descrip
 // industry-specific template file for var(--token-*) references and
 // reverse-maps them to ColorFieldKey via FIELD_DEFS. Regenerate with:
 //   node scripts/generate-section-color-contracts.cjs
-function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
+export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
   const industryKey = industry
     ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
     : null;

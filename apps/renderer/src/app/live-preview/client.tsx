@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { SectionRenderer } from '@/components/section-renderer';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
+import { EditOverlays } from './edit-overlays';
 import type { SnapshotSection, SnapshotCollection } from '@/lib/snapshot';
 
 interface InitialData {
@@ -79,11 +80,13 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
     const root = mainRef.current;
     if (!root) return;
 
-    const editables = Array.from(root.querySelectorAll<HTMLElement>('[data-edit-path]'));
+    const editables = Array.from(root.querySelectorAll<HTMLElement>('[data-edit-path], [data-edit-rich]'));
     const cleanups: Array<() => void> = [];
 
     editables.forEach((el) => {
-      const leafPath = el.getAttribute('data-edit-path');
+      const richAttr = el.getAttribute('data-edit-rich');
+      const isRich = richAttr !== null;
+      const leafPath = isRich ? richAttr : el.getAttribute('data-edit-path');
       if (!leafPath) return;
       const sectionEl = el.closest<HTMLElement>('[data-section-id]');
       const sectionId = sectionEl?.getAttribute('data-section-id');
@@ -110,8 +113,8 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       }
       const path = segments.join('.');
 
-      const original = el.innerText;
-      el.setAttribute('contenteditable', 'plaintext-only');
+      const original = isRich ? el.innerHTML : el.innerText;
+      el.setAttribute('contenteditable', isRich ? 'true' : 'plaintext-only');
       el.setAttribute('spellcheck', 'false');
       el.setAttribute('data-editable-active', 'true');
       // Inline edit affordance: bright solid pink box + soft halo + text
@@ -137,19 +140,28 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       const onClick = (e: Event) => { e.stopPropagation(); };
       const onMouseDown = (e: Event) => { e.stopPropagation(); };
       const onBlur = () => {
-        const value = el.innerText.trim();
-        if (value === original.trim()) return;
-        window.parent?.postMessage(
-          { type: 'flamingo-field-edit', sectionId, path, value },
-          window.location.origin,
-        );
+        if (isRich) {
+          const value = el.innerHTML;
+          if (value === original) return;
+          window.parent?.postMessage(
+            { type: 'flamingo-rich-edit', sectionId, path, value },
+            window.location.origin,
+          );
+        } else {
+          const value = el.innerText.trim();
+          if (value === original.trim()) return;
+          window.parent?.postMessage(
+            { type: 'flamingo-field-edit', sectionId, path, value },
+            window.location.origin,
+          );
+        }
       };
       const onKey = (e: KeyboardEvent) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.key === 'Enter' && !e.shiftKey && !isRich) {
           e.preventDefault();
           el.blur();
         } else if (e.key === 'Escape') {
-          el.innerText = original;
+          if (isRich) el.innerHTML = original; else el.innerText = original;
           el.blur();
         }
       };
@@ -247,7 +259,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
                 // If the click was inside an editable text element, let
                 // contentEditable take focus instead of jumping the editor.
                 const target = e.target as HTMLElement;
-                if (target.closest('[data-edit-path]')) return;
+                if (target.closest('[data-edit-path], [data-edit-rich], [data-edit-link], [data-edit-image]')) return;
                 e.preventDefault();
                 e.stopPropagation();
                 window.parent?.postMessage(
@@ -255,7 +267,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
                   window.location.origin,
                 );
               }}
-              className={editMode ? 'relative cursor-pointer outline-2 outline-transparent hover:outline-pink-500 outline-dashed transition-[outline-color] [&_a]:pointer-events-none [&_button]:pointer-events-none [&_[data-edit-path]]:!pointer-events-auto [&_[data-edit-path]]:relative [&_[data-edit-path]]:z-[5]' : 'relative'}
+              className={editMode ? 'relative cursor-pointer outline-2 outline-transparent hover:outline-pink-500 outline-dashed transition-[outline-color] [&_a]:pointer-events-none [&_button]:pointer-events-none [&_[data-edit-path]]:!pointer-events-auto [&_[data-edit-path]]:relative [&_[data-edit-path]]:z-[5] [&_[data-edit-rich]]:!pointer-events-auto [&_[data-edit-rich]]:relative [&_[data-edit-rich]]:z-[5] [&_[data-edit-link]]:!pointer-events-auto [&_[data-edit-image]]:!pointer-events-auto' : 'relative'}
             >
               {editMode && (
                 <div className="absolute top-1 left-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-pink-500 text-white text-[10px] font-medium px-2 py-0.5 rounded pointer-events-none">
@@ -270,6 +282,18 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
           <SiteFooter footer={footer as never} brand={brand as never} contact={contact as never} socialLinks={socialLinks as never} />
         )}
       </div>
+      <EditOverlays
+        enabled={editMode}
+        rootRef={mainRef}
+        industry={industry}
+        sectionsMeta={visibleSections.map(s => ({
+          id: s.id,
+          type: s.type,
+          industry,
+          styleOverrides: (s as { styleOverrides?: Record<string, string> }).styleOverrides || {},
+          data: (s as { data?: Record<string, unknown> }).data || {},
+        } as unknown as { id: string; type: string; industry?: string; styleOverrides: Record<string, string> }))}
+      />
     </div>
   );
 }

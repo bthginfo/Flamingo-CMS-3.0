@@ -74,7 +74,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
           <Stethoscope className="text-[var(--token-badge-text)]" size={20} />
         </motion.div>
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-[var(--token-heading)] sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }} data-edit-path="headline">{headline}</motion.h1>
-        {subline && <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-7 max-w-2xl text-lg leading-8 text-[var(--token-body)] rt-content" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }} dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-7 max-w-2xl text-lg leading-8 text-[var(--token-body)] rt-content" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
           {emergencyCta.label && <a href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)]">{emergencyCta.icon && <DynamicIcon name={emergencyCta.icon} size={17} />}<span data-edit-path="label">{emergencyCta.label}</span></a>}
@@ -98,7 +98,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageM
         <div className="max-w-xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</p>}
           <h1 className="mt-5 text-3xl md:text-5xl font-light leading-[0.95] text-[var(--token-heading)] sm:text-6xl lg:text-7xl" data-edit-path="headline">{headline}</h1>
-          {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-[var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="mt-8 flex flex-wrap gap-3">
             {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
             {emergencyCta.label && <a href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)]">{emergencyCta.icon && <DynamicIcon name={emergencyCta.icon} size={17} />}<span data-edit-path="label">{emergencyCta.label}</span></a>}
@@ -146,7 +146,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMob
           {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</p>}
         </div>
         <h1 className="mt-5 max-w-5xl text-3xl md:text-5xl font-black uppercase leading-[0.95] text-[var(--token-heading)] sm:text-6xl lg:text-8xl" data-edit-path="headline">{headline}</h1>
-        {subline && <div className="mt-7 max-w-2xl text-lg leading-8 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-7 max-w-2xl text-lg leading-8 text-[var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-6 py-3 font-black uppercase text-[var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
           {emergencyCta.label && <a href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-red-500 bg-red-500 px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_theme(colors.red.800)]">{emergencyCta.icon && <DynamicIcon name={emergencyCta.icon} size={17} />}<span data-edit-path="label">{emergencyCta.label}</span></a>}

@@ -67,7 +67,7 @@ export function PopupSection({ data }: SectionProps) {
         <div className="relative pr-10">
           {subtitle && <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[var(--token-eyebrow)]" data-edit-path="subtitle">{subtitle}</p>}
           <h2 className="max-w-lg text-3xl font-black leading-tight text-[var(--token-heading)] md:text-4xl" data-edit-path="title">{title}</h2>
-          {text && <div className="rt-content mt-5 text-base leading-8 text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: text }} />}
+          {text && <div className="rt-content mt-5 text-base leading-8 text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
         </div>
 
         {(primaryCta.label || secondaryCta.label) && (

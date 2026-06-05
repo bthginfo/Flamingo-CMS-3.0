@@ -26,7 +26,7 @@ function Classic({ badge, headline, text, colors, hints }: P) {
       <div className="max-w-3xl mx-auto text-center">
         <span className="section-badge" data-edit-path="badge">{badge}</span>
         <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
-        {text && <div className="text-[color:var(--token-muted)] text-lg mt-6 leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+        {text && <div className="text-[color:var(--token-muted)] text-lg mt-6 leading-relaxed rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
         {colors.length > 0 && (
           <div className="flex items-center justify-center gap-4 mt-10">
             {colors.map((color, i) => (
@@ -55,7 +55,7 @@ function Modern({ badge, headline, text, colors, hints }: P) {
       <div className="max-w-3xl mx-auto">
         <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body)] mb-4" data-edit-path="badge">{badge}</p>
         <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-10 break-words" data-edit-path="headline">{headline}</h2>
-        {text && <div className="text-[color:var(--token-muted)] text-base leading-relaxed mb-12 rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+        {text && <div className="text-[color:var(--token-muted)] text-base leading-relaxed mb-12 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
         {colors.length > 0 && (
           <div className="flex items-center gap-6 mb-12">
             {colors.map((color, i) => (
@@ -81,7 +81,7 @@ function Bold({ badge, headline, text, colors, hints }: P) {
       <div className="max-w-4xl mx-auto text-center">
         <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words" data-edit-path="headline">{headline}</h2>
-        {text && <div className="text-[color:var(--token-muted)] text-lg leading-relaxed mb-10 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+        {text && <div className="text-[color:var(--token-muted)] text-lg leading-relaxed mb-10 max-w-2xl mx-auto rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
         {colors.length > 0 && (
           <div className="flex items-center justify-center gap-4 mb-10">
             {colors.map((color, i) => (

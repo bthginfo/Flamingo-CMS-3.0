@@ -31,8 +31,8 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
               </motion.div>
             )}
             <div className={image ? '' : 'md:col-span-2 max-w-2xl'}>
-              {intro && <div className="text-[color:var(--token-muted)] text-lg leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
-              {story && <div className="text-[color:var(--token-body)] leading-relaxed mt-6 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
+              {intro && <div className="text-[color:var(--token-muted)] text-lg leading-relaxed rt-content" data-edit-rich="intro" dangerouslySetInnerHTML={{ __html: intro }} />}
+              {story && <div className="text-[color:var(--token-body)] leading-relaxed mt-6 rt-content" data-edit-rich="story" dangerouslySetInnerHTML={{ __html: story }} />}
               {facts.length > 0 && (
                 <ul className="mt-10 space-y-3 border-t border-[color:var(--token-card-border)] pt-8">
                   {facts.map((fact, i) => <li key={i} className="text-[color:var(--token-muted)] text-sm" data-edit-collection="facts" data-edit-index={i}>{fact}</li>)}
@@ -43,7 +43,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                   {values.map((v, i) => (
                     <div key={i} data-edit-collection="values" data-edit-index={i}>
                       <h4 className="text-sm font-medium text-[color:var(--token-heading)]" data-edit-path="title">{v.title}</h4>
-                      <div className="text-[color:var(--token-body)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
+                      <div className="text-[color:var(--token-body)] text-sm mt-1 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
                     </div>
                   ))}
                 </div>
@@ -70,8 +70,8 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
               </motion.div>
             )}
             <div className={image ? 'md:col-span-3' : 'md:col-span-5 max-w-3xl'}>
-              {intro && <div className="text-[color:var(--token-on-dark-heading)/90] text-lg leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
-              {story && <div className="text-[color:var(--token-on-dark-heading)/80] leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
+              {intro && <div className="text-[color:var(--token-on-dark-heading)/90] text-lg leading-relaxed rt-content" data-edit-rich="intro" dangerouslySetInnerHTML={{ __html: intro }} />}
+              {story && <div className="text-[color:var(--token-on-dark-heading)/80] leading-relaxed mt-4 rt-content" data-edit-rich="story" dangerouslySetInnerHTML={{ __html: story }} />}
               {facts.length > 0 && (
                 <ul className="mt-8 space-y-2">
                   {facts.map((fact, i) => <li key={i} className="flex items-start gap-2 text-[color:var(--token-on-dark-heading)/70] text-sm" data-edit-collection="facts" data-edit-index={i}><span className="text-[color:var(--token-eyebrow)]">—</span>{fact}</li>)}
@@ -82,7 +82,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                   {values.map((v, i) => (
                     <div key={i} className="border border-[color:var(--token-card-border)/10] p-4" data-edit-collection="values" data-edit-index={i}>
                       <h4 className="font-bold text-[color:var(--token-eyebrow)] text-sm" data-edit-path="title">{v.title}</h4>
-                      <div className="text-[color:var(--token-on-dark-heading)/80] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
+                      <div className="text-[color:var(--token-on-dark-heading)/80] text-sm mt-1 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
                     </div>
                   ))}
                 </div>
@@ -109,8 +109,8 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
           <div className={image ? 'md:col-span-3' : 'md:col-span-5 max-w-3xl mx-auto'}>
             <span className="section-badge" data-edit-path="badge">{badge}</span>
             {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
-            {intro && <div className="text-[color:var(--token-muted)] text-lg leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
-            {story && <div className="text-[color:var(--token-muted)] leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
+            {intro && <div className="text-[color:var(--token-muted)] text-lg leading-relaxed mt-4 rt-content" data-edit-rich="intro" dangerouslySetInnerHTML={{ __html: intro }} />}
+            {story && <div className="text-[color:var(--token-muted)] leading-relaxed mt-4 rt-content" data-edit-rich="story" dangerouslySetInnerHTML={{ __html: story }} />}
             {facts.length > 0 && (
               <ul className="mt-8 space-y-2">
                 {facts.map((fact, i) => (
@@ -126,7 +126,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                 {values.map((v, i) => (
                   <div key={i} className="p-4 rounded-xl bg-[var(--token-btn-bg)]/[0.03] border border-[var(--token-card-border)/10]" data-edit-collection="values" data-edit-index={i}>
                     <h4 className="font-semibold text-[color:var(--token-heading)] text-sm" data-edit-path="title">{v.title}</h4>
-                    <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
+                    <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
                   </div>
                 ))}
               </div>

@@ -36,7 +36,7 @@ function BookingClassic({ headline, subline, badgeText, submitCta, secondaryCta,
     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-6 shadow-lg text-center">
       {badgeText && <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]"><Star size={12} className="text-[color:var(--token-icon)]" /><span data-edit-path="badgeText">{badgeText}</span></p>}
       <h2 className="mt-3 text-2xl font-[700] text-[color:var(--token-heading)] sm:text-3xl" data-edit-path="headline">{headline}</h2>
-      {subline && <div className="mx-auto mt-2 max-w-lg text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+      {subline && <div className="mx-auto mt-2 max-w-lg text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       {trustItems.length > 0 && (
         <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
           {trustItems.map((item, i) => (
@@ -62,7 +62,7 @@ function BookingModern({ headline, subline, badgeText, submitCta, secondaryCta, 
     <div className="border border-black/10 bg-[var(--token-card-bg)] p-8 text-center">
       {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
       <h2 className="mt-3 text-2xl font-light text-[color:var(--token-heading)] sm:text-3xl" data-edit-path="headline">{headline}</h2>
-      {subline && <div className="mx-auto mt-2 max-w-lg text-sm font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+      {subline && <div className="mx-auto mt-2 max-w-lg text-sm font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       {trustItems.length > 0 && (
         <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
           {trustItems.map((item, i) => (
@@ -88,7 +88,7 @@ function BookingBold({ headline, subline, badgeText, submitCta, secondaryCta, bo
     <div className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_#111827] text-center">
       {badgeText && <p className="inline-block bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
       <h2 className="mt-3 text-2xl font-black uppercase text-[color:var(--token-heading)] sm:text-3xl" data-edit-path="headline">{headline}</h2>
-      {subline && <div className="mx-auto mt-2 max-w-lg text-sm text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+      {subline && <div className="mx-auto mt-2 max-w-lg text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       {trustItems.length > 0 && (
         <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
           {trustItems.map((item, i) => (

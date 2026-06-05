@@ -38,7 +38,7 @@ function ScheduleClassic({ badge, headline, events }: P) {
                   <div className={`flex-1 ${i % 2 === 0 ? 'md:text-right' : 'md:text-left'} hidden md:block`}>
                     <span className="text-sm font-semibold text-[color:var(--token-icon)]" data-edit-path="time">{event.time}</span>
                     <h3 className="text-xl font-semibold text-[color:var(--token-heading)] mt-1" data-edit-path="title">{event.title}</h3>
-                    {event.description && <div className="text-[color:var(--token-muted)] mt-1 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
+                    {event.description && <div className="text-[color:var(--token-muted)] mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: event.description }} />}
                     {event.location && <p className="text-sm text-[color:var(--token-muted)] mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" /><span data-edit-path="location">{event.location}</span></p>}
                   </div>
                   <div className="relative z-10 w-12 h-12 rounded-full bg-[var(--token-btn-bg)/10] flex items-center justify-center shrink-0">
@@ -47,7 +47,7 @@ function ScheduleClassic({ badge, headline, events }: P) {
                   <div className="flex-1 md:hidden">
                     <span className="text-sm font-semibold text-[color:var(--token-icon)]" data-edit-path="time">{event.time}</span>
                     <h3 className="text-xl font-semibold text-[color:var(--token-heading)] mt-1" data-edit-path="title">{event.title}</h3>
-                    {event.description && <div className="text-[color:var(--token-muted)] mt-1 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
+                    {event.description && <div className="text-[color:var(--token-muted)] mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: event.description }} />}
                     {event.location && <p className="text-sm text-[color:var(--token-muted)] mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" /><span data-edit-path="location">{event.location}</span></p>}
                   </div>
                   <div className="flex-1 hidden md:block" />
@@ -73,7 +73,7 @@ function ScheduleModern({ badge, headline, events }: P) {
               <span className="text-sm font-light text-[color:var(--token-body)] pt-1" data-edit-path="time">{event.time}</span>
               <div>
                 <h3 className="text-lg font-light text-[color:var(--token-heading)]" data-edit-path="title">{event.title}</h3>
-                {event.description && <div className="text-[color:var(--token-muted)] text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
+                {event.description && <div className="text-[color:var(--token-muted)] text-sm mt-2 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: event.description }} />}
                 {event.location && <p className="text-xs text-[color:var(--token-body)] mt-2 uppercase tracking-wider" data-edit-path="location">{event.location}</p>}
               </div>
             </motion.div>
@@ -100,7 +100,7 @@ function ScheduleBold({ badge, headline, events }: P) {
                   <span className="text-[color:var(--token-eyebrow)] font-bold text-sm" data-edit-path="time">{event.time}</span>
                 </div>
                 <h3 className="text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{event.title}</h3>
-                {event.description && <div className="text-[color:var(--token-muted)] text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
+                {event.description && <div className="text-[color:var(--token-muted)] text-sm mt-2 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: event.description }} />}
                 {event.location && <p className="text-xs text-[color:var(--token-body)] mt-3 uppercase tracking-wider flex items-center gap-1"><MapPin className="w-3 h-3" /><span data-edit-path="location">{event.location}</span></p>}
               </motion.div>
             );

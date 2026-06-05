@@ -44,9 +44,9 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
         <div className="mb-6 max-w-3xl">
           {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]"><Star size={12} className="text-[color:var(--token-icon)]" /><span data-edit-path="badgeText">{badgeText}</span></motion.p>}
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
-          {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {introText && <div className="text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <motion.div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[var(--token-icon)]/20 pt-4" data-edit-collection="infoCards" data-edit-index={index}>
@@ -76,9 +76,9 @@ function ContactModern({ headline, subline, badgeText, introText, submitLabel, f
         <div className="mb-8 max-w-3xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
           <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-          {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {introText && <div className="font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-8 grid gap-4">
           {infoCards.map((card, index) => (
             <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex gap-4 border-t border-black/10 pt-4" data-edit-collection="infoCards" data-edit-index={index}>
@@ -108,9 +108,9 @@ function ContactBold({ headline, subline, badgeText, introText, submitLabel, for
         <div className="mb-6 max-w-3xl">
           {badgeText && <p className="inline-block bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-          {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {introText && <div className="text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4" data-edit-collection="infoCards" data-edit-index={index}>

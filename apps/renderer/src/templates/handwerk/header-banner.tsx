@@ -25,7 +25,7 @@ export function HeaderBannerSection({ data }: Props) {
             {item.link ? (
               <a href={item.link} className="hover:underline font-medium" data-edit-path="text">{plain(item.text)}</a>
             ) : (
-              <span className="rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />
+              <span className="rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />
             )}
           </span>
         ))}

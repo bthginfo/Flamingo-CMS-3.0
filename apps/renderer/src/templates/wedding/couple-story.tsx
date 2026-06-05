@@ -41,7 +41,7 @@ function Classic({ badge, headline, story, image, milestones }: P) {
                 {milestones.map((m, i) => (
                   <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} data-edit-collection="milestones" data-edit-index={i}>
                     <span className="text-sm font-semibold text-[color:var(--token-icon)]" data-edit-path="date">{m.date}</span>
-                    <div className="text-[color:var(--token-muted)] mt-1 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />
+                    <div className="text-[color:var(--token-muted)] mt-1 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />
                   </motion.div>
                 ))}
               </div>
@@ -70,7 +70,7 @@ function Modern({ badge, headline, story, image, milestones }: P) {
             {milestones.map((m, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="border-t border-[color:var(--token-card-border)] pt-6" data-edit-collection="milestones" data-edit-index={i}>
                 <span className="text-xs uppercase tracking-[0.2em] text-[color:var(--token-body)]" data-edit-path="date">{m.date}</span>
-                <div className="text-[color:var(--token-muted)] mt-3 text-sm leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />
+                <div className="text-[color:var(--token-muted)] mt-3 text-sm leading-relaxed rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />
               </motion.div>
             ))}
           </div>
@@ -100,7 +100,7 @@ function Bold({ badge, headline, story, image, milestones }: P) {
                 {milestones.map((m, i) => (
                   <motion.div key={i} initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-l-4 border-[var(--token-card-border)] pl-5" data-edit-collection="milestones" data-edit-index={i}>
                     <span className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="date">{m.date}</span>
-                    <div className="text-[color:var(--token-muted)] mt-2 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />
+                    <div className="text-[color:var(--token-muted)] mt-2 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />
                   </motion.div>
                 ))}
               </div>

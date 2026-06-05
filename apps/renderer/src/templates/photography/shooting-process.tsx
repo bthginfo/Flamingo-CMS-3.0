@@ -37,7 +37,7 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
                   </div>
                   <div>
                     <h3 className="font-light text-[color:var(--token-heading)] text-lg" data-edit-path="title">{step.title}</h3>
-                    <div className="text-[color:var(--token-muted)] text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />
+                    <div className="text-[color:var(--token-muted)] text-sm mt-2 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />
                   </div>
                 </motion.div>
               );
@@ -64,7 +64,7 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
                     <Icon className="w-5 h-5 text-[color:var(--token-eyebrow)]" />
                   </div>
                   <h3 className="font-bold text-[color:var(--token-on-dark-heading)] mb-2" data-edit-path="title">{step.title}</h3>
-                  <div className="text-[color:var(--token-on-dark-heading)/80] text-sm rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />
+                  <div className="text-[color:var(--token-on-dark-heading)/80] text-sm rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />
                 </motion.div>
               );
             })}
@@ -80,7 +80,7 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         <div className="relative">
           <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-[var(--token-btn-bg)/15]" />
@@ -98,7 +98,7 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
                       <span className="text-xs font-bold text-[color:var(--token-icon)] uppercase tracking-wider">Schritt {i + 1}</span>
                     </div>
                     <h3 className="text-lg md:text-xl font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{step.title}</h3>
-                    <div className="text-[color:var(--token-muted)] mt-1 md:mt-2 text-sm md:text-base rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />
+                    <div className="text-[color:var(--token-muted)] mt-1 md:mt-2 text-sm md:text-base rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />
                   </div>
                   {isLeft && <div className="hidden md:block" />}
                 </motion.div>

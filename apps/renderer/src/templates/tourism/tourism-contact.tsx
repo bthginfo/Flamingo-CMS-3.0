@@ -38,7 +38,7 @@ function Classic({ header, introText, image, formEnabled, submitLabel, formField
     <div className="grid gap-10 lg:grid-cols-2">
       <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
         <SectionHeader {...header} />
-        {introText && <div className="text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="text-[var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex gap-4 border-t border-[var(--token-card-border)] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
@@ -65,7 +65,7 @@ function Modern({ header, introText, image, formEnabled, submitLabel, formFields
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <SectionHeader {...header} />
-        {introText && <div className="font-light text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="font-light text-[var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex gap-4 border-t border-[var(--token-card-border)] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
@@ -94,9 +94,9 @@ function Bold({ header, introText, image, formEnabled, submitLabel, formFields, 
         <div className="mb-10 max-w-3xl">
           {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{header.badgeText}</p>}
           <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
-          {header.subline && <div className="mt-4 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
+          {header.subline && <div className="mt-4 text-[var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
         </div>
-        {introText && <div className="text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="text-[var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex gap-4 border-t-2 border-[var(--token-card-border)] pt-4" data-edit-collection="infoCards" data-edit-index={index}>

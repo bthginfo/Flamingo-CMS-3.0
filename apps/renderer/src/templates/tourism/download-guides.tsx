@@ -28,7 +28,7 @@ function Classic({ header, items }: Props) {
             <Download size={22} className="text-[color:var(--token-icon)]" />
             {item.metaLabel && <p className="mt-4 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]">{item.metaLabel}</p>}
             <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
-            {item.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
+            {item.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
             {item.fileLabel && <a href={item.fileHref || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-[color:var(--token-icon)]">{item.fileLabel}<ArrowRight size={14} /></a>}
           </motion.article>
         ))}
@@ -47,7 +47,7 @@ function Modern({ header, items }: Props) {
             <Download size={22} className="text-teal-600" />
             {item.metaLabel && <p className="mt-4 text-xs font-light uppercase tracking-widest text-teal-600">{item.metaLabel}</p>}
             <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
-            {item.text && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
+            {item.text && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
             {item.fileLabel && <a href={item.fileHref || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-teal-600">{item.fileLabel}<ArrowRight size={14} /></a>}
           </article>
         ))}
@@ -62,7 +62,7 @@ function Bold({ header, items }: Props) {
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-orange-500" data-edit-path="badgeText">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
-        {header.subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
+        {header.subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
@@ -70,7 +70,7 @@ function Bold({ header, items }: Props) {
             <Download size={22} className="text-orange-500" />
             {item.metaLabel && <p className="mt-4 text-xs font-black uppercase tracking-widest text-orange-500">{item.metaLabel}</p>}
             <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
-            {item.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
+            {item.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
             {item.fileLabel && <a href={item.fileHref || '#'} className="mt-5 inline-flex items-center gap-2 font-black uppercase text-orange-500">{item.fileLabel}<ArrowRight size={14} /></a>}
           </article>
         ))}

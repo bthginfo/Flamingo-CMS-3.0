@@ -23,7 +23,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
         <div className="max-w-4xl mx-auto">
           <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body)] mb-4" data-edit-path="badge">{badge}</p>
           <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-8 break-words" data-edit-path="headline">{headline}</h2>
-          {text && <div className="text-[color:var(--token-muted)] leading-relaxed mb-16 max-w-2xl rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+          {text && <div className="text-[color:var(--token-muted)] leading-relaxed mb-16 max-w-2xl rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <div className="space-y-6 mb-16">
               {items.map((item, i) => (
@@ -59,7 +59,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
         <div className="max-w-5xl mx-auto">
           <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words" data-edit-path="headline">{headline}</h2>
-          {text && <div className="text-[color:var(--token-muted)] text-lg mb-12 max-w-2xl rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+          {text && <div className="text-[color:var(--token-muted)] text-lg mb-12 max-w-2xl rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <div className="grid sm:grid-cols-2 gap-4 mb-12">
               {items.map((item, i) => (
@@ -96,9 +96,9 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {text && <div className="text-[color:var(--token-muted)] text-lg text-center mb-12 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+        {text && <div className="text-[color:var(--token-muted)] text-lg text-center mb-12 max-w-2xl mx-auto rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
         {items.length > 0 && (
           <div className="grid sm:grid-cols-2 gap-6 mb-12">
             {items.map((item, i) => (
@@ -108,7 +108,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{item.title}</h3>
-                  {item.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
+                  {item.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: item.description }} />}
                   {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[color:var(--token-icon)] text-sm font-medium mt-2 hover:underline"><ExternalLink className="w-3 h-3" />Ansehen</a>}
                 </div>
               </motion.div>

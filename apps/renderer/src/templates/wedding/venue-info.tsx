@@ -33,7 +33,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
           )}
           <div className="grid md:grid-cols-2 gap-12">
             <div>
-              {description && <div className="text-[color:var(--token-muted)] leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: description }} />}
+              {description && <div className="text-[color:var(--token-muted)] leading-relaxed rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: description }} />}
             </div>
             <div className="space-y-4 border-t border-[color:var(--token-card-border)] pt-6 md:border-t-0 md:pt-0 md:border-l md:pl-12">
               {address && <p className="text-[color:var(--token-muted)] text-sm" data-edit-path="address">{address}</p>}
@@ -60,7 +60,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
               </motion.div>
             )}
             <div className={image ? '' : 'md:col-span-2'}>
-              {description && <div className="text-[color:var(--token-muted)] text-lg leading-relaxed mb-8 rt-content" dangerouslySetInnerHTML={{ __html: description }} />}
+              {description && <div className="text-[color:var(--token-muted)] text-lg leading-relaxed mb-8 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: description }} />}
               <div className="space-y-4 border-l-4 border-[var(--token-card-border)] pl-6">
                 {address && <p className="text-[color:var(--token-muted)] flex items-center gap-2"><MapPin className="w-4 h-4 text-[color:var(--token-eyebrow)]" /><span data-edit-path="address">{address}</span></p>}
                 {contact && <p className="text-[color:var(--token-muted)] flex items-center gap-2"><Phone className="w-4 h-4 text-[color:var(--token-eyebrow)]" />{contact}</p>}
@@ -79,7 +79,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           {image && (
@@ -88,7 +88,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
             </motion.div>
           )}
           <div className={image ? '' : 'md:col-span-2 max-w-3xl mx-auto text-center'}>
-            {description && <div className="text-[color:var(--token-muted)] text-lg leading-relaxed mb-8 rt-content" dangerouslySetInnerHTML={{ __html: description }} />}
+            {description && <div className="text-[color:var(--token-muted)] text-lg leading-relaxed mb-8 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: description }} />}
             <div className="space-y-4">
               {address && <div className="flex items-start gap-3"><MapPin className="w-5 h-5 text-[color:var(--token-icon)] mt-0.5 shrink-0" /><p className="text-[color:var(--token-muted)]" data-edit-path="address">{address}</p></div>}
               {contact && <div className="flex items-start gap-3"><Phone className="w-5 h-5 text-[color:var(--token-icon)] mt-0.5 shrink-0" /><p className="text-[color:var(--token-muted)]">{contact}</p></div>}
@@ -128,7 +128,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
                     <Icon className="w-5 h-5 text-[color:var(--token-body)] shrink-0 mt-1" />
                     <div>
                       <h3 className="text-base font-light text-[color:var(--token-heading)]" data-edit-path="title">{d.title}</h3>
-                      <div className="text-[color:var(--token-muted)] text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: d.text }} />
+                      <div className="text-[color:var(--token-muted)] text-sm mt-2 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: d.text }} />
                     </div>
                   </motion.div>
                 );
@@ -141,7 +141,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
                 <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-t border-[color:var(--token-card-border)] pt-6" data-edit-collection="accommodations" data-edit-index={i}>
                   {a.image && <div className="relative h-40 mb-4"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <h4 className="font-medium text-[color:var(--token-heading)]" data-edit-path="name">{a.name}</h4>
-                  {a.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: a.description }} />}
+                  {a.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: a.description }} />}
                   {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-sm text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)] mt-3 inline-block hover:opacity-70">Details →</a>}
                 </motion.div>
               ))}
@@ -166,7 +166,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
                   <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border)] p-6">
                     <Icon className="w-6 h-6 text-[color:var(--token-eyebrow)] mb-3" />
                     <h3 className="font-bold text-[color:var(--token-heading)] mb-2" data-edit-path="title">{d.title}</h3>
-                    <div className="text-[color:var(--token-muted)] text-sm rt-content" dangerouslySetInnerHTML={{ __html: d.text }} />
+                    <div className="text-[color:var(--token-muted)] text-sm rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: d.text }} />
                   </motion.div>
                 );
               })}
@@ -179,7 +179,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
                   {a.image && <div className="relative h-40"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <div className="p-5">
                     <h4 className="font-bold text-[color:var(--token-heading)]" data-edit-path="name">{a.name}</h4>
-                    {a.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: a.description }} />}
+                    {a.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: a.description }} />}
                     {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-[color:var(--token-eyebrow)] text-sm font-bold mt-3 inline-block hover:opacity-70">Details →</a>}
                   </div>
                 </motion.div>
@@ -197,7 +197,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {directions.length > 0 && (
           <div className="grid md:grid-cols-3 gap-8 mb-10 md:mb-16">
@@ -209,7 +209,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
                     <Icon className="w-5 h-5 text-[color:var(--token-icon)]" />
                   </div>
                   <h3 className="font-semibold text-[color:var(--token-heading)] mb-2" data-edit-path="title">{d.title}</h3>
-                  <div className="text-[color:var(--token-muted)] text-sm rt-content" dangerouslySetInnerHTML={{ __html: d.text }} />
+                  <div className="text-[color:var(--token-muted)] text-sm rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: d.text }} />
                 </motion.div>
               );
             })}
@@ -224,7 +224,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
                   {a.image && <div className="relative h-40"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <div className="p-5">
                     <h4 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{a.name}</h4>
-                    {a.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: a.description }} />}
+                    {a.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: a.description }} />}
                     {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-[color:var(--token-icon)] text-sm font-medium mt-3 inline-block hover:underline">Mehr erfahren →</a>}
                   </div>
                 </motion.div>

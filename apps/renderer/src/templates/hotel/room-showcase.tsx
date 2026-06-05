@@ -33,7 +33,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
       <div className="mb-10 max-w-3xl">
         {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]"><Star size={12} className="text-[color:var(--token-icon)]" /><span data-edit-path="badgeText">{badgeText}</span></motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
-        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         {rooms.map((room, index) => (
@@ -44,7 +44,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
                 <h3 className="text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="name">{room.name || ''}</h3>
                 {room.priceLabel && <p className="text-sm font-semibold text-[color:var(--token-heading)]" data-edit-path="priceLabel">{room.priceLabel}</p>}
               </div>
-              {room.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: room.description }} />}
+              {room.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: room.description }} />}
               <div className="mt-4 grid gap-2 text-xs text-[color:var(--token-muted)]">
                 {room.sizeLabel && <span className="inline-flex items-center gap-2"><Maximize2 size={13} />{room.sizeLabel}</span>}
                 {room.occupancyLabel && <span className="inline-flex items-center gap-2"><Users size={13} />{room.occupancyLabel}</span>}
@@ -72,7 +72,7 @@ function RoomModern({ headline, subline, badgeText, rooms, footerText }: Props) 
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-px border border-black/10 lg:grid-cols-3">
         {rooms.map((room, index) => (
@@ -83,7 +83,7 @@ function RoomModern({ headline, subline, badgeText, rooms, footerText }: Props) 
                 <h3 className="text-lg font-light text-[color:var(--token-heading)]" data-edit-path="name">{room.name || ''}</h3>
                 {room.priceLabel && <p className="text-sm font-light text-[color:var(--token-muted)]" data-edit-path="priceLabel">{room.priceLabel}</p>}
               </div>
-              {room.description && <div className="mt-3 text-sm font-light leading-7 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: room.description }} />}
+              {room.description && <div className="mt-3 text-sm font-light leading-7 text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: room.description }} />}
               <div className="mt-4 grid gap-2 text-xs font-light text-[color:var(--token-muted)]">
                 {room.sizeLabel && <span className="inline-flex items-center gap-2"><Maximize2 size={13} />{room.sizeLabel}</span>}
                 {room.occupancyLabel && <span className="inline-flex items-center gap-2"><Users size={13} />{room.occupancyLabel}</span>}
@@ -111,7 +111,7 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         {rooms.map((room, index) => (
@@ -122,7 +122,7 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
                 <h3 className="text-xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="name">{room.name || ''}</h3>
                 {room.priceLabel && <p className="text-sm font-black text-[color:var(--token-heading)]" data-edit-path="priceLabel">{room.priceLabel}</p>}
               </div>
-              {room.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: room.description }} />}
+              {room.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: room.description }} />}
               <div className="mt-4 grid gap-2 text-xs font-bold text-[color:var(--token-muted)]">
                 {room.sizeLabel && <span className="inline-flex items-center gap-2"><Maximize2 size={13} />{room.sizeLabel}</span>}
                 {room.occupancyLabel && <span className="inline-flex items-center gap-2"><Users size={13} />{room.occupancyLabel}</span>}

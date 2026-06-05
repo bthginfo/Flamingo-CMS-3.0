@@ -40,7 +40,7 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
       <div>
         {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg)/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         {kitchenHoursHeadline && <h3 className="mt-8 font-semibold text-[color:var(--token-heading)]">{kitchenHoursHeadline}</h3>}
         {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-[color:var(--token-muted)]">{kitchenHoursText}</p>}
         {holidayNote && <p className="mt-4 text-xs text-[color:var(--token-muted)]">{holidayNote}</p>}
@@ -71,7 +71,7 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg)]" />
-        {subline && <div className="mt-6 font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-6 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         {kitchenHoursHeadline && <h3 className="mt-8 font-medium text-[color:var(--token-heading)]">{kitchenHoursHeadline}</h3>}
         {kitchenHoursText && <p className="mt-2 text-sm font-light leading-6 text-[color:var(--token-muted)]">{kitchenHoursText}</p>}
         {holidayNote && <p className="mt-4 text-xs font-light text-[color:var(--token-muted)]">{holidayNote}</p>}
@@ -103,7 +103,7 @@ function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHead
           {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{badgeText}</p>}
           <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
           <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg)]" />
-          {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading)/70] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
           {kitchenHoursHeadline && <h3 className="mt-8 font-bold uppercase">{kitchenHoursHeadline}</h3>}
           {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-[color:var(--token-on-dark-heading)/60]">{kitchenHoursText}</p>}
           {holidayNote && <p className="mt-4 text-xs text-[color:var(--token-on-dark-heading)/50]">{holidayNote}</p>}

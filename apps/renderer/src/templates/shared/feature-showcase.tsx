@@ -51,7 +51,7 @@ export function FeatureShowcaseSection({ data }: Props) {
           </motion.p>
         )}
         {text && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.2 }} className="mt-5 text-zinc-600 leading-relaxed prose prose-sm" dangerouslySetInnerHTML={{ __html: text }} />
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.2 }} className="mt-5 text-zinc-600 leading-relaxed prose prose-sm" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />
         )}
 
         {features.length > 0 && (

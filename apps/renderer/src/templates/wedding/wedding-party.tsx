@@ -34,7 +34,7 @@ function Classic({ badge, headline, members }: P) {
               </div>
               <h3 className="text-lg font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h3>
               <p className="text-[color:var(--token-icon)] text-sm font-medium mt-1" data-edit-path="role">{m.role}</p>
-              {m.text && <div className="text-[color:var(--token-muted)] text-sm mt-3 max-w-xs mx-auto rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
+              {m.text && <div className="text-[color:var(--token-muted)] text-sm mt-3 max-w-xs mx-auto rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </motion.div>
           ))}
         </div>
@@ -58,7 +58,7 @@ function Modern({ badge, headline, members }: P) {
               <div>
                 <h3 className="text-base font-medium text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h3>
                 <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--token-body)] mt-1" data-edit-path="role">{m.role}</p>
-                {m.text && <div className="text-[color:var(--token-muted)] text-sm mt-3 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
+                {m.text && <div className="text-[color:var(--token-muted)] text-sm mt-3 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}
               </div>
             </motion.div>
           ))}
@@ -82,7 +82,7 @@ function Bold({ badge, headline, members }: P) {
               </div>
               <h3 className="text-lg font-bold text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h3>
               <p className="text-[color:var(--token-eyebrow)] text-xs font-bold uppercase tracking-widest mt-1" data-edit-path="role">{m.role}</p>
-              {m.text && <div className="text-[color:var(--token-muted)] text-sm mt-3 rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
+              {m.text && <div className="text-[color:var(--token-muted)] text-sm mt-3 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </motion.div>
           ))}
         </div>

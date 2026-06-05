@@ -169,7 +169,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
           <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-[color:var(--token-heading)] !leading-[1.1] tracking-tight break-words" data-edit-path="headline">
             {headline}
           </h1>
-          {subline && <div className="text-lg text-[color:var(--token-body)] leading-relaxed mt-8 max-w-lg [&_p]:inline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="text-lg text-[color:var(--token-body)] leading-relaxed mt-8 max-w-lg [&_p]:inline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta?.label && (
               <a href={primaryCta.href} className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto text-[color:var(--token-heading)] font-medium text-base border-b-2 border-[color:var(--token-card-border)] pb-1 hover:border-[var(--token-card-border)] hover:text-[color:var(--token-eyebrow)] transition-colors">

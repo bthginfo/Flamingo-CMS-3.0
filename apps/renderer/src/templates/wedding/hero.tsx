@@ -75,7 +75,7 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
         <div className={`absolute inset-0 ${isBold ? 'bg-[var(--token-section-bg-alt)]' : isModern ? 'bg-[var(--token-card-bg)]' : 'bg-gradient-to-br from-[var(--token-icon)/5] via-white to-[var(--token-subheading)/5]'}`} />
       )}
       <div className={`relative z-10 px-4 py-10 md:px-6 md:py-20 ${isBold ? 'text-left max-w-4xl mx-auto w-full' : 'text-center'}`}>
-        <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={`${sublineClass} rt-content`} dangerouslySetInnerHTML={{ __html: subline }} />
+        <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={`${sublineClass} rt-content`} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={nameClass}>
           {names}
         </motion.h1>

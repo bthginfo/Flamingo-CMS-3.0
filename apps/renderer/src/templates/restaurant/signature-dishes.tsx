@@ -33,7 +33,7 @@ function SignatureDishesClassic({ headline, subline, badgeText, dishes }: Signat
       <div className="mb-10 max-w-3xl text-center mx-auto">
         {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg)/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {dishes.map((dish, index) => (
@@ -45,7 +45,7 @@ function SignatureDishesClassic({ headline, subline, badgeText, dishes }: Signat
                 <h3 className="text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="name">{dish.name || ''}</h3>
                 {dish.price && <p className="shrink-0 font-bold text-[color:var(--token-heading)]" data-edit-path="price">{dish.price}</p>}
               </div>
-              {dish.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: dish.description }} />}
+              {dish.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: dish.description }} />}
               {asList<string>(dish.ingredients).length > 0 && <p className="mt-4 text-xs text-[color:var(--token-muted)]">{asList<string>(dish.ingredients).join(' / ')}</p>}
               {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-[color:var(--token-icon)]"><span data-edit-path="label">{dish.cta.label}</span><ArrowRight size={16} /></a>}
             </div>
@@ -63,7 +63,7 @@ function SignatureDishesModern({ headline, subline, badgeText, dishes }: Signatu
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg)]" />
-        {subline && <div className="mt-6 font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-6 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-8 md:grid-cols-3">
         {dishes.map((dish, index) => (
@@ -75,7 +75,7 @@ function SignatureDishesModern({ headline, subline, badgeText, dishes }: Signatu
                 <h3 className="text-xl font-medium text-[color:var(--token-heading)]" data-edit-path="name">{dish.name || ''}</h3>
                 {dish.price && <p className="shrink-0 font-medium text-[color:var(--token-heading)]" data-edit-path="price">{dish.price}</p>}
               </div>
-              {dish.description && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: dish.description }} />}
+              {dish.description && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: dish.description }} />}
               {asList<string>(dish.ingredients).length > 0 && <p className="mt-4 text-xs font-light text-[color:var(--token-muted)]">{asList<string>(dish.ingredients).join(' / ')}</p>}
               {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 border-b border-[#111827] pb-0.5 text-sm font-medium text-[color:var(--token-heading)]"><span data-edit-path="label">{dish.cta.label}</span><ArrowRight size={16} /></a>}
             </div>
@@ -93,7 +93,7 @@ function SignatureDishesBold({ headline, subline, badgeText, dishes }: Signature
         {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg)]" />
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading)/70] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-5 md:grid-cols-3">
         {dishes.map((dish, index) => (
@@ -105,7 +105,7 @@ function SignatureDishesBold({ headline, subline, badgeText, dishes }: Signature
                 <h3 className="text-xl font-bold uppercase" data-edit-path="name">{dish.name || ''}</h3>
                 {dish.price && <p className="shrink-0 font-bold text-[color:var(--token-eyebrow)]" data-edit-path="price">{dish.price}</p>}
               </div>
-              {dish.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading)/60] rt-content" dangerouslySetInnerHTML={{ __html: dish.description }} />}
+              {dish.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading)/60] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: dish.description }} />}
               {asList<string>(dish.ingredients).length > 0 && <p className="mt-4 text-xs text-[color:var(--token-on-dark-heading)/50]">{asList<string>(dish.ingredients).join(' / ')}</p>}
               {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-bold uppercase text-[color:var(--token-on-dark-heading)]"><span data-edit-path="label">{dish.cta.label}</span><ArrowRight size={16} /></a>}
             </div>

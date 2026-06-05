@@ -43,7 +43,7 @@ function Classic({ badge, headline, courses, note }: P) {
                       <span className="font-medium text-[color:var(--token-heading)]" data-edit-path="name">{item.name}</span>
                       {item.tags?.map(tag => { const Icon = tagIcons[tag.toLowerCase()] || Leaf; return <Icon key={tag} className="w-3.5 h-3.5 text-green-600" title={tag} />; })}
                     </div>
-                    {item.description && <div className="text-[color:var(--token-muted)] text-sm mt-0.5 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
+                    {item.description && <div className="text-[color:var(--token-muted)] text-sm mt-0.5 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: item.description }} />}
                   </div>
                 ))}
               </div>
@@ -71,7 +71,7 @@ function Modern({ badge, headline, courses, note }: P) {
                   <div key={j} className="flex justify-between items-start gap-4" data-edit-collection="items" data-edit-index={j}>
                     <div>
                       <span className="font-light text-[color:var(--token-heading)]" data-edit-path="name">{item.name}</span>
-                      {item.description && <div className="text-[color:var(--token-body)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
+                      {item.description && <div className="text-[color:var(--token-body)] text-sm mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: item.description }} />}
                     </div>
                     {item.tags && <div className="flex gap-1 shrink-0">{item.tags.map(tag => { const Icon = tagIcons[tag.toLowerCase()] || Leaf; return <Icon key={tag} className="w-3 h-3 text-[color:var(--token-body)]" />; })}</div>}
                   </div>
@@ -102,7 +102,7 @@ function Bold({ badge, headline, courses, note }: P) {
                 {course.items.map((item, j) => (
                   <div key={j} data-edit-collection="items" data-edit-index={j}>
                     <span className="font-bold text-[color:var(--token-heading)]" data-edit-path="name">{item.name}</span>
-                    {item.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
+                    {item.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: item.description }} />}
                   </div>
                 ))}
               </div>

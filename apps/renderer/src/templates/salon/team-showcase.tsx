@@ -27,7 +27,7 @@ function TeamClassic({ headline, subline, badgeText, members }: Props) {
       <div className="mb-10 max-w-3xl">
         {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
-        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {members.map((m, i) => (
@@ -36,7 +36,7 @@ function TeamClassic({ headline, subline, badgeText, members }: Props) {
             <div className="p-5">
               {m.role && <span className="inline-block rounded-full bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase text-[var(--token-eyebrow)]" data-edit-path="role">{m.role}</span>}
               <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="name">{m.name || ''}</h3>
-              {m.bio && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: m.bio }} />}
+              {m.bio && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
               {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-muted)]">{asList<string>(m.specialties).join(' / ')}</p>}
               {m.bookingCta?.label && <a href={m.bookingCta.href || '#'} className="mt-5 inline-flex rounded-full bg-[#111827] px-5 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{m.bookingCta.label}</a>}
             </div>
@@ -53,7 +53,7 @@ function TeamModern({ headline, subline, badgeText, members }: Props) {
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-8 md:grid-cols-3">
         {members.map((m, i) => (
@@ -62,7 +62,7 @@ function TeamModern({ headline, subline, badgeText, members }: Props) {
             <div className="mt-4">
               {m.role && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="role">{m.role}</p>}
               <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading)]" data-edit-path="name">{m.name || ''}</h3>
-              {m.bio && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: m.bio }} />}
+              {m.bio && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
               {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm font-light text-[color:var(--token-muted)]">{asList<string>(m.specialties).join(' / ')}</p>}
               {m.bookingCta?.label && <a href={m.bookingCta.href || '#'} className="mt-4 inline-flex border-b border-[var(--token-card-border)] pb-1 text-sm font-light text-[color:var(--token-heading)]" data-edit-path="label">{m.bookingCta.label}</a>}
             </div>
@@ -79,7 +79,7 @@ function TeamBold({ headline, subline, badgeText, members }: Props) {
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 font-bold text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 font-bold text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {members.map((m, i) => (
@@ -88,7 +88,7 @@ function TeamBold({ headline, subline, badgeText, members }: Props) {
             <div className="p-5">
               {m.role && <span className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="role">{m.role}</span>}
               <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="name">{m.name || ''}</h3>
-              {m.bio && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading)/70] rt-content" dangerouslySetInnerHTML={{ __html: m.bio }} />}
+              {m.bio && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
               {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-on-dark-heading)/60]">{asList<string>(m.specialties).join(' / ')}</p>}
               {m.bookingCta?.label && <a href={m.bookingCta.href || '#'} className="mt-5 inline-flex bg-[var(--token-badge-bg)] px-5 py-2 text-sm font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{m.bookingCta.label}</a>}
             </div>

@@ -70,7 +70,7 @@ export function EmbedSection({ data }: Props) {
           className="text-center mb-8"
         >
           {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
-          {subline && <div className="section-subline max-w-3xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="section-subline max-w-3xl mx-auto rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </motion.div>
       )}
 

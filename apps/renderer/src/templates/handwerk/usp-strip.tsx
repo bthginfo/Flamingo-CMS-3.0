@@ -56,7 +56,7 @@ export function UspStripSection({ data }: Props) {
                 </div>
               )}
               <h3 className="font-display mb-1.5 text-lg font-semibold text-[var(--token-heading)]" data-edit-path="title">{item.title}</h3>
-              <div className="rt-content text-sm leading-relaxed text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: item.text }} />
+              <div className="rt-content text-sm leading-relaxed text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />
             </motion.div>
           ))}
         </div>

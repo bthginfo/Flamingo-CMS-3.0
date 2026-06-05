@@ -44,7 +44,7 @@ function Classic({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: P
                 <p className="text-xs font-semibold uppercase tracking-widest text-[var(--token-badge-text)]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-bold text-[var(--token-heading)]" data-edit-path="title">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-[var(--token-muted)]"><MapPin size={13} /><span data-edit-path="address">{place.address}</span></p>}
-                {place.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: place.text }} />}
+                {place.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: place.text }} />}
                 {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-[var(--token-accent)]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
               </div>
             </motion.article>
@@ -70,7 +70,7 @@ function Modern({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Pr
                 <p className="text-xs font-light uppercase tracking-widest text-[var(--token-badge-text)]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-light text-[var(--token-heading)]" data-edit-path="title">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-[var(--token-muted)]"><MapPin size={13} /><span data-edit-path="address">{place.address}</span></p>}
-                {place.text && <div className="mt-2 text-sm font-light leading-6 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: place.text }} />}
+                {place.text && <div className="mt-2 text-sm font-light leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: place.text }} />}
                 {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-[var(--token-accent)]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
               </div>
             </article>
@@ -90,7 +90,7 @@ function Bold({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Prop
         <div className="mb-10 max-w-3xl">
           {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{header.badgeText}</p>}
           <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
-          {header.subline && <div className="mt-4 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
+          {header.subline && <div className="mt-4 text-[var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
         </div>
         <div className="grid gap-4">
           {places.map((place, index) => (
@@ -100,7 +100,7 @@ function Bold({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Prop
                 <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text)]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-black uppercase text-[var(--token-heading)]" data-edit-path="title">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-[var(--token-muted)]"><MapPin size={13} /><span data-edit-path="address">{place.address}</span></p>}
-                {place.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: place.text }} />}
+                {place.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: place.text }} />}
                 {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-black uppercase text-[var(--token-accent)]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
               </div>
             </article>

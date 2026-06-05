@@ -46,7 +46,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-12 md:mb-20">
         {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       {(storyHeadline || storyText) && (
         <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} className="flex flex-col lg:flex-row gap-12 lg:gap-8 lg:gap-16 items-center mb-12 md:mb-24">
@@ -55,7 +55,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
           )}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'w-full max-w-3xl mx-auto'}>
             {storyHeadline && <h3 className="font-display mb-4 text-2xl font-bold text-[var(--token-heading)] lg:text-3xl">{storyHeadline}</h3>}
-            {storyText && <div className="rt-content whitespace-pre-line text-lg leading-relaxed text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: storyText }} />}
+            {storyText && <div className="rt-content whitespace-pre-line text-lg leading-relaxed text-[var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
           </div>
         </motion.div>
       )}
@@ -77,7 +77,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
               <div key={i} className="group rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-8 shadow-sm transition-all hover:shadow-lg" data-edit-collection="values" data-edit-index={i}>
                 {v.icon && <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--token-accent)]/10 transition-transform group-hover:scale-110"><DynamicIcon name={v.icon} size={28} className="text-[var(--token-icon)]" /></div>}
                 <h4 className="mb-2 text-lg font-semibold text-[var(--token-heading)]" data-edit-path="title">{v.title}</h4>
-                <div className="rt-content text-sm leading-relaxed text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: v.text }} />
+                <div className="rt-content text-sm leading-relaxed text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
               </div>
             ))}
           </div>
@@ -94,7 +94,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
                 </div>
                 <h4 className="text-lg font-semibold text-[var(--token-heading)]" data-edit-path="name">{m.name}</h4>
                 <p className="mb-2 text-sm font-medium text-[var(--token-accent)]" data-edit-path="role">{m.role}</p>
-                {m.bio && <div className="rt-content mx-auto max-w-xs text-sm text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: m.bio }} />}
+                {m.bio && <div className="rt-content mx-auto max-w-xs text-sm text-[var(--token-body)]" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
               </div>
             ))}
           </div>
@@ -111,14 +111,14 @@ function TeamModern({ headline, subline, badgeText, storyHeadline, storyText, st
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
         {badgeText && <div className="mb-4 flex items-center gap-3 text-sm uppercase tracking-wide text-[var(--token-muted)]"><span className="h-px w-8 bg-[var(--token-card-border)]" /><span data-edit-path="badgeText">{badgeText}</span></div>}
         {headline && <h2 className="text-4xl font-light tracking-tight text-[var(--token-heading)] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="rt-content mt-4 max-w-2xl text-lg text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="rt-content mt-4 max-w-2xl text-lg text-[var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       {(storyHeadline || storyText) && (
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center mb-12 md:mb-24">
           {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[3/2] rounded-lg overflow-hidden"><Image src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
             {storyHeadline && <h3 className="mb-4 text-2xl font-light text-[var(--token-heading)]">{storyHeadline}</h3>}
-            {storyText && <div className="rt-content whitespace-pre-line leading-loose text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: storyText }} />}
+            {storyText && <div className="rt-content whitespace-pre-line leading-loose text-[var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
           </div>
         </div>
       )}
@@ -154,14 +154,14 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12">
         {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</span>}
         {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="rt-content mt-3 font-medium text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="rt-content mt-3 font-medium text-[var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       {(storyHeadline || storyText) && (
         <div className="flex flex-col lg:flex-row gap-8 items-start mb-10 md:mb-16">
           {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] overflow-hidden border-3 border-[var(--token-card-border)] shadow-[6px_6px_0_var(--token-body)]"><Image src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
             {storyHeadline && <h3 className="mb-3 text-xl font-bold uppercase text-[var(--token-heading)]">{storyHeadline}</h3>}
-            {storyText && <div className="rt-content whitespace-pre-line leading-relaxed text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: storyText }} />}
+            {storyText && <div className="rt-content whitespace-pre-line leading-relaxed text-[var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
           </div>
         </div>
       )}
@@ -187,7 +187,7 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
                 <div>
                   <h4 className="text-sm font-bold uppercase text-[var(--token-heading)]" data-edit-path="name">{m.name}</h4>
                   <p className="text-xs font-bold uppercase text-[var(--token-accent)]" data-edit-path="role">{m.role}</p>
-                  {m.bio && <div className="rt-content mt-1 text-xs text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: m.bio }} />}
+                  {m.bio && <div className="rt-content mt-1 text-xs text-[var(--token-body)]" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
                 </div>
               </div>
             ))}

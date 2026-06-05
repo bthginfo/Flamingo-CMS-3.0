@@ -58,7 +58,7 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
           ) : (
             <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
           )}
-          {subline && !isModern && !isBold && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && !isModern && !isBold && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
 
         {categories.length > 1 && (

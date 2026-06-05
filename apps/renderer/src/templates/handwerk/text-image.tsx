@@ -33,7 +33,7 @@ export function TextImageSection({ data, variant }: Props) {
         <div className={!image ? 'md:col-span-2 max-w-3xl mx-auto' : ''}>
           {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
           {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
-          {text && <div className="text-[var(--token-body)] text-lg leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+          {text && <div className="text-[var(--token-body)] text-lg leading-relaxed mt-4 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <ul className="mt-6 space-y-3">
               {items.map((item, i) => (

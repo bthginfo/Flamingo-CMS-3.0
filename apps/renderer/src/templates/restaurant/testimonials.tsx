@@ -35,7 +35,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
       <div className="mb-10 max-w-3xl text-center mx-auto">
         {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-[var(--token-badge-bg)/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
-        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         {(ratingValue || ratingCount) && <p className="mt-3 text-sm text-[color:var(--token-muted)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
@@ -62,7 +62,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg)]" />
-        {subline && <div className="mt-6 font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-6 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         {(ratingValue || ratingCount) && <p className="mt-3 text-sm font-light text-[color:var(--token-muted)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       </div>
       <div className="grid gap-8 md:grid-cols-3">
@@ -87,7 +87,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
         {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg)]" />
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading)/70] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         {(ratingValue || ratingCount) && <p className="mt-3 text-sm font-bold text-[color:var(--token-on-dark-heading)/50]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       </div>
       <div className="grid gap-5 md:grid-cols-3">

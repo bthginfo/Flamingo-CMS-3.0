@@ -25,7 +25,7 @@ function Classic({ header, introText, blocks }: Props) {
     <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
         <SectionHeader {...header} />
-        {introText && <div className="text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="text-[var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {blocks.map((block, index) => (
@@ -34,7 +34,7 @@ function Classic({ header, introText, blocks }: Props) {
               <DynamicIcon name={block.icon || 'map-pin'} size={20} className="text-[var(--token-icon)]" />
               <div>
                 <h3 className="font-semibold text-[var(--token-heading)]" data-edit-path="title">{block.title || ''}</h3>
-                {block.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: block.text }} />}
+                {block.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: block.text }} />}
               </div>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">{asList<string>(block.items).map((item) => <span key={item} className="rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs text-[var(--token-badge-text)]">{item}</span>)}</div>
@@ -50,7 +50,7 @@ function Modern({ header, introText, blocks }: Props) {
     <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
         <SectionHeader {...header} />
-        {introText && <div className="font-light text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="font-light text-[var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {blocks.map((block, index) => (
@@ -59,7 +59,7 @@ function Modern({ header, introText, blocks }: Props) {
               <DynamicIcon name={block.icon || 'map-pin'} size={20} className="text-[var(--token-icon)]" />
               <div>
                 <h3 className="font-light text-[var(--token-heading)]" data-edit-path="title">{block.title || ''}</h3>
-                {block.text && <div className="mt-1 text-sm font-light leading-6 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: block.text }} />}
+                {block.text && <div className="mt-1 text-sm font-light leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: block.text }} />}
               </div>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">{asList<string>(block.items).map((item) => <span key={item} className="border border-[var(--token-card-border)] px-3 py-1 text-xs text-[var(--token-muted)]">{item}</span>)}</div>
@@ -77,9 +77,9 @@ function Bold({ header, introText, blocks }: Props) {
         <div className="mb-10 max-w-3xl">
           {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{header.badgeText}</p>}
           <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
-          {header.subline && <div className="mt-4 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
+          {header.subline && <div className="mt-4 text-[var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
         </div>
-        {introText && <div className="text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="text-[var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {blocks.map((block, index) => (
@@ -88,7 +88,7 @@ function Bold({ header, introText, blocks }: Props) {
               <DynamicIcon name={block.icon || 'map-pin'} size={20} className="text-[var(--token-icon)]" />
               <div>
                 <h3 className="font-black uppercase text-[var(--token-heading)]" data-edit-path="title">{block.title || ''}</h3>
-                {block.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: block.text }} />}
+                {block.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: block.text }} />}
               </div>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">{asList<string>(block.items).map((item) => <span key={item} className="border border-[var(--token-accent)] px-3 py-1 text-xs font-bold uppercase text-[var(--token-accent)]">{item}</span>)}</div>

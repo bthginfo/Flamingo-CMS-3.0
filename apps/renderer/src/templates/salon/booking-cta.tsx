@@ -29,9 +29,9 @@ function BookingClassic({ headline, subline, badgeText, introText, onlineCta, ph
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      {introText && <div className="max-w-2xl text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+      {introText && <div className="max-w-2xl text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
         {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md"><CalendarDays size={17} /><span data-edit-path="label">{onlineCta.label}</span></a>}
         {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-icon)]/30 px-5 py-3 font-semibold text-[color:var(--token-heading)]"><Phone size={17} /><span data-edit-path="label">{phoneCta.label}</span></a>}
@@ -48,9 +48,9 @@ function BookingModern({ headline, subline, badgeText, introText, onlineCta, pho
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      {introText && <div className="max-w-2xl font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+      {introText && <div className="max-w-2xl font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
         {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]"><CalendarDays size={16} /><span data-edit-path="label">{onlineCta.label}</span></a>}
         {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted)]"><Phone size={16} /><span data-edit-path="label">{phoneCta.label}</span></a>}
@@ -67,9 +67,9 @@ function BookingBold({ headline, subline, badgeText, introText, onlineCta, phone
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-[color:var(--token-on-dark-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 font-bold text-[color:var(--token-on-dark-heading)/70] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 font-bold text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      {introText && <div className="max-w-2xl font-bold text-[color:var(--token-on-dark-heading)/70] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+      {introText && <div className="max-w-2xl font-bold text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
         {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 bg-[var(--token-badge-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]"><CalendarDays size={17} /><span data-edit-path="label">{onlineCta.label}</span></a>}
         {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]"><Phone size={17} /><span data-edit-path="label">{phoneCta.label}</span></a>}

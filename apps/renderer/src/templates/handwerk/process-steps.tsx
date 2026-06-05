@@ -47,7 +47,7 @@ function ProcessClassic({ headline, badgeText, steps }: PProps) {
                 </div>
                 <div className="pt-3">
                   <h3 className="font-display mb-2 text-xl font-bold text-[var(--token-heading)]" data-edit-path="title">{step.title}</h3>
-                  <div className="rt-content leading-relaxed text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: step.text }} />
+                  <div className="rt-content leading-relaxed text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />
                 </div>
               </motion.div>
             ))}
@@ -76,7 +76,7 @@ function ProcessModern({ headline, badgeText, steps }: PProps) {
             <div className="shrink-0 text-3xl font-extralight text-[var(--token-muted)] md:text-5xl">{String(i + 1).padStart(2, '0')}</div>
             <div>
               <h3 className="mb-2 text-lg font-medium text-[var(--token-heading)]" data-edit-path="title">{step.title}</h3>
-              <div className="rt-content leading-relaxed text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: step.text }} />
+              <div className="rt-content leading-relaxed text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />
             </div>
           </motion.div>
         ))}
@@ -105,7 +105,7 @@ function ProcessBold({ headline, badgeText, steps }: PProps) {
             </div>
             <div className="pt-6">
               <h3 className="mb-2 text-base font-bold uppercase tracking-wide text-[var(--token-heading)]" data-edit-path="title">{step.title}</h3>
-              <div className="rt-content text-sm leading-relaxed text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: step.text }} />
+              <div className="rt-content text-sm leading-relaxed text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />
             </div>
           </motion.div>
         ))}

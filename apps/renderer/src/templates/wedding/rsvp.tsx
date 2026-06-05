@@ -152,7 +152,7 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
         <div className="text-center mb-12">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
           {deadlineStr && <p className="text-sm text-[color:var(--token-icon)] font-medium mt-4">Bitte bis {deadlineStr}</p>}
         </div>
         <form onSubmit={handleSubmit} className="space-y-5 bg-[var(--token-card-bg)] p-8 rounded-2xl shadow-sm border border-[color:var(--token-card-border)]">

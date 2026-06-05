@@ -10,7 +10,7 @@ export function SectionHeader({ headline, subline, badgeText }: HeaderData) {
     <div className="mb-10 max-w-3xl">
       {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</p>}
       <h2 className="mt-3 text-3xl font-[700] text-[var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
-      {subline && <div className="mt-4 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+      {subline && <div className="mt-4 text-[var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
     </div>
   );
 }
@@ -27,7 +27,7 @@ export function ImageCard({ image, title, text, meta, cta }: { image?: string; t
       <div className="p-5">
         {meta && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text)]">{meta}</p>}
         <h3 className="mt-2 text-xl font-bold text-[var(--token-heading)]" data-edit-path="title">{title || ''}</h3>
-        {text && <div className="mt-3 text-sm leading-6 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+        {text && <div className="mt-3 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
         {cta?.label && <div className="mt-5"><CtaButton cta={cta} /></div>}
       </div>
     </article>
@@ -42,7 +42,7 @@ export function IconRows({ items }: { items: unknown }) {
           <DynamicIcon name={item.icon || 'map-pin'} size={20} className="text-[var(--token-icon)]" />
           <div>
             <h3 className="font-semibold text-[var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
-            {item.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
+            {item.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </div>
         </div>
       ))}

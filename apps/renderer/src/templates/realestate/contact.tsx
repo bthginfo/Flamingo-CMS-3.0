@@ -44,7 +44,7 @@ export function RealestateContactSection({ data }: Props) {
             {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)] mb-3" data-edit-path="badgeText">{badgeText}</p>}
             <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
             {subline && <p className="text-lg text-[color:var(--token-muted)] mt-4" data-edit-path="subline">{plain(subline)}</p>}
-            {introText && <div className="text-[color:var(--token-muted)] mt-4 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+            {introText && <div className="text-[color:var(--token-muted)] mt-4 rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
 
             <div className="mt-8 space-y-4">
               {contactItems.map((item, i) => (

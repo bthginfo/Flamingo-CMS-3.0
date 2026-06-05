@@ -29,7 +29,7 @@ export function ArtistHeroSection({ data }: Props) {
               ))}
             </div>
             {experience && <p className="mt-4 text-[color:var(--token-on-dark-heading)/40] text-sm">{experience}</p>}
-            {bio && <p className="mt-4 text-[color:var(--token-on-dark-heading)/60] leading-relaxed" dangerouslySetInnerHTML={{ __html: bio }} />}
+            {bio && <p className="mt-4 text-[color:var(--token-on-dark-heading)/60] leading-relaxed" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: bio }} />}
             {instagram && (
               <a href={`https://instagram.com/${instagram}`} target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 mt-6 text-sm text-[color:var(--token-on-dark-heading)/50] hover:text-[color:var(--token-on-dark-heading)] transition-colors">

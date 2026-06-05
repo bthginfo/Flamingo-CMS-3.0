@@ -51,6 +51,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   // Forward ref to handleSectionChange so the postMessage listener (declared
   // before the handler) can invoke the latest closure without TDZ issues.
   const handleSectionChangeRef = useRef<((sectionId: string, data: Record<string, unknown>) => void) | null>(null);
+  const handleSaveColorOverridesRef = useRef<((sectionId: string, overrides: Record<string, unknown> | null) => void) | null>(null);
 
   const sendPreviewData = useCallback(() => {
     if (!preview.isOpen) return;
@@ -127,6 +128,129 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         const next = setNested(base, segments, value) as Record<string, unknown>;
         handleSectionChangeRef.current?.(sectionId, next);
       }
+      // Rich-text edit from live-preview: same shape as field-edit but the
+      // value is innerHTML. Reuse the same setNested helper.
+      if (e.data?.type === 'flamingo-rich-edit') {
+        const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: string };
+        if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof value !== 'string') return;
+        const current = sectionsRef.current.find(s => s.id === sectionId);
+        if (!current) return;
+        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
+        const segments = path.split('.').filter(Boolean);
+        if (segments.length === 0) return;
+        let probe: unknown = base;
+        for (const seg of segments) {
+          if (probe == null) { probe = undefined; break; }
+          probe = (probe as Record<string, unknown>)[seg];
+        }
+        if (probe === value) return;
+        const setNested = (obj: unknown, segs: string[], val: string): Record<string, unknown> | unknown[] => {
+          const [head, ...rest] = segs;
+          const isIndex = /^\d+$/.test(head);
+          if (rest.length === 0) {
+            if (Array.isArray(obj)) {
+              const copy = [...obj];
+              copy[Number(head)] = val;
+              return copy;
+            }
+            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
+          }
+          if (Array.isArray(obj)) {
+            const copy = [...obj];
+            const idx = Number(head);
+            copy[idx] = setNested(copy[idx], rest, val);
+            return copy;
+          }
+          const container = (obj as Record<string, unknown> | null) ?? {};
+          const childExisting = container[head];
+          const childContainer = isIndex
+            ? (Array.isArray(childExisting) ? childExisting : [])
+            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
+          return { ...container, [head]: setNested(childContainer, rest, val) };
+        };
+        const next = setNested(base, segments, value) as Record<string, unknown>;
+        handleSectionChangeRef.current?.(sectionId, next);
+      }
+      // Image-edit from live-preview overlay: set a string at the given
+      // path (same engine as field-edit).
+      if (e.data?.type === 'flamingo-image-edit') {
+        const { sectionId, path, url } = e.data as { sectionId: string; path: string; url: string };
+        if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof url !== 'string') return;
+        const current = sectionsRef.current.find(s => s.id === sectionId);
+        if (!current) return;
+        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
+        const segments = path.split('.').filter(Boolean);
+        if (segments.length === 0) return;
+        const setNested = (obj: unknown, segs: string[], val: unknown): Record<string, unknown> | unknown[] => {
+          const [head, ...rest] = segs;
+          const isIndex = /^\d+$/.test(head);
+          if (rest.length === 0) {
+            if (Array.isArray(obj)) {
+              const copy = [...obj];
+              copy[Number(head)] = val;
+              return copy;
+            }
+            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
+          }
+          if (Array.isArray(obj)) {
+            const copy = [...obj];
+            const idx = Number(head);
+            copy[idx] = setNested(copy[idx], rest, val);
+            return copy;
+          }
+          const container = (obj as Record<string, unknown> | null) ?? {};
+          const childExisting = container[head];
+          const childContainer = isIndex
+            ? (Array.isArray(childExisting) ? childExisting : [])
+            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
+          return { ...container, [head]: setNested(childContainer, rest, val) };
+        };
+        const next = setNested(base, segments, url) as Record<string, unknown>;
+        handleSectionChangeRef.current?.(sectionId, next);
+      }
+      // Link-edit from live-preview overlay: writes an object {label, href, icon?}.
+      if (e.data?.type === 'flamingo-link-edit') {
+        const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: Record<string, unknown> };
+        if (typeof sectionId !== 'string' || typeof path !== 'string' || !value || typeof value !== 'object') return;
+        const current = sectionsRef.current.find(s => s.id === sectionId);
+        if (!current) return;
+        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
+        const segments = path.split('.').filter(Boolean);
+        if (segments.length === 0) return;
+        const setNested = (obj: unknown, segs: string[], val: unknown): Record<string, unknown> | unknown[] => {
+          const [head, ...rest] = segs;
+          const isIndex = /^\d+$/.test(head);
+          if (rest.length === 0) {
+            if (Array.isArray(obj)) {
+              const copy = [...obj];
+              copy[Number(head)] = val;
+              return copy;
+            }
+            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
+          }
+          if (Array.isArray(obj)) {
+            const copy = [...obj];
+            const idx = Number(head);
+            copy[idx] = setNested(copy[idx], rest, val);
+            return copy;
+          }
+          const container = (obj as Record<string, unknown> | null) ?? {};
+          const childExisting = container[head];
+          const childContainer = isIndex
+            ? (Array.isArray(childExisting) ? childExisting : [])
+            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
+          return { ...container, [head]: setNested(childContainer, rest, val) };
+        };
+        const next = setNested(base, segments, value) as Record<string, unknown>;
+        handleSectionChangeRef.current?.(sectionId, next);
+      }
+      // Color-edit from live-preview overlay: replaces the section's
+      // styleOverrides wholesale (the overlay sends the merged object).
+      if (e.data?.type === 'flamingo-color-edit') {
+        const { sectionId, overrides } = e.data as { sectionId: string; overrides: Record<string, string> };
+        if (typeof sectionId !== 'string' || !overrides || typeof overrides !== 'object') return;
+        handleSaveColorOverridesRef.current?.(sectionId, overrides);
+      }
     }
     window.addEventListener('message', onMsg);
     return () => window.removeEventListener('message', onMsg);
@@ -201,6 +325,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   // Keep the ref in sync so the postMessage listener (declared earlier) can
   // call the latest handler.
   handleSectionChangeRef.current = handleSectionChange;
+  handleSaveColorOverridesRef.current = handleSaveColorOverrides;
 
   async function handleSaveAll() {
     setSaving(true);

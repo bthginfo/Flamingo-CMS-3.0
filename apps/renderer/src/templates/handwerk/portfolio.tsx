@@ -43,7 +43,7 @@ export function PortfolioSection({ data }: Props) {
           </div>
         )}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -74,7 +74,7 @@ export function PortfolioSection({ data }: Props) {
               <div className="p-6 lg:p-8">
                 <h3 className="font-display font-bold text-xl mb-2 text-[var(--token-body)]" data-edit-path="title">{project.title}</h3>
                 {project.description && (
-                  <div className="text-[var(--token-body)] text-sm leading-relaxed mb-4 rt-content" dangerouslySetInnerHTML={{ __html: project.description }} />
+                  <div className="text-[var(--token-body)] text-sm leading-relaxed mb-4 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: project.description }} />
                 )}
                 {project.stats && project.stats.length > 0 && (
                   <div className="flex gap-6 pt-4 border-t border-[var(--token-card-border)]">

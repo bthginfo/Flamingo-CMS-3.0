@@ -58,7 +58,7 @@ function Classic(p: Props) {
           {p.values.map((v, i) => (
             <motion.div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-black/10 bg-[var(--token-card-bg)] p-5 shadow-sm" data-edit-collection="values" data-edit-index={i}>
               <div className="shrink-0 text-[var(--token-eyebrow))]"><DynamicIcon name={v.icon || 'map-pin'} size={20} /></div>
-              <div><h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
+              <div><h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
             </motion.div>
           ))}
         </div>
@@ -70,7 +70,7 @@ function Classic(p: Props) {
               <div className="absolute -left-[2.55rem] top-1 h-4 w-4 rounded-full border-2 border-[var(--token-eyebrow))] bg-[var(--token-card-bg)]" />
               {m.year && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-eyebrow))]">{m.year}</p>}
               <h3 className="mt-1 font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{m.title || ''}</h3>
-              {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
+              {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </motion.div>
           ))}
         </div>
@@ -106,7 +106,7 @@ function Mod(p: Props) {
             <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-l border-black/20 pl-5" data-edit-collection="values" data-edit-index={i}>
               <DynamicIcon name={v.icon || 'map-pin'} size={18} className="text-[color:var(--token-muted)]" />
               <h3 className="mt-2 font-medium text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>
-              {v.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
+              {v.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
           ))}
         </div>
@@ -117,7 +117,7 @@ function Mod(p: Props) {
             <div key={`${m.year}-${i}`} data-edit-collection="milestones" data-edit-index={i}>
               {m.year && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]">{m.year}</p>}
               <h3 className="mt-1 font-medium text-[color:var(--token-heading)]" data-edit-path="title">{m.title || ''}</h3>
-              {m.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
+              {m.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </div>
           ))}
         </div>
@@ -153,7 +153,7 @@ function Bold(p: Props) {
             <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_var(--token-eyebrow))]" data-edit-collection="values" data-edit-index={i}>
               <DynamicIcon name={v.icon || 'map-pin'} size={20} className="text-[var(--token-eyebrow))]" />
               <h3 className="mt-2 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>
-              {v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
+              {v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
           ))}
         </div>
@@ -164,7 +164,7 @@ function Bold(p: Props) {
             <div key={`${m.year}-${i}`} className="border-2 border-[#111827] p-5" data-edit-collection="milestones" data-edit-index={i}>
               {m.year && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-eyebrow))]">{m.year}</p>}
               <h3 className="mt-1 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{m.title || ''}</h3>
-              {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
+              {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </div>
           ))}
         </div>

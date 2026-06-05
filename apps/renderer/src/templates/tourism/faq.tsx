@@ -27,7 +27,7 @@ function Classic({ header, items, ctaPrimary }: Props) {
         {items.map((item, index) => (
           <details key={`${item.question}-${index}`} className="p-5" data-edit-collection="items" data-edit-index={index}>
             <summary className="cursor-pointer font-semibold text-[var(--token-heading)]">{item.question || ''}</summary>
-            {item.answer && <div className="mt-3 text-sm leading-6 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
+            {item.answer && <div className="mt-3 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="answer" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>
         ))}
       </motion.div>
@@ -44,7 +44,7 @@ function Modern({ header, items, ctaPrimary }: Props) {
         {items.map((item, index) => (
           <details key={`${item.question}-${index}`} className="p-5" data-edit-collection="items" data-edit-index={index}>
             <summary className="cursor-pointer font-light text-[var(--token-heading)]">{item.question || ''}</summary>
-            {item.answer && <div className="mt-3 text-sm font-light leading-6 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
+            {item.answer && <div className="mt-3 text-sm font-light leading-6 text-[var(--token-body)] rt-content" data-edit-rich="answer" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>
         ))}
       </div>
@@ -59,13 +59,13 @@ function Bold({ header, items, ctaPrimary }: Props) {
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
-        {header.subline && <div className="mt-4 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
+        {header.subline && <div className="mt-4 text-[var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
       <div className="divide-y divide-[var(--token-card-border)] border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]">
         {items.map((item, index) => (
           <details key={`$<span data-edit-path="question">{item.question}</span>-${index}`} className="p-5" data-edit-collection="items" data-edit-index={index}>
             <summary className="cursor-pointer font-black uppercase text-[var(--token-heading)]">{item.question || ''}</summary>
-            {item.answer && <div className="mt-3 text-sm leading-6 text-[var(--token-body)] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
+            {item.answer && <div className="mt-3 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="answer" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>
         ))}
       </div>

@@ -35,7 +35,7 @@ function EventsClassic({ headline, subline, badgeText, events, fallbackText }: E
       <div className="mb-10 max-w-3xl text-center mx-auto">
         {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg)/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {events.length === 0 && fallbackText ? <p className="text-center text-[color:var(--token-muted)]">{fallbackText}</p> : null}
       <div className="grid gap-6 lg:grid-cols-2">
@@ -49,7 +49,7 @@ function EventsClassic({ headline, subline, badgeText, events, fallbackText }: E
                 {event.priceLabel && <span className="rounded-full bg-[var(--token-section-bg-alt)/5] px-3 py-1" data-edit-path="priceLabel">{event.priceLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{event.title || ''}</h3>
-              {event.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
+              {event.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: event.description }} />}
               <div className="mt-5 flex flex-wrap gap-4">
                 {event.cta?.label && <a href={event.cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-4 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading)]" data-edit-path="label">{event.cta.label}</a>}
                 {event.detailHref && event.detailLabel && <a href={event.detailHref} className="inline-flex items-center gap-1 text-sm text-[color:var(--token-muted)]">{event.detailLabel}<ArrowRight size={14} /></a>}
@@ -69,7 +69,7 @@ function EventsModern({ headline, subline, badgeText, events, fallbackText }: Ev
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg)]" />
-        {subline && <div className="mt-6 font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-6 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {events.length === 0 && fallbackText ? <p className="font-light text-[color:var(--token-muted)]">{fallbackText}</p> : null}
       <div className="grid gap-8 lg:grid-cols-2">
@@ -83,7 +83,7 @@ function EventsModern({ headline, subline, badgeText, events, fallbackText }: Ev
                 {event.priceLabel && <span data-edit-path="priceLabel">{event.priceLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-medium text-[color:var(--token-heading)]" data-edit-path="title">{event.title || ''}</h3>
-              {event.description && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
+              {event.description && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: event.description }} />}
               <div className="mt-5 flex flex-wrap gap-4">
                 {event.cta?.label && <a href={event.cta.href || '#'} className="border-b border-[#111827] pb-0.5 text-sm font-medium text-[color:var(--token-heading)]" data-edit-path="label">{event.cta.label}</a>}
                 {event.detailHref && event.detailLabel && <a href={event.detailHref} className="inline-flex items-center gap-1 text-sm font-light text-[color:var(--token-muted)]">{event.detailLabel}<ArrowRight size={14} /></a>}
@@ -103,7 +103,7 @@ function EventsBold({ headline, subline, badgeText, events, fallbackText }: Even
         {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg)]" />
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading)/70] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {events.length === 0 && fallbackText ? <p className="text-[color:var(--token-on-dark-heading)/60]">{fallbackText}</p> : null}
       <div className="grid gap-5 lg:grid-cols-2">
@@ -117,7 +117,7 @@ function EventsBold({ headline, subline, badgeText, events, fallbackText }: Even
                 {event.priceLabel && <span data-edit-path="priceLabel">{event.priceLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-bold uppercase" data-edit-path="title">{event.title || ''}</h3>
-              {event.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading)/60] rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
+              {event.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading)/60] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: event.description }} />}
               <div className="mt-5 flex flex-wrap gap-4">
                 {event.cta?.label && <a href={event.cta.href || '#'} className="rounded-none border-2 border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] px-4 py-2 text-sm font-bold uppercase text-[color:var(--token-heading)]" data-edit-path="label">{event.cta.label}</a>}
                 {event.detailHref && event.detailLabel && <a href={event.detailHref} className="inline-flex items-center gap-1 text-sm font-bold uppercase text-[color:var(--token-on-dark-heading)/70]">{event.detailLabel}<ArrowRight size={14} /></a>}

@@ -111,7 +111,7 @@ function TestimonialsBold({ headline, badgeText, ratingValue, ratingCount, items
             className="w-[320px] shrink-0 snap-start border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-body)]"
            data-edit-collection="items" data-edit-index={i}>
             <Quote size={24} className="mb-3 text-[var(--token-accent)]" />
-            <div className="rt-content font-medium leading-relaxed text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: item.quote }} />
+            <div className="rt-content font-medium leading-relaxed text-[var(--token-body)]" data-edit-rich="quote" dangerouslySetInnerHTML={{ __html: item.quote }} />
             <div className="mt-4 border-t-2 border-[var(--token-card-border)] pt-3">
               <p className="text-sm font-bold uppercase tracking-wide text-[var(--token-heading)]" data-edit-path="name">{item.name}</p>
               {item.context && <p className="mt-0.5 text-xs text-[var(--token-muted)]">{item.context}</p>}

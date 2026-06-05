@@ -46,7 +46,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-10 md:mb-16">
         {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.2 }}>
         <HoverEffect items={hoverItems} />
@@ -76,7 +76,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
           </div>
         )}
         {headline && <h2 className="text-4xl font-light tracking-tight text-[var(--token-heading)] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="rt-content mt-4 max-w-2xl text-lg text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="rt-content mt-4 max-w-2xl text-lg text-[var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
         {cards.map((card, i) => {
@@ -89,7 +89,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
               )}
               <div>
                 <h3 className="text-lg font-medium text-[var(--token-heading)] transition-colors group-hover:text-[var(--token-accent)]" data-edit-path="title">{card.title}</h3>
-                {card.text && <div className="rt-content mt-2 leading-relaxed text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: card.text }} />}
+                {card.text && <div className="rt-content mt-2 leading-relaxed text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: card.text }} />}
                 {card.href && (
                   <span className="mt-3 inline-flex items-center gap-1 text-sm text-[var(--token-accent)] opacity-0 transition-opacity group-hover:opacity-100">
                     Mehr erfahren {card.icon && <DynamicIcon name={card.icon} size={14} />}
@@ -136,7 +136,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
           </span>
         )}
         {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="rt-content mt-3 font-medium text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="rt-content mt-3 font-medium text-[var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {cards.map((card, i) => {
@@ -148,7 +148,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
                 </div>
               )}
               <h3 className="text-base font-bold uppercase tracking-wide text-[var(--token-heading)]" data-edit-path="title">{card.title}</h3>
-              {card.text && <div className="rt-content mt-2 text-sm leading-relaxed text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: card.text }} />}
+              {card.text && <div className="rt-content mt-2 text-sm leading-relaxed text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: card.text }} />}
               {card.href && (
                 <span className="mt-3 inline-flex items-center gap-1 text-xs font-bold uppercase text-[var(--token-accent)]">
                   Details {card.ctaIcon && <DynamicIcon name={card.ctaIcon} size={12} />}

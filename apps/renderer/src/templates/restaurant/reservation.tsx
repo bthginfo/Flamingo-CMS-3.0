@@ -122,7 +122,7 @@ function ReservationClassic(props: ReservationViewProps) {
       <div className="space-y-6">
         {props.badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg)/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{props.badgeText}</p>}
         <h2 className="text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{props.headline}</h2>
-        {props.subline && <div className="text-lg text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: props.subline }} />}
+        {props.subline && <div className="text-lg text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: props.subline }} />}
         {props.introText && <p className="leading-7 text-[color:var(--token-muted)]">{plain(props.introText)}</p>}
         <div className="flex flex-wrap gap-3">
           {props.externalBookingCta.label && <a href={props.externalBookingCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md"><CalendarDays size={17} /><span data-edit-path="label">{props.externalBookingCta.label}</span></a>}
@@ -146,7 +146,7 @@ function ReservationModern(props: ReservationViewProps) {
         {props.badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{props.badgeText}</p>}
         <h2 className="text-3xl font-light text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{props.headline}</h2>
         <div className="h-px w-16 bg-[var(--token-badge-bg)]" />
-        {props.subline && <div className="font-light leading-relaxed text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: props.subline }} />}
+        {props.subline && <div className="font-light leading-relaxed text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: props.subline }} />}
         {props.introText && <p className="font-light leading-7 text-[color:var(--token-muted)]">{plain(props.introText)}</p>}
         <div className="flex flex-wrap gap-4">
           {props.externalBookingCta.label && <a href={props.externalBookingCta.href || '#'} className="inline-flex items-center gap-2 border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]"><CalendarDays size={17} /><span data-edit-path="label">{props.externalBookingCta.label}</span></a>}
@@ -171,7 +171,7 @@ function ReservationBold(props: ReservationViewProps) {
           {props.badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{props.badgeText}</p>}
           <h2 className="text-3xl font-black uppercase sm:text-3xl md:text-5xl" data-edit-path="headline">{props.headline}</h2>
           <div className="h-1.5 w-20 bg-[var(--token-badge-bg)]" />
-          {props.subline && <div className="text-lg text-[color:var(--token-on-dark-heading)/70] rt-content" dangerouslySetInnerHTML={{ __html: props.subline }} />}
+          {props.subline && <div className="text-lg text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: props.subline }} />}
           {props.introText && <p className="leading-7 text-[color:var(--token-on-dark-heading)/65]">{plain(props.introText)}</p>}
           <div className="flex flex-wrap gap-3">
             {props.externalBookingCta.label && <a href={props.externalBookingCta.href || '#'} className="inline-flex items-center gap-2 rounded-none border-2 border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_rgba(255,255,255,0.3)]"><CalendarDays size={17} /><span data-edit-path="label">{props.externalBookingCta.label}</span></a>}
