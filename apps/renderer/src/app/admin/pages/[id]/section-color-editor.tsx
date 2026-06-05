@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Palette, ChevronDown } from 'lucide-react';
 import { getAllSectionContracts, type SectionColorSlot } from '@/lib/section-contracts';
 import { getCuratedContractFields } from '@/lib/section-color-contracts';
+import { SECTION_COLOR_CONTRACTS_GENERATED } from '@/lib/section-color-contracts-generated';
 
 type ColorOverrides = Record<string, string>;
 
@@ -365,11 +366,24 @@ const CONTRACT_FIELDS_BY_TYPE = new Map(
 );
 
 function getFieldsForSection(sectionType: string): ColorFieldKey[] {
-  // Priority: curated contracts (hand-maintained truth) → legacy auto-gen
-  // SECTION_FIELDS (regex codegen, often over/under-detects) → derived from
-  // the global section-contracts heuristic → minimal default.
+  // Priority chain (highest → lowest):
+  //   1. Hand-curated overrides (section-color-contracts.ts) — manual truth
+  //      for sections the codegen mis-detects.
+  //   2. Smart codegen (section-color-contracts-generated.ts) — built from
+  //      actual CSS-var references in template files. Regenerate with
+  //      `node scripts/generate-section-color-contracts.cjs`.
+  //   3. Legacy regex-based SECTION_FIELDS (kept for backwards compat).
+  //   4. Heuristic derived from the global section-contracts registry.
+  //   5. Minimal default.
   const curated = getCuratedContractFields(sectionType);
-  const fields = curated ?? SECTION_FIELDS[sectionType] ?? CONTRACT_FIELDS_BY_TYPE.get(sectionType) ?? DEFAULT_SECTION_FIELDS;
+  const generated = SECTION_COLOR_CONTRACTS_GENERATED[sectionType];
+  const hasGenerated = Array.isArray(generated) && generated.length > 0;
+  const fields =
+    curated
+    ?? (hasGenerated ? (generated as ColorFieldKey[]) : undefined)
+    ?? SECTION_FIELDS[sectionType]
+    ?? CONTRACT_FIELDS_BY_TYPE.get(sectionType)
+    ?? DEFAULT_SECTION_FIELDS;
   return fields.filter((field) => field !== 'sectionBgAlt');
 }
 
