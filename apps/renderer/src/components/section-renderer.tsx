@@ -240,11 +240,14 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   const isFullBleed = FULL_BLEED_TYPES.has(section.type);
   const hasMediaOverlay = MEDIA_OVERLAY_SECTION_TYPES.has(section.type) || Boolean(section.data.overlay);
   const headingColorVar = hasMediaOverlay
-    ? 'var(--token-on-dark-heading, var(--token-heading, var(--style-heading-color, var(--style-text-primary, inherit))))'
+    ? 'var(--token-on-dark-heading, var(--style-image-text-color, #ffffff))'
     : 'var(--token-heading, var(--style-heading-color, var(--style-text-primary, inherit)))';
   const bodyColorVar = hasMediaOverlay
-    ? 'var(--token-on-dark-body, var(--token-body, var(--style-body-color, var(--style-text-secondary, inherit))))'
+    ? 'var(--token-on-dark-body, var(--style-image-body-color, rgba(255,255,255,0.86)))'
     : 'var(--token-body, var(--style-body-color, var(--style-text-secondary, inherit)))';
+  const mutedColorVar = hasMediaOverlay
+    ? 'var(--token-on-dark-muted, var(--style-image-muted-color, rgba(255,255,255,0.72)))'
+    : 'var(--token-muted, var(--style-text-muted, var(--style-text-secondary, inherit)))';
 
   // Per-section color overrides (from CMS) applied as inline CSS vars
   const overrideStyle = section.styleOverrides
@@ -255,6 +258,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     ? `
 [data-section-id="${section.id}"][data-style] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: ${headingColorVar} !important; }
 [data-section-id="${section.id}"][data-style] :is(p,li):not([class*="text-white"]):not([class*="text-black"]) { color: ${bodyColorVar} !important; }
+[data-section-id="${section.id}"][data-style] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: ${mutedColorVar} !important; }
 [data-section-id="${section.id}"][data-style] .section-badge { color: var(--style-badge-text, var(--style-accent-color, inherit)) !important; background-color: var(--style-badge-bg, transparent) !important; }
 [data-section-id="${section.id}"][data-style] [class*="brand-btn"] { color: var(--brand-btn-text, inherit) !important; background-color: var(--brand-btn-bg, transparent) !important; }
 `

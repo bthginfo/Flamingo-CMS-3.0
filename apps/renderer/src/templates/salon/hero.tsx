@@ -48,6 +48,9 @@ type HeroProps = {
 
 /* ─── CLASSIC: Fullscreen bg, organic rose gradient overlay, flowing curves, centered elegant typography ─── */
 function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
+  const heroHeading = 'var(--token-on-dark-heading,var(--style-image-text-color,#ffffff))';
+  const heroBody = 'var(--token-on-dark-body,var(--style-image-body-color,rgba(255,255,255,0.86)))';
+  const heroMuted = 'var(--token-on-dark-muted,var(--style-image-muted-color,rgba(255,255,255,0.78)))';
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px]">
       {(bgMode === 'image' && bgImage) ? (
@@ -69,21 +72,21 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-12 md:py-20 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
           {badgeText && (
-            <motion.p initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-card-bg,#ffffff)/15] px-5 py-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-on-dark-heading,#ffffff)/90] backdrop-blur-sm">
+            <motion.p initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/15 px-5 py-2 text-xs font-bold uppercase tracking-widest backdrop-blur-sm" style={{ color: heroHeading }}>
               <DynamicIcon name={badgeIcon} size={14} />{badgeText}
             </motion.p>
           )}
         </motion.div>
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }} className="mt-6 text-5xl sm:text-6xl lg:text-8xl font-[700] leading-[0.95] text-[color:var(--token-on-dark-heading,#ffffff)]" style={{ textShadow: '0 2px 30px rgba(107,33,72,0.5)' }}>{headline}</motion.h1>
-        {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }} className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-[color:var(--token-on-dark-heading,#ffffff)/80] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }} className="mt-6 text-5xl sm:text-6xl lg:text-8xl font-[700] leading-[0.95]" style={{ color: heroHeading, textShadow: '0 2px 30px rgba(107,33,72,0.5)' }}>{headline}</motion.h1>
+        {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }} className="mx-auto mt-7 max-w-2xl text-lg leading-8 rt-content" style={{ color: heroBody }} dangerouslySetInnerHTML={{ __html: subline }} />}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-card-bg,#ffffff)] px-7 py-3 font-semibold text-[color:var(--token-heading,#18181b)] shadow-lg">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color:var(--token-card-border,#ffffff)/35] px-7 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)]">{secondaryCta.label}</a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg,var(--brand-btn-bg,#ffffff))] px-7 py-3 font-semibold text-[var(--token-btn-text,var(--brand-btn-text,#111827))] shadow-lg">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/10 px-7 py-3 font-semibold backdrop-blur-sm" style={{ color: heroHeading }}>{secondaryCta.label}</a>}
         </motion.div>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-[color:var(--token-on-dark-heading,#ffffff)/80]">
-          {bookingHint && <span className="rounded-full bg-[var(--token-card-bg,#ffffff)/15] px-4 py-2 backdrop-blur-sm">{bookingHint}</span>}
-          {ratingText && <span className="rounded-full bg-[var(--token-card-bg,#ffffff)/15] px-4 py-2 backdrop-blur-sm">{ratingText}</span>}
-          {trustItems.map((item) => <span key={item} className="rounded-full bg-[var(--token-card-bg,#ffffff)/15] px-4 py-2 backdrop-blur-sm">{item}</span>)}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm">
+          {bookingHint && <span className="rounded-full border border-white/15 bg-white/15 px-4 py-2 backdrop-blur-sm" style={{ color: heroMuted }}>{bookingHint}</span>}
+          {ratingText && <span className="rounded-full border border-white/15 bg-white/15 px-4 py-2 backdrop-blur-sm" style={{ color: heroMuted }}>{ratingText}</span>}
+          {trustItems.map((item) => <span key={item} className="rounded-full border border-white/15 bg-white/15 px-4 py-2 backdrop-blur-sm" style={{ color: heroMuted }}>{item}</span>)}
         </motion.div>
       </div>
     </section>

@@ -1,7 +1,6 @@
 import { getBrandSettings, getDesignSettings } from '../settings-actions';
 import { BackgroundForm } from './background-form';
 import { BrandForm } from './brand-form';
-import { StyleSwitcher } from './style-switcher';
 
 export default async function BrandPage() {
   const [{ brand }, design] = await Promise.all([getBrandSettings(), getDesignSettings()]);
@@ -16,7 +15,6 @@ export default async function BrandPage() {
           Die Einstellungen hier steuern das grundsätzliche Erscheinungsbild der Website. Wenn eine bestimmte Sektion stärker hervorstechen soll, können Sie im Seiten-Editor direkt an der jeweiligen Sektion eigene Farben festlegen, etwa für Hintergrund, Überschriften, Buttons oder Akzente.
         </p>
       </div>
-      <StyleSwitcher />
       <BrandForm initial={brand} />
       <BackgroundForm initial={design} />
     </div>

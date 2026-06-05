@@ -29,13 +29,6 @@ export default function DemoBrandPage() {
       <h1 className="text-2xl font-bold mb-1">Marke & Design</h1>
       <p className="text-zinc-500 text-sm mb-8">Firmenname, Slogan, Farben und Schriften Ihrer Website.</p>
 
-      <div className="admin-card p-6 mb-6">
-        <h2 className="font-semibold mb-2">Website-Stil</h2>
-        <p className="text-sm text-zinc-500">
-          Flamingo nutzt einen festen klassischen Stil. Farben, Schriften, Buttons und einzelne Sektionen können trotzdem individuell angepasst werden.
-        </p>
-      </div>
-
       <div className="admin-card p-6 space-y-4 mb-6">
         <h2 className="font-semibold mb-2">Firmeninformationen</h2>
         <Field label="Firmenname" value="Müller & Söhne Meisterbetrieb" />

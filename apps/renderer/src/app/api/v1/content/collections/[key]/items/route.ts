@@ -34,6 +34,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
       }));
     }
 
+    const now = new Date();
     await db.insert(collectionItems).values({
       id,
       tenantId: auth.tenantId,
@@ -43,12 +44,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
       data: itemData,
       published: published ?? false,
       priority: Number.isFinite(Number(priority)) ? Number(priority) : 0,
+      createdAt: now,
+      updatedAt: now,
     });
 
     return NextResponse.json({ id, slug: itemSlug }, { status: 201 });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error('POST /collections/:key/items error:', message);
+    console.error('POST /collections/:key/items error:', {
+      message,
+      name: err instanceof Error ? err.name : undefined,
+    });
     if (message.includes('unique') || message.includes('duplicate')) {
       return NextResponse.json({ error: 'Item with this slug already exists' }, { status: 409 });
     }

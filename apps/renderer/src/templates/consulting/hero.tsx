@@ -18,12 +18,15 @@ export function ConsultingHeroSection({ data }: Props) {
   const secondaryCta = data.secondaryCta as { label: string; href: string } | undefined;
   const trustItems = (data.trustItems as string[]) || [];
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
+  const heroHeading = 'var(--token-on-dark-heading,var(--style-image-text-color,#ffffff))';
+  const heroBody = 'var(--token-on-dark-body,var(--style-image-body-color,rgba(255,255,255,0.86)))';
+  const heroMuted = 'var(--token-on-dark-muted,var(--style-image-muted-color,rgba(255,255,255,0.72)))';
 
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
 
   return (
-    <div ref={ref} className="relative min-h-[85vh] flex items-center overflow-hidden -mt-[112px] pt-[112px]">
+    <div ref={ref} className="relative min-h-[82vh] flex items-center overflow-hidden -mt-[112px] pt-[112px]">
       {bgImage && (
         <ImageEffectWrapper effect={imageEffect} className="absolute inset-0">
           <Image src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
@@ -37,39 +40,39 @@ export function ConsultingHeroSection({ data }: Props) {
         <div className="absolute bottom-0 left-0 w-96 h-96 border border-[color:var(--token-card-border,#ffffff)/10] rounded-full -translate-x-1/2 translate-y-1/2" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10 py-24">
+      <div className="max-w-7xl mx-auto px-6 relative z-10 py-16 md:py-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
           className="max-w-3xl mx-auto text-center"
         >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[color:var(--token-on-dark-heading,#ffffff)] leading-tight tracking-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight" style={{ color: heroHeading }}>
             {headline}
           </h1>
           {subline && (
-            <p className="text-lg md:text-xl text-[color:var(--token-on-dark-heading,#ffffff)/80] mt-6 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl mt-6 max-w-2xl mx-auto leading-relaxed" style={{ color: heroBody }}>
               {plain(subline)}
             </p>
           )}
           <div className="flex flex-wrap justify-center gap-4 mt-10">
             {primaryCta && (
-              <a href={primaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-amber-700 hover:bg-amber-800 text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+              <a href={primaryCta.href} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg,var(--brand-btn-bg,var(--style-accent-color,#ffffff)))] px-7 py-3.5 font-semibold text-[var(--token-btn-text,var(--brand-btn-text,#111827))] shadow-lg transition-all hover:brightness-110">
                 <DynamicIcon name="phone" size={18} />
                 {primaryCta.label}
               </a>
             )}
             {secondaryCta && (
-              <a href={secondaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 border-2 border-[color:var(--token-card-border,#ffffff)/30] text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-lg hover:bg-[var(--token-card-bg,#ffffff)/10] transition-all">
+              <a href={secondaryCta.href} className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-7 py-3.5 font-semibold backdrop-blur transition-all hover:bg-white/15" style={{ color: heroHeading }}>
                 {secondaryCta.label}
               </a>
             )}
           </div>
           {trustItems.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-6 mt-12 pt-8 border-t border-[color:var(--token-card-border,#ffffff)/20]">
+            <div className="mx-auto mt-10 flex max-w-4xl flex-wrap justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
               {trustItems.map((item, i) => (
-                <div key={i} className="flex items-center gap-2 text-[color:var(--token-on-dark-heading,#ffffff)/70] text-sm">
-                  <DynamicIcon name="check-circle" size={16} className="text-amber-500" />
+                <div key={i} className="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium" style={{ color: heroMuted }}>
+                  <DynamicIcon name="check-circle" size={16} className="text-[color:var(--style-accent-color,var(--token-icon,#f59e0b))]" />
                   {item}
                 </div>
               ))}
