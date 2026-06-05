@@ -479,9 +479,9 @@ const tenant = {
             subline: 'Kennzahlen, die wir messen — weil sie etwas über Qualität aussagen.',
             stats: [
               { value: 97,    suffix: ' %',   label: 'Termintreue in 2024' },
-              { value: 4.3,                  label: 'Jahresarbeitszahl unserer Wärmepumpen' },
-              { value: 60,    suffix: ' Min', label: 'Durchschn. Notdienst-Reaktionszeit' },
-              { value: 12500, prefix: 'Ø ', suffix: ' €', label: 'Förderung pro Heizungssanierung' },
+              { value: 4.3,                  label: 'JAZ unserer Wärmepumpen' },
+              { value: 60,    suffix: ' Min', label: 'Notdienst-Reaktionszeit' },
+              { value: 280,   suffix: '+',    label: 'Wärmepumpen installiert' },
             ],
           },
         },
