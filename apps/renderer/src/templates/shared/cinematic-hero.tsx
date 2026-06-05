@@ -32,9 +32,9 @@ export function CinematicHeroSection({ data }: Props) {
   const facts = (data.facts as Fact[]) || [];
   const align = (data.align as string) || 'left';
   const overlay = (data.overlay as string) || 'rgba(0,0,0,0.48)';
-  const heroText = 'var(--token-on-dark-heading, var(--style-heading-color, #ffffff))';
-  const heroBody = 'var(--token-on-dark-body, var(--style-body-color, rgba(255,255,255,0.82)))';
-  const heroMuted = 'var(--token-on-dark-muted, var(--style-text-muted, rgba(255,255,255,0.68)))';
+  const heroText = 'var(--token-on-dark-heading, var(--token-heading, var(--style-heading-color, #ffffff)))';
+  const heroBody = 'var(--token-on-dark-body, var(--token-body, var(--style-body-color, rgba(255,255,255,0.82))))';
+  const heroMuted = 'var(--token-on-dark-muted, var(--token-muted, var(--style-text-muted, rgba(255,255,255,0.68))))';
 
   const mediaContent = (
     <>
@@ -43,7 +43,7 @@ export function CinematicHeroSection({ data }: Props) {
       ) : image ? (
         <img src={image} alt="" className="h-[110%] w-full object-cover" />
       ) : (
-        <div className="h-full w-full bg-[var(--token-section-bg,var(--style-section-bg,var(--brand-dark,#09090b)))]" />
+        <div className="h-full w-full bg-[var(--token-section-bg,var(--token-section-bg, var(--style-section-bg,var(--brand-dark,#09090b))))]" />
       )}
       <div className="absolute inset-0" style={{ background: overlay }} />
       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black to-transparent" />
@@ -51,7 +51,7 @@ export function CinematicHeroSection({ data }: Props) {
   );
 
   return (
-    <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-[var(--token-section-bg,var(--style-section-bg,#000))]" style={{ color: heroBody }}>
+    <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-[var(--token-section-bg,var(--token-section-bg, var(--style-section-bg,#000)))]" style={{ color: heroBody }}>
       {imageEffect === 'kenBurns' ? (
         <ImageEffectWrapper effect="kenBurns" intensity={imageEffectIntensity} className="absolute inset-0">
           {mediaContent}
@@ -63,13 +63,13 @@ export function CinematicHeroSection({ data }: Props) {
       )}
 
       <motion.div style={{ y: copyY, opacity }} className={`relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-center px-6 pb-14 pt-28 md:pb-16 md:pt-32 ${align === 'center' ? 'items-center text-center' : 'items-start text-left'}`}>
-        {eyebrow && <div className="mb-5 inline-flex rounded-full border border-[var(--token-badge-border,var(--style-badge-border,rgba(255,255,255,0.20)))] bg-[var(--token-badge-bg,var(--style-badge-bg,rgba(255,255,255,0.14)))] px-4 py-2 text-xs font-semibold uppercase text-[var(--token-badge-text,var(--style-badge-text,#fff))] backdrop-blur">{eyebrow}</div>}
+        {eyebrow && <div className="mb-5 inline-flex rounded-full border border-[var(--token-badge-border,var(--token-badge-border, var(--style-badge-border,rgba(255,255,255,0.20))))] bg-[var(--token-badge-bg,var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,0.14))))] px-4 py-2 text-xs font-semibold uppercase text-[var(--token-badge-text,var(--token-badge-text, var(--style-badge-text,#fff)))] backdrop-blur">{eyebrow}</div>}
         {headline && <h1 className="max-w-5xl text-5xl font-black leading-[0.95] md:text-7xl lg:text-8xl" style={{ color: heroText }}>{headline}</h1>}
         {subline && <p className={`mt-6 max-w-2xl text-base leading-8 md:text-xl ${align === 'center' ? 'mx-auto' : ''}`} style={{ color: heroBody }}>{plain(subline)}</p>}
 
         <div className="mt-9 flex flex-wrap items-center gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg,var(--brand-btn-bg,var(--style-accent-color,#fff)))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text,var(--brand-btn-text,#111))] shadow-xl transition hover:brightness-110">{primaryCta.label}<ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--style-border-color,rgba(255,255,255,0.32))] bg-white/10 px-6 py-3 text-sm font-bold backdrop-blur transition hover:bg-white/15" style={{ color: heroText }}><Play size={15} />{secondaryCta.label}</a>}
+          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg,var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,#fff))))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text,var(--token-btn-text, var(--brand-btn-text,#111)))] shadow-xl transition hover:brightness-110">{primaryCta.label}<ArrowRight size={16} /></a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.32)))] bg-white/10 px-6 py-3 text-sm font-bold backdrop-blur transition hover:bg-white/15" style={{ color: heroText }}><Play size={15} />{secondaryCta.label}</a>}
         </div>
 
         {facts.length > 0 && (

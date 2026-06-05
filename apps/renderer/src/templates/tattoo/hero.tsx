@@ -60,7 +60,7 @@ function HeroClassic({ headline, subline, bgImage, bgImageMobile, overlayOpacity
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.7 }}
             className="mt-10 flex flex-col sm:flex-row gap-4">
             {primaryCta && (
-              <a href={primaryCta.href} className="inline-flex items-center justify-center px-8 py-4 font-bold uppercase tracking-wider text-sm transition-colors" style={{ background: 'var(--brand-btn-bg, white)', color: 'var(--brand-btn-text, black)' }}>
+              <a href={primaryCta.href} className="inline-flex items-center justify-center px-8 py-4 font-bold uppercase tracking-wider text-sm transition-colors" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, white))', color: 'var(--token-btn-text, var(--brand-btn-text, black))' }}>
                 {primaryCta.label}
               </a>
             )}
@@ -91,7 +91,7 @@ function HeroModern({ headline, subline, bgImage, bgImageMobile, overlayOpacity,
         <h1 className="text-4xl sm:text-6xl font-light text-[color:var(--token-on-dark-heading,#ffffff)] tracking-tight">{headline}</h1>
         {subline && <p className="mt-4 text-[color:var(--token-on-dark-heading,#ffffff)/50] max-w-lg" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-col sm:flex-row gap-3">
-          {primaryCta && <a href={primaryCta.href} className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-sm" style={{ background: 'var(--brand-btn-bg, white)', color: 'var(--brand-btn-text, black)' }}>{primaryCta.label}</a>}
+          {primaryCta && <a href={primaryCta.href} className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-sm" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, white))', color: 'var(--token-btn-text, var(--brand-btn-text, black))' }}>{primaryCta.label}</a>}
           {secondaryCta && <a href={secondaryCta.href} className="inline-flex items-center justify-center px-6 py-3 border border-[color:var(--token-card-border,#ffffff)/20] text-[color:var(--token-on-dark-heading,#ffffff)/80] text-sm rounded-sm">{secondaryCta.label}</a>}
         </div>
       </div>
@@ -116,7 +116,7 @@ function HeroBold({ headline, subline, bgImage, bgImageMobile, overlayOpacity, p
         </h1>
         {subline && <p className="mt-6 text-[color:var(--token-on-dark-heading,#ffffff)/50] text-lg max-w-lg mx-auto" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-          {primaryCta && <a href={primaryCta.href} className="px-10 py-4 font-black uppercase tracking-wider text-sm transition-colors shadow-[4px_4px_0_rgba(0,0,0,1)]" style={{ background: 'var(--brand-btn-bg, #dc2626)', color: 'var(--brand-btn-text, white)' }}>{primaryCta.label}</a>}
+          {primaryCta && <a href={primaryCta.href} className="px-10 py-4 font-black uppercase tracking-wider text-sm transition-colors shadow-[4px_4px_0_rgba(0,0,0,1)]" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #dc2626))', color: 'var(--token-btn-text, var(--brand-btn-text, white))' }}>{primaryCta.label}</a>}
           {secondaryCta && <a href={secondaryCta.href} className="px-10 py-4 border-2 border-[color:var(--token-card-border,#ffffff)] text-[color:var(--token-on-dark-heading,#ffffff)] font-black uppercase tracking-wider text-sm hover:bg-[var(--token-card-bg,#ffffff)] hover:text-[color:var(--token-heading,#000000)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.2)]">{secondaryCta.label}</a>}
         </div>
       </div>

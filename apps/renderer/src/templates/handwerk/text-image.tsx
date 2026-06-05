@@ -23,7 +23,7 @@ export function TextImageSection({ data, variant }: Props) {
   const imageLeft = layout === 'image-left';
 
   return (
-    <section className="py-20 px-6 bg-[var(--token-section-bg, var(--style-section-bg,#fff))] overflow-hidden">
+    <section className="py-20 px-6 bg-[var(--token-section-bg, var(--token-section-bg, var(--style-section-bg,#fff)))] overflow-hidden">
       <div className={`max-w-6xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center ${imageLeft ? '' : 'md:[&>*:first-child]:order-2'}`}>
         {image && (
           <motion.div initial={{ opacity: 0, x: imageLeft ? -30 : 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">

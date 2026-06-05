@@ -19,9 +19,9 @@ export function VerticalTimelineSection({ data }: Props) {
   const subline = (data.subline as string) || '';
   const steps = (data.steps as Step[]) || [];
   const accentColor = (data.accentColor as string) || 'var(--token-icon, var(--brand-primary, #18181b))';
-  const lineColor = (data.lineColor as string) || 'var(--token-divider, var(--style-divider-color, #e4e4e7))';
-  const bgColor = (data.bgColor as string) || 'var(--token-section-bg, var(--style-section-bg, transparent))';
-  const textColor = (data.textColor as string) || 'var(--token-body, var(--style-body-color, inherit))';
+  const lineColor = (data.lineColor as string) || 'var(--token-divider, var(--token-divider, var(--style-divider-color, #e4e4e7)))';
+  const bgColor = (data.bgColor as string) || 'var(--token-section-bg, var(--token-section-bg, var(--style-section-bg, transparent)))';
+  const textColor = (data.textColor as string) || 'var(--token-body, var(--token-body, var(--style-body-color, inherit)))';
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start 80%', 'end 60%'] });
@@ -37,8 +37,8 @@ export function VerticalTimelineSection({ data }: Props) {
             transition={{ duration: 0.5 }}
             className="text-center mb-14"
           >
-            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,inherit)))]">{headline}</h2>}
-            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--token-subheading, var(--style-subheading-color,var(--style-text-secondary,#71717a)))]">{plain(subline)}</p>}
+            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[var(--token-heading, var(--token-heading, var(--style-heading-color,var(--style-text-primary,inherit))))]">{headline}</h2>}
+            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--token-subheading, var(--token-subheading, var(--style-subheading-color,var(--style-text-secondary,#71717a))))]">{plain(subline)}</p>}
           </motion.div>
         )}
 
@@ -88,14 +88,14 @@ function TimelineStep({ step, index, total, accentColor }: { step: Step; index: 
           <span className="text-xs font-bold uppercase tracking-wider" style={{ color: accentColor }}>
             Schritt {number}/{String(total).padStart(2, '0')}
           </span>
-        {step.timeLabel && <span className="text-xs text-[var(--token-muted, var(--style-text-muted,#a1a1aa))]">{step.timeLabel}</span>}
+        {step.timeLabel && <span className="text-xs text-[var(--token-muted, var(--token-muted, var(--style-text-muted,#a1a1aa)))]">{step.timeLabel}</span>}
         </div>
         <h3 className="text-xl md:text-2xl font-bold mt-1">{step.title}</h3>
-        {step.text && <p className="mt-2 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#71717a)))] leading-relaxed">{plain(step.text)}</p>}
+        {step.text && <p className="mt-2 text-[var(--token-body, var(--token-body, var(--style-body-color,var(--style-text-secondary,#71717a))))] leading-relaxed">{plain(step.text)}</p>}
         {step.checkmarks && step.checkmarks.length > 0 && (
           <ul className="mt-3 space-y-1.5">
             {step.checkmarks.map((item, j) => (
-              <li key={j} className="flex items-center gap-2 text-sm text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b)))]">
+              <li key={j} className="flex items-center gap-2 text-sm text-[var(--token-body, var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b))))]">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
                   <circle cx="8" cy="8" r="8" fill={accentColor} opacity={0.12} />
                   <path d="M5 8l2 2 4-4" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

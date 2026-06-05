@@ -34,7 +34,7 @@ const PREVIEW_CONFIG: BookingConfig = {
   ],
 };
 
-const FORM_CONTROL_CLASS = 'rounded-xl border border-[var(--booking-border-color,rgba(9,9,11,.16))] bg-[var(--booking-card-bg,#fff)] px-4 py-3 text-sm text-[var(--booking-text-secondary,#09090b)] outline-none placeholder:text-[var(--booking-muted-color,rgba(9,9,11,.45))] focus:border-[var(--token-btn-bg, var(--brand-btn-bg,var(--booking-accent-color,#09090b)))]';
+const FORM_CONTROL_CLASS = 'rounded-xl border border-[var(--booking-border-color,rgba(9,9,11,.16))] bg-[var(--booking-card-bg,#fff)] px-4 py-3 text-sm text-[var(--booking-text-secondary,#09090b)] outline-none placeholder:text-[var(--booking-muted-color,rgba(9,9,11,.45))] focus:border-[var(--token-btn-bg, var(--token-btn-bg, var(--brand-btn-bg,var(--booking-accent-color,#09090b))))]';
 const FORM_LABEL_CLASS = 'grid gap-1 text-sm font-semibold text-[var(--booking-text-secondary,#09090b)]';
 const FORM_MUTED_CLASS = 'text-[var(--booking-muted-color,rgba(9,9,11,.55))]';
 const BOOKING_NOTICE_CLASS = 'rounded-2xl p-5 text-sm';
@@ -314,7 +314,7 @@ export function BookingWidgetSection({ data }: SectionProps) {
               <IntakeQuestionFields service={selectedService} />
               <textarea name="message" rows={3} placeholder="Nachricht optional" className={FORM_CONTROL_CLASS} />
               {status === 'error' && <p className="text-sm" style={BOOKING_ERROR_STYLE}>{error}</p>}
-              <button disabled={status === 'loading'} className="mt-1 inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-60" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #09090b))', color: 'var(--token-btn-text, var(--brand-btn-text, #ffffff))' }}>
+              <button disabled={status === 'loading'} className="mt-1 inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-60" style={{ background: 'var(--token-btn-bg, var(--token-btn-bg, var(--brand-btn-bg, #09090b)))', color: 'var(--token-btn-text, var(--token-btn-text, var(--brand-btn-text, #ffffff)))' }}>
                 {status === 'loading' && <Loader2 className="animate-spin" size={17} />}
                 {actionLabel}
               </button>
@@ -390,7 +390,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
           <div className="mt-6 grid gap-3 text-sm sm:grid-cols-3">
             {['Datum wählen', 'Slots prüfen', config?.mode === 'instant' ? 'Direkt buchen' : 'Anfrage senden'].map((item, index) => (
               <div key={item} className="rounded-2xl border p-3" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)', color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>
-                <span className="mb-2 grid h-7 w-7 place-items-center rounded-full text-xs font-black" style={{ background: 'var(--booking-accent-color, #f43f5e)', color: 'var(--token-btn-text, var(--brand-btn-text, #09090b))' }}>{index + 1}</span>
+                <span className="mb-2 grid h-7 w-7 place-items-center rounded-full text-xs font-black" style={{ background: 'var(--booking-accent-color, #f43f5e)', color: 'var(--token-btn-text, var(--token-btn-text, var(--brand-btn-text, #09090b)))' }}>{index + 1}</span>
                 {item}
               </div>
             ))}
@@ -422,7 +422,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
                 <p className={`mb-2 text-xs font-bold uppercase tracking-[0.14em] ${FORM_MUTED_CLASS}`}>Verfügbare Uhrzeiten</p>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {loading ? <p className="col-span-full rounded-xl p-4 text-sm" style={BOOKING_NOTICE_STYLE}>Slots werden geladen...</p> : slots.length ? slots.map((slot) => (
-                    <button key={slot.value} type="button" onClick={() => setSelectedSlot(slot.value)} className="rounded-xl border px-3 py-3 text-sm font-bold transition hover:brightness-95" style={selectedSlot === slot.value ? { borderColor: 'var(--token-btn-bg, var(--brand-btn-bg, #09090b))', background: 'var(--token-btn-bg, var(--brand-btn-bg, #09090b))', color: 'var(--token-btn-text, var(--brand-btn-text, #ffffff))' } : { borderColor: 'var(--booking-border-color, rgba(9,9,11,.16))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }}>
+                    <button key={slot.value} type="button" onClick={() => setSelectedSlot(slot.value)} className="rounded-xl border px-3 py-3 text-sm font-bold transition hover:brightness-95" style={selectedSlot === slot.value ? { borderColor: 'var(--token-btn-bg, var(--token-btn-bg, var(--brand-btn-bg, #09090b)))', background: 'var(--token-btn-bg, var(--token-btn-bg, var(--brand-btn-bg, #09090b)))', color: 'var(--token-btn-text, var(--token-btn-text, var(--brand-btn-text, #ffffff)))' } : { borderColor: 'var(--booking-border-color, rgba(9,9,11,.16))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }}>
                       {slot.label}
                     </button>
                   )) : <p className="col-span-full rounded-xl p-4 text-sm" style={BOOKING_NOTICE_STYLE}>Für diese Auswahl sind keine freien Uhrzeiten verfügbar.</p>}
@@ -452,7 +452,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
               <IntakeQuestionFields service={selectedService} />
               <textarea name="message" rows={3} placeholder="Nachricht optional" className={FORM_CONTROL_CLASS} />
               {status === 'error' && <p className="text-sm" style={BOOKING_ERROR_STYLE}>{error}</p>}
-              <button disabled={status === 'loading' || !selectedSlot} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-50" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #09090b))', color: 'var(--token-btn-text, var(--brand-btn-text, #ffffff))' }}>
+              <button disabled={status === 'loading' || !selectedSlot} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-50" style={{ background: 'var(--token-btn-bg, var(--token-btn-bg, var(--brand-btn-bg, #09090b)))', color: 'var(--token-btn-text, var(--token-btn-text, var(--brand-btn-text, #ffffff)))' }}>
                 {status === 'loading' && <Loader2 className="animate-spin" size={17} />}
                 {submitLabel}
               </button>
@@ -554,7 +554,7 @@ export function BookingDateRangeSection({ data }: SectionProps) {
               <IntakeQuestionFields service={selectedService} />
               <textarea name="message" rows={3} placeholder="Wünsche, Anlass oder weitere Infos" className={FORM_CONTROL_CLASS} />
               {status === 'error' && <p className="text-sm" style={BOOKING_ERROR_STYLE}>{error}</p>}
-              <button disabled={status === 'loading'} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-60" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #09090b))', color: 'var(--token-btn-text, var(--brand-btn-text, #ffffff))' }}>
+              <button disabled={status === 'loading'} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-60" style={{ background: 'var(--token-btn-bg, var(--token-btn-bg, var(--brand-btn-bg, #09090b)))', color: 'var(--token-btn-text, var(--token-btn-text, var(--brand-btn-text, #ffffff)))' }}>
                 {status === 'loading' && <Loader2 className="animate-spin" size={17} />}
                 {submitLabel}
               </button>
@@ -643,10 +643,10 @@ export function AvailabilityCalendarSection({ data }: SectionProps) {
             <div key={label} className="py-1 text-center text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--booking-muted-color, rgba(255,255,255,.52))' }}>{label}</div>
           ))}
           {days.map((day) => (
-          <button key={day.date} type="button" onClick={() => setSelectedDate(day.date)} className="relative grid aspect-square place-items-center rounded-lg border text-sm font-bold transition hover:brightness-110" style={{ borderColor: selectedDate === day.date ? 'var(--token-btn-bg, var(--brand-btn-bg, #ffffff))' : 'var(--booking-border-color, rgba(255,255,255,.14))', background: selectedDate === day.date ? 'var(--token-btn-bg, var(--brand-btn-bg, #ffffff))' : day.inMonth ? 'transparent' : 'rgba(255,255,255,.03)', color: selectedDate === day.date ? 'var(--token-btn-text, var(--brand-btn-text, #09090b))' : 'var(--booking-heading-color, #ffffff)', opacity: day.inMonth ? 1 : 0.42 }} aria-label={`${day.label}, ${day.day}. ${counts[day.date] ?? 0} freie Slots`}>
+          <button key={day.date} type="button" onClick={() => setSelectedDate(day.date)} className="relative grid aspect-square place-items-center rounded-lg border text-sm font-bold transition hover:brightness-110" style={{ borderColor: selectedDate === day.date ? 'var(--token-btn-bg, var(--token-btn-bg, var(--brand-btn-bg, #ffffff)))' : 'var(--booking-border-color, rgba(255,255,255,.14))', background: selectedDate === day.date ? 'var(--token-btn-bg, var(--token-btn-bg, var(--brand-btn-bg, #ffffff)))' : day.inMonth ? 'transparent' : 'rgba(255,255,255,.03)', color: selectedDate === day.date ? 'var(--token-btn-text, var(--token-btn-text, var(--brand-btn-text, #09090b)))' : 'var(--booking-heading-color, #ffffff)', opacity: day.inMonth ? 1 : 0.42 }} aria-label={`${day.label}, ${day.day}. ${counts[day.date] ?? 0} freie Slots`}>
             {day.day}
-            {day.isToday ? <span className="absolute left-1 top-1 h-1.5 w-1.5 rounded-full" style={{ background: selectedDate === day.date ? 'var(--token-btn-text, var(--brand-btn-text, #09090b))' : 'var(--booking-accent-color, #f43f5e)' }} /> : null}
-            {(counts[day.date] || 0) > 0 ? <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full" style={{ background: selectedDate === day.date ? 'var(--token-btn-text, var(--brand-btn-text, #09090b))' : 'var(--booking-accent-color, #f43f5e)' }} /> : null}
+            {day.isToday ? <span className="absolute left-1 top-1 h-1.5 w-1.5 rounded-full" style={{ background: selectedDate === day.date ? 'var(--token-btn-text, var(--token-btn-text, var(--brand-btn-text, #09090b)))' : 'var(--booking-accent-color, #f43f5e)' }} /> : null}
+            {(counts[day.date] || 0) > 0 ? <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full" style={{ background: selectedDate === day.date ? 'var(--token-btn-text, var(--token-btn-text, var(--brand-btn-text, #09090b)))' : 'var(--booking-accent-color, #f43f5e)' }} /> : null}
           </button>
           ))}
         </div>
@@ -661,7 +661,7 @@ export function ResourceBookingShowcaseSection({ data }: SectionProps) {
       <div className="grid gap-3">
         {['Ressource wählen', 'Zeitraum prüfen', 'Anfrage senden'].map((label, index) => (
           <div key={label} className="flex items-center gap-3 rounded-2xl border p-4" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 10%, transparent)' }}>
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-black" style={{ background: 'var(--booking-accent-color, #f43f5e)', color: 'var(--token-btn-text, var(--brand-btn-text, #09090b))' }}>{index + 1}</span>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-black" style={{ background: 'var(--booking-accent-color, #f43f5e)', color: 'var(--token-btn-text, var(--token-btn-text, var(--brand-btn-text, #09090b)))' }}>{index + 1}</span>
             <p className="font-semibold" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{label}</p>
           </div>
         ))}
@@ -685,7 +685,7 @@ export function BookingCtaProSection({ data }: SectionProps) {
           <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{(data.headline as string) || 'Jetzt Wunschtermin sichern'}</h2>
           <p className="mt-2 text-sm leading-6" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.74))' }}>{(data.subline as string) || 'Direkt buchen oder erst unverbindlich anfragen. Das System passt sich dem freigeschalteten Booking-Modus an.'}</p>
         </div>
-        <a href="#booking" className="inline-flex shrink-0 items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-6 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #ffffff))', color: 'var(--token-btn-text, var(--brand-btn-text, #09090b))' }}>
+        <a href="#booking" className="inline-flex shrink-0 items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-6 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--token-btn-bg, var(--token-btn-bg, var(--brand-btn-bg, #ffffff)))', color: 'var(--token-btn-text, var(--token-btn-text, var(--brand-btn-text, #09090b)))' }}>
           {(data.submitLabel as string) || 'Zum Booking'}
         </a>
       </div>
@@ -702,7 +702,7 @@ function BookingShell({ data, icon, defaultBadge, defaultHeadline, children }: {
           <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}>{icon}{(data.badge as string) || defaultBadge}</p>
           <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{(data.headline as string) || defaultHeadline}</h2>
           <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{(data.subline as string) || 'Ein flexibler Booking-Einstieg für Termine, Tage, Räume, Ressourcen oder Anfragen.'}</p>
-          <a href={(data.ctaHref as string) || '#booking-form'} className="mt-6 inline-flex items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #ffffff))', color: 'var(--token-btn-text, var(--brand-btn-text, #09090b))' }}>{(data.submitLabel as string) || 'Anfrage starten'}</a>
+          <a href={(data.ctaHref as string) || '#booking-form'} className="mt-6 inline-flex items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--token-btn-bg, var(--token-btn-bg, var(--brand-btn-bg, #ffffff)))', color: 'var(--token-btn-text, var(--token-btn-text, var(--brand-btn-text, #09090b)))' }}>{(data.submitLabel as string) || 'Anfrage starten'}</a>
         </div>
         {children}
       </div>
