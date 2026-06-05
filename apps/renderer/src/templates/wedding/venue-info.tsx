@@ -138,7 +138,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
           {accommodations.length > 0 && (
             <div className="grid md:grid-cols-2 gap-8">
               {accommodations.map((a, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-t border-[color:var(--token-card-border,#e4e4e7)] pt-6">
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-t border-[color:var(--token-card-border,#e4e4e7)] pt-6" data-edit-collection="accommodations" data-edit-index={i}>
                   {a.image && <div className="relative h-40 mb-4"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <h4 className="font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{a.name}</h4>
                   {a.description && <div className="text-[color:var(--token-muted,#71717a)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: a.description }} />}
@@ -175,7 +175,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
           {accommodations.length > 0 && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {accommodations.map((a, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border,#18181b)] overflow-hidden">
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border,#18181b)] overflow-hidden" data-edit-collection="accommodations" data-edit-index={i}>
                   {a.image && <div className="relative h-40"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <div className="p-5">
                     <h4 className="font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{a.name}</h4>
@@ -220,7 +220,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
             <h3 className="text-2xl font-semibold text-[color:var(--token-heading,#18181b)] text-center mb-8">Unterkünfte</h3>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {accommodations.map((a, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl overflow-hidden bg-[var(--token-card-bg,#ffffff)] shadow-sm border border-[color:var(--token-card-border,#f4f4f5)]">
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl overflow-hidden bg-[var(--token-card-bg,#ffffff)] shadow-sm border border-[color:var(--token-card-border,#f4f4f5)]" data-edit-collection="accommodations" data-edit-index={i}>
                   {a.image && <div className="relative h-40"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <div className="p-5">
                     <h4 className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{a.name}</h4>

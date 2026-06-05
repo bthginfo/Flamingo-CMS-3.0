@@ -69,7 +69,7 @@ function ScheduleModern({ badge, headline, events }: P) {
         <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-20 break-words" data-edit-path="headline">{headline}</h2>
         <div className="space-y-0">
           {events.map((event, i) => (
-            <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="grid grid-cols-[80px_1fr] md:grid-cols-[120px_1fr] border-t border-[color:var(--token-card-border,#e4e4e7)] py-8">
+            <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="grid grid-cols-[80px_1fr] md:grid-cols-[120px_1fr] border-t border-[color:var(--token-card-border,#e4e4e7)] py-8" data-edit-collection="events" data-edit-index={i}>
               <span className="text-sm font-light text-[color:var(--token-body,#a1a1aa)] pt-1">{event.time}</span>
               <div>
                 <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{event.title}</h3>

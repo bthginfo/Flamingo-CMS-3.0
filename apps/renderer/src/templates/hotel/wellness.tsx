@@ -53,7 +53,7 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
       {features.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {features.map((feature, index) => (
-            <motion.div key={`${feature.title}-${index}`} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[color:var(--token-card-border,rgba(0,0,0,0.10))] bg-[var(--token-card-bg,#ffffff)] p-5 shadow-sm">
+            <motion.div key={`${feature.title}-${index}`} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[color:var(--token-card-border,rgba(0,0,0,0.10))] bg-[var(--token-card-bg,#ffffff)] p-5 shadow-sm" data-edit-collection="features" data-edit-index={index}>
               <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon,var(--brand-primary,#1a5276))_12%,transparent)] text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={feature.icon || 'heart'} size={20} /></div>
               <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{feature.title || ''}</h3>
               {feature.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: feature.text }} />}
@@ -64,7 +64,7 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
       {treatments.length > 0 && (
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {treatments.map((treatment, index) => (
-          <motion.article key={`${treatment.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 shadow-md">
+          <motion.article key={`${treatment.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 shadow-md" data-edit-collection="treatments" data-edit-index={index}>
             {treatment.image && <div className="relative mb-4 aspect-[16/9] overflow-hidden rounded-xl"><Image src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="flex justify-between gap-4"><h3 className="font-bold text-[color:var(--token-heading,#18181b)]">{treatment.title || ''}</h3><span className="text-sm text-[color:var(--token-muted,#52525b)]">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: treatment.text }} />}
@@ -91,7 +91,7 @@ function WellnessModern({ headline, subline, badgeText, introText, imagePrimary,
         {introText && <div className="font-light text-[color:var(--token-muted,#52525b)] leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-8 grid gap-4">
           {features.map((feature, index) => (
-            <div key={`${feature.title}-${index}`} className="flex gap-4 border-t border-black/10 pt-4">
+            <div key={`${feature.title}-${index}`} className="flex gap-4 border-t border-black/10 pt-4" data-edit-collection="features" data-edit-index={index}>
               <DynamicIcon name={feature.icon || 'heart'} size={18} className="text-[color:var(--token-muted,#52525b)]" />
               <div><h3 className="font-light text-[color:var(--token-heading,#18181b)]">{feature.title || ''}</h3>{feature.text && <div className="text-sm font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: feature.text }} />}</div>
             </div>
@@ -105,7 +105,7 @@ function WellnessModern({ headline, subline, badgeText, introText, imagePrimary,
           {imageSecondary && <div className="relative aspect-square overflow-hidden border-t border-black/10"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
         {treatments.map((treatment, index) => (
-          <article key={`${treatment.title}-${index}`} className="border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-6">
+          <article key={`${treatment.title}-${index}`} className="border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-6" data-edit-collection="treatments" data-edit-index={index}>
             {treatment.image && <div className="relative mb-5 aspect-[16/9] overflow-hidden"><Image src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="flex justify-between gap-4"><h3 className="font-light text-[color:var(--token-heading,#18181b)]">{treatment.title || ''}</h3><span className="text-sm font-light text-[color:var(--token-muted,#52525b)]">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: treatment.text }} />}
@@ -131,7 +131,7 @@ function WellnessBold({ headline, subline, badgeText, introText, imagePrimary, i
         {introText && <div className="text-[color:var(--token-muted,#52525b)] leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-8 grid gap-4">
           {features.map((feature, index) => (
-            <div key={`${feature.title}-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4">
+            <div key={`${feature.title}-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4" data-edit-collection="features" data-edit-index={index}>
               <div className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={feature.icon || 'heart'} size={20} /></div>
               <div><h3 className="font-black uppercase text-[color:var(--token-heading,#18181b)]">{feature.title || ''}</h3>{feature.text && <div className="text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: feature.text }} />}</div>
             </div>
@@ -145,7 +145,7 @@ function WellnessBold({ headline, subline, badgeText, introText, imagePrimary, i
           {imageSecondary && <div className="relative aspect-square overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
         {treatments.map((treatment, index) => (
-          <article key={`${treatment.title}-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] p-5 shadow-[4px_4px_0_#111827]">
+          <article key={`${treatment.title}-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="treatments" data-edit-index={index}>
             {treatment.image && <div className="relative mb-4 aspect-[16/9] overflow-hidden"><Image src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="flex justify-between gap-4"><h3 className="font-black uppercase text-[color:var(--token-heading,#18181b)]">{treatment.title || ''}</h3><span className="text-sm font-bold text-[color:var(--token-muted,#52525b)]">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: treatment.text }} />}

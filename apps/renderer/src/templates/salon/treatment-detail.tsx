@@ -31,7 +31,7 @@ function TreatmentClassic({ headline, subline, badgeText, treatments }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {treatments.map((item, i) => (
-          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] shadow-md">
+          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] shadow-md" data-edit-collection="treatments" data-edit-index={i}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="50vw" /></div>}
             <div className="p-5">
               {(item.resultLabel || item.durationLabel || item.priceLabel) && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">{[item.resultLabel, item.durationLabel, item.priceLabel].filter(Boolean).join(' / ')}</p>}
@@ -58,7 +58,7 @@ function TreatmentModern({ headline, subline, badgeText, treatments }: Props) {
       </div>
       <div className="grid gap-8 md:grid-cols-2">
         {treatments.map((item, i) => (
-          <article key={`${item.title}-${i}`} className="group">
+          <article key={`${item.title}-${i}`} className="group" data-edit-collection="treatments" data-edit-index={i}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="mt-4">
               {(item.resultLabel || item.durationLabel || item.priceLabel) && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{[item.resultLabel, item.durationLabel, item.priceLabel].filter(Boolean).join(' / ')}</p>}
@@ -85,7 +85,7 @@ function TreatmentBold({ headline, subline, badgeText, treatments }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {treatments.map((item, i) => (
-          <article key={`${item.title}-${i}`} className="group overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow, var(--brand-accent))]">
+          <article key={`${item.title}-${i}`} className="group overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow, var(--brand-accent))]" data-edit-collection="treatments" data-edit-index={i}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="p-5">
               {(item.resultLabel || item.durationLabel || item.priceLabel) && <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]">{[item.resultLabel, item.durationLabel, item.priceLabel].filter(Boolean).join(' / ')}</span>}

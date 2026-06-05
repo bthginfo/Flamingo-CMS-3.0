@@ -56,7 +56,7 @@ export function NewsPreviewSection({ data }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
-          >
+           data-edit-collection="items" data-edit-index={i}>
             <Link href={`${detailBasePath}/${item.slug}`} className="group block">
               {item.image && (
                 <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-4">

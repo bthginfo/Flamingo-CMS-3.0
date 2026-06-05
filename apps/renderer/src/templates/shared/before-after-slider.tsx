@@ -58,7 +58,7 @@ export function BeforeAfterSliderSection({ data }: Props) {
                 onClick={() => setActiveSlide(i)}
                 className="w-2.5 h-2.5 rounded-full transition-all"
                 style={{ backgroundColor: i === activeSlide ? handleColor : '#d4d4d8' }}
-              />
+               data-edit-collection="slides" data-edit-index={i}/>
             ))}
           </div>
         )}

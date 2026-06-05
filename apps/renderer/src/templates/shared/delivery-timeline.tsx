@@ -42,7 +42,7 @@ export function DeliveryTimelineSection({ data }: Props) {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] }}
               className="text-center relative"
-            >
+             data-edit-collection="steps" data-edit-index={i}>
               {/* Step circle */}
               <div className="relative mx-auto w-24 h-24 rounded-full bg-[var(--token-icon, var(--brand-primary,#2563eb))]/5 border-2 border-[var(--token-icon, var(--brand-primary,#2563eb))]/20 flex flex-col items-center justify-center mb-5">
                 {step.icon ? (

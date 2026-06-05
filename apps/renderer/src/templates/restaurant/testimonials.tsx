@@ -26,7 +26,7 @@ export function RestaurantTestimonialsSection({ data, styleVariant }: SectionPro
 type Props = { headline: string; subline: string; badgeText: string; ratingValue: string; ratingCount: string; items: Testimonial[]; ctaPrimary: ButtonValue };
 
 function Stars({ count }: { count: number }) {
-  return <div className="flex gap-0.5">{Array.from({ length: count || 5 }).map((_, i) => <Star key={i} size={14} fill="currentColor" />)}</div>;
+  return <div className="flex gap-0.5">{Array.from({ length: count || 5 }).map((_, i) => <Star key={i} size={14} fill="currentColor"  data-edit-collection="count" data-edit-index={i}/>)}</div>;
 }
 
 function TestimonialsClassic({ headline, subline, badgeText, ratingValue, ratingCount, items, ctaPrimary }: Props) {
@@ -40,7 +40,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
-          <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-6 shadow-md">
+          <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-6 shadow-md" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading,#18181b)]">&ldquo;{plain(item.quote)}&rdquo;</p>}
             <div className="mt-4 border-t border-black/10 pt-4">
@@ -67,7 +67,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
       </div>
       <div className="grid gap-8 md:grid-cols-3">
         {items.map((item, i) => (
-          <article key={`${item.name}-${i}`} className="border-t border-black/10 pt-6">
+          <article key={`${item.name}-${i}`} className="border-t border-black/10 pt-6" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm font-light leading-7 text-[color:var(--token-heading,#18181b)]">&ldquo;{plain(item.quote)}&rdquo;</p>}
             <p className="mt-4 font-medium text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
@@ -92,7 +92,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
       </div>
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
-          <article key={`${item.name}-${i}`} className="border-2 border-[color:var(--token-card-border,#ffffff)/20] p-6 shadow-[4px_4px_0_rgba(255,255,255,0.15)]">
+          <article key={`${item.name}-${i}`} className="border-2 border-[color:var(--token-card-border,#ffffff)/20] p-6 shadow-[4px_4px_0_rgba(255,255,255,0.15)]" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm leading-6">&ldquo;{plain(item.quote)}&rdquo;</p>}
             <div className="mt-4 border-t border-[color:var(--token-card-border,#ffffff)/20] pt-4">

@@ -21,7 +21,7 @@ export function HeaderBannerSection({ data }: Props) {
     <div className={`relative ${bgClass} text-xs py-2 text-center`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-center gap-6">
         {items.map((item, i) => (
-          <span key={i}>
+          <span key={i} data-edit-collection="items" data-edit-index={i}>
             {item.link ? (
               <a href={item.link} className="hover:underline font-medium" data-edit-path="text">{plain(item.text)}</a>
             ) : (

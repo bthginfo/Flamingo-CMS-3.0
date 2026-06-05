@@ -72,7 +72,7 @@ function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, do
         {/* Panels track */}
         <motion.div className="flex h-full" style={{ x, width: `${panels.length * 100}%` }}>
           {panels.map((panel, i) => (
-            <div key={i} className="relative flex-shrink-0 h-full" style={{ width: `${100 / panels.length}%` }}>
+            <div key={i} className="relative flex-shrink-0 h-full" style={{ width: `${100 / panels.length}%` }} data-edit-collection="panels" data-edit-index={i}>
               <img src={panel.image} alt={panel.title} className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0" style={{ backgroundColor: panel.overlayColor || 'rgba(0,0,0,0.4)' }} />
               <div className="relative z-10 flex flex-col justify-end h-full p-8 md:p-14 max-w-lg">
@@ -102,7 +102,7 @@ function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, do
               key={i}
               className="w-2 h-2 rounded-full transition-all duration-300"
               style={{ backgroundColor: dotColor, opacity: i === activeIndex ? 1 : 0.3, transform: i === activeIndex ? 'scale(1.3)' : 'scale(1)' }}
-            />
+             data-edit-collection="panels" data-edit-index={i}/>
           ))}
         </div>
       </div>
@@ -133,7 +133,7 @@ function MobileCarousel({ headline, subline, panels, bgColor, textColor, dotColo
 
       <div ref={scrollRef} onScroll={handleScroll} className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide">
         {panels.map((panel, i) => (
-          <div key={i} className="flex-shrink-0 w-full snap-center px-4">
+          <div key={i} className="flex-shrink-0 w-full snap-center px-4" data-edit-collection="panels" data-edit-index={i}>
             <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
               <img src={panel.image} alt={panel.title} className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0" style={{ backgroundColor: panel.overlayColor || 'rgba(0,0,0,0.4)' }} />
@@ -151,7 +151,7 @@ function MobileCarousel({ headline, subline, panels, bgColor, textColor, dotColo
 
       <div className="flex justify-center gap-2 mt-4">
         {panels.map((_, i) => (
-          <div key={i} className="w-2 h-2 rounded-full transition-all" style={{ backgroundColor: dotColor, opacity: i === activeIndex ? 1 : 0.3 }} />
+          <div key={i} className="w-2 h-2 rounded-full transition-all" style={{ backgroundColor: dotColor, opacity: i === activeIndex ? 1 : 0.3 }}  data-edit-collection="panels" data-edit-index={i}/>
         ))}
       </div>
     </section>

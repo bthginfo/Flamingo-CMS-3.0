@@ -33,7 +33,7 @@ function Classic({ headline, subline, members, ref, inView }: TProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
         {members.map((m, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="group relative bg-[var(--token-card-bg,#ffffff)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[color:var(--token-card-border,#f4f4f5)]">
+            className="group relative bg-[var(--token-card-bg,#ffffff)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[color:var(--token-card-border,#f4f4f5)]" data-edit-collection="members" data-edit-index={i}>
             <div className="relative aspect-[3/4] overflow-hidden">
               {m.image ? (
                 <Image src={m.image} alt={m.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 25vw" />
@@ -72,7 +72,7 @@ function Modern({ headline, subline, members, ref, inView }: TProps) {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         {members.map((m, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }}
-            className="group">
+            className="group" data-edit-collection="members" data-edit-index={i}>
             <div className="relative aspect-square rounded-xl overflow-hidden mb-3">
               {m.image ? (
                 <Image src={m.image} alt={m.name} fill className="object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500" sizes="(max-width: 640px) 50vw, 25vw" />
@@ -101,7 +101,7 @@ function Bold({ headline, subline, members, ref, inView }: TProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {members.map((m, i) => (
           <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} animate={inView ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }}
-            className="group relative aspect-[3/4] rounded-lg overflow-hidden">
+            className="group relative aspect-[3/4] rounded-lg overflow-hidden" data-edit-collection="members" data-edit-index={i}>
             {m.image ? (
               <Image src={m.image} alt={m.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 640px) 100vw, 25vw" />
             ) : (

@@ -40,7 +40,7 @@ function BookingClassic({ headline, subline, badgeText, submitCta, secondaryCta,
       {trustItems.length > 0 && (
         <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
           {trustItems.map((item, i) => (
-            <span key={i} className="inline-flex items-center gap-2 text-sm text-[color:var(--token-muted,#52525b)]">
+            <span key={i} className="inline-flex items-center gap-2 text-sm text-[color:var(--token-muted,#52525b)]" data-edit-collection="trustItems" data-edit-index={i}>
               <DynamicIcon name={item.icon || 'check'} size={16} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />
               {plain(item.text)}
             </span>
@@ -66,7 +66,7 @@ function BookingModern({ headline, subline, badgeText, submitCta, secondaryCta, 
       {trustItems.length > 0 && (
         <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
           {trustItems.map((item, i) => (
-            <span key={i} className="inline-flex items-center gap-2 text-sm font-light text-[color:var(--token-muted,#52525b)]">
+            <span key={i} className="inline-flex items-center gap-2 text-sm font-light text-[color:var(--token-muted,#52525b)]" data-edit-collection="trustItems" data-edit-index={i}>
               <DynamicIcon name={item.icon || 'check'} size={16} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />
               {plain(item.text)}
             </span>
@@ -92,7 +92,7 @@ function BookingBold({ headline, subline, badgeText, submitCta, secondaryCta, bo
       {trustItems.length > 0 && (
         <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
           {trustItems.map((item, i) => (
-            <span key={i} className="inline-flex items-center gap-2 text-sm font-bold text-[color:var(--token-muted,#3f3f46)]">
+            <span key={i} className="inline-flex items-center gap-2 text-sm font-bold text-[color:var(--token-muted,#3f3f46)]" data-edit-collection="trustItems" data-edit-index={i}>
               <DynamicIcon name={item.icon || 'check'} size={16} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
               {plain(item.text)}
             </span>

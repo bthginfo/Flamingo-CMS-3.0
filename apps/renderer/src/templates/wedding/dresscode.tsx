@@ -30,14 +30,14 @@ function Classic({ badge, headline, text, colors, hints }: P) {
         {colors.length > 0 && (
           <div className="flex items-center justify-center gap-4 mt-10">
             {colors.map((color, i) => (
-              <motion.div key={i} initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="w-14 h-14 rounded-full shadow-md border-2 border-[color:var(--token-card-border,#ffffff)]" style={{ backgroundColor: color }} title={color} />
+              <motion.div key={i} initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="w-14 h-14 rounded-full shadow-md border-2 border-[color:var(--token-card-border,#ffffff)]" style={{ backgroundColor: color }} title={color}  data-edit-collection="colors" data-edit-index={i}/>
             ))}
           </div>
         )}
         {hints.length > 0 && (
           <div className="mt-10 grid sm:grid-cols-2 gap-4 text-left max-w-lg mx-auto">
             {hints.map((hint, i) => (
-              <div key={i} className="flex items-start gap-3 text-[color:var(--token-muted,#3f3f46)] text-sm">
+              <div key={i} className="flex items-start gap-3 text-[color:var(--token-muted,#3f3f46)] text-sm" data-edit-collection="hints" data-edit-index={i}>
                 <Shirt className="w-4 h-4 text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-0.5 shrink-0" />
                 <span>{hint}</span>
               </div>
@@ -59,14 +59,14 @@ function Modern({ badge, headline, text, colors, hints }: P) {
         {colors.length > 0 && (
           <div className="flex items-center gap-6 mb-12">
             {colors.map((color, i) => (
-              <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="w-16 h-16 border border-[color:var(--token-card-border,#e4e4e7)]" style={{ backgroundColor: color }} title={color} />
+              <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="w-16 h-16 border border-[color:var(--token-card-border,#e4e4e7)]" style={{ backgroundColor: color }} title={color}  data-edit-collection="colors" data-edit-index={i}/>
             ))}
           </div>
         )}
         {hints.length > 0 && (
           <div className="border-t border-[color:var(--token-card-border,#e4e4e7)] pt-8 space-y-4">
             {hints.map((hint, i) => (
-              <p key={i} className="text-[color:var(--token-muted,#52525b)] text-sm">{hint}</p>
+              <p key={i} className="text-[color:var(--token-muted,#52525b)] text-sm" data-edit-collection="hints" data-edit-index={i}>{hint}</p>
             ))}
           </div>
         )}
@@ -85,14 +85,14 @@ function Bold({ badge, headline, text, colors, hints }: P) {
         {colors.length > 0 && (
           <div className="flex items-center justify-center gap-4 mb-10">
             {colors.map((color, i) => (
-              <motion.div key={i} initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="w-16 h-16 border-2 border-[color:var(--token-card-border,#d4d4d8)]" style={{ backgroundColor: color }} title={color} />
+              <motion.div key={i} initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="w-16 h-16 border-2 border-[color:var(--token-card-border,#d4d4d8)]" style={{ backgroundColor: color }} title={color}  data-edit-collection="colors" data-edit-index={i}/>
             ))}
           </div>
         )}
         {hints.length > 0 && (
           <div className="grid sm:grid-cols-2 gap-4 text-left max-w-lg mx-auto mt-8">
             {hints.map((hint, i) => (
-              <div key={i} className="flex items-start gap-3 text-[color:var(--token-muted,#3f3f46)] text-sm border-2 border-[color:var(--token-card-border,#e4e4e7)] p-4">
+              <div key={i} className="flex items-start gap-3 text-[color:var(--token-muted,#3f3f46)] text-sm border-2 border-[color:var(--token-card-border,#e4e4e7)] p-4" data-edit-collection="hints" data-edit-index={i}>
                 <Shirt className="w-4 h-4 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] mt-0.5 shrink-0" />
                 <span>{hint}</span>
               </div>

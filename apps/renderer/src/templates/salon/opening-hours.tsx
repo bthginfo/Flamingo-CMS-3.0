@@ -37,7 +37,7 @@ function HoursClassic({ headline, subline, badgeText, days, bookingNote, ctaPrim
       </div>
       <div className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] shadow-md">
         {days.map((day, i) => (
-          <motion.div key={`${day.label}-${i}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="flex items-center justify-between gap-4 border-b border-[var(--token-icon, var(--brand-primary))]/20 px-5 py-4 last:border-b-0">
+          <motion.div key={`${day.label}-${i}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="flex items-center justify-between gap-4 border-b border-[var(--token-icon, var(--brand-primary))]/20 px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={i}>
             <div className="flex items-center gap-3"><Clock size={17} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" /><div><p className="font-semibold text-[color:var(--token-heading,#18181b)]">{day.label || ''}</p>{day.note && <p className="text-xs text-[color:var(--token-muted,#52525b)]">{day.note}</p>}</div></div>
             <p className="text-sm font-medium text-[color:var(--token-heading,#18181b)]">{day.closed ? (day.note || '') : day.hours}</p>
           </motion.div>
@@ -61,7 +61,7 @@ function HoursModern({ headline, subline, badgeText, days, bookingNote, ctaPrima
       </div>
       <div className="border-y border-black/10">
         {days.map((day, i) => (
-          <div key={`${day.label}-${i}`} className="flex items-center justify-between gap-4 border-b border-black/10 px-2 py-5 last:border-b-0">
+          <div key={`${day.label}-${i}`} className="flex items-center justify-between gap-4 border-b border-black/10 px-2 py-5 last:border-b-0" data-edit-collection="days" data-edit-index={i}>
             <div className="flex items-center gap-3"><Clock size={16} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" /><div><p className="font-light text-[color:var(--token-heading,#18181b)]">{day.label || ''}</p>{day.note && <p className="text-xs font-light text-[color:var(--token-muted,#52525b)]">{day.note}</p>}</div></div>
             <p className="text-sm font-light text-[color:var(--token-heading,#18181b)]">{day.closed ? (day.note || '') : day.hours}</p>
           </div>
@@ -85,7 +85,7 @@ function HoursBold({ headline, subline, badgeText, days, bookingNote, ctaPrimary
       </div>
       <div className="border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow, var(--brand-accent))]">
         {days.map((day, i) => (
-          <div key={`${day.label}-${i}`} className="flex items-center justify-between gap-4 border-b-2 border-[#111827] px-5 py-4 last:border-b-0">
+          <div key={`${day.label}-${i}`} className="flex items-center justify-between gap-4 border-b-2 border-[#111827] px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={i}>
             <div className="flex items-center gap-3"><Clock size={17} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" /><div><p className="font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]">{day.label || ''}</p>{day.note && <p className="text-xs text-[color:var(--token-on-dark-heading,#ffffff)/60]">{day.note}</p>}</div></div>
             <p className="text-sm font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]">{day.closed ? (day.note || '') : day.hours}</p>
           </div>

@@ -28,7 +28,7 @@ function Classic({ header, introText, items, ctaPrimary }: Props) {
       {introText && <div className="max-w-3xl text-sm leading-6 text-[var(--token-body, var(--style-body-color,rgba(127,29,29,.8)))] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="border-t border-[var(--token-card-border, var(--style-border-color,#fecaca))] pt-4">
+          <article key={`${item.title}-${index}`} className="border-t border-[var(--token-card-border, var(--style-border-color,#fecaca))] pt-4" data-edit-collection="items" data-edit-index={index}>
             <AlertCircle size={18} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,#b91c1c)))]" />
             <h3 className="mt-2 font-bold text-[var(--token-heading, var(--style-heading-color,#450a0a))]">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body, var(--style-body-color,rgba(127,29,29,.75)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
@@ -48,7 +48,7 @@ function Modern({ header, introText, items, ctaPrimary }: Props) {
       {introText && <div className="max-w-3xl text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,rgba(127,29,29,.8)))] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="border-t border-[var(--token-card-border, var(--style-border-color,#fecaca))] pt-4">
+          <article key={`${item.title}-${index}`} className="border-t border-[var(--token-card-border, var(--style-border-color,#fecaca))] pt-4" data-edit-collection="items" data-edit-index={index}>
             <AlertCircle size={18} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,#dc2626)))]" />
             <h3 className="mt-2 font-light text-[var(--token-heading, var(--style-heading-color,#450a0a))]">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,rgba(127,29,29,.75)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
@@ -72,7 +72,7 @@ function Bold({ header, introText, items, ctaPrimary }: Props) {
       {introText && <div className="max-w-3xl text-sm leading-6 text-[var(--token-body, var(--style-body-color,rgba(255,255,255,.7)))] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="border-t border-[var(--token-card-border, var(--style-border-color,color-mix(in_srgb,var(--style-accent-color,#ef4444)_40%,transparent)))] pt-4">
+          <article key={`${item.title}-${index}`} className="border-t border-[var(--token-card-border, var(--style-border-color,color-mix(in_srgb,var(--style-accent-color,#ef4444)_40%,transparent)))] pt-4" data-edit-collection="items" data-edit-index={index}>
             <AlertCircle size={18} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,#f87171)))]" />
             <h3 className="mt-2 font-black uppercase text-[var(--token-heading, var(--style-heading-color,#fff))]">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body, var(--style-body-color,rgba(255,255,255,.7)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}

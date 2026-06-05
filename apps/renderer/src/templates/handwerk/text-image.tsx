@@ -37,7 +37,7 @@ export function TextImageSection({ data, variant }: Props) {
           {items.length > 0 && (
             <ul className="mt-6 space-y-3">
               {items.map((item, i) => (
-                <li key={i} className="flex items-start gap-3">
+                <li key={i} className="flex items-start gap-3" data-edit-collection="items" data-edit-index={i}>
                   <span className="w-2 h-2 mt-2 rounded-full bg-[var(--token-icon, var(--style-accent,var(--token-icon, var(--brand-primary))))] shrink-0" />
                   <div>
                     <span className="font-medium text-[var(--style-text-primary,#111827)]" data-edit-path="title">{item.title}</span>

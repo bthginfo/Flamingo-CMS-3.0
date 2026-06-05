@@ -60,7 +60,7 @@ export function RealestateHeroSection({ data }: Props) {
           {trustItems.length > 0 && (
             <div className="flex flex-wrap gap-6 mt-12 pt-8 border-t border-[color:var(--token-card-border,#ffffff)/20]">
               {trustItems.map((item, i) => (
-                <span key={i} className="text-sm text-[color:var(--token-on-dark-heading,#ffffff)/70] font-medium">{item}</span>
+                <span key={i} className="text-sm text-[color:var(--token-on-dark-heading,#ffffff)/70] font-medium" data-edit-collection="trustItems" data-edit-index={i}>{item}</span>
               ))}
             </div>
           )}

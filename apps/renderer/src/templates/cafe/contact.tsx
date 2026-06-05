@@ -55,7 +55,7 @@ export function CafeContactSection({ data }: Props) {
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.1 * i }}
                   className="flex items-center gap-4 p-5 rounded-2xl bg-[var(--token-section-bg-alt,#fafafa)] border border-[color:var(--token-card-border,#f4f4f5)]"
-                >
+                 data-edit-collection="contactItems" data-edit-index={i}>
                   <div className="w-10 h-10 rounded-xl bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] flex items-center justify-center text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">
                     <DynamicIcon name={item.icon} size={18} />
                   </div>

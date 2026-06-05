@@ -109,7 +109,7 @@ export function ShopProductDetailSection({ data }: Props) {
           {images.length > 1 && (
             <div className="flex gap-3">
               {images.slice(0, 4).map((img, i) => (
-                <button key={i} onClick={() => setSelectedImage(i)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${i === selectedImage ? 'border-[color:var(--token-card-border,#18181b)] ring-2 ring-zinc-900/20' : 'border-[color:var(--token-card-border,#e4e4e7)] hover:border-[color:var(--token-card-border,#a1a1aa)]'}`}>
+                <button key={i} onClick={() => setSelectedImage(i)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${i === selectedImage ? 'border-[color:var(--token-card-border,#18181b)] ring-2 ring-zinc-900/20' : 'border-[color:var(--token-card-border,#e4e4e7)] hover:border-[color:var(--token-card-border,#a1a1aa)]'}`} data-edit-collection="images" data-edit-index={i}>
                   <img src={img} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
@@ -148,7 +148,7 @@ export function ShopProductDetailSection({ data }: Props) {
             <div className="bg-[var(--token-section-bg-alt,#fafafa)] rounded-xl p-4 mb-6">
               <ul className="space-y-2">
                 {highlights.map((h, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm">
+                  <li key={i} className="flex items-center gap-3 text-sm" data-edit-collection="highlights" data-edit-index={i}>
                     <Sparkles size={14} className="text-amber-500 shrink-0" />
                     <span className="text-[color:var(--token-muted,#3f3f46)]">{h}</span>
                   </li>

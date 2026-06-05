@@ -32,7 +32,7 @@ export function ConsultingFaqSection({ data }: Props) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.05 }}
             className="border border-slate-200 rounded-xl overflow-hidden"
-          >
+           data-edit-collection="items" data-edit-index={i}>
             <button
               onClick={() => setOpen(open === i ? null : i)}
               className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-slate-50 transition-colors"

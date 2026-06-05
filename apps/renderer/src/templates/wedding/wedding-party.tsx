@@ -28,7 +28,7 @@ function Classic({ badge, headline, members }: P) {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
           {members.map((m, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center">
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center" data-edit-collection="members" data-edit-index={i}>
               <div className="relative w-32 h-32 mx-auto mb-5 rounded-full overflow-hidden bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/5]">
                 {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full flex items-center justify-center text-4xl text-[color:var(--token-icon,var(--brand-primary,#1a5276))/30]">{m.name[0]}</div>}
               </div>
@@ -51,7 +51,7 @@ function Modern({ badge, headline, members }: P) {
         <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-16 break-words" data-edit-path="headline">{headline}</h2>
         <div className="grid md:grid-cols-2 gap-12">
           {members.map((m, i) => (
-            <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex gap-6 items-start border-t border-[color:var(--token-card-border,#e4e4e7)] pt-6">
+            <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex gap-6 items-start border-t border-[color:var(--token-card-border,#e4e4e7)] pt-6" data-edit-collection="members" data-edit-index={i}>
               <div className="relative w-20 h-20 shrink-0">
                 {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full bg-[var(--token-section-bg-alt,#f4f4f5)] flex items-center justify-center text-2xl text-[color:var(--token-body,#d4d4d8)]">{m.name[0]}</div>}
               </div>
@@ -76,7 +76,7 @@ function Bold({ badge, headline, members }: P) {
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words" data-edit-path="headline">{headline}</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {members.map((m, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6 text-center hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))/50] transition-colors">
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6 text-center hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))/50] transition-colors" data-edit-collection="members" data-edit-index={i}>
               <div className="relative w-24 h-24 mx-auto mb-4">
                 {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full bg-[var(--token-section-bg-alt,#f4f4f5)] flex items-center justify-center text-3xl text-[color:var(--token-body,#d4d4d8)]">{m.name[0]}</div>}
               </div>

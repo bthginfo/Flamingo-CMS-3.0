@@ -34,7 +34,7 @@ function FaqClassic({ headline, badgeText, items, expandFirst }: FProps) {
       </motion.div>
       <div className="space-y-3">
         {items.map((item, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }}>
+          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }} data-edit-collection="items" data-edit-index={i}>
             <FaqItemClassic question={item.question} answer={plain(item.answer)} defaultOpen={expandFirst && i === 0} />
           </motion.div>
         ))}
@@ -75,7 +75,7 @@ function FaqModern({ headline, badgeText, items, expandFirst }: FProps) {
       </motion.div>
       <div className="divide-y divide-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))]">
         {items.map((item, i) => (
-          <motion.div key={i} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }}>
+          <motion.div key={i} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }} data-edit-collection="items" data-edit-index={i}>
             <FaqItemModern question={item.question} answer={plain(item.answer)} defaultOpen={expandFirst && i === 0} />
           </motion.div>
         ))}
@@ -116,7 +116,7 @@ function FaqBold({ headline, badgeText, items, expandFirst }: FProps) {
       </motion.div>
       <div className="space-y-3">
         {items.map((item, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }}>
+          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }} data-edit-collection="items" data-edit-index={i}>
             <FaqItemBold question={item.question} answer={plain(item.answer)} defaultOpen={expandFirst && i === 0} num={i + 1} />
           </motion.div>
         ))}

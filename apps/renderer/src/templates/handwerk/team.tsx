@@ -62,7 +62,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
       {stats.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 md:mb-24">
           {stats.map((s, i) => (
-            <div key={i} className="rounded-2xl border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,rgba(0,0,0,0.03)))] p-6 text-center">
+            <div key={i} className="rounded-2xl border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,rgba(0,0,0,0.03)))] p-6 text-center" data-edit-collection="stats" data-edit-index={i}>
               <div className="font-display mb-1 text-3xl font-bold text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))] lg:text-4xl">{s.value}</div>
               <div className="text-sm text-[var(--style-text-secondary,var(--token-muted, var(--style-text-muted,#6b7280)))]">{s.label}</div>
             </div>
@@ -74,7 +74,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
           <h3 className="font-display mb-12 text-center text-2xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{valuesHeadline}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {values.map((v, i) => (
-              <div key={i} className="group rounded-2xl border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-8 shadow-sm transition-all hover:shadow-lg">
+              <div key={i} className="group rounded-2xl border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-8 shadow-sm transition-all hover:shadow-lg" data-edit-collection="values" data-edit-index={i}>
                 {v.icon && <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]/10 transition-transform group-hover:scale-110"><DynamicIcon name={v.icon} size={28} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" /></div>}
                 <h4 className="mb-2 text-lg font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{v.title}</h4>
                 <div className="rt-content text-sm leading-relaxed text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: v.text }} />
@@ -88,7 +88,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
           <h3 className="font-display mb-12 text-center text-2xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{membersHeadline}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {members.map((m, i) => (
-              <div key={i} className="text-center group">
+              <div key={i} className="text-center group" data-edit-collection="members" data-edit-index={i}>
                 <div className="relative w-48 h-48 mx-auto mb-5 rounded-3xl overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow">
                   {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover transition-transform group-hover:scale-105" sizes="200px" /> : <div className="flex h-full w-full items-center justify-center bg-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]/5"><DynamicIcon name="users" size={48} className="text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]/30" /></div>}
                 </div>
@@ -124,7 +124,7 @@ function TeamModern({ headline, subline, badgeText, storyHeadline, storyText, st
       )}
       {stats.length > 0 && (
         <div className="flex flex-wrap gap-8 md:gap-12 mb-24 justify-center">
-          {stats.map((s, i) => <div key={i} className="text-center"><div className="text-4xl font-light text-[var(--style-accent-color,var(--token-heading, var(--style-heading-color,#111827)))]">{s.value}</div><div className="mt-1 text-xs uppercase tracking-wider text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#9ca3af)))]">{s.label}</div></div>)}
+          {stats.map((s, i) => <div key={i} className="text-center" data-edit-collection="stats" data-edit-index={i}><div className="text-4xl font-light text-[var(--style-accent-color,var(--token-heading, var(--style-heading-color,#111827)))]">{s.value}</div><div className="mt-1 text-xs uppercase tracking-wider text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#9ca3af)))]">{s.label}</div></div>)}
         </div>
       )}
       {members.length > 0 && (
@@ -132,7 +132,7 @@ function TeamModern({ headline, subline, badgeText, storyHeadline, storyText, st
           <h3 className="mb-10 text-xl font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{membersHeadline}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {members.map((m, i) => (
-              <div key={i} className="group">
+              <div key={i} className="group" data-edit-collection="members" data-edit-index={i}>
                 <div className="relative aspect-[3/4] rounded-lg overflow-hidden mb-4">
                   {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover grayscale transition-all duration-500 group-hover:grayscale-0" sizes="300px" /> : <div className="h-full w-full bg-[var(--token-card-bg, var(--style-card-bg,#f3f4f6))]" />}
                 </div>
@@ -168,7 +168,7 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
       {stats.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 md:mb-16">
           {stats.map((s, i) => (
-            <div key={i} className="bg-[var(--token-card-bg, var(--style-card-bg,var(--token-section-bg-alt, var(--brand-dark))))] p-5 text-center text-[var(--style-text-primary,#ffffff)]">
+            <div key={i} className="bg-[var(--token-card-bg, var(--style-card-bg,var(--token-section-bg-alt, var(--brand-dark))))] p-5 text-center text-[var(--style-text-primary,#ffffff)]" data-edit-collection="stats" data-edit-index={i}>
               <div className="text-2xl font-black text-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))]">{s.value}</div>
               <div className="mt-1 text-xs uppercase tracking-wider text-[var(--token-muted, var(--style-text-muted,rgba(255,255,255,0.60)))]">{s.label}</div>
             </div>
@@ -180,7 +180,7 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
           <h3 className="mb-8 text-xl font-bold uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{membersHeadline}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {members.map((m, i) => (
-              <div key={i} className="flex items-start gap-4 border-3 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,transparent))] p-4 shadow-[3px_3px_0_var(--style-accent-color,#f39c12)]">
+              <div key={i} className="flex items-start gap-4 border-3 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,transparent))] p-4 shadow-[3px_3px_0_var(--style-accent-color,#f39c12)]" data-edit-collection="members" data-edit-index={i}>
                 <div className="relative w-20 h-20 shrink-0 overflow-hidden">
                   {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" sizes="80px" /> : <div className="h-full w-full bg-[var(--token-muted, var(--style-text-muted,#e5e7eb))]" />}
                 </div>

@@ -42,7 +42,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         {spaces.map((space, index) => (
-          <motion.article key={`${space.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] shadow-md">
+          <motion.article key={`${space.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] shadow-md" data-edit-collection="spaces" data-edit-index={index}>
             {space.image && <div className="relative aspect-[4/3]"><Image src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <h3 className="text-xl font-bold text-[color:var(--token-heading,#18181b)]">{space.name || ''}</h3>
@@ -58,7 +58,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
       {processHeadline && <h3 className="mt-10 text-2xl font-bold text-[color:var(--token-heading,#18181b)]">{processHeadline}</h3>}
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {processSteps.map((step, index) => (
-          <motion.div key={`${step.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 p-5">
+          <motion.div key={`${step.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 p-5" data-edit-collection="processSteps" data-edit-index={index}>
             <div className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={step.icon || 'clipboard'} size={22} /></div>
             <h4 className="mt-3 font-semibold text-[color:var(--token-heading,#18181b)]">{step.title || ''}</h4>
             {step.text && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />}
@@ -81,7 +81,7 @@ function EventModern({ headline, subline, badgeText, spaces, processHeadline, pr
       </div>
       <div className="grid gap-px border border-black/10 lg:grid-cols-3">
         {spaces.map((space, index) => (
-          <article key={`${space.name}-${index}`} className="overflow-hidden border border-black/10 bg-[var(--token-card-bg,#ffffff)]">
+          <article key={`${space.name}-${index}`} className="overflow-hidden border border-black/10 bg-[var(--token-card-bg,#ffffff)]" data-edit-collection="spaces" data-edit-index={index}>
             {space.image && <div className="relative aspect-[4/3]"><Image src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-6">
               <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]">{space.name || ''}</h3>
@@ -97,7 +97,7 @@ function EventModern({ headline, subline, badgeText, spaces, processHeadline, pr
       {processHeadline && <h3 className="mt-12 text-xl font-light text-[color:var(--token-heading,#18181b)]">{processHeadline}</h3>}
       <div className="mt-6 grid gap-px border border-black/10 md:grid-cols-3">
         {processSteps.map((step, index) => (
-          <div key={`${step.title}-${index}`} className="border border-black/10 p-6">
+          <div key={`${step.title}-${index}`} className="border border-black/10 p-6" data-edit-collection="processSteps" data-edit-index={index}>
             <DynamicIcon name={step.icon || 'clipboard'} size={18} className="text-[color:var(--token-muted,#52525b)]" />
             <h4 className="mt-3 font-light text-[color:var(--token-heading,#18181b)]">{step.title || ''}</h4>
             {step.text && <div className="mt-2 text-sm font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />}
@@ -120,7 +120,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         {spaces.map((space, index) => (
-          <article key={`${space.name}-${index}`} className="overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] shadow-[4px_4px_0_#111827]">
+          <article key={`${space.name}-${index}`} className="overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] shadow-[4px_4px_0_#111827]" data-edit-collection="spaces" data-edit-index={index}>
             {space.image && <div className="relative aspect-[4/3]"><Image src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <h3 className="text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{space.name || ''}</h3>
@@ -136,7 +136,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
       {processHeadline && <h3 className="mt-10 text-2xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{processHeadline}</h3>}
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {processSteps.map((step, index) => (
-          <div key={`${step.title}-${index}`} className="border-2 border-[#111827] p-5">
+          <div key={`${step.title}-${index}`} className="border-2 border-[#111827] p-5" data-edit-collection="processSteps" data-edit-index={index}>
             <div className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={step.icon || 'clipboard'} size={22} /></div>
             <h4 className="mt-3 font-black uppercase text-[color:var(--token-heading,#18181b)]">{step.title || ''}</h4>
             {step.text && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />}

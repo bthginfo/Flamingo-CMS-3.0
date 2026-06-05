@@ -44,7 +44,7 @@ export function IconRows({ items }: { items: unknown }) {
   return (
     <div className="grid gap-4">
       {asList<{ icon?: string; title?: string; text?: string }>(items).map((item, index) => (
-        <div key={`${item.title}-${index}`} className="flex gap-4 border-t border-black/10 pt-4">
+        <div key={`${item.title}-${index}`} className="flex gap-4 border-t border-black/10 pt-4" data-edit-collection="items" data-edit-index={index}>
           <DynamicIcon name={item.icon || 'sparkles'} size={20} />
           <div>
             <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>

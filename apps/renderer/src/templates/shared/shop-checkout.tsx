@@ -177,7 +177,7 @@ export function ShopCheckoutSection({ data }: Props) {
       {/* Step indicator */}
       <div className="flex items-center gap-2 mb-8">
         {STEPS.map((s, i) => (
-          <div key={s} className="flex items-center gap-2">
+          <div key={s} className="flex items-center gap-2" data-edit-collection="STEPS" data-edit-index={i}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= step ? 'bg-[var(--token-icon, var(--brand-primary))] text-[color:var(--token-on-dark-heading,#ffffff)]' : 'bg-[var(--token-section-bg-alt,#f4f4f5)] text-[color:var(--token-body,#a1a1aa)]'}`}>
               {i < step ? <Check size={14} /> : i + 1}
             </div>

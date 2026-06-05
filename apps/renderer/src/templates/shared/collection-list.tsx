@@ -101,7 +101,7 @@ export function CollectionListSection({ data }: Props) {
               viewport={{ once: true }}
               transition={{ delay: i * 0.05, duration: 0.4 }}
               className="group block rounded-xl border border-[color:var(--token-card-border,#f4f4f5)] bg-[var(--token-card-bg,#ffffff)] overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-            >
+             data-edit-collection="sorted" data-edit-index={i}>
               {showImage && item.image && (
                 <div className="aspect-[16/10] overflow-hidden">
                   <img

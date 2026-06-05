@@ -45,7 +45,7 @@ export function LocationVibeSection({ data }: Props) {
                 </div>
                 <ul className="space-y-1.5">
                   {hours.map((h, i) => (
-                    <li key={i} className="flex justify-between text-sm">
+                    <li key={i} className="flex justify-between text-sm" data-edit-collection="hours" data-edit-index={i}>
                       <span className="text-[color:var(--token-muted,#52525b)]">{h.day}</span>
                       <span className="font-medium text-[color:var(--token-heading,#18181b)]">{h.hours}</span>
                     </li>

@@ -53,7 +53,7 @@ export function VerticalTimelineSection({ data }: Props) {
 
           <div className="space-y-10 md:space-y-14">
             {steps.map((step, i) => (
-              <TimelineStep key={i} step={step} index={i} total={steps.length} accentColor={accentColor} />
+              <TimelineStep key={i} step={step} index={i} total={steps.length} accentColor={accentColor}  data-edit-collection="steps" data-edit-index={i}/>
             ))}
           </div>
         </div>
@@ -95,7 +95,7 @@ function TimelineStep({ step, index, total, accentColor }: { step: Step; index: 
         {step.checkmarks && step.checkmarks.length > 0 && (
           <ul className="mt-3 space-y-1.5">
             {step.checkmarks.map((item, j) => (
-              <li key={j} className="flex items-center gap-2 text-sm text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b)))]">
+              <li key={j} className="flex items-center gap-2 text-sm text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b)))]" data-edit-collection="checkmarks" data-edit-index={j}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
                   <circle cx="8" cy="8" r="8" fill={accentColor} opacity={0.12} />
                   <path d="M5 8l2 2 4-4" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

@@ -47,7 +47,7 @@ export function ConsultationBookingSection({ data }: Props) {
                   ? 'bg-[var(--token-icon, var(--brand-primary,#2563eb))]/5 border-[var(--token-icon, var(--brand-primary,#2563eb))]/30 shadow-md'
                   : 'bg-[var(--token-card-bg, var(--style-card-bg,#fff))] border-[rgba(0,0,0,0.06)] hover:border-[var(--token-icon, var(--brand-primary,#2563eb))]/20'
               }`}
-            >
+             data-edit-collection="services" data-edit-index={i}>
               {service.icon && (
                 <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-white' : 'bg-gray-100 text-[var(--token-icon, var(--brand-primary,#2563eb))]'} transition-colors`}>
                   <DynamicIcon name={service.icon} size={20} />

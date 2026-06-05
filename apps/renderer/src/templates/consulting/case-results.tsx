@@ -47,7 +47,7 @@ export function CaseResultsSection({ data }: Props) {
         </motion.div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.15 }} className="text-center">
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.15 }} className="text-center" data-edit-collection="stats" data-edit-index={i}>
               {stat.icon && (
                 <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-amber-600/20 flex items-center justify-center text-amber-400">
                   <DynamicIcon name={stat.icon} size={20} />

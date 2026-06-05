@@ -29,7 +29,7 @@ function MarqueeRow({ items, reverse, speed = 30 }: { items: MarqueeItem[]; reve
         style={{ animationDuration: `${speed}s` }}
       >
         {doubled.map((item, i) => (
-          <div key={i} className="flex-shrink-0 w-[320px] md:w-[380px] rounded-xl bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] border border-[var(--token-card-border, var(--style-border-color,#f4f4f5))] shadow-sm p-5 hover:shadow-md transition-shadow duration-300">
+          <div key={i} className="flex-shrink-0 w-[320px] md:w-[380px] rounded-xl bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] border border-[var(--token-card-border, var(--style-border-color,#f4f4f5))] shadow-sm p-5 hover:shadow-md transition-shadow duration-300" data-edit-collection="doubled" data-edit-index={i}>
             <p className="text-sm text-[var(--token-body, var(--style-body-color,var(--style-text-primary,#3f3f46)))] leading-relaxed mb-4 line-clamp-4">&ldquo;{plain(item.quote)}&rdquo;</p>
             <div className="flex items-center gap-3">
               {item.image && <img src={item.image} alt={item.name} className="w-9 h-9 rounded-full object-cover" />}

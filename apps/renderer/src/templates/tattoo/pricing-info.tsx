@@ -24,7 +24,7 @@ export function PricingInfoSection({ data }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
-              className="bg-[var(--token-card-bg,#ffffff)/5] border border-[color:var(--token-card-border,#ffffff)/10] rounded-lg p-6 text-center">
+              className="bg-[var(--token-card-bg,#ffffff)/5] border border-[color:var(--token-card-border,#ffffff)/10] rounded-lg p-6 text-center" data-edit-collection="items" data-edit-index={i}>
               <p className="text-[color:var(--token-on-dark-heading,#ffffff)/50] text-sm uppercase tracking-wider" data-edit-path="label">{item.label}</p>
               <p className="text-3xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)] mt-2">{item.value}</p>
               {item.note && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/30] text-xs mt-2">{item.note}</p>}
@@ -34,7 +34,7 @@ export function PricingInfoSection({ data }: Props) {
 
         {notes.length > 0 && (
           <div className="mt-10 space-y-2 text-sm text-[color:var(--token-on-dark-heading,#ffffff)/40]">
-            {notes.map((n, i) => <p key={i}>• {n}</p>)}
+            {notes.map((n, i) => <p key={i} data-edit-collection="notes" data-edit-index={i}>• {n}</p>)}
           </div>
         )}
       </div>

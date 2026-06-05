@@ -145,7 +145,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
             style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}
           >
             {trustItems.map((item, i) => (
-              <span key={i} className="flex items-center gap-2 whitespace-nowrap"><CheckCircle size={14} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />{item}</span>
+              <span key={i} className="flex items-center gap-2 whitespace-nowrap" data-edit-collection="trustItems" data-edit-index={i}><CheckCircle size={14} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />{item}</span>
             ))}
           </div>
         </motion.div>
@@ -184,7 +184,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
           </div>
           {trustItems.length > 0 && (
             <div className="flex flex-wrap gap-6 mt-16 text-xs text-[color:var(--token-body,#a1a1aa)] uppercase tracking-wider">
-              {trustItems.map((item, i) => <span key={i}>{item}</span>)}
+              {trustItems.map((item, i) => <span key={i} data-edit-collection="trustItems" data-edit-index={i}>{item}</span>)}
             </div>
           )}
         </motion.div>
@@ -255,7 +255,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
               className="flex flex-wrap gap-6 mt-16 text-sm text-[color:var(--token-on-dark-heading,#ffffff)/40] font-bold uppercase tracking-wider">
               {trustItems.map((item, i) => (
-                <span key={i} className="flex items-center gap-2"><span className="w-2 h-2 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />{item}</span>
+                <span key={i} className="flex items-center gap-2" data-edit-collection="trustItems" data-edit-index={i}><span className="w-2 h-2 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />{item}</span>
               ))}
             </motion.div>
           )}

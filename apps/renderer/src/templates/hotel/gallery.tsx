@@ -37,7 +37,7 @@ function GalleryClassic({ headline, subline, badgeText, images, ctaPrimary }: Pr
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((image, index) => (
-          <motion.figure key={`${image.src}-${index}`} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.06 }} className="group overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] shadow-md">
+          <motion.figure key={`${image.src}-${index}`} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.06 }} className="group overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] shadow-md" data-edit-collection="images" data-edit-index={index}>
             {image.src && <div className="relative aspect-[4/3]"><Image src={image.src} alt={image.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <figcaption className="p-4">
               {image.category && <p className="text-xs uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{image.category}</p>}
@@ -62,7 +62,7 @@ function GalleryModern({ headline, subline, badgeText, images, ctaPrimary }: Pro
       </div>
       <div className="grid gap-px border border-black/10 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((image, index) => (
-          <figure key={`${image.src}-${index}`} className="group overflow-hidden border border-black/10 bg-[var(--token-card-bg,#ffffff)]">
+          <figure key={`${image.src}-${index}`} className="group overflow-hidden border border-black/10 bg-[var(--token-card-bg,#ffffff)]" data-edit-collection="images" data-edit-index={index}>
             {image.src && <div className="relative aspect-[4/3]"><Image src={image.src} alt={image.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <figcaption className="p-5">
               {image.category && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{image.category}</p>}
@@ -87,7 +87,7 @@ function GalleryBold({ headline, subline, badgeText, images, ctaPrimary }: Props
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((image, index) => (
-          <figure key={`${image.src}-${index}`} className="group overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] shadow-[4px_4px_0_#111827]">
+          <figure key={`${image.src}-${index}`} className="group overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] shadow-[4px_4px_0_#111827]" data-edit-collection="images" data-edit-index={index}>
             {image.src && <div className="relative aspect-[4/3]"><Image src={image.src} alt={image.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
             <figcaption className="p-4">
               {image.category && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{image.category}</p>}

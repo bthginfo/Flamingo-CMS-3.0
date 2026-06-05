@@ -49,7 +49,7 @@ export function BentoGridSection({ data }: Props) {
             animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
             transition={{ duration: 0.4, delay: i * 0.08 }}
             className={`group relative overflow-hidden rounded-2xl bg-[var(--token-card-bg, var(--style-card-bg,#fafafa))] border border-[var(--token-card-border, var(--style-border-color,rgba(228,228,231,0.6)))] p-6 cursor-default transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${getSpanClass(item, i)}`}
-          >
+           data-edit-collection="items" data-edit-index={i}>
             {/* Hover spotlight */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(600px_at_50%_50%,var(--color-primary)/0.04,transparent)]" />
 

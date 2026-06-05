@@ -27,7 +27,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
           {items.length > 0 && (
             <div className="space-y-6 mb-16">
               {items.map((item, i) => (
-                <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-baseline justify-between border-t border-[color:var(--token-card-border,#e4e4e7)] pt-4">
+                <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-baseline justify-between border-t border-[color:var(--token-card-border,#e4e4e7)] pt-4" data-edit-collection="items" data-edit-index={i}>
                   <div>
                     <h3 className="font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title}</h3>
                     {item.description && <p className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-1" data-edit-path="description">{plain(item.description)}</p>}
@@ -63,7 +63,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
           {items.length > 0 && (
             <div className="grid sm:grid-cols-2 gap-4 mb-12">
               {items.map((item, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6 flex items-start gap-4">
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6 flex items-start gap-4" data-edit-collection="items" data-edit-index={i}>
                   <Gift className="w-5 h-5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <h3 className="font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title}</h3>
@@ -102,7 +102,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
         {items.length > 0 && (
           <div className="grid sm:grid-cols-2 gap-6 mb-12">
             {items.map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-6 bg-[var(--token-card-bg,#ffffff)] rounded-xl shadow-sm border border-[color:var(--token-card-border,#f4f4f5)] flex items-start gap-4">
+              <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-6 bg-[var(--token-card-bg,#ffffff)] rounded-xl shadow-sm border border-[color:var(--token-card-border,#f4f4f5)] flex items-start gap-4" data-edit-collection="items" data-edit-index={i}>
                 <div className="w-10 h-10 rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] flex items-center justify-center shrink-0">
                   <Gift className="w-4 h-4 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />
                 </div>

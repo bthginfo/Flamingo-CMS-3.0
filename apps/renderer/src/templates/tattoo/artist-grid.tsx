@@ -31,7 +31,7 @@ export function ArtistGridSection({ data }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {artists.map((artist, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-              className="group">
+              className="group" data-edit-collection="artists" data-edit-index={i}>
               <a href={artist.href || '#'} className="block">
                 <div className="relative aspect-[3/4] rounded-lg overflow-hidden mb-4">
                   {artist.image && <Image src={artist.image} alt={artist.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 25vw" />}

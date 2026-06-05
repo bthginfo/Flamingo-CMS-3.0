@@ -48,7 +48,7 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
       </div>
       <div className="overflow-hidden rounded-xl border border-black/10 bg-[var(--token-card-bg,#ffffff)] shadow-lg">
         {days.map((day, index) => (
-          <motion.div key={`${day.label}-${index}`} initial={{ opacity: 0, x: 12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="flex items-center justify-between gap-4 border-b border-black/10 px-6 py-4 last:border-b-0">
+          <motion.div key={`${day.label}-${index}`} initial={{ opacity: 0, x: 12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="flex items-center justify-between gap-4 border-b border-black/10 px-6 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
             <div className="flex items-center gap-3">
               <div className="rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] p-1.5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Clock size={15} /></div>
               <div>
@@ -79,7 +79,7 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
       </div>
       <div className="border border-black/5">
         {days.map((day, index) => (
-          <div key={`${day.label}-${index}`} className="flex items-center justify-between gap-4 border-b border-black/5 px-6 py-5 last:border-b-0">
+          <div key={`${day.label}-${index}`} className="flex items-center justify-between gap-4 border-b border-black/5 px-6 py-5 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
             <div className="flex items-center gap-3">
               <Clock size={15} className="text-[color:var(--token-muted,#71717a)]" />
               <div>
@@ -111,7 +111,7 @@ function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHead
         </div>
         <div className="border-2 border-[color:var(--token-card-border,#ffffff)/20]">
           {days.map((day, index) => (
-            <div key={`${day.label}-${index}`} className="flex items-center justify-between gap-4 border-b-2 border-[color:var(--token-card-border,#ffffff)/10] px-5 py-4 last:border-b-0">
+            <div key={`${day.label}-${index}`} className="flex items-center justify-between gap-4 border-b-2 border-[color:var(--token-card-border,#ffffff)/10] px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
               <div className="flex items-center gap-3">
                 <Clock size={17} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
                 <div>

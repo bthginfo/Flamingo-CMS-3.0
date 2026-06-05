@@ -61,7 +61,7 @@ export function GalleryGridSection({ data }: Props) {
       {/* Masonry Grid */}
       <div className="flex gap-3" style={{ columnCount: colCount }}>
         {masonryColumns.map((col, colIdx) => (
-          <div key={colIdx} className="flex-1 flex flex-col gap-3">
+          <div key={colIdx} className="flex-1 flex flex-col gap-3" data-edit-collection="masonryColumns" data-edit-index={colIdx}>
             {col.map((img) => {
               const globalIdx = images.indexOf(img);
               const aspectRatio = (img.width && img.height) ? img.width / img.height : 1;

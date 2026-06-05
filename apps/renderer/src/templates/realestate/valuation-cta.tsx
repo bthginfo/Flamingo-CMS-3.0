@@ -49,7 +49,7 @@ export function ValuationCtaSection({ data }: Props) {
           {stats.length > 0 && (
             <div className="flex flex-wrap justify-center gap-8 mt-10">
               {stats.map((stat, i) => (
-                <div key={i} className="text-center">
+                <div key={i} className="text-center" data-edit-collection="stats" data-edit-index={i}>
                   <p className="text-2xl font-bold text-amber-400">{stat.value}</p>
                   <p className="text-xs text-[color:var(--token-on-dark-heading,#ffffff)/50] mt-1" data-edit-path="label">{stat.label}</p>
                 </div>

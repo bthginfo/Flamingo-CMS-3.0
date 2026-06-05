@@ -25,7 +25,7 @@ function Classic({ header, items, ctaPrimary }: Props) {
       <SectionHeader {...header} />
       <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="divide-y divide-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] rounded-xl bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-lg">
         {items.map((item, index) => (
-          <details key={`${item.question}-${index}`} className="p-5">
+          <details key={`${item.question}-${index}`} className="p-5" data-edit-collection="items" data-edit-index={index}>
             <summary className="cursor-pointer font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.question || ''}</summary>
             {item.answer && <div className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>
@@ -42,7 +42,7 @@ function Modern({ header, items, ctaPrimary }: Props) {
       <SectionHeader {...header} />
       <div className="divide-y divide-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))]">
         {items.map((item, index) => (
-          <details key={`${item.question}-${index}`} className="p-5">
+          <details key={`${item.question}-${index}`} className="p-5" data-edit-collection="items" data-edit-index={index}>
             <summary className="cursor-pointer font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.question || ''}</summary>
             {item.answer && <div className="mt-3 text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>
@@ -63,7 +63,7 @@ function Bold({ header, items, ctaPrimary }: Props) {
       </div>
       <div className="divide-y divide-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-[4px_4px_0_var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))]">
         {items.map((item, index) => (
-          <details key={`${item.question}-${index}`} className="p-5">
+          <details key={`${item.question}-${index}`} className="p-5" data-edit-collection="items" data-edit-index={index}>
             <summary className="cursor-pointer font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.question || ''}</summary>
             {item.answer && <div className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>

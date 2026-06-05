@@ -71,7 +71,7 @@ export function ConsultingHeroSection({ data }: Props) {
           {trustItems.length > 0 && (
             <div className="mx-auto mt-10 flex max-w-4xl flex-wrap justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
               {trustItems.map((item, i) => (
-                <div key={i} className="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium" style={{ color: heroMuted }}>
+                <div key={i} className="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium" style={{ color: heroMuted }} data-edit-collection="trustItems" data-edit-index={i}>
                   <DynamicIcon name="check-circle" size={16} className="text-[color:var(--style-accent-color,var(--token-icon,#f59e0b))]" />
                   {item}
                 </div>

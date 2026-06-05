@@ -31,12 +31,12 @@ export function ConsultingTestimonialsSection({ data }: Props) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
             className="bg-[var(--token-card-bg,#ffffff)] border border-[color:var(--token-card-border,#e4e4e7)] rounded-xl p-8 relative"
-          >
+           data-edit-collection="items" data-edit-index={i}>
             <DynamicIcon name="quote" size={24} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))/20] absolute top-6 right-6" />
             {item.rating && (
               <div className="flex gap-0.5 mb-4">
                 {Array.from({ length: item.rating }).map((_, j) => (
-                  <DynamicIcon key={j} name="star" size={14} className="text-amber-400 fill-amber-400" />
+                  <DynamicIcon key={j} name="star" size={14} className="text-amber-400 fill-amber-400"  data-edit-collection="rating" data-edit-index={j}/>
                 ))}
               </div>
             )}

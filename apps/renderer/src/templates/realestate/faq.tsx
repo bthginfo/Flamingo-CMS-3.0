@@ -35,7 +35,7 @@ export function RealestateFaqSection({ data }: Props) {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.05 }}
               className="bg-[var(--token-card-bg,#ffffff)] rounded-lg border border-[color:var(--token-card-border,#f4f4f5)] overflow-hidden"
-            >
+             data-edit-collection="items" data-edit-index={i}>
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
                 className="w-full flex items-center justify-between p-5 text-left"

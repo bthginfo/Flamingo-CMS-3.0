@@ -38,7 +38,7 @@ function Classic({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: P
         <SectionHeader {...header} />
         <div className="grid gap-4">
           {places.map((place, index) => (
-            <motion.article key={`${place.title}-${index}`} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: index * 0.1 }} className="grid gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4 sm:grid-cols-[120px_1fr]">
+            <motion.article key={`${place.title}-${index}`} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: index * 0.1 }} className="grid gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4 sm:grid-cols-[120px_1fr]" data-edit-collection="places" data-edit-index={index}>
               {place.image && <div className="relative aspect-[4/3] overflow-hidden rounded-xl"><Image src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
@@ -64,7 +64,7 @@ function Modern({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Pr
         <SectionHeader {...header} />
         <div className="grid gap-4">
           {places.map((place, index) => (
-            <article key={`${place.title}-${index}`} className="grid gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4 sm:grid-cols-[120px_1fr]">
+            <article key={`${place.title}-${index}`} className="grid gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4 sm:grid-cols-[120px_1fr]" data-edit-collection="places" data-edit-index={index}>
               {place.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
                 <p className="text-xs font-light uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
@@ -94,7 +94,7 @@ function Bold({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Prop
         </div>
         <div className="grid gap-4">
           {places.map((place, index) => (
-            <article key={`${place.title}-${index}`} className="grid gap-4 border-t-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] pt-4 sm:grid-cols-[120px_1fr]">
+            <article key={`${place.title}-${index}`} className="grid gap-4 border-t-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] pt-4 sm:grid-cols-[120px_1fr]" data-edit-collection="places" data-edit-index={index}>
               {place.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
                 <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>

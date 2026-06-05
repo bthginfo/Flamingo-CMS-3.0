@@ -63,7 +63,7 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
                 transition={{ delay: index * 0.08 }}
                 className="rounded-2xl border p-5 backdrop-blur-xl"
                 style={{ background: metricCardBg, borderColor: metricBorder }}
-              >
+               data-edit-collection="metrics" data-edit-index={index}>
                 <div className="text-3xl font-black text-[var(--token-stat-value,var(--style-accent-color,#fff))]">{metric.value}</div>
                 <div className="mt-1 text-sm" style={{ color: mutedColor }}>{metric.label}</div>
               </motion.div>

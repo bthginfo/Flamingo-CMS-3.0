@@ -78,16 +78,53 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       }
       // In-place text edits from live-preview: a text element with
       // data-edit-path was blurred. Patch the corresponding field on the
-      // section, mark dirty, and push back to preview for instant feedback.
+      // section (supports nested paths like "items.0.title" for items
+      // rendered inside .map()) and push back to preview for instant
+      // feedback.
       if (e.data?.type === 'flamingo-field-edit') {
         const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: string };
         if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof value !== 'string') return;
         const current = sectionsRef.current.find(s => s.id === sectionId);
         if (!current) return;
-        // Merge with any pending changes already in flight for this section.
         const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
-        if (base[path] === value) return;
-        const next = { ...base, [path]: value };
+        // Path: dot-separated, numeric segments index into arrays.
+        // e.g. "items.0.title" → base.items[0].title = value.
+        const segments = path.split('.').filter(Boolean);
+        if (segments.length === 0) return;
+        // No-op guard: read current value at the same path
+        let probe: unknown = base;
+        for (const seg of segments) {
+          if (probe == null) { probe = undefined; break; }
+          probe = (probe as Record<string, unknown>)[seg];
+        }
+        if (probe === value) return;
+        // Immutably set the nested value, cloning every container along
+        // the path so React sees a new reference at every level.
+        const setNested = (obj: unknown, segs: string[], val: string): Record<string, unknown> | unknown[] => {
+          const [head, ...rest] = segs;
+          const isIndex = /^\d+$/.test(head);
+          if (rest.length === 0) {
+            if (Array.isArray(obj)) {
+              const copy = [...obj];
+              copy[Number(head)] = val;
+              return copy;
+            }
+            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
+          }
+          if (Array.isArray(obj)) {
+            const copy = [...obj];
+            const idx = Number(head);
+            copy[idx] = setNested(copy[idx], rest, val);
+            return copy;
+          }
+          const container = (obj as Record<string, unknown> | null) ?? {};
+          const childExisting = container[head];
+          const childContainer = isIndex
+            ? (Array.isArray(childExisting) ? childExisting : [])
+            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
+          return { ...container, [head]: setNested(childContainer, rest, val) };
+        };
+        const next = setNested(base, segments, value) as Record<string, unknown>;
         handleSectionChangeRef.current?.(sectionId, next);
       }
     }
@@ -110,7 +147,19 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   function handleAddSection(type: string) {
     startTransition(async () => {
       const section = await addSectionAction(page.id, type);
-      if (section) setSections(prev => [...prev, section as Section]);
+      if (section) {
+        setSections(prev => {
+          const next = [...prev, section as Section];
+          // Push to live preview synchronously — don't wait for the
+          // useEffect tick, which sometimes misses the first paint when a
+          // brand-new section is added back-to-back with field edits.
+          if (preview.isOpen) {
+            const liveSections = buildLiveSections(next, pendingChanges.current);
+            preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale, collections });
+          }
+          return next;
+        });
+      }
       toast.success('Sektion hinzugefügt');
     });
   }
@@ -195,7 +244,18 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const colorDebounceRef = useRef<Record<string, NodeJS.Timeout>>({});
 
   function handleSaveColorOverrides(sectionId: string, overrides: Record<string, unknown> | null) {
-    setSections(prev => prev.map(s => s.id === sectionId ? { ...s, styleOverrides: overrides } : s));
+    setSections(prev => {
+      const next = prev.map(s => s.id === sectionId ? { ...s, styleOverrides: overrides } : s);
+      // Push the updated section (with new overrides) to the live preview
+      // synchronously so colour changes show up on the next frame instead
+      // of after the parent's useEffect tick — which the user reported as
+      // "colors only appear after iframe reload".
+      if (preview.isOpen) {
+        const liveSections = buildLiveSections(next, pendingChanges.current);
+        preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale, collections });
+      }
+      return next;
+    });
     // Debounce server save + toast per section
     if (colorDebounceRef.current[sectionId]) clearTimeout(colorDebounceRef.current[sectionId]);
     colorDebounceRef.current[sectionId] = setTimeout(() => {

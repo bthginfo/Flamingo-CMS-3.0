@@ -38,7 +38,7 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
       {offers.length === 0 && fallbackText ? <p className="text-[color:var(--token-muted,#52525b)]">{fallbackText}</p> : null}
       <div className="grid gap-6 md:grid-cols-2">
         {offers.map((offer, index) => (
-          <motion.article key={`${offer.title}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`grid overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] shadow-md sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon, var(--brand-primary))]' : ''}`}>
+          <motion.article key={`${offer.title}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`grid overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] shadow-md sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon, var(--brand-primary))]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
             {offer.image && <div className="relative min-h-52"><Image src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">
@@ -73,7 +73,7 @@ function OffersModern({ headline, subline, badgeText, offers, fallbackText }: Pr
       {offers.length === 0 && fallbackText ? <p className="font-light text-[color:var(--token-muted,#52525b)]">{fallbackText}</p> : null}
       <div className="grid gap-px border border-black/10 md:grid-cols-2">
         {offers.map((offer, index) => (
-          <article key={`${offer.title}-${index}`} className={`grid overflow-hidden border border-black/10 bg-[var(--token-card-bg,#ffffff)] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'bg-[var(--token-section-bg-alt,#000000)]/[0.02]' : ''}`}>
+          <article key={`${offer.title}-${index}`} className={`grid overflow-hidden border border-black/10 bg-[var(--token-card-bg,#ffffff)] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'bg-[var(--token-section-bg-alt,#000000)]/[0.02]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
             {offer.image && <div className="relative min-h-52"><Image src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-6">
               <div className="flex flex-wrap gap-3 text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">
@@ -108,7 +108,7 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
       {offers.length === 0 && fallbackText ? <p className="text-[color:var(--token-muted,#52525b)]">{fallbackText}</p> : null}
       <div className="grid gap-4 md:grid-cols-2">
         {offers.map((offer, index) => (
-          <article key={`${offer.title}-${index}`} className={`grid overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] shadow-[4px_4px_0_#111827] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon, var(--brand-primary))]' : ''}`}>
+          <article key={`${offer.title}-${index}`} className={`grid overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] shadow-[4px_4px_0_#111827] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon, var(--brand-primary))]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
             {offer.image && <div className="relative min-h-52"><Image src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">

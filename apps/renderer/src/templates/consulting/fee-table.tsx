@@ -32,7 +32,7 @@ export function FeeTableSection({ data }: Props) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
             className={`relative p-8 rounded-xl border ${fee.highlighted ? 'border-[var(--token-card-border,var(--brand-primary,#1a5276))] bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/5] ring-1 ring-brand-primary/20' : 'border-[color:var(--token-card-border,#e4e4e7)] bg-[var(--token-card-bg,#ffffff)]'} text-center`}
-          >
+           data-edit-collection="fees" data-edit-index={i}>
             {fee.highlighted && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-[color:var(--token-on-dark-heading,#ffffff)] text-xs font-semibold px-3 py-1 rounded-full">Empfohlen</div>
             )}

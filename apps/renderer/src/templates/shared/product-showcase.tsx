@@ -41,7 +41,7 @@ export function ProductShowcaseSection({ data }: Props) {
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-          >
+           data-edit-collection="items" data-edit-index={i}>
             <a
               href={item.href || '#'}
               className="group block rounded-[var(--style-card-radius,1rem)] overflow-hidden bg-[var(--token-card-bg, var(--style-card-bg,#fff))] border-[var(--style-card-border,1px_solid_rgba(0,0,0,0.06))] shadow-[var(--style-card-shadow,0_4px_20px_rgba(0,0,0,0.06))] hover:shadow-xl transition-all duration-300"

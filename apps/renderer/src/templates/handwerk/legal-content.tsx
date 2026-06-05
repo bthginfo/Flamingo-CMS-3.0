@@ -31,7 +31,7 @@ export function LegalContentSection({ data }: Props) {
         {headline && <h1 className="font-display text-3xl md:text-4xl font-bold mb-12 text-gray-900" data-edit-path="headline">{headline}</h1>}
         <div className="space-y-10">
           {blocks.map((block, i) => (
-            <article key={i}>
+            <article key={i} data-edit-collection="blocks" data-edit-index={i}>
               {block.headline && <h2 className="text-xl font-semibold text-gray-900 mb-3" data-edit-path="headline">{block.headline}</h2>}
               {block.text && (
                 <div

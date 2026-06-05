@@ -27,7 +27,7 @@ export function ScrollStorySection({ data }: Props) {
       </div>
       <div className="space-y-6">
         {steps.map((step, i) => (
-          <motion.article key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-120px' }} className="overflow-hidden rounded-[var(--style-card-radius,1rem)] border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-sm">
+          <motion.article key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-120px' }} className="overflow-hidden rounded-[var(--style-card-radius,1rem)] border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-sm" data-edit-collection="steps" data-edit-index={i}>
             {step.image && <img src={step.image} alt="" className="h-64 w-full object-cover" />}
             <div className="p-6 md:p-8">
               <div className="mb-3 text-xs font-bold uppercase text-[var(--token-icon, var(--brand-primary))]">{step.kicker || String(i + 1).padStart(2, '0')}</div>

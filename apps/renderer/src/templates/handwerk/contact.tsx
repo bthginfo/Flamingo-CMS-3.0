@@ -54,7 +54,7 @@ export function ContactSection({ data }: Props) {
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.4, delay: i * 0.1 }}
               className="flex items-center gap-4 p-5 rounded-2xl bg-[var(--token-card-bg,var(--style-card-bg,#fff))] border border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,.08)))] shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer"
-            >
+             data-edit-collection="infoCards" data-edit-index={i}>
               <div className={cn('w-12 h-12 rounded-xl bg-[color-mix(in_srgb,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))_12%,transparent)] flex items-center justify-center text-[var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))] transition-transform group-hover:scale-110')}>
                 <DynamicIcon name={card.icon} size={20} />
               </div>

@@ -71,7 +71,7 @@ function TestimonialsModern({ headline, badgeText, ratingValue, ratingCount, ite
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: i * 0.1 }}
             className="break-inside-avoid rounded-lg border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-8"
-          >
+           data-edit-collection="items" data-edit-index={i}>
             <p className="leading-relaxed text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] italic">&ldquo;{plain(item.quote)}&rdquo;</p>
             <div className="mt-6 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.06)))] pt-4">
               <p className="text-sm font-medium text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="name">{item.name}</p>
@@ -109,7 +109,7 @@ function TestimonialsBold({ headline, badgeText, ratingValue, ratingCount, items
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.4, delay: i * 0.1 }}
             className="w-[320px] shrink-0 snap-start border-3 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-6 shadow-[4px_4px_0_var(--style-text-primary,#0d2137)]"
-          >
+           data-edit-collection="items" data-edit-index={i}>
             <Quote size={24} className="mb-3 text-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))]" />
             <div className="rt-content font-medium leading-relaxed text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#1f2937)))]" dangerouslySetInnerHTML={{ __html: item.quote }} />
             <div className="mt-4 border-t-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] pt-3">

@@ -33,12 +33,12 @@ function PriceClassic({ headline, subline, badgeText, categories, footnote, ctaP
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         {categories.map((cat, ci) => (
-          <motion.article key={`${cat.title}-${ci}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: ci * 0.1 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-6 shadow-md">
+          <motion.article key={`${cat.title}-${ci}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: ci * 0.1 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-6 shadow-md" data-edit-collection="categories" data-edit-index={ci}>
             <h3 className="text-2xl font-bold text-[color:var(--token-heading,#18181b)]">{cat.title || ''}</h3>
             {cat.text && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: cat.text }} />}
             <div className="mt-5 divide-y divide-[var(--token-icon, var(--brand-primary))]/20">
               {asList<PriceItem>(cat.items).map((item, ii) => (
-                <div key={`${item.name}-${ii}`} className="py-4">
+                <div key={`${item.name}-${ii}`} className="py-4" data-edit-collection="items" data-edit-index={ii}>
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-4"><div className="min-w-0"><p className="font-semibold text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>{item.description && <div className="mt-1 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}</div>{item.priceLabel && <p className="shrink-0 whitespace-nowrap font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="priceLabel">{item.priceLabel}</p>}</div>
                   <div className="mt-2 flex flex-wrap gap-3 text-xs text-[color:var(--token-muted,#52525b)]">{item.durationLabel && <span>{item.durationLabel}</span>}{item.note && <span>{item.note}</span>}{item.cta?.label && <a href={item.cta.href || '#'} className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="label">{item.cta.label}</a>}</div>
                 </div>
@@ -63,12 +63,12 @@ function PriceModern({ headline, subline, badgeText, categories, footnote, ctaPr
       </div>
       <div className="grid gap-10 lg:grid-cols-2">
         {categories.map((cat, ci) => (
-          <article key={`${cat.title}-${ci}`} className="border-t border-black/10 pt-6">
+          <article key={`${cat.title}-${ci}`} className="border-t border-black/10 pt-6" data-edit-collection="categories" data-edit-index={ci}>
             <h3 className="text-2xl font-light text-[color:var(--token-heading,#18181b)]">{cat.title || ''}</h3>
             {cat.text && <div className="mt-2 text-sm font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: cat.text }} />}
             <div className="mt-5 divide-y divide-black/10">
               {asList<PriceItem>(cat.items).map((item, ii) => (
-                <div key={`${item.name}-${ii}`} className="py-4">
+                <div key={`${item.name}-${ii}`} className="py-4" data-edit-collection="items" data-edit-index={ii}>
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-4"><div className="min-w-0"><p className="font-light text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>{item.description && <div className="mt-1 text-sm font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}</div>{item.priceLabel && <p className="shrink-0 whitespace-nowrap font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="priceLabel">{item.priceLabel}</p>}</div>
                   <div className="mt-2 flex flex-wrap gap-3 text-xs font-light text-[color:var(--token-muted,#52525b)]">{item.durationLabel && <span>{item.durationLabel}</span>}{item.note && <span>{item.note}</span>}{item.cta?.label && <a href={item.cta.href || '#'} className="border-b border-[var(--token-card-border,var(--brand-accent,#f39c12))] pb-1 text-[color:var(--token-heading,#18181b)]" data-edit-path="label">{item.cta.label}</a>}</div>
                 </div>
@@ -93,12 +93,12 @@ function PriceBold({ headline, subline, badgeText, categories, footnote, ctaPrim
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         {categories.map((cat, ci) => (
-          <article key={`${cat.title}-${ci}`} className="border-2 border-[#111827] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow, var(--brand-accent))]">
+          <article key={`${cat.title}-${ci}`} className="border-2 border-[#111827] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow, var(--brand-accent))]" data-edit-collection="categories" data-edit-index={ci}>
             <h3 className="text-2xl font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]">{cat.title || ''}</h3>
             {cat.text && <div className="mt-2 text-sm text-[color:var(--token-on-dark-heading,#ffffff)/60] rt-content" dangerouslySetInnerHTML={{ __html: cat.text }} />}
             <div className="mt-5 divide-y-2 divide-[#111827]">
               {asList<PriceItem>(cat.items).map((item, ii) => (
-                <div key={`${item.name}-${ii}`} className="py-4">
+                <div key={`${item.name}-${ii}`} className="py-4" data-edit-collection="items" data-edit-index={ii}>
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-4"><div className="min-w-0"><p className="font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]">{item.name || ''}</p>{item.description && <div className="mt-1 text-sm text-[color:var(--token-on-dark-heading,#ffffff)/60] rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}</div>{item.priceLabel && <p className="shrink-0 whitespace-nowrap font-black text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" data-edit-path="priceLabel">{item.priceLabel}</p>}</div>
                   <div className="mt-2 flex flex-wrap gap-3 text-xs font-bold text-[color:var(--token-on-dark-heading,#ffffff)/50]">{item.durationLabel && <span>{item.durationLabel}</span>}{item.note && <span>{item.note}</span>}{item.cta?.label && <a href={item.cta.href || '#'} className="font-black uppercase text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" data-edit-path="label">{item.cta.label}</a>}</div>
                 </div>

@@ -65,7 +65,7 @@ export function StatsCounterSection({ data }: Props) {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 max-w-5xl mx-auto">
           {stats.map((stat, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.15 }} className="text-center">
+            <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.15 }} className="text-center" data-edit-collection="stats" data-edit-index={i}>
               <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--style-accent-color,var(--color-primary,#ffffff))]">
                 <AnimatedNumber value={stat.value} prefix={stat.prefix} suffix={stat.suffix} inView={inView} />
               </div>

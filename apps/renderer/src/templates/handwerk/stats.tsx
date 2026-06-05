@@ -54,7 +54,7 @@ export function StatsSection({ data }: Props) {
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: i * 0.1 }}
             className="text-center p-6 rounded-2xl bg-[var(--token-card-bg,var(--style-card-bg,#fff))] border border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,.08)))] shadow-sm"
-          >
+           data-edit-collection="stats" data-edit-index={i}>
             {stat.icon && (
               <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-[color-mix(in_srgb,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))_14%,transparent)] flex items-center justify-center text-[var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))]">
                 <DynamicIcon name={stat.icon} size={20} />

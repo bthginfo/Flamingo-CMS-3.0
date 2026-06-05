@@ -45,7 +45,7 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
-          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 shadow-md">
+          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 shadow-md" data-edit-collection="items" data-edit-index={index}>
             {item.mediaType === 'image' && item.image ? (
               <div className="relative mb-4 aspect-[16/10] overflow-hidden rounded-xl"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
@@ -72,7 +72,7 @@ function AmenitiesModern({ headline, subline, badgeText, items, ctaPrimary }: Pr
       </div>
       <div className="grid gap-px border border-black/10 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-8">
+          <article key={`${item.title}-${index}`} className="border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-8" data-edit-collection="items" data-edit-index={index}>
             {item.mediaType === 'image' && item.image ? (
               <div className="relative mb-6 aspect-[16/10] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
@@ -99,7 +99,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] p-5 shadow-[4px_4px_0_#111827]">
+          <article key={`${item.title}-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="items" data-edit-index={index}>
             {item.mediaType === 'image' && item.image ? (
               <div className="relative mb-4 aspect-[16/10] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (

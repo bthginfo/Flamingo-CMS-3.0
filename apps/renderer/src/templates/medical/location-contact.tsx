@@ -38,7 +38,7 @@ function Classic({ header, introText, image, mapEmbedUrl, formEnabled, submitLab
         {introText && <div className="text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
-            <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4">
+            <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
               <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
               <div className="min-w-0 flex-1"><p className="text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{card.label || ''}</p><p className="break-words font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{card.value || ''}</p></div>
             </div>
@@ -63,7 +63,7 @@ function Modern({ header, introText, image, mapEmbedUrl, formEnabled, submitLabe
         {introText && <div className="font-light text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
-            <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4">
+            <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
               <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
               <div className="min-w-0 flex-1"><p className="text-xs font-light text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{card.label || ''}</p><p className="break-words font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{card.value || ''}</p></div>
             </div>
@@ -95,7 +95,7 @@ function Bold({ header, introText, image, mapEmbedUrl, formEnabled, submitLabel,
         {introText && <div className="text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
-            <div key={`${card.label}-${index}`} className="flex gap-4 border-t-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] pt-4">
+            <div key={`${card.label}-${index}`} className="flex gap-4 border-t-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
               <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
               <div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{card.label || ''}</p><p className="break-words font-black text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{card.value || ''}</p></div>
             </div>

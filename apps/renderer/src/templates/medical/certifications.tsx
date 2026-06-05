@@ -24,7 +24,7 @@ function Classic({ header, items }: Props) {
       <SectionHeader {...header} />
       <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="grid gap-6 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="rounded-xl bg-[var(--token-card-bg,#ffffff)] p-5 shadow-lg">
+          <article key={`${item.title}-${index}`} className="rounded-xl bg-[var(--token-card-bg,#ffffff)] p-5 shadow-lg" data-edit-collection="items" data-edit-index={index}>
             {item.metaLabel && <p className="mb-3 text-xs font-bold uppercase tracking-widest text-teal-700">{item.metaLabel}</p>}
             <IconRows items={[item]} />
           </article>
@@ -40,7 +40,7 @@ function Modern({ header, items }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-5">
+          <article key={`${item.title}-${index}`} className="border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-5" data-edit-collection="items" data-edit-index={index}>
             {item.metaLabel && <p className="mb-3 text-xs font-light uppercase tracking-widest text-blue-500">{item.metaLabel}</p>}
             <IconRows items={[item]} />
           </article>
@@ -60,7 +60,7 @@ function Bold({ header, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] p-5 shadow-[4px_4px_0_#111827]">
+          <article key={`${item.title}-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="items" data-edit-index={index}>
             {item.metaLabel && <p className="mb-3 text-xs font-black uppercase tracking-widest text-teal-500">{item.metaLabel}</p>}
             <IconRows items={[item]} />
           </article>

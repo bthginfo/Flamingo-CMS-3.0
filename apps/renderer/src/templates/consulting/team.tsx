@@ -31,7 +31,7 @@ export function ConsultingTeamSection({ data }: Props) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
             className="group text-center"
-          >
+           data-edit-collection="members" data-edit-index={i}>
             {member.image && (
               <div className="w-48 h-48 mx-auto mb-5 rounded-full overflow-hidden border-4 border-[color:var(--token-card-border,#f4f4f5)] shadow-md group-hover:border-[var(--token-card-border,var(--brand-primary,#1a5276))/30] transition-colors">
                 <img src={member.image} alt={member.name} className="w-full h-full object-cover" />

@@ -83,11 +83,32 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
     const cleanups: Array<() => void> = [];
 
     editables.forEach((el) => {
-      const path = el.getAttribute('data-edit-path');
-      if (!path) return;
+      const leafPath = el.getAttribute('data-edit-path');
+      if (!leafPath) return;
       const sectionEl = el.closest<HTMLElement>('[data-section-id]');
       const sectionId = sectionEl?.getAttribute('data-section-id');
       if (!sectionId) return;
+
+      // Build a compound path by walking parents that carry loop markers
+      // (data-edit-collection / data-edit-index). For nested loops the
+      // outer pair appears first in the resulting path, e.g.
+      //   <div data-edit-collection="courses" data-edit-index={2}>
+      //     <div data-edit-collection="items" data-edit-index={0}>
+      //       <span data-edit-path="title">…</span>
+      //     </div>
+      //   </div>
+      // …yields path "courses.2.items.0.title".
+      const segments: string[] = [leafPath];
+      let cursor: HTMLElement | null = el.parentElement;
+      while (cursor && cursor !== root && cursor !== sectionEl) {
+        const collection = cursor.getAttribute('data-edit-collection');
+        const indexAttr = cursor.getAttribute('data-edit-index');
+        if (collection && indexAttr !== null && /^\d+$/.test(indexAttr)) {
+          segments.unshift(collection, indexAttr);
+        }
+        cursor = cursor.parentElement;
+      }
+      const path = segments.join('.');
 
       const original = el.innerText;
       el.setAttribute('contenteditable', 'plaintext-only');

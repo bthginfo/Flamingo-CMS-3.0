@@ -45,8 +45,8 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
       </div>
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, index) => (
-          <motion.article key={`${item.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 shadow-md">
-            <div className="flex gap-1 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{Array.from({ length: item.rating || 5 }).map((_, i) => <Star key={i} size={14} fill="currentColor" />)}</div>
+          <motion.article key={`${item.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 shadow-md" data-edit-collection="items" data-edit-index={index}>
+            <div className="flex gap-1 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{Array.from({ length: item.rating || 5 }).map((_, i) => <Star key={i} size={14} fill="currentColor"  data-edit-collection="rating" data-edit-index={i}/>)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-[color:var(--token-heading,#18181b)] rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-semibold text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
             <p className="text-xs text-[color:var(--token-muted,#52525b)]">{[item.context, item.stayLabel].filter(Boolean).join(' / ')}</p>
@@ -74,8 +74,8 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
       </div>
       <div className="grid gap-px border border-black/10 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.name}-${index}`} className="border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-6">
-            <div className="flex gap-1 text-[color:var(--token-muted,#52525b)]">{Array.from({ length: item.rating || 5 }).map((_, i) => <Star key={i} size={12} />)}</div>
+          <article key={`${item.name}-${index}`} className="border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-6" data-edit-collection="items" data-edit-index={index}>
+            <div className="flex gap-1 text-[color:var(--token-muted,#52525b)]">{Array.from({ length: item.rating || 5 }).map((_, i) => <Star key={i} size={12}  data-edit-collection="rating" data-edit-index={i}/>)}</div>
             {item.quote && <div className="mt-4 text-sm font-light leading-7 text-[color:var(--token-heading,#18181b)] rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-light text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
             <p className="text-xs font-light text-[color:var(--token-muted,#52525b)]">{[item.context, item.stayLabel].filter(Boolean).join(' / ')}</p>
@@ -103,8 +103,8 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.name}-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] p-5 shadow-[4px_4px_0_#111827]">
-            <div className="flex gap-1 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{Array.from({ length: item.rating || 5 }).map((_, i) => <Star key={i} size={14} fill="currentColor" />)}</div>
+          <article key={`${item.name}-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="items" data-edit-index={index}>
+            <div className="flex gap-1 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{Array.from({ length: item.rating || 5 }).map((_, i) => <Star key={i} size={14} fill="currentColor"  data-edit-collection="rating" data-edit-index={i}/>)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-[color:var(--token-heading,#18181b)] rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-black uppercase text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
             <p className="text-xs font-bold text-[color:var(--token-muted,#52525b)]">{[item.context, item.stayLabel].filter(Boolean).join(' / ')}</p>

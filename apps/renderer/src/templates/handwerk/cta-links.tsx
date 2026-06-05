@@ -34,7 +34,7 @@ export function CtaLinksSection({ data }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.08 }}
-          >
+           data-edit-collection="links" data-edit-index={i}>
             <Link
               href={link.href}
               className="group flex items-center gap-4 p-6 rounded-2xl border border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,.08)))] bg-[var(--token-card-bg,var(--style-card-bg,#fff))] shadow-sm hover:shadow-lg hover:border-[color-mix(in_srgb,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))_28%,transparent)] transition-all duration-300 hover:-translate-y-1"

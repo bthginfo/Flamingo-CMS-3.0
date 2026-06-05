@@ -168,7 +168,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, trustItems, bgIma
           <div className="flex flex-wrap items-center gap-4 mt-16 text-xs text-[color:var(--token-body,#a1a1aa)] uppercase tracking-wider">
             {ratingText && <span className="inline-flex items-center gap-1.5"><Star size={12} />{ratingText}</span>}
             {availabilityHint && <span>{availabilityHint}</span>}
-            {trustItems.map((item, i) => <span key={i}>{item}</span>)}
+            {trustItems.map((item, i) => <span key={i} data-edit-collection="trustItems" data-edit-index={i}>{item}</span>)}
           </div>
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
@@ -245,7 +245,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, trustItems, bgImage
             {ratingText && <span className="flex items-center gap-2"><Star size={14} className="text-[color:var(--token-on-dark-body,rgba(255,255,255,0.84))]" />{ratingText}</span>}
             {availabilityHint && <span className="flex items-center gap-2"><span className="w-2 h-2 bg-[var(--token-card-bg,#ffffff)]" />{availabilityHint}</span>}
             {trustItems.map((item, i) => (
-              <span key={i} className="flex items-center gap-2"><span className="w-2 h-2 bg-[var(--token-card-bg,#ffffff)]" />{item}</span>
+              <span key={i} className="flex items-center gap-2" data-edit-collection="trustItems" data-edit-index={i}><span className="w-2 h-2 bg-[var(--token-card-bg,#ffffff)]" />{item}</span>
             ))}
           </motion.div>
         </div>

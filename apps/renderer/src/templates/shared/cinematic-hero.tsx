@@ -75,7 +75,7 @@ export function CinematicHeroSection({ data }: Props) {
         {facts.length > 0 && (
           <div className="mt-10 grid w-full max-w-3xl grid-cols-2 gap-3 md:mt-12 md:grid-cols-4 md:gap-4">
             {facts.map((fact, i) => (
-              <div key={i} className="rounded-2xl border border-white/22 bg-transparent p-4 backdrop-blur-sm md:p-5">
+              <div key={i} className="rounded-2xl border border-white/22 bg-transparent p-4 backdrop-blur-sm md:p-5" data-edit-collection="facts" data-edit-index={i}>
                 <div className="text-2xl font-black" style={{ color: heroText }}>{fact.value}</div>
                 <div className="mt-1 text-xs" style={{ color: heroMuted }}>{fact.label}</div>
               </div>

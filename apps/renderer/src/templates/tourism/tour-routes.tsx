@@ -38,7 +38,7 @@ function Classic({ header, routes, ctaPrimary }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-6 lg:grid-cols-2">
         {routes.map((route, index) => (
-          <motion.article key={`${route.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="overflow-hidden rounded-xl bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-lg">
+          <motion.article key={`${route.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="overflow-hidden rounded-xl bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-lg" data-edit-collection="routes" data-edit-index={index}>
             {route.image && <div className="relative aspect-[16/9]"><Image src={route.image} alt={route.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="p-6">
               <RouteMeta route={route} className="text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
@@ -61,7 +61,7 @@ function Modern({ header, routes, ctaPrimary }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-6 lg:grid-cols-2">
         {routes.map((route, index) => (
-          <article key={`${route.title}-${index}`} className="overflow-hidden border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))]">
+          <article key={`${route.title}-${index}`} className="overflow-hidden border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))]" data-edit-collection="routes" data-edit-index={index}>
             {route.image && <div className="relative aspect-[16/9]"><Image src={route.image} alt={route.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="p-6">
               <RouteMeta route={route} className="text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] font-light" />
@@ -88,7 +88,7 @@ function Bold({ header, routes, ctaPrimary }: Props) {
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         {routes.map((route, index) => (
-          <article key={`${route.title}-${index}`} className="overflow-hidden border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-[4px_4px_0_var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))]">
+          <article key={`${route.title}-${index}`} className="overflow-hidden border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-[4px_4px_0_var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))]" data-edit-collection="routes" data-edit-index={index}>
             {route.image && <div className="relative aspect-[16/9]"><Image src={route.image} alt={route.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="p-6">
               <RouteMeta route={route} className="text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] font-black" />

@@ -34,13 +34,13 @@ export function PremiumComparisonSection({ data }: Props) {
         <div className="grid min-w-[720px]" style={{ gridTemplateColumns: `minmax(180px,1.2fr) repeat(${columns.length}, minmax(140px,1fr))` }}>
           <div className="border-b border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] p-5" />
           {columns.map((col, i) => (
-            <div key={i} className={`border-b border-l border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] p-5 text-center ${i === highlightCol ? 'bg-[var(--token-icon, var(--brand-primary))] text-white' : ''}`}>
+            <div key={i} className={`border-b border-l border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] p-5 text-center ${i === highlightCol ? 'bg-[var(--token-icon, var(--brand-primary))] text-white' : ''}`} data-edit-collection="columns" data-edit-index={i}>
               <div className="font-bold">{col.label}</div>
               {col.note && <div className={`mt-1 text-xs ${i === highlightCol ? 'text-white/70' : 'text-[var(--token-muted, var(--style-text-muted,#71717a))]'}`}>{col.note}</div>}
             </div>
           ))}
           {rows.map((row, ri) => (
-            <Fragment key={ri}>
+            <Fragment key={ri} data-edit-collection="rows" data-edit-index={ri}>
               <div key={`${ri}-feature`} className="border-b border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] p-5 font-medium text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111)))]">{row.feature}</div>
               {columns.map((_, ci) => {
                 const value = normalizeValue(row.values[ci]);

@@ -25,7 +25,7 @@ function Classic({ header, items }: Props) {
       <SectionHeader {...header} />
       <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="grid gap-6 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="group overflow-hidden rounded-xl bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-lg">
+          <article key={`${item.title}-${index}`} className="group overflow-hidden rounded-xl bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-lg" data-edit-collection="items" data-edit-index={index}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {(item.methodLabel || item.benefitLabel) && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[item.methodLabel, item.benefitLabel].filter(Boolean).join(' / ')}</p>}
@@ -46,7 +46,7 @@ function Modern({ header, items }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="group overflow-hidden border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))]">
+          <article key={`${item.title}-${index}`} className="group overflow-hidden border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))]" data-edit-collection="items" data-edit-index={index}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {(item.methodLabel || item.benefitLabel) && <p className="text-xs font-light uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[item.methodLabel, item.benefitLabel].filter(Boolean).join(' / ')}</p>}
@@ -71,7 +71,7 @@ function Bold({ header, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="group overflow-hidden border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-[4px_4px_0_var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))]">
+          <article key={`${item.title}-${index}`} className="group overflow-hidden border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-[4px_4px_0_var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))]" data-edit-collection="items" data-edit-index={index}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {(item.methodLabel || item.benefitLabel) && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[item.methodLabel, item.benefitLabel].filter(Boolean).join(' / ')}</p>}

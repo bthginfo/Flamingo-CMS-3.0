@@ -39,7 +39,7 @@ function ProcessClassic({ headline, badgeText, steps }: PProps) {
           </div>
           <div className="space-y-12">
             {steps.map((step, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: -30 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.15 }} className="flex gap-8 md:gap-12 items-start group">
+              <motion.div key={i} initial={{ opacity: 0, x: -30 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.15 }} className="flex gap-8 md:gap-12 items-start group" data-edit-collection="steps" data-edit-index={i}>
                 <div className="shrink-0 relative z-10">
                   <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] shadow-lg transition-all group-hover:scale-110 group-hover:shadow-glow">
                     {step.icon ? <DynamicIcon name={step.icon} size={24} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" /> : <span className="text-lg font-bold text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">{i + 1}</span>}
@@ -72,7 +72,7 @@ function ProcessModern({ headline, badgeText, steps }: PProps) {
       <div className="max-w-3xl mx-auto space-y-0">
         {steps.map((step, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="flex gap-8 border-b border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] py-10 last:border-b-0">
+            className="flex gap-8 border-b border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] py-10 last:border-b-0" data-edit-collection="steps" data-edit-index={i}>
             <div className="shrink-0 text-3xl font-extralight text-[var(--token-muted, var(--style-text-muted,#e5e7eb))] md:text-5xl">{String(i + 1).padStart(2, '0')}</div>
             <div>
               <h3 className="mb-2 text-lg font-medium text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{step.title}</h3>
@@ -99,7 +99,7 @@ function ProcessBold({ headline, badgeText, steps }: PProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {steps.map((step, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="relative border-3 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-6 shadow-[4px_4px_0_var(--style-text-primary,#0d2137)]">
+            className="relative border-3 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-6 shadow-[4px_4px_0_var(--style-text-primary,#0d2137)]" data-edit-collection="steps" data-edit-index={i}>
             <div className="absolute left-0 top-0 flex h-8 w-8 items-center justify-center bg-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))] text-sm font-black text-[var(--token-badge-text, var(--style-badge-text,var(--token-section-bg-alt, var(--brand-dark))))]">
               {i + 1}
             </div>

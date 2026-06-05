@@ -28,7 +28,7 @@ export function IconRows({ items }: { items: unknown }) {
   return (
     <div className="grid gap-4">
       {asList<{ icon?: string; title?: string; text?: string }>(items).map((item, index) => (
-        <div key={`${item.title}-${index}`} className="flex items-start gap-4 border-t border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,.1)))] pt-4">
+        <div key={`${item.title}-${index}`} className="flex items-start gap-4 border-t border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,.1)))] pt-4" data-edit-collection="items" data-edit-index={index}>
           <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--token-icon,var(--style-icon-color,var(--brand-primary,#1f7a74)))_12%,transparent)] text-[var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary,#1f7a74))))]">
             <DynamicIcon name={item.icon || 'stethoscope'} size={18} />
           </span>

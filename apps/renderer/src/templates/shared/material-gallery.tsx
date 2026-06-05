@@ -66,7 +66,7 @@ export function MaterialGallerySection({ data }: Props) {
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.4, delay: i * 0.04 }}
             className="group"
-          >
+           data-edit-collection="filtered" data-edit-index={i}>
             <div className="aspect-square rounded-[var(--style-card-radius,1rem)] overflow-hidden bg-[var(--token-section-bg-alt,#f4f4f5)] border border-[rgba(0,0,0,0.06)] shadow-sm group-hover:shadow-lg transition-shadow duration-300">
               {item.image ? (
                 <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />

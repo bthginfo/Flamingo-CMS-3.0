@@ -32,11 +32,11 @@ export function DrinkMenuSection({ data }: Props) {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: ci * 0.15 }}
-            >
+             data-edit-collection="categories" data-edit-index={ci}>
               <h3 className="text-lg font-bold text-[color:var(--token-heading,#18181b)] mb-4 pb-2 border-b-2 border-amber-500/30" data-edit-path="title">{cat.title}</h3>
               <ul className="space-y-3">
                 {cat.items.map((item, ii) => (
-                  <li key={ii} className="flex justify-between items-start gap-4">
+                  <li key={ii} className="flex justify-between items-start gap-4" data-edit-collection="items" data-edit-index={ii}>
                     <div>
                       <span className="font-medium text-[color:var(--token-heading,#18181b)] text-sm" data-edit-path="name">{item.name}</span>
                       {item.description && <p className="text-xs text-[color:var(--token-muted,#71717a)] mt-0.5" data-edit-path="description">{plain(item.description)}</p>}

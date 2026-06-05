@@ -50,7 +50,7 @@ export function StyleGallerySection({ data }: Props) {
         <div className="columns-2 md:columns-3 lg:columns-4 gap-3">
           {displayed.map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-              className="break-inside-avoid mb-3 group relative overflow-hidden rounded-lg">
+              className="break-inside-avoid mb-3 group relative overflow-hidden rounded-lg" data-edit-collection="displayed" data-edit-index={i}>
               {item.image && (
                 <Image src={item.image} alt={item.name} width={400} height={500} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500" />
               )}

@@ -41,7 +41,7 @@ export function ReferencesSoldSection({ data }: Props) {
               animate={inView ? { opacity: 1, scale: 1 } : {}}
               transition={{ delay: i * 0.08 }}
               className="relative group rounded-xl overflow-hidden aspect-[3/4]"
-            >
+             data-edit-collection="properties" data-edit-index={i}>
               <Image src={prop.image} alt={prop.title} fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
               {/* Sold overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />

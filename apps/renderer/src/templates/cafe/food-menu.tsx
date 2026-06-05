@@ -33,7 +33,7 @@ export function FoodMenuSection({ data }: Props) {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.08 }}
               className="bg-[var(--token-card-bg,#ffffff)] rounded-xl border border-[color:var(--token-card-border,#f4f4f5)] overflow-hidden group hover:shadow-md transition-shadow"
-            >
+             data-edit-collection="items" data-edit-index={i}>
               {item.image && (
                 <div className="relative aspect-[16/10] overflow-hidden">
                   <Image src={item.image} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 33vw" />

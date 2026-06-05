@@ -1,22 +1,29 @@
 /**
- * Codegen: inject data-edit-path="<key>" on JSX text elements across every
- * template file so the in-place text editor (page-editor.tsx click listener)
- * works everywhere — not just in bento-grid.tsx (the POC).
+ * Codegen: inject data-edit-path (+ data-edit-collection / data-edit-index)
+ * on JSX text elements across every template file so the in-place text
+ * editor (page-editor.tsx click listener) works everywhere — including for
+ * elements rendered inside .map() loops where the path must include the
+ * item index.
  *
- * Strategy: for each .tsx in apps/renderer/src/templates/, find JSX patterns
- * like:
+ * Two passes per file:
  *
- *   <h1>{headline}</h1>
- *   <p>{plain(subline)}</p>
- *   <span>{data.badge}</span>
- *   <h2>{(item.title as string)}</h2>
+ *   PASS A — item-loop wrappers:
+ *     Find `<receiver>.map((<item>, <i>) => <Tag …>` patterns and inject
+ *     `data-edit-collection="<receiver>" data-edit-index={<i>}` on the
+ *     root JSX element returned by the callback.
  *
- * …and inject a data-edit-path attribute when the inner expression resolves
- * to a known text-field name. Conservative — only matches single-expression
- * children, never touches elements that already have data-edit-path.
+ *   PASS B — text expressions:
+ *     Find `<tag>{expr}</tag>` patterns where the inner expression
+ *     resolves to a known text-field name and inject
+ *     `data-edit-path="<key>"` on the opening tag.
+ *
+ * At runtime the live-preview client walks ancestor elements collecting
+ * `data-edit-collection` / `data-edit-index` and builds a compound path
+ * like `items.0.title`, which the editor then applies via a nested
+ * immutable set.
  *
  *   node scripts/annotate-edit-paths.cjs           → write changes
- *   node scripts/annotate-edit-paths.cjs --dry     → print diff stats only
+ *   node scripts/annotate-edit-paths.cjs --dry     → print stats only
  */
 
 const fs = require('fs');
@@ -77,10 +84,96 @@ function injectAttribute(openTag, field) {
 }
 
 function processFile(filePath) {
-  const src = fs.readFileSync(filePath, 'utf8');
+  const original = fs.readFileSync(filePath, 'utf8');
+  const afterPassA = annotateMapWrappers(original);
+  const afterPassB = annotateTextFields(afterPassA);
+  const wrapperChanges = countOccurrences(afterPassA, 'data-edit-collection=') - countOccurrences(original, 'data-edit-collection=');
+  const textChanges = countOccurrences(afterPassB, 'data-edit-path=') - countOccurrences(afterPassA, 'data-edit-path=');
+  return { content: afterPassB, wrapperChanges, textChanges };
+}
+
+function countOccurrences(s, needle) {
+  let n = 0; let idx = 0;
+  while ((idx = s.indexOf(needle, idx)) !== -1) { n++; idx += needle.length; }
+  return n;
+}
+
+// PASS A: annotate the root JSX element of each `.map((item, i) => ...)`
+// callback with `data-edit-collection` and `data-edit-index`.
+function annotateMapWrappers(src) {
   let out = '';
   let i = 0;
-  let changes = 0;
+  const re = /\.map\s*\(\s*\(\s*([A-Za-z_$][\w$]*)\s*,\s*([A-Za-z_$][\w$]*)\s*\)\s*=>\s*\(?\s*<([A-Za-z][A-Za-z0-9.]*)/g;
+  let m;
+  while ((m = re.exec(src)) !== null) {
+    const idxVar = m[2];
+    const matchStart = m.index;
+    const matchEnd = matchStart + m[0].length;
+    // Walk forward from matchEnd to find the closing '>' of the opening
+    // tag we just matched, honouring nested `{…}` JSX expression children
+    // inside attribute values (e.g. `className={`foo ${x}`}`).
+    let j = matchEnd;
+    let braceDepth = 0;
+    while (j < src.length) {
+      const ch = src[j];
+      if (ch === '{') braceDepth++;
+      else if (ch === '}') braceDepth--;
+      else if (ch === '>' && braceDepth === 0) break;
+      j++;
+    }
+    if (j >= src.length) continue;
+    // Skip if this tag already has data-edit-collection (idempotent).
+    const tagBody = src.slice(matchStart, j);
+    if (/\bdata-edit-collection\s*=/.test(tagBody)) continue;
+    // Resolve the collection name from the receiver text directly before
+    // `.map`. Covers `items.map`, `items?.map`, `(items||[]).map`, and the
+    // common `((data.items as Item[]) || []).map` pattern.
+    const before = src.slice(Math.max(0, matchStart - 240), matchStart);
+    const collection = deriveCollectionName(before);
+    if (!collection) continue;
+    // If the previous character before '>' is '/', this is a self-closing
+    // tag; insert before the '/' so the attribute doesn't break the slash.
+    const isSelfClose = src[j - 1] === '/';
+    const insertAt = isSelfClose ? j - 1 : j;
+    out += src.slice(i, insertAt) + ` data-edit-collection="${collection}" data-edit-index={${idxVar}}`;
+    i = insertAt;
+  }
+  out += src.slice(i);
+  return out;
+}
+
+// Words to ignore when scanning the receiver expression for a collection
+// name — these are JS keywords / typescript noise that show up before
+// `.map` in patterns like `(items as Item[]).map`.
+const COLLECTION_NAME_BLACKLIST = new Set([
+  'as', 'const', 'let', 'var', 'return', 'true', 'false', 'null',
+  'undefined', 'data', 'map', 'filter', 'forEach', 'reduce', 'find',
+  'some', 'every', 'sort', 'slice', 'splice', 'concat', 'flat',
+  'flatMap', 'Array', 'Object', 'String', 'Number', 'Boolean',
+  'JSON', 'Math', 'in', 'of', 'new', 'typeof', 'instanceof',
+]);
+
+function deriveCollectionName(before) {
+  // 1) Identifier sitting directly before .map (handles items.map / items?.map).
+  const trail = before.match(/([A-Za-z_$][\w$]*)\s*\??\s*$/);
+  if (trail && !COLLECTION_NAME_BLACKLIST.has(trail[1])) return trail[1];
+  // 2) Last `data.<name>` reference in the receiver expression
+  //    (handles `((data.cards as Card[]) || []).map` and friends).
+  const dataMatches = [...before.matchAll(/data\.([A-Za-z_$][\w$]*)/g)];
+  if (dataMatches.length) return dataMatches[dataMatches.length - 1][1];
+  // 3) Last bare identifier in the receiver that isn't a keyword/type.
+  const idMatches = [...before.matchAll(/\b([A-Za-z_$][\w$]*)\b/g)]
+    .map((mm) => mm[1])
+    .filter((name) => !COLLECTION_NAME_BLACKLIST.has(name) && !/^[A-Z]/.test(name));
+  if (idMatches.length) return idMatches[idMatches.length - 1];
+  return '';
+}
+
+// PASS B: annotate text containers (h1..h6, p, span, a, button, etc.) whose
+// body is a single JSX expression resolving to a known text-field name.
+function annotateTextFields(src) {
+  let out = '';
+  let i = 0;
   // Find each `<tag ...>{...}</tag>` pattern; only matches when the body
   // is exactly one JSX expression (no surrounding text or siblings).
   // We scan character-by-character so we can correctly skip nested braces.
@@ -125,11 +218,10 @@ function processFile(filePath) {
     out += src.slice(i, openStart);
     out += injected + '{' + exprBody + '}' + closeMatch[0];
     i = j + closeMatch[0].length;
-    changes++;
     re.lastIndex = i;
   }
   out += src.slice(i);
-  return { content: out, changes };
+  return out;
 }
 
 function walk(dir) {
@@ -143,17 +235,21 @@ function walk(dir) {
 }
 
 const files = walk(TEMPLATES_DIR);
-let totalChanges = 0;
+let totalText = 0;
+let totalWrap = 0;
 let changedFiles = 0;
 for (const file of files) {
-  const { content, changes } = processFile(file);
-  if (changes === 0) continue;
+  const { content, wrapperChanges, textChanges } = processFile(file);
+  const before = fs.readFileSync(file, 'utf8');
+  if (content === before) continue;
   changedFiles++;
-  totalChanges += changes;
+  totalText += textChanges;
+  totalWrap += wrapperChanges;
   if (!DRY) fs.writeFileSync(file, content);
-  if (DRY || process.env.VERBOSE) console.log(`${path.relative(ROOT, file)}: +${changes}`);
+  if (DRY || process.env.VERBOSE) console.log(`${path.relative(ROOT, file)}: +${textChanges} text / +${wrapperChanges} loop-wrappers`);
 }
-console.log(`\nFiles scanned:  ${files.length}`);
-console.log(`Files changed:  ${changedFiles}`);
-console.log(`Total injects:  ${totalChanges}`);
+console.log(`\nFiles scanned:        ${files.length}`);
+console.log(`Files changed:        ${changedFiles}`);
+console.log(`Total text injects:   ${totalText}`);
+console.log(`Total loop wrappers:  ${totalWrap}`);
 if (DRY) console.log('(dry run — no files written)');

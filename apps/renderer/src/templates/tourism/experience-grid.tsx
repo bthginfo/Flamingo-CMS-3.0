@@ -38,7 +38,7 @@ function Classic({ header, items, ctaPrimary }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-5 lg:grid-cols-2">
         {items.map((item, index) => (
-          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-xl bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-lg sm:grid-cols-[220px_1fr]">
+          <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-xl bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-lg sm:grid-cols-[220px_1fr]" data-edit-collection="items" data-edit-index={index}>
             {item.image && <div className="relative min-h-56"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
             <div className="p-5">
               <ExperienceMeta item={item} className="text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
@@ -60,7 +60,7 @@ function Modern({ header, items, ctaPrimary }: Props) {
       <SectionHeader {...header} />
       <div className="grid gap-5 lg:grid-cols-2">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="grid overflow-hidden border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] sm:grid-cols-[220px_1fr]">
+          <article key={`${item.title}-${index}`} className="grid overflow-hidden border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] sm:grid-cols-[220px_1fr]" data-edit-collection="items" data-edit-index={index}>
             {item.image && <div className="relative min-h-56"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
             <div className="p-5">
               <ExperienceMeta item={item} className="text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] font-light" />
@@ -86,7 +86,7 @@ function Bold({ header, items, ctaPrimary }: Props) {
       </div>
       <div className="grid gap-5 lg:grid-cols-2">
         {items.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="grid overflow-hidden border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-[4px_4px_0_var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] sm:grid-cols-[220px_1fr]">
+          <article key={`${item.title}-${index}`} className="grid overflow-hidden border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-[4px_4px_0_var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] sm:grid-cols-[220px_1fr]" data-edit-collection="items" data-edit-index={index}>
             {item.image && <div className="relative min-h-56"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
             <div className="p-5">
               <ExperienceMeta item={item} className="text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] font-black" />

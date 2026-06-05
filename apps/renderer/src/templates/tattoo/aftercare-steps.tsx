@@ -23,7 +23,7 @@ export function AftercarStepsSection({ data }: Props) {
         <div className="space-y-6">
           {steps.map((step, i) => (
             <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-              className="flex gap-5 items-start">
+              className="flex gap-5 items-start" data-edit-collection="steps" data-edit-index={i}>
               <div className="shrink-0 w-10 h-10 rounded-full bg-[var(--token-card-bg,#ffffff)/10] border border-[color:var(--token-card-border,#ffffff)/20] flex items-center justify-center text-[color:var(--token-on-dark-heading,#ffffff)] font-bold text-sm">
                 {i + 1}
               </div>

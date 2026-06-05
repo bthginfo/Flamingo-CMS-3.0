@@ -34,7 +34,7 @@ export function DailySpecialsSection({ data }: Props) {
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: i * 0.1 }}
               className="flex items-start gap-4 bg-[var(--token-card-bg,#ffffff)] rounded-lg p-5 border border-amber-100 shadow-sm"
-            >
+             data-edit-collection="specials" data-edit-index={i}>
               {item.day && (
                 <span className="text-xs font-bold uppercase text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full whitespace-nowrap">{item.day}</span>
               )}

@@ -32,13 +32,13 @@ function Classic({ badge, headline, courses, note }: P) {
         </div>
         <div className="space-y-12">
           {courses.map((course, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} data-edit-collection="courses" data-edit-index={i}>
               <h3 className="text-lg font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mb-4 flex items-center gap-2">
                 <UtensilsCrossed className="w-4 h-4" /> {course.title}
               </h3>
               <div className="space-y-4 pl-6 border-l-2 border-[var(--token-card-border,var(--brand-primary,#1a5276))/10]">
                 {course.items.map((item, j) => (
-                  <div key={j}>
+                  <div key={j} data-edit-collection="items" data-edit-index={j}>
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{item.name}</span>
                       {item.tags?.map(tag => { const Icon = tagIcons[tag.toLowerCase()] || Leaf; return <Icon key={tag} className="w-3.5 h-3.5 text-green-600" title={tag} />; })}
@@ -64,11 +64,11 @@ function Modern({ badge, headline, courses, note }: P) {
         <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-16 break-words" data-edit-path="headline">{headline}</h2>
         <div className="space-y-16">
           {courses.map((course, i) => (
-            <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+            <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} data-edit-collection="courses" data-edit-index={i}>
               <h3 className="text-xs uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-6 border-b border-[color:var(--token-card-border,#e4e4e7)] pb-3" data-edit-path="title">{course.title}</h3>
               <div className="space-y-6">
                 {course.items.map((item, j) => (
-                  <div key={j} className="flex justify-between items-start gap-4">
+                  <div key={j} className="flex justify-between items-start gap-4" data-edit-collection="items" data-edit-index={j}>
                     <div>
                       <span className="font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{item.name}</span>
                       {item.description && <div className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
@@ -94,13 +94,13 @@ function Bold({ badge, headline, courses, note }: P) {
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words" data-edit-path="headline">{headline}</h2>
         <div className="grid md:grid-cols-2 gap-8">
           {courses.map((course, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6">
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6" data-edit-collection="courses" data-edit-index={i}>
               <h3 className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] font-bold uppercase tracking-wider text-sm mb-5 flex items-center gap-2">
                 <UtensilsCrossed className="w-4 h-4" /> {course.title}
               </h3>
               <div className="space-y-4">
                 {course.items.map((item, j) => (
-                  <div key={j}>
+                  <div key={j} data-edit-collection="items" data-edit-index={j}>
                     <span className="font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{item.name}</span>
                     {item.description && <div className="text-[color:var(--token-muted,#71717a)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
                   </div>

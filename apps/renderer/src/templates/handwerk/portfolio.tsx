@@ -79,7 +79,7 @@ export function PortfolioSection({ data }: Props) {
                 {project.stats && project.stats.length > 0 && (
                   <div className="flex gap-6 pt-4 border-t border-[var(--token-card-border, var(--style-border,rgba(0,0,0,.08)))]">
                     {project.stats.map((stat, j) => (
-                      <div key={j}>
+                      <div key={j} data-edit-collection="stats" data-edit-index={j}>
                         <div className="text-lg font-bold text-[var(--token-icon, var(--style-accent,var(--token-icon, var(--brand-primary))))]">{stat.value}</div>
                         <div className="text-xs text-[var(--token-muted, var(--style-muted,var(--style-text-secondary,#9ca3af)))]">{stat.label}</div>
                       </div>

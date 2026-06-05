@@ -18,7 +18,7 @@ export function BookingCtaSection({ data }: Props) {
         {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50]" data-edit-path="subline">{plain(subline)}</p>}
         {hints.length > 0 && (
           <div className="flex flex-wrap justify-center gap-4 mt-6 text-xs text-[color:var(--token-on-dark-heading,#ffffff)/40]">
-            {hints.map((h, i) => <span key={i} className="flex items-center gap-1.5">✓ {h}</span>)}
+            {hints.map((h, i) => <span key={i} className="flex items-center gap-1.5" data-edit-collection="hints" data-edit-index={i}>✓ {h}</span>)}
           </div>
         )}
         <a href={ctaHref} className="inline-flex items-center justify-center mt-8 px-8 py-4 font-bold uppercase tracking-wider text-sm transition-colors" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, white))', color: 'var(--token-btn-text, var(--brand-btn-text, black))' }}>

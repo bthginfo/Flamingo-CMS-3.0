@@ -32,7 +32,7 @@ export function AtmosphereGallerySection({ data }: Props) {
               animate={inView ? { opacity: 1 } : {}}
               transition={{ delay: i * 0.08 }}
               className="relative break-inside-avoid rounded-lg overflow-hidden group"
-            >
+             data-edit-collection="images" data-edit-index={i}>
               <Image
                 src={img.src}
                 alt={img.caption || ''}

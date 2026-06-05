@@ -35,13 +35,13 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
               {story && <div className="text-[color:var(--token-body,#a1a1aa)] leading-relaxed mt-6 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
               {facts.length > 0 && (
                 <ul className="mt-10 space-y-3 border-t border-[color:var(--token-card-border,#e4e4e7)] pt-8">
-                  {facts.map((fact, i) => <li key={i} className="text-[color:var(--token-muted,#52525b)] text-sm">{fact}</li>)}
+                  {facts.map((fact, i) => <li key={i} className="text-[color:var(--token-muted,#52525b)] text-sm" data-edit-collection="facts" data-edit-index={i}>{fact}</li>)}
                 </ul>
               )}
               {values.length > 0 && (
                 <div className="mt-10 space-y-4 border-t border-[color:var(--token-card-border,#e4e4e7)] pt-8">
                   {values.map((v, i) => (
-                    <div key={i}>
+                    <div key={i} data-edit-collection="values" data-edit-index={i}>
                       <h4 className="text-sm font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{v.title}</h4>
                       <div className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                     </div>
@@ -74,13 +74,13 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
               {story && <div className="text-[color:var(--token-on-dark-heading,#ffffff)/80] leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
               {facts.length > 0 && (
                 <ul className="mt-8 space-y-2">
-                  {facts.map((fact, i) => <li key={i} className="flex items-start gap-2 text-[color:var(--token-on-dark-heading,#ffffff)/70] text-sm"><span className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">—</span>{fact}</li>)}
+                  {facts.map((fact, i) => <li key={i} className="flex items-start gap-2 text-[color:var(--token-on-dark-heading,#ffffff)/70] text-sm" data-edit-collection="facts" data-edit-index={i}><span className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">—</span>{fact}</li>)}
                 </ul>
               )}
               {values.length > 0 && (
                 <div className="mt-8 grid sm:grid-cols-2 gap-4">
                   {values.map((v, i) => (
-                    <div key={i} className="border border-[color:var(--token-card-border,#ffffff)/10] p-4">
+                    <div key={i} className="border border-[color:var(--token-card-border,#ffffff)/10] p-4" data-edit-collection="values" data-edit-index={i}>
                       <h4 className="font-bold text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] text-sm" data-edit-path="title">{v.title}</h4>
                       <div className="text-[color:var(--token-on-dark-heading,#ffffff)/80] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                     </div>
@@ -114,7 +114,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
             {facts.length > 0 && (
               <ul className="mt-8 space-y-2">
                 {facts.map((fact, i) => (
-                  <motion.li key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="flex items-start gap-2 text-[color:var(--token-muted,#3f3f46)] text-sm">
+                  <motion.li key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="flex items-start gap-2 text-[color:var(--token-muted,#3f3f46)] text-sm" data-edit-collection="facts" data-edit-index={i}>
                     <span className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-0.5">•</span>
                     <span>{fact}</span>
                   </motion.li>
@@ -124,7 +124,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
             {values.length > 0 && (
               <div className="mt-8 grid sm:grid-cols-2 gap-4">
                 {values.map((v, i) => (
-                  <div key={i} className="p-4 rounded-xl bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))]/[0.03] border border-[var(--token-card-border,var(--brand-primary,#1a5276))/10]">
+                  <div key={i} className="p-4 rounded-xl bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))]/[0.03] border border-[var(--token-card-border,var(--brand-primary,#1a5276))/10]" data-edit-collection="values" data-edit-index={i}>
                     <h4 className="font-semibold text-[color:var(--token-heading,#18181b)] text-sm" data-edit-path="title">{v.title}</h4>
                     <div className="text-[color:var(--token-muted,#52525b)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                   </div>

@@ -61,7 +61,7 @@ function MenuClassic(props: MenuViewProps) {
       <MenuHeader {...props} align="center" />
       <div className="divide-y divide-black/10">
         {props.categories.map((category, index) => (
-          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="classic" />
+          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="classic"  data-edit-collection="categories" data-edit-index={index}/>
         ))}
       </div>
       <MenuFooter {...props} />
@@ -75,7 +75,7 @@ function MenuModern(props: MenuViewProps) {
       <MenuHeader {...props} align="left" />
       <div className="grid gap-8 lg:grid-cols-2">
         {props.categories.map((category, index) => (
-          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="modern" />
+          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="modern"  data-edit-collection="categories" data-edit-index={index}/>
         ))}
       </div>
       <MenuFooter {...props} />
@@ -89,7 +89,7 @@ function MenuBold(props: MenuViewProps) {
       <MenuHeader {...props} align="left" inverted />
       <div className="grid gap-5">
         {props.categories.map((category, index) => (
-          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="bold" />
+          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="bold"  data-edit-collection="categories" data-edit-index={index}/>
         ))}
       </div>
       <MenuFooter {...props} inverted />
@@ -118,7 +118,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
       </div>
       <div className="space-y-5">
         {items.map((item, index) => (
-          <article key={`${item.name}-${index}`} className={`grid gap-4 ${item.image ? 'sm:grid-cols-[96px_1fr]' : ''} ${item.highlighted ? 'bg-[var(--token-section-bg-alt,#fafafa)] p-4' : ''}`}>
+          <article key={`${item.name}-${index}`} className={`grid gap-4 ${item.image ? 'sm:grid-cols-[96px_1fr]' : ''} ${item.highlighted ? 'bg-[var(--token-section-bg-alt,#fafafa)] p-4' : ''}`} data-edit-collection="items" data-edit-index={index}>
             {item.image && (
               <div className="relative h-24 w-24 overflow-hidden rounded-lg">
                 <Image src={item.image} alt={item.name || ''} fill className="object-cover" sizes="96px" />
