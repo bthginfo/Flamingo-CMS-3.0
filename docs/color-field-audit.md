@@ -18,42 +18,42 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 | Metric | Count |
 |---|---:|
 | Section types in editor | 116 |
-| Total fields shown | 1209 |
+| Total fields shown | 1158 |
 | Unique templates referenced | 197 |
 | Unresolved component refs | 2 |
-| **DEAD fields** | **56** (4.6%) |
-| **SHADOWED fields** | **20** (1.7%) |
-| **MISSING fields** | **15** |
+| **DEAD fields** | **0** (0.0%) |
+| **SHADOWED fields** | **0** (0.0%) |
+| **MISSING fields** | **5** |
 
 ## Top 25 Worst Offenders (by dead+shadowed)
 
 | Section | Dead | Shadowed | Missing | Total | Templates |
 |---|---:|---:|---:|---:|---|
-| `cinematicHero` | 7 | 0 | 1 | 18 | shared/cinematic-hero.tsx |
-| `beforeAfterStoryPro` | 4 | 1 | 0 | 15 | shared/before-after-story-pro.tsx |
-| `emergencyInfo` | 4 | 0 | 0 | 14 | medical/emergency-info.tsx |
-| `immersiveCtaBanner` | 3 | 1 | 0 | 20 | shared/immersive-cta-banner.tsx |
-| `ctaBand` | 2 | 1 | 2 | 16 | handwerk/cta-band.tsx |
-| `proofWall` | 2 | 1 | 0 | 13 | shared/proof-wall.tsx |
-| `signatureGrid` | 2 | 1 | 0 | 14 | shared/signature-grid.tsx |
-| `stats` | 1 | 2 | 0 | 11 | handwerk/stats.tsx |
-| `comparisonCardsPro` | 1 | 1 | 0 | 14 | shared/comparison-cards-pro.tsx |
-| `diagnostics` | 2 | 0 | 0 | 14 | medical/diagnostics.tsx |
-| `editorialFeatureRail` | 2 | 0 | 0 | 15 | shared/editorial-feature-rail.tsx |
-| `equipmentHighlights` | 2 | 0 | 0 | 14 | medical/equipment-highlights.tsx |
-| `fitnessHero` | 1 | 1 | 0 | 16 | shared/glow-hero.tsx |
-| `hero` | 0 | 2 | 0 | 25 | handwerk/hero.tsx, restaurant/hero.tsx, hotel/hero.tsx, tourism/hero.tsx, salon/hero.tsx, medical/hero.tsx, wedding/hero.tsx, consulting/hero.tsx, realestate/hero.tsx, cafe/hero.tsx, tattoo/hero.tsx, shared/glow-hero.tsx, shared/cinematic-hero.tsx |
-| `legalContent` | 2 | 0 | 0 | 4 | handwerk/legal-content.tsx |
-| `principlesGrid` | 1 | 1 | 0 | 17 | shared/principles-grid.tsx |
-| `serviceOverview` | 2 | 0 | 0 | 14 | medical/service-overview.tsx |
-| `textImage` | 2 | 0 | 0 | 10 | handwerk/text-image.tsx |
-| `availabilityCta` | 0 | 1 | 0 | 17 | shared/immersive-cta-banner.tsx |
-| `collectionHero` | 1 | 0 | 0 | 17 | handwerk/collection-hero.tsx |
-| `collectionList` | 1 | 0 | 0 | 6 | shared/collection-list.tsx |
-| `doctorTeam` | 1 | 0 | 0 | 14 | medical/doctor-team.tsx |
-| `faq` | 1 | 0 | 0 | 19 | handwerk/faq.tsx, restaurant/faq.tsx, hotel/faq.tsx, tourism/faq.tsx, salon/faq.tsx, medical/faq.tsx, wedding/faq-gallery.tsx, consulting/faq.tsx, realestate/faq.tsx, cafe/faq.tsx |
-| `floristHero` | 0 | 1 | 0 | 15 | shared/glow-hero.tsx |
-| `freeText` | 1 | 0 | 0 | 3 | handwerk/rich-text.tsx |
+| `additionalLocations` | 0 | 0 | 0 | 16 | shared/additional-locations.tsx |
+| `accommodationGrid` | 0 | 0 | 0 | 14 | tourism/accommodation-grid.tsx |
+| `amenitiesGrid` | 0 | 0 | 0 | 8 | shared/bento-grid.tsx |
+| `appointmentCta` | 0 | 0 | 0 | 15 | medical/appointment-cta.tsx |
+| `availabilityCta` | 0 | 0 | 0 | 17 | shared/immersive-cta-banner.tsx |
+| `beforeAfter` | 0 | 0 | 0 | 11 | salon/before-after.tsx |
+| `beforeAfterSlider` | 0 | 0 | 0 | 9 | shared/before-after-slider.tsx |
+| `beforeAfterStoryPro` | 0 | 0 | 0 | 11 | shared/before-after-story-pro.tsx |
+| `bentoGrid` | 0 | 0 | 0 | 8 | shared/bento-grid.tsx |
+| `bouquetShowcase` | 0 | 0 | 0 | 10 | shared/product-showcase.tsx |
+| `brandShowroom` | 0 | 0 | 0 | 8 | shared/brand-showroom.tsx |
+| `categoryMosaic` | 0 | 0 | 0 | 9 | shared/category-mosaic.tsx |
+| `cinematicHero` | 0 | 0 | 1 | 11 | shared/cinematic-hero.tsx |
+| `collectionHero` | 0 | 0 | 0 | 16 | handwerk/collection-hero.tsx |
+| `collectionList` | 0 | 0 | 0 | 5 | shared/collection-list.tsx |
+| `comparisonCardsPro` | 0 | 0 | 0 | 13 | shared/comparison-cards-pro.tsx |
+| `comparisonTable` | 0 | 0 | 0 | 5 | shared/comparison-table.tsx |
+| `consultationBooking` | 0 | 0 | 0 | 10 | shared/consultation-booking.tsx |
+| `contact` | 0 | 0 | 0 | 16 | handwerk/contact.tsx, restaurant/contact.tsx, hotel/contact.tsx, consulting/contact.tsx, realestate/contact.tsx, cafe/contact.tsx |
+| `courseSchedule` | 0 | 0 | 0 | 1 | shared/timeline.tsx |
+| `ctaBand` | 0 | 0 | 2 | 14 | handwerk/cta-band.tsx |
+| `ctaLinks` | 0 | 0 | 0 | 10 | handwerk/cta-links.tsx |
+| `deliveryTimeline` | 0 | 0 | 0 | 6 | shared/delivery-timeline.tsx |
+| `destinationHighlights` | 0 | 0 | 0 | 12 | tourism/destination-highlights.tsx |
+| `diagnostics` | 0 | 0 | 0 | 12 | medical/diagnostics.tsx |
 
 ## Per-Section Detail
 
@@ -91,9 +91,7 @@ _No issues._
 
 **Templates:** `shared/immersive-cta-banner.tsx`
 
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
+_No issues._
 
 ### `beforeAfter` (11 fields)
 
@@ -107,20 +105,11 @@ _No issues._
 
 _No issues._
 
-### `beforeAfterStoryPro` (15 fields)
+### `beforeAfterStoryPro` (11 fields)
 
 **Templates:** `shared/before-after-story-pro.tsx`
 
-**Dead fields (4):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-- `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
-- `statValue` (Statistik-Wert) → --token-stat-value — cssVar never referenced
-- `check` (Checkmarks) → --token-check — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-eyebrow` first (token defaulted at :root)
+_No issues._
 
 ### `bentoGrid` (8 fields)
 
@@ -170,51 +159,31 @@ _No issues._
 
 _No issues._
 
-### `cinematicHero` (18 fields)
+### `cinematicHero` (11 fields)
 
 **Templates:** `shared/cinematic-hero.tsx`
-
-**Dead fields (7):**
-
-- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
-- `headingColor` (Headline) → --token-heading — cssVar never referenced
-- `subheadingColor` (Subheadline) → --token-subheading — cssVar never referenced
-- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
-- `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
 **Missing fields (1):**
 
 - `--brand-dark` — used by template, no editor field exposes it
 
-### `collectionHero` (17 fields)
+### `collectionHero` (16 fields)
 
 **Templates:** `handwerk/collection-hero.tsx`
 
-**Dead fields (1):**
+_No issues._
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
-
-### `collectionList` (6 fields)
+### `collectionList` (5 fields)
 
 **Templates:** `shared/collection-list.tsx`
 
-**Dead fields (1):**
+_No issues._
 
-- `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
-
-### `comparisonCardsPro` (14 fields)
+### `comparisonCardsPro` (13 fields)
 
 **Templates:** `shared/comparison-cards-pro.tsx`
 
-**Dead fields (1):**
-
-- `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-check` first (token defaulted at :root)
+_No issues._
 
 ### `comparisonTable` (5 fields)
 
@@ -240,18 +209,9 @@ _No issues._
 
 _No issues._
 
-### `ctaBand` (16 fields)
+### `ctaBand` (14 fields)
 
 **Templates:** `handwerk/cta-band.tsx`
-
-**Dead fields (2):**
-
-- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
-- `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-icon` first (token defaulted at :root)
 
 **Missing fields (2):**
 
@@ -276,22 +236,17 @@ _No issues._
 
 _No issues._
 
-### `diagnostics` (14 fields)
+### `diagnostics` (12 fields)
 
 **Templates:** `medical/diagnostics.tsx`
 
-**Dead fields (2):**
+_No issues._
 
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
-
-### `doctorTeam` (14 fields)
+### `doctorTeam` (13 fields)
 
 **Templates:** `medical/doctor-team.tsx`
 
-**Dead fields (1):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+_No issues._
 
 ### `downloadForms` (3 fields)
 
@@ -299,14 +254,11 @@ _No issues._
 
 _No issues._
 
-### `editorialFeatureRail` (15 fields)
+### `editorialFeatureRail` (13 fields)
 
 **Templates:** `shared/editorial-feature-rail.tsx`
 
-**Dead fields (2):**
-
-- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
-- `eyebrow` (Eyebrow / Kicker) → --token-eyebrow — cssVar never referenced
+_No issues._
 
 ### `embed` (2 fields)
 
@@ -314,25 +266,17 @@ _No issues._
 
 _No issues._
 
-### `emergencyInfo` (14 fields)
+### `emergencyInfo` (10 fields)
 
 **Templates:** `medical/emergency-info.tsx`
 
-**Dead fields (4):**
+_No issues._
 
-- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
-- `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
-- `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
-
-### `equipmentHighlights` (14 fields)
+### `equipmentHighlights` (12 fields)
 
 **Templates:** `medical/equipment-highlights.tsx`
 
-**Dead fields (2):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
+_No issues._
 
 ### `eventTypes` (9 fields)
 
@@ -346,13 +290,11 @@ _No issues._
 
 _No issues._
 
-### `faq` (19 fields)
+### `faq` (18 fields)
 
 **Templates:** `handwerk/faq.tsx`, `restaurant/faq.tsx`, `hotel/faq.tsx`, `tourism/faq.tsx`, `salon/faq.tsx`, `medical/faq.tsx`, `wedding/faq-gallery.tsx`, `consulting/faq.tsx`, `realestate/faq.tsx`, `cafe/faq.tsx`
 
-**Dead fields (1):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+_No issues._
 
 ### `featureShowcase` (1 fields)
 
@@ -360,38 +302,23 @@ _No issues._
 
 _No issues._
 
-### `fitnessHero` (16 fields)
+### `fitnessHero` (15 fields)
 
 **Templates:** `shared/glow-hero.tsx`
 
-**Dead fields (1):**
+_No issues._
 
-- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-
-### `floorPlanOverview` (5 fields)
+### `floorPlanOverview` (8 fields)
 
 **Templates:** `handwerk/text-image.tsx`
 
-**Missing fields (6):**
-
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--style-button-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--style-button-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--style-border` — used by template, no editor field exposes it
+_No issues._
 
 ### `floristHero` (15 fields)
 
 **Templates:** `shared/glow-hero.tsx`
 
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
+_No issues._
 
 ### `floristMaterials` (11 fields)
 
@@ -399,13 +326,11 @@ _No issues._
 
 _No issues._
 
-### `freeText` (3 fields)
+### `freeText` (2 fields)
 
 **Templates:** `handwerk/rich-text.tsx`
 
-**Dead fields (1):**
-
-- `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
+_No issues._
 
 ### `galleryGrid` (2 fields)
 
@@ -423,9 +348,7 @@ _No issues._
 
 **Templates:** `shared/glow-hero.tsx`
 
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
+_No issues._
 
 ### `headerBanner` (1 fields)
 
@@ -437,10 +360,7 @@ _No issues._
 
 **Templates:** `handwerk/hero.tsx`, `restaurant/hero.tsx`, `hotel/hero.tsx`, `tourism/hero.tsx`, `salon/hero.tsx`, `medical/hero.tsx`, `wedding/hero.tsx`, `consulting/hero.tsx`, `realestate/hero.tsx`, `cafe/hero.tsx`, `tattoo/hero.tsx`, `shared/glow-hero.tsx`, `shared/cinematic-hero.tsx`
 
-**Shadowed fields (2):**
-
-- `imageTextColor` (Bild-Text) — writes `--style-image-text-color` but template reads `--token-on-dark-heading` first (token defaulted at :root)
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
+_No issues._
 
 ### `heroEcommerce` (10 fields)
 
@@ -466,19 +386,11 @@ _No issues._
 
 _No issues._
 
-### `immersiveCtaBanner` (20 fields)
+### `immersiveCtaBanner` (17 fields)
 
 **Templates:** `shared/immersive-cta-banner.tsx`
 
-**Dead fields (3):**
-
-- `subheadingColor` (Subheadline) → --token-subheading — cssVar never referenced
-- `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
-- `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
+_No issues._
 
 ### `inspirationGrid` (10 fields)
 
@@ -486,14 +398,11 @@ _No issues._
 
 _No issues._
 
-### `legalContent` (4 fields)
+### `legalContent` (2 fields)
 
 **Templates:** `handwerk/legal-content.tsx`
 
-**Dead fields (2):**
-
-- `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
-- `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
+_No issues._
 
 ### `locationAccess` (7 fields)
 
@@ -513,9 +422,7 @@ _No issues._
 
 **Templates:** `shared/comparison-cards-pro.tsx`
 
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-check` first (token defaulted at :root)
+_No issues._
 
 ### `logoMarquee` (1 fields)
 
@@ -523,13 +430,11 @@ _No issues._
 
 _No issues._
 
-### `map` (8 fields)
+### `map` (7 fields)
 
 **Templates:** `handwerk/map.tsx`
 
-**Dead fields (1):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+_No issues._
 
 ### `materialGallery` (11 fields)
 
@@ -541,9 +446,7 @@ _No issues._
 
 **Templates:** `shared/comparison-cards-pro.tsx`
 
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-check` first (token defaulted at :root)
+_No issues._
 
 ### `newsGrid` (7 fields)
 
@@ -557,13 +460,11 @@ _No issues._
 
 _No issues._
 
-### `noticeBanner` (3 fields)
+### `noticeBanner` (2 fields)
 
 **Templates:** `shared/notice-banner.tsx`
 
-**Dead fields (1):**
-
-- `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
+_No issues._
 
 ### `occasionMosaic` (9 fields)
 
@@ -577,13 +478,11 @@ _No issues._
 
 _No issues._
 
-### `openingHours` (18 fields)
+### `openingHours` (17 fields)
 
 **Templates:** `restaurant/opening-hours.tsx`, `salon/opening-hours.tsx`, `medical/opening-hours.tsx`
 
-**Dead fields (1):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+_No issues._
 
 ### `placesMap` (13 fields)
 
@@ -595,17 +494,13 @@ _No issues._
 
 **Templates:** `shared/popup.tsx`
 
-**Shadowed fields (1):**
+_No issues._
 
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-eyebrow` first (token defaulted at :root)
-
-### `portfolio` (13 fields)
+### `portfolio` (12 fields)
 
 **Templates:** `handwerk/portfolio.tsx`
 
-**Dead fields (1):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+_No issues._
 
 ### `premiumComparison` (8 fields)
 
@@ -613,25 +508,17 @@ _No issues._
 
 _No issues._
 
-### `principlesGrid` (17 fields)
+### `principlesGrid` (16 fields)
 
 **Templates:** `shared/principles-grid.tsx`
 
-**Dead fields (1):**
+_No issues._
 
-- `subheadingColor` (Subheadline) → --token-subheading — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-eyebrow` first (token defaulted at :root)
-
-### `processSteps` (16 fields)
+### `processSteps` (15 fields)
 
 **Templates:** `handwerk/process-steps.tsx`
 
-**Dead fields (1):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+_No issues._
 
 ### `productShowcase` (10 fields)
 
@@ -645,18 +532,11 @@ _No issues._
 
 _No issues._
 
-### `proofWall` (13 fields)
+### `proofWall` (11 fields)
 
 **Templates:** `shared/proof-wall.tsx`
 
-**Dead fields (2):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-rating-star` first (token defaulted at :root)
+_No issues._
 
 ### `resourceBookingShowcase` (4 fields)
 
@@ -682,33 +562,23 @@ _No issues._
 
 _No issues._
 
-### `serviceDetail` (8 fields)
+### `serviceDetail` (10 fields)
 
 **Templates:** `handwerk/service-detail.tsx`
 
-**Missing fields (4):**
+_No issues._
 
-- `--token-muted` — used by template, no editor field exposes it
-- `--style-muted` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--style-border` — used by template, no editor field exposes it
-
-### `serviceOverview` (14 fields)
+### `serviceOverview` (12 fields)
 
 **Templates:** `medical/service-overview.tsx`
 
-**Dead fields (2):**
+_No issues._
 
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
-
-### `servicesGrid` (18 fields)
+### `servicesGrid` (17 fields)
 
 **Templates:** `handwerk/services-grid.tsx`
 
-**Dead fields (1):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+_No issues._
 
 ### `shopCart` (6 fields)
 
@@ -740,18 +610,11 @@ _No issues._
 
 _No issues._
 
-### `signatureGrid` (14 fields)
+### `signatureGrid` (12 fields)
 
 **Templates:** `shared/signature-grid.tsx`
 
-**Dead fields (2):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-- `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
+_No issues._
 
 ### `socialProofBar` (10 fields)
 
@@ -773,18 +636,11 @@ _No issues._
 
 - `--brand-primary-rgb` — used by template, no editor field exposes it
 
-### `stats` (11 fields)
+### `stats` (10 fields)
 
 **Templates:** `handwerk/stats.tsx`
 
-**Dead fields (1):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-
-**Shadowed fields (2):**
-
-- `textPrimary` (Primärer Text) — writes `--style-text-primary` but template reads `--token-heading` first (token defaulted at :root)
-- `textSecondary` (Sekundärer Text) — writes `--style-text-secondary` but template reads `--token-body` first (token defaulted at :root)
+_No issues._
 
 ### `statsCounter` (9 fields)
 
@@ -792,13 +648,11 @@ _No issues._
 
 _No issues._
 
-### `story` (17 fields)
+### `story` (16 fields)
 
 **Templates:** `restaurant/story.tsx`, `handwerk/text-image.tsx`, `hotel/story.tsx`, `tourism/story.tsx`, `medical/story.tsx`
 
-**Dead fields (1):**
-
-- `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
+_No issues._
 
 ### `studioAmenities` (8 fields)
 
@@ -806,13 +660,11 @@ _No issues._
 
 _No issues._
 
-### `team` (17 fields)
+### `team` (16 fields)
 
 **Templates:** `handwerk/team.tsx`, `consulting/team.tsx`, `cafe/team.tsx`
 
-**Dead fields (1):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+_No issues._
 
 ### `templateAdvantage` (12 fields)
 
@@ -826,22 +678,17 @@ _No issues._
 
 _No issues._
 
-### `testimonials` (18 fields)
+### `testimonials` (17 fields)
 
 **Templates:** `handwerk/testimonials.tsx`, `restaurant/testimonials.tsx`, `hotel/testimonials.tsx`, `tourism/testimonials.tsx`, `salon/testimonials.tsx`, `medical/testimonials.tsx`, `consulting/testimonials.tsx`, `realestate/testimonials.tsx`, `cafe/testimonials.tsx`
 
-**Dead fields (1):**
+_No issues._
 
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-
-### `textImage` (10 fields)
+### `textImage` (8 fields)
 
 **Templates:** `handwerk/text-image.tsx`
 
-**Dead fields (2):**
-
-- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
-- `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
+_No issues._
 
 ### `timeline` (1 fields)
 
@@ -871,33 +718,25 @@ _No issues._
 
 **Templates:** `shared/before-after-story-pro.tsx`
 
-**Shadowed fields (1):**
+_No issues._
 
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-eyebrow` first (token defaulted at :root)
-
-### `treatmentDetail` (14 fields)
+### `treatmentDetail` (13 fields)
 
 **Templates:** `medical/treatment-detail.tsx`
 
-**Dead fields (1):**
-
-- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+_No issues._
 
 ### `trialSessionCta` (17 fields)
 
 **Templates:** `shared/immersive-cta-banner.tsx`
 
-**Shadowed fields (1):**
+_No issues._
 
-- `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-
-### `uspStrip` (9 fields)
+### `uspStrip` (8 fields)
 
 **Templates:** `handwerk/usp-strip.tsx`
 
-**Dead fields (1):**
-
-- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
+_No issues._
 
 ### `verticalTimeline` (10 fields)
 

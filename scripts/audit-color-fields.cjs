@@ -23,10 +23,18 @@ function api(p) { return new Promise((res, rej) => { https.get({ hostname: 'api.
   }
   console.log('FIELD_DEFS:', Object.keys(fieldDefs).length, ' SECTION_FIELDS:', Object.keys(sectionFields).length);
 
-  // 2) brand-colors :root vars
+  // 2) brand-colors :root vars + their first-line definitions (for shadow analysis)
   const brandColors = await raw('apps/renderer/src/lib/brand-colors.ts');
   const rootDefaulted = new Set();
-  { const re = /vars\[\s*['"](--[\w-]+)['"]\s*\]/g; let m; while ((m = re.exec(brandColors))) rootDefaulted.add(m[1]); }
+  const rootDefaultText = {}; // tokenVar -> raw RHS string of the assignment
+  {
+    const re = /vars\[\s*['"](--[\w-]+)['"]\s*\]\s*=\s*([^;]+);/g;
+    let m;
+    while ((m = re.exec(brandColors))) {
+      rootDefaulted.add(m[1]);
+      rootDefaultText[m[1]] = m[2];
+    }
+  }
 
   // 3) Get FULL file tree under templates/
   const tree = await api('/repos/bthginfo/Flamingo-CMS-3.0/git/trees/main?recursive=1');
@@ -203,13 +211,13 @@ function api(p) { return new Promise((res, rej) => { https.get({ hostname: 'api.
       if (cv.startsWith('--style-') && styleAsFallback.has(cv)) {
         const tv = styleToTokenForType.get(cv);
         if (tv && rootDefaulted.has(tv)) {
-          // need to check it ALSO doesn't appear OUTSIDE a fallback (direct use)
-          let standalone = false;
-          for (const p of tpaths) {
-            const src = ''; // we don't have src in scope here; use a heuristic: count var(--style-X but NOT after var(--token-…,
-            // skipping full re-fetch; assume shadowed if any pair exists. Refine later.
+          // Not shadowed if the token's :root default itself contains cv as a fallback
+          const rootDefault = rootDefaultText[tv] || '';
+          if (rootDefault.includes(cv)) {
+            // editor write reaches the template via the :root cascade
+          } else {
+            shadowed.push({ field: f, cssVar: cv, shadowedBy: tv });
           }
-          shadowed.push({ field: f, cssVar: cv, shadowedBy: tv });
         }
       }
     }

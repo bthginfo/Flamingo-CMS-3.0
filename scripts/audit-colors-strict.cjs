@@ -5,8 +5,9 @@
  */
 const { execSync } = require('child_process');
 
-// Baseline after Phases A→E (final). NEVER increase without explicit approval.
-const BASELINE = { dead: 56, shadowed: 20, missing: 15 };
+// Baseline after Phases A-E + codegen + brand-colors accent cascade fix.
+// All 5 MISSING are intentional brand-level computed defaults.
+const BASELINE = { dead: 0, shadowed: 0, missing: 5 };
 
 const out = execSync('node scripts/audit-color-fields.cjs', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] });
 const m = out.match(/=== (\d+) dead, (\d+) shadowed, (\d+) missing/);
