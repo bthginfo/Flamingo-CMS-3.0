@@ -677,3 +677,11 @@ html {
 .scrollbar-hidden::-webkit-scrollbar {
   display: none;
 }
+
+/* View Transitions API (cross-document, Chrome 126+ / Safari 18+).
+   Falls back silently. Subtle 180ms fade on navigation between public pages. */
+@view-transition { navigation: auto; }
+::view-transition-old(root), ::view-transition-new(root) {
+  animation-duration: 180ms;
+  animation-timing-function: cubic-bezier(.4, 0, .2, 1);
+}

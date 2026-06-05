@@ -34,6 +34,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
   const [collections, setCollections] = useState<SnapshotCollection[]>([]);
   const [fontsUrl, setFontsUrl] = useState(initialData.fontsUrl || null);
   const [locale, setLocale] = useState<string | undefined>(undefined);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     function handleMessage(e: MessageEvent) {
@@ -80,8 +81,16 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
     <div data-style={styleVariant} style={cssVars as React.CSSProperties}>
       {fontsUrl && <link rel="stylesheet" href={fontsUrl} />}
       {importantOverrides.length > 0 && <style dangerouslySetInnerHTML={{ __html: importantOverrides.join('\n') }} />}
-      <div className="fixed top-0 left-0 right-0 z-[9999] bg-green-600 text-white text-center text-xs py-1 font-medium">
-        Live-Vorschau
+      <div className="fixed top-0 left-0 right-0 z-[9999] bg-green-600 text-white text-xs py-1 px-3 font-medium flex items-center justify-center gap-3">
+        <span>Live-Vorschau</span>
+        <button
+          type="button"
+          onClick={() => setEditMode(v => !v)}
+          className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${editMode ? 'bg-white text-green-700' : 'bg-green-700 text-white hover:bg-green-800'}`}
+          title="Klicke im Bearbeitungsmodus auf eine Sektion, um sie im Editor zu öffnen"
+        >
+          {editMode ? 'Bearbeitungsmodus AN' : 'Bearbeitungsmodus AUS'}
+        </button>
       </div>
       <div className="pt-6">
         {navItems.length > 0 && (
@@ -94,7 +103,27 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
             </div>
           )}
           {visibleSections.map((section) => (
-            <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} locale={locale} />
+            <div
+              key={section.id}
+              data-section-id={section.id}
+              onClick={(e) => {
+                if (!editMode) return;
+                e.preventDefault();
+                e.stopPropagation();
+                window.parent?.postMessage(
+                  { type: 'flamingo-section-clicked', sectionId: section.id },
+                  window.location.origin,
+                );
+              }}
+              className={editMode ? 'relative cursor-pointer outline-2 outline-transparent hover:outline-pink-500 outline-dashed transition-[outline-color] [&_a]:pointer-events-none [&_button]:pointer-events-none' : 'relative'}
+            >
+              {editMode && (
+                <div className="absolute top-1 left-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-pink-500 text-white text-[10px] font-medium px-2 py-0.5 rounded pointer-events-none">
+                  {section.type}
+                </div>
+              )}
+              <SectionRenderer section={section} collections={collections} styleVariant={styleVariant} industry={industry} locale={locale} />
+            </div>
           ))}
         </main>
         {footer && (

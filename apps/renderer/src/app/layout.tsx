@@ -17,6 +17,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de" className={`${inter.variable} ${outfit.variable}`}>
+      <head>
+        {/* Opt-in to native cross-document View Transitions for SPA-like
+            navigation between public pages (no client-side router needed).
+            Falls back gracefully on browsers without support. */}
+        <meta name="view-transition" content="same-origin" />
+      </head>
       <body className="font-sans bg-white text-gray-900 antialiased">
         <CartProvider>
           <ConsentWrapper>{children}</ConsentWrapper>

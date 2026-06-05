@@ -62,6 +62,17 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       // Only trust the same-origin iframe (the live-preview tab).
       if (e.origin !== window.location.origin) return;
       if (e.data?.type === 'flamingo-live-preview-ready') sendPreviewData();
+      // Click-to-focus from live-preview: scroll matching editor card into view
+      // and pulse it briefly so the user sees where their click landed.
+      if (e.data?.type === 'flamingo-section-clicked') {
+        const id = e.data.sectionId;
+        if (typeof id !== 'string') return;
+        const card = document.querySelector<HTMLElement>(`[data-section-card-id="${CSS.escape(id)}"]`);
+        if (!card) return;
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('ring-2', 'ring-pink-400', 'ring-offset-2');
+        setTimeout(() => card.classList.remove('ring-2', 'ring-pink-400', 'ring-offset-2'), 1600);
+      }
     }
     window.addEventListener('message', onMsg);
     return () => window.removeEventListener('message', onMsg);
@@ -226,6 +237,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         onReorder={handleReorder}
         onAddSection={handleAddSection}
         renderSection={(section) => (
+          <div data-section-card-id={section.id} className="transition-shadow rounded-lg">
           <SectionEditorCard
             key={section.id}
             section={section}
@@ -241,6 +253,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
             activeLocale={activeLocale}
             i18n={i18n}
           />
+          </div>
         )}
       />
       <EditorActionBar

@@ -234,8 +234,17 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
       {/* Grid */}
       {assets.length === 0 ? (
         <div className="admin-card p-16 text-center">
-          <ImageIcon size={48} className="text-zinc-200 mx-auto mb-4" />
-          <p className="text-zinc-400 text-sm">Noch keine Bilder hochgeladen</p>
+          <div className="mx-auto mb-4 w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center">
+            <ImageIcon className="text-amber-500" size={28} />
+          </div>
+          <h3 className="text-base font-semibold text-zinc-900 mb-1">Noch keine Bilder</h3>
+          <p className="text-sm text-zinc-500 max-w-md mx-auto mb-5">
+            Lade Bilder hoch, um sie in Sektionen, Collections oder im Footer zu verwenden.
+            Wir optimieren automatisch auf max. 1920px und konvertieren in WebP.
+          </p>
+          <button type="button" onClick={() => document.querySelector<HTMLInputElement>('input[type="file"]')?.click()} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-500 text-white text-sm font-medium hover:bg-amber-600 transition-colors">
+            + Bilder hochladen
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">

@@ -1,6 +1,6 @@
 import { getDb } from './db';
-import { tenants, tenantDomains, pages, pageSections, collections, collectionItems } from '@flamingo/db';
-import { eq, and, asc, notInArray } from 'drizzle-orm';
+import { tenants, tenantDomains, pages, pageSections, collections, collectionItems, publishedSnapshots } from '@flamingo/db';
+import { eq, and, asc, desc, notInArray } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { unstable_cache } from 'next/cache';
 
@@ -83,14 +83,47 @@ export async function resolveTenant(candidateSlug?: string): Promise<string | nu
   }
 }
 
-/** Get live data for the tenant (cached for public frontend, invalidated on publish). */
+/**
+ * Public-facing snapshot read.
+ *
+ * Draft/Publish (B): if the tenant has an active row in published_snapshots,
+ * the public renderer reads from there — isolating end-users from in-flight
+ * admin edits. If no active snapshot exists yet (legacy tenants or fresh
+ * tenants who never clicked "Veröffentlichen"), we fall back to the draft
+ * read so existing sites keep working transparently.
+ *
+ * Cache key includes the active snapshot's version so a publish flip
+ * naturally invalidates without needing tag-revalidation to land everywhere.
+ */
 export async function getActiveSnapshot(tenantId: string): Promise<Snapshot | null> {
+  const meta = await getActiveSnapshotMeta(tenantId);
+  const cacheKey = meta ? `snapshot-pub-${tenantId}-v${meta.version}` : `snapshot-draft-${tenantId}`;
   const cached = unstable_cache(
-    async () => getDraftSnapshot(tenantId),
-    [`snapshot-${tenantId}`],
-    { revalidate: 60, tags: [`tenant-${tenantId}`] }
+    async () => {
+      if (meta) return meta.snapshot;
+      return getDraftSnapshot(tenantId);
+    },
+    [cacheKey],
+    { revalidate: 60, tags: [`tenant-${tenantId}`] },
   );
   return cached();
+}
+
+async function getActiveSnapshotMeta(tenantId: string): Promise<{ version: number; snapshot: Snapshot } | null> {
+  try {
+    const db = getDb();
+    const [row] = await db
+      .select({ version: publishedSnapshots.version, snapshot: publishedSnapshots.snapshot })
+      .from(publishedSnapshots)
+      .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)))
+      .orderBy(desc(publishedSnapshots.version))
+      .limit(1);
+    if (!row) return null;
+    return { version: row.version, snapshot: row.snapshot as unknown as Snapshot };
+  } catch (err) {
+    console.warn('[getActiveSnapshotMeta] DB error — falling back to draft:', err);
+    return null;
+  }
 }
 
 /** Build a live snapshot from pages/page_sections/collections tables. */
