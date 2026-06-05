@@ -5,6 +5,7 @@ import { eq, and, sql } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 import { sendOrderEmails } from '@/lib/shop-email';
 import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { getTaxRate } from '@/lib/tax';
 import Stripe from 'stripe';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -16,14 +17,9 @@ function resolveExplicitTenant(queryTenantId: unknown) {
   return queryTenantId;
 }
 
-// Map taxClass to rate percentage
-function getTaxRate(taxClass: string): number {
-  switch (taxClass) {
-    case 'reduced': return 7;
-    case 'free': return 0;
-    default: return 19; // 'standard'
-  }
-}
+// Tax rate resolution is provided by lib/tax (DB-backed tax_rates table
+// with per-class defaults). The local fallback below is kept inline only as
+// a safety net for the unlikely case where the DB lookup fails synchronously.
 
 type OrderItem = {
   productId: string;
@@ -195,7 +191,7 @@ export async function POST(req: NextRequest) {
       variantName,
       quantity,
       priceCents,
-      taxRate: getTaxRate(product.taxClass),
+      taxRate: await getTaxRate(tenantId, product.taxClass),
     });
     subtotalCents += priceCents * quantity;
   }

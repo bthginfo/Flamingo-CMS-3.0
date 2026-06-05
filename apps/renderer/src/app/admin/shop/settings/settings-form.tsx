@@ -248,7 +248,7 @@ export function ShopSettingsForm({ initial }: { initial: Settings | null | undef
                 <li>Verifiziere dein Unternehmen (Ausweisdokument + Handelsregistereintrag)</li>
                 <li>Gehe zu Developers → API Keys</li>
                 <li>Kopiere den Publishable Key (pk_live_...) und Secret Key (sk_live_...)</li>
-                <li>Für Webhooks: Developers → Webhooks → Add Endpoint → URL: <code className="bg-blue-100 px-1 rounded">deine-domain.de/api/shop/stripe-webhook</code></li>
+                <li>Für Webhooks: Developers → Webhooks → Add Endpoint → URL: <code className="bg-blue-100 px-1 rounded">deine-domain.de/api/shop/webhook/stripe/&lt;tenantId&gt;</code> (empfohlen, O(1)-Lookup). Legacy-URL ohne tenantId funktioniert weiterhin: <code className="bg-blue-100 px-1 rounded">deine-domain.de/api/shop/webhook/stripe</code></li>
                 <li>Kopiere den Webhook Signing Secret (whsec_...)</li>
               </ol>
               <p className="mt-1"><strong>Tipp:</strong> Teste erst im Test-Modus (tk_test_ / sk_test_), bevor du live gehst.</p>

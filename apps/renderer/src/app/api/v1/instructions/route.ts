@@ -4,7 +4,7 @@ import { getDb } from '@/lib/db';
 import { pages, tenantAddons } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
-import { ensureShopPages } from '@/app/admin/shop/actions';
+import { ensureShopPages } from '@/lib/shop-pages';
 import { getAllSectionContracts, SECTION_COLOR_SLOT_DEFINITIONS } from '@/lib/section-contracts';
 
 export async function GET(req: NextRequest) {

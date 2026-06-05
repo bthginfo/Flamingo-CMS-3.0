@@ -1,6 +1,6 @@
 ﻿import { getSession } from '@/lib/session';
 import { getDb } from '@/lib/db';
-import { pages, pageSections, collectionItems, publishedSnapshots, tenants, mediaAssets, seoGlobal, seoPage } from '@flamingo/db';
+import { pages, pageSections, collectionItems, tenants, mediaAssets, seoGlobal, seoPage } from '@flamingo/db';
 import { eq, count, and } from 'drizzle-orm';
 import { FileText, Layers, FolderOpen, Rocket, Eye, Globe, ImageIcon, Search, AlertTriangle, CheckCircle2, Gift, Send } from 'lucide-react';
 import Link from 'next/link';
@@ -27,7 +27,7 @@ export default async function DashboardPage() {
   const [pageCount] = await db.select({ value: count() }).from(pages).where(eq(pages.tenantId, tid));
   const [sectionCount] = await db.select({ value: count() }).from(pageSections).where(eq(pageSections.tenantId, tid));
   const [itemCount] = await db.select({ value: count() }).from(collectionItems).where(eq(collectionItems.tenantId, tid));
-  const [snapCount] = await db.select({ value: count() }).from(publishedSnapshots).where(and(eq(publishedSnapshots.tenantId, tid), eq(publishedSnapshots.isActive, true)));
+  const [publishedPages] = await db.select({ value: count() }).from(pages).where(and(eq(pages.tenantId, tid), eq(pages.status, 'published')));
   const [mediaCount] = await db.select({ value: count() }).from(mediaAssets).where(eq(mediaAssets.tenantId, tid));
   const [seoRow] = await db.select().from(seoGlobal).where(eq(seoGlobal.tenantId, tid));
 
@@ -46,7 +46,7 @@ export default async function DashboardPage() {
     { label: 'Seiten', value: pageCount?.value ?? 0, icon: FileText, href: '/admin/pages' },
     { label: 'Sections', value: sectionCount?.value ?? 0, icon: Layers, href: '/admin/pages' },
     { label: 'Collection Items', value: itemCount?.value ?? 0, icon: FolderOpen, href: '/admin/collections' },
-    { label: 'Live Snapshot', value: snapCount?.value ?? 0 ? 'Aktiv' : 'Keiner', icon: Rocket, href: '#' },
+    { label: 'Live-Seiten', value: publishedPages?.value ?? 0, icon: Rocket, href: '/admin/pages' },
   ];
 
   return (

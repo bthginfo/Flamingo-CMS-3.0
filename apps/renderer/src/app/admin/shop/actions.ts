@@ -58,9 +58,23 @@ export async function requestShopAddon(message?: string): Promise<void> {
   }
 }
 
-// Keep activateShopAddon for CRM/platform admin use only (not exposed in client UI)
+/**
+ * Activates the shop addon for the current tenant.
+ *
+ * Even though this is in a 'use server' file (and therefore reachable as a
+ * POST endpoint from any authenticated admin), we restrict execution to
+ * platform admins. The list is configured via the PLATFORM_ADMIN_TENANT_IDS
+ * env var (comma-separated tenant UUIDs). Without that env var, the action
+ * refuses to run, preventing self-activation by regular tenants who haven't
+ * been onboarded for billing.
+ */
 export async function activateShopAddon(): Promise<void> {
   const tenantId = await requireTenant();
+  const allow = (process.env.PLATFORM_ADMIN_TENANT_IDS || '')
+    .split(',').map(s => s.trim()).filter(Boolean);
+  if (allow.length === 0 || !allow.includes(tenantId)) {
+    throw new Error('Shop-Aktivierung ist nur für Platform-Admins erlaubt. Bitte kontaktiere FlamingoMedia.');
+  }
   const db = getDb();
   const now = new Date();
 
@@ -89,93 +103,18 @@ export async function activateShopAddon(): Promise<void> {
 }
 
 // ─── Shop System Pages ────────────────────────────────────────────────
+// SHOP_PAGES and the pure ensureShopPages implementation now live in
+// @/lib/shop-pages so the PAT-authenticated /api/v1/instructions route can
+// call them without a session cookie.
 
-const SHOP_PAGES = [
-  {
-    slug: 'shop',
-    title: 'Shop',
-    sortOrder: 50,
-    sections: [
-      { type: 'shopProductGrid', data: { headline: 'Unsere Produkte', showCategories: true, showSearch: true, showSort: true, columns: 3 }, sortOrder: 0 },
-    ],
-  },
-  {
-    slug: 'warenkorb',
-    title: 'Warenkorb',
-    sortOrder: 51,
-    sections: [
-      { type: 'shopCart', data: { headline: 'Dein Warenkorb', emptyText: 'Dein Warenkorb ist leer.', continueShoppingLabel: 'Weiter einkaufen', checkoutLabel: 'Zur Kasse' }, sortOrder: 0 },
-    ],
-  },
-  {
-    slug: 'checkout',
-    title: 'Checkout',
-    sortOrder: 52,
-    sections: [
-      { type: 'shopCheckout', data: { headline: 'Kasse', steps: ['Kontakt', 'Versand', 'Zahlung', 'Bestätigung'] }, sortOrder: 0 },
-    ],
-  },
-  {
-    slug: 'bestellung-abgeschlossen',
-    title: 'Bestellung abgeschlossen',
-    sortOrder: 53,
-    sections: [
-      { type: 'shopThankYou', data: { headline: 'Vielen Dank für deine Bestellung!', subline: 'Du erhältst in Kürze eine Bestätigung per E-Mail.', continueShoppingLabel: 'Zurück zum Shop' }, sortOrder: 0 },
-    ],
-  },
-  {
-    slug: 'agb',
-    title: 'AGB',
-    sortOrder: 54,
-    sections: [
-      { type: 'legalContent', data: { headline: 'Allgemeine Geschäftsbedingungen', blocks: [{ title: '§1 Geltungsbereich', content: '<p>Diese Allgemeinen Geschäftsbedingungen gelten für alle Bestellungen über unseren Online-Shop.</p>' }, { title: '§2 Vertragsschluss', content: '<p>Die Darstellung der Produkte im Shop stellt kein rechtlich bindendes Angebot dar. Erst durch Anklicken des Bestell-Buttons geben Sie eine verbindliche Bestellung ab.</p>' }, { title: '§3 Preise und Zahlung', content: '<p>Alle angegebenen Preise sind Endpreise inkl. gesetzlicher MwSt. zzgl. Versandkosten.</p>' }, { title: '§4 Lieferung', content: '<p>Die Lieferzeit beträgt, sofern nicht anders angegeben, 3-5 Werktage.</p>' }, { title: '§5 Widerrufsrecht', content: '<p>Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.</p>' }] }, sortOrder: 0, locked: true },
-    ],
-  },
-  {
-    slug: 'widerrufsbelehrung',
-    title: 'Widerrufsbelehrung',
-    sortOrder: 55,
-    sections: [
-      { type: 'legalContent', data: { headline: 'Widerrufsbelehrung', blocks: [{ title: 'Widerrufsrecht', content: '<p>Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag, an dem Sie oder ein von Ihnen benannter Dritter die Waren in Besitz genommen haben.</p>' }, { title: 'Folgen des Widerrufs', content: '<p>Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben, unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrags bei uns eingegangen ist.</p>' }] }, sortOrder: 0, locked: true },
-    ],
-  },
-] as const;
-
+// Public action: callable from admin UI. Enforces session === tenantId.
 export async function ensureShopPages(tenantId: string) {
-  const db = getDb();
-
-  for (const pageDef of SHOP_PAGES) {
-    // Check if page already exists
-    const [existing] = await db.select({ id: pages.id }).from(pages)
-      .where(and(eq(pages.tenantId, tenantId), eq(pages.slug, pageDef.slug)))
-      .limit(1);
-
-    if (existing) continue; // Don't recreate if already exists
-
-    // Create the page
-    const [page] = await db.insert(pages).values({
-      tenantId,
-      title: pageDef.title,
-      slug: pageDef.slug,
-      type: 'system',
-      status: 'published',
-      visible: true,
-      sortOrder: pageDef.sortOrder,
-    }).returning({ id: pages.id });
-
-    // Create locked sections
-    for (const section of pageDef.sections) {
-      await db.insert(pageSections).values({
-        tenantId,
-        pageId: page.id,
-        type: section.type,
-        data: section.data,
-        sortOrder: section.sortOrder,
-        locked: true,
-        titleInternal: `[Shop] ${pageDef.title}`,
-      });
-    }
+  const session = await getSession();
+  if (!session || session.tenantId !== tenantId) {
+    throw new Error('Unauthorized: tenantId mismatch');
   }
+  const { ensureShopPages: impl } = await import('@/lib/shop-pages');
+  return impl(tenantId);
 }
 
 // ─── Shop Settings ────────────────────────────────────────────────────
