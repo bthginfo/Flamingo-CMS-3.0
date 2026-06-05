@@ -155,7 +155,7 @@ export default async function DashboardPage() {
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-zinc-600 flex items-center gap-2"><Globe size={14} /> Live Status</span>
-              {(snapCount?.value ?? 0) > 0 ? (
+              {(publishedPages?.value ?? 0) > 0 ? (
                 <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Online</span>
               ) : (
                 <span className="text-zinc-400">Nicht verÃ¶ffentlicht</span>
