@@ -23,19 +23,19 @@ export function CafeTestimonialsSection({ data }: Props) {
   return (
     <section ref={ref} className="py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-6">
-        <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-[color:var(--token-heading,#18181b)] text-center mb-12" data-edit-path="headline">{headline}</motion.h2>
+        <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-[color:var(--token-heading)] text-center mb-12" data-edit-path="headline">{headline}</motion.h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.1 }} className="bg-[var(--token-section-bg-alt,#fafafa)] p-6 rounded-xl" data-edit-collection="testimonials" data-edit-index={i}>
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.1 }} className="bg-[var(--token-section-bg-alt)] p-6 rounded-xl" data-edit-collection="testimonials" data-edit-index={i}>
               {t.stars && (
                 <div className="flex gap-0.5 mb-3">{Array.from({ length: t.stars }).map((_, j) => <Star key={j} size={14} className="fill-amber-400 text-amber-400"  data-edit-collection="stars" data-edit-index={j}/>)}</div>
               )}
-              <p className="text-[color:var(--token-muted,#3f3f46)] text-sm leading-relaxed italic">&ldquo;<span data-edit-path="text">{plain(t.text)}</span>&rdquo;</p>
-              <div className="flex items-center gap-3 mt-4 pt-3 border-t border-[color:var(--token-card-border,#e4e4e7)]">
+              <p className="text-[color:var(--token-muted)] text-sm leading-relaxed italic">&ldquo;<span data-edit-path="text">{plain(t.text)}</span>&rdquo;</p>
+              <div className="flex items-center gap-3 mt-4 pt-3 border-t border-[color:var(--token-card-border)]">
                 {t.image && <Image src={t.image} alt={t.name} width={32} height={32} className="rounded-full object-cover" />}
                 <div>
-                  <p className="text-sm font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{t.name}</p>
-                  {t.source && <p className="text-xs text-[color:var(--token-muted,#71717a)]">{t.source}</p>}
+                  <p className="text-sm font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{t.name}</p>
+                  {t.source && <p className="text-xs text-[color:var(--token-muted)]">{t.source}</p>}
                 </div>
               </div>
             </motion.div>

@@ -23,23 +23,23 @@ export function StyleGallerySection({ data }: Props) {
   const displayed = activeFilter ? styles.filter(s => s.name === activeFilter) : styles;
 
   return (
-    <section className="py-20 px-6 bg-[var(--token-section-bg-alt,#09090b)]">
+    <section className="py-20 px-6 bg-[var(--token-section-bg-alt)]">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-5xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="headline">{headline}</h2>
-          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50] max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
+          <h2 className="text-3xl sm:text-5xl font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading)/50] max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
 
         {/* Filter pills */}
         {allTags.length > 1 && (
           <div className="flex flex-wrap justify-center gap-2 mb-10">
             <button onClick={() => setActiveFilter(null)}
-              className={`px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider transition-colors ${!activeFilter ? 'bg-[var(--token-card-bg,#ffffff)] text-[color:var(--token-heading,#000000)]' : 'bg-[var(--token-card-bg,#ffffff)/10] text-[color:var(--token-on-dark-heading,#ffffff)/60] hover:bg-[var(--token-card-bg,#ffffff)/20]'}`}>
+              className={`px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider transition-colors ${!activeFilter ? 'bg-[var(--token-card-bg)] text-[color:var(--token-heading)]' : 'bg-[var(--token-card-bg)/10] text-[color:var(--token-on-dark-heading)/60] hover:bg-[var(--token-card-bg)/20]'}`}>
               Alle
             </button>
             {allTags.map(tag => (
               <button key={tag} onClick={() => setActiveFilter(activeFilter === tag ? null : tag)}
-                className={`px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider transition-colors ${activeFilter === tag ? 'bg-[var(--token-card-bg,#ffffff)] text-[color:var(--token-heading,#000000)]' : 'bg-[var(--token-card-bg,#ffffff)/10] text-[color:var(--token-on-dark-heading,#ffffff)/60] hover:bg-[var(--token-card-bg,#ffffff)/20]'}`} data-edit-path="tag">
+                className={`px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider transition-colors ${activeFilter === tag ? 'bg-[var(--token-card-bg)] text-[color:var(--token-heading)]' : 'bg-[var(--token-card-bg)/10] text-[color:var(--token-on-dark-heading)/60] hover:bg-[var(--token-card-bg)/20]'}`} data-edit-path="tag">
                 {tag}
               </button>
             ))}
@@ -56,8 +56,8 @@ export function StyleGallerySection({ data }: Props) {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                 <div>
-                  <p className="text-[color:var(--token-on-dark-heading,#ffffff)] font-medium text-sm" data-edit-path="name">{item.name}</p>
-                  {item.description && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/60] text-xs mt-0.5" data-edit-path="description">{plain(item.description)}</p>}
+                  <p className="text-[color:var(--token-on-dark-heading)] font-medium text-sm" data-edit-path="name">{item.name}</p>
+                  {item.description && <p className="text-[color:var(--token-on-dark-heading)/60] text-xs mt-0.5" data-edit-path="description">{plain(item.description)}</p>}
                 </div>
               </div>
             </motion.div>
@@ -65,7 +65,7 @@ export function StyleGallerySection({ data }: Props) {
         </div>
 
         {styles.length === 0 && (
-          <p className="text-center text-[color:var(--token-on-dark-heading,#ffffff)/30] py-12">Keine Bilder vorhanden.</p>
+          <p className="text-center text-[color:var(--token-on-dark-heading)/30] py-12">Keine Bilder vorhanden.</p>
         )}
       </div>
     </section>

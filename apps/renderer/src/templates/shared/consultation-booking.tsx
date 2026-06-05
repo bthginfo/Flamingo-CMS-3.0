@@ -27,8 +27,8 @@ export function ConsultationBookingSection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]" data-edit-path="headline">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-3 text-[var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 
@@ -42,20 +42,20 @@ export function ConsultationBookingSection({ data }: Props) {
               initial={{ opacity: 0, x: -20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className={`w-full text-left flex items-start gap-4 p-5 rounded-[var(--style-card-radius,1rem)] border transition-all duration-300 ${
+              className={`w-full text-left flex items-start gap-4 p-5 rounded-[var(--token-card-radius)] border transition-all duration-300 ${
                 selected === i
-                  ? 'bg-[var(--token-icon, var(--brand-primary,#2563eb))]/5 border-[var(--token-icon, var(--brand-primary,#2563eb))]/30 shadow-md'
-                  : 'bg-[var(--token-card-bg, var(--style-card-bg,#fff))] border-[rgba(0,0,0,0.06)] hover:border-[var(--token-icon, var(--brand-primary,#2563eb))]/20'
+                  ? 'bg-[var(--token-icon)]/5 border-[var(--token-icon)]/30 shadow-md'
+                  : 'bg-[var(--token-card-bg)] border-[rgba(0,0,0,0.06)] hover:border-[var(--token-icon)]/20'
               }`}
              data-edit-collection="services" data-edit-index={i}>
               {service.icon && (
-                <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-white' : 'bg-gray-100 text-[var(--token-icon, var(--brand-primary,#2563eb))]'} transition-colors`}>
+                <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--token-icon)] text-white' : 'bg-gray-100 text-[var(--token-icon)]'} transition-colors`}>
                   <DynamicIcon name={service.icon} size={20} />
                 </div>
               )}
               <div>
-                <h3 className="font-semibold text-[var(--style-text-primary,#0f172a)]" data-edit-path="title">{service.title}</h3>
-                {service.description && <p className="text-sm text-[var(--style-text-secondary,#64748b)] mt-1" data-edit-path="description">{plain(service.description)}</p>}
+                <h3 className="font-semibold text-[var(--token-body)]" data-edit-path="title">{service.title}</h3>
+                {service.description && <p className="text-sm text-[var(--token-body)] mt-1" data-edit-path="description">{plain(service.description)}</p>}
               </div>
             </motion.button>
           ))}
@@ -68,16 +68,16 @@ export function ConsultationBookingSection({ data }: Props) {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="lg:col-span-2 sticky top-8"
         >
-          <div className="rounded-[var(--style-card-radius,1rem)] overflow-hidden bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-[var(--style-card-shadow,0_4px_20px_rgba(0,0,0,0.06))] border border-[rgba(0,0,0,0.06)]">
+          <div className="rounded-[var(--token-card-radius)] overflow-hidden bg-[var(--token-card-bg)] shadow-[var(--style-card-shadow,0_4px_20px_rgba(0,0,0,0.06))] border border-[rgba(0,0,0,0.06)]">
             {image && (
               <img src={image} alt={headline} className="w-full aspect-[4/3] object-cover" />
             )}
             <div className="p-6 text-center">
-              <p className="text-[var(--style-text-secondary,#64748b)] text-sm mb-4">
+              <p className="text-[var(--token-body)] text-sm mb-4">
                 {services[selected]?.title ? `Beratung: $<span data-edit-path="title">{services[selected].title}</span>` : 'Individuelle Beratung'}
               </p>
               {cta?.label && (
-                <a href={cta.href || '#'} className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-white font-semibold rounded-[var(--style-button-radius,0.75rem)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
+                <a href={cta.href || '#'} className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[var(--token-icon)] text-white font-semibold rounded-[var(--token-button-radius)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
                   {cta.label}
                 </a>
               )}

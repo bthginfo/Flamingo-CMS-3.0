@@ -31,8 +31,8 @@ export function CategoryMosaicSection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]" data-edit-path="headline">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-3 text-[var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 
@@ -44,7 +44,7 @@ export function CategoryMosaicSection({ data }: Props) {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.6, delay: i * 0.1 }}
-            className="relative col-span-2 row-span-2 rounded-[var(--style-card-radius,1rem)] overflow-hidden group ring-2 ring-transparent hover:ring-[var(--token-icon, var(--brand-primary,var(--style-brand,#2563eb)))] transition-all duration-300"
+            className="relative col-span-2 row-span-2 rounded-[var(--token-card-radius)] overflow-hidden group ring-2 ring-transparent hover:ring-[var(--token-icon)] transition-all duration-300"
            data-edit-collection="displayLarge" data-edit-index={i}>
             {item.image ? (
               <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -53,8 +53,8 @@ export function CategoryMosaicSection({ data }: Props) {
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6 flex items-center gap-3">
-              <span className="w-1 h-6 rounded-full bg-[var(--token-icon, var(--brand-primary,var(--style-brand,#2563eb)))]" />
-              <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-display font-bold text-xl md:text-2xl" data-edit-path="title">{item.title}</h3>
+              <span className="w-1 h-6 rounded-full bg-[var(--token-icon)]" />
+              <h3 className="text-[color:var(--token-on-dark-heading)] font-display font-bold text-xl md:text-2xl" data-edit-path="title">{item.title}</h3>
             </div>
           </motion.a>
         ))}
@@ -65,7 +65,7 @@ export function CategoryMosaicSection({ data }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2 + i * 0.08 }}
-            className="relative col-span-1 row-span-1 rounded-[var(--style-card-radius,1rem)] overflow-hidden group ring-2 ring-transparent hover:ring-[var(--token-icon, var(--brand-primary,var(--style-brand,#2563eb)))] transition-all duration-300"
+            className="relative col-span-1 row-span-1 rounded-[var(--token-card-radius)] overflow-hidden group ring-2 ring-transparent hover:ring-[var(--token-icon)] transition-all duration-300"
            data-edit-collection="displaySmall" data-edit-index={i}>
             {item.image ? (
               <img src={item.image} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -74,8 +74,8 @@ export function CategoryMosaicSection({ data }: Props) {
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center gap-2">
-              <span className="w-0.5 h-4 rounded-full bg-[var(--token-icon, var(--brand-primary,var(--style-brand,#2563eb)))]" />
-              <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold text-sm md:text-base" data-edit-path="title">{item.title}</h3>
+              <span className="w-0.5 h-4 rounded-full bg-[var(--token-icon)]" />
+              <h3 className="text-[color:var(--token-on-dark-heading)] font-semibold text-sm md:text-base" data-edit-path="title">{item.title}</h3>
             </div>
           </motion.a>
         ))}

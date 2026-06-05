@@ -29,8 +29,8 @@ export function BeforeAfterSection({ data }: Props) {
     <div ref={ref}>
       {(headline || description) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]" data-edit-path="headline">{headline}</h2>}
-          {description && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto" data-edit-path="description">{plain(description)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
+          {description && <p className="mt-3 text-[var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="description">{plain(description)}</p>}
         </div>
       )}
 
@@ -39,7 +39,7 @@ export function BeforeAfterSection({ data }: Props) {
         animate={inView ? { opacity: 1, scale: 1 } : {}}
         transition={{ duration: 0.6 }}
         ref={containerRef}
-        className="relative aspect-[16/9] md:aspect-[21/9] rounded-[var(--style-card-radius,1rem)] overflow-hidden cursor-col-resize select-none shadow-[var(--style-card-shadow,0_4px_20px_rgba(0,0,0,0.06))]"
+        className="relative aspect-[16/9] md:aspect-[21/9] rounded-[var(--token-card-radius)] overflow-hidden cursor-col-resize select-none shadow-[var(--style-card-shadow,0_4px_20px_rgba(0,0,0,0.06))]"
         onMouseMove={(e) => { if (e.buttons === 1) handleMove(e.clientX); }}
         onTouchMove={(e) => handleMove(e.touches[0].clientX)}
       >
@@ -63,17 +63,17 @@ export function BeforeAfterSection({ data }: Props) {
 
         {/* Slider handle */}
         <div className="absolute top-0 bottom-0" style={{ left: `${sliderPos}%` }}>
-          <div className="absolute inset-y-0 -translate-x-1/2 w-1 bg-[var(--token-card-bg,#ffffff)] shadow-lg" />
-          <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--token-card-bg,#ffffff)] shadow-xl flex items-center justify-center border-2 border-[var(--token-icon, var(--brand-primary,#2563eb))]">
-            <svg width="16" height="16" viewBox="0 0 16 16" className="text-[var(--token-icon, var(--brand-primary,#2563eb))]">
+          <div className="absolute inset-y-0 -translate-x-1/2 w-1 bg-[var(--token-card-bg)] shadow-lg" />
+          <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--token-card-bg)] shadow-xl flex items-center justify-center border-2 border-[var(--token-icon)]">
+            <svg width="16" height="16" viewBox="0 0 16 16" className="text-[var(--token-icon)]">
               <path d="M4 8L1 5.5V10.5L4 8ZM12 8L15 5.5V10.5L12 8Z" fill="currentColor" />
             </svg>
           </div>
         </div>
 
         {/* Labels */}
-        <span className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold bg-[var(--token-section-bg-alt,#000000)/50] text-[color:var(--token-on-dark-heading,#ffffff)] rounded-full">{labelBefore}</span>
-        <span className="absolute top-4 right-4 px-3 py-1 text-xs font-semibold bg-[var(--token-section-bg-alt,#000000)/50] text-[color:var(--token-on-dark-heading,#ffffff)] rounded-full">{labelAfter}</span>
+        <span className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold bg-[var(--token-section-bg-alt)/50] text-[color:var(--token-on-dark-heading)] rounded-full">{labelBefore}</span>
+        <span className="absolute top-4 right-4 px-3 py-1 text-xs font-semibold bg-[var(--token-section-bg-alt)/50] text-[color:var(--token-on-dark-heading)] rounded-full">{labelAfter}</span>
       </motion.div>
     </div>
   );

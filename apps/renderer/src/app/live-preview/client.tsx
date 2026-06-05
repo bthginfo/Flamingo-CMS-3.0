@@ -114,15 +114,18 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       el.setAttribute('contenteditable', 'plaintext-only');
       el.setAttribute('spellcheck', 'false');
       el.setAttribute('data-editable-active', 'true');
-      // Inline edit affordance: dashed pink box + text cursor. The class
-      // hook is a fallback the parent section CSS uses to re-enable
-      // pointer-events on editable spans inside disabled <a>/<button>.
-      el.style.outline = '1px dashed rgba(236,72,153,0.55)';
-      el.style.outlineOffset = '2px';
-      el.style.borderRadius = '3px';
+      // Inline edit affordance: bright solid pink box + soft halo + text
+      // cursor. The class hook is a fallback the parent section CSS uses
+      // to re-enable pointer-events on editable spans inside disabled
+      // <a>/<button>.
+      el.style.outline = '2px solid rgba(236,72,153,0.9)';
+      el.style.outlineOffset = '3px';
+      el.style.borderRadius = '4px';
+      el.style.boxShadow = '0 0 0 4px rgba(236,72,153,0.18), 0 6px 18px -8px rgba(236,72,153,0.35)';
       el.style.cursor = 'text';
       el.style.pointerEvents = 'auto';
       el.style.position = el.style.position || 'relative';
+      el.style.transition = 'outline-color 120ms, box-shadow 120ms';
 
       // Capture-phase intercept on the editable element so the parent
       // <a href> never navigates and the section-wrapper click never
@@ -185,8 +188,10 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
         el.style.outline = '';
         el.style.outlineOffset = '';
         el.style.borderRadius = '';
+        el.style.boxShadow = '';
         el.style.cursor = '';
         el.style.pointerEvents = '';
+        el.style.transition = '';
         el.removeEventListener('focus', onFocus);
         el.removeEventListener('click', onClick);
         el.removeEventListener('mousedown', onMouseDown);

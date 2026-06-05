@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
 import { usePreview } from '@/components/admin/preview-context';
+import { PreviewNudge } from '@/components/admin/preview-nudge';
 import { MonitorPlay } from 'lucide-react';
 
 const NAV: { href: string; label: string; icon: typeof LayoutDashboard; tour?: string; industry?: string }[] = [
@@ -156,18 +157,13 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
 
         {/* Footer */}
         <div className={`py-4 border-t border-sidebar-border space-y-1 ${collapsed ? 'px-2' : 'px-3'}`}>
-          <div className="relative group/preview">
+          <div className="relative">
             <button onClick={() => { preview.isOpen ? preview.close() : preview.open(); }} title={collapsed ? 'Vorschau — Texte direkt in der Vorschau bearbeiten' : undefined}
               className={`flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'}`}>
               <MonitorPlay size={18} />
               {!collapsed && 'Vorschau'}
             </button>
-            {!collapsed && !preview.isOpen && (
-              <div className="pointer-events-none absolute left-full bottom-0 ml-2 w-60 rounded-lg bg-gray-900 text-white text-xs px-3 py-2 shadow-xl opacity-0 group-hover/preview:opacity-100 transition-opacity z-50">
-                <div className="font-semibold mb-0.5 flex items-center gap-1.5"><span>✏️</span> Direkt bearbeiten</div>
-                <div className="text-gray-300 font-normal leading-relaxed">In der Vorschau auf Texte oder Sektionen klicken, um sie direkt zu ändern.</div>
-              </div>
-            )}
+            {!collapsed && <PreviewNudge variant="right" compact />}
           </div>
           <button onClick={async () => { await logoutAction(); router.push('/admin/login'); }} title={collapsed ? 'Abmelden' : undefined}
             className={`flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'}`}>

@@ -38,7 +38,7 @@ export function ConsultingFaqSection({ data }: Props) {
               className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-slate-50 transition-colors"
             >
               <span className="font-medium text-slate-900 pr-4" data-edit-path="question">{item.question}</span>
-              <DynamicIcon name={open === i ? 'minus' : 'plus'} size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] shrink-0" />
+              <DynamicIcon name={open === i ? 'minus' : 'plus'} size={18} className="text-[color:var(--token-icon)] shrink-0" />
             </button>
             <AnimatePresence>
               {open === i && (
@@ -49,7 +49,7 @@ export function ConsultingFaqSection({ data }: Props) {
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  <div className="px-6 pb-5 text-slate-600 text-sm leading-relaxed">{plain(item.answer)}</div>
+                  <div className="px-6 pb-5 text-slate-600 text-sm leading-relaxed" data-edit-path="answer">{plain(item.answer)}</div>
                 </motion.div>
               )}
             </AnimatePresence>

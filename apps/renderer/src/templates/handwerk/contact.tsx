@@ -53,14 +53,14 @@ export function ContactSection({ data }: Props) {
               initial={{ opacity: 0, x: -20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="flex items-center gap-4 p-5 rounded-2xl bg-[var(--token-card-bg,var(--style-card-bg,#fff))] border border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,.08)))] shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer"
+              className="flex items-center gap-4 p-5 rounded-2xl bg-[var(--token-card-bg)] border border-[var(--token-card-border)] shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer"
              data-edit-collection="infoCards" data-edit-index={i}>
-              <div className={cn('w-12 h-12 rounded-xl bg-[color-mix(in_srgb,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))_12%,transparent)] flex items-center justify-center text-[var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))] transition-transform group-hover:scale-110')}>
+              <div className={cn('w-12 h-12 rounded-xl bg-[color-mix(in_srgb,var(--token-icon)_12%,transparent)] flex items-center justify-center text-[var(--token-icon)] transition-transform group-hover:scale-110')}>
                 <DynamicIcon name={card.icon} size={20} />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-xs text-[var(--token-muted,var(--style-text-muted,var(--style-text-secondary,#64748b)))] uppercase tracking-wider font-medium">{card.label}</div>
-                <div className="text-sm font-semibold text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#111827)))] break-words">{card.value}</div>
+                <div className="text-xs text-[var(--token-muted)] uppercase tracking-wider font-medium" data-edit-path="label">{card.label}</div>
+                <div className="text-sm font-semibold text-[var(--token-heading)] break-words" data-edit-path="value">{card.value}</div>
               </div>
             </motion.div>
           ))}
@@ -77,7 +77,7 @@ export function ContactSection({ data }: Props) {
             <DynamicContactForm
               fields={formFields}
               submitLabel={submitLabel}
-              className="bg-[var(--token-card-bg,var(--style-card-bg,#fff))] rounded-3xl border border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,.08)))] shadow-lg p-8 sm:p-10 space-y-5"
+              className="bg-[var(--token-card-bg)] rounded-3xl border border-[var(--token-card-border)] shadow-lg p-8 sm:p-10 space-y-5"
             />
           </motion.div>
         )}

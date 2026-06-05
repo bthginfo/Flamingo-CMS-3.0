@@ -28,8 +28,8 @@ export function CafeEventCalendarSection({ data }: Props) {
     <section ref={ref} className="py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-14">
-          <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
-          {subline && <p className="text-[color:var(--token-muted,#52525b)] mt-3" data-edit-path="subline">{plain(subline)}</p>}
+          <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="text-[color:var(--token-muted)] mt-3" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -41,7 +41,7 @@ export function CafeEventCalendarSection({ data }: Props) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: i * 0.1 }}
-                className="bg-[var(--token-card-bg,#ffffff)] rounded-xl border border-[color:var(--token-card-border,#f4f4f5)] overflow-hidden hover:shadow-md transition-shadow"
+                className="bg-[var(--token-card-bg)] rounded-xl border border-[color:var(--token-card-border)] overflow-hidden hover:shadow-md transition-shadow"
               >
                 {event.image && (
                   <div className="relative aspect-[16/9] overflow-hidden">
@@ -52,11 +52,11 @@ export function CafeEventCalendarSection({ data }: Props) {
                   <div className="flex items-center gap-2 text-xs text-amber-700 font-medium mb-2">
                     <Icon size={14} />
                     <span data-edit-path="date">{event.date}</span>
-                    <span className="text-[color:var(--token-body,#d4d4d8)]">·</span>
+                    <span className="text-[color:var(--token-body)]">·</span>
                     <span data-edit-path="time">{event.time}</span>
                   </div>
-                  <h3 className="font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{event.title}</h3>
-                  {event.description && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1.5" data-edit-path="description">{plain(event.description)}</p>}
+                  <h3 className="font-bold text-[color:var(--token-heading)]" data-edit-path="title">{event.title}</h3>
+                  {event.description && <p className="text-sm text-[color:var(--token-muted)] mt-1.5" data-edit-path="description">{plain(event.description)}</p>}
                 </div>
               </motion.div>
             );

@@ -29,32 +29,32 @@ export function ShopCategoryOverviewSection({ data }: Props) {
       .finally(() => setLoading(false));
   }, [data.tenantId, previewCategories.length]);
 
-  if (loading) return <section className="py-12 text-center text-[color:var(--token-body,#a1a1aa)]">Kategorien werden geladen…</section>;
+  if (loading) return <section className="py-12 text-center text-[color:var(--token-body)]">Kategorien werden geladen…</section>;
   if (categories.length === 0) return null;
 
   return (
     <section className="py-12 md:py-16">
       <div className="text-center mb-10">
         <h2 className="text-3xl font-bold" data-edit-path="headline">{headline}</h2>
-        {subline && <p className="text-[color:var(--token-muted,#71717a)] mt-2 max-w-lg mx-auto" data-edit-path="subline">{plain(subline)}</p>}
+        {subline && <p className="text-[color:var(--token-muted)] mt-2 max-w-lg mx-auto" data-edit-path="subline">{plain(subline)}</p>}
       </div>
 
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns >= 3 ? 'lg:grid-cols-3' : ''} ${columns >= 4 ? 'xl:grid-cols-4' : ''} gap-6`}>
         {categories.map(cat => (
           <Link key={cat.id} href={`${shopGridPath}?kategorie=${cat.slug}`} className="group">
-            <div className="bg-[var(--token-card-bg,#ffffff)] rounded-2xl border border-[color:var(--token-card-border,#f4f4f5)] overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-[4/3] bg-[var(--token-section-bg-alt,#fafafa)] relative overflow-hidden">
+            <div className="bg-[var(--token-card-bg)] rounded-2xl border border-[color:var(--token-card-border)] overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="aspect-[4/3] bg-[var(--token-section-bg-alt)] relative overflow-hidden">
                 {cat.image ? (
                   <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <FolderOpen size={40} className="text-[color:var(--token-body,#e4e4e7)]" />
+                    <FolderOpen size={40} className="text-[color:var(--token-body)]" />
                   </div>
                 )}
               </div>
               <div className="p-5 text-center">
-                <h3 className="font-semibold text-lg group-hover:text-[color:var(--token-muted,#52525b)] transition" data-edit-path="name">{cat.name}</h3>
-                {cat.description && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1 line-clamp-2" data-edit-path="description">{plain(cat.description)}</p>}
+                <h3 className="font-semibold text-lg group-hover:text-[color:var(--token-muted)] transition" data-edit-path="name">{cat.name}</h3>
+                {cat.description && <p className="text-sm text-[color:var(--token-muted)] mt-1 line-clamp-2" data-edit-path="description">{plain(cat.description)}</p>}
               </div>
             </div>
           </Link>

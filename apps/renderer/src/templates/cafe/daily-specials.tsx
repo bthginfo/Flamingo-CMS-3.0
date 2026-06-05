@@ -22,8 +22,8 @@ export function DailySpecialsSection({ data }: Props) {
       <div className="max-w-4xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-10">
           <Sparkles className="mx-auto text-amber-600 mb-3" size={24} />
-          <h2 className="text-2xl md:text-3xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
-          {subline && <p className="text-[color:var(--token-muted,#52525b)] mt-2" data-edit-path="subline">{plain(subline)}</p>}
+          <h2 className="text-2xl md:text-3xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="text-[color:var(--token-muted)] mt-2" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
 
         <div className="space-y-4">
@@ -33,16 +33,16 @@ export function DailySpecialsSection({ data }: Props) {
               initial={{ opacity: 0, x: -20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: i * 0.1 }}
-              className="flex items-start gap-4 bg-[var(--token-card-bg,#ffffff)] rounded-lg p-5 border border-amber-100 shadow-sm"
+              className="flex items-start gap-4 bg-[var(--token-card-bg)] rounded-lg p-5 border border-amber-100 shadow-sm"
              data-edit-collection="specials" data-edit-index={i}>
               {item.day && (
                 <span className="text-xs font-bold uppercase text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full whitespace-nowrap">{item.day}</span>
               )}
               <div className="flex-1">
-                <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title}</h3>
-                <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-0.5" data-edit-path="description">{plain(item.description)}</p>
+                <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{item.title}</h3>
+                <p className="text-sm text-[color:var(--token-muted)] mt-0.5" data-edit-path="description">{plain(item.description)}</p>
               </div>
-              {item.price && <span className="font-bold text-[color:var(--token-icon,var(--brand-primary,#1a5276))] whitespace-nowrap" data-edit-path="price">{item.price}</span>}
+              {item.price && <span className="font-bold text-[color:var(--token-icon)] whitespace-nowrap" data-edit-path="price">{item.price}</span>}
             </motion.div>
           ))}
         </div>

@@ -19,9 +19,9 @@ export function HorizontalScrollShowcaseSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const panels = (data.panels as Panel[]) || [];
-  const bgColor = (data.bgColor as string) || 'var(--token-section-bg, var(--style-section-bg, #09090b))';
-  const textColor = (data.textColor as string) || 'var(--token-body, var(--style-body-color, #ffffff))';
-  const dotColor = (data.dotColor as string) || 'var(--token-icon, var(--brand-primary, #ffffff))';
+  const bgColor = (data.bgColor as string) || 'var(--token-section-bg)';
+  const textColor = (data.textColor as string) || 'var(--token-body)';
+  const dotColor = (data.dotColor as string) || 'var(--token-icon)';
   const panelHeight = (data.panelHeight as string) || 'full'; // full | compact
 
   const [isMobile, setIsMobile] = useState(false);

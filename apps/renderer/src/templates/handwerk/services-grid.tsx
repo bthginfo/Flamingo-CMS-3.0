@@ -35,7 +35,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
   const hoverItems = cards.map(c => ({
     title: c.title,
     description: c.text || '',
-    icon: c.mediaType === 'image' && c.image ? undefined : (c.icon ? <DynamicIcon name={c.icon} size={24} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" /> : undefined),
+    icon: c.mediaType === 'image' && c.image ? undefined : (c.icon ? <DynamicIcon name={c.icon} size={24} className="text-[color:var(--token-icon)]" /> : undefined),
     image: c.mediaType === 'image' ? c.image : undefined,
     imagePosition: c.imagePosition || 'center',
     link: c.href || undefined,
@@ -53,7 +53,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
       </motion.div>
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="text-center mt-12">
-          <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-[var(--token-btn-text,var(--brand-btn-text,#ffffff))] font-semibold rounded-full hover:brightness-95 transition-all shadow-md hover:shadow-lg">
+          <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg)] text-[var(--token-btn-text)] font-semibold rounded-full hover:brightness-95 transition-all shadow-md hover:shadow-lg">
             {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={16} />}
           </Link>
         </motion.div>
@@ -71,27 +71,27 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
         {badgeText && (
-          <div className="mb-4 flex items-center gap-3 text-sm uppercase tracking-wide text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#9ca3af)))]">
-            <span className="h-px w-8 bg-[var(--token-card-border, var(--style-border-color,#d1d5db))]" />{badgeText}
+          <div className="mb-4 flex items-center gap-3 text-sm uppercase tracking-wide text-[var(--token-muted)]">
+            <span className="h-px w-8 bg-[var(--token-card-border)]" /><span data-edit-path="badgeText">{badgeText}</span>
           </div>
         )}
-        {headline && <h2 className="text-4xl font-light tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="rt-content mt-4 max-w-2xl text-lg text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#9ca3af)))]" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {headline && <h2 className="text-4xl font-light tracking-tight text-[var(--token-heading)] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
+        {subline && <div className="rt-content mt-4 max-w-2xl text-lg text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
         {cards.map((card, i) => {
           const inner = (
             <div className="flex items-start gap-6">
               {card.icon && (
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center text-[var(--token-icon)] transition-colors">
                   <DynamicIcon name={card.icon} size={28} />
                 </div>
               )}
               <div>
-                <h3 className="text-lg font-medium text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] transition-colors group-hover:text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]" data-edit-path="title">{card.title}</h3>
-                {card.text && <div className="rt-content mt-2 leading-relaxed text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#9ca3af)))]" dangerouslySetInnerHTML={{ __html: card.text }} />}
+                <h3 className="text-lg font-medium text-[var(--token-heading)] transition-colors group-hover:text-[var(--token-accent)]" data-edit-path="title">{card.title}</h3>
+                {card.text && <div className="rt-content mt-2 leading-relaxed text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: card.text }} />}
                 {card.href && (
-                  <span className="mt-3 inline-flex items-center gap-1 text-sm text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))] opacity-0 transition-opacity group-hover:opacity-100">
+                  <span className="mt-3 inline-flex items-center gap-1 text-sm text-[var(--token-accent)] opacity-0 transition-opacity group-hover:opacity-100">
                     Mehr erfahren {card.icon && <DynamicIcon name={card.icon} size={14} />}
                   </span>
                 )}
@@ -104,7 +104,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="group border-b border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] px-8 py-10 transition-colors hover:bg-[var(--token-card-bg, var(--style-card-bg,rgba(0,0,0,0.03)))]"
+              className="group border-b border-[var(--token-card-border)] px-8 py-10 transition-colors hover:bg-[var(--token-card-bg)]"
             >
               {card.href ? <Link href={card.href} className="block">{inner}</Link> : inner}
             </motion.div>
@@ -113,7 +113,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
       </div>
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="mt-16">
-          <Link href={ctaHref} className="inline-flex items-center gap-2 border-b border-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))] pb-1 text-sm font-medium text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))] transition-colors hover:border-[var(--style-text-primary,var(--token-section-bg-alt, var(--brand-dark)))] hover:text-[var(--style-text-primary,var(--token-section-bg-alt, var(--brand-dark)))]">
+          <Link href={ctaHref} className="inline-flex items-center gap-2 border-b border-[var(--token-accent)] pb-1 text-sm font-medium text-[var(--token-accent)] transition-colors hover:border-[var(--token-body)] hover:text-[var(--token-body)]">
             {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={14} />}
           </Link>
         </motion.div>
@@ -131,26 +131,26 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12">
         {badgeText && (
-          <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-section-bg-alt, var(--brand-dark))))]" data-edit-path="badgeText">
+          <span className="mb-4 inline-block bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">
             {badgeText}
           </span>
         )}
-        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="rt-content mt-3 font-medium text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
+        {subline && <div className="rt-content mt-3 font-medium text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {cards.map((card, i) => {
           const inner = (
             <>
               {card.icon && (
-                <div className="mb-4 flex h-12 w-12 items-center justify-center bg-[var(--style-text-primary,var(--token-section-bg-alt, var(--brand-dark)))]">
-                  <DynamicIcon name={card.icon} size={20} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))]" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center bg-[var(--token-body)]">
+                  <DynamicIcon name={card.icon} size={20} className="text-[var(--token-icon)]" />
                 </div>
               )}
-              <h3 className="text-base font-bold uppercase tracking-wide text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{card.title}</h3>
-              {card.text && <div className="rt-content mt-2 text-sm leading-relaxed text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: card.text }} />}
+              <h3 className="text-base font-bold uppercase tracking-wide text-[var(--token-heading)]" data-edit-path="title">{card.title}</h3>
+              {card.text && <div className="rt-content mt-2 text-sm leading-relaxed text-[var(--token-body)]" dangerouslySetInnerHTML={{ __html: card.text }} />}
               {card.href && (
-                <span className="mt-3 inline-flex items-center gap-1 text-xs font-bold uppercase text-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))]">
+                <span className="mt-3 inline-flex items-center gap-1 text-xs font-bold uppercase text-[var(--token-accent)]">
                   Details {card.ctaIcon && <DynamicIcon name={card.ctaIcon} size={12} />}
                 </span>
               )}
@@ -162,7 +162,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="group border-3 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-6 shadow-[4px_4px_0_var(--style-text-primary,#0d2137)] transition-all hover:border-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))] hover:shadow-[-4px_4px_0_var(--style-accent-color,#f39c12)]"
+              className="group border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-body)] transition-all hover:border-[var(--token-accent)] hover:shadow-[-4px_4px_0_var(--token-accent)]"
             >
               {card.href ? <Link href={card.href} className="block">{inner}</Link> : inner}
             </motion.div>
@@ -171,7 +171,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
       </div>
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="mt-10">
-          <Link href={ctaHref} className="inline-flex items-center gap-2 border-3 border-[var(--style-text-primary,var(--token-section-bg-alt, var(--brand-dark)))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-text-primary,var(--token-section-bg-alt, var(--brand-dark)))))] px-8 py-3.5 font-bold uppercase tracking-wide text-[var(--token-btn-text, var(--brand-btn-text,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))] shadow-[4px_4px_0_var(--style-accent-color,#f39c12)] transition-all hover:shadow-[-4px_4px_0_var(--style-accent-color,#f39c12)]">
+          <Link href={ctaHref} className="inline-flex items-center gap-2 border-3 border-[var(--token-body)] bg-[var(--token-btn-bg)] px-8 py-3.5 font-bold uppercase tracking-wide text-[var(--token-btn-text)] shadow-[4px_4px_0_var(--token-accent)] transition-all hover:shadow-[-4px_4px_0_var(--token-accent)]">
             {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={16} />}
           </Link>
         </motion.div>

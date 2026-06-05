@@ -49,11 +49,11 @@ export function ShopProductDetailSection({ data }: Props) {
   const [added, setAdded] = useState(false);
 
   if (loading) {
-    return <section className="py-16 text-center text-[color:var(--token-body,#a1a1aa)]">Produkt wird geladen…</section>;
+    return <section className="py-16 text-center text-[color:var(--token-body)]">Produkt wird geladen…</section>;
   }
 
   if (!product) {
-    return <section className="py-16 text-center text-[color:var(--token-body,#a1a1aa)]">Produkt nicht gefunden.</section>;
+    return <section className="py-16 text-center text-[color:var(--token-body)]">Produkt nicht gefunden.</section>;
   }
 
   const images = product.images?.length ? product.images : [];
@@ -82,39 +82,39 @@ export function ShopProductDetailSection({ data }: Props) {
   return (
     <section className="py-8 md:py-12">
       {/* Back link */}
-      <Link href={shopBase} className="inline-flex items-center gap-2 text-sm text-[color:var(--token-muted,#71717a)] hover:text-[color:var(--token-heading,#27272a)] mb-6 transition-colors">
+      <Link href={shopBase} className="inline-flex items-center gap-2 text-sm text-[color:var(--token-muted)] hover:text-[color:var(--token-heading)] mb-6 transition-colors">
         <ArrowLeft size={16} /> Zurück zum Shop
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14">
         {/* Gallery */}
         <div className="space-y-4">
-          <div className="aspect-square bg-[var(--token-section-bg-alt,#fafafa)] rounded-2xl overflow-hidden relative group">
+          <div className="aspect-square bg-[var(--token-section-bg-alt)] rounded-2xl overflow-hidden relative group">
             {images[selectedImage] ? (
               <img src={images[selectedImage]} alt={product.title} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center"><ShoppingBag size={60} className="text-[color:var(--token-body,#e4e4e7)]" /></div>
+              <div className="w-full h-full flex items-center justify-center"><ShoppingBag size={60} className="text-[color:var(--token-body)]" /></div>
             )}
             {images.length > 1 && (
               <>
-                <button onClick={() => setSelectedImage((selectedImage - 1 + images.length) % images.length)} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-[var(--token-card-bg,#ffffff)/90] rounded-full shadow-md opacity-0 group-hover:opacity-100 hover:bg-[var(--token-card-bg,#ffffff)] transition-all"><ChevronLeft size={18} /></button>
-                <button onClick={() => setSelectedImage((selectedImage + 1) % images.length)} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[var(--token-card-bg,#ffffff)/90] rounded-full shadow-md opacity-0 group-hover:opacity-100 hover:bg-[var(--token-card-bg,#ffffff)] transition-all"><ChevronRight size={18} /></button>
+                <button onClick={() => setSelectedImage((selectedImage - 1 + images.length) % images.length)} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-[var(--token-card-bg)/90] rounded-full shadow-md opacity-0 group-hover:opacity-100 hover:bg-[var(--token-card-bg)] transition-all"><ChevronLeft size={18} /></button>
+                <button onClick={() => setSelectedImage((selectedImage + 1) % images.length)} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[var(--token-card-bg)/90] rounded-full shadow-md opacity-0 group-hover:opacity-100 hover:bg-[var(--token-card-bg)] transition-all"><ChevronRight size={18} /></button>
               </>
             )}
             {discount > 0 && (
-              <span className="absolute top-4 left-4 bg-red-500 text-[color:var(--token-on-dark-heading,#ffffff)] text-xs font-bold px-3 py-1 rounded-full">-{discount}%</span>
+              <span className="absolute top-4 left-4 bg-red-500 text-[color:var(--token-on-dark-heading)] text-xs font-bold px-3 py-1 rounded-full">-{discount}%</span>
             )}
           </div>
           {/* Thumbnails */}
           {images.length > 1 && (
             <div className="flex gap-3">
               {images.slice(0, 4).map((img, i) => (
-                <button key={i} onClick={() => setSelectedImage(i)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${i === selectedImage ? 'border-[color:var(--token-card-border,#18181b)] ring-2 ring-zinc-900/20' : 'border-[color:var(--token-card-border,#e4e4e7)] hover:border-[color:var(--token-card-border,#a1a1aa)]'}`} data-edit-collection="images" data-edit-index={i}>
+                <button key={i} onClick={() => setSelectedImage(i)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${i === selectedImage ? 'border-[color:var(--token-card-border)] ring-2 ring-zinc-900/20' : 'border-[color:var(--token-card-border)] hover:border-[color:var(--token-card-border)]'}`} data-edit-collection="images" data-edit-index={i}>
                   <img src={img} alt="" className="w-full h-full object-cover" />
                 </button>
               ))}
               {images.length > 4 && (
-                <div className="w-20 h-20 rounded-xl border-2 border-[color:var(--token-card-border,#e4e4e7)] flex items-center justify-center text-sm text-[color:var(--token-body,#a1a1aa)] font-medium">
+                <div className="w-20 h-20 rounded-xl border-2 border-[color:var(--token-card-border)] flex items-center justify-center text-sm text-[color:var(--token-body)] font-medium">
                   +{images.length - 4}
                 </div>
               )}
@@ -126,31 +126,31 @@ export function ShopProductDetailSection({ data }: Props) {
         <div className="flex flex-col">
           {/* Category badge */}
           {product.categoryName && (
-            <span className="inline-block text-xs font-medium text-[color:var(--token-muted,#71717a)] bg-[var(--token-section-bg-alt,#f4f4f5)] px-3 py-1 rounded-full w-fit mb-3">{product.categoryName}</span>
+            <span className="inline-block text-xs font-medium text-[color:var(--token-muted)] bg-[var(--token-section-bg-alt)] px-3 py-1 rounded-full w-fit mb-3">{product.categoryName}</span>
           )}
 
           <h1 className="text-2xl md:text-3xl font-bold mb-2" data-edit-path="title">{product.title}</h1>
 
           {product.shortDescription && (
-            <p className="text-[color:var(--token-muted,#71717a)] mb-4">{product.shortDescription}</p>
+            <p className="text-[color:var(--token-muted)] mb-4">{product.shortDescription}</p>
           )}
 
           {/* Price */}
           <div className="flex items-baseline gap-3 mb-6">
             <span className="text-3xl font-bold">{formatPrice(currentPrice)}</span>
             {product.comparePriceCents && (
-              <span className="text-lg text-[color:var(--token-body,#a1a1aa)] line-through">{formatPrice(product.comparePriceCents)}</span>
+              <span className="text-lg text-[color:var(--token-body)] line-through">{formatPrice(product.comparePriceCents)}</span>
             )}
           </div>
 
           {/* Highlights / Facts */}
           {highlights.length > 0 && (
-            <div className="bg-[var(--token-section-bg-alt,#fafafa)] rounded-xl p-4 mb-6">
+            <div className="bg-[var(--token-section-bg-alt)] rounded-xl p-4 mb-6">
               <ul className="space-y-2">
                 {highlights.map((h, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm" data-edit-collection="highlights" data-edit-index={i}>
                     <Sparkles size={14} className="text-amber-500 shrink-0" />
-                    <span className="text-[color:var(--token-muted,#3f3f46)]">{h}</span>
+                    <span className="text-[color:var(--token-muted)]">{h}</span>
                   </li>
                 ))}
               </ul>
@@ -160,7 +160,7 @@ export function ShopProductDetailSection({ data }: Props) {
           {/* Variant options */}
           {product.variantOptions?.map(opt => (
             <div key={opt.name} className="mb-5">
-              <label className="text-sm font-medium text-[color:var(--token-muted,#3f3f46)] mb-2 block" data-edit-path="name">{opt.name}</label>
+              <label className="text-sm font-medium text-[color:var(--token-muted)] mb-2 block" data-edit-path="name">{opt.name}</label>
               <div className="flex flex-wrap gap-2">
                 {opt.values.map(val => {
                   const matchVariant = variants.find(v => v.name.includes(val));
@@ -169,7 +169,7 @@ export function ShopProductDetailSection({ data }: Props) {
                     <button
                       key={val}
                       onClick={() => setSelectedVariant(matchVariant?.id || null)}
-                      className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${isSelected ? 'border-[color:var(--token-card-border,#18181b)] bg-[var(--token-section-bg-alt,#18181b)] text-[color:var(--token-on-dark-heading,#ffffff)]' : 'border-[color:var(--token-card-border,#e4e4e7)] hover:border-[color:var(--token-card-border,#a1a1aa)]'}`}
+                      className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${isSelected ? 'border-[color:var(--token-card-border)] bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)]' : 'border-[color:var(--token-card-border)] hover:border-[color:var(--token-card-border)]'}`}
                     >
                       {val}
                     </button>
@@ -181,10 +181,10 @@ export function ShopProductDetailSection({ data }: Props) {
 
           {/* Add to cart */}
           <div className="flex items-center gap-4 mt-auto pt-4">
-            <div className="flex items-center border border-[color:var(--token-card-border,#e4e4e7)] rounded-xl">
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3 hover:bg-[var(--token-section-bg-alt,#fafafa)] rounded-l-xl transition"><Minus size={16} /></button>
+            <div className="flex items-center border border-[color:var(--token-card-border)] rounded-xl">
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="p-3 hover:bg-[var(--token-section-bg-alt)] rounded-l-xl transition"><Minus size={16} /></button>
               <span className="w-10 text-center font-medium text-sm">{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)} className="p-3 hover:bg-[var(--token-section-bg-alt,#fafafa)] rounded-r-xl transition"><Plus size={16} /></button>
+              <button onClick={() => setQuantity(quantity + 1)} className="p-3 hover:bg-[var(--token-section-bg-alt)] rounded-r-xl transition"><Plus size={16} /></button>
             </div>
             <button
               onClick={handleAdd}
@@ -201,11 +201,11 @@ export function ShopProductDetailSection({ data }: Props) {
           )}
 
           {/* Trust badges */}
-          <div className="flex items-center gap-6 mt-6 pt-6 border-t border-[color:var(--token-card-border,#f4f4f5)]">
-            <div className="flex items-center gap-2 text-xs text-[color:var(--token-muted,#71717a)]">
+          <div className="flex items-center gap-6 mt-6 pt-6 border-t border-[color:var(--token-card-border)]">
+            <div className="flex items-center gap-2 text-xs text-[color:var(--token-muted)]">
               <Truck size={14} /> Schneller Versand
             </div>
-            <div className="flex items-center gap-2 text-xs text-[color:var(--token-muted,#71717a)]">
+            <div className="flex items-center gap-2 text-xs text-[color:var(--token-muted)]">
               <ShieldCheck size={14} /> Sicherer Kauf
             </div>
           </div>
@@ -214,9 +214,9 @@ export function ShopProductDetailSection({ data }: Props) {
 
       {/* Description */}
       {product.description && (
-        <div className="mt-12 pt-8 border-t border-[color:var(--token-card-border,#f4f4f5)]">
+        <div className="mt-12 pt-8 border-t border-[color:var(--token-card-border)]">
           <h2 className="text-lg font-semibold mb-4">Beschreibung</h2>
-          <div className="text-sm text-[color:var(--token-muted,#52525b)] whitespace-pre-line leading-relaxed">{plain(product.description)}</div>
+          <div className="text-sm text-[color:var(--token-muted)] whitespace-pre-line leading-relaxed" data-edit-path="description">{plain(product.description)}</div>
         </div>
       )}
     </section>

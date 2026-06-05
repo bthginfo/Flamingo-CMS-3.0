@@ -18,9 +18,9 @@ export function ConsultingHeroSection({ data }: Props) {
   const secondaryCta = data.secondaryCta as { label: string; href: string } | undefined;
   const trustItems = (data.trustItems as string[]) || [];
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
-  const heroHeading = 'var(--token-on-dark-heading,var(--style-image-text-color,#ffffff))';
-  const heroBody = 'var(--token-on-dark-body,var(--style-image-body-color,rgba(255,255,255,0.86)))';
-  const heroMuted = 'var(--token-on-dark-muted,var(--style-image-muted-color,rgba(255,255,255,0.72)))';
+  const heroHeading = 'var(--token-on-dark-heading)';
+  const heroBody = 'var(--token-on-dark-body)';
+  const heroMuted = 'var(--token-on-dark-muted)';
 
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
@@ -32,12 +32,12 @@ export function ConsultingHeroSection({ data }: Props) {
           <Image src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
         </ImageEffectWrapper>
       )}
-      <div className="absolute inset-0 bg-[var(--token-section-bg-alt,#18181b)]" style={{ opacity: bgImage ? overlayOpacity : 1 }} />
+      <div className="absolute inset-0 bg-[var(--token-section-bg-alt)]" style={{ opacity: bgImage ? overlayOpacity : 1 }} />
 
       {/* Subtle pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/10 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 border border-[color:var(--token-card-border,#ffffff)/10] rounded-full -translate-x-1/2 translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 border border-[color:var(--token-card-border)/10] rounded-full -translate-x-1/2 translate-y-1/2" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 py-16 md:py-20">
@@ -57,7 +57,7 @@ export function ConsultingHeroSection({ data }: Props) {
           )}
           <div className="flex flex-wrap justify-center gap-4 mt-10">
             {primaryCta && (
-              <a href={primaryCta.href} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg,var(--brand-btn-bg,var(--style-accent-color,#ffffff)))] px-7 py-3.5 font-semibold text-[var(--token-btn-text,var(--brand-btn-text,#111827))] shadow-lg transition-all hover:brightness-110">
+              <a href={primaryCta.href} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-7 py-3.5 font-semibold text-[var(--token-btn-text)] shadow-lg transition-all hover:brightness-110">
                 <DynamicIcon name="phone" size={18} />
                 <span data-edit-path="label">{primaryCta.label}</span>
               </a>
@@ -72,7 +72,7 @@ export function ConsultingHeroSection({ data }: Props) {
             <div className="mx-auto mt-10 flex max-w-4xl flex-wrap justify-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
               {trustItems.map((item, i) => (
                 <div key={i} className="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium" style={{ color: heroMuted }} data-edit-collection="trustItems" data-edit-index={i}>
-                  <DynamicIcon name="check-circle" size={16} className="text-[color:var(--style-accent-color,var(--token-icon,#f59e0b))]" />
+                  <DynamicIcon name="check-circle" size={16} className="text-[color:var(--token-accent)]" />
                   {item}
                 </div>
               ))}

@@ -6,6 +6,7 @@ import { MonitorPlay, Rocket, Save } from 'lucide-react';
 import { publishAction } from '@/app/admin/actions/publish';
 import { useSaveState } from '@/components/save-context';
 import { usePreview } from '@/components/admin/preview-context';
+import { PreviewNudge } from '@/components/admin/preview-nudge';
 
 export function PublishFab() {
   const pathname = usePathname();
@@ -40,7 +41,7 @@ export function PublishFab() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3" data-tour="publish-fab">
-      <div className="relative group/preview">
+      <div className="relative">
         <button
           onClick={() => preview.isOpen ? preview.close() : preview.open()}
           className={`flex items-center gap-2 px-4 py-3 border rounded-full shadow-lg text-sm font-medium transition-colors ${
@@ -49,17 +50,7 @@ export function PublishFab() {
         >
           <MonitorPlay size={16} /> Vorschau
         </button>
-        {!preview.isOpen && (
-          <div className="pointer-events-none absolute bottom-full right-0 mb-2 w-64 rounded-lg bg-gray-900 text-white text-xs px-3 py-2 shadow-xl opacity-0 group-hover/preview:opacity-100 transition-opacity">
-            <div className="font-semibold mb-0.5 flex items-center gap-1.5">
-              <span>✏️</span> Texte direkt in der Vorschau bearbeiten
-            </div>
-            <div className="text-gray-300 font-normal leading-relaxed">
-              Öffne die Vorschau und klicke auf Texte oder Sektionen, um sie direkt zu ändern.
-            </div>
-            <div className="absolute top-full right-6 h-2 w-2 -mt-1 rotate-45 bg-gray-900" />
-          </div>
-        )}
+        <PreviewNudge variant="top-right" />
       </div>
       {showSave ? (
         <button

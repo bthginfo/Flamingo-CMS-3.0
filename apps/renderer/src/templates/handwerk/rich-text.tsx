@@ -32,7 +32,7 @@ export function RichTextSection({ data }: Props) {
       <div className="max-w-3xl mx-auto px-6">
         {headline && <h1 className="font-display text-4xl font-bold mb-10 text-center" data-edit-path="headline">{headline}</h1>}
         <div
-          className="prose prose-lg prose-slate max-w-none prose-headings:font-display prose-a:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] prose-a:no-underline hover:prose-a:underline rt-content"
+          className="prose prose-lg prose-slate max-w-none prose-headings:font-display prose-a:text-[color:var(--token-icon)] prose-a:no-underline hover:prose-a:underline rt-content"
           dangerouslySetInnerHTML={{ __html: clean }}
         />
       </div>

@@ -23,18 +23,18 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
   const primaryCta = (data.primaryCta as Cta) || {};
   const secondaryCta = (data.secondaryCta as Cta) || {};
   const metrics = (data.metrics as Metric[]) || [];
-  const headingColor = image ? 'var(--token-on-dark-heading,var(--style-on-dark-heading,#ffffff))' : 'var(--token-heading,var(--style-heading-color,#111827))';
-  const bodyColor = image ? 'var(--token-on-dark-body,var(--style-on-dark-body,rgba(255,255,255,0.84)))' : 'var(--token-body,var(--style-body-color,#3f3f46))';
-  const mutedColor = image ? 'var(--token-on-dark-muted,var(--style-on-dark-muted,rgba(255,255,255,0.72)))' : 'var(--token-muted,var(--style-text-muted,#71717a))';
+  const headingColor = image ? 'var(--token-on-dark-heading)' : 'var(--token-heading)';
+  const bodyColor = image ? 'var(--token-on-dark-body)' : 'var(--token-body)';
+  const mutedColor = image ? 'var(--token-on-dark-muted)' : 'var(--token-muted)';
   const metricCardBg = image
-    ? 'color-mix(in srgb,var(--token-on-dark-heading,#ffffff) 12%,transparent)'
-    : 'var(--token-card-bg,var(--style-card-bg,#ffffff))';
+    ? 'color-mix(in srgb,var(--token-on-dark-heading) 12%,transparent)'
+    : 'var(--token-card-bg)';
   const metricBorder = image
-    ? 'color-mix(in srgb,var(--token-on-dark-heading,#ffffff) 24%,transparent)'
-    : 'var(--token-card-border,var(--style-border-color,rgba(0,0,0,0.12)))';
+    ? 'color-mix(in srgb,var(--token-on-dark-heading) 24%,transparent)'
+    : 'var(--token-card-border)';
 
   return (
-    <section ref={ref} className="relative overflow-hidden bg-[var(--token-section-bg,var(--style-section-bg,#050505))]">
+    <section ref={ref} className="relative overflow-hidden bg-[var(--token-section-bg)]">
       <motion.div style={{ y }} className="absolute inset-x-0 -top-10 h-[calc(100%+80px)]">
         {image ? <img src={image} alt="" className="h-full w-full object-cover" style={{ objectPosition: imagePosition }} /> : <div className="h-full bg-zinc-950" />}
         <div className="absolute inset-0" style={{ background: overlay }} />
@@ -43,12 +43,12 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
 
       <div className="relative z-10 mx-auto grid min-h-[620px] max-w-7xl items-end gap-10 px-6 py-16 md:grid-cols-[1.1fr_0.9fr] md:py-24">
         <div>
-          {badge && <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_24%,transparent)] bg-[var(--token-badge-bg,var(--style-badge-bg,rgba(255,255,255,0.12)))] px-4 py-2 text-xs font-bold uppercase text-[var(--token-badge-text,var(--style-badge-text,#fff))] backdrop-blur"><Sparkles size={14} />{badge}</div>}
+          {badge && <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_24%,transparent)] bg-[var(--token-badge-bg)] px-4 py-2 text-xs font-bold uppercase text-[var(--token-badge-text)] backdrop-blur"><Sparkles size={14} /><span data-edit-path="badge">{badge}</span></div>}
           {headline && <h2 className="max-w-4xl text-4xl font-black leading-none md:text-6xl lg:text-7xl" style={{ color: headingColor }} data-edit-path="headline">{headline}</h2>}
           {subline && <p className="mt-6 max-w-2xl text-base leading-8 md:text-xl" style={{ color: bodyColor }} data-edit-path="subline">{plain(subline)}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
-            {primaryCta.label && <a href={primaryCta.href || '#'} className="btn-primary inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--token-icon, var(--brand-primary,#fff))))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#111))] shadow-2xl transition hover:brightness-110"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
-            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="btn-secondary inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_28%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_10%,transparent)] px-6 py-3 text-sm font-bold backdrop-blur transition hover:brightness-110" style={{ color: headingColor }} data-edit-path="label">{secondaryCta.label}</a>}
+            {primaryCta.label && <a href={primaryCta.href || '#'} className="btn-primary inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[var(--token-btn-text)] shadow-2xl transition hover:brightness-110"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
+            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="btn-secondary inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_28%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_10%,transparent)] px-6 py-3 text-sm font-bold backdrop-blur transition hover:brightness-110" style={{ color: headingColor }} data-edit-path="label">{secondaryCta.label}</a>}
           </div>
         </div>
 
@@ -64,8 +64,8 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
                 className="rounded-2xl border p-5 backdrop-blur-xl"
                 style={{ background: metricCardBg, borderColor: metricBorder }}
                data-edit-collection="metrics" data-edit-index={index}>
-                <div className="text-3xl font-black text-[var(--token-stat-value,var(--style-accent-color,#fff))]">{metric.value}</div>
-                <div className="mt-1 text-sm" style={{ color: mutedColor }}>{metric.label}</div>
+                <div className="text-3xl font-black text-[var(--token-stat-value)]" data-edit-path="value">{metric.value}</div>
+                <div className="mt-1 text-sm" style={{ color: mutedColor }} data-edit-path="label">{metric.label}</div>
               </motion.div>
             ))}
           </div>

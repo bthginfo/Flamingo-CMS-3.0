@@ -52,8 +52,10 @@ const TEXT_FIELDS = new Set([
   'category', 'tag', 'value', 'unit', 'detail', 'summary',
 ]);
 
-// JSX tags we'll annotate. Keep it to actual text containers.
-const TEXT_TAGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span', 'a', 'button', 'blockquote', 'figcaption', 'label', 'li', 'strong', 'em'];
+// JSX tags we'll annotate. Includes `div` because many templates use
+// `<div>{eyebrow}</div>` for badge / pill rendering. Pass B is strict
+// (single-expression body only) so we won't pollute structural divs.
+const TEXT_TAGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span', 'a', 'button', 'blockquote', 'figcaption', 'label', 'li', 'strong', 'em', 'div', 'small', 'dt', 'dd', 'cite'];
 
 // Pull a known field name out of a JSX expression body. Handles the
 // following shapes (the LHS wins when fallback operators are involved):

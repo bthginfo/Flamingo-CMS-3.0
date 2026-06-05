@@ -18,13 +18,13 @@ export function SocialProofBarSection({ data }: Props) {
   if (!items.length) return null;
 
   const bg = bgStyle === 'dark'
-    ? 'bg-[var(--token-section-bg, var(--style-section-bg,#18181b))] text-[var(--token-heading, var(--style-heading-color,#ffffff))]'
+    ? 'bg-[var(--token-section-bg)] text-[var(--token-heading)]'
     : bgStyle === 'primary'
-      ? 'bg-[var(--style-accent-color,var(--color-primary,#18181b))] text-[var(--token-badge-text, var(--style-badge-text,#ffffff))]'
-      : 'bg-[var(--token-card-bg, var(--style-card-bg,#f4f4f5))] text-[var(--style-text-primary,#27272a)]';
+      ? 'bg-[var(--token-accent)] text-[var(--token-badge-text)]'
+      : 'bg-[var(--token-card-bg)] text-[var(--token-body)]';
 
   return (
-    <div ref={ref} className={`${bg} rounded-xl border border-[var(--token-card-border, var(--style-border-color,transparent))] px-4 py-6`}>
+    <div ref={ref} className={`${bg} rounded-xl border border-[var(--token-card-border)] px-4 py-6`}>
       <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.5 }} className="flex flex-wrap items-center justify-center gap-8 md:gap-12 lg:gap-16">
         {items.map((item, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }} className="flex flex-col items-center text-center gap-1" data-edit-collection="items" data-edit-index={i}>
@@ -34,7 +34,7 @@ export function SocialProofBarSection({ data }: Props) {
               <div className="flex gap-0.5 mb-1">{Array.from({ length: 5 }).map((_, si) => <Star key={si} size={14} className="fill-yellow-400 text-yellow-400"  data-edit-collection="length" data-edit-index={si}/>)}</div>
             ) : null}
             <span className="text-2xl md:text-3xl font-bold leading-tight" data-edit-path="value">{item.value}</span>
-            <span className="text-xs text-[var(--style-text-secondary,var(--token-body, var(--style-body-color,#71717a)))] md:text-sm" data-edit-path="label">{item.label}</span>
+            <span className="text-xs text-[var(--token-body)] md:text-sm" data-edit-path="label">{item.label}</span>
           </motion.div>
         ))}
       </motion.div>

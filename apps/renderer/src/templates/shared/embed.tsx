@@ -87,7 +87,7 @@ export function EmbedSection({ data }: Props) {
               onClick={() => { const fn = triggerFn; if (typeof window !== 'undefined' && fn && (window as any)[fn]) (window as any)[fn](); }}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-200"
               style={{
-                backgroundColor: buttonColor || 'var(--token-icon, var(--brand-primary, #0ea5e9))',
+                backgroundColor: buttonColor || 'var(--token-icon)',
                 color: buttonTextColor || '#ffffff',
               }} data-edit-path="buttonLabel"
             >

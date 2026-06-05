@@ -32,8 +32,8 @@ export function PropertySearchSection({ data }: Props) {
     <section ref={ref} className="py-16 md:py-20" style={bgColor ? { backgroundColor: bgColor } : undefined}>
       <div className="max-w-4xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
-          {subline && <p className="mt-2 text-[color:var(--token-muted,#52525b)]" data-edit-path="subline">{plain(subline)}</p>}
+          <h2 className="text-2xl md:text-3xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="mt-2 text-[color:var(--token-muted)]" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
 
         <motion.div
@@ -48,22 +48,22 @@ export function PropertySearchSection({ data }: Props) {
               <a
                 key={i}
                 href={cat.href || ctaHref}
-                className={`group relative flex flex-col items-center gap-3 rounded-xl border p-6 text-center transition-all hover:shadow-lg hover:border-[var(--token-card-border,var(--brand-primary,#1a5276))/30] ${i === activeCategory ? 'border-[var(--token-card-border,var(--brand-primary,#1a5276))/40] bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/5]' : 'border-[color:var(--token-card-border,#e4e4e7)] bg-[var(--token-card-bg,#ffffff)]'}`}
+                className={`group relative flex flex-col items-center gap-3 rounded-xl border p-6 text-center transition-all hover:shadow-lg hover:border-[var(--token-card-border)/30] ${i === activeCategory ? 'border-[var(--token-card-border)/40] bg-[var(--token-btn-bg)/5]' : 'border-[color:var(--token-card-border)] bg-[var(--token-card-bg)]'}`}
                 onMouseEnter={() => setActiveCategory(i)}
               >
-                <div className="rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] p-3 text-[color:var(--token-icon,var(--brand-primary,#1a5276))] group-hover:bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] group-hover:text-[color:var(--token-on-dark-heading,#ffffff)] transition-colors">
+                <div className="rounded-full bg-[var(--token-btn-bg)/10] p-3 text-[color:var(--token-icon)] group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-on-dark-heading)] transition-colors">
                   <Icon size={24} />
                 </div>
-                <span className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="label">{cat.label}</span>
-                {cat.count && <span className="text-xs text-[color:var(--token-muted,#71717a)]">{cat.count}</span>}
-                <ArrowRight size={16} className="absolute top-4 right-4 text-[color:var(--token-body,#d4d4d8)] group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors" />
+                <span className="font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{cat.label}</span>
+                {cat.count && <span className="text-xs text-[color:var(--token-muted)]">{cat.count}</span>}
+                <ArrowRight size={16} className="absolute top-4 right-4 text-[color:var(--token-body)] group-hover:text-[color:var(--token-icon)] transition-colors" />
               </a>
             );
           })}
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.4 }} className="mt-8 text-center">
-          <a href={ctaHref} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-lg hover:bg-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))] transition-colors">
+          <a href={ctaHref} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-lg hover:bg-[var(--token-section-bg-alt)] transition-colors">
             <Search size={18} />
             <span data-edit-path="ctaLabel">{ctaLabel}</span>
           </a>

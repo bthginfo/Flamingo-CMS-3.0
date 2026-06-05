@@ -15,7 +15,7 @@ export function HeaderBannerSection({ data }: Props) {
 
   const bgClass = style === 'warning' ? 'bg-amber-500 text-amber-950'
     : style === 'info' ? 'bg-blue-600 text-white'
-    : 'bg-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))] text-white/80';
+    : 'bg-[var(--token-section-bg-alt)] text-white/80';
 
   return (
     <div className={`relative ${bgClass} text-xs py-2 text-center`}>
