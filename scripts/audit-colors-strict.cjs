@@ -5,9 +5,8 @@
  */
 const { execSync } = require('child_process');
 
-// Baseline as of commit a2d78eda (Phase A complete).
-// Decrease after each future Phase. NEVER increase without explicit approval.
-const BASELINE = { dead: 64, shadowed: 20, missing: 15 };
+// Baseline after Phases A→E (final). NEVER increase without explicit approval.
+const BASELINE = { dead: 56, shadowed: 20, missing: 15 };
 
 const out = execSync('node scripts/audit-color-fields.cjs', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] });
 const m = out.match(/=== (\d+) dead, (\d+) shadowed, (\d+) missing/);

@@ -21,9 +21,9 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 | Total fields shown | 1209 |
 | Unique templates referenced | 197 |
 | Unresolved component refs | 2 |
-| **DEAD fields** | **64** (5.3%) |
+| **DEAD fields** | **56** (4.6%) |
 | **SHADOWED fields** | **20** (1.7%) |
-| **MISSING fields** | **25** |
+| **MISSING fields** | **15** |
 
 ## Top 25 Worst Offenders (by dead+shadowed)
 
@@ -31,8 +31,6 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 |---|---:|---:|---:|---:|---|
 | `cinematicHero` | 7 | 0 | 1 | 18 | shared/cinematic-hero.tsx |
 | `beforeAfterStoryPro` | 4 | 1 | 0 | 15 | shared/before-after-story-pro.tsx |
-| `portfolio` | 5 | 0 | 5 | 13 | handwerk/portfolio.tsx |
-| `textImage` | 5 | 0 | 4 | 10 | handwerk/text-image.tsx |
 | `emergencyInfo` | 4 | 0 | 0 | 14 | medical/emergency-info.tsx |
 | `immersiveCtaBanner` | 3 | 1 | 0 | 20 | shared/immersive-cta-banner.tsx |
 | `ctaBand` | 2 | 1 | 2 | 16 | handwerk/cta-band.tsx |
@@ -48,12 +46,14 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 | `legalContent` | 2 | 0 | 0 | 4 | handwerk/legal-content.tsx |
 | `principlesGrid` | 1 | 1 | 0 | 17 | shared/principles-grid.tsx |
 | `serviceOverview` | 2 | 0 | 0 | 14 | medical/service-overview.tsx |
-| `story` | 2 | 0 | 4 | 17 | restaurant/story.tsx, handwerk/text-image.tsx, hotel/story.tsx, tourism/story.tsx, medical/story.tsx |
+| `textImage` | 2 | 0 | 0 | 10 | handwerk/text-image.tsx |
 | `availabilityCta` | 0 | 1 | 0 | 17 | shared/immersive-cta-banner.tsx |
 | `collectionHero` | 1 | 0 | 0 | 17 | handwerk/collection-hero.tsx |
 | `collectionList` | 1 | 0 | 0 | 6 | shared/collection-list.tsx |
 | `doctorTeam` | 1 | 0 | 0 | 14 | medical/doctor-team.tsx |
 | `faq` | 1 | 0 | 0 | 19 | handwerk/faq.tsx, restaurant/faq.tsx, hotel/faq.tsx, tourism/faq.tsx, salon/faq.tsx, medical/faq.tsx, wedding/faq-gallery.tsx, consulting/faq.tsx, realestate/faq.tsx, cafe/faq.tsx |
+| `floristHero` | 0 | 1 | 0 | 15 | shared/glow-hero.tsx |
+| `freeText` | 1 | 0 | 0 | 3 | handwerk/rich-text.tsx |
 
 ## Per-Section Detail
 
@@ -376,11 +376,13 @@ _No issues._
 
 **Templates:** `handwerk/text-image.tsx`
 
-**Missing fields (4):**
+**Missing fields (6):**
 
-- `--style-accent` — used by template, no editor field exposes it
+- `--token-btn-bg` — used by template, no editor field exposes it
 - `--style-button-bg` — used by template, no editor field exposes it
+- `--token-btn-text` — used by template, no editor field exposes it
 - `--style-button-text` — used by template, no editor field exposes it
+- `--token-card-border` — used by template, no editor field exposes it
 - `--style-border` — used by template, no editor field exposes it
 
 ### `floristHero` (15 fields)
@@ -601,21 +603,9 @@ _No issues._
 
 **Templates:** `handwerk/portfolio.tsx`
 
-**Dead fields (5):**
+**Dead fields (1):**
 
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
-- `btnBg` (Button Hintergrund) → --token-btn-bg — cssVar never referenced
-- `btnText` (Button Text) → --token-btn-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
-
-**Missing fields (5):**
-
-- `--style-border` — used by template, no editor field exposes it
-- `--style-accent` — used by template, no editor field exposes it
-- `--style-muted` — used by template, no editor field exposes it
-- `--style-button-bg` — used by template, no editor field exposes it
-- `--style-button-text` — used by template, no editor field exposes it
 
 ### `premiumComparison` (8 fields)
 
@@ -696,10 +686,11 @@ _No issues._
 
 **Templates:** `handwerk/service-detail.tsx`
 
-**Missing fields (3):**
+**Missing fields (4):**
 
-- `--style-accent` — used by template, no editor field exposes it
+- `--token-muted` — used by template, no editor field exposes it
 - `--style-muted` — used by template, no editor field exposes it
+- `--token-card-border` — used by template, no editor field exposes it
 - `--style-border` — used by template, no editor field exposes it
 
 ### `serviceOverview` (14 fields)
@@ -805,17 +796,9 @@ _No issues._
 
 **Templates:** `restaurant/story.tsx`, `handwerk/text-image.tsx`, `hotel/story.tsx`, `tourism/story.tsx`, `medical/story.tsx`
 
-**Dead fields (2):**
+**Dead fields (1):**
 
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `btnText` (Button Text) → --token-btn-text — cssVar never referenced
-
-**Missing fields (4):**
-
-- `--style-accent` — used by template, no editor field exposes it
-- `--style-button-bg` — used by template, no editor field exposes it
-- `--style-button-text` — used by template, no editor field exposes it
-- `--style-border` — used by template, no editor field exposes it
 
 ### `studioAmenities` (8 fields)
 
@@ -855,20 +838,10 @@ _No issues._
 
 **Templates:** `handwerk/text-image.tsx`
 
-**Dead fields (5):**
+**Dead fields (2):**
 
 - `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `btnBg` (Button Hintergrund) → --token-btn-bg — cssVar never referenced
-- `btnText` (Button Text) → --token-btn-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
-
-**Missing fields (4):**
-
-- `--style-accent` — used by template, no editor field exposes it
-- `--style-button-bg` — used by template, no editor field exposes it
-- `--style-button-text` — used by template, no editor field exposes it
-- `--style-border` — used by template, no editor field exposes it
 
 ### `timeline` (1 fields)
 
