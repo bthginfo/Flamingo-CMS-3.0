@@ -48,7 +48,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
       </div>
       <div className="relative z-10 px-6 py-12 text-center text-[var(--token-heading,var(--style-heading-color,#ffffff))] sm:py-16 md:py-24 lg:py-32">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
-          className="mb-8 inline-flex items-center gap-2 rounded-full border border-[var(--token-badge-border,var(--style-badge-border,var(--style-border-color,rgba(255,255,255,0.20))))] bg-[var(--token-badge-bg,var(--style-badge-bg,rgba(255,255,255,0.10)))] px-5 py-2 text-sm text-[var(--token-badge-text,var(--style-badge-text,#ffffff))] backdrop-blur-sm">
+          className="mb-8 inline-flex items-center gap-2 rounded-full border border-[var(--token-badge-border,var(--style-badge-border,var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.20)))))] bg-[var(--token-badge-bg,var(--style-badge-bg,rgba(255,255,255,0.10)))] px-5 py-2 text-sm text-[var(--token-badge-text,var(--style-badge-text,#ffffff))] backdrop-blur-sm">
           <Sparkles size={14} className="text-[var(--token-icon,var(--style-accent-color,var(--brand-accent)))]" /><span>{badgeText || 'Jetzt Termin sichern'}</span>
         </motion.div>
         <motion.h2 initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 }}
@@ -83,7 +83,7 @@ function CtaModern({ headline, subline, cta, colors }: CProps) {
       </h2>
       {subline && <div className="rt-content mx-auto mt-6 max-w-2xl text-lg text-[var(--token-body,var(--style-body-color,#52525b))]" dangerouslySetInnerHTML={{ __html: subline }} />}
       {cta?.label && (
-        <a href={cta.href} className="group mt-10 inline-flex items-center gap-3 border-b-2 border-[var(--token-btn-bg,var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary))))] pb-1 text-lg font-medium text-[var(--token-btn-text,var(--brand-btn-text,var(--style-heading-color,var(--style-text-primary,#111827))))] transition-colors hover:text-[var(--style-accent-color,var(--brand-primary))]">
+        <a href={cta.href} className="group mt-10 inline-flex items-center gap-3 border-b-2 border-[var(--token-btn-bg,var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary))))] pb-1 text-lg font-medium text-[var(--token-btn-text,var(--brand-btn-text,var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))))] transition-colors hover:text-[var(--style-accent-color,var(--brand-primary))]">
           {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
         </a>
       )}
