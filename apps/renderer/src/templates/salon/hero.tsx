@@ -134,7 +134,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMob
         <>
           <Image data-edit-image="bgImage" src={bgImage} alt="" fill className={`object-cover opacity-30${bgImageMobile ? ' hidden md:block' : ''}`} priority sizes="100vw" />
           {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill className="object-cover opacity-30 md:hidden" priority sizes="100vw" />}
-          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.5 }} />) : (<div className="absolute inset-0 bg-[var(--token-section-bg-alt)/50]" />)}
+          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.5 }} />) : (<div className="absolute inset-0 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_50%,transparent)]" />)}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
@@ -144,15 +144,15 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMob
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-12 md:py-20">
         {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
         <h1 className="mt-5 text-3xl md:text-5xl font-black uppercase leading-[0.95] text-[color:var(--token-on-dark-heading)] sm:text-7xl lg:text-9xl" data-edit-path="headline">{headline}</h1>
-        {subline && <div className="mt-7 max-w-2xl text-lg font-bold uppercase leading-8 text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-7 max-w-2xl text-lg font-bold uppercase leading-8 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 bg-[var(--token-badge-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={17} />}</a>}
           {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
-        <div className="mt-10 flex flex-wrap gap-3 text-sm font-bold uppercase text-[color:var(--token-on-dark-heading)/60]">
-          {bookingHint && <span className="bg-[var(--token-card-bg)/10] px-4 py-2">{bookingHint}</span>}
-          {ratingText && <span className="bg-[var(--token-card-bg)/10] px-4 py-2">{ratingText}</span>}
-          {trustItems.map((item) => <span key={item} className="bg-[var(--token-card-bg)/10] px-4 py-2">{item}</span>)}
+        <div className="mt-10 flex flex-wrap gap-3 text-sm font-bold uppercase text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]">
+          {bookingHint && <span className="bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] px-4 py-2">{bookingHint}</span>}
+          {ratingText && <span className="bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] px-4 py-2">{ratingText}</span>}
+          {trustItems.map((item) => <span key={item} className="bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] px-4 py-2">{item}</span>)}
         </div>
       </div>
     </section>

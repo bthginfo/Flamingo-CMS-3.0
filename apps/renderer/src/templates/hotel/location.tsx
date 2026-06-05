@@ -46,7 +46,7 @@ function LocationClassic({ headline, subline, badgeText, addressText, mapEmbedUr
         {addressText && <p className="text-[color:var(--token-muted)]">{addressText}</p>}
         <div className="mt-6 grid gap-3">
           {transportItems.map((item, index) => (
-            <motion.div key={`$<span data-edit-path="label">{item.label}</span>-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[var(--token-icon)]/20 pt-4" data-edit-collection="transportItems" data-edit-index={index}>
+            <motion.div key={`$<span data-edit-path="label">{item.label}</span>-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] pt-4" data-edit-collection="transportItems" data-edit-index={index}>
               <div className="text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={item.icon || 'map-pin'} size={20} /></div>
               <div><h3 className="font-semibold text-[color:var(--token-heading)]"><span data-edit-path="label">{item.label || ''}</span> <span data-edit-path="value">{item.value || ''}</span></h3>{item.text && <div className="text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}</div>
             </motion.div>
@@ -59,7 +59,7 @@ function LocationClassic({ headline, subline, badgeText, addressText, mapEmbedUr
         {mapEmbedUrl && <iframe title={headline} src={mapEmbedUrl} className="h-72 w-full rounded-xl border-0" loading="lazy" />}
         <div className="grid gap-4 sm:grid-cols-2">
           {nearbyItems.map((item, index) => (
-            <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-4 shadow-md" data-edit-collection="nearbyItems" data-edit-index={index}>
+            <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-4 shadow-md" data-edit-collection="nearbyItems" data-edit-index={index}>
               {item.image && <div className="relative mb-3 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
               {item.distanceLabel && <p className="text-xs text-[color:var(--token-muted)]">{item.distanceLabel}</p>}
@@ -117,7 +117,7 @@ function LocationBold({ headline, subline, badgeText, addressText, mapEmbedUrl, 
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <div className="mb-6 max-w-3xl">
-          {badgeText && <p className="inline-block bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
+          {badgeText && <p className="inline-block bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
           {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>

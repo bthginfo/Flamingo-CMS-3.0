@@ -37,7 +37,7 @@ function Classic({ badge, headline, story, image, milestones }: P) {
           <div className={image ? '' : 'md:col-span-2 max-w-3xl mx-auto'}>
             {story && <p className="text-[color:var(--token-muted)] text-lg leading-relaxed mb-10">{story}</p>}
             {milestones.length > 0 && (
-              <div className="space-y-6 border-l-2 border-[var(--token-card-border)/20] pl-6">
+              <div className="space-y-6 border-l-2 border-[color-mix(in_srgb,var(--token-card-border)_20%,transparent)] pl-6">
                 {milestones.map((m, i) => (
                   <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} data-edit-collection="milestones" data-edit-index={i}>
                     <span className="text-sm font-semibold text-[color:var(--token-icon)]" data-edit-path="date">{m.date}</span>

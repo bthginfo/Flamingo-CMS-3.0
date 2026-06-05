@@ -31,13 +31,13 @@ export function FeeTableSection({ data }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
-            className={`relative p-8 rounded-xl border ${fee.highlighted ? 'border-[var(--token-card-border)] bg-[var(--token-btn-bg)/5] ring-1 ring-brand-primary/20' : 'border-[color:var(--token-card-border)] bg-[var(--token-card-bg)]'} text-center`}
+            className={`relative p-8 rounded-xl border ${fee.highlighted ? 'border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-btn-bg)_5%,transparent)] ring-1 ring-brand-primary/20' : 'border-[color:var(--token-card-border)] bg-[var(--token-card-bg)]'} text-center`}
            data-edit-collection="fees" data-edit-index={i}>
             {fee.highlighted && (
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] text-xs font-semibold px-3 py-1 rounded-full">Empfohlen</div>
             )}
             {fee.icon && (
-              <div className="w-12 h-12 mx-auto mb-4 rounded-lg bg-[var(--token-btn-bg)/10] flex items-center justify-center text-[color:var(--token-icon)]">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-lg bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] flex items-center justify-center text-[color:var(--token-icon)]">
                 <DynamicIcon editPath="icon" name={fee.icon} size={24} />
               </div>
             )}

@@ -66,23 +66,23 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
             {image && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="md:col-span-2 relative aspect-[3/4]">
                 <Image data-edit-image="image" src={image} alt={headline || 'Fotograf'} fill className="object-cover" />
-                <div className="absolute inset-0 border-2 border-[color:var(--token-card-border)/20]" />
+                <div className="absolute inset-0 border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)]" />
               </motion.div>
             )}
             <div className={image ? 'md:col-span-3' : 'md:col-span-5 max-w-3xl'}>
-              {intro && <div className="text-[color:var(--token-on-dark-heading)/90] text-lg leading-relaxed rt-content" data-edit-rich="intro" dangerouslySetInnerHTML={{ __html: intro }} />}
-              {story && <div className="text-[color:var(--token-on-dark-heading)/80] leading-relaxed mt-4 rt-content" data-edit-rich="story" dangerouslySetInnerHTML={{ __html: story }} />}
+              {intro && <div className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_90%,transparent)] text-lg leading-relaxed rt-content" data-edit-rich="intro" dangerouslySetInnerHTML={{ __html: intro }} />}
+              {story && <div className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] leading-relaxed mt-4 rt-content" data-edit-rich="story" dangerouslySetInnerHTML={{ __html: story }} />}
               {facts.length > 0 && (
                 <ul className="mt-8 space-y-2">
-                  {facts.map((fact, i) => <li key={i} className="flex items-start gap-2 text-[color:var(--token-on-dark-heading)/70] text-sm" data-edit-collection="facts" data-edit-index={i}><span className="text-[color:var(--token-eyebrow)]">—</span>{fact}</li>)}
+                  {facts.map((fact, i) => <li key={i} className="flex items-start gap-2 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] text-sm" data-edit-collection="facts" data-edit-index={i}><span className="text-[color:var(--token-eyebrow)]">—</span>{fact}</li>)}
                 </ul>
               )}
               {values.length > 0 && (
                 <div className="mt-8 grid sm:grid-cols-2 gap-4">
                   {values.map((v, i) => (
-                    <div key={i} className="border border-[color:var(--token-card-border)/10] p-4" data-edit-collection="values" data-edit-index={i}>
+                    <div key={i} className="border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)] p-4" data-edit-collection="values" data-edit-index={i}>
                       <h4 className="font-bold text-[color:var(--token-eyebrow)] text-sm" data-edit-path="title">{v.title}</h4>
-                      <div className="text-[color:var(--token-on-dark-heading)/80] text-sm mt-1 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
+                      <div className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] text-sm mt-1 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
                     </div>
                   ))}
                 </div>
@@ -124,7 +124,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
             {values.length > 0 && (
               <div className="mt-8 grid sm:grid-cols-2 gap-4">
                 {values.map((v, i) => (
-                  <div key={i} className="p-4 rounded-xl bg-[var(--token-btn-bg)]/[0.03] border border-[var(--token-card-border)/10]" data-edit-collection="values" data-edit-index={i}>
+                  <div key={i} className="p-4 rounded-xl bg-[color-mix(in_srgb,var(--token-btn-bg)_3%,transparent)] border border-[color-mix(in_srgb,var(--token-card-border)_10%,transparent)]" data-edit-collection="values" data-edit-index={i}>
                     <h4 className="font-semibold text-[color:var(--token-heading)] text-sm" data-edit-path="title">{v.title}</h4>
                     <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
                   </div>

@@ -75,7 +75,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {values.map((v, i) => (
               <div key={i} className="group rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-8 shadow-sm transition-all hover:shadow-lg" data-edit-collection="values" data-edit-index={i}>
-                {v.icon && <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--token-accent)]/10 transition-transform group-hover:scale-110"><DynamicIcon editPath="icon" name={v.icon} size={28} className="text-[var(--token-icon)]" /></div>}
+                {v.icon && <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] transition-transform group-hover:scale-110"><DynamicIcon editPath="icon" name={v.icon} size={28} className="text-[var(--token-icon)]" /></div>}
                 <h4 className="mb-2 text-lg font-semibold text-[var(--token-heading)]" data-edit-path="title">{v.title}</h4>
                 <div className="rt-content text-sm leading-relaxed text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
               </div>
@@ -90,7 +90,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
             {members.map((m, i) => (
               <div key={i} className="text-center group" data-edit-collection="members" data-edit-index={i}>
                 <div className="relative w-48 h-48 mx-auto mb-5 rounded-3xl overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow">
-                  {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover transition-transform group-hover:scale-105" sizes="200px" /> : <div className="flex h-full w-full items-center justify-center bg-[var(--token-accent)]/5"><DynamicIcon name="users" size={48} className="text-[var(--token-accent)]/30" /></div>}
+                  {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover transition-transform group-hover:scale-105" sizes="200px" /> : <div className="flex h-full w-full items-center justify-center bg-[color-mix(in_srgb,var(--token-accent)_5%,transparent)]"><DynamicIcon name="users" size={48} className="text-[color-mix(in_srgb,var(--token-accent)_30%,transparent)]" /></div>}
                 </div>
                 <h4 className="text-lg font-semibold text-[var(--token-heading)]" data-edit-path="name">{m.name}</h4>
                 <p className="mb-2 text-sm font-medium text-[var(--token-accent)]" data-edit-path="role">{m.role}</p>

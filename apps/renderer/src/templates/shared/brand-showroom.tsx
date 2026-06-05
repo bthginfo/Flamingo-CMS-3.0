@@ -35,7 +35,7 @@ export function BrandShowroomSection({ data }: Props) {
       >
         <div className="max-w-5xl">
           {headline && <h2 className="font-display text-3xl md:text-5xl font-bold text-[color:var(--token-on-dark-heading)] mb-3" data-edit-path="headline">{headline}</h2>}
-          {subline && <p className="text-[color:var(--token-on-dark-heading)/80] text-lg md:text-xl max-w-2xl mb-8" data-edit-path="subline">{plain(subline)}</p>}
+          {subline && <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] text-lg md:text-xl max-w-2xl mb-8" data-edit-path="subline">{plain(subline)}</p>}
 
           {highlights.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -45,10 +45,10 @@ export function BrandShowroomSection({ data }: Props) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
-                  className="bg-[var(--token-card-bg)/10] backdrop-blur-sm border border-[color:var(--token-card-border)/20] rounded-lg p-4"
+                  className="bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] backdrop-blur-sm border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] rounded-lg p-4"
                  data-edit-collection="highlights" data-edit-index={i}>
                   <h4 className="font-semibold text-[color:var(--token-on-dark-heading)] text-sm" data-edit-path="title">{h.title}</h4>
-                  <p className="text-[color:var(--token-on-dark-heading)/70] text-xs mt-1" data-edit-path="text">{plain(h.text)}</p>
+                  <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] text-xs mt-1" data-edit-path="text">{plain(h.text)}</p>
                 </motion.div>
               ))}
             </div>

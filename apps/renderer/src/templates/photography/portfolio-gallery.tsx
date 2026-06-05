@@ -63,11 +63,11 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
 
         {categories.length > 1 && (
           <div className={`flex flex-wrap ${isModern ? '' : 'justify-center'} gap-2 mb-10`}>
-            <button onClick={() => setFilter(null)} className={isModern ? `px-3 py-1.5 text-sm transition-colors ${!filter ? 'text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)]' : 'text-[color:var(--token-body)] hover:text-[color:var(--token-heading)]'}` : isBold ? `px-4 py-2 text-sm font-bold uppercase tracking-wider transition-colors ${!filter ? 'bg-[var(--token-badge-bg)] text-[color:var(--token-heading)]' : 'text-[color:var(--token-on-dark-heading)/60] hover:text-[color:var(--token-on-dark-heading)] border border-[color:var(--token-card-border)/10]'}` : `px-4 py-2 rounded-full text-sm font-medium transition-colors ${!filter ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-gray-200'}`}>
+            <button onClick={() => setFilter(null)} className={isModern ? `px-3 py-1.5 text-sm transition-colors ${!filter ? 'text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)]' : 'text-[color:var(--token-body)] hover:text-[color:var(--token-heading)]'}` : isBold ? `px-4 py-2 text-sm font-bold uppercase tracking-wider transition-colors ${!filter ? 'bg-[var(--token-badge-bg)] text-[color:var(--token-heading)]' : 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] hover:text-[color:var(--token-on-dark-heading)] border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)]'}` : `px-4 py-2 rounded-full text-sm font-medium transition-colors ${!filter ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-gray-200'}`}>
               Alle
             </button>
             {categories.map(cat => (
-              <button key={cat} onClick={() => setFilter(cat)} className={isModern ? `px-3 py-1.5 text-sm transition-colors ${filter === cat ? 'text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)]' : 'text-[color:var(--token-body)] hover:text-[color:var(--token-heading)]'}` : isBold ? `px-4 py-2 text-sm font-bold uppercase tracking-wider transition-colors ${filter === cat ? 'bg-[var(--token-badge-bg)] text-[color:var(--token-heading)]' : 'text-[color:var(--token-on-dark-heading)/60] hover:text-[color:var(--token-on-dark-heading)] border border-[color:var(--token-card-border)/10]'}` : `px-4 py-2 rounded-full text-sm font-medium transition-colors ${filter === cat ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-gray-200'}`}>
+              <button key={cat} onClick={() => setFilter(cat)} className={isModern ? `px-3 py-1.5 text-sm transition-colors ${filter === cat ? 'text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)]' : 'text-[color:var(--token-body)] hover:text-[color:var(--token-heading)]'}` : isBold ? `px-4 py-2 text-sm font-bold uppercase tracking-wider transition-colors ${filter === cat ? 'bg-[var(--token-badge-bg)] text-[color:var(--token-heading)]' : 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] hover:text-[color:var(--token-on-dark-heading)] border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)]'}` : `px-4 py-2 rounded-full text-sm font-medium transition-colors ${filter === cat ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-muted)] hover:bg-gray-200'}`}>
                 {cat}
               </button>
             ))}
@@ -79,12 +79,12 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
             {filtered.map((img, i) => (
               <motion.div key={img.src} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }} className={`${isModern ? 'relative aspect-square' : 'break-inside-avoid'} cursor-pointer group relative ${!isModern ? 'rounded-lg' : ''} overflow-hidden`} onClick={() => setLightbox(i)} data-edit-collection="filtered" data-edit-index={i}>
                 <Image data-edit-image="src" src={img.src} alt={img.alt || ''} {...(isModern ? { fill: true, className: 'object-cover transition-transform duration-500 group-hover:scale-105' } : { width: 600, height: 800, className: 'w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105' })} />
-                {isBold && <div className="absolute inset-0 border border-[color:var(--token-card-border)/10]" />}
-                <div className={`absolute inset-0 ${isBold ? 'bg-[var(--token-section-bg-alt)/0] group-hover:bg-[var(--token-section-bg-alt)/50]' : 'bg-[var(--token-section-bg-alt)/0] group-hover:bg-[var(--token-section-bg-alt)/30]'} transition-colors duration-300 flex items-end`}>
+                {isBold && <div className="absolute inset-0 border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)]" />}
+                <div className={`absolute inset-0 ${isBold ? 'bg-[color-mix(in_srgb,var(--token-section-bg-alt)_0%,transparent)] group-hover:bg-[color-mix(in_srgb,var(--token-section-bg-alt)_50%,transparent)]' : 'bg-[color-mix(in_srgb,var(--token-section-bg-alt)_0%,transparent)] group-hover:bg-[color-mix(in_srgb,var(--token-section-bg-alt)_30%,transparent)]'} transition-colors duration-300 flex items-end`}>
                   {(img.alt || img.location) && (
                     <div className="p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[color:var(--token-on-dark-heading)] text-sm">
                       {img.alt && <p className="font-medium">{img.alt}</p>}
-                      {img.location && <p className="text-[color:var(--token-on-dark-heading)/70] text-xs" data-edit-path="location">{img.location}</p>}
+                      {img.location && <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] text-xs" data-edit-path="location">{img.location}</p>}
                     </div>
                   )}
                 </div>
@@ -106,20 +106,20 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
       {/* Connected Lightbox */}
       <AnimatePresence>
         {lightbox !== null && filtered[lightbox] && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-[var(--token-section-bg-alt)/95] flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
-            <button className="absolute top-6 right-6 text-[color:var(--token-on-dark-heading)/80] hover:text-[color:var(--token-on-dark-heading)] z-10" onClick={() => setLightbox(null)}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_95%,transparent)] flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
+            <button className="absolute top-6 right-6 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] hover:text-[color:var(--token-on-dark-heading)] z-10" onClick={() => setLightbox(null)}>
               <X className="w-8 h-8" />
             </button>
             {filtered.length > 1 && (
               <>
-                <button className="absolute left-4 top-1/2 -translate-y-1/2 text-[color:var(--token-on-dark-heading)/70] hover:text-[color:var(--token-on-dark-heading)] z-10 p-2" onClick={(e) => { e.stopPropagation(); navigate(-1); }}><ChevronLeft size={36} /></button>
-                <button className="absolute right-4 top-1/2 -translate-y-1/2 text-[color:var(--token-on-dark-heading)/70] hover:text-[color:var(--token-on-dark-heading)] z-10 p-2" onClick={(e) => { e.stopPropagation(); navigate(1); }}><ChevronRight size={36} /></button>
+                <button className="absolute left-4 top-1/2 -translate-y-1/2 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] hover:text-[color:var(--token-on-dark-heading)] z-10 p-2" onClick={(e) => { e.stopPropagation(); navigate(-1); }}><ChevronLeft size={36} /></button>
+                <button className="absolute right-4 top-1/2 -translate-y-1/2 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] hover:text-[color:var(--token-on-dark-heading)] z-10 p-2" onClick={(e) => { e.stopPropagation(); navigate(1); }}><ChevronRight size={36} /></button>
               </>
             )}
             <motion.img key={lightbox} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ duration: 0.2 }} src={filtered[lightbox].src} alt={filtered[lightbox].alt || ''} className="max-w-full max-h-[85vh] object-contain rounded-lg" onClick={(e) => e.stopPropagation()} />
             <div className="absolute bottom-6 left-0 right-0 text-center">
               {filtered[lightbox].alt && <p className="text-[color:var(--token-on-dark-heading)] text-sm mb-2">{filtered[lightbox].alt}</p>}
-              <span className="text-[color:var(--token-on-dark-heading)/50] text-xs">{lightbox + 1} / {filtered.length}</span>
+              <span className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] text-xs">{lightbox + 1} / {filtered.length}</span>
             </div>
           </motion.div>
         )}

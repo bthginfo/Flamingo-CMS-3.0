@@ -29,8 +29,8 @@ function Classic({ badge, headline, members }: P) {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
           {members.map((m, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center" data-edit-collection="members" data-edit-index={i}>
-              <div className="relative w-32 h-32 mx-auto mb-5 rounded-full overflow-hidden bg-[var(--token-btn-bg)/5]">
-                {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full flex items-center justify-center text-4xl text-[color:var(--token-icon)/30]">{m.name[0]}</div>}
+              <div className="relative w-32 h-32 mx-auto mb-5 rounded-full overflow-hidden bg-[color-mix(in_srgb,var(--token-btn-bg)_5%,transparent)]">
+                {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full flex items-center justify-center text-4xl text-[color:color-mix(in_srgb,var(--token-icon)_30%,transparent)]">{m.name[0]}</div>}
               </div>
               <h3 className="text-lg font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h3>
               <p className="text-[color:var(--token-icon)] text-sm font-medium mt-1" data-edit-path="role">{m.role}</p>
@@ -76,7 +76,7 @@ function Bold({ badge, headline, members }: P) {
         <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words" data-edit-path="headline">{headline}</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {members.map((m, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-2 border-[color:var(--token-card-border)] p-6 text-center hover:border-[var(--token-card-border)/50] transition-colors" data-edit-collection="members" data-edit-index={i}>
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-2 border-[color:var(--token-card-border)] p-6 text-center hover:border-[color-mix(in_srgb,var(--token-card-border)_50%,transparent)] transition-colors" data-edit-collection="members" data-edit-index={i}>
               <div className="relative w-24 h-24 mx-auto mb-4">
                 {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full bg-[var(--token-section-bg-alt)] flex items-center justify-center text-3xl text-[color:var(--token-body)]">{m.name[0]}</div>}
               </div>

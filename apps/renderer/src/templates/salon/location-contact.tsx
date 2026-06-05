@@ -41,13 +41,13 @@ function ContactClassic({ headline, subline, badgeText, introText, image, mapEmb
           {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {introText && <div className="text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
-        <div className="mt-6 grid gap-3">{infoCards.map((card, i) => <div key={`$<span data-edit-path="label">{card.label}</span>-${i}`} className="flex gap-4 border-t border-[var(--token-icon)]/20 pt-4" data-edit-collection="infoCards" data-edit-index={i}><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} className="text-[color:var(--token-eyebrow)]" /><div><p className="text-xs text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="font-semibold text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div></div>)}</div>
+        <div className="mt-6 grid gap-3">{infoCards.map((card, i) => <div key={`$<span data-edit-path="label">{card.label}</span>-${i}`} className="flex gap-4 border-t border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] pt-4" data-edit-collection="infoCards" data-edit-index={i}><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} className="text-[color:var(--token-eyebrow)]" /><div><p className="text-xs text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="font-semibold text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{primaryCta.label}</a>}
-          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex rounded-full border border-[var(--token-icon)]/30 px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex rounded-full border border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)] px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
-      <div className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 shadow-md">
+      <div className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-md">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {mapEmbedUrl && <iframe src={mapEmbedUrl} className="mb-5 h-56 w-full rounded-xl" loading="lazy" />}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}

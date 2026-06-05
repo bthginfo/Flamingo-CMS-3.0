@@ -32,7 +32,7 @@ function PackagesClassic({ headline, subline, badgeText, packages, ctaPrimary }:
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {packages.map((item, i) => (
-          <motion.article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md" data-edit-collection="packages" data-edit-index={i}>
+          <motion.article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-edit-collection="packages" data-edit-index={i}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {(item.priceLabel || item.validUntilLabel) && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]">{[item.priceLabel, item.validUntilLabel].filter(Boolean).join(' / ')}</p>}
@@ -91,8 +91,8 @@ function PackagesBold({ headline, subline, badgeText, packages, ctaPrimary }: Pr
             <div className="p-5">
               {(item.priceLabel || item.validUntilLabel) && <span className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]">{[item.priceLabel, item.validUntilLabel].filter(Boolean).join(' / ')}</span>}
               <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="title">{item.title || ''}</h3>
-              {item.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
-              {asList<string>(item.includes).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-on-dark-heading)/60]">{asList<string>(item.includes).join(' / ')}</p>}
+              {item.text && <div className="mt-3 text-sm leading-6 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
+              {asList<string>(item.includes).length > 0 && <p className="mt-2 text-sm text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]">{asList<string>(item.includes).join(' / ')}</p>}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex bg-[var(--token-badge-bg)] px-5 py-2 text-sm font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{item.cta.label}</a>}
             </div>
           </article>

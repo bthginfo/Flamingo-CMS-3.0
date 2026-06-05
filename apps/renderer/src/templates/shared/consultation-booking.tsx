@@ -44,8 +44,8 @@ export function ConsultationBookingSection({ data }: Props) {
               transition={{ duration: 0.4, delay: i * 0.08 }}
               className={`w-full text-left flex items-start gap-4 p-5 rounded-[var(--token-card-radius)] border transition-all duration-300 ${
                 selected === i
-                  ? 'bg-[var(--token-icon)]/5 border-[var(--token-icon)]/30 shadow-md'
-                  : 'bg-[var(--token-card-bg)] border-[rgba(0,0,0,0.06)] hover:border-[var(--token-icon)]/20'
+                  ? 'bg-[color-mix(in_srgb,var(--token-icon)_5%,transparent)] border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)] shadow-md'
+                  : 'bg-[var(--token-card-bg)] border-[rgba(0,0,0,0.06)] hover:border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)]'
               }`}
              data-edit-collection="services" data-edit-index={i}>
               {service.icon && (

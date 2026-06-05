@@ -45,11 +45,11 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, index) => (
-          <motion.article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 shadow-md" data-edit-collection="items" data-edit-index={index}>
+          <motion.article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-md" data-edit-collection="items" data-edit-index={index}>
             {item.mediaType === 'image' && item.image ? (
               <div className="relative mb-4 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-btn-bg)/10]/10 text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={item.icon || 'star'} size={20} /></div>
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)]/10 text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={item.icon || 'star'} size={20} /></div>
             )}
             <h3 className="font-bold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
@@ -93,7 +93,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
+        {badgeText && <p className="inline-block bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>

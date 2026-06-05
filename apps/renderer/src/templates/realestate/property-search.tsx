@@ -48,10 +48,10 @@ export function PropertySearchSection({ data }: Props) {
               <a
                 key={i}
                 href={cat.href || ctaHref}
-                className={`group relative flex flex-col items-center gap-3 rounded-xl border p-6 text-center transition-all hover:shadow-lg hover:border-[var(--token-card-border)/30] ${i === activeCategory ? 'border-[var(--token-card-border)/40] bg-[var(--token-btn-bg)/5]' : 'border-[color:var(--token-card-border)] bg-[var(--token-card-bg)]'}`}
+                className={`group relative flex flex-col items-center gap-3 rounded-xl border p-6 text-center transition-all hover:shadow-lg hover:border-[color-mix(in_srgb,var(--token-card-border)_30%,transparent)] ${i === activeCategory ? 'border-[color-mix(in_srgb,var(--token-card-border)_40%,transparent)] bg-[color-mix(in_srgb,var(--token-btn-bg)_5%,transparent)]' : 'border-[color:var(--token-card-border)] bg-[var(--token-card-bg)]'}`}
                 onMouseEnter={() => setActiveCategory(i)}
               >
-                <div className="rounded-full bg-[var(--token-btn-bg)/10] p-3 text-[color:var(--token-icon)] group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-on-dark-heading)] transition-colors">
+                <div className="rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] p-3 text-[color:var(--token-icon)] group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-on-dark-heading)] transition-colors">
                   <Icon size={24} />
                 </div>
                 <span className="font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{cat.label}</span>

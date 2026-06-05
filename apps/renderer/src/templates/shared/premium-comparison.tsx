@@ -45,7 +45,7 @@ export function PremiumComparisonSection({ data }: Props) {
               {columns.map((_, ci) => {
                 const value = normalizeValue(row.values[ci]);
                 return (
-                  <div key={`${ri}-${ci}`} className={`flex items-center justify-center border-b border-l border-[var(--token-card-border)] p-5 text-center text-sm ${ci === highlightCol ? 'bg-[var(--token-icon)]/5' : ''}`}>
+                  <div key={`${ri}-${ci}`} className={`flex items-center justify-center border-b border-l border-[var(--token-card-border)] p-5 text-center text-sm ${ci === highlightCol ? 'bg-[color-mix(in_srgb,var(--token-icon)_5%,transparent)]' : ''}`}>
                     {value === true ? <Check className="text-[var(--token-icon)]" size={19} /> : value === false ? <Minus className="text-[var(--token-muted)]" size={19} /> : <span data-edit-path="value">{value}</span>}
                   </div>
                 );

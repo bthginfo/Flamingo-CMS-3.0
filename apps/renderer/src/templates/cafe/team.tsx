@@ -45,7 +45,7 @@ function Classic({ headline, subline, members, ref, inView }: TProps) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               {m.bio && (
                 <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                  <p className="text-[color:var(--token-on-dark-heading)/90] text-sm leading-relaxed">{plain(m.bio)}</p>
+                  <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_90%,transparent)] text-sm leading-relaxed">{plain(m.bio)}</p>
                 </div>
               )}
             </div>
@@ -111,7 +111,7 @@ function Bold({ headline, subline, members, ref, inView }: TProps) {
             <div className="absolute bottom-0 left-0 right-0 p-5">
               <h4 className="font-bold text-[color:var(--token-on-dark-heading)] text-lg" data-edit-path="name">{m.name}</h4>
               <p className="text-amber-400 text-sm font-medium" data-edit-path="role">{m.role}</p>
-              {m.bio && <p className="text-[color:var(--token-on-dark-heading)/70] text-xs mt-1.5 leading-relaxed">{plain(m.bio)}</p>}
+              {m.bio && <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] text-xs mt-1.5 leading-relaxed">{plain(m.bio)}</p>}
             </div>
           </motion.div>
         ))}

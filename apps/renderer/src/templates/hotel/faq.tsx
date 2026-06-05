@@ -34,7 +34,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      <div className="divide-y divide-[var(--token-icon)]/20 rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md">
+      <div className="divide-y divide-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md">
         {items.map((item, index) => (
           <motion.details key={`$<span data-edit-path="question">{item.question}</span>-${index}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="group p-5" data-edit-collection="items" data-edit-index={index}>
             <summary className="cursor-pointer font-semibold text-[color:var(--token-heading)]">{item.question || ''}</summary>
@@ -74,7 +74,7 @@ function FaqBold({ headline, subline, badgeText, items, ctaPrimary }: Props) {
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
+        {badgeText && <p className="inline-block bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>

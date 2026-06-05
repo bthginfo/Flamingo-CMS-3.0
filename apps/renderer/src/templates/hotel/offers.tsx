@@ -38,7 +38,7 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
       {offers.length === 0 && fallbackText ? <p className="text-[color:var(--token-muted)]">{fallbackText}</p> : null}
       <div className="grid gap-6 md:grid-cols-2">
         {offers.map((offer, index) => (
-          <motion.article key={`$<span data-edit-path="title">{offer.title}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`grid overflow-hidden rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
+          <motion.article key={`$<span data-edit-path="title">{offer.title}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`grid overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
             {offer.image && <div className="relative min-h-52"><Image data-edit-image="image" src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-widest text-[color:var(--token-muted)]">
@@ -73,7 +73,7 @@ function OffersModern({ headline, subline, badgeText, offers, fallbackText }: Pr
       {offers.length === 0 && fallbackText ? <p className="font-light text-[color:var(--token-muted)]">{fallbackText}</p> : null}
       <div className="grid gap-px border border-black/10 md:grid-cols-2">
         {offers.map((offer, index) => (
-          <article key={`$<span data-edit-path="title">{offer.title}</span>-${index}`} className={`grid overflow-hidden border border-black/10 bg-[var(--token-card-bg)] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'bg-[var(--token-section-bg-alt)]/[0.02]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{offer.title}</span>-${index}`} className={`grid overflow-hidden border border-black/10 bg-[var(--token-card-bg)] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'bg-[color-mix(in_srgb,var(--token-section-bg-alt)_2%,transparent)]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
             {offer.image && <div className="relative min-h-52"><Image data-edit-image="image" src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-6">
               <div className="flex flex-wrap gap-3 text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]">
@@ -101,7 +101,7 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
+        {badgeText && <p className="inline-block bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>

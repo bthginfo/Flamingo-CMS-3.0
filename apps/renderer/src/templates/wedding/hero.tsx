@@ -66,13 +66,13 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
           {isBold ? (
             overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
           ) : isModern ? (
-            overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-[var(--token-section-bg-alt)/30]" />
+            overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_30%,transparent)]" />
           ) : (
-            overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-gradient-to-b from-[var(--token-section-bg-alt)/60] via-[var(--token-section-bg-alt)/40] to-[var(--token-section-bg-alt)/60]" />
+            overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-gradient-to-b from-[color-mix(in_srgb,var(--token-section-bg-alt)_60%,transparent)] via-[color-mix(in_srgb,var(--token-section-bg-alt)_40%,transparent)] to-[color-mix(in_srgb,var(--token-section-bg-alt)_60%,transparent)]" />
           )}
         </>
       ) : (
-        <div className={`absolute inset-0 ${isBold ? 'bg-[var(--token-section-bg-alt)]' : isModern ? 'bg-[var(--token-card-bg)]' : 'bg-gradient-to-br from-[var(--token-icon)/5] via-white to-[var(--token-subheading)/5]'}`} />
+        <div className={`absolute inset-0 ${isBold ? 'bg-[var(--token-section-bg-alt)]' : isModern ? 'bg-[var(--token-card-bg)]' : 'bg-gradient-to-br from-[color-mix(in_srgb,var(--token-icon)_5%,transparent)] via-white to-[color-mix(in_srgb,var(--token-subheading)_5%,transparent)]'}`} />
       )}
       <div className={`relative z-10 px-4 py-10 md:px-6 md:py-20 ${isBold ? 'text-left max-w-4xl mx-auto w-full' : 'text-center'}`}>
         <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className={`${sublineClass} rt-content`} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />
@@ -90,7 +90,7 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
               { v: countdown.minutes, l: 'Min' },
               { v: countdown.seconds, l: 'Sek' },
             ].map(({ v, l }) => (
-              <div key={l} className={`flex flex-col items-center ${isBold ? 'border-2 border-[color:var(--token-card-border)/20] px-3 py-2 md:px-5 md:py-4' : isModern ? 'border border-[color:var(--token-card-border)/10] px-3 py-2 md:px-6 md:py-4' : ''}`}>
+              <div key={l} className={`flex flex-col items-center ${isBold ? 'border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] px-3 py-2 md:px-5 md:py-4' : isModern ? 'border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)] px-3 py-2 md:px-6 md:py-4' : ''}`}>
                 <span className={`tabular-nums ${isBold ? 'text-2xl md:text-5xl font-black' : isModern ? 'text-2xl md:text-5xl font-extralight' : 'text-2xl md:text-6xl font-light'}`}>{v}</span>
                 <span className={`uppercase mt-1 md:mt-2 opacity-70 ${isBold ? 'text-[10px] tracking-[0.3em] font-bold' : isModern ? 'text-[10px] tracking-[0.2em]' : 'text-[10px] md:text-xs tracking-[0.2em]'}`}>{l}</span>
               </div>

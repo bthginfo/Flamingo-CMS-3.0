@@ -44,7 +44,7 @@ export function CafeHeroSection({ data }: Props) {
             {headline}
           </h1>
           {subline && (
-            <p className="text-lg text-[color:var(--token-on-dark-heading)/80] mt-5 leading-relaxed" data-edit-path="subline">
+            <p className="text-lg text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] mt-5 leading-relaxed" data-edit-path="subline">
               {plain(subline)}
             </p>
           )}
@@ -55,7 +55,7 @@ export function CafeHeroSection({ data }: Props) {
               </a>
             )}
             {secondaryCta && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--token-card-bg)/10] hover:bg-[var(--token-card-bg)/20] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full border border-[color:var(--token-card-border)/20] backdrop-blur-sm transition-all" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] hover:bg-[color-mix(in_srgb,var(--token-card-bg)_20%,transparent)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] backdrop-blur-sm transition-all" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

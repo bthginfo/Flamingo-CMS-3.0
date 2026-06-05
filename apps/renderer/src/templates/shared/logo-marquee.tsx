@@ -30,8 +30,8 @@ export function LogoMarqueeSection({ data }: Props) {
 
       <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.6, delay: 0.2 }} className="relative">
         {/* Fade edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[color:var(--token-section-bg,var(--token-page-bg))] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[color:var(--token-section-bg,var(--token-page-bg))] to-transparent z-10 pointer-events-none" />
 
         <div className="flex overflow-hidden">
           <div className="flex items-center gap-12 animate-scroll-x" style={{ animationDuration: '35s' }}>

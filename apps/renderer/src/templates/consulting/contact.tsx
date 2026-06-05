@@ -45,8 +45,8 @@ export function ConsultingContactSection({ data }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.2 }} className="space-y-4">
           {contactItems.map((item, i) => (
-            <div key={i} className="flex items-center gap-4 p-4 rounded-lg border border-[color:var(--token-card-border)] hover:border-[var(--token-card-border)/30] transition-colors" data-edit-collection="contactItems" data-edit-index={i}>
-              <div className="w-10 h-10 rounded-lg bg-[var(--token-btn-bg)/10] flex items-center justify-center text-[color:var(--token-icon)]">
+            <div key={i} className="flex items-center gap-4 p-4 rounded-lg border border-[color:var(--token-card-border)] hover:border-[color-mix(in_srgb,var(--token-card-border)_30%,transparent)] transition-colors" data-edit-collection="contactItems" data-edit-index={i}>
+              <div className="w-10 h-10 rounded-lg bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] flex items-center justify-center text-[color:var(--token-icon)]">
                 <DynamicIcon editPath="icon" name={item.icon} size={20} />
               </div>
               <div>

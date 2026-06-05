@@ -32,10 +32,10 @@ export function PracticeAreasSection({ data }: Props) {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.08 }}
-              className="group relative p-8 rounded-xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] hover:border-[var(--token-card-border)/30] hover:shadow-lg transition-all duration-300"
+              className="group relative p-8 rounded-xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] hover:border-[color-mix(in_srgb,var(--token-card-border)_30%,transparent)] hover:shadow-lg transition-all duration-300"
             >
               {area.icon && (
-                <div className="w-12 h-12 mb-5 rounded-lg bg-[var(--token-btn-bg)/10] flex items-center justify-center text-[color:var(--token-icon)] group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-on-dark-heading)] transition-colors">
+                <div className="w-12 h-12 mb-5 rounded-lg bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] flex items-center justify-center text-[color:var(--token-icon)] group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-on-dark-heading)] transition-colors">
                   <DynamicIcon editPath="icon" name={area.icon} size={24} />
                 </div>
               )}

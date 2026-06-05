@@ -45,7 +45,7 @@ function StoryClassic(p: Props) {
           {p.subline && <div className="mt-4 text-lg text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: p.subline }} />}
           {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-muted)]">{plain(p.storyText)}</p>}
           {p.founderQuote && (
-            <blockquote className="mt-8 rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 shadow-sm">
+            <blockquote className="mt-8 rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-sm">
               <p className="text-sm italic leading-6 text-[color:var(--token-heading)]">&ldquo;{p.founderQuote}&rdquo;</p>
               {p.founderName && <p className="mt-3 font-semibold text-[color:var(--token-heading)]">{p.founderName}</p>}
               {p.founderRole && <p className="text-xs text-[color:var(--token-muted)]">{p.founderRole}</p>}
@@ -61,7 +61,7 @@ function StoryClassic(p: Props) {
       {p.stats.length > 0 && (
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-5 md:grid-cols-4">
           {p.stats.map((s, i) => (
-            <motion.div key={`$<span data-edit-path="label">{s.label}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 text-center shadow-sm" data-edit-collection="stats" data-edit-index={i}>
+            <motion.div key={`$<span data-edit-path="label">{s.label}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 text-center shadow-sm" data-edit-collection="stats" data-edit-index={i}>
               <p className="text-3xl font-bold text-[color:var(--token-heading)]" data-edit-path="value">{s.value || ''}</p>
               <p className="mt-1 text-xs uppercase tracking-widest text-[color:var(--token-muted)]" data-edit-path="label">{s.label || ''}</p>
             </motion.div>
@@ -71,7 +71,7 @@ function StoryClassic(p: Props) {
       {p.values.length > 0 && (
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
-            <motion.div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 shadow-sm" data-edit-collection="values" data-edit-index={i}>
+            <motion.div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-sm" data-edit-collection="values" data-edit-index={i}>
               <div className="shrink-0 text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={v.icon || 'heart'} size={20} /></div>
               <div><h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
             </motion.div>
@@ -79,7 +79,7 @@ function StoryClassic(p: Props) {
         </div>
       )}
       {p.milestones.length > 0 && (
-        <div className="mt-16 relative border-l-2 border-[var(--token-icon)]/30 pl-8">
+        <div className="mt-16 relative border-l-2 border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)] pl-8">
           {p.milestones.map((m, i) => (
             <motion.div key={`${m.year}-${i}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="relative mb-8 last:mb-0" data-edit-collection="milestones" data-edit-index={i}>
               <div className="absolute -left-[2.55rem] top-1 h-4 w-4 rounded-full border-2 border-[var(--token-icon)] bg-[var(--token-card-bg)]" />
@@ -158,12 +158,12 @@ function StoryBold(p: Props) {
     <div>
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <div>
-          {p.badgeText && <p className="inline-block bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{p.badgeText}</p>}
+          {p.badgeText && <p className="inline-block bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{p.badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{p.headline}</h2>
           {p.subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: p.subline }} />}
           {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-muted)]">{plain(p.storyText)}</p>}
           {p.founderQuote && (
-            <div className="mt-8 border-l-4 border-[var(--token-icon)] bg-[var(--token-section-bg-alt)/5] p-5">
+            <div className="mt-8 border-l-4 border-[var(--token-icon)] bg-[color-mix(in_srgb,var(--token-section-bg-alt)_5%,transparent)] p-5">
               <p className="text-sm italic font-bold text-[color:var(--token-heading)]">&ldquo;{p.founderQuote}&rdquo;</p>
               {p.founderName && <p className="mt-3 font-black uppercase text-[color:var(--token-heading)]">{p.founderName}</p>}
               {p.founderRole && <p className="text-xs font-bold text-[color:var(--token-muted)]">{p.founderRole}</p>}

@@ -42,7 +42,7 @@ export function PublicationsSection({ data }: Props) {
             )}
             <div className="p-6">
               <div className="flex items-center gap-3 text-xs text-[color:var(--token-body)] mb-3">
-                {article.category && <span className="bg-[var(--token-btn-bg)/10] text-[color:var(--token-icon)] px-2 py-0.5 rounded font-medium" data-edit-path="category">{article.category}</span>}
+                {article.category && <span className="bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] text-[color:var(--token-icon)] px-2 py-0.5 rounded font-medium" data-edit-path="category">{article.category}</span>}
                 {article.date && <span data-edit-path="date">{article.date}</span>}
               </div>
               <h3 className="text-lg font-semibold text-[color:var(--token-heading)] group-hover:text-[color:var(--token-icon)] transition-colors mb-2" data-edit-path="title">{article.title}</h3>

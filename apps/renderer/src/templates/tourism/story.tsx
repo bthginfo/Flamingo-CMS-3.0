@@ -134,7 +134,7 @@ function Bold(p: Props) {
           <SectionHeader headline={p.headline} subline={plain(p.subline)} badgeText={p.badgeText} />
           {p.storyText && <p className="whitespace-pre-line leading-7 text-[color:var(--token-muted)]">{plain(p.storyText)}</p>}
           {p.founderQuote && (
-            <div className="mt-8 border-l-4 border-[var(--token-eyebrow))] bg-[var(--token-section-bg-alt)/5] p-5">
+            <div className="mt-8 border-l-4 border-[var(--token-eyebrow))] bg-[color-mix(in_srgb,var(--token-section-bg-alt)_5%,transparent)] p-5">
               <p className="text-sm italic font-bold text-[color:var(--token-heading)]">&ldquo;{p.founderQuote}&rdquo;</p>
               {p.founderName && <p className="mt-3 font-black uppercase text-[color:var(--token-heading)]">{p.founderName}</p>}
               {p.founderRole && <p className="text-xs font-bold text-[color:var(--token-muted)]">{p.founderRole}</p>}

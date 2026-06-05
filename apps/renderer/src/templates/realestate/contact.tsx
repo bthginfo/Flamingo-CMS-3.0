@@ -49,7 +49,7 @@ export function RealestateContactSection({ data }: Props) {
             <div className="mt-8 space-y-4">
               {contactItems.map((item, i) => (
                 <div key={i} className="flex items-center gap-3 text-[color:var(--token-muted)]" data-edit-collection="contactItems" data-edit-index={i}>
-                  <div className="w-10 h-10 bg-[var(--token-btn-bg)/10] rounded-lg flex items-center justify-center text-[color:var(--token-icon)]">
+                  <div className="w-10 h-10 bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] rounded-lg flex items-center justify-center text-[color:var(--token-icon)]">
                     <DynamicIcon editPath="icon" name={item.icon} size={18} />
                   </div>
                   <div>

@@ -25,14 +25,14 @@ export function ArtistHeroSection({ data }: Props) {
             <h1 className="text-4xl sm:text-5xl font-black text-[color:var(--token-on-dark-heading)] uppercase" data-edit-path="name">{name}</h1>
             <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
               {styles.map(s => (
-                <span key={s} className="text-xs uppercase tracking-wider bg-[var(--token-card-bg)/10] text-[color:var(--token-on-dark-heading)/70] px-3 py-1 rounded-full">{s}</span>
+                <span key={s} className="text-xs uppercase tracking-wider bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] px-3 py-1 rounded-full">{s}</span>
               ))}
             </div>
-            {experience && <p className="mt-4 text-[color:var(--token-on-dark-heading)/40] text-sm">{experience}</p>}
-            {bio && <p className="mt-4 text-[color:var(--token-on-dark-heading)/60] leading-relaxed" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: bio }} />}
+            {experience && <p className="mt-4 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_40%,transparent)] text-sm">{experience}</p>}
+            {bio && <p className="mt-4 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] leading-relaxed" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: bio }} />}
             {instagram && (
               <a href={`https://instagram.com/${instagram}`} target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 mt-6 text-sm text-[color:var(--token-on-dark-heading)/50] hover:text-[color:var(--token-on-dark-heading)] transition-colors">
+                className="inline-flex items-center gap-2 mt-6 text-sm text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] hover:text-[color:var(--token-on-dark-heading)] transition-colors">
                 @{instagram}
               </a>
             )}

@@ -49,7 +49,7 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
         {introText && <div className="text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
-            <motion.div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[var(--token-icon)]/20 pt-4" data-edit-collection="infoCards" data-edit-index={index}>
+            <motion.div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
               <div className="text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} /></div>
               <div><p className="text-xs text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="font-semibold text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div>
             </motion.div>
@@ -60,7 +60,7 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
           {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="rounded-xl border border-black/15 px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{routeCta.label}</a>}
         </div>
       </div>
-      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 shadow-lg">
+      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-lg">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </motion.div>
@@ -106,7 +106,7 @@ function ContactBold({ headline, subline, badgeText, introText, submitLabel, for
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <div className="mb-6 max-w-3xl">
-          {badgeText && <p className="inline-block bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
+          {badgeText && <p className="inline-block bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
           {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>

@@ -41,7 +41,7 @@ export function RealestateHeroSection({ data }: Props) {
             {headline}
           </h1>
           {subline && (
-            <p className="text-lg md:text-xl text-[color:var(--token-on-dark-heading)/80] mt-6 leading-relaxed" data-edit-path="subline">
+            <p className="text-lg md:text-xl text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] mt-6 leading-relaxed" data-edit-path="subline">
               {plain(subline)}
             </p>
           )}
@@ -52,15 +52,15 @@ export function RealestateHeroSection({ data }: Props) {
               </a>
             )}
             {secondaryCta && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--token-card-bg)/10] hover:bg-[var(--token-card-bg)/20] text-[color:var(--token-on-dark-heading)] font-semibold rounded-lg border border-[color:var(--token-card-border)/20] transition-all backdrop-blur-sm" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] hover:bg-[color-mix(in_srgb,var(--token-card-bg)_20%,transparent)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-lg border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] transition-all backdrop-blur-sm" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}
           </div>
           {trustItems.length > 0 && (
-            <div className="flex flex-wrap gap-6 mt-12 pt-8 border-t border-[color:var(--token-card-border)/20]">
+            <div className="flex flex-wrap gap-6 mt-12 pt-8 border-t border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)]">
               {trustItems.map((item, i) => (
-                <span key={i} className="text-sm text-[color:var(--token-on-dark-heading)/70] font-medium" data-edit-collection="trustItems" data-edit-index={i}>{item}</span>
+                <span key={i} className="text-sm text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] font-medium" data-edit-collection="trustItems" data-edit-index={i}>{item}</span>
               ))}
             </div>
           )}

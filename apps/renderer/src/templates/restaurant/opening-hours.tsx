@@ -38,7 +38,7 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
-        {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg)/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
+        {badgeText && <p className="inline-block rounded-full bg-[color-mix(in_srgb,var(--token-badge-bg)_10%,transparent)] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         {kitchenHoursHeadline && <h3 className="mt-8 font-semibold text-[color:var(--token-heading)]">{kitchenHoursHeadline}</h3>}
@@ -50,7 +50,7 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
         {days.map((day, index) => (
           <motion.div key={`$<span data-edit-path="label">{day.label}</span>-${index}`} initial={{ opacity: 0, x: 12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="flex items-center justify-between gap-4 border-b border-black/10 px-6 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
             <div className="flex items-center gap-3">
-              <div className="rounded-full bg-[var(--token-badge-bg)/10] p-1.5 text-[color:var(--token-eyebrow)]"><Clock size={15} /></div>
+              <div className="rounded-full bg-[color-mix(in_srgb,var(--token-badge-bg)_10%,transparent)] p-1.5 text-[color:var(--token-eyebrow)]"><Clock size={15} /></div>
               <div>
                 <p className="font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{day.label || ''}</p>
                 {day.note && <p className="text-xs text-[color:var(--token-muted)]" data-edit-path="note">{day.note}</p>}
@@ -103,23 +103,23 @@ function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHead
           {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{badgeText}</p>}
           <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
           <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg)]" />
-          {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {subline && <div className="mt-4 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
           {kitchenHoursHeadline && <h3 className="mt-8 font-bold uppercase">{kitchenHoursHeadline}</h3>}
-          {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-[color:var(--token-on-dark-heading)/60]">{kitchenHoursText}</p>}
-          {holidayNote && <p className="mt-4 text-xs text-[color:var(--token-on-dark-heading)/50]">{holidayNote}</p>}
+          {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]">{kitchenHoursText}</p>}
+          {holidayNote && <p className="mt-4 text-xs text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)]">{holidayNote}</p>}
           {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-none border-2 border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_rgba(255,255,255,0.3)]" data-edit-path="label">{ctaPrimary.label}</a>}
         </div>
-        <div className="border-2 border-[color:var(--token-card-border)/20]">
+        <div className="border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)]">
           {days.map((day, index) => (
-            <div key={`$<span data-edit-path="label">{day.label}</span>-${index}`} className="flex items-center justify-between gap-4 border-b-2 border-[color:var(--token-card-border)/10] px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
+            <div key={`$<span data-edit-path="label">{day.label}</span>-${index}`} className="flex items-center justify-between gap-4 border-b-2 border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)] px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
               <div className="flex items-center gap-3">
                 <Clock size={17} className="text-[color:var(--token-eyebrow)]" />
                 <div>
                   <p className="font-bold uppercase" data-edit-path="label">{day.label || ''}</p>
-                  {day.note && <p className="text-xs text-[color:var(--token-on-dark-heading)/50]" data-edit-path="note">{day.note}</p>}
+                  {day.note && <p className="text-xs text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)]" data-edit-path="note">{day.note}</p>}
                 </div>
               </div>
-              <p className={`text-sm font-bold ${day.closed ? 'text-[color:var(--token-on-dark-heading)/40]' : ''}`}>{day.closed ? (day.note || '') : day.hours}</p>
+              <p className={`text-sm font-bold ${day.closed ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_40%,transparent)]' : ''}`}>{day.closed ? (day.note || '') : day.hours}</p>
             </div>
           ))}
         </div>

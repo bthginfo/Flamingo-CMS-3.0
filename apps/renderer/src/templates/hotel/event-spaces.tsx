@@ -42,7 +42,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         {spaces.map((space, index) => (
-          <motion.article key={`$<span data-edit-path="name">{space.name}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md" data-edit-collection="spaces" data-edit-index={index}>
+          <motion.article key={`$<span data-edit-path="name">{space.name}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-edit-collection="spaces" data-edit-index={index}>
             {space.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <h3 className="text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="name">{space.name || ''}</h3>
@@ -58,7 +58,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
       {processHeadline && <h3 className="mt-10 text-2xl font-bold text-[color:var(--token-heading)]">{processHeadline}</h3>}
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {processSteps.map((step, index) => (
-          <motion.div key={`${step.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon)]/20 p-5" data-edit-collection="processSteps" data-edit-index={index}>
+          <motion.div key={`${step.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] p-5" data-edit-collection="processSteps" data-edit-index={index}>
             <div className="text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={step.icon || 'clipboard'} size={22} /></div>
             <h4 className="mt-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{step.title || ''}</h4>
             {step.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />}
@@ -114,7 +114,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
+        {badgeText && <p className="inline-block bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>

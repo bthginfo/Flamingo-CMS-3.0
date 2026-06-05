@@ -36,7 +36,7 @@ function InfoCards({ cards }: { cards: InfoCard[] }) {
   return (
     <div className="grid gap-3">
       {cards.map((card, i) => (
-        <div key={`${card.label}-${i}`} className="flex gap-4 border-t border-[var(--token-icon)]/20 pt-4" data-edit-collection="cards" data-edit-index={i}>
+        <div key={`${card.label}-${i}`} className="flex gap-4 border-t border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] pt-4" data-edit-collection="cards" data-edit-index={i}>
           <DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} className="text-[color:var(--token-eyebrow)]" />
           <div>
             <p className="text-xs text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p>
@@ -61,10 +61,10 @@ function Classic(p: Props) {
         <div className="mt-6"><InfoCards cards={p.infoCards} /></div>
         <div className="mt-8 flex flex-wrap gap-3">
           {p.primaryCta.label && <a href={p.primaryCta.href || '#'} className="inline-flex rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{p.primaryCta.label}</a>}
-          {p.secondaryCta.label && <a href={p.secondaryCta.href || '#'} className="inline-flex rounded-full border border-[var(--token-icon)]/30 px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{p.secondaryCta.label}</a>}
+          {p.secondaryCta.label && <a href={p.secondaryCta.href || '#'} className="inline-flex rounded-full border border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)] px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{p.secondaryCta.label}</a>}
         </div>
       </div>
-      <div className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 shadow-md">
+      <div className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-5 shadow-md">
         {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {p.mapEmbedUrl && <iframe src={p.mapEmbedUrl} title="Standort" className="mb-5 h-56 w-full rounded-xl" loading="lazy" />}
         {p.formEnabled && <DynamicContactForm fields={p.formFields} submitLabel={p.submitLabel} />}

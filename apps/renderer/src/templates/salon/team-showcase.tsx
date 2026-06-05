@@ -31,10 +31,10 @@ function TeamClassic({ headline, subline, badgeText, members }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {members.map((m, i) => (
-          <motion.article key={`$<span data-edit-path="name">{m.name}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md" data-edit-collection="members" data-edit-index={i}>
+          <motion.article key={`$<span data-edit-path="name">{m.name}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-edit-collection="members" data-edit-index={i}>
             {m.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={m.image} alt={m.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
-              {m.role && <span className="inline-block rounded-full bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase text-[var(--token-eyebrow)]" data-edit-path="role">{m.role}</span>}
+              {m.role && <span className="inline-block rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase text-[var(--token-eyebrow)]" data-edit-path="role">{m.role}</span>}
               <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="name">{m.name || ''}</h3>
               {m.bio && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
               {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-muted)]">{asList<string>(m.specialties).join(' / ')}</p>}
@@ -88,8 +88,8 @@ function TeamBold({ headline, subline, badgeText, members }: Props) {
             <div className="p-5">
               {m.role && <span className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="role">{m.role}</span>}
               <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="name">{m.name || ''}</h3>
-              {m.bio && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
-              {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-on-dark-heading)/60]">{asList<string>(m.specialties).join(' / ')}</p>}
+              {m.bio && <div className="mt-3 text-sm leading-6 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] rt-content" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
+              {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]">{asList<string>(m.specialties).join(' / ')}</p>}
               {m.bookingCta?.label && <a href={m.bookingCta.href || '#'} className="mt-5 inline-flex bg-[var(--token-badge-bg)] px-5 py-2 text-sm font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{m.bookingCta.label}</a>}
             </div>
           </article>

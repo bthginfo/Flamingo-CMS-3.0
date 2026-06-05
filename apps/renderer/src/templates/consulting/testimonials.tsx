@@ -32,7 +32,7 @@ export function ConsultingTestimonialsSection({ data }: Props) {
             transition={{ delay: i * 0.1 }}
             className="bg-[var(--token-card-bg)] border border-[color:var(--token-card-border)] rounded-xl p-8 relative"
            data-edit-collection="items" data-edit-index={i}>
-            <DynamicIcon name="quote" size={24} className="text-[color:var(--token-icon)/20] absolute top-6 right-6" />
+            <DynamicIcon name="quote" size={24} className="text-[color:color-mix(in_srgb,var(--token-icon)_20%,transparent)] absolute top-6 right-6" />
             {item.rating && (
               <div className="flex gap-0.5 mb-4">
                 {Array.from({ length: item.rating }).map((_, j) => (

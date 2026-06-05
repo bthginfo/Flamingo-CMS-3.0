@@ -249,7 +249,7 @@ export function ShopCheckoutSection({ data }: Props) {
                   {shippingMethods.map(method => {
                     const isFree = method.freeAboveCents && totalCents >= method.freeAboveCents;
                     return (
-                      <label key={method.id} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition ${form.shippingMethod === method.id ? 'border-[var(--token-icon)] bg-[var(--token-icon)]/5' : 'border-[color:var(--token-card-border)]'}`}>
+                      <label key={method.id} className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition ${form.shippingMethod === method.id ? 'border-[var(--token-icon)] bg-[color-mix(in_srgb,var(--token-icon)_5%,transparent)]' : 'border-[color:var(--token-card-border)]'}`}>
                         <div className="flex items-center gap-3">
                           <input type="radio" name="shipping" value={method.id} checked={form.shippingMethod === method.id} onChange={e => set('shippingMethod', e.target.value)} className="accent-[var(--token-icon)]" />
                           <div>
@@ -277,7 +277,7 @@ export function ShopCheckoutSection({ data }: Props) {
             <div className="space-y-4">
               <div className="space-y-3">
                 {availablePayments.map(method => (
-                  <label key={method} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition ${form.paymentMethod === method ? 'border-[var(--token-icon)] bg-[var(--token-icon)]/5' : 'border-[color:var(--token-card-border)]'}`}>
+                  <label key={method} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition ${form.paymentMethod === method ? 'border-[var(--token-icon)] bg-[color-mix(in_srgb,var(--token-icon)_5%,transparent)]' : 'border-[color:var(--token-card-border)]'}`}>
                     <input type="radio" name="payment" value={method} checked={form.paymentMethod === method} onChange={e => set('paymentMethod', e.target.value)} className="accent-[var(--token-icon)]" />
                     <div>
                       <p className="text-sm font-medium">

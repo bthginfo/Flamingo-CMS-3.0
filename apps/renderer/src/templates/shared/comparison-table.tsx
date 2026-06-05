@@ -36,7 +36,7 @@ export function ComparisonTableSection({ data }: Props) {
             <tr>
               <th className="text-left p-4 border-b border-[color:var(--token-card-border)] font-medium text-[color:var(--token-muted)] w-1/3" />
               {columns.map((col, i) => (
-                <th key={i} className={`p-4 border-b text-center font-semibold ${i === highlightCol ? 'bg-[var(--token-accent)]/10 text-[var(--token-accent)]' : 'text-[color:var(--token-heading)]'}`} data-edit-collection="columns" data-edit-index={i}>
+                <th key={i} className={`p-4 border-b text-center font-semibold ${i === highlightCol ? 'bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] text-[var(--token-accent)]' : 'text-[color:var(--token-heading)]'}`} data-edit-collection="columns" data-edit-index={i}>
                   {col.label}
                 </th>
               ))}
@@ -47,7 +47,7 @@ export function ComparisonTableSection({ data }: Props) {
               <tr key={ri} className="border-b border-[color:var(--token-card-border)] last:border-b-0" data-edit-collection="rows" data-edit-index={ri}>
                 <td className="p-4 font-medium text-[color:var(--token-muted)]">{row.feature}</td>
                 {row.values.map((val, ci) => (
-                  <td key={ci} className={`p-4 text-center ${ci === highlightCol ? 'bg-[var(--token-accent)]/5' : ''}`} data-edit-collection="values" data-edit-index={ci}>
+                  <td key={ci} className={`p-4 text-center ${ci === highlightCol ? 'bg-[color-mix(in_srgb,var(--token-accent)_5%,transparent)]' : ''}`} data-edit-collection="values" data-edit-index={ci}>
                     {val === 'true' ? <Check size={18} className="mx-auto text-green-600" /> : val === 'false' ? <X size={18} className="mx-auto text-[color:var(--token-body)]" /> : <span className="text-[color:var(--token-muted)]">{val}</span>}
                   </td>
                 ))}

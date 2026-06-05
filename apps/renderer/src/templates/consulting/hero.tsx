@@ -36,8 +36,8 @@ export function ConsultingHeroSection({ data }: Props) {
 
       {/* Subtle pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/10 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 border border-[color:var(--token-card-border)/10] rounded-full -translate-x-1/2 translate-y-1/2" />
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-[color:color-mix(in_srgb,var(--token-on-dark-heading)_10%,transparent)] to-transparent" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)] rounded-full -translate-x-1/2 translate-y-1/2" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 py-16 md:py-20">

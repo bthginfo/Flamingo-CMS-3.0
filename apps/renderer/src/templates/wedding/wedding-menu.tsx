@@ -36,7 +36,7 @@ function Classic({ badge, headline, courses, note }: P) {
               <h3 className="text-lg font-semibold text-[color:var(--token-icon)] mb-4 flex items-center gap-2">
                 <UtensilsCrossed className="w-4 h-4" /> <span data-edit-path="title">{course.title}</span>
               </h3>
-              <div className="space-y-4 pl-6 border-l-2 border-[var(--token-card-border)/10]">
+              <div className="space-y-4 pl-6 border-l-2 border-[color-mix(in_srgb,var(--token-card-border)_10%,transparent)]">
                 {course.items.map((item, j) => (
                   <div key={j} data-edit-collection="items" data-edit-index={j}>
                     <div className="flex items-center gap-2">

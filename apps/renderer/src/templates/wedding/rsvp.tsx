@@ -44,7 +44,7 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
     return (
       <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-lg mx-auto text-center">
-          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${isBold ? 'bg-[var(--token-badge-bg)/20]' : 'bg-green-100'}`}>
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className={`w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center ${isBold ? 'bg-[color-mix(in_srgb,var(--token-badge-bg)_20%,transparent)]' : 'bg-green-100'}`}>
             <Check className={`w-8 h-8 ${isBold ? 'text-[color:var(--token-eyebrow)]' : 'text-green-600'}`} />
           </motion.div>
           <h2 className="text-2xl font-semibold text-[color:var(--token-heading)]">Vielen Dank!</h2>
@@ -147,7 +147,7 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
   }
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-btn-bg)]/[0.02]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-[color-mix(in_srgb,var(--token-btn-bg)_2%,transparent)]">
       <div className="max-w-lg mx-auto">
         <div className="text-center mb-12">
           <span className="section-badge" data-edit-path="badge">{badge}</span>

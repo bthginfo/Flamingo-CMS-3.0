@@ -91,7 +91,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
   }
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-btn-bg)]/[0.02]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-[color-mix(in_srgb,var(--token-btn-bg)_2%,transparent)]">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
@@ -103,7 +103,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
           <div className="grid sm:grid-cols-2 gap-6 mb-12">
             {items.map((item, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-6 bg-[var(--token-card-bg)] rounded-xl shadow-sm border border-[color:var(--token-card-border)] flex items-start gap-4" data-edit-collection="items" data-edit-index={i}>
-                <div className="w-10 h-10 rounded-full bg-[var(--token-btn-bg)/10] flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] flex items-center justify-center shrink-0">
                   <Gift className="w-4 h-4 text-[color:var(--token-icon)]" />
                 </div>
                 <div className="flex-1">

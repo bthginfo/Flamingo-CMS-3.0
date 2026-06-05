@@ -102,8 +102,8 @@ function MenuHeader({ headline, subline, badgeText, introText, align, inverted }
     <div className={`${align === 'center' ? 'text-center mx-auto' : ''} max-w-3xl p-6 sm:p-10`}>
       {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[var(--token-eyebrow)]' : 'text-[color:var(--token-muted)]'}`} data-edit-path="badgeText">{badgeText}</p>}
       <h2 className={`mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] ${inverted ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="headline">{headline}</h2>
-      {subline && <div className={`mt-4 text-base sm:text-lg ${inverted ? 'text-[color:var(--token-on-dark-heading)/70]' : 'text-[color:var(--token-muted)]'} rt-content`} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
-      {introText && <div className={`mt-5 leading-7 ${inverted ? 'text-[color:var(--token-on-dark-heading)/65]' : 'text-[color:var(--token-muted)]'} rt-content`} data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
+      {subline && <div className={`mt-4 text-base sm:text-lg ${inverted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)]' : 'text-[color:var(--token-muted)]'} rt-content`} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
+      {introText && <div className={`mt-5 leading-7 ${inverted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_65%,transparent)]' : 'text-[color:var(--token-muted)]'} rt-content`} data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
     </div>
   );
 }
@@ -111,10 +111,10 @@ function MenuHeader({ headline, subline, badgeText, introText, align, inverted }
 function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layout: 'classic' | 'modern' | 'bold' }) {
   const items = asList<MenuItem>(category.items);
   return (
-    <div className={`${layout === 'classic' ? 'p-6 sm:p-10' : layout === 'bold' ? 'border-2 border-[color:var(--token-card-border)/20] p-5' : 'border border-black/10 p-6'}`}>
+    <div className={`${layout === 'classic' ? 'p-6 sm:p-10' : layout === 'bold' ? 'border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] p-5' : 'border border-black/10 p-6'}`}>
       <div className="mb-6">
         <h3 className={`text-2xl font-bold ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading)] uppercase' : 'text-[color:var(--token-heading)]'}`} data-edit-path="title">{category.title || ''}</h3>
-        {category.description && <div className={`mt-2 text-sm ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading)/60]' : 'text-[color:var(--token-muted)]'}`} data-edit-rich="description" dangerouslySetInnerHTML={{ __html: category.description }} />}
+        {category.description && <div className={`mt-2 text-sm ${layout === 'bold' ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]' : 'text-[color:var(--token-muted)]'}`} data-edit-rich="description" dangerouslySetInnerHTML={{ __html: category.description }} />}
       </div>
       <div className="space-y-5">
         {items.map((item, index) => (
@@ -129,7 +129,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
                 <h4 className={`font-semibold ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="name">{item.name || ''}</h4>
                 {item.price && <p className={`shrink-0 font-bold ${layout === 'bold' ? 'text-[var(--token-eyebrow)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="price">{item.price}</p>}
               </div>
-              {item.description && <div className={`mt-1 text-sm leading-6 ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading)/60]' : 'text-[color:var(--token-muted)]'}`} data-edit-rich="description" dangerouslySetInnerHTML={{ __html: item.description }} />}
+              {item.description && <div className={`mt-1 text-sm leading-6 ${layout === 'bold' ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]' : 'text-[color:var(--token-muted)]'}`} data-edit-rich="description" dangerouslySetInnerHTML={{ __html: item.description }} />}
               <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
                 {asList<string>(item.tags).map((tag) => <Badge key={tag} icon={item.spicy ? <Flame size={12} /> : item.vegetarian || item.vegan ? <Leaf size={12} /> : null} label={tag} />)}
                 {asList<string>(item.allergens).map((allergen) => <Badge key={allergen} icon={<Wheat size={12} />} label={allergen} />)}
@@ -150,9 +150,9 @@ function Badge({ icon, label }: { icon: React.ReactNode; label: string }) {
 function MenuFooter({ footnote, ctaPrimary, inverted }: MenuViewProps & { inverted?: boolean }) {
   if (!footnote && !ctaPrimary.label) return null;
   return (
-    <div className={`flex flex-col gap-4 p-6 sm:p-10 sm:flex-row sm:items-center sm:justify-between ${inverted ? 'text-[color:var(--token-on-dark-heading)/70]' : 'text-[color:var(--token-muted)]'}`}>
+    <div className={`flex flex-col gap-4 p-6 sm:p-10 sm:flex-row sm:items-center sm:justify-between ${inverted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)]' : 'text-[color:var(--token-muted)]'}`}>
       {footnote && <p className="text-sm">{footnote}</p>}
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 font-semibold text-[color:var(--token-heading)] bg-[var(--token-btn-bg)/10] px-5 py-3 rounded-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 font-semibold text-[color:var(--token-heading)] bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-5 py-3 rounded-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }

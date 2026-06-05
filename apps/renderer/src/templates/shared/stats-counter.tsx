@@ -51,8 +51,8 @@ export function StatsCounterSection({ data }: Props) {
   return (
     <div ref={ref} className="relative overflow-hidden rounded-2xl bg-[var(--token-section-bg-alt)] py-20 px-6 text-[var(--token-body)]">
       {/* Decorative gradient orbs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--token-accent)]/20 rounded-full blur-3xl -translate-y-1/2" />
-      <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-[var(--token-accent)]/10 rounded-full blur-3xl translate-y-1/2" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[color-mix(in_srgb,var(--token-accent)_20%,transparent)] rounded-full blur-3xl -translate-y-1/2" />
+      <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] rounded-full blur-3xl translate-y-1/2" />
 
       <div className="relative z-10">
         {(headline || badge) && (

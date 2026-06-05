@@ -44,7 +44,7 @@ export function InspirationGridSection({ data }: Props) {
               <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300" />
             )}
             {/* Hover overlay */}
-            <div className="absolute inset-0 bg-[var(--token-section-bg-alt)/0] group-hover:bg-[var(--token-section-bg-alt)/40] transition-colors duration-300 flex items-end">
+            <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_0%,transparent)] group-hover:bg-[color-mix(in_srgb,var(--token-section-bg-alt)_40%,transparent)] transition-colors duration-300 flex items-end">
               {item.title && (
                 <div className="p-4 md:p-6 w-full translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
                   <span className="inline-block w-8 h-0.5 rounded bg-[var(--token-icon)] mb-2" />

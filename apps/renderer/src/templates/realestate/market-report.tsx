@@ -27,7 +27,7 @@ export function MarketReportSection({ data }: Props) {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-14">
           <span className="text-amber-500 text-sm font-semibold uppercase tracking-wider">{region}</span>
           <h2 className="text-3xl md:text-4xl font-bold mt-2" data-edit-path="headline">{headline}</h2>
-          {subline && <p className="text-lg text-[color:var(--token-on-dark-heading)/70] mt-4 max-w-2xl" data-edit-path="subline">{plain(subline)}</p>}
+          {subline && <p className="text-lg text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] mt-4 max-w-2xl" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -39,11 +39,11 @@ export function MarketReportSection({ data }: Props) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: i * 0.1 }}
-                className="bg-[var(--token-card-bg)/5] backdrop-blur-sm border border-[color:var(--token-card-border)/10] rounded-xl p-6"
+                className="bg-[color-mix(in_srgb,var(--token-card-bg)_5%,transparent)] backdrop-blur-sm border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)] rounded-xl p-6"
               >
                 <Icon size={20} className="text-amber-500 mb-3" />
                 <p className="text-3xl font-bold" data-edit-path="value">{stat.value}</p>
-                <p className="text-sm text-[color:var(--token-on-dark-heading)/60] mt-1" data-edit-path="label">{stat.label}</p>
+                <p className="text-sm text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] mt-1" data-edit-path="label">{stat.label}</p>
                 {stat.trend && <span className="text-xs text-emerald-400 mt-2 inline-block">↑ {stat.trend}</span>}
               </motion.div>
             );
@@ -55,7 +55,7 @@ export function MarketReportSection({ data }: Props) {
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ delay: 0.5 }}
-            className="text-[color:var(--token-on-dark-heading)/60] mt-10 max-w-3xl leading-relaxed" data-edit-path="description"
+            className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] mt-10 max-w-3xl leading-relaxed" data-edit-path="description"
           >
             {plain(description)}
           </motion.p>

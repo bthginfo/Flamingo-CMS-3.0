@@ -43,7 +43,7 @@ export function CaseResultsSection({ data }: Props) {
       <div className="relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
           {headline && <h2 className="text-3xl md:text-4xl font-serif font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="headline">{headline}</h2>}
-          {subline && <p className="text-[color:var(--token-on-dark-heading)/60] mt-3 max-w-xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
+          {subline && <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] mt-3 max-w-xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
@@ -56,7 +56,7 @@ export function CaseResultsSection({ data }: Props) {
               <div className="text-3xl md:text-4xl font-bold text-[color:var(--token-on-dark-heading)]">
                 <AnimatedNumber value={stat.value} suffix={stat.suffix} prefix={stat.prefix} />
               </div>
-              <div className="text-sm text-[color:var(--token-on-dark-heading)/50] mt-2" data-edit-path="label">{stat.label}</div>
+              <div className="text-sm text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] mt-2" data-edit-path="label">{stat.label}</div>
             </motion.div>
           ))}
         </div>

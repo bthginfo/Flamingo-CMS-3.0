@@ -24,7 +24,7 @@ export function ValuationCtaSection({ data }: Props) {
       {bgImage ? (
         <>
           <img data-edit-image="bgImage" src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-[var(--token-section-bg-alt)/80]" />
+          <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_80%,transparent)]" />
         </>
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800" />
@@ -44,14 +44,14 @@ export function ValuationCtaSection({ data }: Props) {
             Immobilienbewertung
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="headline">{headline}</h2>
-          <p className="text-lg text-[color:var(--token-on-dark-heading)/70] mt-5 max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>
+          <p className="text-lg text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] mt-5 max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>
 
           {stats.length > 0 && (
             <div className="flex flex-wrap justify-center gap-8 mt-10">
               {stats.map((stat, i) => (
                 <div key={i} className="text-center" data-edit-collection="stats" data-edit-index={i}>
                   <p className="text-2xl font-bold text-amber-400" data-edit-path="value">{stat.value}</p>
-                  <p className="text-xs text-[color:var(--token-on-dark-heading)/50] mt-1" data-edit-path="label">{stat.label}</p>
+                  <p className="text-xs text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] mt-1" data-edit-path="label">{stat.label}</p>
                 </div>
               ))}
             </div>

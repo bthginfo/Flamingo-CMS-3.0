@@ -27,7 +27,7 @@ function GalleryClassic({ headline, subline, badgeText, images, ctaPrimary }: Pr
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-[var(--token-badge-bg)/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</motion.p>}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-[color-mix(in_srgb,var(--token-badge-bg)_10%,transparent)] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
@@ -79,11 +79,11 @@ function GalleryBold({ headline, subline, badgeText, images, ctaPrimary }: Props
         {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg)]" />
-        {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {subline && <div className="mt-4 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((img, i) => (
-          <figure key={`${img.src}-${i}`} className="group overflow-hidden border-2 border-[color:var(--token-card-border)/20] shadow-[4px_4px_0_rgba(255,255,255,0.15)]" data-edit-collection="images" data-edit-index={i}>
+          <figure key={`${img.src}-${i}`} className="group overflow-hidden border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] shadow-[4px_4px_0_rgba(255,255,255,0.15)]" data-edit-collection="images" data-edit-index={i}>
             {img.src && <div className="relative aspect-[4/3]"><Image data-edit-image="src" src={img.src} alt={img.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
             <figcaption className="p-4">
               {img.category && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="category">{img.category}</p>}

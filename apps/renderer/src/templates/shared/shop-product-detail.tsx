@@ -97,8 +97,8 @@ export function ShopProductDetailSection({ data }: Props) {
             )}
             {images.length > 1 && (
               <>
-                <button onClick={() => setSelectedImage((selectedImage - 1 + images.length) % images.length)} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-[var(--token-card-bg)/90] rounded-full shadow-md opacity-0 group-hover:opacity-100 hover:bg-[var(--token-card-bg)] transition-all"><ChevronLeft size={18} /></button>
-                <button onClick={() => setSelectedImage((selectedImage + 1) % images.length)} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[var(--token-card-bg)/90] rounded-full shadow-md opacity-0 group-hover:opacity-100 hover:bg-[var(--token-card-bg)] transition-all"><ChevronRight size={18} /></button>
+                <button onClick={() => setSelectedImage((selectedImage - 1 + images.length) % images.length)} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 bg-[color-mix(in_srgb,var(--token-card-bg)_90%,transparent)] rounded-full shadow-md opacity-0 group-hover:opacity-100 hover:bg-[var(--token-card-bg)] transition-all"><ChevronLeft size={18} /></button>
+                <button onClick={() => setSelectedImage((selectedImage + 1) % images.length)} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-[color-mix(in_srgb,var(--token-card-bg)_90%,transparent)] rounded-full shadow-md opacity-0 group-hover:opacity-100 hover:bg-[var(--token-card-bg)] transition-all"><ChevronRight size={18} /></button>
               </>
             )}
             {discount > 0 && (

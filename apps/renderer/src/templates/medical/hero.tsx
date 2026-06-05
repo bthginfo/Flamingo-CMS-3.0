@@ -153,7 +153,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMob
           {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-card-border)] px-6 py-3 font-black uppercase text-[var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
         <div className="mt-10 flex flex-wrap gap-3 text-sm text-[var(--token-body)]">
-          {specialtyLabel && <span className="inline-flex items-center gap-2 border border-[color:var(--token-card-border)/20] px-4 py-2 font-bold uppercase"><Heart size={15} />{specialtyLabel}</span>}
+          {specialtyLabel && <span className="inline-flex items-center gap-2 border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] px-4 py-2 font-bold uppercase"><Heart size={15} />{specialtyLabel}</span>}
           {emergencyHint && <span className="border border-red-500/40 px-4 py-2 font-bold uppercase text-red-400">{emergencyHint}</span>}
           {trustItems.map((item) => <span key={item} className="border border-[var(--token-card-border)] px-4 py-2 font-bold uppercase">{item}</span>)}
         </div>

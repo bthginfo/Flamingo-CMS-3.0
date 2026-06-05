@@ -60,31 +60,31 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
           <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words" data-edit-path="headline">{headline}</h2>
           <div className={`grid gap-4 ${gridCols}`}>
             {packages.map((pkg, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`relative p-6 md:p-8 border ${pkg.highlighted ? 'border-[var(--token-card-border)]' : 'border-[color:var(--token-card-border)/10]'}`} data-edit-collection="packages" data-edit-index={i}>
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`relative p-6 md:p-8 border ${pkg.highlighted ? 'border-[var(--token-card-border)]' : 'border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)]'}`} data-edit-collection="packages" data-edit-index={i}>
                 {pkg.highlighted && <span className="absolute -top-3 left-6 bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold px-3 py-1">BELIEBT</span>}
                 <h3 className="text-xl font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="name">{pkg.name}</h3>
-                {pkg.price && <p className="text-3xl font-black text-[color:var(--token-eyebrow)] mt-3"><span data-edit-path="price">{pkg.price}</span>{pkg.priceNote && <span className="text-sm text-[color:var(--token-on-dark-heading)/70] ml-1">{pkg.priceNote}</span>}</p>}
-                {pkg.description && <div className="text-[color:var(--token-on-dark-heading)/80] text-sm mt-3" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
+                {pkg.price && <p className="text-3xl font-black text-[color:var(--token-eyebrow)] mt-3"><span data-edit-path="price">{pkg.price}</span>{pkg.priceNote && <span className="text-sm text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] ml-1">{pkg.priceNote}</span>}</p>}
+                {pkg.description && <div className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] text-sm mt-3" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
                 <ul className="mt-6 space-y-2">
                   {pkg.features.map((f, j) => (
                     <li key={j} className="flex items-start gap-2 text-sm" data-edit-collection="features" data-edit-index={j}>
                       <Check className="w-4 h-4 mt-0.5 shrink-0 text-[color:var(--token-eyebrow)]" />
-                      <span className="text-[color:var(--token-on-dark-heading)/80]">{f}</span>
+                      <span className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)]">{f}</span>
                     </li>
                   ))}
                 </ul>
-                {pkg.ctaHref && <a href={pkg.ctaHref} className={`mt-8 inline-flex items-center gap-2 px-6 py-3 text-sm font-bold uppercase tracking-wider w-full justify-center ${pkg.highlighted ? 'bg-[var(--token-badge-bg)] text-[color:var(--token-heading)]' : 'border border-[color:var(--token-card-border)/20] text-[color:var(--token-on-dark-heading)] hover:bg-[var(--token-card-bg)/5]'}`}><span data-edit-path="ctaLabel">{pkg.ctaLabel || 'Anfragen'}</span> <ArrowRight className="w-4 h-4" /></a>}
+                {pkg.ctaHref && <a href={pkg.ctaHref} className={`mt-8 inline-flex items-center gap-2 px-6 py-3 text-sm font-bold uppercase tracking-wider w-full justify-center ${pkg.highlighted ? 'bg-[var(--token-badge-bg)] text-[color:var(--token-heading)]' : 'border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] text-[color:var(--token-on-dark-heading)] hover:bg-[color-mix(in_srgb,var(--token-card-bg)_5%,transparent)]'}`}><span data-edit-path="ctaLabel">{pkg.ctaLabel || 'Anfragen'}</span> <ArrowRight className="w-4 h-4" /></a>}
               </motion.div>
             ))}
           </div>
-          {note && <p className="text-[color:var(--token-on-dark-heading)/40] text-sm mt-10 italic" data-edit-path="note">{note}</p>}
+          {note && <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_40%,transparent)] text-sm mt-10 italic" data-edit-path="note">{note}</p>}
         </div>
       </section>
     );
   }
 
   return (
-    <section className="py-12 md:py-24 px-4 md:px-6 bg-[var(--token-btn-bg)]/[0.02]">
+    <section className="py-12 md:py-24 px-4 md:px-6 bg-[color-mix(in_srgb,var(--token-btn-bg)_2%,transparent)]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
@@ -99,15 +99,15 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
               {pkg.price && (
                 <div className="mt-3">
                   <span className={`text-2xl md:text-3xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-icon)]'}`} data-edit-path="price">{pkg.price}</span>
-                  {pkg.priceNote && <span className={`text-sm ml-1 ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)/70]' : 'text-[color:var(--token-muted)]'}`}>{pkg.priceNote}</span>}
+                  {pkg.priceNote && <span className={`text-sm ml-1 ${pkg.highlighted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)]' : 'text-[color:var(--token-muted)]'}`}>{pkg.priceNote}</span>}
                 </div>
               )}
-              {pkg.description && <div className={`mt-3 text-sm ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)/80]' : 'text-[color:var(--token-muted)]'}`} data-edit-rich="description" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
+              {pkg.description && <div className={`mt-3 text-sm ${pkg.highlighted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)]' : 'text-[color:var(--token-muted)]'}`} data-edit-rich="description" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
               <ul className="mt-6 space-y-3">
                 {pkg.features.map((f, j) => (
                   <li key={j} className="flex items-start gap-2 text-sm" data-edit-collection="features" data-edit-index={j}>
                     <Check className={`w-4 h-4 mt-0.5 shrink-0 ${pkg.highlighted ? 'text-[color:var(--token-eyebrow)]' : 'text-[color:var(--token-icon)]'}`} />
-                    <span className={pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)/90]' : 'text-[color:var(--token-muted)]'}>{f}</span>
+                    <span className={pkg.highlighted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_90%,transparent)]' : 'text-[color:var(--token-muted)]'}>{f}</span>
                   </li>
                 ))}
               </ul>

@@ -12,12 +12,12 @@ export function BookingCtaSection({ data }: Props) {
   const hints = (data.hints as string[]) || [];
 
   return (
-    <section className="py-16 px-6 bg-[var(--token-section-bg-alt)] border-y border-[color:var(--token-card-border)/5]">
+    <section className="py-16 px-6 bg-[var(--token-section-bg-alt)] border-y border-[color:color-mix(in_srgb,var(--token-card-border)_5%,transparent)]">
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-3xl sm:text-4xl font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="headline">{headline}</h2>
-        {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading)/50]" data-edit-path="subline">{plain(subline)}</p>}
+        {subline && <p className="mt-3 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)]" data-edit-path="subline">{plain(subline)}</p>}
         {hints.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-4 mt-6 text-xs text-[color:var(--token-on-dark-heading)/40]">
+          <div className="flex flex-wrap justify-center gap-4 mt-6 text-xs text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_40%,transparent)]">
             {hints.map((h, i) => <span key={i} className="flex items-center gap-1.5" data-edit-collection="hints" data-edit-index={i}>✓ {h}</span>)}
           </div>
         )}

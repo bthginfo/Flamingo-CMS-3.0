@@ -48,7 +48,7 @@ export function MaterialGallerySection({ data }: Props) {
               className={`px-4 py-2 text-sm font-medium rounded-full border transition-all ${
                 activeFilter === cat
                   ? 'bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] border-transparent shadow-md'
-                  : 'bg-[var(--token-card-bg)] text-[var(--token-body)] border-[color:var(--token-card-border)] hover:border-[var(--token-icon)]/30'
+                  : 'bg-[var(--token-card-bg)] text-[var(--token-body)] border-[color:var(--token-card-border)] hover:border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)]'
               }`}
             >
               {cat}

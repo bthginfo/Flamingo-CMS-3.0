@@ -30,7 +30,7 @@ function Accordion({ items, variant }: { items: FaqItem[]; variant: 'classic' | 
       {items.map((item, i) => {
         const isOpen = open === i;
         return (
-          <div key={`${item.question}-${i}`} className={variant === 'bold' ? 'border-b-2 border-[#111827]' : variant === 'modern' ? 'border-b border-black/10' : 'border-b border-[var(--token-icon)]/20'}>
+          <div key={`${item.question}-${i}`} className={variant === 'bold' ? 'border-b-2 border-[#111827]' : variant === 'modern' ? 'border-b border-black/10' : 'border-b border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)]'}>
             <button onClick={() => setOpen(isOpen ? null : i)} className={`flex w-full items-center justify-between py-5 text-left ${variant === 'bold' ? 'font-black uppercase text-[color:var(--token-heading)]' : variant === 'modern' ? 'font-medium text-[color:var(--token-heading)]' : 'font-semibold text-[color:var(--token-heading)]'}`}>
               <span data-edit-path="question">{item.question || ''}</span>
               <ChevronDown size={18} className={`shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -53,7 +53,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-10 text-center">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-[var(--token-badge-bg)/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</motion.p>}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-[color-mix(in_srgb,var(--token-badge-bg)_10%,transparent)] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>

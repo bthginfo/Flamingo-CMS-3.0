@@ -51,15 +51,15 @@ export function PopupSection({ data }: SectionProps) {
         type="button"
         aria-label="Popup schließen"
         onClick={close}
-        className="absolute inset-0 bg-[var(--token-section-bg-alt)/62] backdrop-blur-[2px]"
+        className="absolute inset-0 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_62%,transparent)] backdrop-blur-[2px]"
       />
       <div className="relative w-full max-w-xl overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 text-[var(--token-body)] shadow-[0_30px_120px_rgba(0,0,0,0.35)] md:p-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-[var(--token-accent)]/20 blur-3xl" />
+        <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-[color-mix(in_srgb,var(--token-accent)_20%,transparent)] blur-3xl" />
         <button
           type="button"
           onClick={close}
           aria-label="Popup schließen"
-          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--token-card-border)] bg-[var(--token-card-bg)/80] text-[color:var(--token-muted)] shadow-sm backdrop-blur transition hover:bg-[var(--token-card-bg)]"
+          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-card-bg)_80%,transparent)] text-[color:var(--token-muted)] shadow-sm backdrop-blur transition hover:bg-[var(--token-card-bg)]"
         >
           <X size={18} />
         </button>
@@ -79,7 +79,7 @@ export function PopupSection({ data }: SectionProps) {
               </a>
             )}
             {secondaryCta.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center rounded-[var(--token-button-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)/70] px-5 py-3 text-sm font-bold text-[var(--token-heading)] transition hover:bg-[var(--token-card-bg)]" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center rounded-[var(--token-button-radius)] border border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-card-bg)_70%,transparent)] px-5 py-3 text-sm font-bold text-[var(--token-heading)] transition hover:bg-[var(--token-card-bg)]" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

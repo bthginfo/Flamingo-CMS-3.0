@@ -192,7 +192,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
   }
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-btn-bg)]/[0.02]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-[color-mix(in_srgb,var(--token-btn-bg)_2%,transparent)]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
@@ -205,7 +205,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
               const Icon = dirIcons[(d.icon || 'car').toLowerCase()] || Car;
               return (
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center p-6 rounded-xl bg-[var(--token-card-bg)] shadow-sm">
-                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[var(--token-btn-bg)/10] flex items-center justify-center">
+                  <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] flex items-center justify-center">
                     <Icon className="w-5 h-5 text-[color:var(--token-icon)]" />
                   </div>
                   <h3 className="font-semibold text-[color:var(--token-heading)] mb-2" data-edit-path="title">{d.title}</h3>

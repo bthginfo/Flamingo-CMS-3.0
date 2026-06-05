@@ -72,8 +72,8 @@ export function BeforeAfterSection({ data }: Props) {
         </div>
 
         {/* Labels */}
-        <span className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold bg-[var(--token-section-bg-alt)/50] text-[color:var(--token-on-dark-heading)] rounded-full">{labelBefore}</span>
-        <span className="absolute top-4 right-4 px-3 py-1 text-xs font-semibold bg-[var(--token-section-bg-alt)/50] text-[color:var(--token-on-dark-heading)] rounded-full">{labelAfter}</span>
+        <span className="absolute top-4 left-4 px-3 py-1 text-xs font-semibold bg-[color-mix(in_srgb,var(--token-section-bg-alt)_50%,transparent)] text-[color:var(--token-on-dark-heading)] rounded-full">{labelBefore}</span>
+        <span className="absolute top-4 right-4 px-3 py-1 text-xs font-semibold bg-[color-mix(in_srgb,var(--token-section-bg-alt)_50%,transparent)] text-[color:var(--token-on-dark-heading)] rounded-full">{labelAfter}</span>
       </motion.div>
     </div>
   );

@@ -37,7 +37,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
         {rooms.map((room, index) => (
-          <motion.article key={`$<span data-edit-path="name">{room.name}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`overflow-hidden rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md ${room.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="rooms" data-edit-index={index}>
+          <motion.article key={`$<span data-edit-path="name">{room.name}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md ${room.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="rooms" data-edit-index={index}>
             {room.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={room.image} alt={room.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
@@ -76,7 +76,7 @@ function RoomModern({ headline, subline, badgeText, rooms, footerText }: Props) 
       </div>
       <div className="grid gap-px border border-black/10 lg:grid-cols-3">
         {rooms.map((room, index) => (
-          <article key={`$<span data-edit-path="name">{room.name}</span>-${index}`} className={`overflow-hidden border border-black/10 bg-[var(--token-card-bg)] ${room.highlighted ? 'bg-[var(--token-section-bg-alt)]/[0.02]' : ''}`} data-edit-collection="rooms" data-edit-index={index}>
+          <article key={`$<span data-edit-path="name">{room.name}</span>-${index}`} className={`overflow-hidden border border-black/10 bg-[var(--token-card-bg)] ${room.highlighted ? 'bg-[color-mix(in_srgb,var(--token-section-bg-alt)_2%,transparent)]' : ''}`} data-edit-collection="rooms" data-edit-index={index}>
             {room.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={room.image} alt={room.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-6">
               <div className="flex items-start justify-between gap-3">
@@ -109,7 +109,7 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
+        {badgeText && <p className="inline-block bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>

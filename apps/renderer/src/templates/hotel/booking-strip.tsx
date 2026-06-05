@@ -33,7 +33,7 @@ type Props = {
 /* --- CLASSIC --- */
 function BookingClassic({ headline, subline, badgeText, submitCta, secondaryCta, bookingNote, trustItems }: Props) {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-6 shadow-lg text-center">
+    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-6 shadow-lg text-center">
       {badgeText && <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]"><Star size={12} className="text-[color:var(--token-icon)]" /><span data-edit-path="badgeText">{badgeText}</span></p>}
       <h2 className="mt-3 text-2xl font-[700] text-[color:var(--token-heading)] sm:text-3xl" data-edit-path="headline">{headline}</h2>
       {subline && <div className="mx-auto mt-2 max-w-lg text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
@@ -86,7 +86,7 @@ function BookingModern({ headline, subline, badgeText, submitCta, secondaryCta, 
 function BookingBold({ headline, subline, badgeText, submitCta, secondaryCta, bookingNote, trustItems }: Props) {
   return (
     <div className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_#111827] text-center">
-      {badgeText && <p className="inline-block bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
+      {badgeText && <p className="inline-block bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
       <h2 className="mt-3 text-2xl font-black uppercase text-[color:var(--token-heading)] sm:text-3xl" data-edit-path="headline">{headline}</h2>
       {subline && <div className="mx-auto mt-2 max-w-lg text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       {trustItems.length > 0 && (
