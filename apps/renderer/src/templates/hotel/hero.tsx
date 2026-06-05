@@ -115,7 +115,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
           className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
           {primaryCta.label && (
               <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-[var(--token-btn-bg)] px-8 py-4 font-semibold text-[color:var(--token-btn-text)] transition-all hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto">
-              <span className="relative z-10 flex items-center justify-between sm:justify-center sm:gap-2.5 w-full sm:w-auto"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} className="transition-transform group-hover:translate-x-1" />}</span>
+              <span className="relative z-10 flex items-center justify-between sm:justify-center sm:gap-2.5 w-full sm:w-auto"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={17} className="transition-transform group-hover:translate-x-1" />}</span>
               <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.3),transparent)] bg-[length:200%_100%]" />
             </a>
           )}
@@ -156,7 +156,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, trustItems, bgIma
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta.label && (
               <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 text-[color:var(--token-heading)] font-medium text-base border-b-2 border-[color:var(--token-card-border)] pb-1 hover:border-amber-500 hover:text-amber-600 transition-colors w-full sm:w-auto">
-                <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
+                <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
               </a>
             )}
             {secondaryCta.label && (
@@ -231,7 +231,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, trustItems, bgImage
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta.label && (
               <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] w-full sm:w-auto">
-                <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} />}
+                <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={18} />}
               </a>
             )}
             {secondaryCta.label && (

@@ -97,7 +97,7 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
           <div className={`${isModern ? '' : 'text-center'} mt-12`}>
             <a data-edit-link="cta" href={cta.href} className={isModern ? 'inline-block text-sm text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)] hover:opacity-70' : isBold ? 'inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity' : 'inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full hover:opacity-90 transition-opacity shadow-lg'}>
               <span data-edit-path="label">{cta.label}</span>
-              {cta.icon && <DynamicIcon name={cta.icon} size={18} />}
+              {cta.icon && <DynamicIcon editPath="cta.icon" name={cta.icon} size={18} />}
             </a>
           </div>
         )}

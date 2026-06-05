@@ -61,7 +61,7 @@ export function BentoGridSection({ data }: Props) {
             )}
 
             <div className="relative z-10 flex flex-col h-full justify-end">
-              {item.icon && <div className="text-3xl mb-3 text-[var(--token-icon)]"><DynamicIcon name={item.icon} size={32} /></div>}
+              {item.icon && <div className="text-3xl mb-3 text-[var(--token-icon)]"><DynamicIcon editPath="icon" name={item.icon} size={32} /></div>}
               <h3 className="text-lg font-semibold text-[var(--token-heading)] mb-1" data-edit-path="title">{item.title}</h3>
               {item.description && <p className="text-sm text-[var(--token-body)] leading-relaxed" data-edit-path="description">{plain(item.description)}</p>}
             </div>

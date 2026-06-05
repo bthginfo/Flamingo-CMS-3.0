@@ -46,7 +46,7 @@ export function DeliveryTimelineSection({ data }: Props) {
               {/* Step circle */}
               <div className="relative mx-auto w-24 h-24 rounded-full bg-[var(--token-icon)]/5 border-2 border-[var(--token-icon)]/20 flex flex-col items-center justify-center mb-5">
                 {step.icon ? (
-                  <DynamicIcon name={step.icon} size={28} className="text-[var(--token-icon)]" />
+                  <DynamicIcon editPath="icon" name={step.icon} size={28} className="text-[var(--token-icon)]" />
                 ) : (
                   <span className="text-2xl font-bold text-[var(--token-icon)]">{step.number || i + 1}</span>
                 )}

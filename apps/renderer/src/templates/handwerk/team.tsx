@@ -75,7 +75,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {values.map((v, i) => (
               <div key={i} className="group rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-8 shadow-sm transition-all hover:shadow-lg" data-edit-collection="values" data-edit-index={i}>
-                {v.icon && <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--token-accent)]/10 transition-transform group-hover:scale-110"><DynamicIcon name={v.icon} size={28} className="text-[var(--token-icon)]" /></div>}
+                {v.icon && <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--token-accent)]/10 transition-transform group-hover:scale-110"><DynamicIcon editPath="icon" name={v.icon} size={28} className="text-[var(--token-icon)]" /></div>}
                 <h4 className="mb-2 text-lg font-semibold text-[var(--token-heading)]" data-edit-path="title">{v.title}</h4>
                 <div className="rt-content text-sm leading-relaxed text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
               </div>

@@ -57,7 +57,7 @@ export function StatsSection({ data }: Props) {
            data-edit-collection="stats" data-edit-index={i}>
             {stat.icon && (
               <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-[color-mix(in_srgb,var(--token-icon)_14%,transparent)] flex items-center justify-center text-[var(--token-icon)]">
-                <DynamicIcon name={stat.icon} size={20} />
+                <DynamicIcon editPath="icon" name={stat.icon} size={20} />
               </div>
             )}
             <div className="text-3xl md:text-4xl font-bold text-[var(--token-stat-value)]">

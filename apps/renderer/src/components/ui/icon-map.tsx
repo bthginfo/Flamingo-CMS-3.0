@@ -47,10 +47,29 @@ function resolveIcon(name: string): LucideIcon | null {
   return null;
 }
 
-export function DynamicIcon({ name, size = 24, className }: { name: string; size?: number; className?: string }) {
+/**
+ * DynamicIcon — looks up a lucide icon by name and renders it.
+ * If `editPath` is provided, a `data-edit-icon="<path>"` attribute is set
+ * on the SVG so the live-preview overlay can attach a pencil icon and
+ * open the icon picker. The path is relative to the section's data root
+ * (the overlay walks parent `data-edit-collection` markers to prepend
+ * `collection.index.` segments).
+ */
+export function DynamicIcon({
+  name,
+  size = 24,
+  className,
+  editPath,
+}: {
+  name: string;
+  size?: number;
+  className?: string;
+  editPath?: string;
+}) {
   const Icon = resolveIcon(name);
-  if (!Icon) return <span className={className}>{name}</span>;
-  return <Icon size={size} className={className} />;
+  const editAttr = editPath ? ({ 'data-edit-icon': editPath } as Record<string, string>) : null;
+  if (!Icon) return <span className={className} {...(editAttr ?? {})}>{name || ''}</span>;
+  return <Icon size={size} className={className} {...(editAttr ?? {})} />;
 }
 
 /**
@@ -93,7 +112,7 @@ export function MediaDisplay({
   }
 
   if (item.icon) {
-    return <DynamicIcon name={item.icon} size={iconSize} className={iconClassName} />;
+    return <DynamicIcon name={item.icon} size={iconSize} className={iconClassName} editPath="icon" />;
   }
 
   return null;

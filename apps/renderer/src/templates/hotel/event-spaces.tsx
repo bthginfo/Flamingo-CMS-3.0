@@ -59,7 +59,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {processSteps.map((step, index) => (
           <motion.div key={`${step.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon)]/20 p-5" data-edit-collection="processSteps" data-edit-index={index}>
-            <div className="text-[color:var(--token-icon)]"><DynamicIcon name={step.icon || 'clipboard'} size={22} /></div>
+            <div className="text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={step.icon || 'clipboard'} size={22} /></div>
             <h4 className="mt-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{step.title || ''}</h4>
             {step.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />}
           </motion.div>
@@ -98,7 +98,7 @@ function EventModern({ headline, subline, badgeText, spaces, processHeadline, pr
       <div className="mt-6 grid gap-px border border-black/10 md:grid-cols-3">
         {processSteps.map((step, index) => (
           <div key={`${step.title}-${index}`} className="border border-black/10 p-6" data-edit-collection="processSteps" data-edit-index={index}>
-            <DynamicIcon name={step.icon || 'clipboard'} size={18} className="text-[color:var(--token-muted)]" />
+            <DynamicIcon editPath="icon" name={step.icon || 'clipboard'} size={18} className="text-[color:var(--token-muted)]" />
             <h4 className="mt-3 font-light text-[color:var(--token-heading)]" data-edit-path="title">{step.title || ''}</h4>
             {step.text && <div className="mt-2 text-sm font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />}
           </div>
@@ -137,7 +137,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {processSteps.map((step, index) => (
           <div key={`${step.title}-${index}`} className="border-2 border-[#111827] p-5" data-edit-collection="processSteps" data-edit-index={index}>
-            <div className="text-[color:var(--token-icon)]"><DynamicIcon name={step.icon || 'clipboard'} size={22} /></div>
+            <div className="text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={step.icon || 'clipboard'} size={22} /></div>
             <h4 className="mt-3 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{step.title || ''}</h4>
             {step.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: step.text }} />}
           </div>

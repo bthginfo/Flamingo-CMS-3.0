@@ -51,12 +51,12 @@ export function TextImageSection({ data, variant }: Props) {
             <div className="mt-8 flex flex-wrap gap-3">
               {primaryCta.label && (
                 <Link data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[var(--token-btn-text)] shadow-md transition-colors">
-                  {primaryCta.label} {primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} />}
+                  {primaryCta.label} {primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={16} />}
                 </Link>
               )}
               {secondaryCta.label && (
                 <Link data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] px-6 py-3 font-semibold text-[var(--token-body)] hover:border-[var(--token-icon)] hover:text-[var(--token-icon)] transition-colors">
-                  {secondaryCta.label} {secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={16} />}
+                  {secondaryCta.label} {secondaryCta.icon && <DynamicIcon editPath="secondaryCta.icon" name={secondaryCta.icon} size={16} />}
                 </Link>
               )}
             </div>

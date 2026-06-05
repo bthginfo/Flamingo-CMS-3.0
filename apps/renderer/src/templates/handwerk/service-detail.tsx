@@ -46,7 +46,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
                 </div>
               ) : item.icon ? (
                 <div className="w-24 h-24 rounded-2xl bg-[color-mix(in_srgb,var(--token-icon)_10%,transparent)] flex items-center justify-center mx-auto lg:mx-0">
-                  <DynamicIcon name={item.icon} size={40} className="text-[var(--token-icon)]" />
+                  <DynamicIcon editPath="icon" name={item.icon} size={40} className="text-[var(--token-icon)]" />
                 </div>
               ) : null}
             </div>
@@ -60,7 +60,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 text-[var(--token-icon)] font-medium hover:gap-3 transition-all">
-                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon name={item.icon} size={16} />}
+                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon editPath="icon" name={item.icon} size={16} />}
                 </a>
               )}
             </div>
@@ -101,7 +101,7 @@ function ServiceModern({ headline, subline, badgeText, items }: SProps) {
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 text-[var(--token-body)] font-medium mt-6 border-b border-[var(--token-body)] pb-0.5 hover:border-[var(--token-icon)] hover:text-[var(--token-icon)] transition-colors">
-                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon name={item.icon} size={14} />}
+                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon editPath="icon" name={item.icon} size={14} />}
                 </a>
               )}
             </div>
@@ -146,7 +146,7 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 mt-4 font-bold uppercase text-sm text-[var(--token-body)] hover:text-[var(--token-icon)] transition-colors">
-                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon name={item.icon} size={14} />}
+                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon editPath="icon" name={item.icon} size={14} />}
                 </a>
               )}
             </div>

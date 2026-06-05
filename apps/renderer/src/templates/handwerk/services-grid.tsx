@@ -35,7 +35,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
   const hoverItems = cards.map(c => ({
     title: c.title,
     description: c.text || '',
-    icon: c.mediaType === 'image' && c.image ? undefined : (c.icon ? <DynamicIcon name={c.icon} size={24} className="text-[color:var(--token-icon)]" /> : undefined),
+    icon: c.mediaType === 'image' && c.image ? undefined : (c.icon ? <DynamicIcon editPath="icon" name={c.icon} size={24} className="text-[color:var(--token-icon)]" /> : undefined),
     image: c.mediaType === 'image' ? c.image : undefined,
     imagePosition: c.imagePosition || 'center',
     link: c.href || undefined,
@@ -84,7 +84,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
             <div className="flex items-start gap-6">
               {card.icon && (
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center text-[var(--token-icon)] transition-colors">
-                  <DynamicIcon name={card.icon} size={28} />
+                  <DynamicIcon editPath="icon" name={card.icon} size={28} />
                 </div>
               )}
               <div>
@@ -92,7 +92,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
                 {card.text && <div className="rt-content mt-2 leading-relaxed text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: card.text }} />}
                 {card.href && (
                   <span className="mt-3 inline-flex items-center gap-1 text-sm text-[var(--token-accent)] opacity-0 transition-opacity group-hover:opacity-100">
-                    Mehr erfahren {card.icon && <DynamicIcon name={card.icon} size={14} />}
+                    Mehr erfahren {card.icon && <DynamicIcon editPath="icon" name={card.icon} size={14} />}
                   </span>
                 )}
               </div>
@@ -144,14 +144,14 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
             <>
               {card.icon && (
                 <div className="mb-4 flex h-12 w-12 items-center justify-center bg-[var(--token-body)]">
-                  <DynamicIcon name={card.icon} size={20} className="text-[var(--token-icon)]" />
+                  <DynamicIcon editPath="icon" name={card.icon} size={20} className="text-[var(--token-icon)]" />
                 </div>
               )}
               <h3 className="text-base font-bold uppercase tracking-wide text-[var(--token-heading)]" data-edit-path="title">{card.title}</h3>
               {card.text && <div className="rt-content mt-2 text-sm leading-relaxed text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: card.text }} />}
               {card.href && (
                 <span className="mt-3 inline-flex items-center gap-1 text-xs font-bold uppercase text-[var(--token-accent)]">
-                  Details {card.ctaIcon && <DynamicIcon name={card.ctaIcon} size={12} />}
+                  Details {card.ctaIcon && <DynamicIcon editPath="ctaIcon" name={card.ctaIcon} size={12} />}
                 </span>
               )}
             </>

@@ -208,6 +208,43 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         const next = setNested(base, segments, url) as Record<string, unknown>;
         handleSectionChangeRef.current?.(sectionId, next);
       }
+      // Icon-edit from live-preview overlay: writes a Lucide icon name string
+      // at the given path. Same set-nested engine as image-edit.
+      if (e.data?.type === 'flamingo-icon-edit') {
+        const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: string };
+        if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof value !== 'string') return;
+        const current = sectionsRef.current.find(s => s.id === sectionId);
+        if (!current) return;
+        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
+        const segments = path.split('.').filter(Boolean);
+        if (segments.length === 0) return;
+        const setNested = (obj: unknown, segs: string[], val: unknown): Record<string, unknown> | unknown[] => {
+          const [head, ...rest] = segs;
+          const isIndex = /^\d+$/.test(head);
+          if (rest.length === 0) {
+            if (Array.isArray(obj)) {
+              const copy = [...obj];
+              copy[Number(head)] = val;
+              return copy;
+            }
+            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
+          }
+          if (Array.isArray(obj)) {
+            const copy = [...obj];
+            const idx = Number(head);
+            copy[idx] = setNested(copy[idx], rest, val);
+            return copy;
+          }
+          const container = (obj as Record<string, unknown> | null) ?? {};
+          const childExisting = container[head];
+          const childContainer = isIndex
+            ? (Array.isArray(childExisting) ? childExisting : [])
+            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
+          return { ...container, [head]: setNested(childContainer, rest, val) };
+        };
+        const next = setNested(base, segments, value) as Record<string, unknown>;
+        handleSectionChangeRef.current?.(sectionId, next);
+      }
       // Link-edit from live-preview overlay: writes an object {label, href, icon?}.
       if (e.data?.type === 'flamingo-link-edit') {
         const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: Record<string, unknown> };

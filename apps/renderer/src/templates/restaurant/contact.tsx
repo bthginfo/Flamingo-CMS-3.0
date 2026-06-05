@@ -37,7 +37,7 @@ function InfoCards({ cards }: { cards: InfoCard[] }) {
     <div className="grid gap-3">
       {cards.map((card, i) => (
         <div key={`${card.label}-${i}`} className="flex gap-4 border-t border-[var(--token-icon)]/20 pt-4" data-edit-collection="cards" data-edit-index={i}>
-          <DynamicIcon name={card.icon || 'mail'} size={20} className="text-[color:var(--token-eyebrow)]" />
+          <DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} className="text-[color:var(--token-eyebrow)]" />
           <div>
             <p className="text-xs text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p>
             <p className="font-semibold text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p>
@@ -83,7 +83,7 @@ function Modern(p: Props) {
           {p.subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
         {p.introText && <p className="font-light text-[color:var(--token-muted)]">{plain(p.introText)}</p>}
-        <div className="mt-6">{p.infoCards.map((c, i) => <div key={`$<span data-edit-path="label">{c.label}</span>-${i}`} className="flex gap-4 border-t border-black/10 pt-4" data-edit-collection="infoCards" data-edit-index={i}><DynamicIcon name={c.icon || 'mail'} size={18} className="shrink-0 text-[color:var(--token-eyebrow)]" /><div className="min-w-0 flex-1"><p className="text-xs font-light text-[color:var(--token-muted)]" data-edit-path="label">{c.label || ''}</p><p className="break-words font-light text-[color:var(--token-heading)]" data-edit-path="value">{c.value || ''}</p></div></div>)}</div>
+        <div className="mt-6">{p.infoCards.map((c, i) => <div key={`$<span data-edit-path="label">{c.label}</span>-${i}`} className="flex gap-4 border-t border-black/10 pt-4" data-edit-collection="infoCards" data-edit-index={i}><DynamicIcon editPath="icon" name={c.icon || 'mail'} size={18} className="shrink-0 text-[color:var(--token-eyebrow)]" /><div className="min-w-0 flex-1"><p className="text-xs font-light text-[color:var(--token-muted)]" data-edit-path="label">{c.label || ''}</p><p className="break-words font-light text-[color:var(--token-heading)]" data-edit-path="value">{c.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
           {p.primaryCta.label && <a href={p.primaryCta.href || '#'} className="inline-flex border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{p.primaryCta.label}</a>}
           {p.secondaryCta.label && <a href={p.secondaryCta.href || '#'} className="inline-flex px-6 py-3 font-light text-[color:var(--token-muted)]" data-edit-path="label">{p.secondaryCta.label}</a>}
@@ -108,7 +108,7 @@ function Bold(p: Props) {
           {p.subline && <div className="mt-4 font-bold text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
         {p.introText && <p className="font-bold text-[color:var(--token-muted)]">{plain(p.introText)}</p>}
-        <div className="mt-6">{p.infoCards.map((c, i) => <div key={`$<span data-edit-path="label">{c.label}</span>-${i}`} className="flex gap-4 border-t-2 border-[#111827] pt-4" data-edit-collection="infoCards" data-edit-index={i}><DynamicIcon name={c.icon || 'mail'} size={20} className="shrink-0 text-[color:var(--token-eyebrow)]" /><div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase text-[color:var(--token-muted)]" data-edit-path="label">{c.label || ''}</p><p className="break-words font-black text-[color:var(--token-heading)]" data-edit-path="value">{c.value || ''}</p></div></div>)}</div>
+        <div className="mt-6">{p.infoCards.map((c, i) => <div key={`$<span data-edit-path="label">{c.label}</span>-${i}`} className="flex gap-4 border-t-2 border-[#111827] pt-4" data-edit-collection="infoCards" data-edit-index={i}><DynamicIcon editPath="icon" name={c.icon || 'mail'} size={20} className="shrink-0 text-[color:var(--token-eyebrow)]" /><div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase text-[color:var(--token-muted)]" data-edit-path="label">{c.label || ''}</p><p className="break-words font-black text-[color:var(--token-heading)]" data-edit-path="value">{c.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
           {p.primaryCta.label && <a href={p.primaryCta.href || '#'} className="inline-flex bg-[var(--token-badge-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{p.primaryCta.label}</a>}
           {p.secondaryCta.label && <a href={p.secondaryCta.href || '#'} className="inline-flex border-2 border-[#111827] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-path="label">{p.secondaryCta.label}</a>}

@@ -54,7 +54,7 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {features.map((feature, index) => (
             <motion.div key={`${feature.title}-${index}`} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-sm" data-edit-collection="features" data-edit-index={index}>
-              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon)_12%,transparent)] text-[color:var(--token-icon)]"><DynamicIcon name={feature.icon || 'heart'} size={20} /></div>
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon)_12%,transparent)] text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={feature.icon || 'heart'} size={20} /></div>
               <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{feature.title || ''}</h3>
               {feature.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: feature.text }} />}
             </motion.div>
@@ -92,7 +92,7 @@ function WellnessModern({ headline, subline, badgeText, introText, imagePrimary,
         <div className="mt-8 grid gap-4">
           {features.map((feature, index) => (
             <div key={`$<span data-edit-path="title">{feature.title}</span>-${index}`} className="flex gap-4 border-t border-black/10 pt-4" data-edit-collection="features" data-edit-index={index}>
-              <DynamicIcon name={feature.icon || 'heart'} size={18} className="text-[color:var(--token-muted)]" />
+              <DynamicIcon editPath="icon" name={feature.icon || 'heart'} size={18} className="text-[color:var(--token-muted)]" />
               <div><h3 className="font-light text-[color:var(--token-heading)]" data-edit-path="title">{feature.title || ''}</h3>{feature.text && <div className="text-sm font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: feature.text }} />}</div>
             </div>
           ))}
@@ -132,7 +132,7 @@ function WellnessBold({ headline, subline, badgeText, introText, imagePrimary, i
         <div className="mt-8 grid gap-4">
           {features.map((feature, index) => (
             <div key={`$<span data-edit-path="title">{feature.title}</span>-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4" data-edit-collection="features" data-edit-index={index}>
-              <div className="text-[color:var(--token-icon)]"><DynamicIcon name={feature.icon || 'heart'} size={20} /></div>
+              <div className="text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={feature.icon || 'heart'} size={20} /></div>
               <div><h3 className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{feature.title || ''}</h3>{feature.text && <div className="text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: feature.text }} />}</div>
             </div>
           ))}

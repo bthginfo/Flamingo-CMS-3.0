@@ -36,7 +36,7 @@ export function PracticeAreasSection({ data }: Props) {
             >
               {area.icon && (
                 <div className="w-12 h-12 mb-5 rounded-lg bg-[var(--token-btn-bg)/10] flex items-center justify-center text-[color:var(--token-icon)] group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-on-dark-heading)] transition-colors">
-                  <DynamicIcon name={area.icon} size={24} />
+                  <DynamicIcon editPath="icon" name={area.icon} size={24} />
                 </div>
               )}
               <h3 className="text-lg font-semibold text-[color:var(--token-heading)] mb-2" data-edit-path="title">{area.title}</h3>

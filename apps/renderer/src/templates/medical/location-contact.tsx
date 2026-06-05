@@ -39,7 +39,7 @@ function Classic({ header, introText, image, mapEmbedUrl, formEnabled, submitLab
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex gap-4 border-t border-[var(--token-card-border)] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
-              <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon)]" />
+              <DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon)]" />
               <div className="min-w-0 flex-1"><p className="text-xs text-[var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="break-words font-semibold text-[var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div>
             </div>
           ))}
@@ -64,7 +64,7 @@ function Modern({ header, introText, image, mapEmbedUrl, formEnabled, submitLabe
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex gap-4 border-t border-[var(--token-card-border)] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
-              <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon)]" />
+              <DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon)]" />
               <div className="min-w-0 flex-1"><p className="text-xs font-light text-[var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="break-words font-light text-[var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div>
             </div>
           ))}
@@ -96,7 +96,7 @@ function Bold({ header, introText, image, mapEmbedUrl, formEnabled, submitLabel,
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
             <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex gap-4 border-t-2 border-[var(--token-card-border)] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
-              <DynamicIcon name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon)]" />
+              <DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} className="shrink-0 text-[var(--token-icon)]" />
               <div className="min-w-0 flex-1"><p className="text-xs font-bold uppercase text-[var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="break-words font-black text-[var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div>
             </div>
           ))}

@@ -117,14 +117,14 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
               <a data-edit-link="primaryCta" href={primaryCta.href || '#'}
                 className="group inline-flex items-center justify-between sm:justify-center sm:gap-2 rounded-full bg-[var(--token-btn-bg)] px-8 py-4 font-semibold text-[color:var(--token-btn-text)] transition-all hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto">
                 <span data-edit-path="label">{primaryCta.label}</span>
-                {primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} className="transition-transform group-hover:translate-x-1" />}
+                {primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={17} className="transition-transform group-hover:translate-x-1" />}
               </a>
             )}
             {secondaryCta.label && (
               <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'}
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_8%,transparent)] px-8 py-4 text-[color:var(--token-on-dark-heading)] font-medium hover:border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_62%,transparent)] transition-all text-sm w-full sm:w-auto">
                 <span data-edit-path="label">{secondaryCta.label}</span>
-                {secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={14} />}
+                {secondaryCta.icon && <DynamicIcon editPath="secondaryCta.icon" name={secondaryCta.icon} size={14} />}
               </a>
             )}
           </motion.div>
@@ -169,7 +169,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
               <a data-edit-link="primaryCta" href={primaryCta.href || '#'}
                 className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 text-[color:var(--token-heading)] font-medium text-base border-b-2 border-[color:var(--token-card-border)] pb-1 hover:border-[var(--token-card-border)] hover:text-[color:var(--token-eyebrow)] transition-colors w-full sm:w-auto">
                 <span data-edit-path="label">{primaryCta.label}</span>
-                {primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
+                {primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
               </a>
             )}
             {secondaryCta.label && (
@@ -257,7 +257,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgI
             {primaryCta.label && (
               <a data-edit-link="primaryCta" href={primaryCta.href || '#'}
                 className="inline-flex items-center justify-between sm:justify-center sm:gap-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] w-full sm:w-auto">
-                <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} />}
+                <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={18} />}
               </a>
             )}
             {secondaryCta.label && (

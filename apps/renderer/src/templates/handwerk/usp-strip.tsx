@@ -52,7 +52,7 @@ export function UspStripSection({ data }: Props) {
              data-edit-collection="items" data-edit-index={i}>
               {item.icon && (
                 <div className="flex items-center justify-center text-4xl mb-4 transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1">
-                  <DynamicIcon name={item.icon} size={32} className="text-[var(--token-accent)]" />
+                  <DynamicIcon editPath="icon" name={item.icon} size={32} className="text-[var(--token-accent)]" />
                 </div>
               )}
               <h3 className="font-display mb-1.5 text-lg font-semibold text-[var(--token-heading)]" data-edit-path="title">{item.title}</h3>

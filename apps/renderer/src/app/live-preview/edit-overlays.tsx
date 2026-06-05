@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { icons as lucideIcons, type LucideIcon } from 'lucide-react';
 import { FIELD_DEFS, getFieldsForSection, type ColorFieldKey } from '@/app/admin/pages/[id]/section-color-editor';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -21,9 +22,9 @@ import { FIELD_DEFS, getFieldsForSection, type ColorFieldKey } from '@/app/admin
 
 type Target = {
   el: HTMLElement;
-  kind: 'section' | 'image' | 'link';
+  kind: 'section' | 'image' | 'link' | 'icon';
   sectionId: string;
-  path: string; // for image/link the data path within the section
+  path: string; // for image/link/icon the data path within the section
 };
 
 type SectionMeta = {
@@ -39,6 +40,7 @@ type ActiveModal =
   | { kind: 'color'; sectionId: string }
   | { kind: 'image'; sectionId: string; path: string; current: string }
   | { kind: 'link'; sectionId: string; path: string; current: LinkValue }
+  | { kind: 'icon'; sectionId: string; path: string; current: string }
   | null;
 
 const PINK = 'rgb(236, 72, 153)';
@@ -96,6 +98,10 @@ export function EditOverlays({
           const path = buildPath(el, sec, el.getAttribute('data-edit-link') || '');
           next.push({ el, kind: 'link', sectionId, path });
         });
+        sec.querySelectorAll<HTMLElement>('[data-edit-icon]').forEach((el) => {
+          const path = buildPath(el, sec, el.getAttribute('data-edit-icon') || '');
+          next.push({ el, kind: 'icon', sectionId, path });
+        });
       });
       setTargets(next);
     }
@@ -141,6 +147,14 @@ export function EditOverlays({
       )}
       {active?.kind === 'link' && (
         <LinkModal
+          sectionId={active.sectionId}
+          path={active.path}
+          current={active.current}
+          onClose={() => setActive(null)}
+        />
+      )}
+      {active?.kind === 'icon' && (
+        <IconModal
           sectionId={active.sectionId}
           path={active.path}
           current={active.current}
@@ -194,6 +208,10 @@ function openModal(
     const data = (section as unknown as { data?: unknown })?.data ?? {};
     const current = (getDeep(data, t.path) as LinkValue) || {};
     setActive({ kind: 'link', sectionId: t.sectionId, path: t.path, current });
+  } else if (t.kind === 'icon') {
+    const data = (section as unknown as { data?: unknown })?.data ?? {};
+    const current = (getDeep(data, t.path) as string) || '';
+    setActive({ kind: 'icon', sectionId: t.sectionId, path: t.path, current });
   }
 }
 
@@ -240,22 +258,32 @@ function FloatingIcon({ target, onActivate }: { target: Target; onActivate: () =
   const label =
     target.kind === 'section' ? 'Farben dieser Section ändern'
     : target.kind === 'image' ? 'Bild ändern'
+    : target.kind === 'icon' ? 'Icon ändern'
     : 'Link / Button bearbeiten';
+
+  // Touch devices: bigger hit-target (44px iOS minimum, easier to tap).
+  // We detect via pointer media query at render time; ssr defaults to small.
+  const isTouch = typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  const size = isTouch ? 40 : 28;
+  const offset = isTouch ? 48 : 36;
 
   return (
     <button
       type="button"
       onClick={(e) => { e.preventDefault(); e.stopPropagation(); onActivate(); }}
       onMouseDown={(e) => { e.stopPropagation(); }}
+      onTouchStart={(e) => { e.stopPropagation(); }}
       title={label}
       aria-label={label}
       style={{
         position: 'absolute',
         top: pos.top,
-        left: pos.left,
+        left: pos.left + (offset - 36),
         zIndex: 9998,
-        width: 28,
-        height: 28,
+        width: size,
+        height: size,
         borderRadius: '9999px',
         background: PINK,
         color: '#fff',
@@ -266,6 +294,8 @@ function FloatingIcon({ target, onActivate }: { target: Target; onActivate: () =
         border: '2px solid #fff',
         boxShadow: '0 4px 10px -2px rgba(0,0,0,0.25), 0 2px 4px -1px rgba(0,0,0,0.15)',
         padding: 0,
+        touchAction: 'manipulation',
+        WebkitTapHighlightColor: 'transparent',
       }}
       dangerouslySetInnerHTML={{ __html: icon }}
     />
@@ -279,6 +309,8 @@ const ICONS: Record<Target['kind'], string> = {
   image: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>',
   // Gear icon
   link: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>',
+  // Sparkles icon (icon picker)
+  icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>',
 };
 
 // ── modal shell ────────────────────────────────────────────────────────────
@@ -297,7 +329,8 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
         position: 'fixed', inset: 0, zIndex: 99999,
         background: 'rgba(15,23,42,0.55)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: 16,
+        padding: 'max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left))',
+        overscrollBehavior: 'contain',
       }}
     >
       <div
@@ -305,15 +338,16 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
         style={{
           background: '#fff', color: '#0f172a',
           borderRadius: 12, maxWidth: 480, width: '100%',
-          maxHeight: '85vh', overflow: 'auto',
+          maxHeight: '90vh', overflow: 'auto',
           boxShadow: '0 25px 50px -12px rgba(0,0,0,0.35)',
           fontFamily: 'system-ui, -apple-system, Segoe UI, sans-serif',
           fontSize: 14,
+          WebkitOverflowScrolling: 'touch',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid #e2e8f0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#fff', zIndex: 1 }}>
           <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>{title}</h3>
-          <button type="button" onClick={onClose} aria-label="Schließen" style={{ background: 'transparent', border: 0, fontSize: 18, cursor: 'pointer', color: '#64748b', padding: 4 }}>✕</button>
+          <button type="button" onClick={onClose} aria-label="Schließen" style={{ background: 'transparent', border: 0, fontSize: 22, cursor: 'pointer', color: '#64748b', padding: 8, lineHeight: 1, minWidth: 40, minHeight: 40 }}>✕</button>
         </div>
         <div style={{ padding: 18 }}>{children}</div>
       </div>
@@ -627,6 +661,115 @@ function LinkModal({ sectionId, path, current, onClose }: { sectionId: string; p
   );
 }
 
-const inputStyle: React.CSSProperties = { padding: '8px 10px', border: '1px solid #cbd5e1', borderRadius: 6, fontSize: 13 };
-const btnGhost: React.CSSProperties = { padding: '8px 14px', borderRadius: 6, background: 'transparent', border: '1px solid #cbd5e1', cursor: 'pointer', fontSize: 13 };
-const btnPrimary: React.CSSProperties = { padding: '8px 14px', borderRadius: 6, background: PINK, color: '#fff', border: 0, cursor: 'pointer', fontSize: 13, fontWeight: 500 };
+const inputStyle: React.CSSProperties = { padding: '10px 12px', border: '1px solid #cbd5e1', borderRadius: 6, fontSize: 16, minHeight: 40 };
+const btnGhost: React.CSSProperties = { padding: '10px 16px', borderRadius: 6, background: 'transparent', border: '1px solid #cbd5e1', cursor: 'pointer', fontSize: 14, minHeight: 40, touchAction: 'manipulation' };
+const btnPrimary: React.CSSProperties = { padding: '10px 16px', borderRadius: 6, background: PINK, color: '#fff', border: 0, cursor: 'pointer', fontSize: 14, fontWeight: 500, minHeight: 40, touchAction: 'manipulation' };
+
+// ── icon modal ─────────────────────────────────────────────────────────────
+
+// Curated list of the most useful Lucide icons for content pages. Keeps the
+// picker focused; the search box reaches the long tail via free-text entry.
+const ICON_LIBRARY: { group: string; names: string[] }[] = [
+  { group: 'Allgemein', names: ['Star', 'Heart', 'Check', 'X', 'Plus', 'Minus', 'Sparkles', 'Award', 'Trophy', 'Crown', 'Flame', 'Zap', 'Sun', 'Moon', 'Cloud', 'Quote'] },
+  { group: 'Pfeile', names: ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'ArrowUpRight', 'ChevronRight', 'ChevronLeft', 'ChevronDown', 'ChevronUp', 'ExternalLink', 'Move', 'CornerDownRight'] },
+  { group: 'Kontakt', names: ['Phone', 'Mail', 'MessageSquare', 'MessageCircle', 'MapPin', 'Map', 'Compass', 'Send', 'AtSign', 'Smartphone', 'Headphones'] },
+  { group: 'Personen', names: ['User', 'Users', 'UserCheck', 'UserPlus', 'Smile', 'HeartHandshake', 'HandHeart', 'Handshake'] },
+  { group: 'Zeit & Datum', names: ['Calendar', 'CalendarDays', 'Clock', 'Timer', 'History', 'AlarmClock'] },
+  { group: 'Sicherheit', names: ['Shield', 'ShieldCheck', 'Lock', 'Key', 'Eye', 'EyeOff', 'CircleCheck', 'CircleAlert'] },
+  { group: 'Business', names: ['Briefcase', 'Building', 'Building2', 'Home', 'Store', 'ShoppingBag', 'ShoppingCart', 'Package', 'Truck', 'CreditCard', 'Wallet', 'BadgeEuro', 'BadgeDollarSign', 'BarChart', 'TrendingUp', 'Target', 'Rocket'] },
+  { group: 'Werkzeug', names: ['Wrench', 'Hammer', 'Settings', 'Cog', 'PenTool', 'Pencil', 'Pen', 'Brush', 'Ruler', 'Lightbulb'] },
+  { group: 'Gastronomie', names: ['Coffee', 'GlassWater', 'Wine', 'Utensils', 'UtensilsCrossed', 'Pizza', 'Soup', 'IceCream', 'Cake', 'ChefHat'] },
+  { group: 'Reise & Hotel', names: ['Plane', 'Car', 'Bus', 'Train', 'Bike', 'Bed', 'BedDouble', 'Hotel', 'Tent', 'TreePalm', 'Mountain', 'Waves'] },
+  { group: 'Medizin', names: ['Stethoscope', 'Pill', 'HeartPulse', 'Activity', 'Cross', 'Syringe', 'Bandage'] },
+  { group: 'Tech & Web', names: ['Globe', 'Wifi', 'Bluetooth', 'Database', 'Cloud', 'Server', 'Code', 'Cpu', 'Smartphone', 'Monitor', 'Camera', 'Image', 'Video', 'Music', 'Mic', 'Play', 'Download', 'Upload', 'Link', 'Share2'] },
+  { group: 'Wellness', names: ['Leaf', 'Flower2', 'Sprout', 'Sparkle', 'Dumbbell'] },
+];
+
+function IconModal({ sectionId, path, current, onClose }: { sectionId: string; path: string; current: string; onClose: () => void }) {
+  const [value, setValue] = useState(current);
+  const [query, setQuery] = useState('');
+  const norm = query.trim().toLowerCase();
+
+  const filtered = norm
+    ? ICON_LIBRARY.map((g) => ({ ...g, names: g.names.filter((n) => n.toLowerCase().includes(norm)) })).filter((g) => g.names.length > 0)
+    : ICON_LIBRARY;
+
+  const save = useCallback((next: string) => {
+    window.parent?.postMessage(
+      { type: 'flamingo-icon-edit', sectionId, path, value: next },
+      window.location.origin,
+    );
+  }, [sectionId, path]);
+
+  return (
+    <Modal title="Icon auswählen" onClose={onClose}>
+      <div style={{ display: 'grid', gap: 12 }}>
+        <label style={{ display: 'grid', gap: 4 }}>
+          <span style={{ fontSize: 12, fontWeight: 500 }}>Icon-Name (Lucide)</span>
+          <input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="z.B. ArrowRight"
+            style={inputStyle}
+          />
+          <span style={{ fontSize: 11, color: '#94a3b8' }}>Alle Icons: lucide.dev/icons — Tippen direkt in dieses Feld unterstützt jeden Lucide-Namen.</span>
+        </label>
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Bibliothek durchsuchen…"
+          style={inputStyle}
+        />
+        <div style={{ maxHeight: '50vh', overflow: 'auto', display: 'grid', gap: 16 }}>
+          {filtered.length === 0 && (
+            <div style={{ color: '#94a3b8', fontSize: 13, textAlign: 'center', padding: 16 }}>
+              Keine Treffer. Du kannst den Lucide-Namen oben direkt eintippen.
+            </div>
+          )}
+          {filtered.map((g) => (
+            <div key={g.group}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>{g.group}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(64px, 1fr))', gap: 6 }}>
+                {g.names.map((n) => {
+                  const active = n === value;
+                  return (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setValue(n)}
+                      title={n}
+                      style={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                        gap: 4, padding: '8px 4px', minHeight: 60, borderRadius: 6,
+                        border: active ? '2px solid ' + PINK : '1px solid #e2e8f0',
+                        background: active ? 'rgba(236,72,153,0.06)' : '#fff',
+                        cursor: 'pointer', touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent',
+                      }}
+                    >
+                      <LucideGlyph name={n} size={22} />
+                      <span style={{ fontSize: 9, color: '#64748b', textAlign: 'center', wordBreak: 'break-word', lineHeight: 1.1 }}>{n}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'space-between', alignItems: 'center', position: 'sticky', bottom: 0, background: '#fff', padding: '8px 0', borderTop: '1px solid #e2e8f0', marginTop: 4 }}>
+          <button type="button" onClick={() => { setValue(''); save(''); onClose(); }} style={{ ...btnGhost, color: '#dc2626', borderColor: '#fecaca' }}>Icon entfernen</button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button type="button" onClick={onClose} style={btnGhost}>Abbrechen</button>
+            <button type="button" onClick={() => { save(value); onClose(); }} style={btnPrimary}>Speichern</button>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+function LucideGlyph({ name, size = 20 }: { name: string; size?: number }) {
+  const Cmp = (lucideIcons as Record<string, LucideIcon>)[name];
+  if (!Cmp) return <span style={{ fontSize: 9 }}>{name.slice(0, 3)}</span>;
+  return <Cmp size={size} />;
+}

@@ -57,7 +57,7 @@ export function CafeContactSection({ data }: Props) {
                   className="flex items-center gap-4 p-5 rounded-2xl bg-[var(--token-section-bg-alt)] border border-[color:var(--token-card-border)]"
                  data-edit-collection="contactItems" data-edit-index={i}>
                   <div className="w-10 h-10 rounded-xl bg-[var(--token-btn-bg)/10] flex items-center justify-center text-[color:var(--token-icon)]">
-                    <DynamicIcon name={item.icon} size={18} />
+                    <DynamicIcon editPath="icon" name={item.icon} size={18} />
                   </div>
                   <div>
                     <div className="text-xs text-[color:var(--token-body)] uppercase tracking-wider" data-edit-path="label">{item.label}</div>

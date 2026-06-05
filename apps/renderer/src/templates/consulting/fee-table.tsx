@@ -38,7 +38,7 @@ export function FeeTableSection({ data }: Props) {
             )}
             {fee.icon && (
               <div className="w-12 h-12 mx-auto mb-4 rounded-lg bg-[var(--token-btn-bg)/10] flex items-center justify-center text-[color:var(--token-icon)]">
-                <DynamicIcon name={fee.icon} size={24} />
+                <DynamicIcon editPath="icon" name={fee.icon} size={24} />
               </div>
             )}
             <h3 className="text-lg font-semibold text-[color:var(--token-heading)] mb-2" data-edit-path="title">{fee.title}</h3>

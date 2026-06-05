@@ -58,7 +58,7 @@ function StoryClassic({ headline, subline, badgeText, storyText, imagePrimary, i
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {values.map((v, i) => (
             <motion.div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl bg-[var(--token-card-bg)] p-5 shadow-sm" data-edit-collection="values" data-edit-index={i}>
-              <div className="shrink-0 rounded-full bg-[var(--token-badge-bg)/10] p-2.5 text-[color:var(--token-eyebrow)]"><DynamicIcon name={v.icon || 'heart'} size={20} /></div>
+              <div className="shrink-0 rounded-full bg-[var(--token-badge-bg)/10] p-2.5 text-[color:var(--token-eyebrow)]"><DynamicIcon editPath="icon" name={v.icon || 'heart'} size={20} /></div>
               <div>
                 <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>
                 {v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}
@@ -113,7 +113,7 @@ function StoryModern({ headline, subline, badgeText, storyText, imagePrimary, im
         <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {values.map((v, i) => (
             <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-l-2 border-[var(--token-card-border)] pl-5" data-edit-collection="values" data-edit-index={i}>
-              <DynamicIcon name={v.icon || 'heart'} size={18} className="text-[color:var(--token-muted)]" />
+              <DynamicIcon editPath="icon" name={v.icon || 'heart'} size={18} className="text-[color:var(--token-muted)]" />
               <h3 className="mt-2 font-medium text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>
               {v.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
@@ -163,7 +163,7 @@ function StoryBold({ headline, subline, badgeText, storyText, imagePrimary, imag
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {values.map((v, i) => (
             <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="values" data-edit-index={i}>
-              <DynamicIcon name={v.icon || 'heart'} size={20} className="text-[color:var(--token-eyebrow)]" />
+              <DynamicIcon editPath="icon" name={v.icon || 'heart'} size={20} className="text-[color:var(--token-eyebrow)]" />
               <h3 className="mt-2 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>
               {v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>

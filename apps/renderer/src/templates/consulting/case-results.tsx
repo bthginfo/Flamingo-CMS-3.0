@@ -50,7 +50,7 @@ export function CaseResultsSection({ data }: Props) {
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.15 }} className="text-center" data-edit-collection="stats" data-edit-index={i}>
               {stat.icon && (
                 <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-amber-600/20 flex items-center justify-center text-amber-400">
-                  <DynamicIcon name={stat.icon} size={20} />
+                  <DynamicIcon editPath="icon" name={stat.icon} size={20} />
                 </div>
               )}
               <div className="text-3xl md:text-4xl font-bold text-[color:var(--token-on-dark-heading)]">

@@ -49,7 +49,7 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
             {item.mediaType === 'image' && item.image ? (
               <div className="relative mb-4 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-btn-bg)/10]/10 text-[color:var(--token-icon)]"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-btn-bg)/10]/10 text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={item.icon || 'star'} size={20} /></div>
             )}
             <h3 className="font-bold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
@@ -76,7 +76,7 @@ function AmenitiesModern({ headline, subline, badgeText, items, ctaPrimary }: Pr
             {item.mediaType === 'image' && item.image ? (
               <div className="relative mb-6 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
-              <div className="mb-6 text-[color:var(--token-muted)]"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
+              <div className="mb-6 text-[color:var(--token-muted)]"><DynamicIcon editPath="icon" name={item.icon || 'star'} size={20} /></div>
             )}
             <h3 className="font-light text-lg text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-3 text-sm font-light leading-7 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
@@ -103,7 +103,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
             {item.mediaType === 'image' && item.image ? (
               <div className="relative mb-4 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
-              <div className="mb-4 inline-block border-2 border-[var(--token-icon)] p-2 text-[color:var(--token-icon)]"><DynamicIcon name={item.icon || 'star'} size={22} /></div>
+              <div className="mb-4 inline-block border-2 border-[var(--token-icon)] p-2 text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={item.icon || 'star'} size={22} /></div>
             )}
             <h3 className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}

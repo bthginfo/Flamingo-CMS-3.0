@@ -88,7 +88,7 @@ export function PortfolioSection({ data }: Props) {
                 )}
                 {project.href && (
                   <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--token-icon)] mt-4 group-hover:underline">
-                    Projekt ansehen {project.icon && <DynamicIcon name={project.icon} size={14} />}
+                    Projekt ansehen {project.icon && <DynamicIcon editPath="icon" name={project.icon} size={14} />}
                   </span>
                 )}
               </div>

@@ -47,7 +47,7 @@ export function ConsultingContactSection({ data }: Props) {
           {contactItems.map((item, i) => (
             <div key={i} className="flex items-center gap-4 p-4 rounded-lg border border-[color:var(--token-card-border)] hover:border-[var(--token-card-border)/30] transition-colors" data-edit-collection="contactItems" data-edit-index={i}>
               <div className="w-10 h-10 rounded-lg bg-[var(--token-btn-bg)/10] flex items-center justify-center text-[color:var(--token-icon)]">
-                <DynamicIcon name={item.icon} size={20} />
+                <DynamicIcon editPath="icon" name={item.icon} size={20} />
               </div>
               <div>
                 <div className="text-xs text-[color:var(--token-body)] uppercase tracking-wider" data-edit-path="label">{item.label}</div>

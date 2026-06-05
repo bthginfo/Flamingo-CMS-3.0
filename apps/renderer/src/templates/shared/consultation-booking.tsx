@@ -50,7 +50,7 @@ export function ConsultationBookingSection({ data }: Props) {
              data-edit-collection="services" data-edit-index={i}>
               {service.icon && (
                 <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--token-icon)] text-white' : 'bg-gray-100 text-[var(--token-icon)]'} transition-colors`}>
-                  <DynamicIcon name={service.icon} size={20} />
+                  <DynamicIcon editPath="icon" name={service.icon} size={20} />
                 </div>
               )}
               <div>

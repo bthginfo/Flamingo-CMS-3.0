@@ -41,7 +41,7 @@ function BookingClassic({ headline, subline, badgeText, submitCta, secondaryCta,
         <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
           {trustItems.map((item, i) => (
             <span key={i} className="inline-flex items-center gap-2 text-sm text-[color:var(--token-muted)]" data-edit-collection="trustItems" data-edit-index={i}>
-              <DynamicIcon name={item.icon || 'check'} size={16} className="text-[color:var(--token-icon)]" />
+              <DynamicIcon editPath="icon" name={item.icon || 'check'} size={16} className="text-[color:var(--token-icon)]" />
               <span data-edit-path="text">{plain(item.text)}</span>
             </span>
           ))}
@@ -67,7 +67,7 @@ function BookingModern({ headline, subline, badgeText, submitCta, secondaryCta, 
         <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
           {trustItems.map((item, i) => (
             <span key={i} className="inline-flex items-center gap-2 text-sm font-light text-[color:var(--token-muted)]" data-edit-collection="trustItems" data-edit-index={i}>
-              <DynamicIcon name={item.icon || 'check'} size={16} className="text-[color:var(--token-icon)]" />
+              <DynamicIcon editPath="icon" name={item.icon || 'check'} size={16} className="text-[color:var(--token-icon)]" />
               <span data-edit-path="text">{plain(item.text)}</span>
             </span>
           ))}
@@ -93,7 +93,7 @@ function BookingBold({ headline, subline, badgeText, submitCta, secondaryCta, bo
         <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
           {trustItems.map((item, i) => (
             <span key={i} className="inline-flex items-center gap-2 text-sm font-bold text-[color:var(--token-muted)]" data-edit-collection="trustItems" data-edit-index={i}>
-              <DynamicIcon name={item.icon || 'check'} size={16} className="text-[color:var(--token-eyebrow)]" />
+              <DynamicIcon editPath="icon" name={item.icon || 'check'} size={16} className="text-[color:var(--token-eyebrow)]" />
               <span data-edit-path="text">{plain(item.text)}</span>
             </span>
           ))}
