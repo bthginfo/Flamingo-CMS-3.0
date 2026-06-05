@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef, type RefObject } from 'react';
-import { X, Monitor, Smartphone, RefreshCw } from 'lucide-react';
+import { X, Monitor, Smartphone, RefreshCw, Pencil } from 'lucide-react';
+import { usePreview } from './preview-context';
 
 type Props = {
   url: string;
@@ -16,6 +17,7 @@ export function PreviewPanel({ url, onClose, iframeRef: externalRef }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [scale, setScale] = useState(0.5);
+  const { editMode, setEditMode } = usePreview();
 
   // Close on Escape
   useEffect(() => {
@@ -59,6 +61,13 @@ export function PreviewPanel({ url, onClose, iframeRef: externalRef }: Props) {
             <X size={18} /> Zurück zum Editor
           </button>
           <div className="flex-1" />
+          <button
+            onClick={() => setEditMode(!editMode)}
+            className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-colors ${editMode ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+            title="Bearbeitungsmodus"
+          >
+            <Pencil size={12} /> {editMode ? 'AN' : 'Bearbeiten'}
+          </button>
           <button onClick={handleRefresh} className="p-2 hover:bg-gray-200 rounded" title="Neu laden">
             <RefreshCw size={16} />
           </button>
@@ -73,6 +82,14 @@ export function PreviewPanel({ url, onClose, iframeRef: externalRef }: Props) {
         {/* Toolbar */}
         <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-800 border-b border-gray-700">
           <span className="text-sm font-medium text-gray-200">Vorschau</span>
+          <button
+            onClick={() => setEditMode(!editMode)}
+            className={`flex items-center gap-1.5 px-2 py-1 rounded text-[11px] font-medium transition-colors ${editMode ? 'bg-pink-500 text-white hover:bg-pink-600' : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'}`}
+            title={editMode ? 'Bearbeitungsmodus AN — Klicke auf eine Sektion oder einen Text' : 'Bearbeitungsmodus AUS'}
+          >
+            <Pencil size={11} />
+            {editMode ? 'Bearbeiten AN' : 'Bearbeiten'}
+          </button>
           <div className="flex-1" />
           <div className="flex items-center gap-1 bg-gray-700 rounded-lg p-0.5">
             <button

@@ -48,6 +48,9 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   // Live preview sync
   const sectionsRef = useRef(sections);
   sectionsRef.current = sections;
+  // Forward ref to handleSectionChange so the postMessage listener (declared
+  // before the handler) can invoke the latest closure without TDZ issues.
+  const handleSectionChangeRef = useRef<((sectionId: string, data: Record<string, unknown>) => void) | null>(null);
 
   const sendPreviewData = useCallback(() => {
     if (!preview.isOpen) return;
@@ -72,6 +75,20 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
         card.classList.add('ring-2', 'ring-pink-400', 'ring-offset-2');
         setTimeout(() => card.classList.remove('ring-2', 'ring-pink-400', 'ring-offset-2'), 1600);
+      }
+      // In-place text edits from live-preview: a text element with
+      // data-edit-path was blurred. Patch the corresponding field on the
+      // section, mark dirty, and push back to preview for instant feedback.
+      if (e.data?.type === 'flamingo-field-edit') {
+        const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: string };
+        if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof value !== 'string') return;
+        const current = sectionsRef.current.find(s => s.id === sectionId);
+        if (!current) return;
+        // Merge with any pending changes already in flight for this section.
+        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
+        if (base[path] === value) return;
+        const next = { ...base, [path]: value };
+        handleSectionChangeRef.current?.(sectionId, next);
       }
     }
     window.addEventListener('message', onMsg);
@@ -127,6 +144,10 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale });
     }
   }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, i18n, activeLocale]);
+
+  // Keep the ref in sync so the postMessage listener (declared earlier) can
+  // call the latest handler.
+  handleSectionChangeRef.current = handleSectionChange;
 
   async function handleSaveAll() {
     setSaving(true);

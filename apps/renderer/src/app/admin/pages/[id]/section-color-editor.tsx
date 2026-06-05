@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Palette, ChevronDown } from 'lucide-react';
 import { getAllSectionContracts, type SectionColorSlot } from '@/lib/section-contracts';
+import { getCuratedContractFields } from '@/lib/section-color-contracts';
 
 type ColorOverrides = Record<string, string>;
 
@@ -364,7 +365,11 @@ const CONTRACT_FIELDS_BY_TYPE = new Map(
 );
 
 function getFieldsForSection(sectionType: string): ColorFieldKey[] {
-  const fields = SECTION_FIELDS[sectionType] ?? CONTRACT_FIELDS_BY_TYPE.get(sectionType) ?? DEFAULT_SECTION_FIELDS;
+  // Priority: curated contracts (hand-maintained truth) → legacy auto-gen
+  // SECTION_FIELDS (regex codegen, often over/under-detects) → derived from
+  // the global section-contracts heuristic → minimal default.
+  const curated = getCuratedContractFields(sectionType);
+  const fields = curated ?? SECTION_FIELDS[sectionType] ?? CONTRACT_FIELDS_BY_TYPE.get(sectionType) ?? DEFAULT_SECTION_FIELDS;
   return fields.filter((field) => field !== 'sectionBgAlt');
 }
 

@@ -1,11 +1,13 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, useRef, useMemo } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useMemo, useEffect } from 'react';
 
 type PreviewContextValue = {
   isOpen: boolean;
   url: string;
   refreshKey: number;
+  editMode: boolean;
+  setEditMode: (v: boolean) => void;
   open: (url?: string) => void;
   close: () => void;
   refresh: () => void;
@@ -18,6 +20,8 @@ const PreviewContext = createContext<PreviewContextValue>({
   isOpen: false,
   url: '/live-preview',
   refreshKey: 0,
+  editMode: false,
+  setEditMode: () => {},
   open: () => {},
   close: () => {},
   refresh: () => {},
@@ -35,6 +39,7 @@ export function PreviewProvider({ children, tenantId }: { children: React.ReactN
   const [isOpen, setIsOpen] = useState(false);
   const [url, setUrlState] = useState(defaultUrl);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [editMode, setEditModeState] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const open = useCallback((previewUrl?: string) => {
@@ -56,7 +61,25 @@ export function PreviewProvider({ children, tenantId }: { children: React.ReactN
     );
   }, []);
 
-  const value = useMemo(() => ({ isOpen, url, refreshKey, open, close, refresh, setUrl, sendLiveData, iframeRef }), [isOpen, url, refreshKey, open, close, refresh, setUrl, sendLiveData]);
+  // Broadcast editMode changes to the iframe so the live-preview client can
+  // toggle hover-outlines / contentEditable behaviour. The setter is exposed
+  // via context so the parent toolbar button (in PreviewPanel) is the sole
+  // owner of the edit-mode state.
+  const setEditMode = useCallback((v: boolean) => {
+    setEditModeState(v);
+    sendLiveData({ editMode: v });
+  }, [sendLiveData]);
+
+  // Re-broadcast editMode whenever the iframe (re-)opens or refreshes so the
+  // freshly mounted client always reflects the parent's intent.
+  useEffect(() => {
+    if (isOpen) sendLiveData({ editMode });
+  }, [isOpen, editMode, sendLiveData, refreshKey]);
+
+  const value = useMemo(
+    () => ({ isOpen, url, refreshKey, editMode, setEditMode, open, close, refresh, setUrl, sendLiveData, iframeRef }),
+    [isOpen, url, refreshKey, editMode, setEditMode, open, close, refresh, setUrl, sendLiveData],
+  );
 
   return (
     <PreviewContext.Provider value={value}>

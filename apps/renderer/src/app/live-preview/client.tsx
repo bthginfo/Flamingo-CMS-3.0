@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { SectionRenderer } from '@/components/section-renderer';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
@@ -34,6 +34,8 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
   const [collections, setCollections] = useState<SnapshotCollection[]>([]);
   const [fontsUrl, setFontsUrl] = useState(initialData.fontsUrl || null);
   const [locale, setLocale] = useState<string | undefined>(undefined);
+  // editMode is owned by the parent admin shell (PreviewPanel toolbar) and
+  // pushed in via postMessage. The old in-iframe toggle button is gone.
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
@@ -57,6 +59,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       if (p.collections) setCollections(p.collections);
       if (p.fontsUrl !== undefined) setFontsUrl(p.fontsUrl);
       if (p.locale !== undefined) setLocale(p.locale);
+      if (typeof p.editMode === 'boolean') setEditMode(p.editMode);
     }
     window.addEventListener('message', handleMessage);
     // Signal readiness to the parent. Targeting the parent's origin would be
@@ -65,6 +68,76 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
     window.parent?.postMessage({ type: 'flamingo-live-preview-ready' }, window.location.origin);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
+
+  // ── In-place text editing ────────────────────────────────────────────────
+  // Templates opt into editable text by adding `data-edit-path="headline"` to
+  // their text elements. When edit mode is ON we attach contentEditable and
+  // a blur listener that pushes the new value to the parent editor.
+  const mainRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!editMode) return;
+    const root = mainRef.current;
+    if (!root) return;
+
+    const editables = Array.from(root.querySelectorAll<HTMLElement>('[data-edit-path]'));
+    const cleanups: Array<() => void> = [];
+
+    editables.forEach((el) => {
+      const path = el.getAttribute('data-edit-path');
+      if (!path) return;
+      const sectionEl = el.closest<HTMLElement>('[data-section-id]');
+      const sectionId = sectionEl?.getAttribute('data-section-id');
+      if (!sectionId) return;
+
+      const original = el.innerText;
+      el.setAttribute('contenteditable', 'plaintext-only');
+      el.setAttribute('spellcheck', 'false');
+      el.style.outline = '1px dashed rgba(236,72,153,0.45)';
+      el.style.outlineOffset = '2px';
+      el.style.cursor = 'text';
+
+      const onFocus = (e: Event) => { e.stopPropagation(); };
+      const onClick = (e: Event) => { e.stopPropagation(); };
+      const onBlur = () => {
+        const value = el.innerText.trim();
+        if (value === original.trim()) return;
+        window.parent?.postMessage(
+          { type: 'flamingo-field-edit', sectionId, path, value },
+          window.location.origin,
+        );
+      };
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          el.blur();
+        } else if (e.key === 'Escape') {
+          el.innerText = original;
+          el.blur();
+        }
+      };
+
+      el.addEventListener('focus', onFocus);
+      el.addEventListener('click', onClick);
+      el.addEventListener('blur', onBlur);
+      el.addEventListener('keydown', onKey);
+
+      cleanups.push(() => {
+        el.removeAttribute('contenteditable');
+        el.removeAttribute('spellcheck');
+        el.style.outline = '';
+        el.style.outlineOffset = '';
+        el.style.cursor = '';
+        el.removeEventListener('focus', onFocus);
+        el.removeEventListener('click', onClick);
+        el.removeEventListener('blur', onBlur);
+        el.removeEventListener('keydown', onKey);
+      });
+    });
+
+    return () => { cleanups.forEach(fn => fn()); };
+    // Re-run when sections change so newly rendered editable elements get
+    // hooked up; depending on `sections` covers field edits + reorders.
+  }, [editMode, sections]);
 
   const visibleSections = sections.filter(s => s.visible !== false);
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
@@ -81,22 +154,18 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
     <div data-style={styleVariant} style={cssVars as React.CSSProperties}>
       {fontsUrl && <link rel="stylesheet" href={fontsUrl} />}
       {importantOverrides.length > 0 && <style dangerouslySetInnerHTML={{ __html: importantOverrides.join('\n') }} />}
-      <div className="fixed top-0 left-0 right-0 z-[9999] bg-green-600 text-white text-xs py-1 px-3 font-medium flex items-center justify-center gap-3">
-        <span>Live-Vorschau</span>
-        <button
-          type="button"
-          onClick={() => setEditMode(v => !v)}
-          className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${editMode ? 'bg-white text-green-700' : 'bg-green-700 text-white hover:bg-green-800'}`}
-          title="Klicke im Bearbeitungsmodus auf eine Sektion, um sie im Editor zu öffnen"
-        >
-          {editMode ? 'Bearbeitungsmodus AN' : 'Bearbeitungsmodus AUS'}
-        </button>
+      {/* Small unobtrusive badge — the actual edit-mode toggle now lives in
+          the parent admin shell (PreviewPanel toolbar). */}
+      <div
+        className={`fixed top-0 left-0 right-0 z-[9999] text-white text-[10px] py-0.5 px-3 font-medium text-center pointer-events-none transition-colors ${editMode ? 'bg-pink-500' : 'bg-green-600'}`}
+      >
+        {editMode ? 'Bearbeitungsmodus' : 'Live-Vorschau'}
       </div>
-      <div className="pt-6">
+      <div className="pt-4">
         {navItems.length > 0 && (
           <SiteHeader navItems={navItems} brand={brand as never} contact={contact as never} darkBg={firstSectionIsHero} cta={navCta} />
         )}
-        <main>
+        <main ref={mainRef}>
           {visibleSections.length === 0 && (
             <div className="flex items-center justify-center h-[60vh] text-gray-400 text-sm">
               Bearbeite Sektionen im Editor um die Live-Vorschau zu sehen…
@@ -108,6 +177,10 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
               data-section-id={section.id}
               onClick={(e) => {
                 if (!editMode) return;
+                // If the click was inside an editable text element, let
+                // contentEditable take focus instead of jumping the editor.
+                const target = e.target as HTMLElement;
+                if (target.closest('[data-edit-path]')) return;
                 e.preventDefault();
                 e.stopPropagation();
                 window.parent?.postMessage(
