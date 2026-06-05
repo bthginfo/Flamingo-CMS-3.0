@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Palette, ChevronDown } from 'lucide-react';
-import { getAllSectionContracts, type SectionColorSlot } from '@/lib/section-contracts';
-import { getCuratedContractFields } from '@/lib/section-color-contracts';
-import { SECTION_COLOR_CONTRACTS_GENERATED } from '@/lib/section-color-contracts-generated';
+import {
+  SECTION_COLOR_CONTRACTS_GENERATED,
+  SECTION_COLOR_CONTRACTS_GENERIC,
+} from '@/lib/section-color-contracts-generated';
 
 type ColorOverrides = Record<string, string>;
 
@@ -193,280 +194,25 @@ const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; descrip
   buttonRadius:     { cssVar: '--token-button-radius',    label: 'Button-Radius',          description: 'Abrundung der Buttons', type: 'size' },
 };
 
-/* ─── Mapping: section type → relevant fields ─── */
-const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
-  additionalLocations: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  accommodationGrid: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  amenitiesGrid: ['cardBg', 'headingColor', 'bodyColor', 'iconColor', 'borderColor', 'accentColor'],
-  appointmentCta: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  availabilityCta: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'statValue', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  beforeAfter: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  beforeAfterSlider: ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor'],
-  beforeAfterStoryPro: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'btnBg', 'btnText', 'borderColor'],
-  bentoGrid: ['cardBg', 'headingColor', 'bodyColor', 'iconColor', 'borderColor', 'accentColor'],
-  bouquetShowcase: ['cardBg', 'bodyColor', 'iconColor', 'accentColor', 'cardRadius'],
-  brandShowroom: ['cardBg', 'subheadingColor', 'iconColor', 'accentColor', 'onDarkHeading', 'borderColor', 'cardRadius', 'buttonRadius'],
-  categoryMosaic: ['bodyColor', 'iconColor', 'accentColor', 'onDarkHeading', 'cardRadius'],
-  cinematicHero: ['sectionBg', 'accentColor', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder', 'borderColor'],
-  collectionHero: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'badgeBg', 'badgeText', 'borderColor'],
-  collectionList: ['cardBg', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor'],
-  comparisonCardsPro: ['cardBg', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'check', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  comparisonTable: ['headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor'],
-  consultationBooking: ['cardBg', 'bodyColor', 'iconColor', 'accentColor', 'cardRadius', 'buttonRadius'],
-  contact: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  courseSchedule: ['accentColor'],
-  ctaBand: ['sectionBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder', 'borderColor'],
-  ctaLinks: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'borderColor'],
-  deliveryTimeline: ['bodyColor', 'iconColor', 'accentColor'],
-  destinationHighlights: ['cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
-  diagnostics: ['cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
-  doctorTeam: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
-  downloadForms: ['cardBg', 'headingColor', 'mutedColor'],
-  emergencyInfo: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
-  editorialFeatureRail: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'onDarkHeading', 'accentColor', 'btnBg', 'btnText', 'borderColor'],
-  embed: ['iconColor', 'accentColor'],
-  eventTypes: ['bodyColor', 'iconColor', 'accentColor', 'onDarkHeading', 'cardRadius'],
-  equipmentHighlights: ['cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
-  experienceGrid: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
-  faq: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  featureShowcase: ['accentColor'],
-  fitnessHero: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'eyebrow', 'statValue', 'btnBg', 'btnText', 'borderColor'],
-  floorPlanOverview: ['sectionBg', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'borderColor'],
-  floristHero: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'eyebrow', 'statValue', 'btnBg', 'btnText', 'borderColor'],
-  floristMaterials: ['sectionBgAlt', 'cardBg', 'bodyColor', 'iconColor', 'accentColor', 'onDarkHeading', 'borderColor', 'cardRadius'],
-  freeText: ['iconColor', 'accentColor'],
-  galleryGrid: ['sectionBgAlt', 'onDarkHeading'],
-  galleryMoodboard: ['sectionBgAlt', 'onDarkHeading'],
-  glowHero: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'iconColor', 'accentColor', 'eyebrow', 'statValue', 'btnBg', 'btnText', 'borderColor'],
-  headerBanner: ['sectionBgAlt'],
-  hero: ['sectionBg', 'sectionBgAlt', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'onDarkHeading', 'iconColor', 'accentColor', 'eyebrow', 'statValue', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder', 'borderColor'],
-  heroEcommerce: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'badgeBg', 'borderColor'],
-  heroHandwerk: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'badgeBg', 'borderColor'],
-  horizontalScrollShowcase: ['sectionBg', 'bodyColor', 'iconColor', 'accentColor'],
-  hostTeam: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'badgeBg', 'badgeText', 'borderColor'],
-  immersiveCtaBanner: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'statValue', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  inspirationGrid: ['sectionBgAlt', 'bodyColor', 'iconColor', 'accentColor', 'onDarkHeading', 'cardRadius'],
-  legalContent: ['iconColor', 'accentColor'],
-  locationAccess: ['sectionBgAlt', 'cardBg', 'headingColor', 'mutedColor', 'bodyColor', 'borderColor'],
-  locationHero: ['sectionBg', 'accentColor', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder', 'borderColor'],
-  locationPackages: ['cardBg', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'check', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  logoCloud: [],
-  logoMarquee: ['bodyColor'],
-  map: ['sectionBgAlt', 'cardBg', 'headingColor', 'mutedColor', 'bodyColor', 'borderColor'],
-  placesMap: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
-  materialGallery: ['sectionBgAlt', 'cardBg', 'bodyColor', 'iconColor', 'accentColor', 'onDarkHeading', 'borderColor', 'cardRadius'],
-  membershipPlans: ['cardBg', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'check', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  newsGrid: ['headingColor', 'mutedColor', 'bodyColor', 'iconColor', 'accentColor'],
-  newsPreview: ['headingColor', 'mutedColor', 'bodyColor', 'iconColor', 'accentColor'],
-  noticeBanner: ['iconColor', 'accentColor'],
-  occasionMosaic: ['bodyColor', 'iconColor', 'accentColor', 'onDarkHeading', 'cardRadius'],
-  offerCampaignStrip: ['sectionBg', 'sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  openingHours: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  popup: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'btnBg', 'btnText', 'borderColor', 'cardRadius', 'buttonRadius'],
-  bookingWidget: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor', 'cardRadius', 'buttonRadius'],
-  bookingSlotPicker: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor', 'cardRadius', 'buttonRadius'],
-  bookingDateRange: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor', 'cardRadius', 'buttonRadius'],
-  availabilityCalendar: ['btnBg', 'btnText', 'cardRadius', 'buttonRadius'],
-  resourceBookingShowcase: ['btnBg', 'btnText', 'cardRadius', 'buttonRadius'],
-  bookingCtaPro: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius', 'buttonRadius'],
-  portfolio: ['cardBg', 'mutedColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  premiumComparison: ['cardBg', 'headingColor', 'mutedColor', 'bodyColor', 'iconColor', 'accentColor', 'borderColor', 'cardRadius'],
-  principlesGrid: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'eyebrow', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder', 'borderColor'],
-  processSteps: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'badgeBg', 'badgeText', 'borderColor'],
-  productShowcase: ['cardBg', 'bodyColor', 'iconColor', 'accentColor', 'cardRadius'],
-  programGrid: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  proofWall: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'statValue', 'quoteMark', 'ratingStar', 'borderColor'],
-  richText: ['iconColor', 'accentColor'],
-  scrollStory: ['cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'borderColor', 'cardRadius'],
-  seasonalCampaign: ['sectionBg', 'sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  serviceDetail: ['sectionBgAlt', 'cardBg', 'mutedColor', 'bodyColor', 'iconColor', 'accentColor', 'eyebrow', 'borderColor'],
-  serviceOverview: ['cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
-  servicesGrid: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  shopCart: ['sectionBgAlt', 'cardBg', 'bodyColor', 'mutedColor', 'onDarkHeading', 'borderColor'],
-  shopCategoryOverview: ['sectionBgAlt', 'cardBg', 'bodyColor', 'mutedColor', 'borderColor'],
-  shopCheckout: ['sectionBgAlt', 'cardBg', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'borderColor'],
-  shopFeaturedProducts: [],
-  shopProductDetail: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'onDarkHeading', 'borderColor'],
-  shopProductGrid: ['sectionBgAlt', 'cardBg', 'bodyColor', 'mutedColor', 'iconColor', 'onDarkHeading', 'borderColor'],
-  shopThankYou: [],
-  signatureGrid: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'onDarkHeading', 'iconColor', 'accentColor', 'statValue', 'badgeText', 'borderColor'],
-  socialProofBar: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'badgeText', 'borderColor'],
-  spaceShowcase: ['cardBg', 'bodyColor', 'iconColor', 'accentColor', 'cardRadius'],
-  spotlightCards: ['cardBg', 'headingColor', 'bodyColor', 'iconColor', 'borderColor', 'cardRadius', 'accentColor'],
-  stats: ['cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'statValue', 'borderColor'],
-  statsCounter: ['sectionBgAlt', 'headingColor', 'bodyColor', 'accentColor', 'badgeBg', 'badgeText'],
-  story: ['sectionBg', 'sectionBgAlt', 'cardBg', 'headingColor', 'mutedColor', 'bodyColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'btnText', 'badgeBg', 'borderColor'],
-  studioAmenities: ['cardBg', 'headingColor', 'bodyColor', 'iconColor', 'borderColor', 'accentColor'],
-  team: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'badgeBg', 'badgeText', 'borderColor'],
-  templateAdvantage: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'btnBg', 'btnText', 'badgeText', 'borderColor', 'accentColor'],
-  testimonialMarquee: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'borderColor'],
-  testimonials: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'badgeText', 'borderColor'],
-  textImage: ['sectionBg', 'bodyColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'borderColor'],
-  timeline: ['accentColor'],
-  treatmentDetail: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
-  tourismContact: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
-  tourRoutes: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  trainerProfiles: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'badgeBg', 'badgeText', 'borderColor'],
-  transformationStories: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'btnBg', 'btnText', 'borderColor'],
-  trialSessionCta: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'statValue', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  uspStrip: ['cardBg', 'headingColor', 'bodyColor', 'accentColor', 'borderColor'],
-  visitorInfo: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'badgeBg', 'badgeText', 'borderColor'],
-  verticalTimeline: ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'dividerColor'],
-  videoEmbed: [],
-  weddingFloristry: ['cardBg', 'subheadingColor', 'iconColor', 'accentColor', 'onDarkHeading', 'borderColor', 'cardRadius', 'buttonRadius'],
-  workshopBooking: ['cardBg', 'bodyColor', 'iconColor', 'accentColor', 'cardRadius', 'buttonRadius'],
-  menu: ['sectionBgAlt', 'cardBg', 'headingColor', 'mutedColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'borderColor'],
-  reservation: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  signatureDishes: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'badgeBg', 'borderColor'],
-  events: ['sectionBgAlt', 'cardBg', 'headingColor', 'mutedColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  ambience: ['cardBg', 'headingColor', 'mutedColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  gallery: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  heroRestaurant: ['cardBg', 'headingColor', 'mutedColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeBg', 'borderColor'],
-  heroHotel: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'borderColor'],
-  heroTourism: ['sectionBg', 'sectionBgAlt', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
-  heroSalon: ['sectionBgAlt', 'cardBg', 'headingColor', 'mutedColor', 'onDarkHeading', 'accentColor', 'eyebrow', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeBg', 'borderColor'],
-  heroMedical: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'accentColor', 'onDarkHeading', 'onDarkBody', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  heroWedding: ['sectionBgAlt', 'cardBg', 'headingColor', 'subheadingColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'onDarkBody', 'borderColor'],
-  heroConsulting: ['sectionBgAlt', 'onDarkHeading', 'iconColor', 'accentColor', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'borderColor'],
-  heroRealestate: ['cardBg', 'onDarkHeading', 'borderColor'],
-  heroCafe: ['cardBg', 'onDarkHeading', 'borderColor'],
-  heroTattoo: ['sectionBgAlt', 'cardBg', 'headingColor', 'onDarkHeading', 'btnBg', 'btnText', 'borderColor'],
-  portfolioGallery: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  servicePackages: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  photographerAbout: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  shootingProcess: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  amenities: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'btnBg'],
-  eventCalendar: ['headingColor', 'bodyColor', 'iconColor', 'accentColor', 'borderColor'],
-  faqGallery: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'eyebrow', 'btnBg', 'badgeBg', 'borderColor'],
-  bookingStrip: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg'],
-  roomShowcase: ['sectionBgAlt', 'cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'btnBg'],
-  offers: ['sectionBgAlt', 'cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'btnBg'],
-  wellness: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'btnBg', 'btnText', 'borderColor'],
-  location: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'btnBg'],
-  hotelDining: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'btnBg'],
-  eventSpaces: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'btnBg'],
-  seasonTeaser: ['cardBg', 'headingColor', 'mutedColor'],
-  eventsCalendar: ['headingColor', 'bodyColor', 'iconColor', 'accentColor', 'borderColor'],
-  sightseeingList: ['cardBg', 'headingColor', 'mutedColor'],
-  downloadGuides: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'badgeText'],
-  serviceMenu: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  priceList: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'badgeBg', 'borderColor'],
-  packages: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'badgeBg', 'borderColor'],
-  teamShowcase: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  expertiseGrid: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg'],
-  bookingCta: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'badgeBg', 'borderColor'],
-  locationContact: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'onDarkHeading', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
-  practiceTeam: ['cardBg', 'headingColor', 'mutedColor'],
-  certifications: ['cardBg', 'headingColor', 'mutedColor'],
-  patientInfo: ['cardBg', 'headingColor', 'mutedColor'],
-  insuranceInfo: ['cardBg', 'headingColor', 'mutedColor', 'onDarkHeading'],
-  practiceGallery: ['cardBg', 'headingColor', 'mutedColor'],
-  valuesGrid: ['cardBg', 'headingColor', 'mutedColor'],
-  weddingParty: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'btnBg', 'badgeBg', 'borderColor'],
-  weddingMenu: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'badgeBg', 'borderColor'],
-  practiceAreas: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'btnBg', 'borderColor'],
-  caseResults: ['sectionBgAlt', 'onDarkHeading'],
-  feeTable: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'btnBg', 'borderColor'],
-  publications: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'btnBg', 'borderColor'],
-  propertyShowcase: ['sectionBgAlt', 'cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'borderColor'],
-  propertySearch: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'btnBg', 'borderColor'],
-  marketReport: ['sectionBgAlt', 'cardBg', 'onDarkHeading', 'borderColor'],
-  agentTeam: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'borderColor'],
-  valuationCta: ['sectionBgAlt', 'onDarkHeading'],
-  referencesSold: ['headingColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading'],
-  locationHighlight: ['sectionBgAlt', 'cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'borderColor'],
-  drinkMenu: ['sectionBgAlt', 'headingColor', 'mutedColor'],
-  foodMenu: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'borderColor'],
-  dailySpecials: ['cardBg', 'headingColor', 'mutedColor', 'iconColor', 'accentColor'],
-  cafeEventCalendar: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'borderColor'],
-  locationVibe: ['sectionBgAlt', 'headingColor', 'mutedColor', 'iconColor', 'accentColor'],
-  styleGallery: ['sectionBgAlt', 'cardBg', 'headingColor', 'onDarkHeading'],
-  artistGrid: ['sectionBgAlt', 'cardBg', 'accentColor', 'eyebrow', 'onDarkHeading'],
-  artistHero: ['sectionBgAlt', 'cardBg', 'onDarkHeading'],
-  pricingInfo: ['sectionBgAlt', 'cardBg', 'onDarkHeading', 'borderColor'],
-  tattooBooking: ['sectionBgAlt', 'cardBg', 'headingColor', 'onDarkHeading', 'borderColor'],
-  flashDayBanner: ['sectionBgAlt', 'onDarkHeading'],
-  aftercareSteps: ['sectionBgAlt', 'cardBg', 'onDarkHeading', 'borderColor'],
-};
-
-const DEFAULT_SECTION_FIELDS: ColorFieldKey[] = [
-  'sectionBg',
-  'sectionBgAlt',
-  'cardBg',
-  'headingColor',
-  'subheadingColor',
-  'bodyColor',
-  'mutedColor',
-  'iconColor',
-  'accentColor',
-  'btnBg',
-  'btnText',
-  'badgeBg',
-  'badgeText',
-  'borderColor',
-];
-
-const CONTRACT_FIELD_BY_SLOT: Partial<Record<SectionColorSlot, ColorFieldKey>> = {
-  sectionBg: 'sectionBg',
-  sectionBgAlt: 'sectionBgAlt',
-  cardBg: 'cardBg',
-  headingColor: 'headingColor',
-  subheadingColor: 'subheadingColor',
-  bodyColor: 'bodyColor',
-  mutedColor: 'mutedColor',
-  // Legacy slots collapse to their modern equivalents.
-  textPrimary: 'bodyColor',
-  textSecondary: 'bodyColor',
-  imageTextColor: 'onDarkHeading',
-  accentColor: 'accentColor',
-  iconColor: 'iconColor',
-  btnBg: 'btnBg',
-  btnText: 'btnText',
-  badgeBg: 'badgeBg',
-  badgeText: 'badgeText',
-  badgeBorder: 'badgeBorder',
-  borderColor: 'borderColor',
-  dividerColor: 'dividerColor',
-  overlayColor: 'imageOverlay',
-  // btnSecondary* are no longer surfaced — see
-  // LEGACY_FIELD_ALIASES + migrateLegacyOverrides above.
-};
-
-const CONTRACT_FIELDS_BY_TYPE = new Map(
-  getAllSectionContracts().map((contract) => [
-    contract.type,
-    contract.colorSlots.map((slot) => CONTRACT_FIELD_BY_SLOT[slot]).filter(Boolean),
-  ]),
-);
-
+/* ─── SINGLE SOURCE OF TRUTH ─── */
+// The editor reads ONLY the codegen output. The codegen scans each
+// industry-specific template file for var(--token-*) references and
+// reverse-maps them to ColorFieldKey via FIELD_DEFS. Regenerate with:
+//   node scripts/generate-section-color-contracts.cjs
 function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
-  // Priority chain (highest → lowest):
-  //   1. Industry-specific generated contract (e.g. heroSalon for salon+hero) —
-  //      built from the EXACT template that will render (no cross-industry
-  //      pollution).
-  //   2. Hand-curated overrides (section-color-contracts.ts) — manual truth
-  //      for sections the codegen mis-detects.
-  //   3. Generic generated contract (section-color-contracts-generated.ts)
-  //      keyed by section.type alone (union across industries).
-  //   4. Legacy regex-based SECTION_FIELDS (kept for backwards compat).
-  //   5. Heuristic derived from the global section-contracts registry.
-  //   6. Minimal default.
   const industryKey = industry
     ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
     : null;
   const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
-  const hasIndustrySpecific = Array.isArray(industrySpecific) && industrySpecific.length > 0;
-  const curated = getCuratedContractFields(sectionType);
-  const generated = SECTION_COLOR_CONTRACTS_GENERATED[sectionType];
-  const hasGenerated = Array.isArray(generated) && generated.length > 0;
-  const fields =
-    (hasIndustrySpecific ? (industrySpecific as ColorFieldKey[]) : undefined)
-    ?? curated
-    ?? (hasGenerated ? (generated as ColorFieldKey[]) : undefined)
-    ?? SECTION_FIELDS[sectionType]
-    ?? CONTRACT_FIELDS_BY_TYPE.get(sectionType)
-    ?? DEFAULT_SECTION_FIELDS;
-  return fields.filter((field) => field !== 'sectionBgAlt');
+  if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
+    return (industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt');
+  }
+  const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
+  if (Array.isArray(generic) && generic.length > 0) {
+    return (generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt');
+  }
+  // No codegen entry → minimal safe set. Re-run the generator to fix.
+  return ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor'];
 }
 
 

@@ -1,26 +1,22 @@
 /**
- * Smart codegen for SECTION_COLOR_CONTRACTS.
+ * SIMPLE CODEGEN — single source of truth for editor field lists.
  *
- * For every sectionType registered in apps/renderer/src/templates/index.ts:
- *   1. Resolve the template component file via the import map
- *   2. Read the file + recursively follow same-dir / shared imports (1 level)
- *   3. Extract every CSS-var reference (var(--something) or '--something':)
- *   4. Map each CSS var to a SectionColorSlot via SECTION_COLOR_SLOT_ALIASES
- *      (re-read from apps/renderer/src/lib/section-contracts.ts at build time)
- *   5. Map slots to ColorFieldKey via the contract editor's
- *      CONTRACT_FIELD_BY_SLOT map
- *   6. Aggregate across all industries that use the sectionType, dedupe by
- *      slot — if both --token-X and --style-Y point to the same slot, the
- *      slot appears exactly once (no legacy duplicates).
+ * For every (industry, sectionType) pair registered in templates/index.ts:
+ *   1. Resolve the EXACT template component file
+ *   2. Recursively follow same-dir + ../shared imports (3 levels deep)
+ *   3. Extract every var(--token-NAME) reference
+ *   4. Reverse-map each --token-NAME to the ColorFieldKey whose cssVar
+ *      matches it (using the FIELD_DEFS table parsed from
+ *      section-color-editor.tsx).
+ *   5. Sort by canonical editor order, dedupe, emit two maps:
+ *        SECTION_COLOR_CONTRACTS_GENERATED         // per-industry key
+ *        SECTION_COLOR_CONTRACTS_GENERIC           // by type alone (union)
  *
- * Writes apps/renderer/src/lib/section-color-contracts-generated.ts which
- * exports SECTION_COLOR_CONTRACTS_GENERATED. The editor then prefers this
- * generated map over the hand-curated map (which is kept for manual
- * overrides when codegen mis-detects).
+ * No slot aliases, no curated overrides, no legacy fallbacks. What the
+ * template literally renders is what the editor shows. Period.
  *
- * Run:
+ * Re-run after ANY template change:
  *   node scripts/generate-section-color-contracts.cjs
- *   node scripts/generate-section-color-contracts.cjs --check  (CI mode)
  */
 
 const fs = require('fs');
@@ -29,307 +25,252 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const TEMPLATES_DIR = path.join(ROOT, 'apps/renderer/src/templates');
 const TEMPLATES_INDEX = path.join(TEMPLATES_DIR, 'index.ts');
-const SECTION_CONTRACTS_FILE = path.join(ROOT, 'apps/renderer/src/lib/section-contracts.ts');
 const EDITOR_FILE = path.join(ROOT, 'apps/renderer/src/app/admin/pages/[id]/section-color-editor.tsx');
 const OUTPUT_FILE = path.join(ROOT, 'apps/renderer/src/lib/section-color-contracts-generated.ts');
 
-const CHECK_MODE = process.argv.includes('--check');
-
-// ─── Parse SECTION_COLOR_SLOT_ALIASES from section-contracts.ts ─────────────
-function loadVarToSlot() {
-  const src = fs.readFileSync(SECTION_CONTRACTS_FILE, 'utf8');
-  const block = src.match(/SECTION_COLOR_SLOT_ALIASES[\s\S]*?=\s*{([\s\S]*?)};\s*\n/);
-  if (!block) throw new Error('Could not parse SECTION_COLOR_SLOT_ALIASES');
-  const map = new Map();
-  const lineRe = /^\s*([a-zA-Z]+):\s*\[([^\]]+)\]/gm;
-  let m;
-  while ((m = lineRe.exec(block[1])) !== null) {
-    const slot = m[1];
-    const vars = m[2].split(',').map(s => s.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
-    for (const v of vars) {
-      if (!map.has(v)) map.set(v, slot);
-    }
-  }
-  return map;
-}
-
-// ─── Parse CONTRACT_FIELD_BY_SLOT from section-color-editor.tsx ─────────────
-function loadSlotToField() {
+// ──────────────────────────────────────────────────────────────────────
+// 1. Parse FIELD_DEFS from the editor so we get a precise
+//    cssVar → ColorFieldKey mapping. No drift possible — the editor
+//    file is the registry.
+// ──────────────────────────────────────────────────────────────────────
+function loadFieldDefs() {
   const src = fs.readFileSync(EDITOR_FILE, 'utf8');
-  const block = src.match(/CONTRACT_FIELD_BY_SLOT[\s\S]*?=\s*{([\s\S]*?)};\s*\n/);
-  if (!block) throw new Error('Could not parse CONTRACT_FIELD_BY_SLOT');
-  const map = new Map();
-  const lineRe = /^\s*([a-zA-Z]+):\s*['"]([a-zA-Z]+)['"]/gm;
-  let m;
-  while ((m = lineRe.exec(block[1])) !== null) {
-    map.set(m[1], m[2]);
+  const m = src.match(/const FIELD_DEFS:[^=]*=\s*{([\s\S]*?)\n};/);
+  if (!m) throw new Error('Could not parse FIELD_DEFS');
+  const body = m[1];
+  const cssVarToField = new Map();
+  const entryRe = /^\s*([a-zA-Z][\w]*)\s*:\s*\{\s*cssVar:\s*'(--[a-z0-9-]+)'/gm;
+  let em;
+  while ((em = entryRe.exec(body)) !== null) {
+    cssVarToField.set(em[2], em[1]);
   }
-  return map;
+  return cssVarToField;
 }
 
-// ─── Parse INDUSTRY_TEMPLATES + ComponentName→FilePath from templates/index.ts
+// ──────────────────────────────────────────────────────────────────────
+// 2. Resolve every Component → file from templates/index.ts.
+// ──────────────────────────────────────────────────────────────────────
+function resolveImport(rel, fromDir) {
+  const abs = path.resolve(fromDir, rel);
+  for (const ext of ['.tsx', '.ts', '/index.tsx', '/index.ts']) {
+    const c = abs + ext;
+    if (fs.existsSync(c)) return c;
+  }
+  return null;
+}
+
+function parseImportNames(raw) {
+  // Each entry may be `Foo` or `Foo as Bar` — we want the alias if present
+  // because that's the name used in the INDUSTRY_TEMPLATES object.
+  return raw.split(',').map((s) => {
+    const t = s.trim();
+    const asMatch = t.match(/^\s*\w+\s+as\s+(\w+)\s*$/);
+    return asMatch ? asMatch[1] : t;
+  }).filter(Boolean);
+}
+
 function loadTemplateRegistry() {
   const src = fs.readFileSync(TEMPLATES_INDEX, 'utf8');
-  // ComponentName → file path
   const componentToFile = new Map();
-  const importRe = /import\s+(?:type\s+)?{([^}]+)}\s+from\s+['"](\.[^'"]+)['"]/g;
+
+  // Direct imports from templates/index.ts (top of file)
+  const directRe = /import\s+(?:type\s+)?{([^}]+)}\s+from\s+['"](\.[^'"]+)['"]/g;
   let m;
-  while ((m = importRe.exec(src)) !== null) {
-    const names = m[1].split(',').map(s => s.trim().replace(/\s+as\s+\w+/g, ''));
-    const rel = m[2];
-    // Resolve rel path relative to TEMPLATES_DIR
-    const abs = path.resolve(TEMPLATES_DIR, rel);
-    const candidates = [abs + '.tsx', abs + '.ts', path.join(abs, 'index.tsx'), path.join(abs, 'index.ts')];
-    let resolved = null;
-    for (const c of candidates) { if (fs.existsSync(c)) { resolved = c; break; } }
+  while ((m = directRe.exec(src)) !== null) {
+    const names = parseImportNames(m[1]);
+    const resolved = resolveImport(m[2], TEMPLATES_DIR);
     if (!resolved) continue;
     for (const n of names) componentToFile.set(n, resolved);
   }
-  // Re-exports like `export * from './shared'` AND `export { Foo } from './foo'`
-  // — recurse to map ComponentName → underlying file path.
-  const followIndexFile = (indexFile) => {
-    if (!fs.existsSync(indexFile)) return;
+
+  // Re-resolve any name that landed in an industry-level index.ts (e.g. ./salon)
+  // by walking that index for its named re-exports.
+  const indexFollow = new Set();
+  for (const [, file] of componentToFile) {
+    if (/[\/\\]index\.tsx?$/.test(file)) indexFollow.add(file);
+  }
+  for (const indexFile of indexFollow) {
     const sub = fs.readFileSync(indexFile, 'utf8');
-    // export * from './x'
-    const starRe = /export\s+\*\s+from\s+['"](\.[^'"]+)['"]/g;
-    let sm;
-    while ((sm = starRe.exec(sub)) !== null) {
-      const subAbs = path.resolve(path.dirname(indexFile), sm[1]);
-      const subCands = [subAbs + '.tsx', subAbs + '.ts', path.join(subAbs, 'index.tsx'), path.join(subAbs, 'index.ts')];
-      let subResolved = null;
-      for (const sc of subCands) { if (fs.existsSync(sc)) { subResolved = sc; break; } }
-      if (!subResolved) continue;
-      const subSrc = fs.readFileSync(subResolved, 'utf8');
-      const namedExportRe = /export\s+(?:function|const|class)\s+([A-Z][A-Za-z0-9]+)/g;
-      let nm;
-      while ((nm = namedExportRe.exec(subSrc)) !== null) {
-        if (!componentToFile.has(nm[1])) componentToFile.set(nm[1], subResolved);
-      }
-    }
-    // export { Foo, Bar } from './baz'
     const namedRe = /export\s+(?:type\s+)?{([^}]+)}\s+from\s+['"](\.[^'"]+)['"]/g;
+    let sm;
     while ((sm = namedRe.exec(sub)) !== null) {
-      const names = sm[1].split(',').map(s => s.trim().replace(/\s+as\s+\w+/g, '')).filter(Boolean);
-      const subAbs = path.resolve(path.dirname(indexFile), sm[2]);
-      const subCands = [subAbs + '.tsx', subAbs + '.ts', path.join(subAbs, 'index.tsx'), path.join(subAbs, 'index.ts')];
-      let subResolved = null;
-      for (const sc of subCands) { if (fs.existsSync(sc)) { subResolved = sc; break; } }
-      if (!subResolved) continue;
+      const names = parseImportNames(sm[1]);
+      const resolved = resolveImport(sm[2], path.dirname(indexFile));
+      if (!resolved) continue;
       for (const n of names) {
         const existing = componentToFile.get(n);
-        // Override if the existing entry is itself an index file (intermediate)
-        // — we want the final leaf template file. Handle both / and \ separators.
         if (!existing || /[\/\\]index\.tsx?$/.test(existing)) {
-          componentToFile.set(n, subResolved);
+          componentToFile.set(n, resolved);
         }
       }
-      // Recurse if the target is itself an index file
-      if (/[\/\\]index\.tsx?$/.test(subResolved)) followIndexFile(subResolved);
     }
-  };
-  // Any path the top-level imports resolved to that ends with /index.ts(x):
-  for (const file of new Set(componentToFile.values())) {
-    if (/[\/\\]index\.tsx?$/.test(file)) followIndexFile(file);
   }
 
-  // sectionType → ComponentName, aggregated across all INDUSTRY_TEMPLATES blocks
-  const typeToComponents = new Map();
-  // Match every `const XYZ_TEMPLATES: Record<string, TemplateComponent> = { ... }` block
-  // AND every inline industry block inside the INDUSTRY_TEMPLATES map.
-  const blockRe = /:\s*Record<string,\s*TemplateComponent>\s*=\s*{([\s\S]*?)\n\s*}/g;
-  const inlineRe = /[a-zA-Z]+:\s*{([\s\S]*?)\n\s{2,4}}/g;
-  const collect = (blockBody) => {
-    const entryRe = /^\s*([a-zA-Z][a-zA-Z0-9]*)\s*:\s*([A-Z][A-Za-z0-9]+),?\s*$/gm;
-    let em;
-    while ((em = entryRe.exec(blockBody)) !== null) {
-      const type = em[1]; const comp = em[2];
-      if (!typeToComponents.has(type)) typeToComponents.set(type, new Set());
-      typeToComponents.get(type).add(comp);
-    }
-  };
-  while ((m = blockRe.exec(src)) !== null) collect(m[1]);
-  while ((m = inlineRe.exec(src)) !== null) collect(m[1]);
+  // sectionType → Set<{ industry, componentName }>, parsed from the
+  // INDUSTRY_TEMPLATES literal (an industry-keyed object of {type:Component}).
+  const industryTypeComponent = []; // { industry, type, componentName }
 
-  return { componentToFile, typeToComponents };
+  // Top-level industry blocks live as `industryKey: { type: Component, ... },`
+  // We match every `<word>: { ... },` block whose body has the shape `type: Component,`.
+  // Use a manual brace-walker to avoid regex pitfalls.
+  let cursor = 0;
+  const industryNameRe = /^\s{2}([a-zA-Z][a-zA-Z0-9]*):\s*\{$/gm;
+  let im;
+  while ((im = industryNameRe.exec(src)) !== null) {
+    const industry = im[1];
+    let depth = 1;
+    let i = im.index + im[0].length;
+    const start = i;
+    while (depth > 0 && i < src.length) {
+      const ch = src[i];
+      if (ch === '{') depth++;
+      else if (ch === '}') depth--;
+      i++;
+    }
+    const body = src.slice(start, i - 1);
+    const entryRe = /^\s*([a-zA-Z][\w]*)\s*:\s*([A-Z][A-Za-z0-9]+),?\s*$/gm;
+    let em;
+    while ((em = entryRe.exec(body)) !== null) {
+      industryTypeComponent.push({ industry, type: em[1], componentName: em[2] });
+    }
+  }
+
+  return { componentToFile, industryTypeComponent };
 }
 
-// ─── Extract CSS vars from a template file + 1 level of local imports ───────
-const CSS_VAR_RE = /--[a-z][a-z0-9-]+/gi;
+// ──────────────────────────────────────────────────────────────────────
+// 3. Extract --token-* references from a template + local imports
+//    (3 levels deep). Stops at any import outside src/templates.
+// ──────────────────────────────────────────────────────────────────────
+const TOKEN_REF_RE = /var\(\s*(--token-[a-z0-9-]+)/gi;
 
-function extractVarsFromFile(filePath, depth = 0, seen = new Set()) {
-  if (seen.has(filePath)) return new Set();
+function extractTokenVars(filePath, depth = 0, seen = new Set()) {
+  if (seen.has(filePath) || depth > 3) return new Set();
   seen.add(filePath);
   if (!fs.existsSync(filePath)) return new Set();
   const src = fs.readFileSync(filePath, 'utf8');
   const vars = new Set();
   let m;
-  const re = new RegExp(CSS_VAR_RE.source, 'gi');
-  while ((m = re.exec(src)) !== null) vars.add(m[0]);
-  // Follow up to 2 levels of local imports (other template files in shared/
-  // or same dir). Deeper than that quickly drags in unrelated UI components.
-  if (depth < 2) {
-    const importRe = /import[\s\S]*?from\s+['"](\.[^'"]+)['"]/g;
-    while ((m = importRe.exec(src)) !== null) {
-      const rel = m[1];
-      const abs = path.resolve(path.dirname(filePath), rel);
-      const candidates = [abs + '.tsx', abs + '.ts', path.join(abs, 'index.tsx'), path.join(abs, 'index.ts')];
-      for (const c of candidates) {
-        if (fs.existsSync(c)) {
-          for (const v of extractVarsFromFile(c, depth + 1, seen)) vars.add(v);
-          break;
-        }
-      }
-    }
+  const re = new RegExp(TOKEN_REF_RE.source, 'gi');
+  while ((m = re.exec(src)) !== null) vars.add(m[1]);
+  // Follow relative imports inside src/templates only
+  const importRe = /import[\s\S]*?from\s+['"](\.[^'"]+)['"]/g;
+  while ((m = importRe.exec(src)) !== null) {
+    const resolved = resolveImport(m[1], path.dirname(filePath));
+    if (!resolved) continue;
+    if (!resolved.startsWith(TEMPLATES_DIR)) continue;
+    for (const v of extractTokenVars(resolved, depth + 1, seen)) vars.add(v);
   }
   return vars;
 }
 
-// ─── Build the contract map ─────────────────────────────────────────────────
-// Many templates use a namespaced CSS-var prefix (e.g. --booking-section-bg,
-// --shop-card-bg) instead of the canonical --style-* / --token-* form.
-// We strip well-known prefixes and re-match against the canonical aliases so
-// the generator doesn't miss those sections.
-const NAMESPACE_PREFIXES = ['--booking-', '--shop-', '--cart-', '--card-', '--product-'];
+// ──────────────────────────────────────────────────────────────────────
+// 4. Build the contracts.
+// ──────────────────────────────────────────────────────────────────────
+const FIELD_ORDER = [
+  'sectionBg', 'sectionBgAlt', 'cardBg',
+  'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
+  'iconColor', 'accentColor',
+  'onDarkHeading', 'onDarkBody', 'onDarkMuted',
+  'imageOverlay',
+  'eyebrow', 'statValue', 'quoteMark', 'ratingStar', 'check',
+  'btnBg', 'btnText',
+  'badgeBg', 'badgeText', 'badgeBorder',
+  'borderColor', 'dividerColor',
+  'cardRadius', 'buttonRadius',
+];
+const orderIdx = (f) => { const i = FIELD_ORDER.indexOf(f); return i < 0 ? 999 : i; };
 
-function resolveSlot(cssVar, varToSlot) {
-  const direct = varToSlot.get(cssVar);
-  if (direct) return direct;
-  for (const prefix of NAMESPACE_PREFIXES) {
-    if (cssVar.startsWith(prefix)) {
-      const tail = cssVar.slice(prefix.length);
-      const candidates = [
-        '--token-' + tail,
-        '--style-' + tail,
-        // some templates use `--booking-heading-color` ↔ `--style-heading-color`
-        // and that suffix matches; also try without -color suffix
-        '--token-' + tail.replace(/-color$/, ''),
-        '--style-' + tail.replace(/-color$/, ''),
-      ];
-      for (const c of candidates) {
-        const s = varToSlot.get(c);
-        if (s) return s;
-      }
-    }
-  }
-  return null;
-}
+function build() {
+  const cssVarToField = loadFieldDefs();
+  const { componentToFile, industryTypeComponent } = loadTemplateRegistry();
 
-function buildContracts() {
-  const varToSlot = loadVarToSlot();
-  const slotToField = loadSlotToField();
-  const { componentToFile, typeToComponents } = loadTemplateRegistry();
+  const perIndustry = {};   // 'heroSalon' → ColorFieldKey[]
+  const perType = {};       // 'hero' → ColorFieldKey[] (union)
+  const stats = { entries: 0, resolved: 0, missing: [] };
 
-  const stats = {
-    types: 0, resolved: 0, unresolved: [], avgFields: 0, totalFields: 0,
-    confidence: { high: 0, medium: 0, low: 0 },
-  };
-  const contracts = {};
-
-  // Stable ordering of fields (matches the visual grouping in the editor)
-  const fieldOrder = [
-    'sectionBg', 'sectionBgAlt', 'cardBg',
-    'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'onDarkHeading', 'onDarkBody', 'onDarkMuted',
-    'imageOverlay',
-    'eyebrow', 'statValue', 'quoteMark', 'ratingStar', 'check',
-    'btnBg', 'btnText', 'btnSecondaryBg', 'btnSecondaryText',
-    'badgeBg', 'badgeText', 'badgeBorder',
-    'borderColor', 'dividerColor', 'cardBorderColor',
-    'cardRadius', 'cardShadow', 'buttonRadius',
-    'headingWeight', 'headingTracking',
-    // Legacy fields kept at the end if they sneak through
-    'textPrimary', 'textSecondary', 'imageTextColor',
-    'styleBrand', 'brandPrimary', 'brandAccent', 'colorPrimary',
-  ];
-  const orderIdx = (f) => { const i = fieldOrder.indexOf(f); return i < 0 ? 999 : i; };
-
-  for (const [type, componentSet] of typeToComponents) {
-    stats.types++;
-    const slots = new Set();
-    let anyResolved = false;
-    let totalVarCount = 0;
-    for (const compName of componentSet) {
-      const file = componentToFile.get(compName);
-      if (!file) continue;
-      anyResolved = true;
-      const vars = extractVarsFromFile(file);
-      totalVarCount += vars.size;
-      for (const v of vars) {
-        const slot = resolveSlot(v, varToSlot);
-        if (slot) slots.add(slot);
-      }
-    }
-    if (!anyResolved) {
-      stats.unresolved.push(type);
-      continue;
-    }
+  for (const { industry, type, componentName } of industryTypeComponent) {
+    stats.entries++;
+    const file = componentToFile.get(componentName);
+    if (!file) { stats.missing.push(`${industry}.${type} (${componentName})`); continue; }
     stats.resolved++;
-    // Map slots → ColorFieldKey, deduped by slot (key collisions naturally merge)
-    const fieldsSet = new Set();
-    for (const slot of slots) {
-      const field = slotToField.get(slot);
-      if (field) fieldsSet.add(field);
+
+    const tokens = extractTokenVars(file);
+    const fieldSet = new Set();
+    for (const t of tokens) {
+      const field = cssVarToField.get(t);
+      if (field) fieldSet.add(field);
     }
-    // Sort by canonical order
-    const fields = [...fieldsSet].sort((a, b) => orderIdx(a) - orderIdx(b));
-    contracts[type] = fields;
-    stats.totalFields += fields.length;
-    // Confidence heuristic
-    if (fields.length >= 6 && fields.length <= 20 && totalVarCount >= 3) stats.confidence.high++;
-    else if (fields.length >= 3 && fields.length <= 25) stats.confidence.medium++;
-    else stats.confidence.low++;
+    const fields = [...fieldSet].sort((a, b) => orderIdx(a) - orderIdx(b));
+
+    const industryKey = type + industry.charAt(0).toUpperCase() + industry.slice(1);
+    perIndustry[industryKey] = fields;
+
+    if (!perType[type]) perType[type] = new Set();
+    for (const f of fields) perType[type].add(f);
   }
-  stats.avgFields = stats.resolved ? (stats.totalFields / stats.resolved).toFixed(1) : 0;
-  return { contracts, stats };
+  // Materialize unions in canonical order
+  const perTypeArr = {};
+  for (const [t, set] of Object.entries(perType)) {
+    perTypeArr[t] = [...set].sort((a, b) => orderIdx(a) - orderIdx(b));
+  }
+
+  return { perIndustry, perType: perTypeArr, stats };
 }
 
-// ─── Render the output file ─────────────────────────────────────────────────
-function renderOutput(contracts) {
-  const header = `// AUTO-GENERATED by scripts/generate-section-color-contracts.cjs — DO NOT EDIT BY HAND.
-// Regenerate with: node scripts/generate-section-color-contracts.cjs
-//
-// Source of truth: actual CSS-var references in each template file (and one
-// level of local imports), mapped to SectionColorSlots via the existing
-// SECTION_COLOR_SLOT_ALIASES, then to ColorFieldKey via CONTRACT_FIELD_BY_SLOT.
-//
-// Manual overrides for sections this codegen mis-detects belong in
-// section-color-contracts.ts (the hand-curated file). That file wins.
-
-import type { ColorFieldKey } from '@/app/admin/pages/[id]/section-color-editor';
-
-export const SECTION_COLOR_CONTRACTS_GENERATED: Partial<Record<string, ColorFieldKey[]>> = {
-`;
+// ──────────────────────────────────────────────────────────────────────
+// 5. Emit.
+// ──────────────────────────────────────────────────────────────────────
+function render(perIndustry, perType) {
   const lines = [];
-  for (const type of Object.keys(contracts).sort()) {
-    const arr = contracts[type].map((f) => `'${f}'`).join(', ');
-    lines.push(`  ${type}: [${arr}],`);
-  }
-  return header + lines.join('\n') + '\n};\n';
+  lines.push(`// AUTO-GENERATED by scripts/generate-section-color-contracts.cjs — DO NOT EDIT BY HAND.`);
+  lines.push(`// Regenerate after ANY template change with:`);
+  lines.push(`//   node scripts/generate-section-color-contracts.cjs`);
+  lines.push(`//`);
+  lines.push(`// Each entry is the EXACT list of color fields the corresponding template`);
+  lines.push(`// reads via var(--token-*). Reverse-mapped from FIELD_DEFS in`);
+  lines.push(`// section-color-editor.tsx. No heuristics, no fallbacks.`);
+  lines.push(``);
+  lines.push(`import type { ColorFieldKey } from '@/app/admin/pages/[id]/section-color-editor';`);
+  lines.push(``);
+
+  const emit = (name, doc, map) => {
+    lines.push(`// ${doc}`);
+    lines.push(`export const ${name}: Partial<Record<string, ColorFieldKey[]>> = {`);
+    const keys = Object.keys(map).sort();
+    for (const k of keys) {
+      const arr = map[k];
+      const literal = arr.length === 0 ? '[]' : '[' + arr.map((s) => `'${s}'`).join(', ') + ']';
+      lines.push(`  ${k}: ${literal},`);
+    }
+    lines.push(`};`);
+    lines.push(``);
+  };
+  emit(
+    'SECTION_COLOR_CONTRACTS_GENERATED',
+    'Per-industry contracts (keyed as `${type}${IndustryPascal}` — e.g. heroSalon).',
+    perIndustry,
+  );
+  emit(
+    'SECTION_COLOR_CONTRACTS_GENERIC',
+    'Generic per-type contracts (union across all industries, fallback only).',
+    perType,
+  );
+  return lines.join('\n');
 }
 
-// ─── Main ───────────────────────────────────────────────────────────────────
-const { contracts, stats } = buildContracts();
-const output = renderOutput(contracts);
+function main() {
+  const { perIndustry, perType, stats } = build();
+  const out = render(perIndustry, perType);
+  fs.writeFileSync(OUTPUT_FILE, out);
 
-console.log(`Generator stats:
-  section types found:        ${stats.types}
-  resolved (template found):  ${stats.resolved}
-  unresolved (no template):   ${stats.unresolved.length}${stats.unresolved.length ? ' → ' + stats.unresolved.slice(0,20).join(', ') + (stats.unresolved.length>20?'…':'') : ''}
-  avg fields per section:     ${stats.avgFields}
-  confidence high (6-20 f):   ${stats.confidence.high}
-  confidence medium:          ${stats.confidence.medium}
-  confidence low (<3 / >25):  ${stats.confidence.low}
-`);
-
-if (CHECK_MODE) {
-  const existing = fs.existsSync(OUTPUT_FILE) ? fs.readFileSync(OUTPUT_FILE, 'utf8') : '';
-  if (existing !== output) {
-    console.error('[check] section-color-contracts-generated.ts is OUT OF DATE — run without --check to regenerate.');
-    process.exit(1);
-  }
-  console.log('[check] section-color-contracts-generated.ts is up to date.');
-} else {
-  fs.writeFileSync(OUTPUT_FILE, output);
-  console.log(`Wrote ${OUTPUT_FILE} (${Object.keys(contracts).length} sections)`);
+  console.log(`Industry entries scanned:  ${stats.entries}`);
+  console.log(`Resolved (template found): ${stats.resolved}`);
+  console.log(`Missing:                   ${stats.missing.length}`);
+  if (stats.missing.length) stats.missing.slice(0, 10).forEach((m) => console.log('  - ' + m));
+  console.log(`Per-industry keys written: ${Object.keys(perIndustry).length}`);
+  console.log(`Per-type keys written:     ${Object.keys(perType).length}`);
+  console.log(`Wrote ${path.relative(ROOT, OUTPUT_FILE)}`);
 }
+
+main();

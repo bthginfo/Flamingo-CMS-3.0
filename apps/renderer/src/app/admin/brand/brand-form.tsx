@@ -534,20 +534,11 @@ export function BrandForm({ initial }: { initial: BrandData }) {
             </div>
           </div>
           <div>
-            <label className="admin-label">Kartenlinien</label>
-            <p className="text-xs text-zinc-400 mb-1.5">Linien von Team-Cards, Service-Karten, Testimonials etc.</p>
-            <div className="flex items-center gap-3">
-              <input type="color" value={form.cardBorder || '#e5e7eb'} onChange={e => setForm(f => ({ ...f, cardBorder: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
-              <input className="admin-input flex-1" value={form.cardBorder} onChange={e => setForm(f => ({ ...f, cardBorder: e.target.value }))} placeholder="Leer = rgba(0,0,0,0.06)" />
-              {form.cardBorder && <button type="button" onClick={() => setForm(f => ({ ...f, cardBorder: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
-            </div>
-          </div>
-          <div>
-            <label className="admin-label">Allgemeine Linien</label>
-            <p className="text-xs text-zinc-400 mb-1.5">Linienfarbe moderner und Premium-Sektionen.</p>
+            <label className="admin-label">Linienfarbe (Karten & Container)</label>
+            <p className="text-xs text-zinc-400 mb-1.5">Linien von Team-Cards, Service-Karten, Testimonials, Containern.</p>
             <div className="flex items-center gap-3">
               <input type="color" value={form.borderColor || form.cardBorder || '#e5e7eb'} onChange={e => setForm(f => ({ ...f, borderColor: e.target.value }))} className="w-10 h-10 rounded-lg border border-admin-border cursor-pointer" />
-              <input className="admin-input flex-1" value={form.borderColor} onChange={e => setForm(f => ({ ...f, borderColor: e.target.value }))} placeholder="Leer = Karten-Rahmen" />
+              <input className="admin-input flex-1" value={form.borderColor} onChange={e => setForm(f => ({ ...f, borderColor: e.target.value }))} placeholder="Leer = rgba(15,23,42,0.08)" />
               {form.borderColor && <button type="button" onClick={() => setForm(f => ({ ...f, borderColor: '' }))} className="text-xs text-zinc-400 hover:text-red-500">✕</button>}
             </div>
           </div>
