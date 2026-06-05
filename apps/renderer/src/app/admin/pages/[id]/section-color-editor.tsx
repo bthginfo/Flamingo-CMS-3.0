@@ -168,10 +168,10 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   sectionBg:        { cssVar: '--token-section-bg',       label: 'Hintergrund',            description: 'Hintergrundfarbe der Sektion', group: 'core' },
   sectionBgAlt:     { cssVar: '--token-section-bg-alt',   label: 'Sekundärer Hintergrund', description: 'Nur für Sections mit einem zweiten sichtbaren Hintergrund-Layer', group: 'special' },
   cardBg:           { cssVar: '--token-card-bg',          label: 'Karten-Hintergrund',     description: 'Hintergrund von Karten/Containern', group: 'core' },
-  headingColor:     { cssVar: '--token-heading',          label: 'Headline',               description: 'Farbe der Hauptüberschrift', group: 'core' },
-  subheadingColor:  { cssVar: '--token-subheading',       label: 'Subheadline',            description: 'Farbe der Unterüberschrift', group: 'core' },
-  bodyColor:        { cssVar: '--token-body',             label: 'Fließtext',              description: 'Farbe des Fließtexts', group: 'core' },
-  mutedColor:       { cssVar: '--token-muted',            label: 'Dezenter Text',          description: 'Dezente Texte, Labels, Eyebrow', group: 'core' },
+  headingColor:     { cssVar: '--token-heading',          label: 'Headline-Farbe',         description: 'Farbe der Hauptueberschrift (gilt fuer helle und dunkle Backgrounds)', group: 'core' },
+  subheadingColor:  { cssVar: '--token-subheading',       label: 'Subheadline',            description: 'Farbe der Unterueberschrift', group: 'core' },
+  bodyColor:        { cssVar: '--token-body',             label: 'Fliesstext-Farbe',       description: 'Farbe des Fliesstexts (gilt fuer helle und dunkle Backgrounds)', group: 'core' },
+  mutedColor:       { cssVar: '--token-muted',            label: 'Dezenter Text',          description: 'Dezente Texte / Labels (gilt fuer helle und dunkle Backgrounds)', group: 'core' },
   iconColor:        { cssVar: '--token-icon',             label: 'Icons',                  description: 'Farbe der Icons', group: 'core' },
   accentColor:      { cssVar: '--token-accent',           label: 'Akzentfarbe',            description: 'Akzente, Linien, Hervorhebungen', group: 'core' },
   eyebrow:          { cssVar: '--token-eyebrow',          label: 'Eyebrow / Kicker',       description: 'Kleine Label-Texte über der Überschrift', group: 'special' },
@@ -223,7 +223,11 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
   const probeRef = useRef<HTMLDivElement>(null);
   const overrides = migrateLegacyOverrides<ColorOverrides>(value);
   const activeCount = Object.values(overrides).filter(Boolean).length;
-  const allFields = sectionType ? getFieldsForSection(sectionType, industry) : Object.keys(FIELD_DEFS) as ColorFieldKey[];
+  const rawFields = sectionType ? getFieldsForSection(sectionType, industry) : Object.keys(FIELD_DEFS) as ColorFieldKey[];
+  // Collapse the "auf Dunkel" duplicates — a single Headline/Body/Muted picker
+  // writes both --token-* and --token-on-dark-* via FIELD_FANOUT below.
+  const HIDDEN_FIELDS = new Set<ColorFieldKey>(['onDarkHeading', 'onDarkBody', 'onDarkMuted']);
+  const allFields = rawFields.filter((f) => !HIDDEN_FIELDS.has(f));
   
   // Split into color fields and design token fields
   const colorFields = allFields.filter(f => FIELD_DEFS[f]?.type !== 'size');
@@ -318,17 +322,30 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
 
   const handleChange = (key: string, color: string) => {
     // Phase 4c: pickers write exactly ONE var — no hidden cross-writes.
-    // (Previously --style-accent-color also wrote --brand-primary + --brand-accent,
-    //  and --style-border-color also wrote --style-card-border; that made
-    //  "Akzentfarbe" recolour brand vars + buttons globally.)
-    const next = { ...overrides, [key]: color };
+    // EXCEPTION (Phase 6 UX merge): the three text-colour fields also
+    // write their --token-on-dark-* twin so the section always renders
+    // with the chosen colour regardless of which slot the template uses.
+    const FANOUT: Record<string, string[]> = {
+      '--token-heading': ['--token-on-dark-heading'],
+      '--token-body':    ['--token-on-dark-body'],
+      '--token-muted':   ['--token-on-dark-muted'],
+    };
+    const extras = FANOUT[key] || [];
+    const next: Record<string, string> = { ...overrides, [key]: color };
+    for (const v of extras) next[v] = color;
     Object.keys(next).forEach(k => { if (!next[k]) delete next[k]; });
     onChange(Object.keys(next).length > 0 ? next : null);
   };
 
   const handleClear = (key: string) => {
+    const FANOUT: Record<string, string[]> = {
+      '--token-heading': ['--token-on-dark-heading'],
+      '--token-body':    ['--token-on-dark-body'],
+      '--token-muted':   ['--token-on-dark-muted'],
+    };
     const next = { ...overrides };
     delete next[key];
+    for (const v of FANOUT[key] || []) delete next[v];
     onChange(Object.keys(next).length > 0 ? next : null);
   };
 

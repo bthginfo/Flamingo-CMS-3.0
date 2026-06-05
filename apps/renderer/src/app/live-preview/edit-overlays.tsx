@@ -43,6 +43,20 @@ type ActiveModal =
 
 const PINK = 'rgb(236, 72, 153)';
 
+// When the user picks one of these primary fields, also write the listed
+// extra cssVars. Eliminates the confusing "auf Dunkel" double-fields —
+// the user picks ONE "Headline-Farbe" and we set both --token-heading
+// (light backgrounds) and --token-on-dark-heading (dark backgrounds) so the
+// section always renders the chosen colour regardless of which slot the
+// template uses.
+const FIELD_FANOUT: Partial<Record<ColorFieldKey, string[]>> = {
+  headingColor: ['--token-on-dark-heading'],
+  bodyColor:    ['--token-on-dark-body'],
+  mutedColor:   ['--token-on-dark-muted'],
+};
+// Fields that are now redundant because they are auto-written via FIELD_FANOUT.
+const HIDDEN_FIELDS = new Set<ColorFieldKey>(['onDarkHeading', 'onDarkBody', 'onDarkMuted']);
+
 export function EditOverlays({
   enabled,
   rootRef,
@@ -314,15 +328,21 @@ function ColorModal({ sectionId, sectionsMeta, industry, onClose }: { sectionId:
   if (!section) return <Modal title="Section nicht gefunden" onClose={onClose}>—</Modal>;
 
   const [overrides, setOverrides] = useState<Record<string, string>>(section.styleOverrides || {});
-  const fields = getFieldsForSection(section.type, industry || section.industry);
+  const allFields = getFieldsForSection(section.type, industry || section.industry);
+  // Hide the dark-pair fields — they are auto-written by FIELD_FANOUT.
+  const fields = allFields.filter((f) => !HIDDEN_FIELDS.has(f));
 
   const update = useCallback((key: ColorFieldKey, value: string) => {
-    const cssVar = FIELD_DEFS[key]?.cssVar;
-    if (!cssVar) return;
+    const def = FIELD_DEFS[key];
+    if (!def) return;
+    const extras = FIELD_FANOUT[key] || [];
     setOverrides((prev) => {
       const next = { ...prev };
-      if (!value) delete next[cssVar];
-      else next[cssVar] = value;
+      const allVars = [def.cssVar, ...extras];
+      for (const v of allVars) {
+        if (!value) delete next[v];
+        else next[v] = value;
+      }
       // Push live to parent so the preview updates immediately.
       window.parent?.postMessage(
         { type: 'flamingo-color-edit', sectionId, overrides: next },

@@ -58,12 +58,12 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
           <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
           {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="100vw" />}
           </ImageEffectWrapper>
-          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />) : (<div className="absolute inset-0 bg-gradient-to-br from-[#6b2148]/85 via-[#8b3a62]/65 to-[#c0528a]/40" />)}
+          {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />) : (<div className="absolute inset-0 bg-gradient-to-br from-[#6b2148]/85 via-[#8b3a62]/65 to-[#c0528a]/40" style={{ background: 'var(--token-section-bg, transparent)' }} />)}
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-[#6b2148] via-[#8b3a62] to-[#c0528a]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#6b2148] via-[#8b3a62] to-[#c0528a]" style={{ background: 'var(--token-section-bg, transparent)' }} />
       )}
       {/* Organic flowing curve */}
       <div className="absolute bottom-0 left-0 right-0 h-32 overflow-hidden">
@@ -72,7 +72,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-12 md:py-20 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
           {badgeText && (
-            <motion.p initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/15 px-5 py-2 text-xs font-bold uppercase tracking-widest backdrop-blur-sm" style={{ color: heroHeading }}>
+            <motion.p initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/15 px-5 py-2 text-xs font-bold uppercase tracking-widest backdrop-blur-sm" style={{ background: 'var(--token-badge-bg)' }} style={{ color: heroHeading }}>
               <DynamicIcon name={badgeIcon} size={14} /><span data-edit-path="badgeText">{badgeText}</span>
             </motion.p>
           )}
@@ -81,7 +81,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
         {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }} className="mx-auto mt-7 max-w-2xl text-lg leading-8 rt-content" style={{ color: heroBody }} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-7 py-3 font-semibold text-[var(--token-btn-text)] shadow-lg"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/10 px-7 py-3 font-semibold backdrop-blur-sm" style={{ color: heroHeading }} data-edit-path="label">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/10 px-7 py-3 font-semibold backdrop-blur-sm" style={{ background: 'var(--token-badge-bg)' }} style={{ color: heroHeading }} data-edit-path="label">{secondaryCta.label}</a>}
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm">
           {bookingHint && <span className="rounded-full border border-white/15 bg-white/15 px-4 py-2 backdrop-blur-sm" style={{ color: heroMuted }}>{bookingHint}</span>}
@@ -129,7 +129,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageM
 /* ─── BOLD: Fullscreen dark, hot-pink diagonal stripe, uppercase brutalist ─── */
 function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111]">
+    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111]" style={{ background: 'var(--token-section-bg, transparent)' }}>
       {(bgMode === 'image' && bgImage) ? (
         <>
           <Image src={bgImage} alt="" fill className={`object-cover opacity-30${bgImageMobile ? ' hidden md:block' : ''}`} priority sizes="100vw" />

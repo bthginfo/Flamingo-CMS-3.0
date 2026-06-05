@@ -58,7 +58,7 @@ type HeroProps = {
 /* ─── CLASSIC: Fullscreen bg, warm gradient overlay, grain texture, spotlight, staggered fade-in ─── */
 function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, overlayColor, overlayOpacity, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
+    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]" style={{ background: 'var(--token-section-bg, transparent)' }}>
       {/* Background image + overlays */}
       {(bgMode === 'image' && bgImage) ? (
         <>
@@ -207,14 +207,14 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
 /* ─── BOLD: Fullscreen dark bg, diagonal accent stripe, brutalist buttons, uppercase ─── */
 function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]">
+    <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[#111827]" style={{ background: 'var(--token-section-bg, transparent)' }}>
       {/* Background image + dark overlay */}
       {(bgMode === 'image' && bgImage) ? (
         <>
           <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
           {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
           <div className="absolute inset-0 bg-black/40" />
-          <div className="absolute inset-0 bg-[#111827]/75" />
+          <div className="absolute inset-0 bg-[#111827]/75" style={{ background: 'var(--token-section-bg, transparent)' }} />
         </>
       ) : (bgMode === 'color' && bgColor) ? (
         <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
