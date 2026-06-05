@@ -28,7 +28,7 @@ function Classic({ header, images }: Props) {
             {img.src && <div className="relative aspect-[4/3] overflow-hidden"><Image src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-4">
               {img.category && <p className="text-xs font-bold uppercase tracking-widest text-teal-700" data-edit-path="category">{img.category}</p>}
-              {(img.caption || img.alt) && <h3 className="mt-1 font-semibold text-[color:var(--token-heading,#18181b)]">{img.caption || img.alt}</h3>}
+              {(img.caption || img.alt) && <h3 className="mt-1 font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="caption">{img.caption || img.alt}</h3>}
             </div>
           </article>
         ))}
@@ -47,7 +47,7 @@ function Modern({ header, images }: Props) {
             {img.src && <div className="relative aspect-[4/3] overflow-hidden"><Image src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-4">
               {img.category && <p className="text-xs font-light uppercase tracking-widest text-blue-500" data-edit-path="category">{img.category}</p>}
-              {(img.caption || img.alt) && <h3 className="mt-1 font-light text-[color:var(--token-heading,#18181b)]">{img.caption || img.alt}</h3>}
+              {(img.caption || img.alt) && <h3 className="mt-1 font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="caption">{img.caption || img.alt}</h3>}
             </div>
           </article>
         ))}
@@ -70,7 +70,7 @@ function Bold({ header, images }: Props) {
             {img.src && <div className="relative aspect-[4/3] overflow-hidden"><Image src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-4">
               {img.category && <p className="text-xs font-black uppercase tracking-widest text-teal-500" data-edit-path="category">{img.category}</p>}
-              {(img.caption || img.alt) && <h3 className="mt-1 font-black uppercase text-[color:var(--token-heading,#18181b)]">{img.caption || img.alt}</h3>}
+              {(img.caption || img.alt) && <h3 className="mt-1 font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="caption">{img.caption || img.alt}</h3>}
             </div>
           </article>
         ))}

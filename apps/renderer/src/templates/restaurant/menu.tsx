@@ -113,7 +113,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
   return (
     <div className={`${layout === 'classic' ? 'p-6 sm:p-10' : layout === 'bold' ? 'border-2 border-[color:var(--token-card-border,#ffffff)/20] p-5' : 'border border-black/10 p-6'}`}>
       <div className="mb-6">
-        <h3 className={`text-2xl font-bold ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading,#ffffff)] uppercase' : 'text-[color:var(--token-heading,#18181b)]'}`}>{category.title || ''}</h3>
+        <h3 className={`text-2xl font-bold ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading,#ffffff)] uppercase' : 'text-[color:var(--token-heading,#18181b)]'}`} data-edit-path="title">{category.title || ''}</h3>
         {category.description && <div className={`mt-2 text-sm ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading,#ffffff)/60]' : 'text-[color:var(--token-muted,#52525b)]'}`} dangerouslySetInnerHTML={{ __html: category.description }} />}
       </div>
       <div className="space-y-5">
@@ -126,7 +126,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
             )}
             <div>
               <div className="flex items-start justify-between gap-4">
-                <h4 className={`font-semibold ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-heading,#18181b)]'}`}>{item.name || ''}</h4>
+                <h4 className={`font-semibold ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-heading,#18181b)]'}`} data-edit-path="name">{item.name || ''}</h4>
                 {item.price && <p className={`shrink-0 font-bold ${layout === 'bold' ? 'text-[var(--token-eyebrow, var(--brand-accent))]' : 'text-[color:var(--token-heading,#18181b)]'}`} data-edit-path="price">{item.price}</p>}
               </div>
               {item.description && <div className={`mt-1 text-sm leading-6 ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading,#ffffff)/60]' : 'text-[color:var(--token-muted,#52525b)]'}`} dangerouslySetInnerHTML={{ __html: item.description }} />}

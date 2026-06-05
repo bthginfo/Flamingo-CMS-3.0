@@ -42,7 +42,7 @@ function Classic({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: P
               {place.image && <div className="relative aspect-[4/3] overflow-hidden rounded-xl"><Image src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
-                <h3 className="mt-1 font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{place.title || ''}</h3>
+                <h3 className="mt-1 font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]"><MapPin size={13} /><span data-edit-path="address">{place.address}</span></p>}
                 {place.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: place.text }} />}
                 {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
@@ -68,7 +68,7 @@ function Modern({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Pr
               {place.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
                 <p className="text-xs font-light uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
-                <h3 className="mt-1 font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{place.title || ''}</h3>
+                <h3 className="mt-1 font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]"><MapPin size={13} /><span data-edit-path="address">{place.address}</span></p>}
                 {place.text && <div className="mt-2 text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: place.text }} />}
                 {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
@@ -98,7 +98,7 @@ function Bold({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Prop
               {place.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
                 <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
-                <h3 className="mt-1 font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{place.title || ''}</h3>
+                <h3 className="mt-1 font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]"><MapPin size={13} /><span data-edit-path="address">{place.address}</span></p>}
                 {place.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: place.text }} />}
                 {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-black uppercase text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}

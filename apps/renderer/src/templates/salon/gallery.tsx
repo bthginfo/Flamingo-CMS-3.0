@@ -35,7 +35,7 @@ function GalleryClassic({ headline, subline, badgeText, images }: Props) {
             {img.src && <div className="relative aspect-[4/3] overflow-hidden"><Image src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-4">
               {img.category && <span className="inline-block rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase text-[var(--token-eyebrow, var(--brand-accent))]" data-edit-path="category">{img.category}</span>}
-              {(img.caption || img.alt) && <p className="mt-2 text-sm text-[color:var(--token-heading,#18181b)]">{img.caption || img.alt}</p>}
+              {(img.caption || img.alt) && <p className="mt-2 text-sm text-[color:var(--token-heading,#18181b)]" data-edit-path="caption">{img.caption || img.alt}</p>}
             </div>
           </motion.article>
         ))}
@@ -58,7 +58,7 @@ function GalleryModern({ headline, subline, badgeText, images }: Props) {
             {img.src && <div className="relative aspect-[4/3] overflow-hidden"><Image src={img.src} alt={img.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="mt-3">
               {img.category && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]" data-edit-path="category">{img.category}</p>}
-              {(img.caption || img.alt) && <p className="mt-1 text-sm font-light text-[color:var(--token-heading,#18181b)]">{img.caption || img.alt}</p>}
+              {(img.caption || img.alt) && <p className="mt-1 text-sm font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="caption">{img.caption || img.alt}</p>}
             </div>
           </article>
         ))}
@@ -81,7 +81,7 @@ function GalleryBold({ headline, subline, badgeText, images }: Props) {
             {img.src && <div className="relative aspect-[4/3] overflow-hidden"><Image src={img.src} alt={img.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-4">
               {img.category && <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="category">{img.category}</span>}
-              {(img.caption || img.alt) && <p className="mt-2 text-sm font-bold uppercase text-[color:var(--token-on-dark-heading,#ffffff)]">{img.caption || img.alt}</p>}
+              {(img.caption || img.alt) && <p className="mt-2 text-sm font-bold uppercase text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="caption">{img.caption || img.alt}</p>}
             </div>
           </article>
         ))}

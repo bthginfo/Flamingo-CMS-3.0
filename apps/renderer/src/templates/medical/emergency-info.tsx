@@ -30,7 +30,7 @@ function Classic({ header, introText, items, ctaPrimary }: Props) {
         {items.map((item, index) => (
           <article key={`${item.title}-${index}`} className="border-t border-[var(--token-card-border, var(--style-border-color,#fecaca))] pt-4" data-edit-collection="items" data-edit-index={index}>
             <AlertCircle size={18} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,#b91c1c)))]" />
-            <h3 className="mt-2 font-bold text-[var(--token-heading, var(--style-heading-color,#450a0a))]">{item.title || ''}</h3>
+            <h3 className="mt-2 font-bold text-[var(--token-heading, var(--style-heading-color,#450a0a))]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body, var(--style-body-color,rgba(127,29,29,.75)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-3 inline-flex font-semibold text-[var(--token-heading, var(--style-heading-color,#450a0a))]">{item.phoneLabel}</a>}
           </article>
@@ -50,7 +50,7 @@ function Modern({ header, introText, items, ctaPrimary }: Props) {
         {items.map((item, index) => (
           <article key={`${item.title}-${index}`} className="border-t border-[var(--token-card-border, var(--style-border-color,#fecaca))] pt-4" data-edit-collection="items" data-edit-index={index}>
             <AlertCircle size={18} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,#dc2626)))]" />
-            <h3 className="mt-2 font-light text-[var(--token-heading, var(--style-heading-color,#450a0a))]">{item.title || ''}</h3>
+            <h3 className="mt-2 font-light text-[var(--token-heading, var(--style-heading-color,#450a0a))]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,rgba(127,29,29,.75)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-3 inline-flex font-semibold text-[var(--style-accent-color,#b91c1c)]">{item.phoneLabel}</a>}
           </article>
@@ -74,7 +74,7 @@ function Bold({ header, introText, items, ctaPrimary }: Props) {
         {items.map((item, index) => (
           <article key={`${item.title}-${index}`} className="border-t border-[var(--token-card-border, var(--style-border-color,color-mix(in_srgb,var(--style-accent-color,#ef4444)_40%,transparent)))] pt-4" data-edit-collection="items" data-edit-index={index}>
             <AlertCircle size={18} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,#f87171)))]" />
-            <h3 className="mt-2 font-black uppercase text-[var(--token-heading, var(--style-heading-color,#fff))]">{item.title || ''}</h3>
+            <h3 className="mt-2 font-black uppercase text-[var(--token-heading, var(--style-heading-color,#fff))]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body, var(--style-body-color,rgba(255,255,255,.7)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-3 inline-flex font-black uppercase text-[var(--style-accent-color,#f87171)]">{item.phoneLabel}</a>}
           </article>

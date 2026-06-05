@@ -43,7 +43,7 @@ function Classic({ header, introText, image, formEnabled, submitLabel, formField
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
               <DynamicIcon name={card.icon || 'mail'} size={20} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
-              <div><p className="text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{card.label || ''}</p><p className="font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{card.value || ''}</p></div>
+              <div><p className="text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]" data-edit-path="label">{card.label || ''}</p><p className="font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="value">{card.value || ''}</p></div>
             </div>
           ))}
         </div>
@@ -70,7 +70,7 @@ function Modern({ header, introText, image, formEnabled, submitLabel, formFields
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
               <DynamicIcon name={card.icon || 'mail'} size={20} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
-              <div><p className="text-xs font-light text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{card.label || ''}</p><p className="font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{card.value || ''}</p></div>
+              <div><p className="text-xs font-light text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]" data-edit-path="label">{card.label || ''}</p><p className="font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="value">{card.value || ''}</p></div>
             </div>
           ))}
         </div>
@@ -101,7 +101,7 @@ function Bold({ header, introText, image, formEnabled, submitLabel, formFields, 
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
               <DynamicIcon name={card.icon || 'mail'} size={20} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
-              <div><p className="text-xs font-bold uppercase text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{card.label || ''}</p><p className="font-black text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{card.value || ''}</p></div>
+              <div><p className="text-xs font-bold uppercase text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]" data-edit-path="label">{card.label || ''}</p><p className="font-black text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="value">{card.value || ''}</p></div>
             </div>
           ))}
         </div>

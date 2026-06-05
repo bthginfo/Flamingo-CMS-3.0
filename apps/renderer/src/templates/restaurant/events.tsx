@@ -48,7 +48,7 @@ function EventsClassic({ headline, subline, badgeText, events, fallbackText }: E
                 {event.timeLabel && <span className="rounded-full bg-[var(--token-section-bg-alt,#000000)/5] px-3 py-1">{event.timeLabel}</span>}
                 {event.priceLabel && <span className="rounded-full bg-[var(--token-section-bg-alt,#000000)/5] px-3 py-1" data-edit-path="priceLabel">{event.priceLabel}</span>}
               </div>
-              <h3 className="mt-3 text-xl font-bold text-[color:var(--token-heading,#18181b)]">{event.title || ''}</h3>
+              <h3 className="mt-3 text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{event.title || ''}</h3>
               {event.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
               <div className="mt-5 flex flex-wrap gap-4">
                 {event.cta?.label && <a href={event.cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] px-4 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="label">{event.cta.label}</a>}
@@ -82,7 +82,7 @@ function EventsModern({ headline, subline, badgeText, events, fallbackText }: Ev
                 {event.timeLabel && <span>{event.timeLabel}</span>}
                 {event.priceLabel && <span data-edit-path="priceLabel">{event.priceLabel}</span>}
               </div>
-              <h3 className="mt-3 text-xl font-medium text-[color:var(--token-heading,#18181b)]">{event.title || ''}</h3>
+              <h3 className="mt-3 text-xl font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{event.title || ''}</h3>
               {event.description && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
               <div className="mt-5 flex flex-wrap gap-4">
                 {event.cta?.label && <a href={event.cta.href || '#'} className="border-b border-[#111827] pb-0.5 text-sm font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="label">{event.cta.label}</a>}
@@ -116,7 +116,7 @@ function EventsBold({ headline, subline, badgeText, events, fallbackText }: Even
                 {event.timeLabel && <span>{event.timeLabel}</span>}
                 {event.priceLabel && <span data-edit-path="priceLabel">{event.priceLabel}</span>}
               </div>
-              <h3 className="mt-3 text-xl font-bold uppercase">{event.title || ''}</h3>
+              <h3 className="mt-3 text-xl font-bold uppercase" data-edit-path="title">{event.title || ''}</h3>
               {event.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading,#ffffff)/60] rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
               <div className="mt-5 flex flex-wrap gap-4">
                 {event.cta?.label && <a href={event.cta.href || '#'} className="rounded-none border-2 border-[color:var(--token-card-border,#ffffff)] bg-[var(--token-card-bg,#ffffff)] px-4 py-2 text-sm font-bold uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="label">{event.cta.label}</a>}

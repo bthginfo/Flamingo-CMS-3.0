@@ -29,7 +29,7 @@ function Classic({ header, members }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {item.role && <p className="text-xs font-bold uppercase tracking-widest text-teal-700" data-edit-path="role">{item.role}</p>}
-              <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]">{item.name || ''}</h3>
+              <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{item.name || ''}</h3>
               {item.bio && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.bio }} />}
             </div>
           </article>
@@ -49,7 +49,7 @@ function Modern({ header, members }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {item.role && <p className="text-xs font-light uppercase tracking-widest text-blue-500" data-edit-path="role">{item.role}</p>}
-              <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading,#18181b)]">{item.name || ''}</h3>
+              <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{item.name || ''}</h3>
               {item.bio && <div className="mt-3 whitespace-pre-line text-sm font-light leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.bio }} />}
             </div>
           </article>
@@ -73,7 +73,7 @@ function Bold({ header, members }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {item.role && <p className="text-xs font-black uppercase tracking-widest text-teal-500" data-edit-path="role">{item.role}</p>}
-              <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{item.name || ''}</h3>
+              <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{item.name || ''}</h3>
               {item.bio && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.bio }} />}
             </div>
           </article>

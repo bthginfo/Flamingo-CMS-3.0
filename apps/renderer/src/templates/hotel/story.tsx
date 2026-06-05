@@ -62,8 +62,8 @@ function StoryClassic(p: Props) {
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-5 md:grid-cols-4">
           {p.stats.map((s, i) => (
             <motion.div key={`${s.label}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 text-center shadow-sm" data-edit-collection="stats" data-edit-index={i}>
-              <p className="text-3xl font-bold text-[color:var(--token-heading,#18181b)]">{s.value || ''}</p>
-              <p className="mt-1 text-xs uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">{s.label || ''}</p>
+              <p className="text-3xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="value">{s.value || ''}</p>
+              <p className="mt-1 text-xs uppercase tracking-widest text-[color:var(--token-muted,#52525b)]" data-edit-path="label">{s.label || ''}</p>
             </motion.div>
           ))}
         </div>
@@ -73,7 +73,7 @@ function StoryClassic(p: Props) {
           {p.values.map((v, i) => (
             <motion.div key={`${v.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 shadow-sm" data-edit-collection="values" data-edit-index={i}>
               <div className="shrink-0 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={v.icon || 'heart'} size={20} /></div>
-              <div><h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
+              <div><h3 className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
             </motion.div>
           ))}
         </div>
@@ -84,7 +84,7 @@ function StoryClassic(p: Props) {
             <motion.div key={`${m.year}-${i}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="relative mb-8 last:mb-0" data-edit-collection="milestones" data-edit-index={i}>
               <div className="absolute -left-[2.55rem] top-1 h-4 w-4 rounded-full border-2 border-[var(--token-icon, var(--brand-primary))] bg-[var(--token-card-bg,#ffffff)]" />
               {m.year && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{m.year}</p>}
-              <h3 className="mt-1 font-semibold text-[color:var(--token-heading,#18181b)]">{m.title || ''}</h3>
+              <h3 className="mt-1 font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{m.title || ''}</h3>
               {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </motion.div>
           ))}
@@ -121,8 +121,8 @@ function StoryModern(p: Props) {
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-px border border-black/10 md:grid-cols-4">
           {p.stats.map((s, i) => (
             <div key={`${s.label}-${i}`} className="border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-6 text-center" data-edit-collection="stats" data-edit-index={i}>
-              <p className="text-3xl font-light text-[color:var(--token-heading,#18181b)]">{s.value || ''}</p>
-              <p className="mt-1 text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#52525b)]">{s.label || ''}</p>
+              <p className="text-3xl font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="value">{s.value || ''}</p>
+              <p className="mt-1 text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#52525b)]" data-edit-path="label">{s.label || ''}</p>
             </div>
           ))}
         </div>
@@ -132,7 +132,7 @@ function StoryModern(p: Props) {
           {p.values.map((v, i) => (
             <div key={`${v.title}-${i}`} className="border-l border-black/20 pl-5" data-edit-collection="values" data-edit-index={i}>
               <DynamicIcon name={v.icon || 'heart'} size={18} className="text-[color:var(--token-muted,#52525b)]" />
-              <h3 className="mt-2 font-medium text-[color:var(--token-heading,#18181b)]">{v.title || ''}</h3>
+              <h3 className="mt-2 font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{v.title || ''}</h3>
               {v.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
           ))}
@@ -143,7 +143,7 @@ function StoryModern(p: Props) {
           {p.milestones.map((m, i) => (
             <div key={`${m.year}-${i}`} data-edit-collection="milestones" data-edit-index={i}>
               {m.year && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#52525b)]">{m.year}</p>}
-              <h3 className="mt-1 font-medium text-[color:var(--token-heading,#18181b)]">{m.title || ''}</h3>
+              <h3 className="mt-1 font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{m.title || ''}</h3>
               {m.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </div>
           ))}
@@ -180,8 +180,8 @@ function StoryBold(p: Props) {
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-4 md:grid-cols-4">
           {p.stats.map((s, i) => (
             <div key={`${s.label}-${i}`} className="border-2 border-[#111827] p-5 text-center shadow-[4px_4px_0_var(--token-icon, var(--brand-primary))]" data-edit-collection="stats" data-edit-index={i}>
-              <p className="text-3xl font-black text-[color:var(--token-heading,#18181b)]">{s.value || ''}</p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">{s.label || ''}</p>
+              <p className="text-3xl font-black text-[color:var(--token-heading,#18181b)]" data-edit-path="value">{s.value || ''}</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]" data-edit-path="label">{s.label || ''}</p>
             </div>
           ))}
         </div>
@@ -191,7 +191,7 @@ function StoryBold(p: Props) {
           {p.values.map((v, i) => (
             <div key={`${v.title}-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="values" data-edit-index={i}>
               <DynamicIcon name={v.icon || 'heart'} size={20} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />
-              <h3 className="mt-2 font-black uppercase text-[color:var(--token-heading,#18181b)]">{v.title || ''}</h3>
+              <h3 className="mt-2 font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{v.title || ''}</h3>
               {v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
           ))}
@@ -202,7 +202,7 @@ function StoryBold(p: Props) {
           {p.milestones.map((m, i) => (
             <div key={`${m.year}-${i}`} className="border-2 border-[#111827] p-5" data-edit-collection="milestones" data-edit-index={i}>
               {m.year && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{m.year}</p>}
-              <h3 className="mt-1 font-black uppercase text-[color:var(--token-heading,#18181b)]">{m.title || ''}</h3>
+              <h3 className="mt-1 font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{m.title || ''}</h3>
               {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </div>
           ))}

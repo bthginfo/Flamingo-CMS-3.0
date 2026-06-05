@@ -29,7 +29,7 @@ function Classic({ header, items }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {item.typeLabel && <p className="text-xs font-bold uppercase tracking-widest text-teal-700">{item.typeLabel}</p>}
-              <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.notice && <p className="mt-2 whitespace-pre-line text-xs text-[color:var(--token-muted,#52525b)]">{item.notice}</p>}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 rounded-full bg-teal-700 px-4 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading,#ffffff)]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a>}
@@ -51,7 +51,7 @@ function Modern({ header, items }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {item.typeLabel && <p className="text-xs font-light uppercase tracking-widest text-blue-500">{item.typeLabel}</p>}
-              <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 whitespace-pre-line text-sm font-light leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.notice && <p className="mt-2 whitespace-pre-line text-xs font-light text-[color:var(--token-muted,#52525b)]">{item.notice}</p>}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-4 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading,#ffffff)]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a>}
@@ -77,7 +77,7 @@ function Bold({ header, items }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {item.typeLabel && <p className="text-xs font-black uppercase tracking-widest text-teal-500">{item.typeLabel}</p>}
-              <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.notice && <p className="mt-2 whitespace-pre-line text-xs text-[color:var(--token-muted,#52525b)]">{item.notice}</p>}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 border-2 border-teal-400 bg-teal-400 px-4 py-2 text-sm font-black uppercase text-[color:var(--token-heading,#09090b)] shadow-[4px_4px_0_theme(colors.teal.700)]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a>}

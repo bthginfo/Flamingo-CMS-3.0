@@ -39,7 +39,7 @@ function Classic({ badge, headline, text, colors, hints }: P) {
             {hints.map((hint, i) => (
               <div key={i} className="flex items-start gap-3 text-[color:var(--token-muted,#3f3f46)] text-sm" data-edit-collection="hints" data-edit-index={i}>
                 <Shirt className="w-4 h-4 text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-0.5 shrink-0" />
-                <span>{hint}</span>
+                <span data-edit-path="hint">{hint}</span>
               </div>
             ))}
           </div>
@@ -66,7 +66,7 @@ function Modern({ badge, headline, text, colors, hints }: P) {
         {hints.length > 0 && (
           <div className="border-t border-[color:var(--token-card-border,#e4e4e7)] pt-8 space-y-4">
             {hints.map((hint, i) => (
-              <p key={i} className="text-[color:var(--token-muted,#52525b)] text-sm" data-edit-collection="hints" data-edit-index={i}>{hint}</p>
+              <p key={i} className="text-[color:var(--token-muted,#52525b)] text-sm" data-edit-collection="hints" data-edit-index={i} data-edit-path="hint">{hint}</p>
             ))}
           </div>
         )}
@@ -94,7 +94,7 @@ function Bold({ badge, headline, text, colors, hints }: P) {
             {hints.map((hint, i) => (
               <div key={i} className="flex items-start gap-3 text-[color:var(--token-muted,#3f3f46)] text-sm border-2 border-[color:var(--token-card-border,#e4e4e7)] p-4" data-edit-collection="hints" data-edit-index={i}>
                 <Shirt className="w-4 h-4 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] mt-0.5 shrink-0" />
-                <span>{hint}</span>
+                <span data-edit-path="hint">{hint}</span>
               </div>
             ))}
           </div>

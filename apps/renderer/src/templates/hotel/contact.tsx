@@ -51,7 +51,7 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
           {infoCards.map((card, index) => (
             <motion.div key={`${card.label}-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 border-t border-[var(--token-icon, var(--brand-primary))]/20 pt-4" data-edit-collection="infoCards" data-edit-index={index}>
               <div className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={card.icon || 'mail'} size={20} /></div>
-              <div><p className="text-xs text-[color:var(--token-muted,#52525b)]">{card.label || ''}</p><p className="font-semibold text-[color:var(--token-heading,#18181b)]">{card.value || ''}</p></div>
+              <div><p className="text-xs text-[color:var(--token-muted,#52525b)]" data-edit-path="label">{card.label || ''}</p><p className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="value">{card.value || ''}</p></div>
             </motion.div>
           ))}
         </div>
@@ -83,7 +83,7 @@ function ContactModern({ headline, subline, badgeText, introText, submitLabel, f
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t border-black/10 pt-4" data-edit-collection="infoCards" data-edit-index={index}>
               <DynamicIcon name={card.icon || 'mail'} size={18} className="text-[color:var(--token-muted,#52525b)]" />
-              <div><p className="text-xs font-light text-[color:var(--token-muted,#52525b)]">{card.label || ''}</p><p className="font-light text-[color:var(--token-heading,#18181b)]">{card.value || ''}</p></div>
+              <div><p className="text-xs font-light text-[color:var(--token-muted,#52525b)]" data-edit-path="label">{card.label || ''}</p><p className="font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="value">{card.value || ''}</p></div>
             </div>
           ))}
         </div>
@@ -115,7 +115,7 @@ function ContactBold({ headline, subline, badgeText, introText, submitLabel, for
           {infoCards.map((card, index) => (
             <div key={`${card.label}-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
               <div className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={card.icon || 'mail'} size={20} /></div>
-              <div><p className="text-xs font-bold uppercase text-[color:var(--token-muted,#52525b)]">{card.label || ''}</p><p className="font-black text-[color:var(--token-heading,#18181b)]">{card.value || ''}</p></div>
+              <div><p className="text-xs font-bold uppercase text-[color:var(--token-muted,#52525b)]" data-edit-path="label">{card.label || ''}</p><p className="font-black text-[color:var(--token-heading,#18181b)]" data-edit-path="value">{card.value || ''}</p></div>
             </div>
           ))}
         </div>

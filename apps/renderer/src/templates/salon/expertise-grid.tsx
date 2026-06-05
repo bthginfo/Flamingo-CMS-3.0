@@ -36,7 +36,7 @@ function ExpertiseClassic({ headline, subline, badgeText, items }: Props) {
             <div className="mt-4 flex gap-4">
               <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
               <div>
-                <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+                <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
                 {item.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               </div>
             </div>
@@ -62,7 +62,7 @@ function ExpertiseModern({ headline, subline, badgeText, items }: Props) {
             <div className="mt-3 flex gap-4">
               <DynamicIcon name={item.icon || 'sparkles'} size={18} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
               <div>
-                <h3 className="font-light text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+                <h3 className="font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
                 {item.text && <div className="mt-2 text-sm font-light leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               </div>
             </div>
@@ -88,7 +88,7 @@ function ExpertiseBold({ headline, subline, badgeText, items }: Props) {
             <div className="mt-4 flex gap-4">
               <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
               <div>
-                <h3 className="font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]">{item.title || ''}</h3>
+                <h3 className="font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="title">{item.title || ''}</h3>
                 {item.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-on-dark-heading,#ffffff)/70] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               </div>
             </div>

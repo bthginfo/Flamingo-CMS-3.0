@@ -29,7 +29,7 @@ function Classic({ header, treatments }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="50vw" /></div>}
             <div className="p-5">
               {(item.durationLabel || item.requirementLabel) && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[item.durationLabel, item.requirementLabel].filter(Boolean).join(' / ')}</p>}
-              <h3 className="mt-2 text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.steps && item.steps.length > 0 && <p className="mt-2 text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{item.steps.join(' / ')}</p>}
               {item.noticeText && <p className="mt-2 text-xs italic text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{item.noticeText}</p>}
@@ -52,7 +52,7 @@ function Modern({ header, treatments }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="50vw" /></div>}
             <div className="p-5">
               {(item.durationLabel || item.requirementLabel) && <p className="text-xs font-light uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[item.durationLabel, item.requirementLabel].filter(Boolean).join(' / ')}</p>}
-              <h3 className="mt-2 text-xl font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 whitespace-pre-line text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.steps && item.steps.length > 0 && <p className="mt-2 text-xs font-light text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{item.steps.join(' / ')}</p>}
               {item.noticeText && <p className="mt-2 text-xs font-light italic text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{item.noticeText}</p>}
@@ -79,7 +79,7 @@ function Bold({ header, treatments }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="50vw" /></div>}
             <div className="p-5">
               {(item.durationLabel || item.requirementLabel) && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[item.durationLabel, item.requirementLabel].filter(Boolean).join(' / ')}</p>}
-              <h3 className="mt-2 text-xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.steps && item.steps.length > 0 && <p className="mt-2 text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{item.steps.join(' / ')}</p>}
               {item.noticeText && <p className="mt-2 text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{item.noticeText}</p>}

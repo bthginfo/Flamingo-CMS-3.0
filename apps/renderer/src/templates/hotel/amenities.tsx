@@ -51,7 +51,7 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
             ) : (
               <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10]/10 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
             )}
-            <h3 className="font-bold text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+            <h3 className="font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </motion.article>
         ))}
@@ -78,7 +78,7 @@ function AmenitiesModern({ headline, subline, badgeText, items, ctaPrimary }: Pr
             ) : (
               <div className="mb-6 text-[color:var(--token-muted,#52525b)]"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
             )}
-            <h3 className="font-light text-lg text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+            <h3 className="font-light text-lg text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-3 text-sm font-light leading-7 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </article>
         ))}
@@ -105,7 +105,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
             ) : (
               <div className="mb-4 inline-block border-2 border-[var(--token-icon, var(--brand-primary))] p-2 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={item.icon || 'star'} size={22} /></div>
             )}
-            <h3 className="font-black uppercase text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+            <h3 className="font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </article>
         ))}

@@ -45,7 +45,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
           <motion.article key={`${space.name}-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] shadow-md" data-edit-collection="spaces" data-edit-index={index}>
             {space.image && <div className="relative aspect-[4/3]"><Image src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
-              <h3 className="text-xl font-bold text-[color:var(--token-heading,#18181b)]">{space.name || ''}</h3>
+              <h3 className="text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{space.name || ''}</h3>
               {space.description && <div className="mt-3 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: space.description }} />}
               <p className="mt-3 text-xs text-[color:var(--token-muted,#52525b)]">{[space.capacityLabel, space.sizeLabel].filter(Boolean).join(' / ')}</p>
               {asList<string>(space.seatingOptions).length > 0 && <p className="mt-2 text-xs text-[color:var(--token-muted,#52525b)]">{asList<string>(space.seatingOptions).join(' / ')}</p>}
@@ -60,7 +60,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
         {processSteps.map((step, index) => (
           <motion.div key={`${step.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 p-5" data-edit-collection="processSteps" data-edit-index={index}>
             <div className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={step.icon || 'clipboard'} size={22} /></div>
-            <h4 className="mt-3 font-semibold text-[color:var(--token-heading,#18181b)]">{step.title || ''}</h4>
+            <h4 className="mt-3 font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{step.title || ''}</h4>
             {step.text && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />}
           </motion.div>
         ))}
@@ -84,7 +84,7 @@ function EventModern({ headline, subline, badgeText, spaces, processHeadline, pr
           <article key={`${space.name}-${index}`} className="overflow-hidden border border-black/10 bg-[var(--token-card-bg,#ffffff)]" data-edit-collection="spaces" data-edit-index={index}>
             {space.image && <div className="relative aspect-[4/3]"><Image src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-6">
-              <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]">{space.name || ''}</h3>
+              <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{space.name || ''}</h3>
               {space.description && <div className="mt-3 text-sm font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: space.description }} />}
               <p className="mt-3 text-xs font-light text-[color:var(--token-muted,#52525b)]">{[space.capacityLabel, space.sizeLabel].filter(Boolean).join(' / ')}</p>
               {asList<string>(space.seatingOptions).length > 0 && <p className="mt-2 text-xs font-light text-[color:var(--token-muted,#52525b)]">{asList<string>(space.seatingOptions).join(' / ')}</p>}
@@ -99,7 +99,7 @@ function EventModern({ headline, subline, badgeText, spaces, processHeadline, pr
         {processSteps.map((step, index) => (
           <div key={`${step.title}-${index}`} className="border border-black/10 p-6" data-edit-collection="processSteps" data-edit-index={index}>
             <DynamicIcon name={step.icon || 'clipboard'} size={18} className="text-[color:var(--token-muted,#52525b)]" />
-            <h4 className="mt-3 font-light text-[color:var(--token-heading,#18181b)]">{step.title || ''}</h4>
+            <h4 className="mt-3 font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{step.title || ''}</h4>
             {step.text && <div className="mt-2 text-sm font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />}
           </div>
         ))}
@@ -123,7 +123,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
           <article key={`${space.name}-${index}`} className="overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] shadow-[4px_4px_0_#111827]" data-edit-collection="spaces" data-edit-index={index}>
             {space.image && <div className="relative aspect-[4/3]"><Image src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
-              <h3 className="text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{space.name || ''}</h3>
+              <h3 className="text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{space.name || ''}</h3>
               {space.description && <div className="mt-3 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: space.description }} />}
               <p className="mt-3 text-xs font-bold uppercase text-[color:var(--token-muted,#52525b)]">{[space.capacityLabel, space.sizeLabel].filter(Boolean).join(' / ')}</p>
               {asList<string>(space.seatingOptions).length > 0 && <p className="mt-2 text-xs text-[color:var(--token-muted,#52525b)]">{asList<string>(space.seatingOptions).join(' / ')}</p>}
@@ -138,7 +138,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
         {processSteps.map((step, index) => (
           <div key={`${step.title}-${index}`} className="border-2 border-[#111827] p-5" data-edit-collection="processSteps" data-edit-index={index}>
             <div className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><DynamicIcon name={step.icon || 'clipboard'} size={22} /></div>
-            <h4 className="mt-3 font-black uppercase text-[color:var(--token-heading,#18181b)]">{step.title || ''}</h4>
+            <h4 className="mt-3 font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{step.title || ''}</h4>
             {step.text && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />}
           </div>
         ))}

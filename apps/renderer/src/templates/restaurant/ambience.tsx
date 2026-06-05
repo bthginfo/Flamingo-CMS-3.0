@@ -53,7 +53,7 @@ function AmbienceClassic({ headline, subline, badgeText, imagePrimary, imageSeco
             <motion.div key={`${highlight.title}-${index}`} initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="flex gap-4 rounded-xl bg-[var(--token-card-bg,#ffffff)] p-4 shadow-sm" data-edit-collection="highlights" data-edit-index={index}>
               <div className="mt-0.5 shrink-0 rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] p-2 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><DynamicIcon name={highlight.icon || 'star'} size={20} /></div>
               <div>
-                <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{highlight.title || ''}</h3>
+                <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{highlight.title || ''}</h3>
                 {highlight.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: highlight.text }} />}
               </div>
             </motion.div>
@@ -83,7 +83,7 @@ function AmbienceModern({ headline, subline, badgeText, imagePrimary, imageSecon
             <div key={`${highlight.title}-${index}`} className="flex gap-4 border-l-2 border-[var(--token-card-border,var(--brand-accent,#f39c12))] pl-5" data-edit-collection="highlights" data-edit-index={index}>
               <div className="mt-0.5 shrink-0 text-[color:var(--token-muted,#71717a)]"><DynamicIcon name={highlight.icon || 'star'} size={18} /></div>
               <div>
-                <h3 className="font-medium text-[color:var(--token-heading,#18181b)]">{highlight.title || ''}</h3>
+                <h3 className="font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{highlight.title || ''}</h3>
                 {highlight.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: highlight.text }} />}
               </div>
             </div>
@@ -114,7 +114,7 @@ function AmbienceBold({ headline, subline, badgeText, imagePrimary, imageSeconda
               <div key={`${highlight.title}-${index}`} className="flex gap-4 border-2 border-[color:var(--token-card-border,#ffffff)/20] p-4 shadow-[4px_4px_0_rgba(255,255,255,0.15)]" data-edit-collection="highlights" data-edit-index={index}>
                 <div className="mt-0.5 shrink-0 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><DynamicIcon name={highlight.icon || 'star'} size={20} /></div>
                 <div>
-                  <h3 className="font-bold uppercase">{highlight.title || ''}</h3>
+                  <h3 className="font-bold uppercase" data-edit-path="title">{highlight.title || ''}</h3>
                   {highlight.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-on-dark-heading,#ffffff)/60] rt-content" dangerouslySetInnerHTML={{ __html: highlight.text }} />}
                 </div>
               </div>

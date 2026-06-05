@@ -316,7 +316,7 @@ export function BookingWidgetSection({ data }: SectionProps) {
               {status === 'error' && <p className="text-sm" style={BOOKING_ERROR_STYLE}>{error}</p>}
               <button disabled={status === 'loading'} className="mt-1 inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-60" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #09090b))', color: 'var(--token-btn-text, var(--brand-btn-text, #ffffff))' }}>
                 {status === 'loading' && <Loader2 className="animate-spin" size={17} />}
-                {actionLabel}
+                <span data-edit-path="actionLabel">{actionLabel}</span>
               </button>
             </form>
           )}
@@ -454,7 +454,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
               {status === 'error' && <p className="text-sm" style={BOOKING_ERROR_STYLE}>{error}</p>}
               <button disabled={status === 'loading' || !selectedSlot} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-50" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #09090b))', color: 'var(--token-btn-text, var(--brand-btn-text, #ffffff))' }}>
                 {status === 'loading' && <Loader2 className="animate-spin" size={17} />}
-                {submitLabel}
+                <span data-edit-path="submitLabel">{submitLabel}</span>
               </button>
             </div>
           )}
@@ -556,7 +556,7 @@ export function BookingDateRangeSection({ data }: SectionProps) {
               {status === 'error' && <p className="text-sm" style={BOOKING_ERROR_STYLE}>{error}</p>}
               <button disabled={status === 'loading'} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95 disabled:opacity-60" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #09090b))', color: 'var(--token-btn-text, var(--brand-btn-text, #ffffff))' }}>
                 {status === 'loading' && <Loader2 className="animate-spin" size={17} />}
-                {submitLabel}
+                <span data-edit-path="submitLabel">{submitLabel}</span>
               </button>
             </>
           )}
@@ -680,12 +680,12 @@ export function BookingCtaProSection({ data }: SectionProps) {
       <div className="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
         <div className="max-w-2xl">
           <p className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}>
-            <Sparkles size={14} /> {(data.badge as string) || 'Booking'}
+            <Sparkles size={14} /> <span data-edit-path="badge">{(data.badge as string) || 'Booking'}</span>
           </p>
-          <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{(data.headline as string) || 'Jetzt Wunschtermin sichern'}</h2>
-          <p className="mt-2 text-sm leading-6" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.74))' }}>{(data.subline as string) || 'Direkt buchen oder erst unverbindlich anfragen. Das System passt sich dem freigeschalteten Booking-Modus an.'}</p>
+          <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }} data-edit-path="headline">{(data.headline as string) || 'Jetzt Wunschtermin sichern'}</h2>
+          <p className="mt-2 text-sm leading-6" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.74))' }} data-edit-path="subline">{(data.subline as string) || 'Direkt buchen oder erst unverbindlich anfragen. Das System passt sich dem freigeschalteten Booking-Modus an.'}</p>
         </div>
-        <a href="#booking" className="inline-flex shrink-0 items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-6 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #ffffff))', color: 'var(--token-btn-text, var(--brand-btn-text, #09090b))' }}>
+        <a href="#booking" className="inline-flex shrink-0 items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-6 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #ffffff))', color: 'var(--token-btn-text, var(--brand-btn-text, #09090b))' }} data-edit-path="submitLabel">
           {(data.submitLabel as string) || 'Zum Booking'}
         </a>
       </div>
@@ -699,10 +699,10 @@ function BookingShell({ data, icon, defaultBadge, defaultHeadline, children }: {
       <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--booking-accent-color, #f43f5e) 28%, transparent), transparent 28%)' }} />
       <div className="relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}>{icon}{(data.badge as string) || defaultBadge}</p>
-          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{(data.headline as string) || defaultHeadline}</h2>
-          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{(data.subline as string) || 'Ein flexibler Booking-Einstieg für Termine, Tage, Räume, Ressourcen oder Anfragen.'}</p>
-          <a href={(data.ctaHref as string) || '#booking-form'} className="mt-6 inline-flex items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #ffffff))', color: 'var(--token-btn-text, var(--brand-btn-text, #09090b))' }}>{(data.submitLabel as string) || 'Anfrage starten'}</a>
+          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}>{icon}<span data-edit-path="badge">{(data.badge as string) || defaultBadge}</span></p>
+          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }} data-edit-path="headline">{(data.headline as string) || defaultHeadline}</h2>
+          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }} data-edit-path="subline">{(data.subline as string) || 'Ein flexibler Booking-Einstieg für Termine, Tage, Räume, Ressourcen oder Anfragen.'}</p>
+          <a href={(data.ctaHref as string) || '#booking-form'} className="mt-6 inline-flex items-center justify-center rounded-[var(--style-button-radius,.75rem)] px-5 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #ffffff))', color: 'var(--token-btn-text, var(--brand-btn-text, #09090b))' }} data-edit-path="submitLabel">{(data.submitLabel as string) || 'Anfrage starten'}</a>
         </div>
         {children}
       </div>

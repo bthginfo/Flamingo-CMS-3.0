@@ -49,7 +49,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
       <div className="relative z-10 px-6 py-12 text-center text-[var(--token-heading,var(--style-heading-color,#ffffff))] sm:py-16 md:py-24 lg:py-32">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
           className="mb-8 inline-flex items-center gap-2 rounded-full border border-[var(--token-badge-border,var(--style-badge-border,var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.20)))))] bg-[var(--token-badge-bg,var(--style-badge-bg,rgba(255,255,255,0.10)))] px-5 py-2 text-sm text-[var(--token-badge-text,var(--style-badge-text,#ffffff))] backdrop-blur-sm">
-          <Sparkles size={14} className="text-[var(--token-icon,var(--style-accent-color,var(--brand-accent)))]" /><span>{badgeText || 'Jetzt Termin sichern'}</span>
+          <Sparkles size={14} className="text-[var(--token-icon,var(--style-accent-color,var(--brand-accent)))]" /><span data-edit-path="badgeText">{badgeText || 'Jetzt Termin sichern'}</span>
         </motion.div>
         <motion.h2 initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 }}
           className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight !leading-[1.1]" data-edit-path="headline">{headline}</motion.h2>

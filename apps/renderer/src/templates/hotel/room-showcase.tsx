@@ -41,7 +41,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
             {room.image && <div className="relative aspect-[4/3]"><Image src={room.image} alt={room.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-xl font-bold text-[color:var(--token-heading,#18181b)]">{room.name || ''}</h3>
+                <h3 className="text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{room.name || ''}</h3>
                 {room.priceLabel && <p className="text-sm font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="priceLabel">{room.priceLabel}</p>}
               </div>
               {room.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: room.description }} />}
@@ -80,7 +80,7 @@ function RoomModern({ headline, subline, badgeText, rooms, footerText }: Props) 
             {room.image && <div className="relative aspect-[4/3]"><Image src={room.image} alt={room.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-6">
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]">{room.name || ''}</h3>
+                <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{room.name || ''}</h3>
                 {room.priceLabel && <p className="text-sm font-light text-[color:var(--token-muted,#52525b)]" data-edit-path="priceLabel">{room.priceLabel}</p>}
               </div>
               {room.description && <div className="mt-3 text-sm font-light leading-7 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: room.description }} />}
@@ -119,7 +119,7 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
             {room.image && <div className="relative aspect-[4/3]"><Image src={room.image} alt={room.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{room.name || ''}</h3>
+                <h3 className="text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{room.name || ''}</h3>
                 {room.priceLabel && <p className="text-sm font-black text-[color:var(--token-heading,#18181b)]" data-edit-path="priceLabel">{room.priceLabel}</p>}
               </div>
               {room.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: room.description }} />}

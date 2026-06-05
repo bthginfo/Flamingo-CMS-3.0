@@ -44,7 +44,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
             <div className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading,#18181b)]">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
             <div className="mt-4 border-t border-black/10 pt-4">
-              <p className="font-semibold text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
+              <p className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{item.name || ''}</p>
               <p className="text-xs text-[color:var(--token-muted,#71717a)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
             </div>
           </motion.article>
@@ -70,7 +70,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
           <article key={`${item.name}-${i}`} className="border-t border-black/10 pt-6" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm font-light leading-7 text-[color:var(--token-heading,#18181b)]">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
-            <p className="mt-4 font-medium text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
+            <p className="mt-4 font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{item.name || ''}</p>
             <p className="text-xs font-light text-[color:var(--token-muted,#71717a)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
           </article>
         ))}
@@ -96,7 +96,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
             <div className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm leading-6">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
             <div className="mt-4 border-t border-[color:var(--token-card-border,#ffffff)/20] pt-4">
-              <p className="font-black uppercase">{item.name || ''}</p>
+              <p className="font-black uppercase" data-edit-path="name">{item.name || ''}</p>
               <p className="text-xs text-[color:var(--token-on-dark-heading,#ffffff)/60]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
             </div>
           </article>

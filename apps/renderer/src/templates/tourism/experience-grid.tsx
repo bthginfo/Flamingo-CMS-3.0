@@ -42,7 +42,7 @@ function Classic({ header, items, ctaPrimary }: Props) {
             {item.image && <div className="relative min-h-56"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
             <div className="p-5">
               <ExperienceMeta item={item} className="text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
-              <h3 className="mt-3 text-2xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
+              <h3 className="mt-3 text-2xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.cta?.label && <div className="mt-5"><a href={item.cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-2.5 text-sm font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a></div>}
             </div>
@@ -64,7 +64,7 @@ function Modern({ header, items, ctaPrimary }: Props) {
             {item.image && <div className="relative min-h-56"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
             <div className="p-5">
               <ExperienceMeta item={item} className="text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] font-light" />
-              <h3 className="mt-3 text-2xl font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
+              <h3 className="mt-3 text-2xl font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.cta?.label && <div className="mt-5"><a href={item.cta.href || '#'} className="inline-flex items-center gap-2 font-semibold text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a></div>}
             </div>
@@ -90,7 +90,7 @@ function Bold({ header, items, ctaPrimary }: Props) {
             {item.image && <div className="relative min-h-56"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
             <div className="p-5">
               <ExperienceMeta item={item} className="text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] font-black" />
-              <h3 className="mt-3 text-2xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
+              <h3 className="mt-3 text-2xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.cta?.label && <div className="mt-5"><a href={item.cta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-2.5 text-sm font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a></div>}
             </div>

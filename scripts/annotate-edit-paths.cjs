@@ -42,37 +42,87 @@ const TEXT_FIELDS = new Set([
   'name', 'role', 'position',
   'quote', 'author', 'company', 'tagline', 'note',
   'ctaLabel', 'ctaPrimaryLabel', 'ctaSecondaryLabel', 'ctaText',
-  'buttonLabel', 'buttonText',
-  'primaryLabel', 'secondaryLabel', 'linkLabel',
+  'buttonLabel', 'buttonText', 'submitLabel', 'actionLabel', 'linkText',
+  'primaryLabel', 'secondaryLabel', 'linkLabel', 'menuLabel',
   'statValue', 'statLabel', 'statSuffix', 'statPrefix',
-  'price', 'priceLabel', 'priceSuffix', 'priceFrom', 'priceTo',
+  'price', 'priceLabel', 'priceSuffix', 'priceFrom', 'priceTo', 'cost', 'amount',
   'phone', 'phoneNumber', 'email', 'address', 'addressLine',
-  'question', 'answer',
-  'date', 'time', 'duration', 'location',
-  'category', 'tag', 'value', 'unit',
+  'question', 'answer', 'prompt', 'hint', 'tip',
+  'date', 'time', 'duration', 'location', 'venue', 'venueName',
+  'category', 'tag', 'value', 'unit', 'detail', 'summary',
 ]);
 
 // JSX tags we'll annotate. Keep it to actual text containers.
 const TEXT_TAGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span', 'a', 'button', 'blockquote', 'figcaption', 'label', 'li', 'strong', 'em'];
 
-// Pull a known field name out of a JSX expression body.
+// Pull a known field name out of a JSX expression body. Handles the
+// following shapes (the LHS wins when fallback operators are involved):
+//   {headline}
+//   {data.headline}
+//   {data.headline as string}
+//   {(data.headline as string)}
+//   {(data.headline as string) || 'default'}
+//   {data.headline ?? 'default'}
+//   {data?.headline}
+//   {plain(data.headline)}
 function fieldFromExpression(exprRaw) {
   let expr = exprRaw.trim();
-  // Strip wrapping parens
-  while (expr.startsWith('(') && expr.endsWith(')')) expr = expr.slice(1, -1).trim();
+  // Strip wrapping parens (repeatedly)
+  while (expr.startsWith('(') && expr.endsWith(')') && balancedParenSpan(expr) === expr.length) {
+    expr = expr.slice(1, -1).trim();
+  }
+  // If the expression is `LHS || RHS` or `LHS ?? RHS`, only the LHS
+  // determines the field — RHS is the default literal.
+  const fallbackSplit = splitOnTopLevelFallback(expr);
+  if (fallbackSplit) return fieldFromExpression(fallbackSplit);
   // Strip `as Type` cast
   expr = expr.replace(/\s+as\s+[A-Za-z_$][\w.<>[\]|& '"]*$/, '').trim();
   // Strip wrapping calls like plain(...), String(...), formatX(...)
   const callMatch = expr.match(/^(?:plain|String|trim|stripHtml|toString|html|md|markdown)\s*\(\s*([\s\S]+?)\s*\)$/);
   if (callMatch) return fieldFromExpression(callMatch[1]);
-  // Member access: take last segment
-  const segments = expr.split('.').map((s) => s.trim());
+  // Member access: take last segment (handles a?.b and a.b)
+  const segments = expr.split(/\??\./).map((s) => s.trim());
   const last = segments[segments.length - 1];
   // Identifier match
   const idMatch = last.match(/^([A-Za-z_$][\w$]*)$/);
   if (!idMatch) return null;
   const name = idMatch[1];
   if (TEXT_FIELDS.has(name)) return name;
+  return null;
+}
+
+// Return how far `(...)` extends from position 0 (i.e. the index AFTER the
+// matching closing paren) — used to detect whether the whole expression is
+// wrapped in a single paren-pair vs. being two side-by-side groups.
+function balancedParenSpan(s) {
+  if (s[0] !== '(') return 0;
+  let depth = 0;
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '(') depth++;
+    else if (s[i] === ')') { depth--; if (depth === 0) return i + 1; }
+  }
+  return 0;
+}
+
+// If the expression top-level is `LHS || RHS` or `LHS ?? RHS`, return LHS.
+// Otherwise null. Top-level means outside any paren / brace / string.
+function splitOnTopLevelFallback(expr) {
+  let depth = 0;
+  let inSingle = false, inDouble = false, inBack = false;
+  for (let i = 0; i < expr.length - 1; i++) {
+    const ch = expr[i];
+    if (inSingle) { if (ch === '\\') { i++; continue; } if (ch === "'") inSingle = false; continue; }
+    if (inDouble) { if (ch === '\\') { i++; continue; } if (ch === '"') inDouble = false; continue; }
+    if (inBack) { if (ch === '\\') { i++; continue; } if (ch === '`') inBack = false; continue; }
+    if (ch === "'") { inSingle = true; continue; }
+    if (ch === '"') { inDouble = true; continue; }
+    if (ch === '`') { inBack = true; continue; }
+    if (ch === '(' || ch === '[' || ch === '{') { depth++; continue; }
+    if (ch === ')' || ch === ']' || ch === '}') { depth--; continue; }
+    if (depth !== 0) continue;
+    const two = expr.slice(i, i + 2);
+    if (two === '||' || two === '??') return expr.slice(0, i).trim();
+  }
   return null;
 }
 

@@ -42,7 +42,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
                 <ul className="mt-6 space-y-2">
                   {pkg.features.map((f, j) => <li key={j} className="text-[color:var(--token-muted,#52525b)] text-sm" data-edit-collection="features" data-edit-index={j}>— {f}</li>)}
                 </ul>
-                {pkg.ctaHref && <a href={pkg.ctaHref} className="inline-block mt-6 text-sm text-[color:var(--token-heading,#18181b)] border-b border-[color:var(--token-card-border,#18181b)] hover:opacity-70">{pkg.ctaLabel || 'Anfragen'} →</a>}
+                {pkg.ctaHref && <a href={pkg.ctaHref} className="inline-block mt-6 text-sm text-[color:var(--token-heading,#18181b)] border-b border-[color:var(--token-card-border,#18181b)] hover:opacity-70"><span data-edit-path="ctaLabel">{pkg.ctaLabel || 'Anfragen'}</span> →</a>}
               </motion.div>
             ))}
           </div>
@@ -73,7 +73,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
                     </li>
                   ))}
                 </ul>
-                {pkg.ctaHref && <a href={pkg.ctaHref} className={`mt-8 inline-flex items-center gap-2 px-6 py-3 text-sm font-bold uppercase tracking-wider w-full justify-center ${pkg.highlighted ? 'bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)]' : 'border border-[color:var(--token-card-border,#ffffff)/20] text-[color:var(--token-on-dark-heading,#ffffff)] hover:bg-[var(--token-card-bg,#ffffff)/5]'}`}>{pkg.ctaLabel || 'Anfragen'} <ArrowRight className="w-4 h-4" /></a>}
+                {pkg.ctaHref && <a href={pkg.ctaHref} className={`mt-8 inline-flex items-center gap-2 px-6 py-3 text-sm font-bold uppercase tracking-wider w-full justify-center ${pkg.highlighted ? 'bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)]' : 'border border-[color:var(--token-card-border,#ffffff)/20] text-[color:var(--token-on-dark-heading,#ffffff)] hover:bg-[var(--token-card-bg,#ffffff)/5]'}`}><span data-edit-path="ctaLabel">{pkg.ctaLabel || 'Anfragen'}</span> <ArrowRight className="w-4 h-4" /></a>}
               </motion.div>
             ))}
           </div>
@@ -113,7 +113,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
               </ul>
               {pkg.ctaHref && (
                 <a href={pkg.ctaHref} className={`mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition-colors w-full justify-center ${pkg.highlighted ? 'bg-[var(--token-card-bg,#ffffff)] text-[color:var(--token-icon,var(--brand-primary,#1a5276))] hover:bg-[var(--token-section-bg-alt,#f4f4f5)]' : 'bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-[color:var(--token-on-dark-heading,#ffffff)] hover:bg-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))]'}`}>
-                  {pkg.ctaLabel || 'Anfragen'} <ArrowRight className="w-4 h-4" />
+                  <span data-edit-path="ctaLabel">{pkg.ctaLabel || 'Anfragen'}</span> <ArrowRight className="w-4 h-4" />
                 </a>
               )}
             </motion.div>

@@ -33,7 +33,7 @@ function Classic({ header, introText, blocks }: Props) {
             <div className="flex gap-4">
               <DynamicIcon name={block.icon || 'map-pin'} size={20} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
               <div>
-                <h3 className="font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{block.title || ''}</h3>
+                <h3 className="font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{block.title || ''}</h3>
                 {block.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: block.text }} />}
               </div>
             </div>
@@ -58,7 +58,7 @@ function Modern({ header, introText, blocks }: Props) {
             <div className="flex gap-4">
               <DynamicIcon name={block.icon || 'map-pin'} size={20} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
               <div>
-                <h3 className="font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{block.title || ''}</h3>
+                <h3 className="font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{block.title || ''}</h3>
                 {block.text && <div className="mt-1 text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: block.text }} />}
               </div>
             </div>
@@ -87,7 +87,7 @@ function Bold({ header, introText, blocks }: Props) {
             <div className="flex gap-4">
               <DynamicIcon name={block.icon || 'map-pin'} size={20} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" />
               <div>
-                <h3 className="font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{block.title || ''}</h3>
+                <h3 className="font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{block.title || ''}</h3>
                 {block.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: block.text }} />}
               </div>
             </div>

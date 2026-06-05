@@ -46,7 +46,7 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
                 {offer.priceLabel && <span data-edit-path="priceLabel">{offer.priceLabel}</span>}
                 {offer.validUntilLabel && <span>{offer.validUntilLabel}</span>}
               </div>
-              <h3 className="mt-3 text-xl font-bold text-[color:var(--token-heading,#18181b)]">{offer.title || ''}</h3>
+              <h3 className="mt-3 text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{offer.title || ''}</h3>
               {offer.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: offer.description }} />}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs text-[color:var(--token-muted,#52525b)]">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">
@@ -81,7 +81,7 @@ function OffersModern({ headline, subline, badgeText, offers, fallbackText }: Pr
                 {offer.priceLabel && <span data-edit-path="priceLabel">{offer.priceLabel}</span>}
                 {offer.validUntilLabel && <span>{offer.validUntilLabel}</span>}
               </div>
-              <h3 className="mt-3 text-xl font-light text-[color:var(--token-heading,#18181b)]">{offer.title || ''}</h3>
+              <h3 className="mt-3 text-xl font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{offer.title || ''}</h3>
               {offer.description && <div className="mt-3 text-sm font-light leading-7 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: offer.description }} />}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs font-light text-[color:var(--token-muted,#52525b)]">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">
@@ -116,7 +116,7 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
                 {offer.priceLabel && <span data-edit-path="priceLabel">{offer.priceLabel}</span>}
                 {offer.validUntilLabel && <span>{offer.validUntilLabel}</span>}
               </div>
-              <h3 className="mt-3 text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{offer.title || ''}</h3>
+              <h3 className="mt-3 text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{offer.title || ''}</h3>
               {offer.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: offer.description }} />}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs text-[color:var(--token-muted,#52525b)]">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">

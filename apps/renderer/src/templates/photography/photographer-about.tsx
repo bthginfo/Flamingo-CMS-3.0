@@ -48,7 +48,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                   ))}
                 </div>
               )}
-              {ctaHref && <a href={ctaHref} className="inline-block mt-10 text-sm text-[color:var(--token-heading,#18181b)] border-b border-[color:var(--token-card-border,#18181b)] hover:opacity-70 transition-opacity">{ctaLabel || 'Kontakt aufnehmen'} →</a>}
+              {ctaHref && <a href={ctaHref} className="inline-block mt-10 text-sm text-[color:var(--token-heading,#18181b)] border-b border-[color:var(--token-card-border,#18181b)] hover:opacity-70 transition-opacity"><span data-edit-path="ctaLabel">{ctaLabel || 'Kontakt aufnehmen'}</span> →</a>}
             </div>
           </div>
         </div>
@@ -87,7 +87,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                   ))}
                 </div>
               )}
-              {ctaHref && <a href={ctaHref} className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-opacity">{ctaLabel || 'Kontakt aufnehmen'}</a>}
+              {ctaHref && <a href={ctaHref} className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-opacity" data-edit-path="ctaLabel">{ctaLabel || 'Kontakt aufnehmen'}</a>}
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
               </div>
             )}
             {ctaHref && (
-              <a href={ctaHref} className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-[color:var(--token-on-dark-heading,#ffffff)] rounded-lg text-sm font-medium hover:bg-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))] transition-colors">
+              <a href={ctaHref} className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-[color:var(--token-on-dark-heading,#ffffff)] rounded-lg text-sm font-medium hover:bg-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))] transition-colors" data-edit-path="ctaLabel">
                 {ctaLabel || 'Kontakt aufnehmen'}
               </a>
             )}

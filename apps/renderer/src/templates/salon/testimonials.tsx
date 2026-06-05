@@ -38,7 +38,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
           <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-5 shadow-md" data-edit-collection="items" data-edit-index={i}>
             <div className="flex gap-1 text-[var(--token-eyebrow, var(--brand-accent))]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={14}  data-edit-collection="rating" data-edit-index={si}/>)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-[color:var(--token-heading,#18181b)] rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />}
-            <p className="mt-4 font-semibold text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
+            <p className="mt-4 font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{item.name || ''}</p>
             <p className="text-xs text-[color:var(--token-muted,#52525b)]">{[item.context, item.sourceLabel].filter(Boolean).join(' / ')}</p>
           </motion.article>
         ))}
@@ -62,7 +62,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
           <article key={`${item.name}-${i}`} className="border-t border-black/10 pt-6" data-edit-collection="items" data-edit-index={i}>
             <div className="flex gap-1 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={12}  data-edit-collection="rating" data-edit-index={si}/>)}</div>
             {item.quote && <div className="mt-4 text-sm font-light leading-6 text-[color:var(--token-heading,#18181b)] rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />}
-            <p className="mt-4 font-light text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
+            <p className="mt-4 font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{item.name || ''}</p>
             <p className="text-xs font-light text-[color:var(--token-muted,#52525b)]">{[item.context, item.sourceLabel].filter(Boolean).join(' / ')}</p>
           </article>
         ))}
@@ -86,7 +86,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
           <article key={`${item.name}-${i}`} className="border-2 border-[#111827] bg-[#111] p-5 shadow-[4px_4px_0_var(--token-eyebrow, var(--brand-accent))]" data-edit-collection="items" data-edit-index={i}>
             <div className="flex gap-1 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={14}  data-edit-collection="rating" data-edit-index={si}/>)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-[color:var(--token-on-dark-heading,#ffffff)] rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />}
-            <p className="mt-4 font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]">{item.name || ''}</p>
+            <p className="mt-4 font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="name">{item.name || ''}</p>
             <p className="text-xs text-[color:var(--token-on-dark-heading,#ffffff)/60]">{[item.context, item.sourceLabel].filter(Boolean).join(' / ')}</p>
           </article>
         ))}

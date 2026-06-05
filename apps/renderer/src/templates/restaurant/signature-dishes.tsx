@@ -42,7 +42,7 @@ function SignatureDishesClassic({ headline, subline, badgeText, dishes }: Signat
             <div className="p-5">
               {dish.label && <p className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" data-edit-path="label">{dish.label}</p>}
               <div className="mt-2 flex items-start justify-between gap-4">
-                <h3 className="text-xl font-bold text-[color:var(--token-heading,#18181b)]">{dish.name || ''}</h3>
+                <h3 className="text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{dish.name || ''}</h3>
                 {dish.price && <p className="shrink-0 font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="price">{dish.price}</p>}
               </div>
               {dish.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: dish.description }} />}
@@ -72,7 +72,7 @@ function SignatureDishesModern({ headline, subline, badgeText, dishes }: Signatu
             <div className="p-6">
               {dish.label && <p className="text-xs font-light uppercase tracking-[0.15em] text-[color:var(--token-muted,#71717a)]" data-edit-path="label">{dish.label}</p>}
               <div className="mt-2 flex items-start justify-between gap-4">
-                <h3 className="text-xl font-medium text-[color:var(--token-heading,#18181b)]">{dish.name || ''}</h3>
+                <h3 className="text-xl font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{dish.name || ''}</h3>
                 {dish.price && <p className="shrink-0 font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="price">{dish.price}</p>}
               </div>
               {dish.description && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: dish.description }} />}
@@ -102,7 +102,7 @@ function SignatureDishesBold({ headline, subline, badgeText, dishes }: Signature
             <div className="p-5">
               {dish.label && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" data-edit-path="label">{dish.label}</p>}
               <div className="mt-2 flex items-start justify-between gap-4">
-                <h3 className="text-xl font-bold uppercase">{dish.name || ''}</h3>
+                <h3 className="text-xl font-bold uppercase" data-edit-path="name">{dish.name || ''}</h3>
                 {dish.price && <p className="shrink-0 font-bold text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" data-edit-path="price">{dish.price}</p>}
               </div>
               {dish.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading,#ffffff)/60] rt-content" dangerouslySetInnerHTML={{ __html: dish.description }} />}

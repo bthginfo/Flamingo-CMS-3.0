@@ -32,7 +32,7 @@ export function ImageCard({ image, title, text, meta, cta }: { image?: string; t
       {image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={image} alt={title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
       <div className="p-5">
         {meta && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">{meta}</p>}
-        <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]">{title || ''}</h3>
+        <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{title || ''}</h3>
         {text && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {cta?.label && <div className="mt-5"><CtaButton cta={cta} /></div>}
       </div>
@@ -47,7 +47,7 @@ export function IconRows({ items }: { items: unknown }) {
         <div key={`${item.title}-${index}`} className="flex gap-4 border-t border-black/10 pt-4" data-edit-collection="items" data-edit-index={index}>
           <DynamicIcon name={item.icon || 'sparkles'} size={20} />
           <div>
-            <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+            <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </div>
         </div>

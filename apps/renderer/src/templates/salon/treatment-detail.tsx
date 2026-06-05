@@ -35,7 +35,7 @@ function TreatmentClassic({ headline, subline, badgeText, treatments }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="50vw" /></div>}
             <div className="p-5">
               {(item.resultLabel || item.durationLabel || item.priceLabel) && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">{[item.resultLabel, item.durationLabel, item.priceLabel].filter(Boolean).join(' / ')}</p>}
-              <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {asList<string>(item.steps).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-muted,#52525b)]">{asList<string>(item.steps).join(' / ')}</p>}
               {asList<string>(item.careTips).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-muted,#52525b)]">{asList<string>(item.careTips).join(' / ')}</p>}
@@ -62,7 +62,7 @@ function TreatmentModern({ headline, subline, badgeText, treatments }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="mt-4">
               {(item.resultLabel || item.durationLabel || item.priceLabel) && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{[item.resultLabel, item.durationLabel, item.priceLabel].filter(Boolean).join(' / ')}</p>}
-              <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {asList<string>(item.steps).length > 0 && <p className="mt-2 text-sm font-light text-[color:var(--token-muted,#52525b)]">{asList<string>(item.steps).join(' / ')}</p>}
               {asList<string>(item.careTips).length > 0 && <p className="mt-2 text-sm font-light text-[color:var(--token-muted,#52525b)]">{asList<string>(item.careTips).join(' / ')}</p>}
@@ -89,7 +89,7 @@ function TreatmentBold({ headline, subline, badgeText, treatments }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="p-5">
               {(item.resultLabel || item.durationLabel || item.priceLabel) && <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]">{[item.resultLabel, item.durationLabel, item.priceLabel].filter(Boolean).join(' / ')}</span>}
-              <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading,#ffffff)/70] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {asList<string>(item.steps).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-on-dark-heading,#ffffff)/60]">{asList<string>(item.steps).join(' / ')}</p>}
               {asList<string>(item.careTips).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-on-dark-heading,#ffffff)/60]">{asList<string>(item.careTips).join(' / ')}</p>}

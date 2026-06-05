@@ -38,7 +38,7 @@ function BeforeAfterClassic({ headline, subline, badgeText, items }: Props) {
             </div>
             <div className="p-5">
               {item.category && <span className="inline-block rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase text-[var(--token-eyebrow, var(--brand-accent))]" data-edit-path="category">{item.category}</span>}
-              <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.caption && <p className="mt-2 text-xs text-[color:var(--token-muted,#52525b)]" data-edit-path="caption">{item.caption}</p>}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex rounded-full bg-[#111827] px-5 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="label">{item.cta.label}</a>}
@@ -67,7 +67,7 @@ function BeforeAfterModern({ headline, subline, badgeText, items }: Props) {
             </div>
             <div className="mt-5">
               {item.category && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]" data-edit-path="category">{item.category}</p>}
-              <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex border-b border-[var(--token-card-border,var(--brand-accent,#f39c12))] pb-1 text-sm font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="label">{item.cta.label}</a>}
             </div>
@@ -95,7 +95,7 @@ function BeforeAfterBold({ headline, subline, badgeText, items }: Props) {
             </div>
             <div className="p-5">
               {item.category && <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="category">{item.category}</span>}
-              <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm text-[color:var(--token-on-dark-heading,#ffffff)/70] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-5 py-2 text-sm font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{item.cta.label}</a>}
             </div>

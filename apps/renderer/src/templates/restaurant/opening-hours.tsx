@@ -52,7 +52,7 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
             <div className="flex items-center gap-3">
               <div className="rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] p-1.5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Clock size={15} /></div>
               <div>
-                <p className="font-semibold text-[color:var(--token-heading,#18181b)]">{day.label || ''}</p>
+                <p className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="label">{day.label || ''}</p>
                 {day.note && <p className="text-xs text-[color:var(--token-muted,#71717a)]" data-edit-path="note">{day.note}</p>}
               </div>
             </div>
@@ -83,7 +83,7 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
             <div className="flex items-center gap-3">
               <Clock size={15} className="text-[color:var(--token-muted,#71717a)]" />
               <div>
-                <p className="font-medium text-[color:var(--token-heading,#18181b)]">{day.label || ''}</p>
+                <p className="font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="label">{day.label || ''}</p>
                 {day.note && <p className="text-xs font-light text-[color:var(--token-muted,#71717a)]" data-edit-path="note">{day.note}</p>}
               </div>
             </div>
@@ -115,7 +115,7 @@ function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHead
               <div className="flex items-center gap-3">
                 <Clock size={17} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
                 <div>
-                  <p className="font-bold uppercase">{day.label || ''}</p>
+                  <p className="font-bold uppercase" data-edit-path="label">{day.label || ''}</p>
                   {day.note && <p className="text-xs text-[color:var(--token-on-dark-heading,#ffffff)/50]" data-edit-path="note">{day.note}</p>}
                 </div>
               </div>

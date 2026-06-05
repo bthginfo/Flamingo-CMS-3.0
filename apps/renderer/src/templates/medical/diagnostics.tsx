@@ -29,7 +29,7 @@ function Classic({ header, items }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {(item.methodLabel || item.benefitLabel) && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[item.methodLabel, item.benefitLabel].filter(Boolean).join(' / ')}</p>}
-              <h3 className="mt-2 text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-2.5 text-sm font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
@@ -50,7 +50,7 @@ function Modern({ header, items }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {(item.methodLabel || item.benefitLabel) && <p className="text-xs font-light uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[item.methodLabel, item.benefitLabel].filter(Boolean).join(' / ')}</p>}
-              <h3 className="mt-2 text-xl font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 whitespace-pre-line text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-4 py-2 text-sm font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
@@ -75,7 +75,7 @@ function Bold({ header, items }: Props) {
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {(item.methodLabel || item.benefitLabel) && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{[item.methodLabel, item.benefitLabel].filter(Boolean).join(' / ')}</p>}
-              <h3 className="mt-2 text-xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-4 py-2 text-sm font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a>}
             </div>

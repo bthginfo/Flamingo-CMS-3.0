@@ -110,7 +110,7 @@ export function AdditionalLocationsSection({ data }: Props) {
                       rel={routeHref.startsWith('http') ? 'noreferrer' : undefined}
                       className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--token-icon, var(--brand-primary,#111827))))] px-5 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#ffffff))] transition hover:brightness-110"
                     >
-                      {location.ctaLabel || 'Route öffnen'}
+                      <span data-edit-path="ctaLabel">{location.ctaLabel || 'Route öffnen'}</span>
                       {location.ctaLabel ? <ArrowRight size={16} /> : <Navigation size={16} />}
                     </a>
                   )}

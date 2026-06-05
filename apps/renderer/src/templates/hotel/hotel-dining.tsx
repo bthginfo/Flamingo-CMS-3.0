@@ -47,7 +47,7 @@ function DiningClassic({ headline, subline, badgeText, introText, image, opening
         <div className="mt-6 grid gap-4">
           {menus.map((menu, index) => (
             <motion.article key={`${menu.title}-${index}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} className="border-t border-[var(--token-icon, var(--brand-primary))]/20 pt-4" data-edit-collection="menus" data-edit-index={index}>
-              <div className="flex justify-between gap-4"><h3 className="font-bold text-[color:var(--token-heading,#18181b)]">{menu.title || ''}</h3><span className="text-sm text-[color:var(--token-muted,#52525b)]">{menu.priceLabel || ''}</span></div>
+              <div className="flex justify-between gap-4"><h3 className="font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{menu.title || ''}</h3><span className="text-sm text-[color:var(--token-muted,#52525b)]" data-edit-path="priceLabel">{menu.priceLabel || ''}</span></div>
               {menu.description && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: menu.description }} />}
               {menu.timeLabel && <p className="mt-2 text-xs text-[color:var(--token-muted,#52525b)]">{menu.timeLabel}</p>}
               {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" data-edit-path="label">{menu.cta.label}</a>}
@@ -62,7 +62,7 @@ function DiningClassic({ headline, subline, badgeText, introText, image, opening
           {highlights.map((item, index) => (
             <motion.article key={`${item.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon, var(--brand-primary))]/20 bg-[var(--token-card-bg,#ffffff)] p-4 shadow-md" data-edit-collection="highlights" data-edit-index={index}>
               {item.image && <div className="relative mb-3 aspect-[16/10] overflow-hidden rounded-xl"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
-              <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+              <h3 className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             </motion.article>
           ))}
@@ -87,7 +87,7 @@ function DiningModern({ headline, subline, badgeText, introText, image, openingT
         <div className="mt-8 grid gap-4">
           {menus.map((menu, index) => (
             <article key={`${menu.title}-${index}`} className="border-t border-black/10 pt-4" data-edit-collection="menus" data-edit-index={index}>
-              <div className="flex justify-between gap-4"><h3 className="font-light text-[color:var(--token-heading,#18181b)]">{menu.title || ''}</h3><span className="text-sm font-light text-[color:var(--token-muted,#52525b)]">{menu.priceLabel || ''}</span></div>
+              <div className="flex justify-between gap-4"><h3 className="font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{menu.title || ''}</h3><span className="text-sm font-light text-[color:var(--token-muted,#52525b)]" data-edit-path="priceLabel">{menu.priceLabel || ''}</span></div>
               {menu.description && <div className="mt-2 text-sm font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: menu.description }} />}
               {menu.timeLabel && <p className="mt-2 text-xs font-light text-[color:var(--token-muted,#52525b)]">{menu.timeLabel}</p>}
               {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4" data-edit-path="label">{menu.cta.label}</a>}
@@ -102,7 +102,7 @@ function DiningModern({ headline, subline, badgeText, introText, image, openingT
           {highlights.map((item, index) => (
             <article key={`${item.title}-${index}`} className="border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-5" data-edit-collection="highlights" data-edit-index={index}>
               {item.image && <div className="relative mb-4 aspect-[16/10] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
-              <h3 className="font-light text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+              <h3 className="font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-2 text-sm font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             </article>
           ))}
@@ -127,7 +127,7 @@ function DiningBold({ headline, subline, badgeText, introText, image, openingTex
         <div className="mt-6 grid gap-4">
           {menus.map((menu, index) => (
             <article key={`${menu.title}-${index}`} className="border-t-2 border-[#111827] pt-4" data-edit-collection="menus" data-edit-index={index}>
-              <div className="flex justify-between gap-4"><h3 className="font-black uppercase text-[color:var(--token-heading,#18181b)]">{menu.title || ''}</h3><span className="text-sm font-bold text-[color:var(--token-muted,#52525b)]">{menu.priceLabel || ''}</span></div>
+              <div className="flex justify-between gap-4"><h3 className="font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{menu.title || ''}</h3><span className="text-sm font-bold text-[color:var(--token-muted,#52525b)]" data-edit-path="priceLabel">{menu.priceLabel || ''}</span></div>
               {menu.description && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: menu.description }} />}
               {menu.timeLabel && <p className="mt-2 text-xs font-bold text-[color:var(--token-muted,#52525b)]">{menu.timeLabel}</p>}
               {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-black uppercase text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" data-edit-path="label">{menu.cta.label}</a>}
@@ -142,7 +142,7 @@ function DiningBold({ headline, subline, badgeText, introText, image, openingTex
           {highlights.map((item, index) => (
             <article key={`${item.title}-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg,#ffffff)] p-4 shadow-[4px_4px_0_#111827]" data-edit-collection="highlights" data-edit-index={index}>
               {item.image && <div className="relative mb-3 aspect-[16/10] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
-              <h3 className="font-black uppercase text-[color:var(--token-heading,#18181b)]">{item.title || ''}</h3>
+              <h3 className="font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
             </article>
           ))}

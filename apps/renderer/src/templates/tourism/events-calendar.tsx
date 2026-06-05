@@ -43,7 +43,7 @@ function Classic({ header, events, fallbackText }: Props) {
             {event.image && <div className="relative min-h-48"><Image src={event.image} alt={event.title || ''} fill className="object-cover" sizes="220px" /></div>}
             <div className="p-5">
               <EventMeta event={event} />
-              <h3 className="mt-3 text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{event.title || ''}</h3>
+              <h3 className="mt-3 text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{event.title || ''}</h3>
               {event.text && <div className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: event.text }} />}
               {event.cta?.label && <a href={event.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]"><span data-edit-path="label">{event.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
@@ -71,7 +71,7 @@ function Modern({ header, events, fallbackText }: Props) {
                 {event.category && <span data-edit-path="category">{event.category}</span>}
                 {event.priceLabel && <span data-edit-path="priceLabel">{event.priceLabel}</span>}
               </div>
-              <h3 className="mt-3 text-xl font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{event.title || ''}</h3>
+              <h3 className="mt-3 text-xl font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{event.title || ''}</h3>
               {event.text && <div className="mt-3 text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: event.text }} />}
               {event.cta?.label && <a href={event.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]"><span data-edit-path="label">{event.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
@@ -103,7 +103,7 @@ function Bold({ header, events, fallbackText }: Props) {
                 {event.category && <span data-edit-path="category">{event.category}</span>}
                 {event.priceLabel && <span data-edit-path="priceLabel">{event.priceLabel}</span>}
               </div>
-              <h3 className="mt-3 text-xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{event.title || ''}</h3>
+              <h3 className="mt-3 text-xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{event.title || ''}</h3>
               {event.text && <div className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: event.text }} />}
               {event.cta?.label && <a href={event.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-black uppercase text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]"><span data-edit-path="label">{event.cta.label}</span><ArrowRight size={14} /></a>}
             </div>

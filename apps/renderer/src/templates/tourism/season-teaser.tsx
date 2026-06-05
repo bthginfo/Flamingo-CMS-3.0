@@ -29,7 +29,7 @@ function Classic({ header, seasons }: Props) {
             {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={season.image} alt={season.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="25vw" /></div>}
             <div className="p-5">
               <p className="text-xs font-bold uppercase tracking-widest text-green-700">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
-              <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]">{season.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{season.title || ''}</h3>
               {season.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: season.text }} />}
               {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-green-700"><span data-edit-path="label">{season.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
@@ -50,7 +50,7 @@ function Modern({ header, seasons }: Props) {
             {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={season.image} alt={season.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             <div className="p-5">
               <p className="text-xs font-light uppercase tracking-widest text-teal-600">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
-              <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading,#18181b)]">{season.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{season.title || ''}</h3>
               {season.text && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: season.text }} />}
               {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-teal-600"><span data-edit-path="label">{season.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
@@ -75,7 +75,7 @@ function Bold({ header, seasons }: Props) {
             {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={season.image} alt={season.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             <div className="p-5">
               <p className="text-xs font-black uppercase tracking-widest text-orange-500">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
-              <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{season.title || ''}</h3>
+              <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{season.title || ''}</h3>
               {season.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: season.text }} />}
               {season.cta?.label && <a href={season.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-black uppercase text-orange-500"><span data-edit-path="label">{season.cta.label}</span><ArrowRight size={14} /></a>}
             </div>

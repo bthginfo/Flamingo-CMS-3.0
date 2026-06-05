@@ -80,7 +80,7 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
           {names}
         </motion.h1>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className={`mt-6 ${isBold ? 'text-sm font-bold uppercase tracking-widest' : isModern ? 'text-sm tracking-[0.15em] uppercase' : 'text-lg'} ${bgImage ? 'text-[color:var(--token-on-dark-body,#ffffff)] opacity-90' : 'text-[color:var(--token-muted,#52525b)]'}`}>
-          {formattedDate}{venue && ` · ${venue}`}
+          {formattedDate}{venue && ` · $<span data-edit-path="venue">{venue}</span>`}
         </motion.p>
         {showCountdown && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className={`mt-10 md:mt-14 flex ${isBold ? 'gap-4 md:gap-8' : 'gap-4 md:gap-12 justify-center'} ${bgImage ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : (isBold ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-heading,#27272a)]')}`}>

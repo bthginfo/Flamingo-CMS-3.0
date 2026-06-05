@@ -21,7 +21,7 @@ export function CtaButton({ cta }: { cta: ButtonValue }) {
 }
 
 export function ImageCard({ image, title, text, meta, cta }: { image?: string; title?: string; text?: string; meta?: string; cta?: ButtonValue }) {
-  return <article className="group overflow-hidden rounded-xl border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-sm">{image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={image} alt={title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}<div className="p-5">{meta && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-muted, var(--style-text-muted,#4b5563))))]">{meta}</p>}<h3 className="mt-2 text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{title || ''}</h3>{text && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: text }} />}{cta?.label && <div className="mt-5"><CtaButton cta={cta} /></div>}</div></article>;
+  return <article className="group overflow-hidden rounded-xl border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-sm">{image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={image} alt={title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}<div className="p-5">{meta && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-muted, var(--style-text-muted,#4b5563))))]">{meta}</p>}<h3 className="mt-2 text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{title || ''}</h3>{text && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: text }} />}{cta?.label && <div className="mt-5"><CtaButton cta={cta} /></div>}</div></article>;
 }
 
 export function IconRows({ items }: { items: unknown }) {
@@ -33,7 +33,7 @@ export function IconRows({ items }: { items: unknown }) {
             <DynamicIcon name={item.icon || 'stethoscope'} size={18} />
           </span>
           <div className="min-w-0">
-            <h3 className="font-semibold text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
+            <h3 className="font-semibold text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body,var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </div>
         </div>

@@ -32,7 +32,7 @@ function Accordion({ items, variant }: { items: FaqItem[]; variant: 'classic' | 
         return (
           <div key={`${item.question}-${i}`} className={variant === 'bold' ? 'border-b-2 border-[#111827]' : variant === 'modern' ? 'border-b border-black/10' : 'border-b border-[var(--token-icon, var(--brand-primary))]/20'}>
             <button onClick={() => setOpen(isOpen ? null : i)} className={`flex w-full items-center justify-between py-5 text-left ${variant === 'bold' ? 'font-black uppercase text-[color:var(--token-heading,#18181b)]' : variant === 'modern' ? 'font-medium text-[color:var(--token-heading,#18181b)]' : 'font-semibold text-[color:var(--token-heading,#18181b)]'}`}>
-              {item.question || ''}
+              <span data-edit-path="question">{item.question || ''}</span>
               <ChevronDown size={18} className={`shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </button>
             <AnimatePresence>

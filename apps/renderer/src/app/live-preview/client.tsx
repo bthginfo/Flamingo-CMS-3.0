@@ -113,12 +113,26 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       const original = el.innerText;
       el.setAttribute('contenteditable', 'plaintext-only');
       el.setAttribute('spellcheck', 'false');
-      el.style.outline = '1px dashed rgba(236,72,153,0.45)';
+      el.setAttribute('data-editable-active', 'true');
+      // Inline edit affordance: dashed pink box + text cursor. The class
+      // hook is a fallback the parent section CSS uses to re-enable
+      // pointer-events on editable spans inside disabled <a>/<button>.
+      el.style.outline = '1px dashed rgba(236,72,153,0.55)';
       el.style.outlineOffset = '2px';
+      el.style.borderRadius = '3px';
       el.style.cursor = 'text';
+      el.style.pointerEvents = 'auto';
+      el.style.position = el.style.position || 'relative';
+
+      // Capture-phase intercept on the editable element so the parent
+      // <a href> never navigates and the section-wrapper click never
+      // bubbles up to the section-select handler.
+      const swallow = (e: Event) => { e.stopPropagation(); };
+      const prevent = (e: Event) => { e.preventDefault(); e.stopPropagation(); };
 
       const onFocus = (e: Event) => { e.stopPropagation(); };
       const onClick = (e: Event) => { e.stopPropagation(); };
+      const onMouseDown = (e: Event) => { e.stopPropagation(); };
       const onBlur = () => {
         const value = el.innerText.trim();
         if (value === original.trim()) return;
@@ -137,21 +151,48 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
         }
       };
 
+      // Walk ancestor chain up to the section root and intercept clicks
+      // on any <a>/<button> so the editable child gets the focus instead
+      // of triggering navigation or the section-click handler. Without
+      // this users see the pink outline on a button-wrapped text but
+      // their click is swallowed by the disabled <a>.
+      const ancestorPreventers: Array<{ el: HTMLElement; fn: (e: Event) => void }> = [];
+      let p: HTMLElement | null = el.parentElement;
+      while (p && p !== root && p !== sectionEl) {
+        if (p.tagName === 'A' || p.tagName === 'BUTTON') {
+          const fn = (e: Event) => {
+            const t = e.target as HTMLElement;
+            if (t.closest('[data-editable-active]')) { e.preventDefault(); e.stopPropagation(); }
+          };
+          p.addEventListener('click', fn, true);
+          ancestorPreventers.push({ el: p, fn });
+        }
+        p = p.parentElement;
+      }
+
       el.addEventListener('focus', onFocus);
       el.addEventListener('click', onClick);
+      el.addEventListener('mousedown', onMouseDown);
       el.addEventListener('blur', onBlur);
       el.addEventListener('keydown', onKey);
+      // Silence the swallow ref so TS doesn't warn it's unused.
+      void swallow; void prevent;
 
       cleanups.push(() => {
         el.removeAttribute('contenteditable');
         el.removeAttribute('spellcheck');
+        el.removeAttribute('data-editable-active');
         el.style.outline = '';
         el.style.outlineOffset = '';
+        el.style.borderRadius = '';
         el.style.cursor = '';
+        el.style.pointerEvents = '';
         el.removeEventListener('focus', onFocus);
         el.removeEventListener('click', onClick);
+        el.removeEventListener('mousedown', onMouseDown);
         el.removeEventListener('blur', onBlur);
         el.removeEventListener('keydown', onKey);
+        ancestorPreventers.forEach(({ el: anc, fn }) => anc.removeEventListener('click', fn, true));
       });
     });
 
@@ -209,7 +250,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
                   window.location.origin,
                 );
               }}
-              className={editMode ? 'relative cursor-pointer outline-2 outline-transparent hover:outline-pink-500 outline-dashed transition-[outline-color] [&_a]:pointer-events-none [&_button]:pointer-events-none' : 'relative'}
+              className={editMode ? 'relative cursor-pointer outline-2 outline-transparent hover:outline-pink-500 outline-dashed transition-[outline-color] [&_a]:pointer-events-none [&_button]:pointer-events-none [&_[data-edit-path]]:!pointer-events-auto [&_[data-edit-path]]:relative [&_[data-edit-path]]:z-[5]' : 'relative'}
             >
               {editMode && (
                 <div className="absolute top-1 left-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-pink-500 text-white text-[10px] font-medium px-2 py-0.5 rounded pointer-events-none">
