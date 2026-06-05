@@ -55,7 +55,7 @@ export function ProductShowcaseSection({ data }: Props) {
                   </div>
                 )}
                 {item.badge && (
-                  <span className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full bg-[var(--token-icon)] text-white shadow-md" data-edit-path="badge">
+                  <span className="absolute top-3 left-3 px-3 py-1 text-xs font-semibold rounded-full bg-[var(--token-icon)] text-[color:var(--token-btn-text,#fff)] shadow-md" data-edit-path="badge">
                     {item.badge}
                   </span>
                 )}

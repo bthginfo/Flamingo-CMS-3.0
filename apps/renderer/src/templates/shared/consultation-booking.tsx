@@ -49,7 +49,7 @@ export function ConsultationBookingSection({ data }: Props) {
               }`}
              data-edit-collection="services" data-edit-index={i}>
               {service.icon && (
-                <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--token-icon)] text-white' : 'bg-gray-100 text-[var(--token-icon)]'} transition-colors`}>
+                <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--token-icon)] text-[color:var(--token-btn-text,#fff)]' : 'bg-gray-100 text-[var(--token-icon)]'} transition-colors`}>
                   <DynamicIcon editPath="icon" name={service.icon} size={20} />
                 </div>
               )}
@@ -77,7 +77,7 @@ export function ConsultationBookingSection({ data }: Props) {
                 {services[selected]?.title ? `Beratung: $<span data-edit-path="title">{services[selected].title}</span>` : 'Individuelle Beratung'}
               </p>
               {cta?.label && (
-                <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[var(--token-icon)] text-white font-semibold rounded-[var(--token-button-radius)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
+                <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[var(--token-icon)] text-[color:var(--token-btn-text,#fff)] font-semibold rounded-[var(--token-button-radius)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
                   {cta.label}
                 </a>
               )}

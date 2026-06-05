@@ -39,7 +39,7 @@ function Classic({ header, events, fallbackText }: Props) {
       {events.length === 0 && fallbackText ? <p className="text-[var(--token-body)]">{fallbackText}</p> : null}
       <div className="grid gap-6 lg:grid-cols-2">
         {events.map((event, index) => (
-          <motion.article key={`$<span data-edit-path="title">{event.title}</span>-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-xl bg-white shadow-lg sm:grid-cols-[180px_1fr]" data-edit-collection="events" data-edit-index={index}>
+          <motion.article key={`$<span data-edit-path="title">{event.title}</span>-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg sm:grid-cols-[180px_1fr]" data-edit-collection="events" data-edit-index={index}>
             {event.image && <div className="relative min-h-48"><Image data-edit-image="image" src={event.image} alt={event.title || ''} fill className="object-cover" sizes="220px" /></div>}
             <div className="p-5">
               <EventMeta event={event} />
@@ -61,7 +61,7 @@ function Modern({ header, events, fallbackText }: Props) {
       {events.length === 0 && fallbackText ? <p className="text-[var(--token-body)]">{fallbackText}</p> : null}
       <div className="grid gap-6 lg:grid-cols-2">
         {events.map((event, index) => (
-          <article key={`$<span data-edit-path="title">{event.title}</span>-${index}`} className="grid overflow-hidden border border-black/10 bg-white sm:grid-cols-[180px_1fr]" data-edit-collection="events" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{event.title}</span>-${index}`} className="grid overflow-hidden border border-[color:color-mix(in_srgb,var(--token-card-border)_60%,transparent)] bg-[var(--token-card-bg)] sm:grid-cols-[180px_1fr]" data-edit-collection="events" data-edit-index={index}>
             {event.image && <div className="relative min-h-48"><Image data-edit-image="image" src={event.image} alt={event.title || ''} fill className="object-cover" sizes="220px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-light uppercase tracking-widest text-[var(--token-accent)]">
@@ -93,7 +93,7 @@ function Bold({ header, events, fallbackText }: Props) {
       {events.length === 0 && fallbackText ? <p className="text-[var(--token-body)]">{fallbackText}</p> : null}
       <div className="grid gap-6 lg:grid-cols-2">
         {events.map((event, index) => (
-          <article key={`$<span data-edit-path="title">{event.title}</span>-${index}`} className="grid overflow-hidden border-2 border-[var(--token-card-border)] bg-white shadow-[4px_4px_0_var(--token-card-border)] sm:grid-cols-[180px_1fr]" data-edit-collection="events" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{event.title}</span>-${index}`} className="grid overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)] sm:grid-cols-[180px_1fr]" data-edit-collection="events" data-edit-index={index}>
             {event.image && <div className="relative min-h-48"><Image data-edit-image="image" src={event.image} alt={event.title || ''} fill className="object-cover" sizes="220px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-black uppercase tracking-widest text-[var(--token-accent)]">

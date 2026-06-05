@@ -51,7 +51,7 @@ export function FeatureShowcaseSection({ data }: Props) {
           </motion.p>
         )}
         {text && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.2 }} className="mt-5 text-zinc-600 leading-relaxed prose prose-sm" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.2 }} className="mt-5 text-[color:var(--token-body)] leading-relaxed prose prose-sm" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />
         )}
 
         {features.length > 0 && (
@@ -61,7 +61,7 @@ export function FeatureShowcaseSection({ data }: Props) {
                 <div className="w-5 h-5 rounded-full bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] flex items-center justify-center flex-shrink-0">
                   <svg className="w-3 h-3 text-[var(--token-accent)]" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
                 </div>
-                <span className="text-sm text-zinc-700">{feat}</span>
+                <span className="text-sm text-[color:var(--token-body)]">{feat}</span>
               </motion.div>
             ))}
           </div>
@@ -69,7 +69,7 @@ export function FeatureShowcaseSection({ data }: Props) {
 
         {ctaLabel && (
           <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.4, delay: 0.5 }} className="mt-8">
-            <a href={ctaHref || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-accent)] text-white font-medium rounded-lg hover:opacity-90 transition-opacity">
+                <a href={ctaHref || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-accent)] text-[color:var(--token-btn-text,#fff)] font-medium rounded-lg hover:opacity-90 transition-opacity">
               <span data-edit-path="ctaLabel">{ctaLabel}</span>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
             </a>

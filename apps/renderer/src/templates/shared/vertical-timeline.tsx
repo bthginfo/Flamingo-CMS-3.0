@@ -78,7 +78,7 @@ function TimelineStep({ step, index, total, accentColor }: { step: Step; index: 
     >
       {/* Dot */}
       <div
-        className="absolute left-4 md:left-6 w-4 h-4 rounded-full border-[3px] bg-white transition-colors duration-500"
+        className="absolute left-4 md:left-6 w-4 h-4 rounded-full border-[3px] bg-[var(--token-card-bg)] transition-colors duration-500"
         style={{ borderColor: isInView ? accentColor : '#d4d4d8' }}
       />
 
