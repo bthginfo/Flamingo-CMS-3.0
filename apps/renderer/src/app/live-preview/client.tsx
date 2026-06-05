@@ -37,6 +37,10 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
 
   useEffect(() => {
     function handleMessage(e: MessageEvent) {
+      // Only accept messages from the same origin (admin tab embedding this
+      // iframe). Postmessage from any other window is ignored — protects
+      // against malicious sites that try to inject CMS content via iframe.
+      if (e.origin !== window.location.origin) return;
       if (!e.data || e.data.type !== 'flamingo-live-preview') return;
       const p = e.data.payload;
       if (p.sections) setSections(p.sections);
@@ -54,7 +58,10 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       if (p.locale !== undefined) setLocale(p.locale);
     }
     window.addEventListener('message', handleMessage);
-    window.parent?.postMessage({ type: 'flamingo-live-preview-ready' }, '*');
+    // Signal readiness to the parent. Targeting the parent's origin would be
+    // safest, but the iframe is always rendered same-origin so '*' here is
+    // acceptable and matches existing admin embedding.
+    window.parent?.postMessage({ type: 'flamingo-live-preview-ready' }, window.location.origin);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 

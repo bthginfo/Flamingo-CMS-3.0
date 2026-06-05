@@ -67,6 +67,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   // Listen for iframe ready signal to send initial data
   useEffect(() => {
     function onMsg(e: MessageEvent) {
+      if (e.origin !== window.location.origin) return;
       if (e.data?.type === 'flamingo-live-preview-ready') sendPreviewData();
     }
     window.addEventListener('message', onMsg);

@@ -6,22 +6,41 @@ import { getDb } from '@/lib/db';
 import { adminSecrets, tenants } from '@flamingo/db';
 import { verifyPassword, createSessionToken, buildSessionCookie } from '@flamingo/auth';
 import { eq } from 'drizzle-orm';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
+import { resolveTenantByHost } from '@/lib/tenant-host';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function loginAction(_prev: unknown, formData: FormData): Promise<{ error?: string; success?: boolean }> {
   const password = formData.get('password') as string;
   const tenantSlug = (formData.get('tenant') as string | null)?.trim();
   if (!password) return { error: 'Passwort ist erforderlich' };
 
+  // Brute-force throttle by IP (10 attempts / 15 min). bcrypt(12) alone is not enough.
+  const h = await headers();
+  const ip = (h.get('x-forwarded-for') || '').split(',')[0].trim() || h.get('x-real-ip') || 'unknown';
+  const limit = rateLimit(`admin-login:${ip}`, 10, 15 * 60 * 1000);
+  if (!limit.ok) {
+    return { error: `Zu viele Anmeldeversuche. Bitte in ${Math.ceil(limit.resetMs / 60000)} Min. erneut versuchen.` };
+  }
+
   const db = getDb();
 
-  // Resolve tenant: use FIXED_TENANT_ID for standalone, otherwise first tenant
+  // Resolve tenant strictly: FIXED_TENANT_ID > explicit slug > host-based lookup
+  // in tenant_domains. Never fall back to "first tenant in DB" — that would let
+  // a tenant's password get checked against an unrelated tenant's admin record.
+  let tenantId: string | null = null;
   const fixedId = process.env.FIXED_TENANT_ID;
-  const [tenant] = fixedId
-    ? await db.select().from(tenants).where(eq(tenants.id, fixedId)).limit(1)
-    : tenantSlug
-      ? await db.select().from(tenants).where(eq(tenants.slug, tenantSlug)).limit(1)
-      : await db.select().from(tenants).limit(1);
+  if (fixedId) {
+    tenantId = fixedId;
+  } else if (tenantSlug) {
+    const [t] = await db.select({ id: tenants.id }).from(tenants).where(eq(tenants.slug, tenantSlug)).limit(1);
+    tenantId = t?.id ?? null;
+  } else {
+    tenantId = await resolveTenantByHost();
+  }
+  if (!tenantId) return { error: 'Kein Tenant für diese Domain konfiguriert' };
+
+  const [tenant] = await db.select().from(tenants).where(eq(tenants.id, tenantId)).limit(1);
   if (!tenant) return { error: 'Kein Tenant konfiguriert' };
 
   const [secret] = await db.select().from(adminSecrets).where(eq(adminSecrets.tenantId, tenant.id));

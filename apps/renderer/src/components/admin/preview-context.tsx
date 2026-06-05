@@ -47,9 +47,12 @@ export function PreviewProvider({ children, tenantId }: { children: React.ReactN
   const setUrl = useCallback((u: string) => setUrlState(u), []);
 
   const sendLiveData = useCallback((payload: Record<string, unknown>) => {
+    // Target the same origin only — iframe is always loaded from the renderer
+    // host. Using a wildcard '*' would leak preview data to any cross-origin
+    // window that ever takes over the iframe URL.
     iframeRef.current?.contentWindow?.postMessage(
       { type: 'flamingo-live-preview', payload },
-      '*'
+      typeof window !== 'undefined' ? window.location.origin : '/',
     );
   }, []);
 

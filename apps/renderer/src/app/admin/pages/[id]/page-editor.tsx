@@ -59,6 +59,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
 
   useEffect(() => {
     function onMsg(e: MessageEvent) {
+      // Only trust the same-origin iframe (the live-preview tab).
+      if (e.origin !== window.location.origin) return;
       if (e.data?.type === 'flamingo-live-preview-ready') sendPreviewData();
     }
     window.addEventListener('message', onMsg);

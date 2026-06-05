@@ -1,6 +1,8 @@
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
+import { getDb } from '@/lib/db';
+import { mediaAssets } from '@flamingo/db';
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
@@ -29,7 +31,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
-        // Runs on Vercel after upload completes
+        // Persist asset to media_assets so it appears in the CMS library even
+        // when never referenced from a section. Replaces the previous "lazy
+        // scan" approach which produced orphan blobs and never recorded size.
+        try {
+          const payload = tokenPayload ? JSON.parse(tokenPayload) as { tenantId?: string } : {};
+          const tenantId = payload.tenantId;
+          if (!tenantId) return;
+          const filename = (blob.pathname.split('/').pop() || 'upload').slice(0, 255);
+          const db = getDb();
+          await db.insert(mediaAssets).values({
+            tenantId,
+            blobUrl: blob.url,
+            pathname: blob.pathname.slice(0, 500),
+            filename,
+            mimeType: blob.contentType || 'application/octet-stream',
+            size: 0,
+          });
+        } catch (err) {
+          // Never fail the upload because of bookkeeping — the blob is stored.
+          console.error('[Upload] media_assets insert failed:', err);
+        }
       },
     });
 

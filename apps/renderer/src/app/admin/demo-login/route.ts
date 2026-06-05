@@ -5,6 +5,7 @@ import { resolveDemoTenant, resolveDemoTenantBySlug } from '@/lib/snapshot';
 import { getDb } from '@/lib/db';
 import { tenants } from '@flamingo/db';
 import { eq, and, like } from 'drizzle-orm';
+import { rateLimit } from '@/lib/rate-limit';
 
 const DEFAULT_DEMO_TENANT_ID = 'f50cbf53-279d-43f3-b58b-f5ae3d550ab2';
 
@@ -36,6 +37,20 @@ const SLUG_MAP: Record<string, string> = {
 };
 
 export async function GET(request: NextRequest) {
+  // Rate-limit per IP: 10 demo logins / hour. Each demo-login issues an Admin
+  // JWT that grants full CMS write access to a demo tenant, so the endpoint
+  // must not be loopable.
+  const ip = (request.headers.get('x-forwarded-for') || '').split(',')[0].trim()
+    || request.headers.get('x-real-ip')
+    || 'unknown';
+  const limit = rateLimit(`demo-login:${ip}`, 10, 60 * 60 * 1000);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: 'Too many demo logins, please retry later.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(limit.resetMs / 1000)) } },
+    );
+  }
+
   const industry = request.nextUrl.searchParams.get('industry');
   const requestedNext = request.nextUrl.searchParams.get('next');
   const publicDemo = request.nextUrl.searchParams.get('public') === '1' || request.nextUrl.searchParams.get('embed') === '1';
@@ -82,7 +97,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const token = await createSessionToken(tenantId);
+  const token = await createSessionToken(tenantId, '1h');
   const safeNext = requestedNext?.startsWith('/admin') && !requestedNext.startsWith('/admin/login')
     ? requestedNext
     : '/admin';

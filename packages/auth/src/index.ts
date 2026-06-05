@@ -23,11 +23,11 @@ function getSecret() {
   return new TextEncoder().encode(s);
 }
 
-export async function createSessionToken(tenantId: string): Promise<string> {
+export async function createSessionToken(tenantId: string, ttl: string | number = '7d'): Promise<string> {
   return new SignJWT({ tenantId })
     .setProtectedHeader({ alg: JWT_ALG })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime(ttl)
     .sign(getSecret());
 }
 

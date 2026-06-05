@@ -4,6 +4,7 @@ import { orders, products, productVariants, shopSettings, customers, orderStatus
 import { eq, and, sql } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 import { sendOrderEmails } from '@/lib/shop-email';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import Stripe from 'stripe';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -94,6 +95,18 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const tenantId = resolveExplicitTenant(body.tenantId) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
+
+  // Rate limit: 10 checkout attempts / 10 min per IP+tenant. Slows down both
+  // card-testing bots and accidental double-submits.
+  const ip = getClientIp(req);
+  const rl = rateLimit(`checkout:${tenantId}:${ip}`, 10, 10 * 60 * 1000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: 'Zu viele Bestellversuche. Bitte sp\u00e4ter erneut versuchen.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetMs / 1000)) } },
+    );
+  }
+
   const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingMethod: shippingMethodId, couponCode, idempotencyKey } = body;
 
   if (!name || !email || !items?.length) {
@@ -131,13 +144,20 @@ export async function POST(req: NextRequest) {
 
   // Resolve product prices and build order items
   const orderItems: OrderItem[] = [];
+  const missingProducts: string[] = [];
   let subtotalCents = 0;
 
   for (const item of items) {
     const [product] = await db.select().from(products)
       .where(and(eq(products.id, item.productId), eq(products.tenantId, tenantId)))
       .limit(1);
-    if (!product) continue;
+    if (!product) {
+      // Customer's cart referenced a product that no longer exists / belongs
+      // to a different tenant. Never silently drop — refuse the order so the
+      // displayed cart total cannot diverge from what gets charged.
+      missingProducts.push(String(item.productId));
+      continue;
+    }
 
     let priceCents = product.priceCents;
     let variantName: string | undefined;
@@ -182,6 +202,12 @@ export async function POST(req: NextRequest) {
 
   if (orderItems.length === 0) {
     return NextResponse.json({ error: 'No valid items' }, { status: 400 });
+  }
+  if (missingProducts.length > 0) {
+    return NextResponse.json({
+      error: 'Einige Artikel in deinem Warenkorb sind nicht mehr verf\u00fcgbar. Bitte Warenkorb aktualisieren.',
+      missingProductIds: missingProducts,
+    }, { status: 409 });
   }
 
   // Server-side shipping cost validation

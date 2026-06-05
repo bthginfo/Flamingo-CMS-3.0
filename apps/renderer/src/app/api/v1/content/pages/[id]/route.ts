@@ -96,7 +96,7 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
           ...(patch.styleOverrides || {}),
         });
       }
-      await db.update(pageSections).set(sectionUpdates).where(eq(pageSections.id, patch.id));
+      await db.update(pageSections).set(sectionUpdates).where(and(eq(pageSections.id, patch.id), eq(pageSections.tenantId, auth.tenantId)));
     }
   }
 
