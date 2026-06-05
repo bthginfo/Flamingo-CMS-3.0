@@ -24,6 +24,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Guard the section-color contracts: fails if a template was edited
+      # without regenerating apps/renderer/src/lib/section-color-contracts-generated.ts
+      # (see docs/section-color-system.md).
+      - run: pnpm check:section-colors
+
       - run: pnpm --filter @flamingo/admin build
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
