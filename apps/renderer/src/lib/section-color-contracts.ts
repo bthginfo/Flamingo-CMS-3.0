@@ -29,178 +29,42 @@ export const SECTION_COLOR_CONTRACTS: Partial<Record<string, ColorFieldKey[]>> =
   // Hero family — image/video heroes with dark overlays, headline + CTAs.
   // The "Salon-Hero" complaint that started this refactor.
   // ────────────────────────────────────────────────────────────────────────
-  hero: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'onDarkHeading', 'onDarkBody', 'onDarkMuted',
-    'imageOverlay',
-    'btnBg', 'btnText',
-    'badgeBg', 'badgeText',
-    'borderColor',
-  ],
-  cinematicHero: [
-    'sectionBg',
-    'onDarkHeading', 'onDarkBody', 'onDarkMuted',
-    'accentColor', 'iconColor',
-    'imageOverlay',
-    'btnBg', 'btnText',
-    'badgeBg', 'badgeText', 'badgeBorder',
-    'borderColor',
-  ],
-  glowHero: [
-    'sectionBg',
-    'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
-    'accentColor', 'iconColor',
-    'onDarkHeading', 'onDarkBody',
-    'btnBg', 'btnText',
-    'badgeBg', 'badgeText',
-  ],
-  collectionHero: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'onDarkHeading', 'onDarkBody', 'onDarkMuted',
-    'imageOverlay',
-    'badgeBg', 'badgeText',
-    'borderColor',
-  ],
+  hero: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
+  cinematicHero: ['sectionBg', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'accentColor', 'iconColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder', 'borderColor'],
+  glowHero: ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'accentColor', 'iconColor', 'onDarkHeading', 'onDarkBody', 'btnBg', 'btnText', 'badgeBg', 'badgeText'],
+  collectionHero: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'badgeBg', 'badgeText', 'borderColor'],
 
   // ────────────────────────────────────────────────────────────────────────
   // Booking family — forms / pickers / CTAs. The "Buchungsformular" complaint.
   // ────────────────────────────────────────────────────────────────────────
-  bookingWidget: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'btnBg', 'btnText',
-    'badgeBg', 'badgeText',
-    'borderColor', 'dividerColor',
-    'cardRadius', 'buttonRadius',
-  ],
-  bookingSlotPicker: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'btnBg', 'btnText',
-    'borderColor', 'dividerColor',
-    'cardRadius', 'buttonRadius',
-  ],
-  bookingDateRange: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'btnBg', 'btnText',
-    'borderColor', 'dividerColor',
-    'cardRadius', 'buttonRadius',
-  ],
-  bookingStrip: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'btnBg', 'btnText',
-    'borderColor', 'cardRadius', 'buttonRadius',
-  ],
-  bookingCta: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'onDarkHeading', 'onDarkBody',
-    'btnBg', 'btnText',
-    'badgeBg', 'badgeText',
-    'borderColor', 'buttonRadius',
-  ],
-  bookingCtaPro: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'onDarkHeading', 'onDarkBody', 'onDarkMuted',
-    'btnBg', 'btnText',
-    'badgeBg', 'badgeText', 'badgeBorder',
-    'borderColor', 'cardRadius', 'buttonRadius',
-  ],
+  bookingWidget: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor', 'cardRadius', 'buttonRadius'],
+  bookingSlotPicker: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'dividerColor', 'cardRadius', 'buttonRadius'],
+  bookingDateRange: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'dividerColor', 'cardRadius', 'buttonRadius'],
+  bookingStrip: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'borderColor', 'cardRadius', 'buttonRadius'],
+  bookingCta: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'onDarkBody', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'buttonRadius'],
+  bookingCtaPro: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder', 'borderColor', 'cardRadius', 'buttonRadius'],
 
   // ────────────────────────────────────────────────────────────────────────
   // Bento / feature / comparison grids — card-heavy sections.
   // ────────────────────────────────────────────────────────────────────────
-  bentoGrid: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'borderColor', 'cardRadius',
-  ],
-  comparisonCardsPro: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'check', 'eyebrow',
-    'btnBg', 'btnText',
-    'badgeBg', 'badgeText',
-    'borderColor', 'cardRadius',
-  ],
-  comparisonTable: [
-    'sectionBg',
-    'headingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor', 'check',
-    'borderColor', 'dividerColor',
-  ],
+  bentoGrid: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'borderColor', 'cardRadius'],
+  comparisonCardsPro: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'check', 'eyebrow', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius'],
+  comparisonTable: ['sectionBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'check', 'borderColor', 'dividerColor'],
 
   // ────────────────────────────────────────────────────────────────────────
   // Contact, CTA, Testimonials
   // ────────────────────────────────────────────────────────────────────────
-  contact: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'btnBg', 'btnText',
-    'badgeBg', 'badgeText',
-    'borderColor', 'dividerColor',
-    'cardRadius', 'buttonRadius',
-  ],
-  immersiveCtaBanner: [
-    'sectionBg',
-    'onDarkHeading', 'onDarkBody', 'onDarkMuted',
-    'accentColor', 'iconColor',
-    'imageOverlay',
-    'btnBg', 'btnText',
-  ],
-  testimonialCarousel: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'quoteMark', 'ratingStar',
-    'borderColor', 'cardRadius',
-  ],
-  proofWall: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-    'quoteMark', 'ratingStar', 'eyebrow',
-    'borderColor', 'cardRadius',
-  ],
+  contact: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor', 'cardRadius', 'buttonRadius'],
+  immersiveCtaBanner: ['sectionBg', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'accentColor', 'iconColor', 'btnBg', 'btnText'],
+  testimonialCarousel: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'quoteMark', 'ratingStar', 'borderColor', 'cardRadius'],
+  proofWall: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'quoteMark', 'ratingStar', 'eyebrow', 'borderColor', 'cardRadius'],
 
   // ────────────────────────────────────────────────────────────────────────
   // Before/After, Stats, Services
   // ────────────────────────────────────────────────────────────────────────
-  beforeAfter: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor', 'eyebrow',
-    'btnBg', 'badgeBg',
-    'borderColor',
-  ],
-  beforeAfterSlider: [
-    'sectionBg',
-    'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor',
-  ],
-  beforeAfterStoryPro: [
-    'sectionBg', 'cardBg',
-    'headingColor', 'bodyColor', 'mutedColor',
-    'iconColor', 'accentColor', 'eyebrow',
-    'btnBg', 'btnText',
-    'borderColor', 'cardRadius',
-  ],
+  beforeAfter: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'btnBg', 'badgeBg', 'borderColor'],
+  beforeAfterSlider: ['sectionBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor'],
+  beforeAfterStoryPro: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'eyebrow', 'btnBg', 'btnText', 'borderColor', 'cardRadius'],
 };
 
 export function getCuratedContractFields(sectionType: string): ColorFieldKey[] | null {
