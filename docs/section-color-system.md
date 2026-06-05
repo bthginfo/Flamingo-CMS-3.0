@@ -105,9 +105,23 @@ renders if `data.bordered === true`).
 
 ## CI guard — drift is forbidden
 
-`scripts/check-section-color-contracts.cjs` re-runs the codegen and
-compares the output to the committed file. If they differ it exits 1
-with a diff summary. Wire it into your CI as a pre-merge check.
+`scripts/check-section-color-contracts.cjs` runs two gates:
+
+1. **Vocabulary gate** (`scripts/audit-token-vocabulary.cjs --strict`):
+   every `var(--token-X)` literally used in any template must have a
+   matching entry in FIELD_DEFS. Anything else means the codegen
+   silently drops it and the editor never exposes a picker for it.
+   If you intentionally use a derived token that should NOT be
+   user-editable (e.g. `--token-accent-rgb` is computed from
+   `--token-accent` for `rgba()` syntax), add it to the WHITELIST
+   inside `audit-token-vocabulary.cjs`.
+
+2. **Contracts gate**: re-runs the codegen in a sandbox and compares
+   the output to the committed `section-color-contracts-generated.ts`.
+   If they differ it exits 1 with a diff summary.
+
+Wired into `.github/workflows/ci.yml` as `pnpm check:section-colors`
+before any app build runs.
 
 Locally before pushing:
 

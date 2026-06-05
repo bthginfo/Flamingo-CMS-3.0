@@ -68,7 +68,8 @@ export type ColorFieldKey =
   | 'btnBg' | 'btnText'
   | 'badgeBg' | 'badgeText' | 'badgeBorder'
   | 'borderColor' | 'dividerColor'
-  | 'cardRadius' | 'buttonRadius';
+  | 'cardRadius' | 'buttonRadius'
+  | 'cardShadow' | 'headingWeight' | 'headingTracking';
 
 // Mapping of every legacy key the editor used to expose to its modern
 // equivalent. Used by migrateLegacyOverrides() to clean up stored
@@ -88,9 +89,9 @@ export const LEGACY_FIELD_ALIASES: Record<string, ColorFieldKey | null> = {
   cardBorderColor: 'borderColor',
   imageOverlay:    'imageOverlay',
   cardBorder:      null,
-  cardShadow:      null,
-  headingWeight:   null,
-  headingTracking: null,
+  cardShadow:      'cardShadow',
+  headingWeight:   'headingWeight',
+  headingTracking: 'headingTracking',
   btnSecondaryBg:  null,
   btnSecondaryText:null,
 };
@@ -123,9 +124,9 @@ const LEGACY_CSS_VAR_ALIASES: Record<string, string | null> = {
   '--brand-btn-secondary-text':null,
   '--style-card-border-color': '--token-card-border',
   '--style-image-overlay':     '--token-image-overlay',
-  '--style-card-shadow':       null,
-  '--style-heading-weight':    null,
-  '--style-heading-tracking':  null,
+  '--style-card-shadow':       '--token-card-shadow',
+  '--style-heading-weight':    '--token-heading-weight',
+  '--style-heading-tracking':  '--token-heading-tracking',
   '--style-brand':             '--token-accent',
   '--color-primary':           '--token-accent',
 };
@@ -192,6 +193,9 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   dividerColor:     { cssVar: '--token-divider',          label: 'Trennlinie',             description: 'Trennlinien zwischen Elementen', group: 'core' },
   cardRadius:       { cssVar: '--token-card-radius',      label: 'Karten-Radius',          description: 'Abrundung der Kartenecken', type: 'size' },
   buttonRadius:     { cssVar: '--token-button-radius',    label: 'Button-Radius',          description: 'Abrundung der Buttons', type: 'size' },
+  cardShadow:       { cssVar: '--token-card-shadow',      label: 'Karten-Schatten',        description: 'box-shadow auf Karten (CSS-Wert, z.B. "0 8px 24px rgba(0,0,0,0.12)")', type: 'size', group: 'special' },
+  headingWeight:    { cssVar: '--token-heading-weight',   label: 'Headline-Gewicht',       description: 'font-weight der Headlines (z.B. 400, 600, 800)', type: 'size', group: 'special' },
+  headingTracking:  { cssVar: '--token-heading-tracking', label: 'Headline-Laufweite',     description: 'letter-spacing der Headlines (z.B. -0.02em)', type: 'size', group: 'special' },
 };
 
 /* ─── SINGLE SOURCE OF TRUTH ─── */

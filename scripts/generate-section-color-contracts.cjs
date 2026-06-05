@@ -178,6 +178,7 @@ const FIELD_ORDER = [
   'badgeBg', 'badgeText', 'badgeBorder',
   'borderColor', 'dividerColor',
   'cardRadius', 'buttonRadius',
+  'cardShadow', 'headingWeight', 'headingTracking',
 ];
 const orderIdx = (f) => { const i = FIELD_ORDER.indexOf(f); return i < 0 ? 999 : i; };
 

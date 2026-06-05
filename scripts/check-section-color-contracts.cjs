@@ -22,6 +22,19 @@ const { execSync } = require('child_process');
 const ROOT = path.resolve(__dirname, '..');
 const GENERATED = path.join(ROOT, 'apps/renderer/src/lib/section-color-contracts-generated.ts');
 const GENERATOR = path.join(ROOT, 'scripts/generate-section-color-contracts.cjs');
+const VOCAB_AUDIT = path.join(ROOT, 'scripts/audit-token-vocabulary.cjs');
+
+// First gate: vocabulary. Any var(--token-X) used in a template must have
+// a matching FIELD_DEFS entry, otherwise the codegen drops it silently.
+try {
+  execSync('node ' + JSON.stringify(VOCAB_AUDIT) + ' ' + JSON.stringify(ROOT) + ' --strict', {
+    stdio: ['ignore', 'ignore', 'inherit'],
+  });
+} catch {
+  console.error('');
+  console.error('Vocabulary check failed — see output above.');
+  process.exit(1);
+}
 
 if (!fs.existsSync(GENERATED)) {
   console.error('ERROR: ' + path.relative(ROOT, GENERATED) + ' is missing.');
