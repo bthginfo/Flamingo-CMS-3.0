@@ -50,6 +50,7 @@ export const DESIGN_TOKENS = {
 
   // ─── Accents / actions ────────────────────────────────────────────────
   accent:          { cssVar: '--token-accent',          kind: 'color', default: '#dc2626',          description: 'Primary accent color (links, focused states, hero highlights)' },
+  accentRgb:       { cssVar: '--token-accent-rgb',      kind: 'color', default: '220 38 38',        description: 'Accent color as space-separated RGB triplet for rgb(... / alpha) usage' },
   icon:            { cssVar: '--token-icon',            kind: 'color', default: '#dc2626',          description: 'Default icon stroke / fill color' },
   check:           { cssVar: '--token-check',           kind: 'color', default: '#16a34a',          description: 'Success checkmark / "included" indicator color' },
   ratingStar:      { cssVar: '--token-rating-star',     kind: 'color', default: '#eab308',          description: 'Filled rating star color' },
@@ -69,6 +70,14 @@ export const DESIGN_TOKENS = {
   // ─── Radii ────────────────────────────────────────────────────────────
   cardRadius:      { cssVar: '--token-card-radius',     kind: 'radius', default: '1rem',            description: 'Card / tile border-radius' },
   buttonRadius:    { cssVar: '--token-button-radius',   kind: 'radius', default: '0.75rem',         description: 'Button border-radius' },
+
+  // ─── Shadows / overlays ──────────────────────────────────────────────
+  cardShadow:      { cssVar: '--token-card-shadow',     kind: 'shadow', default: '0 4px 20px rgba(0,0,0,0.06)', description: 'Card / tile drop shadow' },
+  imageOverlay:    { cssVar: '--token-image-overlay',   kind: 'color', default: 'rgba(0,0,0,0.6)',  description: 'Gradient overlay color for images / hero media' },
+
+  // ─── Typography utilities ────────────────────────────────────────────
+  headingWeight:   { cssVar: '--token-heading-weight',  kind: 'spacing', default: '700',            description: 'Heading font-weight (numeric, used by font-[var(...)] utility)' },
+  headingTracking: { cssVar: '--token-heading-tracking',kind: 'spacing', default: '-0.02em',        description: 'Heading letter-spacing (used by tracking-[var(...)] utility)' },
 } as const satisfies Record<string, DesignTokenDef>;
 
 export type DesignTokenDef = {

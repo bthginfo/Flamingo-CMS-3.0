@@ -29,7 +29,7 @@ export function BeforeAfterSection({ data }: Props) {
     <div ref={ref}>
       {(headline || description) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
           {description && <p className="mt-3 text-[var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="description">{plain(description)}</p>}
         </div>
       )}
@@ -39,7 +39,7 @@ export function BeforeAfterSection({ data }: Props) {
         animate={inView ? { opacity: 1, scale: 1 } : {}}
         transition={{ duration: 0.6 }}
         ref={containerRef}
-        className="relative aspect-[16/9] md:aspect-[21/9] rounded-[var(--token-card-radius)] overflow-hidden cursor-col-resize select-none shadow-[var(--style-card-shadow,0_4px_20px_rgba(0,0,0,0.06))]"
+        className="relative aspect-[16/9] md:aspect-[21/9] rounded-[var(--token-card-radius)] overflow-hidden cursor-col-resize select-none shadow-[var(--token-card-shadow,0_4px_20px_rgba(0,0,0,0.06))]"
         onMouseMove={(e) => { if (e.buttons === 1) handleMove(e.clientX); }}
         onTouchMove={(e) => handleMove(e.touches[0].clientX)}
       >

@@ -45,21 +45,12 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   vars['--brand-topbar'] = brand.topBarColor || vars['--brand-dark'];
   vars['--brand-footer'] = brand.footerColor || vars['--brand-dark'];
 
-  // Override style-level variables so industry style defaults (e.g. salon pink)
-  // get replaced by the tenant's actual brand colors
-  vars['--style-brand'] = normalizedPrimary;
-  vars['--style-accent'] = accent;
-  vars['--style-accent-color'] = accent;
-  vars['--style-icon-color'] = brand.iconColor || normalizedPrimary;
-  vars['--style-badge-bg'] = `${normalizedPrimary}12`;
-  vars['--style-badge-border'] = `${normalizedPrimary}28`;
-  vars['--style-badge-text'] = normalizedPrimary;
-  vars['--style-accent-glow'] = `0 0 30px ${normalizedPrimary}33`;
+  // Phase 4: legacy --style-* emissions are gone. No template references
+  // --style-brand / --style-accent / --style-badge-* / --style-accent-glow
+  // anymore (verified via gate-tokens.cjs). The canonical --token-* vars
+  // below are the single source of truth.
 
   if (brand.pageBg) vars['--background'] = brand.pageBg;
-  if (brand.sectionBg) vars['--style-section-bg'] = brand.sectionBg;
-  if (brand.sectionBgAlt) vars['--style-section-bg-alt'] = brand.sectionBgAlt;
-  if (brand.cardBg) vars['--style-card-bg'] = brand.cardBg;
 
   if (brand.footerLinkColor) vars['--brand-footer-link'] = brand.footerLinkColor;
   if (brand.footerTextColor) vars['--brand-footer-text'] = brand.footerTextColor;
@@ -67,16 +58,8 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   if (brand.navBgColor) vars['--brand-nav-bg'] = brand.navBgColor;
   if (brand.navBrandColor) vars['--brand-nav-brand'] = brand.navBrandColor;
   if (brand.navLogoColor) vars['--brand-nav-logo'] = brand.navLogoColor;
-  if (brand.headingColor) {
-    vars['--brand-heading'] = brand.headingColor;
-    vars['--style-heading-color'] = brand.headingColor;
-  }
-  if (brand.bodyTextColor) {
-    vars['--brand-body-text'] = brand.bodyTextColor;
-    vars['--style-body-color'] = brand.bodyTextColor;
-    vars['--style-text-primary'] = brand.bodyTextColor;
-  }
-  if (brand.mutedTextColor) vars['--style-text-muted'] = brand.mutedTextColor;
+  if (brand.headingColor) vars['--brand-heading'] = brand.headingColor;
+  if (brand.bodyTextColor) vars['--brand-body-text'] = brand.bodyTextColor;
   if (brand.linkColor) vars['--brand-link'] = brand.linkColor;
   if (brand.linkHoverColor) vars['--brand-link-hover'] = brand.linkHoverColor;
   if (brand.btnPrimaryBg) vars['--brand-btn-bg'] = brand.btnPrimaryBg;
@@ -88,26 +71,13 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   if (brand.btnOutlineText) vars['--brand-btn-outline-text'] = brand.btnOutlineText;
   if (brand.btnOutlineBorder) vars['--brand-btn-outline-border'] = brand.btnOutlineBorder;
 
-  // Badge overrides
-  if (brand.badgeBg) vars['--style-badge-bg'] = brand.badgeBg;
-  if (brand.badgeText) vars['--style-badge-text'] = brand.badgeText;
-  if (brand.badgeBorder) vars['--style-badge-border'] = brand.badgeBorder;
+  // Badge overrides (modern --token-* equivalents are set further down).
 
   // Card & border overrides
   const borderColor = brand.borderColor || brand.cardBorder;
-  if (borderColor) {
-    vars['--style-border-color'] = borderColor;
-    vars['--style-card-border'] = `1px solid ${borderColor}`;
-  }
-  if (brand.dividerColor) {
-    vars['--style-divider'] = `1px solid ${brand.dividerColor}`;
-    vars['--style-border-light'] = brand.dividerColor;
-    vars['--style-divider-color'] = brand.dividerColor;
-  }
+  if (brand.dividerColor) vars['--brand-divider'] = brand.dividerColor;
 
-  // Radius overrides
-  if (brand.btnRadius) vars['--style-button-radius'] = brand.btnRadius;
-  if (brand.cardRadius) vars['--style-card-radius'] = brand.cardRadius;
+  // Radius overrides handled by --token-card-radius / --token-button-radius below.
 
   // ---------------------------------------------------------------------------
   // Section color tokens (Layer 2 defaults) — additive, see
@@ -121,35 +91,40 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   // Defaults reference the Layer 1 brand vars above; the legacy `--style-*`
   // chain stays in place as a fallback in unmigrated templates.
   // ---------------------------------------------------------------------------
-  vars['--token-section-bg']    = brand.sectionBg     ?? 'var(--style-section-bg, transparent)';
-  vars['--token-section-bg-alt']= brand.sectionBgAlt  ?? 'var(--style-section-bg-alt, var(--style-section-bg, transparent))';
-  vars['--token-card-bg']       = brand.cardBg        ?? 'var(--style-card-bg, #ffffff)';
-  vars['--token-card-border']   = brand.borderColor   ?? brand.cardBorder ?? 'var(--style-border-color, rgba(15,23,42,0.08))';
-  vars['--token-heading']       = brand.headingColor  ?? 'var(--style-text-primary, var(--brand-heading, #0f172a))';
-  vars['--token-subheading']    = brand.headingColor  ?? 'var(--style-text-primary, var(--brand-heading, #0f172a))';
-  vars['--token-body']          = brand.bodyTextColor ?? 'var(--style-text-secondary, var(--brand-body-text, #27272a))';
-  vars['--token-muted']         = brand.mutedTextColor ?? 'var(--style-text-muted, #71717a)';
-  // Inverse contrast tokens for content on dark backgrounds (Phase 5c).
-  // Defaults are bright values so hardcoded `text-white` / `text-zinc-300` migration
-  // keeps rendering identically when no tenant override is set.
-  vars['--token-on-dark-heading']= 'var(--style-image-text-color, var(--brand-on-dark-heading, #ffffff))';
-  vars['--token-on-dark-body']   = 'var(--style-image-text-color, var(--brand-on-dark-body, rgba(255,255,255,0.82)))';
-  vars['--token-on-dark-muted']  = 'var(--style-image-text-color, var(--brand-on-dark-muted, rgba(255,255,255,0.62)))';
-  // Accent family — independently overridable per section.
-  // Fallback chain: --style-accent-color (per-section override via editor's "accentColor" field)
-  //              -> --brand-accent (tenant brand) -> --brand-primary (tenant primary) -> hex.
-  vars['--token-eyebrow']       = 'var(--style-accent-color, var(--brand-accent, var(--brand-primary, #f39c12)))';
-  vars['--token-icon']          = brand.iconColor ?? 'var(--style-accent-color, var(--brand-primary, #2563eb))';
-  vars['--token-stat-value']    = 'var(--style-accent-color, var(--brand-accent, var(--brand-primary, #f39c12)))';
-  vars['--token-quote']         = 'var(--style-accent-color, var(--brand-accent, var(--brand-primary, #f39c12)))';
-  vars['--token-rating-star']   = 'var(--style-accent-color, var(--brand-accent, var(--brand-primary, #f39c12)))';
-  vars['--token-check']         = 'var(--style-accent-color, var(--brand-accent, var(--brand-primary, #f39c12)))';
-  vars['--token-badge-bg']      = brand.badgeBg     ?? 'var(--style-badge-bg, rgba(0,0,0,0.06))';
-  vars['--token-badge-text']    = brand.badgeText   ?? 'var(--brand-primary, #2563eb)';
-  vars['--token-badge-border']  = brand.badgeBorder ?? 'var(--style-badge-border, transparent)';
-  vars['--token-btn-bg']        = brand.btnPrimaryBg   ?? 'var(--brand-primary, #2563eb)';
+  vars['--token-section-bg']    = brand.sectionBg     ?? '#ffffff';
+  vars['--token-section-bg-alt']= brand.sectionBgAlt  ?? brand.sectionBg ?? '#f8fafc';
+  vars['--token-card-bg']       = brand.cardBg        ?? '#ffffff';
+  vars['--token-card-border']   = borderColor         ?? 'rgba(15,23,42,0.08)';
+  vars['--token-heading']       = brand.headingColor  ?? '#0f172a';
+  vars['--token-subheading']    = brand.headingColor  ?? '#1e293b';
+  vars['--token-body']          = brand.bodyTextColor ?? '#475569';
+  vars['--token-muted']         = brand.mutedTextColor ?? '#64748b';
+  // Inverse contrast tokens for content on dark backgrounds.
+  vars['--token-on-dark-heading']= '#ffffff';
+  vars['--token-on-dark-body']   = 'rgba(255,255,255,0.82)';
+  vars['--token-on-dark-muted']  = 'rgba(255,255,255,0.62)';
+  // Accent family.
+  vars['--token-accent']        = accent;
+  vars['--token-accent-rgb']    = accent.startsWith('#') ? hexToRgb(accent) : '220 38 38';
+  vars['--token-eyebrow']       = accent;
+  vars['--token-icon']          = brand.iconColor ?? normalizedPrimary;
+  vars['--token-stat-value']    = accent;
+  vars['--token-quote']         = accent;
+  vars['--token-rating-star']   = accent;
+  vars['--token-check']         = accent;
+  vars['--token-badge-bg']      = brand.badgeBg     ?? `${normalizedPrimary}12`;
+  vars['--token-badge-text']    = brand.badgeText   ?? normalizedPrimary;
+  vars['--token-badge-border']  = brand.badgeBorder ?? `${normalizedPrimary}28`;
+  vars['--token-btn-bg']        = brand.btnPrimaryBg   ?? normalizedPrimary;
   vars['--token-btn-text']      = brand.btnPrimaryText ?? '#ffffff';
-  vars['--token-divider']       = brand.dividerColor ?? 'var(--style-divider-color, rgba(0,0,0,0.08))';
+  vars['--token-divider']       = brand.dividerColor ?? 'rgba(15,23,42,0.12)';
+  if (brand.cardRadius) vars['--token-card-radius'] = brand.cardRadius;
+  if (brand.btnRadius) vars['--token-button-radius'] = brand.btnRadius;
+  // Phase 4: typography utilities + shadow + image overlay.
+  vars['--token-card-shadow']      = '0 4px 20px rgba(0,0,0,0.06)';
+  vars['--token-image-overlay']    = 'rgba(0,0,0,0.6)';
+  vars['--token-heading-weight']   = '700';
+  vars['--token-heading-tracking'] = '-0.02em';
 
   return vars;
 }

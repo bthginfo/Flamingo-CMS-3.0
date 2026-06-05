@@ -27,7 +27,7 @@ export function ConsultationBookingSection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
           {subline && <p className="mt-3 text-[var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
@@ -68,7 +68,7 @@ export function ConsultationBookingSection({ data }: Props) {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="lg:col-span-2 sticky top-8"
         >
-          <div className="rounded-[var(--token-card-radius)] overflow-hidden bg-[var(--token-card-bg)] shadow-[var(--style-card-shadow,0_4px_20px_rgba(0,0,0,0.06))] border border-[rgba(0,0,0,0.06)]">
+          <div className="rounded-[var(--token-card-radius)] overflow-hidden bg-[var(--token-card-bg)] shadow-[var(--token-card-shadow,0_4px_20px_rgba(0,0,0,0.06))] border border-[rgba(0,0,0,0.06)]">
             {image && (
               <img src={image} alt={headline} className="w-full aspect-[4/3] object-cover" />
             )}

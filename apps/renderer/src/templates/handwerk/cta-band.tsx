@@ -43,7 +43,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
     <motion.div ref={ref} initial={{ opacity: 0, scale: 0.98 }} animate={inView ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.7 }} className="relative overflow-hidden rounded-4xl" style={wrapStyle}>
       {!colors?.bgColor && <motion.div style={{ y: bgY }} className="absolute inset-0 scale-110 bg-[var(--token-section-bg)]" />}
       <div className="absolute inset-0">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] animate-pulse-slow" style={{ backgroundColor: colors?.accentColor ? `${colors.accentColor}26` : 'var(--brand-accent-15, rgba(243,156,18,0.15))' }} />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] animate-pulse-slow" style={{ backgroundColor: colors?.accentColor ? `${colors.accentColor}26` : 'rgba(243,156,18,0.15)' }} />
         <div className="absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-white/5 blur-[100px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
       </div>
       <div className="relative z-10 px-6 py-12 text-center text-[var(--token-heading)] sm:py-16 md:py-24 lg:py-32">

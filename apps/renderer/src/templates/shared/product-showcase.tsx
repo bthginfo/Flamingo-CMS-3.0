@@ -30,7 +30,7 @@ export function ProductShowcaseSection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
           {subline && <p className="mt-3 text-[var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
@@ -44,7 +44,7 @@ export function ProductShowcaseSection({ data }: Props) {
            data-edit-collection="items" data-edit-index={i}>
             <a
               href={item.href || '#'}
-              className="group block rounded-[var(--token-card-radius)] overflow-hidden bg-[var(--token-card-bg)] border-[var(--token-card-border)] shadow-[var(--style-card-shadow,0_4px_20px_rgba(0,0,0,0.06))] hover:shadow-xl transition-all duration-300"
+              className="group block rounded-[var(--token-card-radius)] overflow-hidden bg-[var(--token-card-bg)] border-[var(--token-card-border)] shadow-[var(--token-card-shadow,0_4px_20px_rgba(0,0,0,0.06))] hover:shadow-xl transition-all duration-300"
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
                 {item.image ? (

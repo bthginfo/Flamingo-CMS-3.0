@@ -64,7 +64,7 @@ export function PortfolioSection({ data }: Props) {
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--style-image-overlay,rgba(0,0,0,.6))] via-black/10 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--token-image-overlay,rgba(0,0,0,.6))] via-black/10 to-transparent" />
                 {project.category && (
                   <span className="absolute top-4 left-4 bg-[var(--token-badge-bg)] backdrop-blur-sm text-xs font-medium px-3 py-1.5 rounded-full text-[var(--token-badge-text)]" data-edit-path="category">
                     {project.category}
