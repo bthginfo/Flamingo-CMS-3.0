@@ -23,37 +23,37 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 | Unresolved component refs | 2 |
 | **DEAD fields** | **64** (5.3%) |
 | **SHADOWED fields** | **20** (1.7%) |
-| **MISSING fields** | **581** |
+| **MISSING fields** | **25** |
 
 ## Top 25 Worst Offenders (by dead+shadowed)
 
 | Section | Dead | Shadowed | Missing | Total | Templates |
 |---|---:|---:|---:|---:|---|
-| `cinematicHero` | 7 | 0 | 11 | 18 | shared/cinematic-hero.tsx |
-| `beforeAfterStoryPro` | 4 | 1 | 7 | 15 | shared/before-after-story-pro.tsx |
-| `portfolio` | 5 | 0 | 8 | 13 | handwerk/portfolio.tsx |
-| `textImage` | 5 | 0 | 5 | 10 | handwerk/text-image.tsx |
-| `emergencyInfo` | 4 | 0 | 9 | 14 | medical/emergency-info.tsx |
-| `immersiveCtaBanner` | 3 | 1 | 13 | 20 | shared/immersive-cta-banner.tsx |
-| `ctaBand` | 2 | 1 | 11 | 16 | handwerk/cta-band.tsx |
-| `proofWall` | 2 | 1 | 6 | 13 | shared/proof-wall.tsx |
-| `signatureGrid` | 2 | 1 | 7 | 14 | shared/signature-grid.tsx |
-| `stats` | 1 | 2 | 3 | 11 | handwerk/stats.tsx |
-| `comparisonCardsPro` | 1 | 1 | 6 | 14 | shared/comparison-cards-pro.tsx |
-| `diagnostics` | 2 | 0 | 7 | 14 | medical/diagnostics.tsx |
-| `editorialFeatureRail` | 2 | 0 | 8 | 15 | shared/editorial-feature-rail.tsx |
-| `equipmentHighlights` | 2 | 0 | 7 | 14 | medical/equipment-highlights.tsx |
-| `fitnessHero` | 1 | 1 | 9 | 16 | shared/glow-hero.tsx |
-| `hero` | 0 | 2 | 18 | 25 | handwerk/hero.tsx, restaurant/hero.tsx, hotel/hero.tsx, tourism/hero.tsx, salon/hero.tsx, medical/hero.tsx, wedding/hero.tsx, consulting/hero.tsx, realestate/hero.tsx, cafe/hero.tsx, tattoo/hero.tsx, shared/glow-hero.tsx, shared/cinematic-hero.tsx |
+| `cinematicHero` | 7 | 0 | 1 | 18 | shared/cinematic-hero.tsx |
+| `beforeAfterStoryPro` | 4 | 1 | 0 | 15 | shared/before-after-story-pro.tsx |
+| `portfolio` | 5 | 0 | 5 | 13 | handwerk/portfolio.tsx |
+| `textImage` | 5 | 0 | 4 | 10 | handwerk/text-image.tsx |
+| `emergencyInfo` | 4 | 0 | 0 | 14 | medical/emergency-info.tsx |
+| `immersiveCtaBanner` | 3 | 1 | 0 | 20 | shared/immersive-cta-banner.tsx |
+| `ctaBand` | 2 | 1 | 2 | 16 | handwerk/cta-band.tsx |
+| `proofWall` | 2 | 1 | 0 | 13 | shared/proof-wall.tsx |
+| `signatureGrid` | 2 | 1 | 0 | 14 | shared/signature-grid.tsx |
+| `stats` | 1 | 2 | 0 | 11 | handwerk/stats.tsx |
+| `comparisonCardsPro` | 1 | 1 | 0 | 14 | shared/comparison-cards-pro.tsx |
+| `diagnostics` | 2 | 0 | 0 | 14 | medical/diagnostics.tsx |
+| `editorialFeatureRail` | 2 | 0 | 0 | 15 | shared/editorial-feature-rail.tsx |
+| `equipmentHighlights` | 2 | 0 | 0 | 14 | medical/equipment-highlights.tsx |
+| `fitnessHero` | 1 | 1 | 0 | 16 | shared/glow-hero.tsx |
+| `hero` | 0 | 2 | 0 | 25 | handwerk/hero.tsx, restaurant/hero.tsx, hotel/hero.tsx, tourism/hero.tsx, salon/hero.tsx, medical/hero.tsx, wedding/hero.tsx, consulting/hero.tsx, realestate/hero.tsx, cafe/hero.tsx, tattoo/hero.tsx, shared/glow-hero.tsx, shared/cinematic-hero.tsx |
 | `legalContent` | 2 | 0 | 0 | 4 | handwerk/legal-content.tsx |
-| `principlesGrid` | 1 | 1 | 10 | 17 | shared/principles-grid.tsx |
-| `serviceOverview` | 2 | 0 | 7 | 14 | medical/service-overview.tsx |
-| `story` | 2 | 0 | 5 | 17 | restaurant/story.tsx, handwerk/text-image.tsx, hotel/story.tsx, tourism/story.tsx, medical/story.tsx |
-| `availabilityCta` | 0 | 1 | 13 | 17 | shared/immersive-cta-banner.tsx |
-| `collectionHero` | 1 | 0 | 9 | 17 | handwerk/collection-hero.tsx |
+| `principlesGrid` | 1 | 1 | 0 | 17 | shared/principles-grid.tsx |
+| `serviceOverview` | 2 | 0 | 0 | 14 | medical/service-overview.tsx |
+| `story` | 2 | 0 | 4 | 17 | restaurant/story.tsx, handwerk/text-image.tsx, hotel/story.tsx, tourism/story.tsx, medical/story.tsx |
+| `availabilityCta` | 0 | 1 | 0 | 17 | shared/immersive-cta-banner.tsx |
+| `collectionHero` | 1 | 0 | 0 | 17 | handwerk/collection-hero.tsx |
 | `collectionList` | 1 | 0 | 0 | 6 | shared/collection-list.tsx |
-| `doctorTeam` | 1 | 0 | 8 | 14 | medical/doctor-team.tsx |
-| `faq` | 1 | 0 | 10 | 19 | handwerk/faq.tsx, restaurant/faq.tsx, hotel/faq.tsx, tourism/faq.tsx, salon/faq.tsx, medical/faq.tsx, wedding/faq-gallery.tsx, consulting/faq.tsx, realestate/faq.tsx, cafe/faq.tsx |
+| `doctorTeam` | 1 | 0 | 0 | 14 | medical/doctor-team.tsx |
+| `faq` | 1 | 0 | 0 | 19 | handwerk/faq.tsx, restaurant/faq.tsx, hotel/faq.tsx, tourism/faq.tsx, salon/faq.tsx, medical/faq.tsx, wedding/faq-gallery.tsx, consulting/faq.tsx, realestate/faq.tsx, cafe/faq.tsx |
 
 ## Per-Section Detail
 
@@ -61,74 +61,31 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `tourism/accommodation-grid.tsx`
 
-**Missing fields (9):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
+_No issues._
 
 ### `additionalLocations` (16 fields)
 
 **Templates:** `shared/additional-locations.tsx`
 
-**Missing fields (12):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-subheading-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
+_No issues._
 
 ### `amenitiesGrid` (8 fields)
 
 **Templates:** `shared/bento-grid.tsx`
 
-**Missing fields (5):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `appointmentCta` (15 fields)
 
 **Templates:** `medical/appointment-cta.tsx`
 
-**Missing fields (10):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-section-bg` — used by template, no editor field exposes it
+_No issues._
 
 ### `availabilityCalendar` (4 fields)
 
 **Templates:** `shared/booking-widget.tsx`
 
-**Missing fields (2):**
-
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
+_No issues._
 
 ### `availabilityCta` (17 fields)
 
@@ -137,22 +94,6 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 **Shadowed fields (1):**
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-
-**Missing fields (13):**
-
-- `--style-on-dark-heading` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-on-dark-body` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-on-dark-muted` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `beforeAfter` (11 fields)
 
@@ -164,13 +105,7 @@ _No issues._
 
 **Templates:** `shared/before-after-slider.tsx`
 
-**Missing fields (5):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-subheading-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
+_No issues._
 
 ### `beforeAfterStoryPro` (15 fields)
 
@@ -187,79 +122,47 @@ _No issues._
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-eyebrow` first (token defaulted at :root)
 
-**Missing fields (7):**
-
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-
 ### `bentoGrid` (8 fields)
 
 **Templates:** `shared/bento-grid.tsx`
 
-**Missing fields (5):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `bookingCtaPro` (4 fields)
 
 **Templates:** `shared/booking-widget.tsx`
 
-**Missing fields (2):**
-
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
+_No issues._
 
 ### `bookingDateRange` (4 fields)
 
 **Templates:** `shared/booking-widget.tsx`
 
-**Missing fields (2):**
-
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
+_No issues._
 
 ### `bookingSlotPicker` (4 fields)
 
 **Templates:** `shared/booking-widget.tsx`
 
-**Missing fields (2):**
-
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
+_No issues._
 
 ### `bookingWidget` (4 fields)
 
 **Templates:** `shared/booking-widget.tsx`
 
-**Missing fields (2):**
-
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
+_No issues._
 
 ### `bouquetShowcase` (10 fields)
 
 **Templates:** `shared/product-showcase.tsx`
 
-**Missing fields (1):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
+_No issues._
 
 ### `brandShowroom` (8 fields)
 
 **Templates:** `shared/brand-showroom.tsx`
 
-**Missing fields (1):**
-
-- `--brand-secondary` — used by template, no editor field exposes it
+_No issues._
 
 ### `categoryMosaic` (9 fields)
 
@@ -281,19 +184,9 @@ _No issues._
 - `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Missing fields (11):**
+**Missing fields (1):**
 
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-section-bg` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
-- `--style-badge-border` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
 
 ### `collectionHero` (17 fields)
 
@@ -302,18 +195,6 @@ _No issues._
 **Dead fields (1):**
 
 - `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
-
-**Missing fields (9):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
 
 ### `collectionList` (6 fields)
 
@@ -335,15 +216,6 @@ _No issues._
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-check` first (token defaulted at :root)
 
-**Missing fields (6):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-
 ### `comparisonTable` (5 fields)
 
 **Templates:** `shared/comparison-table.tsx`
@@ -354,21 +226,13 @@ _No issues._
 
 **Templates:** `shared/consultation-booking.tsx`
 
-**Missing fields (1):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
+_No issues._
 
 ### `contact` (16 fields)
 
 **Templates:** `handwerk/contact.tsx`, `restaurant/contact.tsx`, `hotel/contact.tsx`, `consulting/contact.tsx`, `realestate/contact.tsx`, `cafe/contact.tsx`
 
-**Missing fields (5):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `courseSchedule` (1 fields)
 
@@ -389,32 +253,16 @@ _No issues._
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-icon` first (token defaulted at :root)
 
-**Missing fields (11):**
+**Missing fields (2):**
 
-- `--style-section-bg` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
 - `--brand-accent-15` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-badge-border` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `ctaLinks` (10 fields)
 
 **Templates:** `handwerk/cta-links.tsx`
 
-**Missing fields (6):**
-
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
+_No issues._
 
 ### `deliveryTimeline` (6 fields)
 
@@ -426,15 +274,7 @@ _No issues._
 
 **Templates:** `tourism/destination-highlights.tsx`
 
-**Missing fields (7):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `diagnostics` (14 fields)
 
@@ -445,16 +285,6 @@ _No issues._
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 
-**Missing fields (7):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-
 ### `doctorTeam` (14 fields)
 
 **Templates:** `medical/doctor-team.tsx`
@@ -462,17 +292,6 @@ _No issues._
 **Dead fields (1):**
 
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-
-**Missing fields (8):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
 
 ### `downloadForms` (3 fields)
 
@@ -488,17 +307,6 @@ _No issues._
 
 - `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
 - `eyebrow` (Eyebrow / Kicker) → --token-eyebrow — cssVar never referenced
-
-**Missing fields (8):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `embed` (2 fields)
 
@@ -517,18 +325,6 @@ _No issues._
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
-**Missing fields (9):**
-
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-
 ### `equipmentHighlights` (14 fields)
 
 **Templates:** `medical/equipment-highlights.tsx`
@@ -537,16 +333,6 @@ _No issues._
 
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
-
-**Missing fields (7):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
 
 ### `eventTypes` (9 fields)
 
@@ -558,16 +344,7 @@ _No issues._
 
 **Templates:** `tourism/experience-grid.tsx`
 
-**Missing fields (8):**
-
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `faq` (19 fields)
 
@@ -576,19 +353,6 @@ _No issues._
 **Dead fields (1):**
 
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-
-**Missing fields (10):**
-
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-dark` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
 
 ### `featureShowcase` (1 fields)
 
@@ -608,25 +372,12 @@ _No issues._
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
 
-**Missing fields (9):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-subheading-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-
 ### `floorPlanOverview` (5 fields)
 
 **Templates:** `handwerk/text-image.tsx`
 
-**Missing fields (5):**
+**Missing fields (4):**
 
-- `--style-section-bg` — used by template, no editor field exposes it
 - `--style-accent` — used by template, no editor field exposes it
 - `--style-button-bg` — used by template, no editor field exposes it
 - `--style-button-text` — used by template, no editor field exposes it
@@ -639,18 +390,6 @@ _No issues._
 **Shadowed fields (1):**
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-
-**Missing fields (9):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-subheading-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
 
 ### `floristMaterials` (11 fields)
 
@@ -686,25 +425,11 @@ _No issues._
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
 
-**Missing fields (9):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-subheading-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-
 ### `headerBanner` (1 fields)
 
 **Templates:** `handwerk/header-banner.tsx`
 
-**Missing fields (1):**
-
-- `--brand-dark` — used by template, no editor field exposes it
+_No issues._
 
 ### `hero` (25 fields)
 
@@ -715,69 +440,29 @@ _No issues._
 - `imageTextColor` (Bild-Text) — writes `--style-image-text-color` but template reads `--token-on-dark-heading` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
 
-**Missing fields (18):**
-
-- `--brand-dark` — used by template, no editor field exposes it
-- `--brand-secondary` — used by template, no editor field exposes it
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-section-bg-alt` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-image-body-color` — used by template, no editor field exposes it
-- `--style-image-muted-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-subheading-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-badge-border` — used by template, no editor field exposes it
-
 ### `heroEcommerce` (10 fields)
 
 **Templates:** `handwerk/hero.tsx`
 
-**Missing fields (2):**
-
-- `--brand-dark` — used by template, no editor field exposes it
-- `--brand-secondary` — used by template, no editor field exposes it
+_No issues._
 
 ### `heroHandwerk` (10 fields)
 
 **Templates:** `handwerk/hero.tsx`
 
-**Missing fields (2):**
-
-- `--brand-dark` — used by template, no editor field exposes it
-- `--brand-secondary` — used by template, no editor field exposes it
+_No issues._
 
 ### `horizontalScrollShowcase` (4 fields)
 
 **Templates:** `shared/horizontal-scroll-showcase.tsx`
 
-**Missing fields (2):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `hostTeam` (15 fields)
 
 **Templates:** `handwerk/team.tsx`
 
-**Missing fields (9):**
-
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-dark` — used by template, no editor field exposes it
+_No issues._
 
 ### `immersiveCtaBanner` (20 fields)
 
@@ -792,22 +477,6 @@ _No issues._
 **Shadowed fields (1):**
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-
-**Missing fields (13):**
-
-- `--style-on-dark-heading` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-on-dark-body` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-on-dark-muted` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `inspirationGrid` (10 fields)
 
@@ -828,31 +497,15 @@ _No issues._
 
 **Templates:** `handwerk/map.tsx`
 
-**Missing fields (5):**
-
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-section-bg-alt` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
+_No issues._
 
 ### `locationHero` (11 fields)
 
 **Templates:** `shared/cinematic-hero.tsx`
 
-**Missing fields (11):**
+**Missing fields (1):**
 
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-section-bg` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
-- `--style-badge-border` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
 
 ### `locationPackages` (13 fields)
 
@@ -861,15 +514,6 @@ _No issues._
 **Shadowed fields (1):**
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-check` first (token defaulted at :root)
-
-**Missing fields (6):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `logoMarquee` (1 fields)
 
@@ -885,14 +529,6 @@ _No issues._
 
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Missing fields (5):**
-
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-section-bg-alt` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-
 ### `materialGallery` (11 fields)
 
 **Templates:** `shared/material-gallery.tsx`
@@ -907,32 +543,17 @@ _No issues._
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-check` first (token defaulted at :root)
 
-**Missing fields (6):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-
 ### `newsGrid` (7 fields)
 
 **Templates:** `handwerk/news-preview.tsx`
 
-**Missing fields (2):**
-
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `newsPreview` (7 fields)
 
 **Templates:** `handwerk/news-preview.tsx`
 
-**Missing fields (2):**
-
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `noticeBanner` (3 fields)
 
@@ -952,19 +573,7 @@ _No issues._
 
 **Templates:** `shared/offer-campaign-strip.tsx`
 
-**Missing fields (11):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-section-bg-alt` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
+_No issues._
 
 ### `openingHours` (18 fields)
 
@@ -974,32 +583,11 @@ _No issues._
 
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Missing fields (9):**
-
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-
 ### `placesMap` (13 fields)
 
 **Templates:** `tourism/places-map.tsx`
 
-**Missing fields (8):**
-
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
+_No issues._
 
 ### `popup` (16 fields)
 
@@ -1008,15 +596,6 @@ _No issues._
 **Shadowed fields (1):**
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-eyebrow` first (token defaulted at :root)
-
-**Missing fields (6):**
-
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `portfolio` (13 fields)
 
@@ -1030,12 +609,9 @@ _No issues._
 - `btnText` (Button Text) → --token-btn-text — cssVar never referenced
 - `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 
-**Missing fields (8):**
+**Missing fields (5):**
 
-- `--style-card-bg` — used by template, no editor field exposes it
 - `--style-border` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
 - `--style-accent` — used by template, no editor field exposes it
 - `--style-muted` — used by template, no editor field exposes it
 - `--style-button-bg` — used by template, no editor field exposes it
@@ -1045,12 +621,7 @@ _No issues._
 
 **Templates:** `shared/premium-comparison.tsx`
 
-**Missing fields (4):**
-
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `principlesGrid` (17 fields)
 
@@ -1064,19 +635,6 @@ _No issues._
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-eyebrow` first (token defaulted at :root)
 
-**Missing fields (10):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-
 ### `processSteps` (16 fields)
 
 **Templates:** `handwerk/process-steps.tsx`
@@ -1085,43 +643,17 @@ _No issues._
 
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Missing fields (9):**
-
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-dark` — used by template, no editor field exposes it
-
 ### `productShowcase` (10 fields)
 
 **Templates:** `shared/product-showcase.tsx`
 
-**Missing fields (1):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
+_No issues._
 
 ### `programGrid` (17 fields)
 
 **Templates:** `handwerk/services-grid.tsx`
 
-**Missing fields (11):**
-
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--brand-dark` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
+_No issues._
 
 ### `proofWall` (13 fields)
 
@@ -1136,23 +668,11 @@ _No issues._
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-rating-star` first (token defaulted at :root)
 
-**Missing fields (6):**
-
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-
 ### `resourceBookingShowcase` (4 fields)
 
 **Templates:** `shared/booking-widget.tsx`
 
-**Missing fields (2):**
-
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
+_No issues._
 
 ### `richText` (2 fields)
 
@@ -1164,42 +684,23 @@ _No issues._
 
 **Templates:** `shared/scroll-story.tsx`
 
-**Missing fields (4):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `seasonalCampaign` (13 fields)
 
 **Templates:** `shared/offer-campaign-strip.tsx`
 
-**Missing fields (11):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-section-bg-alt` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
+_No issues._
 
 ### `serviceDetail` (8 fields)
 
 **Templates:** `handwerk/service-detail.tsx`
 
-**Missing fields (5):**
+**Missing fields (3):**
 
 - `--style-accent` — used by template, no editor field exposes it
 - `--style-muted` — used by template, no editor field exposes it
 - `--style-border` — used by template, no editor field exposes it
-- `--brand-dark` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
 
 ### `serviceOverview` (14 fields)
 
@@ -1210,16 +711,6 @@ _No issues._
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 
-**Missing fields (7):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-
 ### `servicesGrid` (18 fields)
 
 **Templates:** `handwerk/services-grid.tsx`
@@ -1227,20 +718,6 @@ _No issues._
 **Dead fields (1):**
 
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-
-**Missing fields (11):**
-
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--brand-dark` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
 
 ### `shopCart` (6 fields)
 
@@ -1285,49 +762,25 @@ _No issues._
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
 
-**Missing fields (7):**
-
-- `--style-section-bg-alt` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-
 ### `socialProofBar` (10 fields)
 
 **Templates:** `shared/social-proof-bar.tsx`
 
-**Missing fields (6):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `spaceShowcase` (10 fields)
 
 **Templates:** `shared/product-showcase.tsx`
 
-**Missing fields (1):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
+_No issues._
 
 ### `spotlightCards` (9 fields)
 
 **Templates:** `shared/spotlight-cards.tsx`
 
-**Missing fields (6):**
+**Missing fields (1):**
 
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
 - `--brand-primary-rgb` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
 
 ### `stats` (11 fields)
 
@@ -1342,23 +795,11 @@ _No issues._
 - `textPrimary` (Primärer Text) — writes `--style-text-primary` but template reads `--token-heading` first (token defaulted at :root)
 - `textSecondary` (Sekundärer Text) — writes `--style-text-secondary` but template reads `--token-body` first (token defaulted at :root)
 
-**Missing fields (3):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-
 ### `statsCounter` (9 fields)
 
 **Templates:** `shared/stats-counter.tsx`
 
-**Missing fields (5):**
-
-- `--style-section-bg-alt` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `story` (17 fields)
 
@@ -1369,9 +810,8 @@ _No issues._
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
 - `btnText` (Button Text) → --token-btn-text — cssVar never referenced
 
-**Missing fields (5):**
+**Missing fields (4):**
 
-- `--style-section-bg` — used by template, no editor field exposes it
 - `--style-accent` — used by template, no editor field exposes it
 - `--style-button-bg` — used by template, no editor field exposes it
 - `--style-button-text` — used by template, no editor field exposes it
@@ -1381,13 +821,7 @@ _No issues._
 
 **Templates:** `shared/bento-grid.tsx`
 
-**Missing fields (5):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `team` (17 fields)
 
@@ -1397,47 +831,17 @@ _No issues._
 
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Missing fields (9):**
-
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-dark` — used by template, no editor field exposes it
-
 ### `templateAdvantage` (12 fields)
 
 **Templates:** `shared/template-advantage.tsx`
 
-**Missing fields (11):**
-
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-subheading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
+_No issues._
 
 ### `testimonialMarquee` (8 fields)
 
 **Templates:** `shared/testimonial-marquee.tsx`
 
-**Missing fields (5):**
-
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `testimonials` (18 fields)
 
@@ -1446,17 +850,6 @@ _No issues._
 **Dead fields (1):**
 
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-
-**Missing fields (8):**
-
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-dark` — used by template, no editor field exposes it
 
 ### `textImage` (10 fields)
 
@@ -1470,9 +863,8 @@ _No issues._
 - `btnText` (Button Text) → --token-btn-text — cssVar never referenced
 - `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 
-**Missing fields (5):**
+**Missing fields (4):**
 
-- `--style-section-bg` — used by template, no editor field exposes it
 - `--style-accent` — used by template, no editor field exposes it
 - `--style-button-bg` — used by template, no editor field exposes it
 - `--style-button-text` — used by template, no editor field exposes it
@@ -1488,49 +880,19 @@ _No issues._
 
 **Templates:** `tourism/tour-routes.tsx`
 
-**Missing fields (9):**
-
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
+_No issues._
 
 ### `tourismContact` (13 fields)
 
 **Templates:** `tourism/tourism-contact.tsx`
 
-**Missing fields (9):**
-
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
+_No issues._
 
 ### `trainerProfiles` (15 fields)
 
 **Templates:** `handwerk/team.tsx`
 
-**Missing fields (9):**
-
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-dark` — used by template, no editor field exposes it
+_No issues._
 
 ### `transformationStories` (11 fields)
 
@@ -1540,16 +902,6 @@ _No issues._
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-eyebrow` first (token defaulted at :root)
 
-**Missing fields (7):**
-
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-
 ### `treatmentDetail` (14 fields)
 
 **Templates:** `medical/treatment-detail.tsx`
@@ -1557,17 +909,6 @@ _No issues._
 **Dead fields (1):**
 
 - `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
-
-**Missing fields (8):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
 
 ### `trialSessionCta` (17 fields)
 
@@ -1577,22 +918,6 @@ _No issues._
 
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
 
-**Missing fields (13):**
-
-- `--style-on-dark-heading` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-on-dark-body` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-on-dark-muted` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--brand-btn-bg` — used by template, no editor field exposes it
-- `--brand-btn-text` — used by template, no editor field exposes it
-
 ### `uspStrip` (9 fields)
 
 **Templates:** `handwerk/usp-strip.tsx`
@@ -1601,56 +926,29 @@ _No issues._
 
 - `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
 
-**Missing fields (4):**
-
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-
 ### `verticalTimeline` (10 fields)
 
 **Templates:** `shared/vertical-timeline.tsx`
 
-**Missing fields (6):**
-
-- `--style-divider-color` — used by template, no editor field exposes it
-- `--style-section-bg` — used by template, no editor field exposes it
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-subheading-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
+_No issues._
 
 ### `visitorInfo` (12 fields)
 
 **Templates:** `tourism/visitor-info.tsx`
 
-**Missing fields (8):**
-
-- `--style-body-color` — used by template, no editor field exposes it
-- `--style-card-bg` — used by template, no editor field exposes it
-- `--style-icon-color` — used by template, no editor field exposes it
-- `--style-heading-color` — used by template, no editor field exposes it
-- `--style-badge-bg` — used by template, no editor field exposes it
-- `--style-badge-text` — used by template, no editor field exposes it
-- `--style-border-color` — used by template, no editor field exposes it
-- `--style-text-muted` — used by template, no editor field exposes it
+_No issues._
 
 ### `weddingFloristry` (8 fields)
 
 **Templates:** `shared/brand-showroom.tsx`
 
-**Missing fields (1):**
-
-- `--brand-secondary` — used by template, no editor field exposes it
+_No issues._
 
 ### `workshopBooking` (10 fields)
 
 **Templates:** `shared/consultation-booking.tsx`
 
-**Missing fields (1):**
-
-- `--style-card-bg` — used by template, no editor field exposes it
+_No issues._
 
 ## Section Types in Template Registry but Missing from SECTION_FIELDS
 

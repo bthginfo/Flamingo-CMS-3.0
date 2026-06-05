@@ -164,7 +164,7 @@ function api(p) { return new Promise((res, rej) => { https.get({ hostname: 'api.
 
   const tplVars = {}, tplPairs = {};
   const VARS_RE = /var\(\s*(--[a-z0-9-]+)/g;
-  const PAIR_RE = /var\(\s*(--token-[a-z0-9-]+)\s*,\s*var\(\s*(--style-[a-z0-9-]+)/g;
+  const PAIR_RE = /var\(\s*(--token-[a-z0-9-]+)\s*,\s*var\(\s*(--(?:style|brand)-[a-z0-9-]+)/g;
   const pathsArr = [...allPaths]; let pi = 0;
   async function workerVars() {
     while (pi < pathsArr.length) {
@@ -215,7 +215,18 @@ function api(p) { return new Promise((res, rej) => { https.get({ hostname: 'api.
     }
     const usedColorVars = [...usedVars].filter(v => /^--(token|style|brand|color)-/.test(v));
     const exposedVars = new Set(fields.map(f => fieldDefs[f]).filter(Boolean));
-    const missing = usedColorVars.filter(v => !exposedVars.has(v));
+    // A non-exposed --style-X / --brand-X is NOT truly missing if it only appears
+    // as the inner fallback of a var(--token-Y, var(--style-X, …)) pair AND
+    // --token-Y IS exposed by the editor. In that case the editor still has full
+    // control via --token-Y; the style/brand var is just the brand-level default.
+    const missing = usedColorVars.filter(v => {
+      if (exposedVars.has(v)) return false;
+      if (v.startsWith('--token-')) return true;
+      // style/brand var: check if any wrap pair covers it via an exposed token
+      const wrappedBy = styleToTokenForType.get(v);
+      if (wrappedBy && exposedVars.has(wrappedBy)) return false;
+      return true;
+    });
     diffs[type] = { dead, shadowed, missing, allUsedVars: usedColorVars, templates: [...tpaths] };
   }
 
