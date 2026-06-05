@@ -42,7 +42,24 @@ Referenz-Implementierung. Es bleiben **16 Tenants** offen.
    - Mindestens **eine Collection** mit mind. 3 Items, verlinkt aus `servicesGrid`/`collectionList`.
    - Pflicht-Pages aus den Instructions vollständig (Impressum + Datenschutz immer mit echtem, branchen­spezifischem Text).
    - Collection-Item-Sections **brauchen `id: uuid()`** — siehe `handwerk.cjs`.
-   - Bei dunklen Backgrounds **immer** `--token-on-dark-heading/body/muted` in `styleOverrides` setzen. Bei eigenem `--token-btn-bg` immer auch `--token-btn-text`.
+   - Bei dunklen Backgrounds **immer** `--token-on-dark-heading/body/muted` in `styleOverrides` setzen. Bei eigenem `--token-btn-bg` immer auch `--token-btn-text`. Nutze den `darkSectionTokens`-Helper aus `handwerk.cjs` (kopiert sich der nächste Tenant aus dem File raus).
+
+### Qualitäts-Mindeststandard (NEU, ab Phase 12b verbindlich)
+
+- **Startseite: mindestens 12 Sections.** Pflicht-Mix:
+  hero → socialProofBar → 1–2 contentSections → servicesGrid → featureShowcase → processSteps → bentoGrid → stats → timeline → statsCounter → testimonials → faq → ctaBand
+- **Jede Unterseite: mindestens 6 Sections** (Hero + Storytelling + min. 2 Premium-Sections wie comparisonTable, portfolio, timeline, featureShowcase + Testimonial + CTA).
+- **Premium-Sections sind Pflicht**, nicht optional. Mindestens diese müssen über den ganzen Tenant verteilt vorkommen:
+  `bentoGrid`, `featureShowcase`, `timeline`, `statsCounter`, `comparisonTable`, `portfolio`, `socialProofBar`. Sie machen den Unterschied zwischen „fertig" und „Demo, die ich Kunden zeige".
+- **Karten- und Listen-Items: mindestens 4 pro Array** (ein Service zu wenig wirkt halb fertig).
+- **Bilder: jedes `image`-Feld gefüllt.** Unsplash-IDs aus den anderen Tenants übernehmen oder neue suchen — nie ohne Bild.
+
+### Bekannte Renderer-Fallstricke (zwingend per Daten umgehen)
+
+1. **Hero `trustItems` → weißer Kasten auf weiß.**
+   Der Renderer rendert `trustItems` ohne expliziten `trustStripColor` als opakes weißes Kärtchen mit weißer Schrift (Tailwind-Arbitrary-Value-Bug mit `/opacity`). Wenn du `trustItems` benutzt: **immer** `trustStripColor: 'rgba(8,28,42,0.55)'` oder einen anderen sichtbaren Farbton mitgeben. Beispiel: siehe `handwerk.cjs` Startseite-Hero.
+2. **Collection-Items: `published: true` setzen.** Der Runner tut das jetzt automatisch — überschreib es nur, wenn du wirklich einen Draft willst.
+3. **Section-Backgrounds mit `--token-section-bg` = dunkler Farbe:** ohne `darkSectionTokens` bleiben Headings und Buttons unsichtbar.
 
 4. **Laufen lassen**:
    ```bash

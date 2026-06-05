@@ -353,8 +353,27 @@ const tenant = {
               '24/7 Notdienst in Köln',
               '4,9 / 5 bei Google (312 Bewertungen)',
             ],
+            // The classic hero's default trust-strip background uses a buggy
+            // arbitrary-value Tailwind class (bg-[var(...)]/10) that renders
+            // as opaque white → white text on white. Setting trustStripColor
+            // bypasses that branch entirely and uses a clean translucent dark
+            // backing with full-opacity white text.
+            trustStripColor: 'rgba(8,28,42,0.55)',
           },
           styleOverrides: darkSectionTokens,
+        },
+        {
+          type: 'socialProofBar',
+          data: {
+            bgStyle: 'light',
+            items: [
+              { icon: 'Star',          value: '4,9 / 5',  label: '312 Bewertungen bei Google' },
+              { icon: 'Award',         value: 'Meister',  label: 'Eingetragen bei der HwK Köln' },
+              { icon: 'ShieldCheck',   value: '67 Jahre', label: 'Familienbetrieb seit 1958' },
+              { icon: 'Clock',         value: '< 60 Min', label: 'Notdienst-Reaktionszeit Köln' },
+              { icon: 'BadgeCheck',    value: '4.300+',   label: 'Anlagen unter Wartungsvertrag' },
+            ],
+          },
         },
         {
           type: 'uspStrip',
@@ -383,6 +402,22 @@ const tenant = {
           },
         },
         {
+          type: 'featureShowcase',
+          data: {
+            headline: 'In der eigenen Werkstatt vorgefertigt — in Ihrem Haus eingebaut',
+            subline: 'Wir konfektionieren so viel wie möglich in unserer Werkstatt in Köln-Zollstock. Das verkürzt Ihre Bauzeit, hält den Bauplatz sauber und gibt uns Qualitätskontrolle, die auf Baustellen niemand bietet.',
+            image: img('1581094277802-a07db7a6bbfb'),
+            features: [
+              { icon: 'Factory',    title: 'Vorfertigung in Köln',     text: 'Rohrleitungen, Heizverteiler und Unterputz-Boxen werden bei uns gepresst, gedichtet und geprüft — bevor sie auf die Baustelle gehen.' },
+              { icon: 'ShieldCheck',title: 'Druck- und Dichtheitsprüfung', text: 'Jede Anlage läuft 24 Stunden auf Druck, bevor sie verputzt wird. Sie unterschreiben kein Werkstück ohne Prüfprotokoll.' },
+              { icon: 'Truck',      title: 'Sauberer Bauplatz',         text: 'Eigene Schmutzfangmatten, Staubschutzwände und tägliche Endreinigung sind in jedem Auftrag enthalten — keine Aufpreis-Position.' },
+              { icon: 'GraduationCap', title: 'Eigene Lehrwerkstatt',   text: 'Wir bilden seit 1981 aus. Unsere Monteure sind hier gelernt — nicht angelernt.' },
+            ],
+            ctaPrimary: { label: 'Werkstatt besuchen', href: '/kontakt' },
+          },
+          styleOverrides: { '--token-section-bg-alt': C.cream },
+        },
+        {
           type: 'processSteps',
           data: {
             badgeText: 'So arbeiten wir',
@@ -396,6 +431,20 @@ const tenant = {
           },
         },
         {
+          type: 'bentoGrid',
+          data: {
+            headline: 'Was uns von Schnell-Schnell-Betrieben unterscheidet',
+            subline: 'Fünf Dinge, an denen man einen guten SHK-Betrieb erkennt — lange bevor die Anlage läuft.',
+            items: [
+              { icon: 'FileSignature', title: 'Festpreis, schwarz auf weiß', text: 'Keine Überraschungen nach Auftrag. Was im Angebot steht, gilt — inklusive Termin.', span: '2' },
+              { icon: 'Microscope',    title: 'Vorab-Bestandsaufnahme',    text: 'Wir messen Heizkörper, Hydraulik und Dämmung — bevor wir Bauteile bestellen.' },
+              { icon: 'Wallet',        title: 'Förderung mitgedacht',      text: 'BAFA-Antrag, KfW-Brief, Energieberater-Kontakt — erledigt vom Büro.' },
+              { icon: 'BookOpenCheck', title: 'Anlagen-Tagebuch',          text: 'Jede Wartung wird dokumentiert. Sie erhalten ein PDF-Protokoll für Versicherung und Notar.' },
+              { icon: 'PhoneCall',     title: 'Direkt mit dem Meister',    text: 'Im Notfall niemand am Callcenter — Sie sprechen mit einem unserer sieben Meister.', span: '2' },
+            ],
+          },
+        },
+        {
           type: 'stats',
           data: {
             headline: 'Drei Generationen in Zahlen',
@@ -404,6 +453,35 @@ const tenant = {
               { icon: 'Users',    value: '14',                     label: 'Monteure & Meister' },
               { icon: 'Wrench',   value: '4300', suffix: '+',      label: 'Anlagen im Service' },
               { icon: 'Star',     value: '4,9',                    label: '★ bei Google' },
+            ],
+          },
+        },
+        {
+          type: 'timeline',
+          data: {
+            badge: 'Drei Generationen',
+            headline: 'Sechs Jahrzehnte Kölner Handwerks-Geschichte',
+            subline: 'Was 1958 in einer Hinterhof-Werkstatt in Sülz begann, ist heute ein 14-köpfiger Meisterbetrieb — mit derselben Handschrift.',
+            entries: [
+              { year: '1958', title: 'Gründung in Köln-Sülz',          text: 'Heinrich Müller, Installateurmeister, stellt die erste Werkbank in einer Hinterhof-Werkstatt auf. Zwei Gesellen, ein Lehrling, ein Lastenrad.' },
+              { year: '1981', title: 'Erste Lehrwerkstatt',             text: 'Werner Müller übernimmt den Betrieb von seinem Vater und richtet die erste eigene Lehrwerkstatt ein — bis heute Herzstück unserer Ausbildung.' },
+              { year: '1998', title: 'Umzug Vorgebirgstraße',          text: 'Neue Werkhalle, eigener Hof, Vorfertigung für größere Bauprojekte. Erste Komplettbäder mit eigenem Fliesenleger-Team.' },
+              { year: '2012', title: 'Wärmepumpen-Zertifizierung',     text: 'Anja Müller schließt den Kältekreis-Schein ab. Heute installieren wir 30+ Wärmepumpen pro Jahr im Bestand.' },
+              { year: '2018', title: 'Dritte Generation übernimmt',    text: 'Anja und Felix Müller führen den Betrieb gemeinsam. Werner bleibt als Senior-Berater an Bord — in jedem Erstgespräch.' },
+              { year: '2024', title: '67 Jahre, 14 Menschen, ein Wort', text: 'Sieben Meister, vier Gesellen, drei Auszubildende. 4.300 Anlagen unter Wartungsvertrag. Und ein Bürohund namens Bruno.' },
+            ],
+          },
+        },
+        {
+          type: 'statsCounter',
+          data: {
+            headline: 'Was uns ausmacht',
+            subline: 'Kennzahlen, die wir messen — weil sie etwas über Qualität aussagen.',
+            stats: [
+              { value: 97,    suffix: ' %',   label: 'Termintreue in 2024' },
+              { value: 4.3,                  label: 'Jahresarbeitszahl unserer Wärmepumpen' },
+              { value: 60,    suffix: ' Min', label: 'Durchschn. Notdienst-Reaktionszeit' },
+              { value: 12500, prefix: 'Ø ', suffix: ' €', label: 'Förderung pro Heizungssanierung' },
             ],
           },
         },
@@ -430,6 +508,8 @@ const tenant = {
               { question: 'Bekomme ich einen Festpreis?',              answer: 'Für jede planbare Maßnahme ja. Bei Heizungstausch und Badmodernisierung erhalten Sie einen schriftlichen Festpreis — verbindlich, mit Termin.' },
               { question: 'Arbeiten Sie mit Subunternehmern?',         answer: 'Bei sensiblen Gewerken (SHK, Kältekreis) ausschließlich mit eigenen Monteuren. Fliesenleger und Elektriker koordinieren wir aus einem festen Partnerkreis.' },
               { question: 'Wie lange dauert ein Komplettbad?',         answer: 'Im Schnitt drei bis sechs Wochen ab Baubeginn. Wir nennen Ihnen mit dem Angebot einen verbindlichen Übergabetermin.' },
+              { question: 'Was kostet ein Heizungstausch ungefähr?',   answer: 'Für ein Einfamilienhaus liegen wir typischerweise zwischen 18.000 und 32.000 € brutto — abhängig von Anlagentyp, Heizkörper-Auslegung und gewünschter Förderkonstellation. Eine belastbare Zahl bekommen Sie nach dem kostenfreien Aufmaß.' },
+              { question: 'Wann lohnt sich eine Wärmepumpe wirklich?',  answer: 'Wenn Ihre Heizkörper für Vorlauftemperaturen unter 55 °C ausgelegt sind oder ausgelegt werden können — und Sie eine Dämmung ab Energieeffizienzklasse D haben. Wir prüfen das in zwei Stunden vor Ort und sagen Ihnen ehrlich, ob Hybrid- oder Brennwert-Lösung sinnvoller wäre.' },
             ],
           },
         },
@@ -478,6 +558,58 @@ const tenant = {
           },
         },
         {
+          type: 'comparisonTable',
+          data: {
+            badge: 'Wartungspakete',
+            headline: 'Welches Wartungspaket passt zu Ihrer Anlage?',
+            text: 'Alle Pakete enthalten festen Wartungstermin im Wunschmonat, Vorrang im Notdienst und schriftliches Anlagenprotokoll. Preise verstehen sich pro Jahr inkl. MwSt.',
+            columns: [
+              { label: 'Leistung' },
+              { label: 'Basis — 189 €' },
+              { label: 'Komfort — 289 €' },
+              { label: 'Komplett — 449 €' },
+            ],
+            highlightCol: 2,
+            rows: [
+              { feature: 'Jahreswartung Heizung',          values: ['✓', '✓', '✓'] },
+              { feature: 'Schriftliches Anlagenprotokoll', values: ['✓', '✓', '✓'] },
+              { feature: 'Notdienst-Vorrang',              values: ['—', '✓', '✓'] },
+              { feature: 'Trinkwasser-Hygieneprüfung',     values: ['—', '✓', '✓'] },
+              { feature: 'Anfahrt Stadtgebiet Köln',       values: ['Aufpreis', 'inkl.', 'inkl.'] },
+              { feature: 'Material bei Notdienst',         values: ['nach Aufwand', 'nach Aufwand', '20 % Rabatt'] },
+              { feature: 'Heizkostenanalyse jährlich',     values: ['—', '—', '✓'] },
+              { feature: 'Förder-Check alle 2 Jahre',      values: ['—', '—', '✓'] },
+            ],
+          },
+        },
+        {
+          type: 'featureShowcase',
+          data: {
+            headline: 'Warum Komplettbad bei uns dreimal schneller fertig wird',
+            subline: 'Ein Vertrag, ein Ansprechpartner, ein Termin — weil wir jedes Gewerk selbst koordinieren statt zu hoffen, dass der Subunternehmer pünktlich kommt.',
+            image: img('1552321554-5fefe8c9ef14'),
+            features: [
+              { icon: 'PenTool',     title: '3D-Planung vor Auftrag',     text: 'Sie sehen Ihr Bad mit Lichtkonzept und Materialprobe — bevor irgendetwas bestellt wird.' },
+              { icon: 'Handshake',   title: 'Alle Gewerke unter einem Dach', text: 'Fliesenleger, Elektriker, Trockenbauer aus festem Partnerkreis. Wir koordinieren — Sie müssen niemanden anrufen.' },
+              { icon: 'Calendar',    title: 'Übergabetermin garantiert',  text: 'Drei bis sechs Wochen ab Baubeginn. Verbindlich. Mit Vertragsstrafe bei Verzug aus unserem Verschulden.' },
+              { icon: 'Accessibility', title: 'KfW-förderfähig',          text: 'Bodengleiche Duschen und Haltegriffe werden über den KfW-Altersgerecht-Umbau bezuschusst — Antrag inklusive.' },
+            ],
+            ctaPrimary: { label: 'Badtermin anfragen', href: '/kontakt' },
+          },
+        },
+        {
+          type: 'testimonials',
+          data: {
+            badgeText: 'Kundenstimmen',
+            headline: 'Was Auftraggeber:innen zu unseren Leistungen sagen',
+            items: [
+              { name: 'Familie Wallraf',  context: 'Heizungstausch, Köln-Nippes',     quote: 'Drei Tage Bauzeit, sauberer Heizkeller, Förderbescheid kam direkt von der BAFA. So hätten wir nicht zu hoffen gewagt.',          rating: 5 },
+              { name: 'Sebastian Klein',  context: 'Komplettbad, Köln-Ehrenfeld',     quote: 'Fertig 4 Tage vor dem zugesagten Termin. Auf den Cent Festpreis. Wir empfehlen Familie Müller jeder Person, die uns fragt.', rating: 5 },
+              { name: 'Dr. med. Hofmann', context: 'Wärmepumpe, Köln-Lindenthal',      quote: 'Sehr saubere Planung. Die Jahresarbeitszahl liegt nach einem Jahr bei 4,2 — wie versprochen.',                          rating: 5 },
+            ],
+          },
+        },
+        {
           type: 'ctaBand',
           data: {
             headline: 'Sie wissen noch nicht, welche Leistung passt?',
@@ -522,6 +654,23 @@ const tenant = {
           },
         },
         {
+          type: 'timeline',
+          data: {
+            badge: 'Meilensteine',
+            headline: 'Sechs Jahrzehnte Kölner Familienbetrieb',
+            subline: 'Ein Strich auf der Zeitleiste pro Generation — und ein paar Erinnerungen dazwischen.',
+            entries: [
+              { year: '1958', title: 'Gründung in Köln-Sülz',          text: 'Heinrich Müller, Installateurmeister, stellt die erste Werkbank in einer Hinterhof-Werkstatt auf.' },
+              { year: '1971', title: 'Erste Zentralheizungen',          text: 'Umstellung von Einzelöfen auf Öl-Zentralheizungen prägt das Jahrzehnt — wir wachsen auf sechs Mitarbeitende.' },
+              { year: '1981', title: 'Eigene Lehrwerkstatt',            text: 'Werner Müller übernimmt und richtet die erste Lehrwerkstatt ein. Seitdem 47 Lehrlinge ausgebildet.' },
+              { year: '1998', title: 'Umzug in die Vorgebirgstraße',   text: 'Neue Werkhalle mit eigenem Hof, Vorfertigung für größere Projekte, erstes Komplettbad-Team.' },
+              { year: '2012', title: 'Wärmepumpen-Kompetenz',           text: 'Anja Müller schließt den Kältekreis-Schein ab. Bis heute 280+ Wärmepumpen installiert.' },
+              { year: '2018', title: 'Dritte Generation übernimmt',     text: 'Anja und Felix Müller führen den Betrieb gemeinsam. Werner bleibt Senior-Berater für jeden ersten Termin.' },
+              { year: '2024', title: 'Frischluft im Familienbetrieb',   text: 'Wir bilden so viele Azubis aus wie nie. Drei Plätze für 2025 sind ausgeschrieben.' },
+            ],
+          },
+        },
+        {
           type: 'stats',
           data: {
             headline: 'Was uns ausmacht — in Zahlen',
@@ -544,6 +693,13 @@ const tenant = {
               { name: 'Felix Müller',   role: 'Technischer Leiter / Meister',      image: img('1507003211169-0a1dd7228f2d', 600), bio: 'Zuständig für Großprojekte und Bestandssanierung. Eigene Kältekreis-Zertifizierung.' },
               { name: 'Thomas Wiegand', role: 'Werkstattleiter / Meister',         image: img('1500648767791-00dcc994a43e', 600), bio: 'Seit 1992 im Betrieb. Bildet seit 20 Jahren Azubis aus und führt unsere Lehrwerkstatt.' },
               { name: 'Petra Eick',     role: 'Büroleitung / Förder-Spezialistin', image: img('1580489944761-15a19d654956', 600), bio: 'Kennt die BAFA-Förderrichtlinie auswendig. Wickelt jährlich über 80 Anträge ab.' },
+            ],
+            valuesHeadline: 'Was uns wichtig ist',
+            values: [
+              { icon: 'Handshake',   title: 'Wort halten',         text: 'Was im Angebot steht, gilt. Wenn wir uns verzählen, zahlen wir die Differenz — nicht Sie.' },
+              { icon: 'GraduationCap', title: 'Ausbilden',         text: 'Drei Auszubildende pro Jahrgang. Eigenes Lehrbad. Berufsschule wird bezahlt, nicht abgesessen.' },
+              { icon: 'Recycle',     title: 'Sauberer Bauplatz',   text: 'Staubschutz, Schmutzfangmatten und tägliche Endreinigung sind im Festpreis enthalten — keine Position extra.' },
+              { icon: 'Heart',       title: 'Lange Beziehungen',   text: 'Wir betreuen Anlagen, die wir selbst gebaut haben — manche seit drei Generationen. Wartung ist kein Cross-Selling.' },
             ],
           },
         },
@@ -584,6 +740,32 @@ const tenant = {
             headline: 'Ausgewählte Projekte',
             subline: 'Klicken Sie auf ein Projekt für Details, Eckdaten und Bilder.',
             columns: 3,
+          },
+        },
+        {
+          type: 'portfolio',
+          data: {
+            badgeText: 'Auszug aus drei Jahrzehnten',
+            headline: 'Was wir gerne in Erinnerung behalten',
+            subline: 'Drei Projekte, an die wir uns gerne erinnern — weil sie zeigen, was Handwerk leisten kann, wenn alle mitziehen.',
+            projects: [
+              { title: 'Domhotel Tradition',     category: 'Hotel-Sanierung',          image: img('1564501049412-61c2a3083791'),  icon: 'Building2',  description: '38 Zimmer, Komplett-Sanierung von Bad und Heizung in 11 Wochen — bei laufendem Hotelbetrieb. Drei Etagen rollierend.', stats: [{label:'Zimmer',value:'38'},{label:'Bauzeit',value:'11 Wo.'}] },
+              { title: 'Bürohaus Rheinauhafen', category: 'Gebäudetechnik Büro',     image: img('1486325212027-8081e485255e'),  icon: 'Briefcase', description: '4.200 m² Bürofläche mit zentraler Lüftung, Kühldecken und Wärmerückgewinnung — nach DGNB-Gold zertifiziert.', stats: [{label:'Fläche',value:'4.200 m²'},{label:'JAZ',value:'4,1'}] },
+              { title: 'Sportverein Südstadt',  category: 'Vereinsanlage',           image: img('1505666287802-931dc83948e6'),  icon: 'Trophy',    description: 'Komplette Sanitäranlage für 600-Mitglieder-Verein — inklusive Trinkwasser-Hygienekonzept und Energierecycling der Duschen.', stats: [{label:'Duschen',value:'24'},{label:'Hygienekonzept',value:'DIN 1988'}] },
+            ],
+            ctaLabel: 'Alle Projekte ansehen', ctaHref: '/referenzen',
+          },
+        },
+        {
+          type: 'testimonials',
+          data: {
+            badgeText: 'Auftraggeber:innen',
+            headline: 'Was Bauherren über unsere Projekte sagen',
+            items: [
+              { name: 'Hausverwaltung Kuper',     context: '240 Wohneinheiten in Köln',  quote: 'Wir vergeben seit 2019 alle SHK-Aufträge an Müller & Söhne. Termintreue, saubere Dokumentation, eine Rechnung. Das spart uns Verwaltung.', rating: 5 },
+              { name: 'Kita-Träger St. Joseph',  context: '3 Kita-Standorte Köln',      quote: 'Sommerferien sind kurz. Bei Müller & Söhne können wir uns darauf verlassen, dass am ersten Schultag warm geduscht werden kann.',         rating: 5 },
+              { name: 'Atelier Mensching',        context: 'Architekturbüro Köln',      quote: 'Endlich ein SHK-Partner, der Pläne lesen kann und mit denkt. Wir spezifizieren grob — Felix Müller liefert den hydraulischen Abgleich dazu.',  rating: 5 },
+            ],
           },
         },
         {

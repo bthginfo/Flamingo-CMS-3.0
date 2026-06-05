@@ -4,7 +4,7 @@ Letzter Stand: siehe Commit-Datum.
 
 | # | Tenant       | Branche                       | Status | Notizen                                          |
 |---|--------------|-------------------------------|--------|--------------------------------------------------|
-| 1 | handwerk     | SHK-Meisterbetrieb (Köln)     | ✅ DONE | Müller & Söhne — Referenz-Implementierung        |
+| 1 | handwerk     | SHK-Meisterbetrieb (Köln)     | ✅ DONE | Müller & Söhne — Referenz-Implementierung, 35+ Sections, Premium-Mix |
 | 2 | restaurant   | Restaurant                    | ⬜ TODO |                                                  |
 | 3 | hotel        | Hotel                         | ⬜ TODO | Booking-Addon prüfen                             |
 | 4 | salon        | Friseur / Beauty              | ⬜ TODO | Booking-Addon prüfen                             |
@@ -34,7 +34,10 @@ Letzter Stand: siehe Commit-Datum.
 - [ ] Mindestens **eine Kollektion** mit mind. 3 Items, sinnvoll genutzt in `servicesGrid`/`collectionList`
 - [ ] Branchen­eigene Sections bevorzugt (z.B. `reservation` statt `contact` im Restaurant)
 - [ ] Alle Pflicht­felder gefüllt, mind. 3 Einträge in Array-Feldern
-- [ ] WCAG-Kontrast geprüft (`--token-on-dark-*` bei dunklen Sektionen)
+- [ ] **Mindestens 12 Sections auf der Startseite, 6 auf jeder Unterseite** (Premium-Mix Pflicht: bentoGrid, featureShowcase, timeline, statsCounter, comparisonTable, portfolio, socialProofBar irgendwo verteilt)
+- [ ] Mindestens 4 Items pro Karten-Array (services, processSteps, faq, etc.)
+- [ ] Bei `trustItems` im Hero: `trustStripColor` gesetzt (sonst weiß-auf-weiß-Bug)
+- [ ] WCAG-Kontrast geprüft (`--token-on-dark-*` bei dunklen Sektionen, `darkSectionTokens`-Helper benutzen)
 - [ ] `node scripts/demo-tenants/<tenant>.cjs` läuft fehlerfrei durch
 - [ ] `validate` meldet `readyToPublish: true` (keine `colorIssues`/`contentIssues` mit severity error)
 - [ ] Live-Site visuell geprüft
