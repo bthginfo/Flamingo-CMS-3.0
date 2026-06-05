@@ -80,7 +80,7 @@ function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, do
                   className="text-2xl md:text-4xl font-bold"
                   initial={{ opacity: 0, y: 30 }}
                   animate={i === activeIndex ? { opacity: 1, y: 0 } : { opacity: 0.5, y: 10 }}
-                  transition={{ duration: 0.4 }}
+                  transition={{ duration: 0.4 }} data-edit-path="title"
                 >
                   {panel.title}
                 </motion.h3>

@@ -112,7 +112,7 @@ export function CollectionListSection({ data }: Props) {
                 </div>
               )}
               <div className="p-5">
-                <h3 className="font-semibold text-lg group-hover:text-[var(--style-brand)] transition-colors">
+                <h3 className="font-semibold text-lg group-hover:text-[var(--style-brand)] transition-colors" data-edit-path="title">
                   {item.title}
                 </h3>
                 {showDate && item.date && (

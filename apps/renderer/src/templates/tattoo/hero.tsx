@@ -50,7 +50,7 @@ function HeroClassic({ headline, subline, bgImage, bgImageMobile, overlayOpacity
             </motion.div>
           )}
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-5xl sm:text-7xl lg:text-9xl font-black leading-[0.9] text-[color:var(--token-on-dark-heading,#ffffff)] uppercase tracking-tight">
+            className="text-5xl sm:text-7xl lg:text-9xl font-black leading-[0.9] text-[color:var(--token-on-dark-heading,#ffffff)] uppercase tracking-tight" data-edit-path="headline">
             {headline}
           </motion.h1>
           {subline && (
@@ -60,12 +60,12 @@ function HeroClassic({ headline, subline, bgImage, bgImageMobile, overlayOpacity
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.7 }}
             className="mt-10 flex flex-col sm:flex-row gap-4">
             {primaryCta && (
-              <a href={primaryCta.href} className="inline-flex items-center justify-center px-8 py-4 font-bold uppercase tracking-wider text-sm transition-colors" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, white))', color: 'var(--token-btn-text, var(--brand-btn-text, black))' }}>
+              <a href={primaryCta.href} className="inline-flex items-center justify-center px-8 py-4 font-bold uppercase tracking-wider text-sm transition-colors" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, white))', color: 'var(--token-btn-text, var(--brand-btn-text, black))' }} data-edit-path="label">
                 {primaryCta.label}
               </a>
             )}
             {secondaryCta && (
-              <a href={secondaryCta.href} className="inline-flex items-center justify-center px-8 py-4 border border-[color:var(--token-card-border,#ffffff)/30] text-[color:var(--token-on-dark-heading,#ffffff)] font-medium uppercase tracking-wider text-sm hover:border-[color:var(--token-card-border,#ffffff)/60] transition-colors">
+              <a href={secondaryCta.href} className="inline-flex items-center justify-center px-8 py-4 border border-[color:var(--token-card-border,#ffffff)/30] text-[color:var(--token-on-dark-heading,#ffffff)] font-medium uppercase tracking-wider text-sm hover:border-[color:var(--token-card-border,#ffffff)/60] transition-colors" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}
@@ -91,7 +91,7 @@ function HeroModern({ headline, subline, bgImage, bgImageMobile, overlayOpacity,
         <h1 className="text-4xl sm:text-6xl font-light text-[color:var(--token-on-dark-heading,#ffffff)] tracking-tight" data-edit-path="headline">{headline}</h1>
         {subline && <p className="mt-4 text-[color:var(--token-on-dark-heading,#ffffff)/50] max-w-lg" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-col sm:flex-row gap-3">
-          {primaryCta && <a href={primaryCta.href} className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-sm" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, white))', color: 'var(--token-btn-text, var(--brand-btn-text, black))' }}>{primaryCta.label}</a>}
+          {primaryCta && <a href={primaryCta.href} className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-sm" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, white))', color: 'var(--token-btn-text, var(--brand-btn-text, black))' }} data-edit-path="label">{primaryCta.label}</a>}
           {secondaryCta && <a href={secondaryCta.href} className="inline-flex items-center justify-center px-6 py-3 border border-[color:var(--token-card-border,#ffffff)/20] text-[color:var(--token-on-dark-heading,#ffffff)/80] text-sm rounded-sm" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
@@ -111,12 +111,12 @@ function HeroBold({ headline, subline, bgImage, bgImageMobile, overlayOpacity, p
       <div className="absolute inset-0 bg-[var(--token-section-bg-alt,#000000)]" style={{ opacity: overlayOpacity }} />
       <div className="relative z-10 text-center px-6">
         {badgeText && <p className="text-sm font-black uppercase tracking-[0.5em] text-red-500 mb-6">{badgeText}</p>}
-        <h1 className="text-6xl sm:text-8xl lg:text-[10rem] font-black text-[color:var(--token-on-dark-heading,#ffffff)] uppercase leading-[0.85] drop-shadow-[0_0_40px_rgba(255,0,0,0.15)]">
+        <h1 className="text-6xl sm:text-8xl lg:text-[10rem] font-black text-[color:var(--token-on-dark-heading,#ffffff)] uppercase leading-[0.85] drop-shadow-[0_0_40px_rgba(255,0,0,0.15)]" data-edit-path="headline">
           {headline}
         </h1>
         {subline && <p className="mt-6 text-[color:var(--token-on-dark-heading,#ffffff)/50] text-lg max-w-lg mx-auto" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-          {primaryCta && <a href={primaryCta.href} className="px-10 py-4 font-black uppercase tracking-wider text-sm transition-colors shadow-[4px_4px_0_rgba(0,0,0,1)]" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #dc2626))', color: 'var(--token-btn-text, var(--brand-btn-text, white))' }}>{primaryCta.label}</a>}
+          {primaryCta && <a href={primaryCta.href} className="px-10 py-4 font-black uppercase tracking-wider text-sm transition-colors shadow-[4px_4px_0_rgba(0,0,0,1)]" style={{ background: 'var(--token-btn-bg, var(--brand-btn-bg, #dc2626))', color: 'var(--token-btn-text, var(--brand-btn-text, white))' }} data-edit-path="label">{primaryCta.label}</a>}
           {secondaryCta && <a href={secondaryCta.href} className="px-10 py-4 border-2 border-[color:var(--token-card-border,#ffffff)] text-[color:var(--token-on-dark-heading,#ffffff)] font-black uppercase tracking-wider text-sm hover:bg-[var(--token-card-bg,#ffffff)] hover:text-[color:var(--token-heading,#000000)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.2)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>

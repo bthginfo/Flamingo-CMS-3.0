@@ -37,22 +37,22 @@ export function RealestateHeroSection({ data }: Props) {
           transition={{ duration: 0.8 }}
           className="max-w-2xl"
         >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)] leading-tight tracking-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)] leading-tight tracking-tight" data-edit-path="headline">
             {headline}
           </h1>
           {subline && (
-            <p className="text-lg md:text-xl text-[color:var(--token-on-dark-heading,#ffffff)/80] mt-6 leading-relaxed">
+            <p className="text-lg md:text-xl text-[color:var(--token-on-dark-heading,#ffffff)/80] mt-6 leading-relaxed" data-edit-path="subline">
               {plain(subline)}
             </p>
           )}
           <div className="flex flex-wrap gap-4 mt-10">
             {primaryCta && (
-              <a href={primaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl">
+              <a href={primaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl" data-edit-path="label">
                 {primaryCta.label}
               </a>
             )}
             {secondaryCta && (
-              <a href={secondaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--token-card-bg,#ffffff)/10] hover:bg-[var(--token-card-bg,#ffffff)/20] text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-lg border border-[color:var(--token-card-border,#ffffff)/20] transition-all backdrop-blur-sm">
+              <a href={secondaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--token-card-bg,#ffffff)/10] hover:bg-[var(--token-card-bg,#ffffff)/20] text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-lg border border-[color:var(--token-card-border,#ffffff)/20] transition-all backdrop-blur-sm" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

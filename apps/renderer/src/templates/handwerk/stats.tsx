@@ -41,7 +41,7 @@ export function StatsSection({ data }: Props) {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          className="section-headline text-center mb-12"
+          className="section-headline text-center mb-12" data-edit-path="headline"
         >
           {headline}
         </motion.h2>

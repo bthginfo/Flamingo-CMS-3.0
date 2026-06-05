@@ -36,17 +36,17 @@ export function FeatureShowcaseSection({ data }: Props) {
       {/* Content */}
       <div className={reversed ? 'lg:order-1 lg:direction-ltr' : ''}>
         {badge && (
-          <motion.span initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4 }} className="section-badge">
+          <motion.span initial={{ opacity: 0, y: 10 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4 }} className="section-badge" data-edit-path="badge">
             {badge}
           </motion.span>
         )}
         {headline && (
-          <motion.h2 initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.1 }} className="section-headline mt-3">
+          <motion.h2 initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.1 }} className="section-headline mt-3" data-edit-path="headline">
             {headline}
           </motion.h2>
         )}
         {subline && (
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.15 }} className="section-subline mt-2">
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.15 }} className="section-subline mt-2" data-edit-path="subline">
             {plain(subline)}
           </motion.p>
         )}

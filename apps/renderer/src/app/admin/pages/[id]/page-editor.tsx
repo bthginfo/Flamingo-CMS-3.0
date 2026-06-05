@@ -190,9 +190,13 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     setSaved(false);
     if (preview.isOpen) {
       const liveSections = buildLiveSections(sectionsRef.current, pendingChanges.current, { sectionId, data: saveData });
-      preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale });
+      // Always include collections so collection-driven sections (lists,
+      // featured products, …) keep rendering when an unrelated field is
+      // edited. Earlier this field was omitted and the iframe sometimes
+      // reset to an "empty" state until a full refresh.
+      preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale, collections });
     }
-  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, i18n, activeLocale]);
+  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, i18n, activeLocale, collections]);
 
   // Keep the ref in sync so the postMessage listener (declared earlier) can
   // call the latest handler.

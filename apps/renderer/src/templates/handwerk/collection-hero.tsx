@@ -69,7 +69,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--token-on-dark-heading,var(--token-heading,var(--style-heading-color,#fff)))] tracking-tight leading-tight break-words"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--token-on-dark-heading,var(--token-heading,var(--style-heading-color,#fff)))] tracking-tight leading-tight break-words" data-edit-path="headline"
         >
           {headline}
         </motion.h1>
@@ -113,7 +113,7 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight break-words text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#111827)))]"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight break-words text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="headline"
         >
           {headline}
         </motion.h1>

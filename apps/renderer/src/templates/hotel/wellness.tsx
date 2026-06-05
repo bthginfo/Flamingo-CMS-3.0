@@ -40,7 +40,7 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
         <div className="mb-6 max-w-3xl">
           {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{badgeText}</motion.p>}
-          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{headline}</motion.h2>
+          <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</motion.h2>
           {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           {introText && <div className="mt-6 text-[color:var(--token-muted,#52525b)] leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
           {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--token-btn-bg,#111827)] px-5 py-3 font-semibold text-[color:var(--token-btn-text,#ffffff)] shadow-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}

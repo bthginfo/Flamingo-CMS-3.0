@@ -97,7 +97,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
           {/* Headline */}
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }}
             className="text-5xl sm:text-6xl lg:text-8xl font-[700] leading-[0.95] text-[color:var(--token-on-dark-heading,#ffffff)]"
-            style={{ textShadow: '0 2px 24px rgba(0,0,0,0.5)' }}>
+            style={{ textShadow: '0 2px 24px rgba(0,0,0,0.5)' }} data-edit-path="headline">
             {headline}
           </motion.h1>
 
@@ -158,7 +158,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
               <span className="w-8 h-px bg-gray-300" />{badgeText}
             </div>
           )}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-[color:var(--token-heading,#18181b)] !leading-[1.1] tracking-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-[color:var(--token-heading,#18181b)] !leading-[1.1] tracking-tight" data-edit-path="headline">
             {headline}
           </h1>
           {subline && (
@@ -174,7 +174,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
             )}
             {secondaryCta.label && (
               <a href={secondaryCta.href || '#'}
-                className="inline-flex items-center gap-2 text-[color:var(--token-muted,#71717a)] hover:text-[color:var(--token-muted,#52525b)] transition-colors text-sm">
+                className="inline-flex items-center gap-2 text-[color:var(--token-muted,#71717a)] hover:text-[color:var(--token-muted,#52525b)] transition-colors text-sm" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}
@@ -238,7 +238,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgI
           {/* Headline */}
           <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
             className="text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] xl:text-[7rem] font-black text-[color:var(--token-on-dark-heading,#ffffff)] uppercase !leading-[0.9] tracking-tight"
-            style={{ textShadow: '0 4px 30px rgba(0,0,0,0.6)' }}>
+            style={{ textShadow: '0 4px 30px rgba(0,0,0,0.6)' }} data-edit-path="headline">
             {headline}
           </motion.h1>
 
@@ -262,7 +262,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgI
             )}
             {secondaryCta.label && (
               <a href={secondaryCta.href || '#'}
-                className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_34%,transparent)] text-[color:var(--token-on-dark-heading,#ffffff)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-on-dark-heading,#ffffff)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.1)]">
+                className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_34%,transparent)] text-[color:var(--token-on-dark-heading,#ffffff)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-on-dark-heading,#ffffff)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.1)]" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

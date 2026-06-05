@@ -47,11 +47,11 @@ export function ConsultingHeroSection({ data }: Props) {
           transition={{ duration: 0.8 }}
           className="max-w-3xl mx-auto text-center"
         >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight" style={{ color: heroHeading }}>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight" style={{ color: heroHeading }} data-edit-path="headline">
             {headline}
           </h1>
           {subline && (
-            <p className="text-lg md:text-xl mt-6 max-w-2xl mx-auto leading-relaxed" style={{ color: heroBody }}>
+            <p className="text-lg md:text-xl mt-6 max-w-2xl mx-auto leading-relaxed" style={{ color: heroBody }} data-edit-path="subline">
               {plain(subline)}
             </p>
           )}
@@ -63,7 +63,7 @@ export function ConsultingHeroSection({ data }: Props) {
               </a>
             )}
             {secondaryCta && (
-              <a href={secondaryCta.href} className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-7 py-3.5 font-semibold backdrop-blur transition-all hover:bg-white/15" style={{ color: heroHeading }}>
+              <a href={secondaryCta.href} className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-7 py-3.5 font-semibold backdrop-blur transition-all hover:bg-white/15" style={{ color: heroHeading }} data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

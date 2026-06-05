@@ -52,7 +52,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
           <Sparkles size={14} className="text-[var(--token-icon,var(--style-accent-color,var(--brand-accent)))]" /><span>{badgeText || 'Jetzt Termin sichern'}</span>
         </motion.div>
         <motion.h2 initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 }}
-          className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight !leading-[1.1]">{headline}</motion.h2>
+          className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight !leading-[1.1]" data-edit-path="headline">{headline}</motion.h2>
         {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="rt-content mx-auto mb-10 max-w-2xl text-lg leading-8 text-[var(--token-body,var(--style-body-color,rgba(255,255,255,0.78)))] sm:text-xl" dangerouslySetInnerHTML={{ __html: subline }} />}
         {cta?.label && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }}>
@@ -78,7 +78,7 @@ function CtaModern({ headline, subline, cta, colors }: CProps) {
   return (
     <motion.div ref={ref} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.8 }}
       className="text-center py-16 md:py-24 lg:py-32" style={wrapStyle}>
-      <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight !leading-[1.1] max-w-4xl mx-auto" style={colors?.textColor ? { color: colors.textColor } : undefined}>
+      <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight !leading-[1.1] max-w-4xl mx-auto" style={colors?.textColor ? { color: colors.textColor } : undefined} data-edit-path="headline">
         {headline}
       </h2>
       {subline && <div className="rt-content mx-auto mt-6 max-w-2xl text-lg text-[var(--token-body,var(--style-body-color,#52525b))]" dangerouslySetInnerHTML={{ __html: subline }} />}

@@ -55,7 +55,7 @@ export function MarketReportSection({ data }: Props) {
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ delay: 0.5 }}
-            className="text-[color:var(--token-on-dark-heading,#ffffff)/60] mt-10 max-w-3xl leading-relaxed"
+            className="text-[color:var(--token-on-dark-heading,#ffffff)/60] mt-10 max-w-3xl leading-relaxed" data-edit-path="description"
           >
             {plain(description)}
           </motion.p>

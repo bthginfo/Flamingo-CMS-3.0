@@ -23,7 +23,7 @@ export function CafeTestimonialsSection({ data }: Props) {
   return (
     <section ref={ref} className="py-20 md:py-28">
       <div className="max-w-6xl mx-auto px-6">
-        <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-[color:var(--token-heading,#18181b)] text-center mb-12">{headline}</motion.h2>
+        <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-[color:var(--token-heading,#18181b)] text-center mb-12" data-edit-path="headline">{headline}</motion.h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.1 }} className="bg-[var(--token-section-bg-alt,#fafafa)] p-6 rounded-xl" data-edit-collection="testimonials" data-edit-index={i}>

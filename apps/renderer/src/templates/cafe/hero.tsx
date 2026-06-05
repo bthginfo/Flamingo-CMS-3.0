@@ -40,22 +40,22 @@ export function CafeHeroSection({ data }: Props) {
           {openingHint && (
             <span className="inline-block text-amber-400 text-sm font-medium mb-4 tracking-wide">{openingHint}</span>
           )}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)] leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)] leading-tight" data-edit-path="headline">
             {headline}
           </h1>
           {subline && (
-            <p className="text-lg text-[color:var(--token-on-dark-heading,#ffffff)/80] mt-5 leading-relaxed">
+            <p className="text-lg text-[color:var(--token-on-dark-heading,#ffffff)/80] mt-5 leading-relaxed" data-edit-path="subline">
               {plain(subline)}
             </p>
           )}
           <div className="flex flex-wrap gap-4 mt-8">
             {primaryCta && (
-              <a href={primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-amber-700 hover:bg-amber-800 text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-full transition-all">
+              <a href={primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-amber-700 hover:bg-amber-800 text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-full transition-all" data-edit-path="label">
                 {primaryCta.label}
               </a>
             )}
             {secondaryCta && (
-              <a href={secondaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--token-card-bg,#ffffff)/10] hover:bg-[var(--token-card-bg,#ffffff)/20] text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-full border border-[color:var(--token-card-border,#ffffff)/20] backdrop-blur-sm transition-all">
+              <a href={secondaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--token-card-bg,#ffffff)/10] hover:bg-[var(--token-card-bg,#ffffff)/20] text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-full border border-[color:var(--token-card-border,#ffffff)/20] backdrop-blur-sm transition-all" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

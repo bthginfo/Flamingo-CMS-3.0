@@ -150,7 +150,7 @@ export function ShopProductGridSection({ data }: Props) {
             Alle
           </button>
           {categories.map(c => (
-            <button key={c.slug} onClick={() => setActiveCategory(c.slug)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${activeCategory === c.slug ? 'bg-[var(--token-section-bg-alt,#18181b)] text-[color:var(--token-on-dark-heading,#ffffff)]' : 'bg-[var(--token-section-bg-alt,#f4f4f5)] text-[color:var(--token-muted,#52525b)] hover:bg-zinc-200'}`}>
+            <button key={c.slug} onClick={() => setActiveCategory(c.slug)} className={`px-3 py-1.5 rounded-full text-sm font-medium transition ${activeCategory === c.slug ? 'bg-[var(--token-section-bg-alt,#18181b)] text-[color:var(--token-on-dark-heading,#ffffff)]' : 'bg-[var(--token-section-bg-alt,#f4f4f5)] text-[color:var(--token-muted,#52525b)] hover:bg-zinc-200'}`} data-edit-path="name">
               {c.name}
             </button>
           ))}

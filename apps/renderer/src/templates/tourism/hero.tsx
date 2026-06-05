@@ -72,7 +72,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgC
           {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-on-dark-heading,#ffffff)]">{badgeText}</p>}
           <Mountain className="text-[color:var(--token-on-dark-heading,#ffffff)]" size={20} />
         </motion.div>
-        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-[color:var(--token-on-dark-heading,#ffffff)] sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 24px rgba(0,0,0,0.62)' }}>{headline}</motion.h1>
+        <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-[color:var(--token-on-dark-heading,#ffffff)] sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 24px rgba(0,0,0,0.62)' }} data-edit-path="headline">{headline}</motion.h1>
         {subline && <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-7 max-w-2xl text-lg leading-8 text-[color:var(--token-on-dark-body,rgba(255,255,255,.84))] rt-content" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.55)' }} dangerouslySetInnerHTML={{ __html: subline }} />}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
           {primaryCta.label && (

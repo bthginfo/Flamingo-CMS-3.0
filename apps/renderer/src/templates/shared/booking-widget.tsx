@@ -259,8 +259,8 @@ export function BookingWidgetSection({ data }: SectionProps) {
           <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}>
             <CalendarCheck size={15} /> {badge}
           </p>
-          <h2 className="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, var(--booking-text-primary, #ffffff))' }}>{headline}</h2>
-          <p className="max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{plain(subline)}</p>
+          <h2 className="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, var(--booking-text-primary, #ffffff))' }} data-edit-path="headline">{headline}</h2>
+          <p className="max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }} data-edit-path="subline">{plain(subline)}</p>
           <div className="rounded-2xl border p-4 text-sm" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.12))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)', color: 'var(--booking-muted-color, rgba(255,255,255,.7))' }}>
             {timeModel === 'full_day' && 'Diese Buchung blockiert einen ganzen Tag.'}
             {timeModel === 'date_range' && 'Diese Buchung prüft einen Datumsbereich, z.B. für Zimmer, Locations oder mehrtägige Leistungen.'}
@@ -385,8 +385,8 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
       <div className="relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div>
           <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}><Clock3 size={15} /> {badge}</p>
-          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{headline}</h2>
-          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{plain(subline)}</p>
+          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }} data-edit-path="headline">{headline}</h2>
+          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }} data-edit-path="subline">{plain(subline)}</p>
           <div className="mt-6 grid gap-3 text-sm sm:grid-cols-3">
             {['Datum wählen', 'Slots prüfen', config?.mode === 'instant' ? 'Direkt buchen' : 'Anfrage senden'].map((item, index) => (
               <div key={item} className="rounded-2xl border p-3" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)', color: 'var(--booking-body-color, rgba(255,255,255,.72))' }} data-edit-collection="senden" data-edit-index={index}>
@@ -422,7 +422,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
                 <p className={`mb-2 text-xs font-bold uppercase tracking-[0.14em] ${FORM_MUTED_CLASS}`}>Verfügbare Uhrzeiten</p>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {loading ? <p className="col-span-full rounded-xl p-4 text-sm" style={BOOKING_NOTICE_STYLE}>Slots werden geladen...</p> : slots.length ? slots.map((slot) => (
-                    <button key={slot.value} type="button" onClick={() => setSelectedSlot(slot.value)} className="rounded-xl border px-3 py-3 text-sm font-bold transition hover:brightness-95" style={selectedSlot === slot.value ? { borderColor: 'var(--token-btn-bg, var(--brand-btn-bg, #09090b))', background: 'var(--token-btn-bg, var(--brand-btn-bg, #09090b))', color: 'var(--token-btn-text, var(--brand-btn-text, #ffffff))' } : { borderColor: 'var(--booking-border-color, rgba(9,9,11,.16))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }}>
+                    <button key={slot.value} type="button" onClick={() => setSelectedSlot(slot.value)} className="rounded-xl border px-3 py-3 text-sm font-bold transition hover:brightness-95" style={selectedSlot === slot.value ? { borderColor: 'var(--token-btn-bg, var(--brand-btn-bg, #09090b))', background: 'var(--token-btn-bg, var(--brand-btn-bg, #09090b))', color: 'var(--token-btn-text, var(--brand-btn-text, #ffffff))' } : { borderColor: 'var(--booking-border-color, rgba(9,9,11,.16))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }} data-edit-path="label">
                       {slot.label}
                     </button>
                   )) : <p className="col-span-full rounded-xl p-4 text-sm" style={BOOKING_NOTICE_STYLE}>Für diese Auswahl sind keine freien Uhrzeiten verfügbar.</p>}
@@ -511,8 +511,8 @@ export function BookingDateRangeSection({ data }: SectionProps) {
       <div className="relative grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-start">
         <div>
           <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}><CalendarCheck size={15} /> {badge}</p>
-          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{headline}</h2>
-          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }}>{plain(subline)}</p>
+          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }} data-edit-path="headline">{headline}</h2>
+          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }} data-edit-path="subline">{plain(subline)}</p>
           <div className="mt-6 rounded-2xl border p-4" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)' }}>
             <p className="text-xs font-bold uppercase tracking-[0.16em]" style={{ color: 'var(--booking-muted-color, rgba(255,255,255,.56))' }}>Ausgewählter Zeitraum</p>
             <p className="mt-2 text-2xl font-black" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{formatInputDate(startDate)} - {formatInputDate(endDate)}</p>
@@ -662,7 +662,7 @@ export function ResourceBookingShowcaseSection({ data }: SectionProps) {
         {['Ressource wählen', 'Zeitraum prüfen', 'Anfrage senden'].map((label, index) => (
           <div key={label} className="flex items-center gap-3 rounded-2xl border p-4" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 10%, transparent)' }} data-edit-collection="senden" data-edit-index={index}>
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-black" style={{ background: 'var(--booking-accent-color, #f43f5e)', color: 'var(--token-btn-text, var(--brand-btn-text, #09090b))' }}>{index + 1}</span>
-            <p className="font-semibold" style={{ color: 'var(--booking-heading-color, #ffffff)' }}>{label}</p>
+            <p className="font-semibold" style={{ color: 'var(--booking-heading-color, #ffffff)' }} data-edit-path="label">{label}</p>
           </div>
         ))}
       </div>

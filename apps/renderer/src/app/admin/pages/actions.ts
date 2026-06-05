@@ -8,6 +8,8 @@ import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { BOOKING_SECTION_TYPES } from '@/lib/booking-core';
+import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
+import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
 
 async function requireSession() {
   const session = await getSession();
@@ -128,11 +130,20 @@ export async function addSectionAction(pageId: string, type: string) {
   // Get max sort order
   const existing = await db.select({ sortOrder: pageSections.sortOrder }).from(pageSections).where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).orderBy(desc(pageSections.sortOrder)).limit(1);
   const nextOrder = (existing[0]?.sortOrder ?? -1) + 1;
+  // Seed new sections with realistic preview data so the live preview shows
+  // visible content the moment a section is added (some templates short-
+  // circuit on empty arrays / missing fields and would otherwise render
+  // nothing). Defaults are merged from both sources; SECTION_PREVIEW_DATA
+  // wins when both are present so the user sees richer demo content.
+  const seedData: Record<string, unknown> = {
+    ...(SECTION_EDITOR_FIELD_DEFAULTS[type] || {}),
+    ...(SECTION_PREVIEW_DATA[type] || {}),
+  };
   const [section] = await db.insert(pageSections).values({
     tenantId: session.tenantId,
     pageId,
     type,
-    data: {},
+    data: seedData,
     sortOrder: nextOrder,
   }).returning();
   revalidatePath(`/admin/pages/${pageId}`);

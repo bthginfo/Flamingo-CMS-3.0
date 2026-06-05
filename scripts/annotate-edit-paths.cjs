@@ -169,56 +169,86 @@ function deriveCollectionName(before) {
   return '';
 }
 
-// PASS B: annotate text containers (h1..h6, p, span, a, button, etc.) whose
-// body is a single JSX expression resolving to a known text-field name.
+// PASS B: annotate text containers (h1..h6, p, span, a, button, etc. plus
+// their framer-motion equivalents `motion.h1` … `motion.em`) whose body is
+// a single JSX expression resolving to a known text-field name.
+//
+// Uses a brace-aware scanner instead of a regex for the opening tag so
+// attributes with nested braces (e.g. `style={{ color: x }}`) don't break
+// the match. The previous regex form silently skipped any text container
+// that used `style={{…}}`, which is why ~30% of templates went un-annotated.
 function annotateTextFields(src) {
+  const textTagSet = new Set([...TEXT_TAGS, ...TEXT_TAGS.map((t) => `motion.${t}`)]);
   let out = '';
   let i = 0;
-  // Find each `<tag ...>{...}</tag>` pattern; only matches when the body
-  // is exactly one JSX expression (no surrounding text or siblings).
-  // We scan character-by-character so we can correctly skip nested braces.
-  const re = new RegExp(
-    `<(${TEXT_TAGS.join('|')})((?:\\s+[^<>{}]*(?:\\{[^{}]*\\}[^<>{}]*)*)?)>\\s*\\{`,
-    'g',
-  );
+  // Scan for "<tag" tokens. For each, do brace-aware tag-end search, then
+  // check the body is exactly one JSX expression.
+  const tagStartRe = /<([A-Za-z][A-Za-z0-9.]*)/g;
   let m;
-  while ((m = re.exec(src)) !== null) {
+  while ((m = tagStartRe.exec(src)) !== null) {
     const tag = m[1];
-    const attrs = m[2];
+    if (!textTagSet.has(tag)) continue;
     const openStart = m.index;
-    const exprStart = re.lastIndex;
-    // Find matching closing brace
-    let depth = 1;
-    let j = exprStart;
-    while (j < src.length && depth > 0) {
+    const afterTagName = openStart + 1 + tag.length;
+    // Find the closing '>' of the opening tag, honouring nested '{}',
+    // '{{}}', backticks, and string literals.
+    let j = afterTagName;
+    let braceDepth = 0;
+    let inSingle = false;
+    let inDouble = false;
+    let inBacktick = false;
+    while (j < src.length) {
       const ch = src[j];
-      if (ch === '{') depth++;
-      else if (ch === '}') depth--;
+      if (inSingle) { if (ch === '\\') { j += 2; continue; } if (ch === "'") inSingle = false; }
+      else if (inDouble) { if (ch === '\\') { j += 2; continue; } if (ch === '"') inDouble = false; }
+      else if (inBacktick) { if (ch === '\\') { j += 2; continue; } if (ch === '`') inBacktick = false; }
+      else if (ch === "'") inSingle = true;
+      else if (ch === '"') inDouble = true;
+      else if (ch === '`') inBacktick = true;
+      else if (ch === '{') braceDepth++;
+      else if (ch === '}') braceDepth--;
+      else if (ch === '>' && braceDepth === 0) break;
+      else if (ch === '<' && braceDepth === 0) { j = -1; break; }
       j++;
     }
-    if (depth !== 0) continue;
-    const exprEnd = j - 1; // points at the closing }
-    const exprBody = src.slice(exprStart, exprEnd);
-    // After the }, expect whitespace then </tag>
-    const closeRe = new RegExp(`^\\s*<\\/${tag}>`);
-    const tail = src.slice(j);
+    if (j < 0 || j >= src.length) continue;
+    // Self-closing tags can't carry a text expression
+    if (src[j - 1] === '/') { tagStartRe.lastIndex = j + 1; continue; }
+    // Expect `{ … }` body right after '>'
+    const bodyStart = j + 1;
+    // Allow whitespace
+    let bs = bodyStart;
+    while (bs < src.length && /\s/.test(src[bs])) bs++;
+    if (src[bs] !== '{') { tagStartRe.lastIndex = j + 1; continue; }
+    // Find matching closing brace
+    let depth = 1;
+    let k = bs + 1;
+    while (k < src.length && depth > 0) {
+      const ch = src[k];
+      if (ch === '{') depth++;
+      else if (ch === '}') depth--;
+      k++;
+    }
+    if (depth !== 0) { tagStartRe.lastIndex = j + 1; continue; }
+    const exprBody = src.slice(bs + 1, k - 1);
+    // After the }, expect optional whitespace then `</tag>` — the close
+    // tag matches the OPENING tag verbatim (so `<motion.h2>` is closed by
+    // `</motion.h2>`). The previous code stripped the `motion.` prefix
+    // and only looked for `</h2>`, which never matched and silently
+    // dropped the annotation for every framer-motion text container.
+    const closeRe = new RegExp(`^\\s*<\\/${tag.replace(/\./g, '\\.')}>`);
+    const tail = src.slice(k);
     const closeMatch = tail.match(closeRe);
-    if (!closeMatch) continue;
-    // Derive field
+    if (!closeMatch) { tagStartRe.lastIndex = j + 1; continue; }
     const field = fieldFromExpression(exprBody);
-    if (!field) continue;
-    // openTag includes the trailing '>' so attribute injection lands
-    // correctly inside the tag. exprStart points just past '{', so
-    // exprStart-2 is the '>'.
-    const openTagOriginal = src.slice(openStart, exprStart - 1); // '<tag ...>'
+    if (!field) { tagStartRe.lastIndex = j + 1; continue; }
+    const openTagOriginal = src.slice(openStart, j + 1);
     const injected = injectAttribute(openTagOriginal, field);
-    if (!injected) continue;
-    // Emit unchanged text up to openStart, the modified open tag, then
-    // the inner expression as-is wrapped in braces, then the close tag.
+    if (!injected) { tagStartRe.lastIndex = j + 1; continue; }
     out += src.slice(i, openStart);
-    out += injected + '{' + exprBody + '}' + closeMatch[0];
-    i = j + closeMatch[0].length;
-    re.lastIndex = i;
+    out += injected + src.slice(j + 1, k) + closeMatch[0];
+    i = k + closeMatch[0].length;
+    tagStartRe.lastIndex = i;
   }
   out += src.slice(i);
   return out;

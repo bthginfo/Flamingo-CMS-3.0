@@ -55,7 +55,7 @@ export function BrandShowroomSection({ data }: Props) {
           )}
 
           {cta?.label && (
-            <a href={cta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-[var(--style-button-radius,0.75rem)] hover:brightness-110 transition-all shadow-lg">
+            <a href={cta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-[var(--style-button-radius,0.75rem)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
               {cta.label}
             </a>
           )}

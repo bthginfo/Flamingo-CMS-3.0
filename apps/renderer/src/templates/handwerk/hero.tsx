@@ -166,7 +166,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
               <span className="w-8 h-px bg-gray-300" />{badgeText}
             </div>
           )}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-[color:var(--token-heading,#18181b)] !leading-[1.1] tracking-tight break-words">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-[color:var(--token-heading,#18181b)] !leading-[1.1] tracking-tight break-words" data-edit-path="headline">
             {headline}
           </h1>
           {subline && <div className="text-lg text-[color:var(--token-body,#a1a1aa)] leading-relaxed mt-8 max-w-lg [&_p]:inline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
@@ -231,7 +231,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
             </motion.div>
           )}
           <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-            className="text-4xl sm:text-5xl md:text-7xl lg:text-[6rem] xl:text-[7rem] font-black text-[color:var(--token-on-dark-heading,#ffffff)] uppercase !leading-[0.9] tracking-tight break-words">
+            className="text-4xl sm:text-5xl md:text-7xl lg:text-[6rem] xl:text-[7rem] font-black text-[color:var(--token-on-dark-heading,#ffffff)] uppercase !leading-[0.9] tracking-tight break-words" data-edit-path="headline">
             {headline}
           </motion.h1>
           {subline && (

@@ -95,10 +95,10 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
           {packages.map((pkg, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className={`relative rounded-2xl p-5 md:p-8 ${pkg.highlighted ? 'bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-[color:var(--token-on-dark-heading,#ffffff)] shadow-xl ring-2 ring-brand-primary/20 md:scale-[1.02]' : 'bg-[var(--token-card-bg,#ffffff)] shadow-sm border border-[color:var(--token-card-border,#f4f4f5)]'}`} data-edit-collection="packages" data-edit-index={i}>
               {pkg.highlighted && <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-on-dark-heading,#ffffff)] text-xs font-bold px-3 py-1 rounded-full">Beliebt</span>}
-              <h3 className={`text-xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-heading,#18181b)]'}`}>{pkg.name}</h3>
+              <h3 className={`text-xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-heading,#18181b)]'}`} data-edit-path="name">{pkg.name}</h3>
               {pkg.price && (
                 <div className="mt-3">
-                  <span className={`text-2xl md:text-3xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-icon,var(--brand-primary,#1a5276))]'}`}>{pkg.price}</span>
+                  <span className={`text-2xl md:text-3xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-icon,var(--brand-primary,#1a5276))]'}`} data-edit-path="price">{pkg.price}</span>
                   {pkg.priceNote && <span className={`text-sm ml-1 ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-muted,#71717a)]'}`}>{pkg.priceNote}</span>}
                 </div>
               )}

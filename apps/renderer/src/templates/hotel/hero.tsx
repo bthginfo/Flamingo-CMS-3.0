@@ -101,7 +101,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
         )}
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }}
           className="text-5xl sm:text-6xl lg:text-8xl font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] leading-[0.98]"
-          style={{ textShadow: '0 2px 30px rgba(0,0,0,0.4)' }}>
+          style={{ textShadow: '0 2px 30px rgba(0,0,0,0.4)' }} data-edit-path="headline">
           {headline}
         </motion.h1>
         {subline && (
@@ -120,7 +120,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
             </a>
           )}
           {secondaryCta.label && (
-            <a href={secondaryCta.href || '#'} className="inline-flex items-center justify-center rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_8%,transparent)] px-7 py-4 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] transition-colors hover:border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_62%,transparent)]">
+            <a href={secondaryCta.href || '#'} className="inline-flex items-center justify-center rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_8%,transparent)] px-7 py-4 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] transition-colors hover:border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_62%,transparent)]" data-edit-path="label">
               {secondaryCta.label}
             </a>
           )}
@@ -149,7 +149,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, trustItems, bgIma
               <span className="w-8 h-px bg-gray-300" />{badgeText}
             </div>
           )}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-[color:var(--token-heading,#18181b)] !leading-[1.1] tracking-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-light text-[color:var(--token-heading,#18181b)] !leading-[1.1] tracking-tight" data-edit-path="headline">
             {headline}
           </h1>
           {subline && <div className="text-lg text-[color:var(--token-body,#a1a1aa)] leading-relaxed mt-8 max-w-lg rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
@@ -160,7 +160,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, trustItems, bgIma
               </a>
             )}
             {secondaryCta.label && (
-              <a href={secondaryCta.href || '#'} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-card-border,#d4d4d8)] px-7 py-3 text-[color:var(--token-muted,#71717a)] hover:text-[color:var(--token-muted,#3f3f46)] hover:border-[color:var(--token-card-border,#a1a1aa)] transition-colors text-sm w-full sm:w-auto">
+              <a href={secondaryCta.href || '#'} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-card-border,#d4d4d8)] px-7 py-3 text-[color:var(--token-muted,#71717a)] hover:text-[color:var(--token-muted,#3f3f46)] hover:border-[color:var(--token-card-border,#a1a1aa)] transition-colors text-sm w-full sm:w-auto" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}
@@ -220,7 +220,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, trustItems, bgImage
             </motion.div>
           )}
           <motion.h1 initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] xl:text-[7rem] font-black text-[color:var(--token-on-dark-heading,#ffffff)] uppercase !leading-[0.9] tracking-tight">
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] xl:text-[7rem] font-black text-[color:var(--token-on-dark-heading,#ffffff)] uppercase !leading-[0.9] tracking-tight" data-edit-path="headline">
             {headline}
           </motion.h1>
           {subline && (
@@ -235,7 +235,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, trustItems, bgImage
               </a>
             )}
             {secondaryCta.label && (
-              <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_34%,transparent)] text-[color:var(--token-on-dark-heading,#ffffff)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-on-dark-heading,#ffffff)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.1)]">
+              <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_34%,transparent)] text-[color:var(--token-on-dark-heading,#ffffff)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-on-dark-heading,#ffffff)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.1)]" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

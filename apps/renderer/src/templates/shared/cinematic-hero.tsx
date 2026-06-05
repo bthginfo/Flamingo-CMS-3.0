@@ -64,8 +64,8 @@ export function CinematicHeroSection({ data }: Props) {
 
       <motion.div style={{ y: copyY, opacity }} className={`relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-center px-6 pb-14 pt-28 md:pb-16 md:pt-32 ${align === 'center' ? 'items-center text-center' : 'items-start text-left'}`}>
         {eyebrow && <div className="mb-5 inline-flex rounded-full border border-[var(--token-badge-border,var(--style-badge-border,rgba(255,255,255,0.20)))] bg-[var(--token-badge-bg,var(--style-badge-bg,rgba(255,255,255,0.14)))] px-4 py-2 text-xs font-semibold uppercase text-[var(--token-badge-text,var(--style-badge-text,#fff))] backdrop-blur">{eyebrow}</div>}
-        {headline && <h1 className="max-w-5xl text-5xl font-black leading-[0.95] md:text-7xl lg:text-8xl" style={{ color: heroText }}>{headline}</h1>}
-        {subline && <p className={`mt-6 max-w-2xl text-base leading-8 md:text-xl ${align === 'center' ? 'mx-auto' : ''}`} style={{ color: heroBody }}>{plain(subline)}</p>}
+        {headline && <h1 className="max-w-5xl text-5xl font-black leading-[0.95] md:text-7xl lg:text-8xl" style={{ color: heroText }} data-edit-path="headline">{headline}</h1>}
+        {subline && <p className={`mt-6 max-w-2xl text-base leading-8 md:text-xl ${align === 'center' ? 'mx-auto' : ''}`} style={{ color: heroBody }} data-edit-path="subline">{plain(subline)}</p>}
 
         <div className="mt-9 flex flex-wrap items-center gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg,var(--brand-btn-bg,var(--style-accent-color,#fff)))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text,var(--brand-btn-text,#111))] shadow-xl transition hover:brightness-110">{primaryCta.label}<ArrowRight size={16} /></a>}

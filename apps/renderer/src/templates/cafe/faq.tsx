@@ -18,7 +18,7 @@ export function CafeFaqSection({ data }: Props) {
   return (
     <section ref={ref} className="py-20 md:py-28 bg-[var(--token-section-bg-alt,#fafafa)]">
       <div className="max-w-3xl mx-auto px-6">
-        <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-[color:var(--token-heading,#18181b)] text-center mb-10">{headline}</motion.h2>
+        <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-[color:var(--token-heading,#18181b)] text-center mb-10" data-edit-path="headline">{headline}</motion.h2>
         <div className="space-y-3">
           {items.map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: i * 0.05 }} className="bg-[var(--token-card-bg,#ffffff)] rounded-lg border border-[color:var(--token-card-border,#f4f4f5)]" data-edit-collection="items" data-edit-index={i}>

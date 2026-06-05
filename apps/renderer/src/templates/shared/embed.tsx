@@ -89,7 +89,7 @@ export function EmbedSection({ data }: Props) {
               style={{
                 backgroundColor: buttonColor || 'var(--token-icon, var(--brand-primary, #0ea5e9))',
                 color: buttonTextColor || '#ffffff',
-              }}
+              }} data-edit-path="buttonLabel"
             >
               {buttonLabel}
             </button>
