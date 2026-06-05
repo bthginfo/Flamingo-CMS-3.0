@@ -54,7 +54,7 @@ export function PropertyShowcaseSection({ data }: Props) {
               </div>
               <div className="p-6">
                 <h3 className="font-semibold text-[color:var(--token-heading,#18181b)] text-lg group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors" data-edit-path="title">{property.title}</h3>
-                <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1">{property.location}</p>
+                <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1" data-edit-path="location">{property.location}</p>
                 <div className="flex items-center gap-4 mt-4 pt-4 border-t border-[color:var(--token-card-border,#f4f4f5)]">
                   <span className="text-sm text-[color:var(--token-muted,#52525b)]"><strong>{property.rooms}</strong> Zimmer</span>
                   <span className="text-sm text-[color:var(--token-muted,#52525b)]"><strong>{property.size}</strong></span>

@@ -31,7 +31,7 @@ function SignatureDishesClassic({ headline, subline, badgeText, dishes }: Signat
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
       <div className="mb-10 max-w-3xl text-center mx-auto">
-        {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
+        {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
@@ -47,7 +47,7 @@ function SignatureDishesClassic({ headline, subline, badgeText, dishes }: Signat
               </div>
               {dish.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: dish.description }} />}
               {asList<string>(dish.ingredients).length > 0 && <p className="mt-4 text-xs text-[color:var(--token-muted,#71717a)]">{asList<string>(dish.ingredients).join(' / ')}</p>}
-              {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{dish.cta.label}<ArrowRight size={16} /></a>}
+              {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]"><span data-edit-path="label">{dish.cta.label}</span><ArrowRight size={16} /></a>}
             </div>
           </motion.article>
         ))}
@@ -60,7 +60,7 @@ function SignatureDishesModern({ headline, subline, badgeText, dishes }: Signatu
   return (
     <div>
       <div className="mb-12 max-w-3xl">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
         {subline && <div className="mt-6 font-light text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
@@ -77,7 +77,7 @@ function SignatureDishesModern({ headline, subline, badgeText, dishes }: Signatu
               </div>
               {dish.description && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: dish.description }} />}
               {asList<string>(dish.ingredients).length > 0 && <p className="mt-4 text-xs font-light text-[color:var(--token-muted,#71717a)]">{asList<string>(dish.ingredients).join(' / ')}</p>}
-              {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 border-b border-[#111827] pb-0.5 text-sm font-medium text-[color:var(--token-heading,#18181b)]">{dish.cta.label}<ArrowRight size={16} /></a>}
+              {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 border-b border-[#111827] pb-0.5 text-sm font-medium text-[color:var(--token-heading,#18181b)]"><span data-edit-path="label">{dish.cta.label}</span><ArrowRight size={16} /></a>}
             </div>
           </article>
         ))}
@@ -90,7 +90,7 @@ function SignatureDishesBold({ headline, subline, badgeText, dishes }: Signature
   return (
     <div className="bg-[#111827] p-6 text-[color:var(--token-on-dark-heading,#ffffff)] sm:p-10">
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading,#18181b)]">{badgeText}</p>}
+        {badgeText && <p className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading,#18181b)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
         {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading,#ffffff)/70] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
@@ -107,7 +107,7 @@ function SignatureDishesBold({ headline, subline, badgeText, dishes }: Signature
               </div>
               {dish.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading,#ffffff)/60] rt-content" dangerouslySetInnerHTML={{ __html: dish.description }} />}
               {asList<string>(dish.ingredients).length > 0 && <p className="mt-4 text-xs text-[color:var(--token-on-dark-heading,#ffffff)/50]">{asList<string>(dish.ingredients).join(' / ')}</p>}
-              {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-bold uppercase text-[color:var(--token-on-dark-heading,#ffffff)]">{dish.cta.label}<ArrowRight size={16} /></a>}
+              {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 font-bold uppercase text-[color:var(--token-on-dark-heading,#ffffff)]"><span data-edit-path="label">{dish.cta.label}</span><ArrowRight size={16} /></a>}
             </div>
           </article>
         ))}

@@ -38,14 +38,18 @@ const DRY = process.argv.includes('--dry');
 const TEXT_FIELDS = new Set([
   'headline', 'subline', 'title', 'subtitle', 'heading', 'subheading',
   'description', 'content', 'body', 'text', 'intro', 'outro', 'caption',
-  'badge', 'eyebrow', 'kicker', 'label', 'name', 'role', 'position',
-  'quote', 'author', 'company', 'tagline',
-  'ctaLabel', 'ctaPrimaryLabel', 'ctaSecondaryLabel', 'buttonLabel',
+  'badge', 'badgeText', 'eyebrow', 'kicker', 'label',
+  'name', 'role', 'position',
+  'quote', 'author', 'company', 'tagline', 'note',
+  'ctaLabel', 'ctaPrimaryLabel', 'ctaSecondaryLabel', 'ctaText',
+  'buttonLabel', 'buttonText',
   'primaryLabel', 'secondaryLabel', 'linkLabel',
-  'statValue', 'statLabel', 'statSuffix',
-  'price', 'priceLabel', 'priceSuffix',
-  'phone', 'email', 'address',
+  'statValue', 'statLabel', 'statSuffix', 'statPrefix',
+  'price', 'priceLabel', 'priceSuffix', 'priceFrom', 'priceTo',
+  'phone', 'phoneNumber', 'email', 'address', 'addressLine',
   'question', 'answer',
+  'date', 'time', 'duration', 'location',
+  'category', 'tag', 'value', 'unit',
 ]);
 
 // JSX tags we'll annotate. Keep it to actual text containers.
@@ -87,9 +91,10 @@ function processFile(filePath) {
   const original = fs.readFileSync(filePath, 'utf8');
   const afterPassA = annotateMapWrappers(original);
   const afterPassB = annotateTextFields(afterPassA);
+  const afterPassC = wrapMixedContentText(afterPassB);
   const wrapperChanges = countOccurrences(afterPassA, 'data-edit-collection=') - countOccurrences(original, 'data-edit-collection=');
-  const textChanges = countOccurrences(afterPassB, 'data-edit-path=') - countOccurrences(afterPassA, 'data-edit-path=');
-  return { content: afterPassB, wrapperChanges, textChanges };
+  const textChanges = countOccurrences(afterPassC, 'data-edit-path=') - countOccurrences(afterPassA, 'data-edit-path=');
+  return { content: afterPassC, wrapperChanges, textChanges };
 }
 
 function countOccurrences(s, needle) {
@@ -252,6 +257,83 @@ function annotateTextFields(src) {
   }
   out += src.slice(i);
   return out;
+}
+
+// PASS C: handle "mixed content" text expressions — `<a><Icon />{label}</a>`
+// or `<p>… {expression}</p>`. Pass B intentionally skipped these because
+// the body isn't a single expression. We wrap just the expression in a
+// `<span data-edit-path="…">{expression}</span>` so the user can click and
+// edit the text portion without restructuring the surrounding JSX.
+function wrapMixedContentText(src) {
+  const textTagSet = new Set([...TEXT_TAGS, ...TEXT_TAGS.map((t) => `motion.${t}`)]);
+  let out = '';
+  let i = 0;
+  const re = /\{([^{}]{1,200})\}/g;
+  let m;
+  while ((m = re.exec(src)) !== null) {
+    const exprBody = m[1];
+    const field = fieldFromExpression(exprBody);
+    if (!field) continue;
+    const openIdx = m.index;
+    // Skip if expression sits inside an opening tag (it's an attribute).
+    let insideTag = false;
+    for (let k = openIdx - 1; k >= 0; k--) {
+      if (src[k] === '>') break;
+      if (src[k] === '<') { insideTag = true; break; }
+    }
+    if (insideTag) continue;
+    // Re-run safety: don't wrap if already wrapped by a previous Pass C.
+    const before30 = src.slice(Math.max(0, openIdx - 30), openIdx);
+    if (/data-edit-path\s*=[^>]*>\s*$/.test(before30)) continue;
+    // Heuristic enclosing-tag check: walk backward through balanced JSX
+    // until we hit an unmatched `<tag …>`. Skip entirely if the parent is
+    // not a known text container (we don't want to inject spans into
+    // arbitrary structural divs).
+    const parent = findEnclosingTextTag(src, openIdx, textTagSet);
+    if (!parent) continue;
+    // Skip if parent already carries data-edit-path (Pass B winner).
+    if (/\bdata-edit-path\s*=/.test(parent.openTag)) continue;
+    out += src.slice(i, openIdx);
+    out += `<span data-edit-path="${field}">{${exprBody}}</span>`;
+    i = openIdx + m[0].length;
+    re.lastIndex = i;
+  }
+  out += src.slice(i);
+  return out;
+}
+
+function findEnclosingTextTag(src, position, textTagSet) {
+  let depth = 0;
+  let k = position - 1;
+  while (k >= 0) {
+    const ch = src[k];
+    if (ch === '>') {
+      let lt = k - 1;
+      let strDepth = 0;
+      while (lt >= 0) {
+        if (src[lt] === '<' && strDepth === 0) break;
+        if (src[lt] === '{') strDepth++;
+        else if (src[lt] === '}') strDepth--;
+        lt--;
+      }
+      if (lt < 0) return null;
+      const inner = src.slice(lt, k + 1);
+      if (inner.endsWith('/>')) { k = lt - 1; continue; }
+      if (inner.startsWith('</')) { depth++; k = lt - 1; continue; }
+      if (depth === 0) {
+        const tagNameMatch = inner.match(/^<([A-Za-z][A-Za-z0-9.]*)/);
+        if (!tagNameMatch) return null;
+        const tag = tagNameMatch[1];
+        if (!textTagSet.has(tag)) return null;
+        return { tag, openTag: inner, openStart: lt };
+      }
+      depth--;
+      k = lt - 1;
+      continue;
+    }
+    k--;
+  }
+  return null;
 }
 
 function walk(dir) {

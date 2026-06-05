@@ -37,7 +37,7 @@ export function ConsultingContactSection({ data }: Props) {
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
-        {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mb-3">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mb-3" data-edit-path="badgeText">{badgeText}</p>}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
         {introText && <div className="text-[color:var(--token-muted,#52525b)] mt-4 rt-content max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: introText }} />}

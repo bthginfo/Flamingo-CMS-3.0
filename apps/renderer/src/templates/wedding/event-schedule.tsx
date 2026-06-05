@@ -36,19 +36,19 @@ function ScheduleClassic({ badge, headline, events }: P) {
               return (
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className={`flex items-start gap-6 md:gap-12 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
                   <div className={`flex-1 ${i % 2 === 0 ? 'md:text-right' : 'md:text-left'} hidden md:block`}>
-                    <span className="text-sm font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{event.time}</span>
+                    <span className="text-sm font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" data-edit-path="time">{event.time}</span>
                     <h3 className="text-xl font-semibold text-[color:var(--token-heading,#18181b)] mt-1" data-edit-path="title">{event.title}</h3>
                     {event.description && <div className="text-[color:var(--token-muted,#52525b)] mt-1 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
-                    {event.location && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" />{event.location}</p>}
+                    {event.location && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" /><span data-edit-path="location">{event.location}</span></p>}
                   </div>
                   <div className="relative z-10 w-12 h-12 rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] flex items-center justify-center shrink-0">
                     <Icon className="w-5 h-5 text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />
                   </div>
                   <div className="flex-1 md:hidden">
-                    <span className="text-sm font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{event.time}</span>
+                    <span className="text-sm font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" data-edit-path="time">{event.time}</span>
                     <h3 className="text-xl font-semibold text-[color:var(--token-heading,#18181b)] mt-1" data-edit-path="title">{event.title}</h3>
                     {event.description && <div className="text-[color:var(--token-muted,#52525b)] mt-1 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
-                    {event.location && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" />{event.location}</p>}
+                    {event.location && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" /><span data-edit-path="location">{event.location}</span></p>}
                   </div>
                   <div className="flex-1 hidden md:block" />
                 </motion.div>
@@ -70,11 +70,11 @@ function ScheduleModern({ badge, headline, events }: P) {
         <div className="space-y-0">
           {events.map((event, i) => (
             <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="grid grid-cols-[80px_1fr] md:grid-cols-[120px_1fr] border-t border-[color:var(--token-card-border,#e4e4e7)] py-8" data-edit-collection="events" data-edit-index={i}>
-              <span className="text-sm font-light text-[color:var(--token-body,#a1a1aa)] pt-1">{event.time}</span>
+              <span className="text-sm font-light text-[color:var(--token-body,#a1a1aa)] pt-1" data-edit-path="time">{event.time}</span>
               <div>
                 <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{event.title}</h3>
                 {event.description && <div className="text-[color:var(--token-muted,#71717a)] text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
-                {event.location && <p className="text-xs text-[color:var(--token-body,#a1a1aa)] mt-2 uppercase tracking-wider">{event.location}</p>}
+                {event.location && <p className="text-xs text-[color:var(--token-body,#a1a1aa)] mt-2 uppercase tracking-wider" data-edit-path="location">{event.location}</p>}
               </div>
             </motion.div>
           ))}
@@ -97,11 +97,11 @@ function ScheduleBold({ badge, headline, events }: P) {
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6 hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))/50] transition-colors">
                 <div className="flex items-center gap-3 mb-3">
                   <Icon className="w-5 h-5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
-                  <span className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] font-bold text-sm">{event.time}</span>
+                  <span className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] font-bold text-sm" data-edit-path="time">{event.time}</span>
                 </div>
                 <h3 className="text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{event.title}</h3>
                 {event.description && <div className="text-[color:var(--token-muted,#52525b)] text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
-                {event.location && <p className="text-xs text-[color:var(--token-body,#a1a1aa)] mt-3 uppercase tracking-wider flex items-center gap-1"><MapPin className="w-3 h-3" />{event.location}</p>}
+                {event.location && <p className="text-xs text-[color:var(--token-body,#a1a1aa)] mt-3 uppercase tracking-wider flex items-center gap-1"><MapPin className="w-3 h-3" /><span data-edit-path="location">{event.location}</span></p>}
               </motion.div>
             );
           })}

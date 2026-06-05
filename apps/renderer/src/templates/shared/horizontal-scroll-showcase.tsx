@@ -87,7 +87,7 @@ function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, do
                 {panel.text && <p className="mt-3 opacity-80 leading-relaxed" data-edit-path="text">{plain(panel.text)}</p>}
                 {panel.ctaLabel && panel.ctaHref && (
                   <a href={panel.ctaHref} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold opacity-90 hover:opacity-100 transition-opacity">
-                    {panel.ctaLabel} <span>→</span>
+                    <span data-edit-path="ctaLabel">{panel.ctaLabel}</span> <span>→</span>
                   </a>
                 )}
               </div>
@@ -141,7 +141,7 @@ function MobileCarousel({ headline, subline, panels, bgColor, textColor, dotColo
                 <h3 className="text-xl font-bold" data-edit-path="title">{panel.title}</h3>
                 {panel.text && <p className="mt-2 text-sm opacity-80" data-edit-path="text">{plain(panel.text)}</p>}
                 {panel.ctaLabel && panel.ctaHref && (
-                  <a href={panel.ctaHref} className="mt-3 text-sm font-semibold opacity-90">{panel.ctaLabel} →</a>
+                  <a href={panel.ctaHref} className="mt-3 text-sm font-semibold opacity-90"><span data-edit-path="ctaLabel">{panel.ctaLabel}</span> →</a>
                 )}
               </div>
             </div>

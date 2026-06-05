@@ -39,7 +39,7 @@ export function StyleGallerySection({ data }: Props) {
             </button>
             {allTags.map(tag => (
               <button key={tag} onClick={() => setActiveFilter(activeFilter === tag ? null : tag)}
-                className={`px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider transition-colors ${activeFilter === tag ? 'bg-[var(--token-card-bg,#ffffff)] text-[color:var(--token-heading,#000000)]' : 'bg-[var(--token-card-bg,#ffffff)/10] text-[color:var(--token-on-dark-heading,#ffffff)/60] hover:bg-[var(--token-card-bg,#ffffff)/20]'}`}>
+                className={`px-4 py-2 rounded-full text-xs font-medium uppercase tracking-wider transition-colors ${activeFilter === tag ? 'bg-[var(--token-card-bg,#ffffff)] text-[color:var(--token-heading,#000000)]' : 'bg-[var(--token-card-bg,#ffffff)/10] text-[color:var(--token-on-dark-heading,#ffffff)/60] hover:bg-[var(--token-card-bg,#ffffff)/20]'}`} data-edit-path="tag">
                 {tag}
               </button>
             ))}

@@ -20,7 +20,7 @@ export function ConsultingFaqSection({ data }: Props) {
   return (
     <div ref={ref} className="max-w-3xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
-        {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
+        {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>

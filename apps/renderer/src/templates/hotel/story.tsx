@@ -40,7 +40,7 @@ function StoryClassic(p: Props) {
     <div>
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-          {p.badgeText && <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" />{p.badgeText}</p>}
+          {p.badgeText && <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]"><Star size={12} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" /><span data-edit-path="badgeText">{p.badgeText}</span></p>}
           <h2 className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{p.headline}</h2>
           {p.subline && <div className="mt-4 text-lg text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
           {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-muted,#52525b)]">{plain(p.storyText)}</p>}
@@ -99,7 +99,7 @@ function StoryModern(p: Props) {
     <div>
       <div className="grid gap-16 lg:grid-cols-2 lg:items-start">
         <div>
-          {p.badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{p.badgeText}</p>}
+          {p.badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]" data-edit-path="badgeText">{p.badgeText}</p>}
           <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{p.headline}</h2>
           {p.subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
           {p.storyText && <p className="mt-6 whitespace-pre-line font-light leading-7 text-[color:var(--token-muted,#52525b)]">{plain(p.storyText)}</p>}
@@ -158,7 +158,7 @@ function StoryBold(p: Props) {
     <div>
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <div>
-          {p.badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{p.badgeText}</p>}
+          {p.badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" data-edit-path="badgeText">{p.badgeText}</p>}
           <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{p.headline}</h2>
           {p.subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
           {p.storyText && <p className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-muted,#52525b)]">{plain(p.storyText)}</p>}

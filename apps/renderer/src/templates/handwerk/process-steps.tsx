@@ -30,7 +30,7 @@ function ProcessClassic({ headline, badgeText, steps }: PProps) {
       <div className="absolute inset-0 bg-[radial-gradient(var(--token-muted, var(--style-text-muted,#e5e7eb))_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.15] rounded-4xl" />
       <div className="relative rounded-4xl p-8 sm:p-12 lg:p-20" style={{ background: 'var(--token-card-bg, var(--style-card-bg, linear-gradient(to bottom right, var(--surface, #f8fafc), white)))', borderColor: 'color-mix(in srgb, var(--style-text-primary, #111) 8%, transparent)', borderWidth: '1px' }}>
         <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-10 md:mb-16">
-          {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
+          {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
           {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         </motion.div>
         <div className="relative max-w-4xl mx-auto">
@@ -93,7 +93,7 @@ function ProcessBold({ headline, badgeText, steps }: PProps) {
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-10">
-        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-section-bg-alt, var(--brand-dark))))]">{badgeText}</span>}
+        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-section-bg-alt, var(--brand-dark))))]" data-edit-path="badgeText">{badgeText}</span>}
         {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
       </motion.div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

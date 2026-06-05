@@ -14,7 +14,7 @@ export function baseHeader(data: Record<string, unknown>, headline: string, badg
 export function SectionHeader({ headline, subline, badgeText }: { headline: string; subline: string; badgeText: string }) {
   return (
     <div className="mb-10 max-w-3xl">
-      {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
+      {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]" data-edit-path="badgeText">{badgeText}</p>}
       <h2 className="mt-3 text-3xl font-[700] text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
       {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
     </div>
@@ -23,7 +23,7 @@ export function SectionHeader({ headline, subline, badgeText }: { headline: stri
 
 export function CtaButton({ cta }: { cta: ButtonValue }) {
   if (!cta.label) return null;
-  return <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)]">{cta.label}<ArrowRight size={16} /></a>;
+  return <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>;
 }
 
 export function ImageCard({ image, title, text, meta, cta }: { image?: string; title?: string; text?: string; meta?: string; cta?: ButtonValue }) {

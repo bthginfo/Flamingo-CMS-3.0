@@ -30,7 +30,7 @@ export function CafeTestimonialsSection({ data }: Props) {
               {t.stars && (
                 <div className="flex gap-0.5 mb-3">{Array.from({ length: t.stars }).map((_, j) => <Star key={j} size={14} className="fill-amber-400 text-amber-400"  data-edit-collection="stars" data-edit-index={j}/>)}</div>
               )}
-              <p className="text-[color:var(--token-muted,#3f3f46)] text-sm leading-relaxed italic">&ldquo;{plain(t.text)}&rdquo;</p>
+              <p className="text-[color:var(--token-muted,#3f3f46)] text-sm leading-relaxed italic">&ldquo;<span data-edit-path="text">{plain(t.text)}</span>&rdquo;</p>
               <div className="flex items-center gap-3 mt-4 pt-3 border-t border-[color:var(--token-card-border,#e4e4e7)]">
                 {t.image && <Image src={t.image} alt={t.name} width={32} height={32} className="rounded-full object-cover" />}
                 <div>

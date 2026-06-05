@@ -31,7 +31,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-12 md:mb-20">
-        {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
+        {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
@@ -60,7 +60,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 text-[var(--token-icon, var(--style-accent,var(--token-icon, var(--brand-primary))))] font-medium hover:gap-3 transition-all">
-                  {item.ctaLabel}{item.icon && <DynamicIcon name={item.icon} size={16} />}
+                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon name={item.icon} size={16} />}
                 </a>
               )}
             </div>
@@ -101,7 +101,7 @@ function ServiceModern({ headline, subline, badgeText, items }: SProps) {
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 text-[var(--style-text-primary,#111827)] font-medium mt-6 border-b border-[var(--style-text-primary,#111827)] pb-0.5 hover:border-[var(--token-icon, var(--style-accent,var(--token-eyebrow, var(--brand-accent))))] hover:text-[var(--token-icon, var(--style-accent,var(--token-eyebrow, var(--brand-accent))))] transition-colors">
-                  {item.ctaLabel}{item.icon && <DynamicIcon name={item.icon} size={14} />}
+                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon name={item.icon} size={14} />}
                 </a>
               )}
             </div>
@@ -120,7 +120,7 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12">
-        {badgeText && <span className="inline-block bg-[var(--token-icon, var(--style-accent,var(--token-eyebrow, var(--brand-accent))))] text-[var(--style-text-primary,var(--token-section-bg-alt, var(--brand-dark)))] font-bold text-xs uppercase tracking-widest px-3 py-1.5 mb-4">{badgeText}</span>}
+        {badgeText && <span className="inline-block bg-[var(--token-icon, var(--style-accent,var(--token-eyebrow, var(--brand-accent))))] text-[var(--style-text-primary,var(--token-section-bg-alt, var(--brand-dark)))] font-bold text-xs uppercase tracking-widest px-3 py-1.5 mb-4" data-edit-path="badgeText">{badgeText}</span>}
         {headline && <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-tight text-[var(--style-text-primary,#111827)]" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="text-[var(--style-text-secondary,#6b7280)] mt-3 font-medium rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
@@ -146,7 +146,7 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 mt-4 font-bold uppercase text-sm text-[var(--style-text-primary,var(--token-section-bg-alt, var(--brand-dark)))] hover:text-[var(--token-icon, var(--style-accent,var(--token-eyebrow, var(--brand-accent))))] transition-colors">
-                  {item.ctaLabel}{item.icon && <DynamicIcon name={item.icon} size={14} />}
+                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon name={item.icon} size={14} />}
                 </a>
               )}
             </div>

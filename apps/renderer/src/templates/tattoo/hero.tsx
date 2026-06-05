@@ -87,7 +87,7 @@ function HeroModern({ headline, subline, bgImage, bgImageMobile, overlayOpacity,
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-transparent" style={{ opacity: overlayOpacity }} />
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full pb-20 pt-40">
-        {badgeText && <p className="text-xs font-mono uppercase tracking-[0.3em] text-[color:var(--token-on-dark-heading,#ffffff)/40] mb-4">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-mono uppercase tracking-[0.3em] text-[color:var(--token-on-dark-heading,#ffffff)/40] mb-4" data-edit-path="badgeText">{badgeText}</p>}
         <h1 className="text-4xl sm:text-6xl font-light text-[color:var(--token-on-dark-heading,#ffffff)] tracking-tight" data-edit-path="headline">{headline}</h1>
         {subline && <p className="mt-4 text-[color:var(--token-on-dark-heading,#ffffff)/50] max-w-lg" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -110,7 +110,7 @@ function HeroBold({ headline, subline, bgImage, bgImageMobile, overlayOpacity, p
       )}
       <div className="absolute inset-0 bg-[var(--token-section-bg-alt,#000000)]" style={{ opacity: overlayOpacity }} />
       <div className="relative z-10 text-center px-6">
-        {badgeText && <p className="text-sm font-black uppercase tracking-[0.5em] text-red-500 mb-6">{badgeText}</p>}
+        {badgeText && <p className="text-sm font-black uppercase tracking-[0.5em] text-red-500 mb-6" data-edit-path="badgeText">{badgeText}</p>}
         <h1 className="text-6xl sm:text-8xl lg:text-[10rem] font-black text-[color:var(--token-on-dark-heading,#ffffff)] uppercase leading-[0.85] drop-shadow-[0_0_40px_rgba(255,0,0,0.15)]" data-edit-path="headline">
           {headline}
         </h1>

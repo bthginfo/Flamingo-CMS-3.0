@@ -55,12 +55,12 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,.2)))] backdrop-blur-sm text-[var(--token-badge-text, var(--style-badge-text,#fff))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,.2)))] backdrop-blur-sm text-[var(--token-badge-text, var(--style-badge-text,#fff))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider" data-edit-path="category">
               {category}
             </span>
           )}
           {date && (
-            <span className="text-[var(--token-on-dark-muted,var(--token-muted,var(--style-text-muted,rgba(255,255,255,.7))))] text-sm">{date}</span>
+            <span className="text-[var(--token-on-dark-muted,var(--token-muted,var(--style-text-muted,rgba(255,255,255,.7))))] text-sm" data-edit-path="date">{date}</span>
           )}
         </motion.div>
 
@@ -100,12 +100,12 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-[var(--token-badge-bg,var(--style-badge-bg,color-mix(in_srgb,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))_10%,transparent)))] text-[var(--token-badge-text,var(--style-badge-text,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="inline-block bg-[var(--token-badge-bg,var(--style-badge-bg,color-mix(in_srgb,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))_10%,transparent)))] text-[var(--token-badge-text,var(--style-badge-text,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider" data-edit-path="category">
               {category}
             </span>
           )}
           {date && (
-            <span className="text-[var(--token-muted,var(--style-text-muted,var(--style-text-secondary,#9ca3af)))] text-sm">{date}</span>
+            <span className="text-[var(--token-muted,var(--style-text-muted,var(--style-text-secondary,#9ca3af)))] text-sm" data-edit-path="date">{date}</span>
           )}
         </motion.div>
 

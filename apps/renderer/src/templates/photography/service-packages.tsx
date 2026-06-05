@@ -37,7 +37,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
             {packages.map((pkg, i) => (
               <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={`border-t ${pkg.highlighted ? 'border-[color:var(--token-card-border,#18181b)]' : 'border-[color:var(--token-card-border,#e4e4e7)]'} pt-8`} data-edit-collection="packages" data-edit-index={i}>
                 <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{pkg.name}</h3>
-                {pkg.price && <p className="text-2xl font-extralight text-[color:var(--token-heading,#18181b)] mt-2">{pkg.price}{pkg.priceNote && <span className="text-sm text-[color:var(--token-body,#a1a1aa)] ml-1">{pkg.priceNote}</span>}</p>}
+                {pkg.price && <p className="text-2xl font-extralight text-[color:var(--token-heading,#18181b)] mt-2"><span data-edit-path="price">{pkg.price}</span>{pkg.priceNote && <span className="text-sm text-[color:var(--token-body,#a1a1aa)] ml-1">{pkg.priceNote}</span>}</p>}
                 {pkg.description && <div className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-3" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
                 <ul className="mt-6 space-y-2">
                   {pkg.features.map((f, j) => <li key={j} className="text-[color:var(--token-muted,#52525b)] text-sm" data-edit-collection="features" data-edit-index={j}>— {f}</li>)}
@@ -46,7 +46,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
               </motion.div>
             ))}
           </div>
-          {note && <p className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-12">{note}</p>}
+          {note && <p className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-12" data-edit-path="note">{note}</p>}
         </div>
       </section>
     );
@@ -63,7 +63,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
               <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`relative p-6 md:p-8 border ${pkg.highlighted ? 'border-[var(--token-card-border,var(--brand-accent,#f39c12))]' : 'border-[color:var(--token-card-border,#ffffff)/10]'}`} data-edit-collection="packages" data-edit-index={i}>
                 {pkg.highlighted && <span className="absolute -top-3 left-6 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold px-3 py-1">BELIEBT</span>}
                 <h3 className="text-xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="name">{pkg.name}</h3>
-                {pkg.price && <p className="text-3xl font-black text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] mt-3">{pkg.price}{pkg.priceNote && <span className="text-sm text-[color:var(--token-on-dark-heading,#ffffff)/70] ml-1">{pkg.priceNote}</span>}</p>}
+                {pkg.price && <p className="text-3xl font-black text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] mt-3"><span data-edit-path="price">{pkg.price}</span>{pkg.priceNote && <span className="text-sm text-[color:var(--token-on-dark-heading,#ffffff)/70] ml-1">{pkg.priceNote}</span>}</p>}
                 {pkg.description && <div className="text-[color:var(--token-on-dark-heading,#ffffff)/80] text-sm mt-3" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
                 <ul className="mt-6 space-y-2">
                   {pkg.features.map((f, j) => (
@@ -77,7 +77,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
               </motion.div>
             ))}
           </div>
-          {note && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/40] text-sm mt-10 italic">{note}</p>}
+          {note && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/40] text-sm mt-10 italic" data-edit-path="note">{note}</p>}
         </div>
       </section>
     );
@@ -119,7 +119,7 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
             </motion.div>
           ))}
         </div>
-        {note && <p className="text-center text-[color:var(--token-muted,#71717a)] text-sm mt-10 italic">{note}</p>}
+        {note && <p className="text-center text-[color:var(--token-muted,#71717a)] text-sm mt-10 italic" data-edit-path="note">{note}</p>}
       </div>
     </section>
   );

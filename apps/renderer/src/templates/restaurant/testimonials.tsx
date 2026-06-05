@@ -33,7 +33,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
   return (
     <div>
       <div className="mb-10 max-w-3xl text-center mx-auto">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</motion.p>}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" data-edit-path="badgeText">{badgeText}</motion.p>}
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</motion.h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         {(ratingValue || ratingCount) && <p className="mt-3 text-sm text-[color:var(--token-muted,#71717a)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
@@ -42,7 +42,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
         {items.map((item, i) => (
           <motion.article key={`${item.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-black/10 bg-[var(--token-card-bg,#ffffff)] p-6 shadow-md" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Stars count={item.rating || 5} /></div>
-            {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading,#18181b)]">&ldquo;{plain(item.quote)}&rdquo;</p>}
+            {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading,#18181b)]">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
             <div className="mt-4 border-t border-black/10 pt-4">
               <p className="font-semibold text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
               <p className="text-xs text-[color:var(--token-muted,#71717a)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
@@ -59,7 +59,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
   return (
     <div>
       <div className="mb-14 max-w-3xl">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
         {subline && <div className="mt-6 font-light text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
@@ -69,7 +69,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
         {items.map((item, i) => (
           <article key={`${item.name}-${i}`} className="border-t border-black/10 pt-6" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Stars count={item.rating || 5} /></div>
-            {item.quote && <p className="mt-4 text-sm font-light leading-7 text-[color:var(--token-heading,#18181b)]">&ldquo;{plain(item.quote)}&rdquo;</p>}
+            {item.quote && <p className="mt-4 text-sm font-light leading-7 text-[color:var(--token-heading,#18181b)]">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
             <p className="mt-4 font-medium text-[color:var(--token-heading,#18181b)]">{item.name || ''}</p>
             <p className="text-xs font-light text-[color:var(--token-muted,#71717a)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
           </article>
@@ -84,7 +84,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
   return (
     <div className="bg-[#111827] p-6 text-[color:var(--token-on-dark-heading,#ffffff)] sm:p-10">
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading,#18181b)]">{badgeText}</p>}
+        {badgeText && <p className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading,#18181b)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
         {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading,#ffffff)/70] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
@@ -94,7 +94,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
         {items.map((item, i) => (
           <article key={`${item.name}-${i}`} className="border-2 border-[color:var(--token-card-border,#ffffff)/20] p-6 shadow-[4px_4px_0_rgba(255,255,255,0.15)]" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Stars count={item.rating || 5} /></div>
-            {item.quote && <p className="mt-4 text-sm leading-6">&ldquo;{plain(item.quote)}&rdquo;</p>}
+            {item.quote && <p className="mt-4 text-sm leading-6">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
             <div className="mt-4 border-t border-[color:var(--token-card-border,#ffffff)/20] pt-4">
               <p className="font-black uppercase">{item.name || ''}</p>
               <p className="text-xs text-[color:var(--token-on-dark-heading,#ffffff)/60]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>

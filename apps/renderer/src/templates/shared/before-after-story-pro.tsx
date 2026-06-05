@@ -32,7 +32,7 @@ export function BeforeAfterStoryProSection({ data }: Props) {
             </motion.div>
           ))}
         </div>
-        {cta.label && <a href={cta.href || '#'} className="mt-7 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--token-icon, var(--brand-primary,#111))))] px-5 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{cta.label}<ArrowRight size={16} /></a>}
+        {cta.label && <a href={cta.href || '#'} className="mt-7 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--token-icon, var(--brand-primary,#111))))] px-5 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>}
       </div>
 
       <div className="space-y-4">

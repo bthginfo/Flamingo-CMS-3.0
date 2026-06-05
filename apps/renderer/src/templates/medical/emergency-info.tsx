@@ -56,7 +56,7 @@ function Modern({ header, introText, items, ctaPrimary }: Props) {
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <div className="mt-6"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,#dc2626)))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,#dc2626)))] px-5 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{ctaPrimary.label}<ArrowRight size={16} /></a></div>}
+      {ctaPrimary.label && <div className="mt-6"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,#dc2626)))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,#dc2626)))] px-5 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
     </div>
   );
 }
@@ -65,7 +65,7 @@ function Bold({ header, introText, items, ctaPrimary }: Props) {
   return (
     <div className="border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-accent-color,#ef4444)))] bg-[var(--token-section-bg, var(--style-section-bg,#030712))] p-6 sm:p-8">
       <div className="mb-10 max-w-3xl">
-        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,#f87171)))]">{header.badgeText}</p>}
+        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,#f87171)))]" data-edit-path="badgeText">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,#fff))] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
         {header.subline && <div className="mt-4 text-[var(--token-body, var(--style-body-color,rgba(255,255,255,.7)))] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
@@ -80,7 +80,7 @@ function Bold({ header, introText, items, ctaPrimary }: Props) {
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <div className="mt-6"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,#ef4444)))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,#ef4444)))] px-5 py-3 font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{ctaPrimary.label}<ArrowRight size={16} /></a></div>}
+      {ctaPrimary.label && <div className="mt-6"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,#ef4444)))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,#ef4444)))] px-5 py-3 font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
     </div>
   );
 }

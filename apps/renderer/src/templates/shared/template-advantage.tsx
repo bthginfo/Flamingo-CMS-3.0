@@ -67,7 +67,7 @@ export function TemplateAdvantageSection({ data }: Props) {
         {cta.label && (
           <div className="mt-10">
             <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--token-icon, var(--brand-primary,#f24171))))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#ffffff))]">
-              {cta.label}<ArrowRight size={16} />
+              <span data-edit-path="label">{cta.label}</span><ArrowRight size={16} />
             </a>
           </div>
         )}

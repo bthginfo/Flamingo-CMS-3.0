@@ -21,7 +21,7 @@ function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number | s
   }, [inView, count, numericValue, isNumeric]);
 
   if (!isNumeric) {
-    return <span ref={ref}>{prefix}{String(value)}{suffix}</span>;
+    return <span ref={ref}>{prefix}<span data-edit-path="value">{String(value)}</span>{suffix}</span>;
   }
 
   return <motion.span ref={ref}>{rounded}</motion.span>;

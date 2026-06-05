@@ -39,7 +39,7 @@ export function PortfolioSection({ data }: Props) {
       >
         {badgeText && (
           <div className="section-badge">
-            <span>{badgeText}</span>
+            <span data-edit-path="badgeText">{badgeText}</span>
           </div>
         )}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
@@ -66,7 +66,7 @@ export function PortfolioSection({ data }: Props) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--style-image-overlay,rgba(0,0,0,.6))] via-black/10 to-transparent" />
                 {project.category && (
-                  <span className="absolute top-4 left-4 bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,.9)))] backdrop-blur-sm text-xs font-medium px-3 py-1.5 rounded-full text-[var(--token-badge-text, var(--style-badge-text,#374151))]">
+                  <span className="absolute top-4 left-4 bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,.9)))] backdrop-blur-sm text-xs font-medium px-3 py-1.5 rounded-full text-[var(--token-badge-text, var(--style-badge-text,#374151))]" data-edit-path="category">
                     {project.category}
                   </span>
                 )}

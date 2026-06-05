@@ -62,7 +62,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
             <div className={image ? '' : 'md:col-span-2'}>
               {description && <div className="text-[color:var(--token-muted,#3f3f46)] text-lg leading-relaxed mb-8 rt-content" dangerouslySetInnerHTML={{ __html: description }} />}
               <div className="space-y-4 border-l-4 border-[var(--token-card-border,var(--brand-accent,#f39c12))] pl-6">
-                {address && <p className="text-[color:var(--token-muted,#3f3f46)] flex items-center gap-2"><MapPin className="w-4 h-4 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />{address}</p>}
+                {address && <p className="text-[color:var(--token-muted,#3f3f46)] flex items-center gap-2"><MapPin className="w-4 h-4 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" /><span data-edit-path="address">{address}</span></p>}
                 {contact && <p className="text-[color:var(--token-muted,#3f3f46)] flex items-center gap-2"><Phone className="w-4 h-4 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />{contact}</p>}
               </div>
               {mapUrl && <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-8 px-6 py-3 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] font-bold text-sm uppercase tracking-wider hover:opacity-90 transition-opacity"><MapPin className="w-4 h-4" /> Route planen</a>}

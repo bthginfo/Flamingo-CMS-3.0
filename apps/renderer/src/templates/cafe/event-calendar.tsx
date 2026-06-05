@@ -51,9 +51,9 @@ export function CafeEventCalendarSection({ data }: Props) {
                 <div className="p-5">
                   <div className="flex items-center gap-2 text-xs text-amber-700 font-medium mb-2">
                     <Icon size={14} />
-                    <span>{event.date}</span>
+                    <span data-edit-path="date">{event.date}</span>
                     <span className="text-[color:var(--token-body,#d4d4d8)]">·</span>
-                    <span>{event.time}</span>
+                    <span data-edit-path="time">{event.time}</span>
                   </div>
                   <h3 className="font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{event.title}</h3>
                   {event.description && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1.5" data-edit-path="description">{plain(event.description)}</p>}

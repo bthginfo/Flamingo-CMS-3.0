@@ -31,7 +31,7 @@ export function EditorialFeatureRailSection({ data }: Props) {
                 {item.kicker && <div className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[var(--token-muted, var(--style-text-muted,rgba(255,255,255,0.65)))]">{item.kicker}</div>}
                 <h3 className="text-3xl font-black leading-tight text-[var(--style-image-text-color,var(--token-heading, var(--style-heading-color,#ffffff)))] md:text-4xl" data-edit-path="title">{item.title}</h3>
                 {item.text && <p className="mt-4 max-w-md text-sm leading-7 text-[var(--style-text-secondary,var(--token-body, var(--style-body-color,rgba(255,255,255,0.72))))]" data-edit-path="text">{plain(item.text)}</p>}
-                {item.ctaLabel && <a href={item.ctaHref || '#'} className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,#ffffff))] px-4 py-2 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#18181b))]">{item.ctaLabel}<ArrowRight size={15} /></a>}
+                {item.ctaLabel && <a href={item.ctaHref || '#'} className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,#ffffff))] px-4 py-2 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#18181b))]"><span data-edit-path="ctaLabel">{item.ctaLabel}</span><ArrowRight size={15} /></a>}
               </div>
             </motion.article>
           ))}

@@ -42,7 +42,7 @@ export function MarketReportSection({ data }: Props) {
                 className="bg-[var(--token-card-bg,#ffffff)/5] backdrop-blur-sm border border-[color:var(--token-card-border,#ffffff)/10] rounded-xl p-6"
               >
                 <Icon size={20} className="text-amber-500 mb-3" />
-                <p className="text-3xl font-bold">{stat.value}</p>
+                <p className="text-3xl font-bold" data-edit-path="value">{stat.value}</p>
                 <p className="text-sm text-[color:var(--token-on-dark-heading,#ffffff)/60] mt-1" data-edit-path="label">{stat.label}</p>
                 {stat.trend && <span className="text-xs text-emerald-400 mt-2 inline-block">↑ {stat.trend}</span>}
               </motion.div>

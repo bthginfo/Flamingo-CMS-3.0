@@ -142,7 +142,7 @@ function IntakeQuestionFields({ service }: { service?: BookingConfig['services']
     <div className="grid gap-3">
       {questions.map((question) => (
         <label key={question.id} className={FORM_LABEL_CLASS}>
-          {question.label}{question.required ? ' *' : ''}
+          <span data-edit-path="label">{question.label}</span>{question.required ? ' *' : ''}
           {Array.isArray(question.options) && question.options.length ? (
             <select name={`intake_${question.id}`} required={question.required} className={`${FORM_CONTROL_CLASS} font-normal`}>
               <option value="">Bitte wählen</option>
@@ -257,7 +257,7 @@ export function BookingWidgetSection({ data }: SectionProps) {
       <div className="relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div className="space-y-5">
           <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}>
-            <CalendarCheck size={15} /> {badge}
+            <CalendarCheck size={15} /> <span data-edit-path="badge">{badge}</span>
           </p>
           <h2 className="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, var(--booking-text-primary, #ffffff))' }} data-edit-path="headline">{headline}</h2>
           <p className="max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }} data-edit-path="subline">{plain(subline)}</p>
@@ -384,7 +384,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
       <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 16% 0%, color-mix(in srgb, var(--booking-accent-color, #f43f5e) 28%, transparent), transparent 30%)' }} />
       <div className="relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}><Clock3 size={15} /> {badge}</p>
+          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}><Clock3 size={15} /> <span data-edit-path="badge">{badge}</span></p>
           <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }} data-edit-path="headline">{headline}</h2>
           <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }} data-edit-path="subline">{plain(subline)}</p>
           <div className="mt-6 grid gap-3 text-sm sm:grid-cols-3">
@@ -433,7 +433,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
                     <div className="grid gap-2 sm:grid-cols-2">
                       {suggestions.flatMap(suggestion => suggestion.slots.map(slot => (
                         <button key={`${suggestion.date}-${slot.value}`} type="button" onClick={() => { setSelectedDate(suggestion.date); setSelectedSlot(slot.value); }} className="rounded-lg border px-3 py-2 text-left text-xs font-semibold transition hover:brightness-95" style={{ borderColor: 'var(--booking-border-color, rgba(9,9,11,.16))', background: 'var(--booking-card-bg, #ffffff)', color: 'var(--booking-text-secondary, #09090b)' }}>
-                          {formatInputDate(suggestion.date)} · {slot.label}
+                          {formatInputDate(suggestion.date)} · <span data-edit-path="label">{slot.label}</span>
                         </button>
                       )))}
                     </div>
@@ -510,7 +510,7 @@ export function BookingDateRangeSection({ data }: SectionProps) {
       <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--booking-accent-color, #f43f5e) 22%, transparent), transparent 45%)' }} />
       <div className="relative grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-start">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}><CalendarCheck size={15} /> {badge}</p>
+          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--booking-badge-bg, rgba(255,255,255,.1))', color: 'var(--booking-badge-text, rgba(255,255,255,.8))' }}><CalendarCheck size={15} /> <span data-edit-path="badge">{badge}</span></p>
           <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--booking-heading-color, #ffffff)' }} data-edit-path="headline">{headline}</h2>
           <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--booking-body-color, rgba(255,255,255,.72))' }} data-edit-path="subline">{plain(subline)}</p>
           <div className="mt-6 rounded-2xl border p-4" style={{ borderColor: 'var(--booking-border-color, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--booking-card-bg, #ffffff) 8%, transparent)' }}>

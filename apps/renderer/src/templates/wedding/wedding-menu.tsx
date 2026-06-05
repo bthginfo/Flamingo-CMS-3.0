@@ -34,7 +34,7 @@ function Classic({ badge, headline, courses, note }: P) {
           {courses.map((course, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} data-edit-collection="courses" data-edit-index={i}>
               <h3 className="text-lg font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mb-4 flex items-center gap-2">
-                <UtensilsCrossed className="w-4 h-4" /> {course.title}
+                <UtensilsCrossed className="w-4 h-4" /> <span data-edit-path="title">{course.title}</span>
               </h3>
               <div className="space-y-4 pl-6 border-l-2 border-[var(--token-card-border,var(--brand-primary,#1a5276))/10]">
                 {course.items.map((item, j) => (
@@ -50,7 +50,7 @@ function Classic({ badge, headline, courses, note }: P) {
             </motion.div>
           ))}
         </div>
-        {note && <p className="text-center text-[color:var(--token-muted,#71717a)] text-sm mt-12 italic">{note}</p>}
+        {note && <p className="text-center text-[color:var(--token-muted,#71717a)] text-sm mt-12 italic" data-edit-path="note">{note}</p>}
       </div>
     </section>
   );
@@ -80,7 +80,7 @@ function Modern({ badge, headline, courses, note }: P) {
             </motion.div>
           ))}
         </div>
-        {note && <p className="text-[color:var(--token-body,#a1a1aa)] text-xs mt-16 tracking-wider uppercase">{note}</p>}
+        {note && <p className="text-[color:var(--token-body,#a1a1aa)] text-xs mt-16 tracking-wider uppercase" data-edit-path="note">{note}</p>}
       </div>
     </section>
   );
@@ -96,7 +96,7 @@ function Bold({ badge, headline, courses, note }: P) {
           {courses.map((course, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border,#18181b)] p-6" data-edit-collection="courses" data-edit-index={i}>
               <h3 className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] font-bold uppercase tracking-wider text-sm mb-5 flex items-center gap-2">
-                <UtensilsCrossed className="w-4 h-4" /> {course.title}
+                <UtensilsCrossed className="w-4 h-4" /> <span data-edit-path="title">{course.title}</span>
               </h3>
               <div className="space-y-4">
                 {course.items.map((item, j) => (
@@ -109,7 +109,7 @@ function Bold({ badge, headline, courses, note }: P) {
             </motion.div>
           ))}
         </div>
-        {note && <p className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-12 text-center italic">{note}</p>}
+        {note && <p className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-12 text-center italic" data-edit-path="note">{note}</p>}
       </div>
     </section>
   );

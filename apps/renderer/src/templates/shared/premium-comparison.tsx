@@ -46,7 +46,7 @@ export function PremiumComparisonSection({ data }: Props) {
                 const value = normalizeValue(row.values[ci]);
                 return (
                   <div key={`${ri}-${ci}`} className={`flex items-center justify-center border-b border-l border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] p-5 text-center text-sm ${ci === highlightCol ? 'bg-[var(--token-icon, var(--brand-primary))]/5' : ''}`}>
-                    {value === true ? <Check className="text-[var(--token-icon, var(--brand-primary))]" size={19} /> : value === false ? <Minus className="text-[var(--token-muted, var(--style-text-muted,#a1a1aa))]" size={19} /> : <span>{value}</span>}
+                    {value === true ? <Check className="text-[var(--token-icon, var(--brand-primary))]" size={19} /> : value === false ? <Minus className="text-[var(--token-muted, var(--style-text-muted,#a1a1aa))]" size={19} /> : <span data-edit-path="value">{value}</span>}
                   </div>
                 );
               })}

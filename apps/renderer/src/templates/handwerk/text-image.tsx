@@ -41,7 +41,7 @@ export function TextImageSection({ data, variant }: Props) {
                   <span className="w-2 h-2 mt-2 rounded-full bg-[var(--token-icon, var(--style-accent,var(--token-icon, var(--brand-primary))))] shrink-0" />
                   <div>
                     <span className="font-medium text-[var(--style-text-primary,#111827)]" data-edit-path="title">{item.title}</span>
-                    {item.text && <span className="text-[var(--style-text-secondary,#4b5563)]"> - {plain(item.text)}</span>}
+                    {item.text && <span className="text-[var(--style-text-secondary,#4b5563)]"> - <span data-edit-path="text">{plain(item.text)}</span></span>}
                   </div>
                 </li>
               ))}

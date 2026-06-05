@@ -37,7 +37,7 @@ export function ContactSection({ data }: Props) {
         {badgeText && (
           <div className="section-badge">
             <Mail size={14} />
-            <span>{badgeText}</span>
+            <span data-edit-path="badgeText">{badgeText}</span>
           </div>
         )}
         <h2 className="section-headline" data-edit-path="headline">{headline}</h2>

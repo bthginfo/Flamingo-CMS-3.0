@@ -75,7 +75,7 @@ export function MaterialGallerySection({ data }: Props) {
               )}
             </div>
             <p className="mt-2 text-center text-sm font-medium text-[var(--style-text-primary,#0f172a)] truncate" data-edit-path="name">{item.name}</p>
-            {item.category && <p className="text-center text-xs text-[var(--style-text-secondary,#64748b)]">{item.category}</p>}
+            {item.category && <p className="text-center text-xs text-[var(--style-text-secondary,#64748b)]" data-edit-path="category">{item.category}</p>}
           </motion.div>
         ))}
       </div>

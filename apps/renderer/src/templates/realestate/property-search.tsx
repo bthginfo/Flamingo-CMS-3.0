@@ -65,7 +65,7 @@ export function PropertySearchSection({ data }: Props) {
         <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.4 }} className="mt-8 text-center">
           <a href={ctaHref} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-lg hover:bg-[var(--token-section-bg-alt,var(--brand-dark,#0d2137))] transition-colors">
             <Search size={18} />
-            {ctaLabel}
+            <span data-edit-path="ctaLabel">{ctaLabel}</span>
           </a>
         </motion.div>
       </div>

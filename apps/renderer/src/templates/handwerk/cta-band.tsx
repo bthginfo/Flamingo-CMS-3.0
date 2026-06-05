@@ -57,7 +57,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
         {cta?.label && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }}>
           <a href={cta.href} className="group inline-flex items-center gap-2.5 rounded-full bg-[var(--token-btn-bg,var(--brand-btn-bg,var(--style-accent-color,var(--brand-accent))))] px-8 py-4 font-semibold text-[var(--token-btn-text,var(--brand-btn-text,#111827))] transition-all hover:-translate-y-0.5 hover:brightness-110">
-              {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
+              <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
             </a>
           </motion.div>
         )}
@@ -84,7 +84,7 @@ function CtaModern({ headline, subline, cta, colors }: CProps) {
       {subline && <div className="rt-content mx-auto mt-6 max-w-2xl text-lg text-[var(--token-body,var(--style-body-color,#52525b))]" dangerouslySetInnerHTML={{ __html: subline }} />}
       {cta?.label && (
         <a href={cta.href} className="group mt-10 inline-flex items-center gap-3 border-b-2 border-[var(--token-btn-bg,var(--brand-btn-bg,var(--style-accent-color,var(--brand-primary))))] pb-1 text-lg font-medium text-[var(--token-btn-text,var(--brand-btn-text,var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))))] transition-colors hover:text-[var(--style-accent-color,var(--brand-primary))]">
-          {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
+          <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
         </a>
       )}
     </motion.div>
@@ -104,13 +104,13 @@ function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
     <motion.div ref={ref} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}
       className={`flex flex-col items-start justify-between gap-8 p-10 text-[var(--token-heading,var(--style-heading-color,#ffffff))] lg:flex-row lg:items-center lg:p-16 ${!colors?.bgColor ? 'bg-[var(--token-section-bg,var(--style-section-bg,var(--brand-dark,#0d2137)))]' : ''}`} style={wrapStyle}>
       <div>
-        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg,var(--style-badge-bg,var(--style-accent-color,var(--brand-accent))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text,var(--style-badge-text,#ffffff))]">{badgeText}</span>}
+        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg,var(--style-badge-bg,var(--style-accent-color,var(--brand-accent))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text,var(--style-badge-text,#ffffff))]" data-edit-path="badgeText">{badgeText}</span>}
         <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tight" data-edit-path="headline">{headline}</h2>
         {subline && <div className="rt-content mt-3 max-w-xl font-medium text-[var(--token-body,var(--style-body-color,rgba(255,255,255,0.72)))]" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {cta?.label && (
         <a href={cta.href} className="inline-flex w-full shrink-0 items-center justify-between bg-[var(--token-btn-bg,var(--brand-btn-bg,var(--style-accent-color,var(--brand-accent))))] px-8 py-4 text-base font-bold uppercase tracking-wider text-[var(--token-btn-text,var(--brand-btn-text,#111827))] shadow-[4px_4px_0_rgba(255,255,255,0.2)] transition-transform hover:translate-x-1 lg:w-auto lg:justify-center lg:gap-3">
-          {cta.label}{cta.icon && <DynamicIcon name={cta.icon} size={18} />}
+          <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon name={cta.icon} size={18} />}
         </a>
       )}
     </motion.div>

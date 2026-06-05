@@ -32,7 +32,7 @@ function Classic({ header, doctors }: Props) {
               <h3 className="mt-2 text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{[item.title, item.name].filter(Boolean).join(' ')}</h3>
               {item.bio && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.bio }} />}
               {item.languages && item.languages.length > 0 && <p className="mt-2 text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{item.languages.join(' / ')}</p>}
-              {item.appointmentCta?.label && <a href={item.appointmentCta.href || '#'} className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-4 py-2 text-sm font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{item.appointmentCta.label}<ArrowRight size={14} /></a>}
+              {item.appointmentCta?.label && <a href={item.appointmentCta.href || '#'} className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-4 py-2 text-sm font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{item.appointmentCta.label}</span><ArrowRight size={14} /></a>}
             </div>
           </article>
         ))}
@@ -54,7 +54,7 @@ function Modern({ header, doctors }: Props) {
               <h3 className="mt-2 text-xl font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{[item.title, item.name].filter(Boolean).join(' ')}</h3>
               {item.bio && <div className="mt-3 whitespace-pre-line text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.bio }} />}
               {item.languages && item.languages.length > 0 && <p className="mt-2 text-xs font-light text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{item.languages.join(' / ')}</p>}
-              {item.appointmentCta?.label && <a href={item.appointmentCta.href || '#'} className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-4 py-2 text-sm font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{item.appointmentCta.label}<ArrowRight size={14} /></a>}
+              {item.appointmentCta?.label && <a href={item.appointmentCta.href || '#'} className="mt-4 inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-4 py-2 text-sm font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{item.appointmentCta.label}</span><ArrowRight size={14} /></a>}
             </div>
           </article>
         ))}
@@ -67,7 +67,7 @@ function Bold({ header, doctors }: Props) {
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{header.badgeText}</p>}
+        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" data-edit-path="badgeText">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
         {header.subline && <div className="mt-4 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
@@ -80,7 +80,7 @@ function Bold({ header, doctors }: Props) {
               <h3 className="mt-2 text-xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{[item.title, item.name].filter(Boolean).join(' ')}</h3>
               {item.bio && <div className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.bio }} />}
               {item.languages && item.languages.length > 0 && <p className="mt-2 text-xs text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{item.languages.join(' / ')}</p>}
-              {item.appointmentCta?.label && <a href={item.appointmentCta.href || '#'} className="mt-4 inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-4 py-2 text-sm font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{item.appointmentCta.label}<ArrowRight size={14} /></a>}
+              {item.appointmentCta?.label && <a href={item.appointmentCta.href || '#'} className="mt-4 inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-4 py-2 text-sm font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{item.appointmentCta.label}</span><ArrowRight size={14} /></a>}
             </div>
           </article>
         ))}

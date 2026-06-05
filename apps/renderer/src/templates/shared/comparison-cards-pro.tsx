@@ -27,7 +27,7 @@ export function ComparisonCardsProSection({ data }: Props) {
             {plan.highlighted && <div className="absolute right-5 top-5 rounded-full bg-[var(--token-badge-bg,var(--token-btn-bg,var(--brand-btn-bg,var(--token-eyebrow,var(--brand-primary)))))] px-3 py-1 text-xs font-black uppercase text-[var(--token-badge-text,var(--token-btn-text,#ffffff))]">Empfohlen</div>}
             <div className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--token-eyebrow,var(--style-accent-color,var(--token-icon,var(--brand-primary))))]">{plan.name}</div>
             {plan.price && <div className="mt-5 text-4xl font-black">{plan.price}</div>}
-            {plan.note && <p className="mt-3 text-sm leading-6 text-[var(--token-muted,var(--style-text-muted,#71717a))]">{plan.note}</p>}
+            {plan.note && <p className="mt-3 text-sm leading-6 text-[var(--token-muted,var(--style-text-muted,#71717a))]" data-edit-path="note">{plan.note}</p>}
             <div className="mt-7 space-y-3">
               {(plan.features || []).map((feature, i) => <div key={i} className="flex gap-2 text-sm" data-edit-collection="features" data-edit-index={i}><Check size={17} className="text-[var(--token-check,var(--style-accent-color,var(--token-icon,var(--brand-primary))))]" />{feature}</div>)}
               {(plan.missing || []).map((feature, i) => <div key={i} className="flex gap-2 text-sm text-[var(--token-muted,var(--style-text-muted,#a1a1aa))]" data-edit-collection="missing" data-edit-index={i}><Minus size={17} />{feature}</div>)}

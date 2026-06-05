@@ -44,7 +44,7 @@ export function OfferCampaignStripSection({ data }: Props) {
               ))}
             </div>
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              {cta.label && <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,#fff)))] px-5 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#111))]">{cta.label}<ArrowRight size={16} /></a>}
+              {cta.label && <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,#fff)))] px-5 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#111))]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>}
               {deadline && <div className="text-sm text-[var(--token-muted, var(--style-text-muted,rgba(255,255,255,0.65)))]">Gültig bis {deadline}</div>}
             </div>
           </div>

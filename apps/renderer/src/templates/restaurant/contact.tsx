@@ -53,7 +53,7 @@ function Classic(p: Props) {
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <div className="mb-10 max-w-3xl">
-          {p.badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">{p.badgeText}</motion.p>}
+          {p.badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]" data-edit-path="badgeText">{p.badgeText}</motion.p>}
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{p.headline}</motion.h2>
           {p.subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
@@ -78,7 +78,7 @@ function Modern(p: Props) {
     <div className="grid gap-16 lg:grid-cols-2">
       <div>
         <div className="mb-14 max-w-3xl">
-          {p.badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{p.badgeText}</p>}
+          {p.badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]" data-edit-path="badgeText">{p.badgeText}</p>}
           <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{p.headline}</h2>
           {p.subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>
@@ -103,7 +103,7 @@ function Bold(p: Props) {
     <div className="grid gap-10 lg:grid-cols-2">
       <div>
         <div className="mb-10 max-w-3xl">
-          {p.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{p.badgeText}</p>}
+          {p.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" data-edit-path="badgeText">{p.badgeText}</p>}
           <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{p.headline}</h2>
           {p.subline && <div className="mt-4 font-bold text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: p.subline }} />}
         </div>

@@ -8,7 +8,7 @@ export type HeaderData = { headline: string; subline: string; badgeText: string 
 export function SectionHeader({ headline, subline, badgeText }: HeaderData) {
   return (
     <div className="mb-10 max-w-3xl">
-      {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-muted, var(--style-text-muted,#4b5563))))]">{badgeText}</p>}
+      {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-muted, var(--style-text-muted,#4b5563))))]" data-edit-path="badgeText">{badgeText}</p>}
       <h2 className="mt-3 text-3xl font-[700] text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
       {subline && <div className="mt-4 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
     </div>
@@ -17,7 +17,7 @@ export function SectionHeader({ headline, subline, badgeText }: HeaderData) {
 
 export function CtaButton({ cta }: { cta: ButtonValue }) {
   if (!cta.label) return null;
-  return <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-text-primary,#111827)))] px-5 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{cta.label}<ArrowRight size={16} /></a>;
+  return <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-text-primary,#111827)))] px-5 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>;
 }
 
 export function ImageCard({ image, title, text, meta, cta }: { image?: string; title?: string; text?: string; meta?: string; cta?: ButtonValue }) {

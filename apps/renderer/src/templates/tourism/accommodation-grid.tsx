@@ -32,7 +32,7 @@ function Classic({ header, items }: Props) {
               <h3 className="mt-2 text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.amenities && item.amenities.length > 0 && <div className="mt-3 flex flex-wrap gap-2">{asList<string>(item.amenities).map((a) => <span key={a} className="rounded-full bg-[var(--token-badge-bg, var(--style-badge-bg,color-mix(in_srgb,var(--style-accent-color,var(--token-icon, var(--brand-primary)))_10%,#fff)))] px-3 py-1 text-xs text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{a}</span>)}</div>}
-              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-2.5 text-sm font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{item.cta.label}<ArrowRight size={14} /></a>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-2.5 text-sm font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
           </motion.article>
         ))}
@@ -54,7 +54,7 @@ function Modern({ header, items }: Props) {
               <h3 className="mt-2 text-xl font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.amenities && item.amenities.length > 0 && <p className="mt-3 text-xs font-light text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#4b5563)))]">{asList<string>(item.amenities).join(' · ')}</p>}
-              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">{item.cta.label}<ArrowRight size={14} /></a>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
           </article>
         ))}
@@ -67,7 +67,7 @@ function Bold({ header, items }: Props) {
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{header.badgeText}</p>}
+        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" data-edit-path="badgeText">{header.badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
         {header.subline && <div className="mt-4 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
@@ -80,7 +80,7 @@ function Bold({ header, items }: Props) {
               <h3 className="mt-2 text-xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.amenities && item.amenities.length > 0 && <div className="mt-3 flex flex-wrap gap-2">{asList<string>(item.amenities).map((a) => <span key={a} className="border border-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))] px-2 py-0.5 text-xs font-bold uppercase text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">{a}</span>)}</div>}
-              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-2.5 text-sm font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{item.cta.label}<ArrowRight size={14} /></a>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-4 inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-2.5 text-sm font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]"><span data-edit-path="label">{item.cta.label}</span><ArrowRight size={14} /></a>}
             </div>
           </article>
         ))}

@@ -74,7 +74,7 @@ export function ConsultationBookingSection({ data }: Props) {
             )}
             <div className="p-6 text-center">
               <p className="text-[var(--style-text-secondary,#64748b)] text-sm mb-4">
-                {services[selected]?.title ? `Beratung: ${services[selected].title}` : 'Individuelle Beratung'}
+                {services[selected]?.title ? `Beratung: $<span data-edit-path="title">{services[selected].title}</span>` : 'Individuelle Beratung'}
               </p>
               {cta?.label && (
                 <a href={cta.href || '#'} className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[var(--token-icon, var(--brand-primary,#2563eb))] text-white font-semibold rounded-[var(--style-button-radius,0.75rem)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">

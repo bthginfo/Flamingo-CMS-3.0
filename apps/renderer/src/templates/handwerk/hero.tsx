@@ -107,7 +107,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
               className="inline-flex items-center gap-2.5 bg-[var(--token-card-bg,#ffffff)]/[0.07] backdrop-blur-md border border-[color:var(--token-card-border,#ffffff)]/[0.12] rounded-full px-5 py-2.5 text-sm text-[color:var(--token-on-dark-heading,#ffffff)/90] mt-6">
               <DynamicIcon name={badgeIcon} size={15} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
-              <span className="font-medium">{badgeText}</span>
+              <span className="font-medium" data-edit-path="badgeText">{badgeText}</span>
               {badgeStarsIcon && (
                 <div className="flex -space-x-0.5 ml-2">
                   {[1,2,3,4,5].map(i => <DynamicIcon key={i} name={badgeStarsIcon} size={12} className="fill-[var(--token-eyebrow,var(--brand-accent,#f39c12))] text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />)}
@@ -122,12 +122,12 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.0 }} className="flex flex-col items-center sm:items-start sm:flex-row gap-4">
             {primaryCta?.label && (
               <a href={primaryCta.href} className="group relative inline-flex items-center overflow-hidden rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-8 py-4 font-semibold text-[color:var(--token-heading,#18181b)] transition-all duration-300 hover:shadow-glow-accent hover:-translate-y-0.5 text-base sm:w-auto">
-                <span className="relative z-10 flex items-center w-full justify-between gap-4 sm:justify-center sm:gap-2.5">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} className="transition-transform group-hover:translate-x-1" />}</span>
+                <span className="relative z-10 flex items-center w-full justify-between gap-4 sm:justify-center sm:gap-2.5"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} className="transition-transform group-hover:translate-x-1" />}</span>
                 <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.3),transparent)] bg-[length:200%_100%]" />
               </a>
             )}
             {secondaryCta?.label && (
-              <a href={secondaryCta.href} className="btn-secondary group !rounded-full sm:w-auto flex items-center justify-between gap-4 sm:justify-center sm:gap-2">{secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={18} />}{secondaryCta.label}</a>
+              <a href={secondaryCta.href} className="btn-secondary group !rounded-full sm:w-auto flex items-center justify-between gap-4 sm:justify-center sm:gap-2">{secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={18} />}<span data-edit-path="label">{secondaryCta.label}</span></a>
             )}
           </motion.div>
         </div>
@@ -173,12 +173,12 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta?.label && (
               <a href={primaryCta.href} className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto text-[color:var(--token-heading,#18181b)] font-medium text-base border-b-2 border-[color:var(--token-card-border,#18181b)] pb-1 hover:border-[var(--token-card-border,var(--brand-accent,#f39c12))] hover:text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-colors">
-                {primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
+                <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
               </a>
             )}
             {secondaryCta?.label && (
               <a href={secondaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-card-border,#d4d4d8)] px-7 py-3 text-[color:var(--token-muted,#71717a)] hover:text-[color:var(--token-muted,#3f3f46)] hover:border-[color:var(--token-card-border,#a1a1aa)] transition-colors text-sm w-full sm:w-auto">
-                <Phone size={14} />{secondaryCta.label}
+                <Phone size={14} /><span data-edit-path="label">{secondaryCta.label}</span>
               </a>
             )}
           </div>
@@ -242,12 +242,12 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta?.label && (
               <a href={primaryCta.href} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,var(--brand-dark,#0d2137))] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
-                {primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} />}
+                <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} />}
               </a>
             )}
             {secondaryCta?.label && (
               <a href={secondaryCta.href} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border,#ffffff)/30] text-[color:var(--token-on-dark-heading,#ffffff)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-card-border,#ffffff)] transition-colors">
-                <Phone size={16} />{secondaryCta.label}
+                <Phone size={16} /><span data-edit-path="label">{secondaryCta.label}</span>
               </a>
             )}
           </motion.div>

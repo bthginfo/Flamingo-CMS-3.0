@@ -44,7 +44,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
                 {bankDetails.holder && <p>{bankDetails.holder}</p>}
                 {bankDetails.iban && <p>{bankDetails.iban}</p>}
                 {bankDetails.bic && <p>{bankDetails.bic}</p>}
-                {bankDetails.note && <p className="mt-3 text-[color:var(--token-body,#a1a1aa)] italic">{bankDetails.note}</p>}
+                {bankDetails.note && <p className="mt-3 text-[color:var(--token-body,#a1a1aa)] italic" data-edit-path="note">{bankDetails.note}</p>}
               </div>
             </div>
           )}
@@ -81,7 +81,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
                 {bankDetails.holder && <p>Kontoinhaber: {bankDetails.holder}</p>}
                 {bankDetails.iban && <p>IBAN: {bankDetails.iban}</p>}
                 {bankDetails.bic && <p>BIC: {bankDetails.bic}</p>}
-                {bankDetails.note && <p className="mt-3 text-[color:var(--token-body,#a1a1aa)] italic">{bankDetails.note}</p>}
+                {bankDetails.note && <p className="mt-3 text-[color:var(--token-body,#a1a1aa)] italic" data-edit-path="note">{bankDetails.note}</p>}
               </div>
             </div>
           )}
@@ -122,7 +122,7 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
               {bankDetails.holder && <p>Kontoinhaber: {bankDetails.holder}</p>}
               {bankDetails.iban && <p>IBAN: {bankDetails.iban}</p>}
               {bankDetails.bic && <p>BIC: {bankDetails.bic}</p>}
-              {bankDetails.note && <p className="mt-3 text-[color:var(--token-muted,#71717a)] italic">{bankDetails.note}</p>}
+              {bankDetails.note && <p className="mt-3 text-[color:var(--token-muted,#71717a)] italic" data-edit-path="note">{bankDetails.note}</p>}
             </div>
           </div>
         )}

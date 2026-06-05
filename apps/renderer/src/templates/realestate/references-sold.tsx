@@ -50,7 +50,7 @@ export function ReferencesSoldSection({ data }: Props) {
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-4">
                 <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold text-sm" data-edit-path="title">{prop.title}</h3>
-                <p className="text-[color:var(--token-on-dark-heading,#ffffff)/70] text-xs mt-0.5">{prop.location}</p>
+                <p className="text-[color:var(--token-on-dark-heading,#ffffff)/70] text-xs mt-0.5" data-edit-path="location">{prop.location}</p>
                 {prop.price && <p className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold text-sm mt-1" data-edit-path="price">{prop.price}</p>}
                 {prop.soldIn && <p className="text-emerald-400 text-xs mt-1">Vermittelt in {prop.soldIn}</p>}
               </div>

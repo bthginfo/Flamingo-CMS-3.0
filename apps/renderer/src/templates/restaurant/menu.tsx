@@ -100,7 +100,7 @@ function MenuBold(props: MenuViewProps) {
 function MenuHeader({ headline, subline, badgeText, introText, align, inverted }: MenuViewProps & { align: 'left' | 'center'; inverted?: boolean }) {
   return (
     <div className={`${align === 'center' ? 'text-center mx-auto' : ''} max-w-3xl p-6 sm:p-10`}>
-      {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[var(--token-eyebrow, var(--brand-accent))]' : 'text-[color:var(--token-muted,#52525b)]'}`}>{badgeText}</p>}
+      {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[var(--token-eyebrow, var(--brand-accent))]' : 'text-[color:var(--token-muted,#52525b)]'}`} data-edit-path="badgeText">{badgeText}</p>}
       <h2 className={`mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] ${inverted ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'text-[color:var(--token-heading,#18181b)]'}`} data-edit-path="headline">{headline}</h2>
       {subline && <div className={`mt-4 text-base sm:text-lg ${inverted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-muted,#52525b)]'} rt-content`} dangerouslySetInnerHTML={{ __html: subline }} />}
       {introText && <div className={`mt-5 leading-7 ${inverted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/65]' : 'text-[color:var(--token-muted,#52525b)]'} rt-content`} dangerouslySetInnerHTML={{ __html: introText }} />}
@@ -144,7 +144,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
 }
 
 function Badge({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return <span className="inline-flex items-center gap-1 rounded-full border border-current/20 px-2 py-1 opacity-80">{icon}{label}</span>;
+  return <span className="inline-flex items-center gap-1 rounded-full border border-current/20 px-2 py-1 opacity-80">{icon}<span data-edit-path="label">{label}</span></span>;
 }
 
 function MenuFooter({ footnote, ctaPrimary, inverted }: MenuViewProps & { inverted?: boolean }) {
@@ -152,7 +152,7 @@ function MenuFooter({ footnote, ctaPrimary, inverted }: MenuViewProps & { invert
   return (
     <div className={`flex flex-col gap-4 p-6 sm:p-10 sm:flex-row sm:items-center sm:justify-between ${inverted ? 'text-[color:var(--token-on-dark-heading,#ffffff)/70]' : 'text-[color:var(--token-muted,#52525b)]'}`}>
       {footnote && <p className="text-sm">{footnote}</p>}
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 font-semibold text-[color:var(--token-heading,#18181b)] bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-5 py-3 rounded-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 font-semibold text-[color:var(--token-heading,#18181b)] bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-5 py-3 rounded-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }

@@ -38,7 +38,7 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
-        {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
+        {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         {kitchenHoursHeadline && <h3 className="mt-8 font-semibold text-[color:var(--token-heading,#18181b)]">{kitchenHoursHeadline}</h3>}
@@ -53,7 +53,7 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
               <div className="rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] p-1.5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]"><Clock size={15} /></div>
               <div>
                 <p className="font-semibold text-[color:var(--token-heading,#18181b)]">{day.label || ''}</p>
-                {day.note && <p className="text-xs text-[color:var(--token-muted,#71717a)]">{day.note}</p>}
+                {day.note && <p className="text-xs text-[color:var(--token-muted,#71717a)]" data-edit-path="note">{day.note}</p>}
               </div>
             </div>
             <p className={`text-sm font-medium ${day.closed ? 'text-[color:var(--token-muted,#71717a)]' : 'text-[color:var(--token-heading,#18181b)]'}`}>{day.closed ? (day.note || '') : day.hours}</p>
@@ -68,7 +68,7 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
   return (
     <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]">{badgeText}</p>}
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-light text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
         {subline && <div className="mt-6 font-light text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
@@ -84,7 +84,7 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
               <Clock size={15} className="text-[color:var(--token-muted,#71717a)]" />
               <div>
                 <p className="font-medium text-[color:var(--token-heading,#18181b)]">{day.label || ''}</p>
-                {day.note && <p className="text-xs font-light text-[color:var(--token-muted,#71717a)]">{day.note}</p>}
+                {day.note && <p className="text-xs font-light text-[color:var(--token-muted,#71717a)]" data-edit-path="note">{day.note}</p>}
               </div>
             </div>
             <p className={`text-sm font-light ${day.closed ? 'text-[color:var(--token-muted,#71717a)]' : 'text-[color:var(--token-heading,#18181b)]'}`}>{day.closed ? (day.note || '') : day.hours}</p>
@@ -100,7 +100,7 @@ function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHead
     <div className="bg-[#111827] p-6 text-[color:var(--token-on-dark-heading,#ffffff)] sm:p-10">
       <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
-          {badgeText && <p className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading,#18181b)]">{badgeText}</p>}
+          {badgeText && <p className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading,#18181b)]" data-edit-path="badgeText">{badgeText}</p>}
           <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
           <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
           {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading,#ffffff)/70] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
@@ -116,7 +116,7 @@ function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHead
                 <Clock size={17} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
                 <div>
                   <p className="font-bold uppercase">{day.label || ''}</p>
-                  {day.note && <p className="text-xs text-[color:var(--token-on-dark-heading,#ffffff)/50]">{day.note}</p>}
+                  {day.note && <p className="text-xs text-[color:var(--token-on-dark-heading,#ffffff)/50]" data-edit-path="note">{day.note}</p>}
                 </div>
               </div>
               <p className={`text-sm font-bold ${day.closed ? 'text-[color:var(--token-on-dark-heading,#ffffff)/40]' : ''}`}>{day.closed ? (day.note || '') : day.hours}</p>

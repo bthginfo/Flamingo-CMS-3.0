@@ -28,7 +28,7 @@ function AnimatedNumber({ value, prefix, suffix, inView }: { value: number | str
   }, [inView, numericValue, isNumeric]);
 
   if (!isNumeric) {
-    return <span>{prefix}{String(value)}{suffix}</span>;
+    return <span>{prefix}<span data-edit-path="value">{String(value)}</span>{suffix}</span>;
   }
 
   return (

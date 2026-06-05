@@ -50,7 +50,7 @@ export function GlowHeroSection({ data }: Props) {
           <h1 className="text-5xl font-black leading-none text-[var(--token-heading,var(--style-heading-color,#ffffff))] md:text-7xl lg:text-8xl" data-edit-path="headline">{headline}</h1>
           {subline && <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--token-subheading, var(--style-subheading-color,rgba(255,255,255,0.76)))] md:text-xl" data-edit-path="subline">{plain(subline)}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
-            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,#ffffff))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#111111))]">{primaryCta.label}<ArrowRight size={16} /></a>}
+            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,#ffffff))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#111111))]"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
             {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,0.20)))] bg-[var(--token-card-bg, var(--style-card-bg,rgba(255,255,255,0.10)))] px-6 py-3 text-sm font-bold text-[var(--style-text-primary,#ffffff)] backdrop-blur" data-edit-path="label">{secondaryCta.label}</a>}
           </div>
         </div>

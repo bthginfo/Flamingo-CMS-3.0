@@ -56,7 +56,7 @@ export function AgentTeamSection({ data }: Props) {
                 <div className="flex gap-3 mt-4 pt-4 border-t border-[color:var(--token-card-border,#f4f4f5)]">
                   {agent.phone && (
                     <a href={`tel:${agent.phone}`} className="flex items-center gap-1.5 text-xs text-[color:var(--token-muted,#52525b)] hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors">
-                      <Phone size={14} />{agent.phone}
+                      <Phone size={14} /><span data-edit-path="phone">{agent.phone}</span>
                     </a>
                   )}
                   {agent.email && (

@@ -29,7 +29,7 @@ function FaqClassic({ headline, badgeText, items, expandFirst }: FProps) {
   return (
     <div ref={ref} className="max-w-4xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-14">
-        {badgeText && <div className="section-badge"><HelpCircle size={14} /><span>{badgeText}</span></div>}
+        {badgeText && <div className="section-badge"><HelpCircle size={14} /><span data-edit-path="badgeText">{badgeText}</span></div>}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
       </motion.div>
       <div className="space-y-3">
@@ -48,7 +48,7 @@ function FaqItemClassic({ question, answer, defaultOpen }: { question: string; a
   return (
     <div className={cn('overflow-hidden rounded-2xl border transition-all duration-300', open ? 'border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.14)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] shadow-lg' : 'border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,rgba(255,255,255,0.50)))] hover:shadow-sm')}>
       <button onClick={() => setOpen(!open)} className="font-display flex w-full items-center justify-between gap-4 px-7 py-6 text-left text-[16px] font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">
-        {question}
+        <span data-edit-path="question">{question}</span>
         <ChevronDown size={18} className={cn('shrink-0 text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#9ca3af)))] transition-transform', open && 'rotate-180')} />
       </button>
       <AnimatePresence>
@@ -89,7 +89,7 @@ function FaqItemModern({ question, answer, defaultOpen }: { question: string; an
   return (
     <div className="py-6">
       <button onClick={() => setOpen(!open)} className="flex w-full items-center justify-between gap-4 text-left font-medium text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] transition-colors hover:text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">
-        {question}
+        <span data-edit-path="question">{question}</span>
         <Plus size={16} className={cn('shrink-0 text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#d1d5db)))] transition-transform', open && 'rotate-45')} />
       </button>
       <AnimatePresence>
@@ -111,7 +111,7 @@ function FaqBold({ headline, badgeText, items, expandFirst }: FProps) {
   return (
     <div ref={ref} className="max-w-4xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-10">
-        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-section-bg-alt, var(--brand-dark))))]">{badgeText}</span>}
+        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-section-bg-alt, var(--brand-dark))))]" data-edit-path="badgeText">{badgeText}</span>}
         {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
       </motion.div>
       <div className="space-y-3">

@@ -307,8 +307,8 @@ export function ShopCheckoutSection({ data }: Props) {
           {step === 3 && (
             <div className="space-y-4">
               <div className="bg-[var(--token-section-bg-alt,#fafafa)] rounded-xl p-5 space-y-2 text-sm">
-                <p><strong>Name:</strong> {form.name}</p>
-                <p><strong>E-Mail:</strong> {form.email}</p>
+                <p><strong>Name:</strong> <span data-edit-path="name">{form.name}</span></p>
+                <p><strong>E-Mail:</strong> <span data-edit-path="email">{form.email}</span></p>
                 <p><strong>Adresse:</strong> {form.street}, {form.zip} {form.city}, {form.country}</p>
                 <p><strong>Zahlung:</strong> {form.paymentMethod === 'prepayment' ? 'Vorkasse' : form.paymentMethod === 'stripe' ? 'Kreditkarte' : form.paymentMethod === 'paypal' ? 'PayPal' : 'Abholung'}</p>
               </div>
@@ -328,7 +328,7 @@ export function ShopCheckoutSection({ data }: Props) {
           <div className="space-y-3 mb-4">
             {items.map(item => (
               <div key={`${item.productId}-${item.variantId || ''}`} className="flex justify-between text-sm">
-                <span className="truncate flex-1">{item.title} × {item.quantity}</span>
+                <span className="truncate flex-1"><span data-edit-path="title">{item.title}</span> × {item.quantity}</span>
                 <span className="font-medium ml-2">{formatPrice(item.priceCents * item.quantity)}</span>
               </div>
             ))}
@@ -337,7 +337,7 @@ export function ShopCheckoutSection({ data }: Props) {
             <div className="flex justify-between"><span>Zwischensumme</span><span>{formatPrice(totalCents)}</span></div>
             {shippingCents > 0 && <div className="flex justify-between"><span>Versand</span><span>{formatPrice(shippingCents)}</span></div>}
             {shippingCents === 0 && selectedShipping && <div className="flex justify-between text-green-600"><span>Versand</span><span>Kostenlos</span></div>}
-            {discountCents > 0 && <div className="flex justify-between text-green-600"><span>Rabatt ({coupon?.label})</span><span>-{formatPrice(discountCents)}</span></div>}
+            {discountCents > 0 && <div className="flex justify-between text-green-600"><span>Rabatt (<span data-edit-path="label">{coupon?.label}</span>)</span><span>-{formatPrice(discountCents)}</span></div>}
             <div className="flex justify-between font-bold text-base pt-1 border-t">
               <span>Gesamt</span>
               <span>{formatPrice(grandTotal)}</span>
@@ -350,7 +350,7 @@ export function ShopCheckoutSection({ data }: Props) {
               <div className="flex items-center justify-between bg-green-50 rounded-lg px-3 py-2">
                 <div className="flex items-center gap-2">
                   <Tag size={14} className="text-green-600" />
-                  <span className="text-sm font-medium text-green-700">{coupon.code} ({coupon.label})</span>
+                  <span className="text-sm font-medium text-green-700">{coupon.code} (<span data-edit-path="label">{coupon.label}</span>)</span>
                 </div>
                 <button onClick={removeCoupon} className="text-green-600 hover:text-green-800"><X size={14} /></button>
               </div>

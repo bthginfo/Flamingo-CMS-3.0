@@ -19,7 +19,7 @@ export function ConsultingTestimonialsSection({ data }: Props) {
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
-        {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
+        {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
@@ -40,7 +40,7 @@ export function ConsultingTestimonialsSection({ data }: Props) {
                 ))}
               </div>
             )}
-            <p className="text-[color:var(--token-muted,#3f3f46)] leading-relaxed italic mb-6">&ldquo;{plain(item.quote)}&rdquo;</p>
+            <p className="text-[color:var(--token-muted,#3f3f46)] leading-relaxed italic mb-6">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>
             <div className="border-t border-[color:var(--token-card-border,#f4f4f5)] pt-4">
               <div className="font-semibold text-[color:var(--token-heading,#18181b)] text-sm">{item.name}</div>
               {item.context && <div className="text-[color:var(--token-body,#a1a1aa)] text-xs mt-0.5">{item.context}</div>}

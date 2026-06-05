@@ -50,7 +50,7 @@ export function ValuationCtaSection({ data }: Props) {
             <div className="flex flex-wrap justify-center gap-8 mt-10">
               {stats.map((stat, i) => (
                 <div key={i} className="text-center" data-edit-collection="stats" data-edit-index={i}>
-                  <p className="text-2xl font-bold text-amber-400">{stat.value}</p>
+                  <p className="text-2xl font-bold text-amber-400" data-edit-path="value">{stat.value}</p>
                   <p className="text-xs text-[color:var(--token-on-dark-heading,#ffffff)/50] mt-1" data-edit-path="label">{stat.label}</p>
                 </div>
               ))}
@@ -61,7 +61,7 @@ export function ValuationCtaSection({ data }: Props) {
             href={ctaHref}
             className="inline-flex items-center gap-2 mt-10 px-10 py-4 bg-amber-600 hover:bg-amber-700 text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
           >
-            {ctaLabel}
+            <span data-edit-path="ctaLabel">{ctaLabel}</span>
             <ArrowRight size={18} />
           </a>
         </motion.div>

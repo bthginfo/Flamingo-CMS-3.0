@@ -22,7 +22,7 @@ export function PublicationsSection({ data }: Props) {
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
-        {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
+        {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
         {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
@@ -42,8 +42,8 @@ export function PublicationsSection({ data }: Props) {
             )}
             <div className="p-6">
               <div className="flex items-center gap-3 text-xs text-[color:var(--token-body,#a1a1aa)] mb-3">
-                {article.category && <span className="bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] text-[color:var(--token-icon,var(--brand-primary,#1a5276))] px-2 py-0.5 rounded font-medium">{article.category}</span>}
-                {article.date && <span>{article.date}</span>}
+                {article.category && <span className="bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] text-[color:var(--token-icon,var(--brand-primary,#1a5276))] px-2 py-0.5 rounded font-medium" data-edit-path="category">{article.category}</span>}
+                {article.date && <span data-edit-path="date">{article.date}</span>}
               </div>
               <h3 className="text-lg font-semibold text-[color:var(--token-heading,#18181b)] group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors mb-2" data-edit-path="title">{article.title}</h3>
               {article.excerpt && <p className="text-[color:var(--token-muted,#71717a)] text-sm leading-relaxed line-clamp-3">{article.excerpt}</p>}

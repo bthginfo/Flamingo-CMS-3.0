@@ -84,7 +84,7 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
                   {(img.alt || img.location) && (
                     <div className="p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[color:var(--token-on-dark-heading,#ffffff)] text-sm">
                       {img.alt && <p className="font-medium">{img.alt}</p>}
-                      {img.location && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/70] text-xs">{img.location}</p>}
+                      {img.location && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/70] text-xs" data-edit-path="location">{img.location}</p>}
                     </div>
                   )}
                 </div>
@@ -96,7 +96,7 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
         {cta?.label && (
           <div className={`${isModern ? '' : 'text-center'} mt-12`}>
             <a href={cta.href} className={isModern ? 'inline-block text-sm text-[color:var(--token-heading,#18181b)] border-b border-[color:var(--token-card-border,#18181b)] hover:opacity-70' : isBold ? 'inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity' : 'inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold rounded-full hover:opacity-90 transition-opacity shadow-lg'}>
-              {cta.label}
+              <span data-edit-path="label">{cta.label}</span>
               {cta.icon && <DynamicIcon name={cta.icon} size={18} />}
             </a>
           </div>

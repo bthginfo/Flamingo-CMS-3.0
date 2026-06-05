@@ -48,7 +48,7 @@ export function PrinciplesGridSection({ data }: Props) {
 
         {cta.label && (
           <a href={cta.href || '#'} className="mt-10 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,#ffffff))] px-6 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#111111))]">
-            {cta.label}<ArrowRight size={16} />
+            <span data-edit-path="label">{cta.label}</span><ArrowRight size={16} />
           </a>
         )}
       </div>

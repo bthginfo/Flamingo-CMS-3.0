@@ -74,7 +74,7 @@ export function PopupSection({ data }: SectionProps) {
           <div className="relative mt-7 flex flex-col gap-3 sm:flex-row">
             {primaryCta.label && (
               <a href={primaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center gap-2 rounded-[var(--style-button-radius,9999px)] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--token-icon, var(--brand-primary,#f24171))))] px-5 py-3 text-sm font-bold text-[var(--token-btn-text, var(--brand-btn-text,#ffffff))] shadow-lg transition hover:brightness-110">
-                {primaryCta.label}
+                <span data-edit-path="label">{primaryCta.label}</span>
                 <ArrowRight size={16} />
               </a>
             )}
