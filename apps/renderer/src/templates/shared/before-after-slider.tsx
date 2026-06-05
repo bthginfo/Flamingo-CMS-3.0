@@ -133,11 +133,11 @@ function SliderWidget({ slide, handleColor, aspectRatio }: { slide: Slide; handl
       onPointerUp={handlePointerUp}
     >
       {/* After image (full) */}
-      <img src={slide.imageAfter} alt={slide.labelAfter || 'Nachher'} className="absolute inset-0 w-full h-full object-cover" draggable={false} />
+      <img data-edit-image="imageAfter" src={slide.imageAfter} alt={slide.labelAfter || 'Nachher'} className="absolute inset-0 w-full h-full object-cover" draggable={false} />
 
       {/* Before image (clipped) */}
       <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}>
-        <img src={slide.imageBefore} alt={slide.labelBefore || 'Vorher'} className="w-full h-full object-cover" draggable={false} />
+        <img data-edit-image="imageBefore" src={slide.imageBefore} alt={slide.labelBefore || 'Vorher'} className="w-full h-full object-cover" draggable={false} />
       </div>
 
       {/* Handle */}

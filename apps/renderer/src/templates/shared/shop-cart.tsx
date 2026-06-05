@@ -42,7 +42,7 @@ export function ShopCartSection({ data }: Props) {
           {items.map(item => (
             <div key={`${item.productId}-${item.variantId || ''}`} className="flex gap-4 p-4 bg-[var(--token-card-bg)] rounded-xl border border-[color:var(--token-card-border)]">
               <div className="w-20 h-20 rounded-lg bg-[var(--token-section-bg-alt)] shrink-0 overflow-hidden">
-                {item.image && <img src={item.image} alt="" className="w-full h-full object-cover" />}
+                {item.image && <img data-edit-image="image" src={item.image} alt="" className="w-full h-full object-cover" />}
               </div>
               <div className="flex-1 min-w-0">
                 <Link href={`${shopBase}/${item.slug}`} className="font-medium text-sm hover:underline">{item.title}</Link>

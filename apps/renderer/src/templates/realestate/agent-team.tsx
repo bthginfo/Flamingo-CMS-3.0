@@ -44,7 +44,7 @@ export function AgentTeamSection({ data }: Props) {
               className="bg-[var(--token-card-bg)] rounded-xl border border-[color:var(--token-card-border)] overflow-hidden hover:shadow-lg transition-shadow"
              data-edit-collection="agents" data-edit-index={i}>
               <div className="relative aspect-[4/5] overflow-hidden">
-                <Image src={agent.image} alt={agent.name} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
+                <Image data-edit-image="image" src={agent.image} alt={agent.name} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
               </div>
               <div className="p-6">
                 <h3 className="text-lg font-bold text-[color:var(--token-heading)]" data-edit-path="name">{agent.name}</h3>

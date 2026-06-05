@@ -34,7 +34,7 @@ export function ArtistGridSection({ data }: Props) {
               className="group" data-edit-collection="artists" data-edit-index={i}>
               <a href={artist.href || '#'} className="block">
                 <div className="relative aspect-[3/4] rounded-lg overflow-hidden mb-4">
-                  {artist.image && <Image src={artist.image} alt={artist.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 25vw" />}
+                  {artist.image && <Image data-edit-image="image" src={artist.image} alt={artist.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 25vw" />}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   {artist.instagram && (
                     <div className="absolute top-3 right-3 bg-[var(--token-section-bg-alt)/50] backdrop-blur-sm rounded-full px-2.5 py-1 text-[10px] text-[color:var(--token-on-dark-heading)/70]">

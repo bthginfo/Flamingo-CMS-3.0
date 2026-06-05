@@ -36,7 +36,7 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
   return (
     <section ref={ref} className="relative overflow-hidden bg-[var(--token-section-bg)]">
       <motion.div style={{ y }} className="absolute inset-x-0 -top-10 h-[calc(100%+80px)]">
-        {image ? <img src={image} alt="" className="h-full w-full object-cover" style={{ objectPosition: imagePosition }} /> : <div className="h-full bg-zinc-950" />}
+        {image ? <img data-edit-image="image" src={image} alt="" className="h-full w-full object-cover" style={{ objectPosition: imagePosition }} /> : <div className="h-full bg-zinc-950" />}
         <div className="absolute inset-0" style={{ background: overlay }} />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(255,255,255,0.18),transparent_28%)]" />
       </motion.div>
@@ -47,8 +47,8 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
           {headline && <h2 className="max-w-4xl text-4xl font-black leading-none md:text-6xl lg:text-7xl" style={{ color: headingColor }} data-edit-path="headline">{headline}</h2>}
           {subline && <p className="mt-6 max-w-2xl text-base leading-8 md:text-xl" style={{ color: bodyColor }} data-edit-path="subline">{plain(subline)}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
-            {primaryCta.label && <a href={primaryCta.href || '#'} className="btn-primary inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[var(--token-btn-text)] shadow-2xl transition hover:brightness-110"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
-            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="btn-secondary inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_28%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_10%,transparent)] px-6 py-3 text-sm font-bold backdrop-blur transition hover:brightness-110" style={{ color: headingColor }} data-edit-path="label">{secondaryCta.label}</a>}
+            {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="btn-primary inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[var(--token-btn-text)] shadow-2xl transition hover:brightness-110"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
+            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="btn-secondary inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_28%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_10%,transparent)] px-6 py-3 text-sm font-bold backdrop-blur transition hover:brightness-110" style={{ color: headingColor }} data-edit-path="label">{secondaryCta.label}</a>}
           </div>
         </div>
 

@@ -56,7 +56,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
         {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="rt-content mx-auto mb-10 max-w-2xl text-lg leading-8 text-[var(--token-body)] sm:text-xl" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         {cta?.label && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }}>
-          <a href={cta.href} className="group inline-flex items-center gap-2.5 rounded-full bg-[var(--token-btn-bg)] px-8 py-4 font-semibold text-[var(--token-btn-text)] transition-all hover:-translate-y-0.5 hover:brightness-110">
+          <a data-edit-link="cta" href={cta.href} className="group inline-flex items-center gap-2.5 rounded-full bg-[var(--token-btn-bg)] px-8 py-4 font-semibold text-[var(--token-btn-text)] transition-all hover:-translate-y-0.5 hover:brightness-110">
               <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
             </a>
           </motion.div>
@@ -83,7 +83,7 @@ function CtaModern({ headline, subline, cta, colors }: CProps) {
       </h2>
       {subline && <div className="rt-content mx-auto mt-6 max-w-2xl text-lg text-[var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       {cta?.label && (
-        <a href={cta.href} className="group mt-10 inline-flex items-center gap-3 border-b-2 border-[var(--token-btn-bg)] pb-1 text-lg font-medium text-[var(--token-btn-text)] transition-colors hover:text-[var(--token-accent)]">
+        <a data-edit-link="cta" href={cta.href} className="group mt-10 inline-flex items-center gap-3 border-b-2 border-[var(--token-btn-bg)] pb-1 text-lg font-medium text-[var(--token-btn-text)] transition-colors hover:text-[var(--token-accent)]">
           <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
         </a>
       )}
@@ -109,7 +109,7 @@ function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
         {subline && <div className="rt-content mt-3 max-w-xl font-medium text-[var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {cta?.label && (
-        <a href={cta.href} className="inline-flex w-full shrink-0 items-center justify-between bg-[var(--token-btn-bg)] px-8 py-4 text-base font-bold uppercase tracking-wider text-[var(--token-btn-text)] shadow-[4px_4px_0_rgba(255,255,255,0.2)] transition-transform hover:translate-x-1 lg:w-auto lg:justify-center lg:gap-3">
+        <a data-edit-link="cta" href={cta.href} className="inline-flex w-full shrink-0 items-center justify-between bg-[var(--token-btn-bg)] px-8 py-4 text-base font-bold uppercase tracking-wider text-[var(--token-btn-text)] shadow-[4px_4px_0_rgba(255,255,255,0.2)] transition-transform hover:translate-x-1 lg:w-auto lg:justify-center lg:gap-3">
           <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon name={cta.icon} size={18} />}
         </a>
       )}

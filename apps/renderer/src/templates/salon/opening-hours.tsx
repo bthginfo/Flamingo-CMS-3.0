@@ -33,7 +33,7 @@ function HoursClassic({ headline, subline, badgeText, days, bookingNote, ctaPrim
           {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {bookingNote && <p className="text-sm leading-6 text-[color:var(--token-muted)]">{bookingNote}</p>}
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
       </div>
       <div className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md">
         {days.map((day, i) => (
@@ -57,7 +57,7 @@ function HoursModern({ headline, subline, badgeText, days, bookingNote, ctaPrima
           {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {bookingNote && <p className="text-sm font-light leading-6 text-[color:var(--token-muted)]">{bookingNote}</p>}
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
       </div>
       <div className="border-y border-black/10">
         {days.map((day, i) => (
@@ -81,7 +81,7 @@ function HoursBold({ headline, subline, badgeText, days, bookingNote, ctaPrimary
           {subline && <div className="mt-4 font-bold text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {bookingNote && <p className="text-sm font-bold leading-6 text-[color:var(--token-muted)]">{bookingNote}</p>}
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex bg-[var(--token-badge-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{ctaPrimary.label}</a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex bg-[var(--token-badge-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{ctaPrimary.label}</a>}
       </div>
       <div className="border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]">
         {days.map((day, i) => (

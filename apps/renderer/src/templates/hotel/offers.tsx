@@ -39,7 +39,7 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
       <div className="grid gap-6 md:grid-cols-2">
         {offers.map((offer, index) => (
           <motion.article key={`$<span data-edit-path="title">{offer.title}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className={`grid overflow-hidden rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
-            {offer.image && <div className="relative min-h-52"><Image src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
+            {offer.image && <div className="relative min-h-52"><Image data-edit-image="image" src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-widest text-[color:var(--token-muted)]">
                 {offer.durationLabel && <span>{offer.durationLabel}</span>}
@@ -74,7 +74,7 @@ function OffersModern({ headline, subline, badgeText, offers, fallbackText }: Pr
       <div className="grid gap-px border border-black/10 md:grid-cols-2">
         {offers.map((offer, index) => (
           <article key={`$<span data-edit-path="title">{offer.title}</span>-${index}`} className={`grid overflow-hidden border border-black/10 bg-[var(--token-card-bg)] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'bg-[var(--token-section-bg-alt)]/[0.02]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
-            {offer.image && <div className="relative min-h-52"><Image src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
+            {offer.image && <div className="relative min-h-52"><Image data-edit-image="image" src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-6">
               <div className="flex flex-wrap gap-3 text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]">
                 {offer.durationLabel && <span>{offer.durationLabel}</span>}
@@ -109,7 +109,7 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
       <div className="grid gap-4 md:grid-cols-2">
         {offers.map((offer, index) => (
           <article key={`$<span data-edit-path="title">{offer.title}</span>-${index}`} className={`grid overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg)] shadow-[4px_4px_0_#111827] sm:grid-cols-[180px_1fr] ${offer.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="offers" data-edit-index={index}>
-            {offer.image && <div className="relative min-h-52"><Image src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
+            {offer.image && <div className="relative min-h-52"><Image data-edit-image="image" src={offer.image} alt={offer.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]">
                 {offer.durationLabel && <span>{offer.durationLabel}</span>}

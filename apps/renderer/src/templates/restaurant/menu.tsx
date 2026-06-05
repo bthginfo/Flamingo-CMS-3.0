@@ -121,7 +121,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
           <article key={`$<span data-edit-path="name">{item.name}</span>-${index}`} className={`grid gap-4 ${item.image ? 'sm:grid-cols-[96px_1fr]' : ''} ${item.highlighted ? 'bg-[var(--token-section-bg-alt)] p-4' : ''}`} data-edit-collection="items" data-edit-index={index}>
             {item.image && (
               <div className="relative h-24 w-24 overflow-hidden rounded-lg">
-                <Image src={item.image} alt={item.name || ''} fill className="object-cover" sizes="96px" />
+                <Image data-edit-image="image" src={item.image} alt={item.name || ''} fill className="object-cover" sizes="96px" />
               </div>
             )}
             <div>
@@ -152,7 +152,7 @@ function MenuFooter({ footnote, ctaPrimary, inverted }: MenuViewProps & { invert
   return (
     <div className={`flex flex-col gap-4 p-6 sm:p-10 sm:flex-row sm:items-center sm:justify-between ${inverted ? 'text-[color:var(--token-on-dark-heading)/70]' : 'text-[color:var(--token-muted)]'}`}>
       {footnote && <p className="text-sm">{footnote}</p>}
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 font-semibold text-[color:var(--token-heading)] bg-[var(--token-btn-bg)/10] px-5 py-3 rounded-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 font-semibold text-[color:var(--token-heading)] bg-[var(--token-btn-bg)/10] px-5 py-3 rounded-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }

@@ -47,7 +47,7 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
         {items.map((item, index) => (
           <motion.article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 shadow-md" data-edit-collection="items" data-edit-index={index}>
             {item.mediaType === 'image' && item.image ? (
-              <div className="relative mb-4 aspect-[16/10] overflow-hidden rounded-xl"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
+              <div className="relative mb-4 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
               <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-btn-bg)/10]/10 text-[color:var(--token-icon)]"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
             )}
@@ -74,7 +74,7 @@ function AmenitiesModern({ headline, subline, badgeText, items, ctaPrimary }: Pr
         {items.map((item, index) => (
           <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="border border-black/10 bg-[var(--token-card-bg)] p-8" data-edit-collection="items" data-edit-index={index}>
             {item.mediaType === 'image' && item.image ? (
-              <div className="relative mb-6 aspect-[16/10] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
+              <div className="relative mb-6 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
               <div className="mb-6 text-[color:var(--token-muted)]"><DynamicIcon name={item.icon || 'star'} size={20} /></div>
             )}
@@ -83,7 +83,7 @@ function AmenitiesModern({ headline, subline, badgeText, items, ctaPrimary }: Pr
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 font-light text-[color:var(--token-heading)] underline underline-offset-4"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={14} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 font-light text-[color:var(--token-heading)] underline underline-offset-4"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={14} /></a>}
     </div>
   );
 }
@@ -101,7 +101,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
         {items.map((item, index) => (
           <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="items" data-edit-index={index}>
             {item.mediaType === 'image' && item.image ? (
-              <div className="relative mb-4 aspect-[16/10] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
+              <div className="relative mb-4 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
               <div className="mb-4 inline-block border-2 border-[var(--token-icon)] p-2 text-[color:var(--token-icon)]"><DynamicIcon name={item.icon || 'star'} size={22} /></div>
             )}
@@ -110,7 +110,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }

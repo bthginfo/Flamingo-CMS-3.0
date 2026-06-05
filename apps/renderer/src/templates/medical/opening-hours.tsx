@@ -53,7 +53,7 @@ function Modern({ header, days, acuteCareText, holidayNote, ctaPrimary }: Props)
         <SectionHeader {...header} />
         {acuteCareText && <p className="text-sm font-light leading-6 text-[var(--token-body)]">{acuteCareText}</p>}
         {holidayNote && <p className="mt-3 text-xs font-light text-[var(--token-muted)]">{holidayNote}</p>}
-        {ctaPrimary.label && <div className="mt-6"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
+        {ctaPrimary.label && <div className="mt-6"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
       </div>
       <div className="border border-[var(--token-card-border)] bg-[var(--token-card-bg)]">
         {days.map((day, index) => (
@@ -81,7 +81,7 @@ function Bold({ header, days, acuteCareText, holidayNote, ctaPrimary }: Props) {
         </div>
         {acuteCareText && <p className="text-sm leading-6 text-[var(--token-body)]">{acuteCareText}</p>}
         {holidayNote && <p className="mt-3 text-xs text-[var(--token-muted)]">{holidayNote}</p>}
-        {ctaPrimary.label && <div className="mt-6"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
+        {ctaPrimary.label && <div className="mt-6"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
       </div>
       <div className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]">
         {days.map((day, index) => (

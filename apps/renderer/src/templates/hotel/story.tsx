@@ -54,8 +54,8 @@ function StoryClassic(p: Props) {
           {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{p.ctaPrimary.label}</a>}
         </motion.div>
         <div className="grid gap-4">
-          {p.imagePrimary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative aspect-[16/10] overflow-hidden rounded-xl shadow-lg"><Image src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></motion.div>}
-          {p.imageSecondary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="relative aspect-[16/9] overflow-hidden rounded-xl shadow-md"><Image src={p.imageSecondary} alt="" fill className="object-cover" sizes="50vw" /></motion.div>}
+          {p.imagePrimary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative aspect-[16/10] overflow-hidden rounded-xl shadow-lg"><Image data-edit-image="imagePrimary" src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></motion.div>}
+          {p.imageSecondary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="relative aspect-[16/9] overflow-hidden rounded-xl shadow-md"><Image data-edit-image="imageSecondary" src={p.imageSecondary} alt="" fill className="object-cover" sizes="50vw" /></motion.div>}
         </div>
       </div>
       {p.stats.length > 0 && (
@@ -113,8 +113,8 @@ function StoryModern(p: Props) {
           {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-10 inline-flex font-light text-[color:var(--token-heading)] underline underline-offset-4" data-edit-path="label">{p.ctaPrimary.label}</a>}
         </div>
         <div className="grid gap-3">
-          {p.imagePrimary && <div className="relative aspect-[16/10] overflow-hidden border border-black/10"><Image src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-          {p.imageSecondary && <div className="relative aspect-[16/9] overflow-hidden border border-black/10"><Image src={p.imageSecondary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {p.imagePrimary && <div className="relative aspect-[16/10] overflow-hidden border border-black/10"><Image data-edit-image="imagePrimary" src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {p.imageSecondary && <div className="relative aspect-[16/9] overflow-hidden border border-black/10"><Image data-edit-image="imageSecondary" src={p.imageSecondary} alt="" fill className="object-cover" sizes="50vw" /></div>}
         </div>
       </div>
       {p.stats.length > 0 && (
@@ -172,8 +172,8 @@ function StoryBold(p: Props) {
           {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{p.ctaPrimary.label}</a>}
         </div>
         <div className="grid gap-2">
-          {p.imagePrimary && <div className="relative aspect-[16/10] overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-          {p.imageSecondary && <div className="relative aspect-[16/9] overflow-hidden border-2 border-[#111827]"><Image src={p.imageSecondary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {p.imagePrimary && <div className="relative aspect-[16/10] overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image data-edit-image="imagePrimary" src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {p.imageSecondary && <div className="relative aspect-[16/9] overflow-hidden border-2 border-[#111827]"><Image data-edit-image="imageSecondary" src={p.imageSecondary} alt="" fill className="object-cover" sizes="50vw" /></div>}
         </div>
       </div>
       {p.stats.length > 0 && (

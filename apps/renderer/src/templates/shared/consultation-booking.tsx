@@ -70,14 +70,14 @@ export function ConsultationBookingSection({ data }: Props) {
         >
           <div className="rounded-[var(--token-card-radius)] overflow-hidden bg-[var(--token-card-bg)] shadow-[var(--token-card-shadow,0_4px_20px_rgba(0,0,0,0.06))] border border-[rgba(0,0,0,0.06)]">
             {image && (
-              <img src={image} alt={headline} className="w-full aspect-[4/3] object-cover" />
+              <img data-edit-image="image" src={image} alt={headline} className="w-full aspect-[4/3] object-cover" />
             )}
             <div className="p-6 text-center">
               <p className="text-[var(--token-body)] text-sm mb-4">
                 {services[selected]?.title ? `Beratung: $<span data-edit-path="title">{services[selected].title}</span>` : 'Individuelle Beratung'}
               </p>
               {cta?.label && (
-                <a href={cta.href || '#'} className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[var(--token-icon)] text-white font-semibold rounded-[var(--token-button-radius)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
+                <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-[var(--token-icon)] text-white font-semibold rounded-[var(--token-button-radius)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
                   {cta.label}
                 </a>
               )}

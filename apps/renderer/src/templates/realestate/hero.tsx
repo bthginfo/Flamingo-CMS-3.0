@@ -25,7 +25,7 @@ export function RealestateHeroSection({ data }: Props) {
     <div ref={ref} className="relative min-h-[90vh] flex items-center overflow-hidden -mt-[112px] pt-[112px]">
       {bgImage && (
         <ImageEffectWrapper effect={imageEffect} className="absolute inset-0">
-          <Image src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
+          <Image data-edit-image="bgImage" src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
         </ImageEffectWrapper>
       )}
       <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-slate-900/40" style={{ opacity: overlayOpacity }} />
@@ -47,12 +47,12 @@ export function RealestateHeroSection({ data }: Props) {
           )}
           <div className="flex flex-wrap gap-4 mt-10">
             {primaryCta && (
-              <a href={primaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 text-[color:var(--token-on-dark-heading)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl" data-edit-path="label">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 text-[color:var(--token-on-dark-heading)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl" data-edit-path="label">
                 {primaryCta.label}
               </a>
             )}
             {secondaryCta && (
-              <a href={secondaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--token-card-bg)/10] hover:bg-[var(--token-card-bg)/20] text-[color:var(--token-on-dark-heading)] font-semibold rounded-lg border border-[color:var(--token-card-border)/20] transition-all backdrop-blur-sm" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--token-card-bg)/10] hover:bg-[var(--token-card-bg)/20] text-[color:var(--token-on-dark-heading)] font-semibold rounded-lg border border-[color:var(--token-card-border)/20] transition-all backdrop-blur-sm" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

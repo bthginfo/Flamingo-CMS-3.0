@@ -65,7 +65,7 @@ function Classic(p: Props) {
         </div>
       </div>
       <div className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 shadow-md">
-        {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {p.mapEmbedUrl && <iframe src={p.mapEmbedUrl} title="Standort" className="mb-5 h-56 w-full rounded-xl" loading="lazy" />}
         {p.formEnabled && <DynamicContactForm fields={p.formFields} submitLabel={p.submitLabel} />}
       </div>
@@ -90,7 +90,7 @@ function Modern(p: Props) {
         </div>
       </div>
       <div className="border border-black/10 p-5">
-        {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {p.mapEmbedUrl && <iframe src={p.mapEmbedUrl} title="Standort" className="mb-5 h-56 w-full" loading="lazy" />}
         {p.formEnabled && <DynamicContactForm fields={p.formFields} submitLabel={p.submitLabel} />}
       </div>
@@ -115,7 +115,7 @@ function Bold(p: Props) {
         </div>
       </div>
       <div className="bg-[var(--token-card-bg)] p-5 shadow-[6px_6px_0_var(--token-eyebrow)]">
-        {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {p.image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={p.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {p.mapEmbedUrl && <iframe src={p.mapEmbedUrl} title="Standort" className="mb-5 h-56 w-full" loading="lazy" />}
         {p.formEnabled && <DynamicContactForm fields={p.formFields} submitLabel={p.submitLabel} />}
       </div>

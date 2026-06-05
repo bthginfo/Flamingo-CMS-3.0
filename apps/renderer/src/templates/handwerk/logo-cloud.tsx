@@ -34,7 +34,7 @@ export function LogoCloudSection({ data }: Props) {
         {logos.map((logo, i) => {
           const img = (
             <div className="relative h-10 w-28 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-              <Image src={logo.src} alt={logo.alt} fill className="object-contain" />
+              <Image data-edit-image="src" src={logo.src} alt={logo.alt} fill className="object-contain" />
             </div>
           );
           return logo.href ? (

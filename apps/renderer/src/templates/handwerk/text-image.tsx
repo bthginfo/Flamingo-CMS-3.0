@@ -27,7 +27,7 @@ export function TextImageSection({ data, variant }: Props) {
       <div className={`max-w-6xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center ${imageLeft ? '' : 'md:[&>*:first-child]:order-2'}`}>
         {image && (
           <motion.div initial={{ opacity: 0, x: imageLeft ? -30 : 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
-            <Image src={image} alt={imageAlt} fill className="object-cover" />
+            <Image data-edit-image="image" src={image} alt={imageAlt} fill className="object-cover" />
           </motion.div>
         )}
         <div className={!image ? 'md:col-span-2 max-w-3xl mx-auto' : ''}>
@@ -50,12 +50,12 @@ export function TextImageSection({ data, variant }: Props) {
           {(primaryCta.label || secondaryCta.label) && (
             <div className="mt-8 flex flex-wrap gap-3">
               {primaryCta.label && (
-                <Link href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[var(--token-btn-text)] shadow-md transition-colors">
+                <Link data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[var(--token-btn-text)] shadow-md transition-colors">
                   {primaryCta.label} {primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} />}
                 </Link>
               )}
               {secondaryCta.label && (
-                <Link href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] px-6 py-3 font-semibold text-[var(--token-body)] hover:border-[var(--token-icon)] hover:text-[var(--token-icon)] transition-colors">
+                <Link data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] px-6 py-3 font-semibold text-[var(--token-body)] hover:border-[var(--token-icon)] hover:text-[var(--token-icon)] transition-colors">
                   {secondaryCta.label} {secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={16} />}
                 </Link>
               )}

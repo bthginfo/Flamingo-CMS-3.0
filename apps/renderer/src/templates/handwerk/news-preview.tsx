@@ -60,7 +60,7 @@ export function NewsPreviewSection({ data }: Props) {
             <Link href={`${detailBasePath}/${item.slug}`} className="group block">
               {item.image && (
                 <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-4">
-                  <Image src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image data-edit-image="image" src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
               )}
               {item.date && (

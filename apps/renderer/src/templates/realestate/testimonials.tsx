@@ -45,7 +45,7 @@ export function RealestateTestimonialsSection({ data }: Props) {
               <p className="text-[color:var(--token-muted)] text-sm leading-relaxed italic">&ldquo;<span data-edit-path="text">{plain(t.text)}</span>&rdquo;</p>
               <div className="flex items-center gap-3 mt-5 pt-4 border-t border-gray-50">
                 {t.image && (
-                  <Image src={t.image} alt={t.name} width={36} height={36} className="rounded-full object-cover" />
+                  <Image data-edit-image="image" src={t.image} alt={t.name} width={36} height={36} className="rounded-full object-cover" />
                 )}
                 <div>
                   <p className="text-sm font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{t.name}</p>

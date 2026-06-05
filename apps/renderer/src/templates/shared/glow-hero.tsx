@@ -36,7 +36,7 @@ export function GlowHeroSection({ data }: Props) {
 
   return (
     <section ref={ref} className="relative min-h-[100svh] overflow-hidden bg-[var(--token-section-bg)] text-[var(--token-body)]">
-      {image && <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70" style={{ objectPosition: imagePosition }} />}
+      {image && <img data-edit-image="image" src={image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70" style={{ objectPosition: imagePosition }} />}
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/30" />
       <div
         className="pointer-events-none absolute inset-0 transition duration-150"
@@ -50,8 +50,8 @@ export function GlowHeroSection({ data }: Props) {
           <h1 className="text-5xl font-black leading-none text-[var(--token-heading)] md:text-7xl lg:text-8xl" data-edit-path="headline">{headline}</h1>
           {subline && <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--token-subheading)] md:text-xl" data-edit-path="subline">{plain(subline)}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
-            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
-            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 text-sm font-bold text-[var(--token-body)] backdrop-blur" data-edit-path="label">{secondaryCta.label}</a>}
+            {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
+            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 text-sm font-bold text-[var(--token-body)] backdrop-blur" data-edit-path="label">{secondaryCta.label}</a>}
           </div>
         </div>
         {facts.length > 0 && (

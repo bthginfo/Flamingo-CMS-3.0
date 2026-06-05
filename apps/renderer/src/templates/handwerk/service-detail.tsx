@@ -42,7 +42,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
             <div className="w-full lg:w-1/2">
               {item.mediaType === 'image' && item.image ? (
                 <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-xl">
-                  <Image src={item.image} alt={item.title} fill className="object-cover" sizes="50vw" />
+                  <Image data-edit-image="image" src={item.image} alt={item.title} fill className="object-cover" sizes="50vw" />
                 </div>
               ) : item.icon ? (
                 <div className="w-24 h-24 rounded-2xl bg-[color-mix(in_srgb,var(--token-icon)_10%,transparent)] flex items-center justify-center mx-auto lg:mx-0">
@@ -88,7 +88,7 @@ function ServiceModern({ headline, subline, badgeText, items }: SProps) {
           <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.1 }} data-edit-collection="items" data-edit-index={i}>
             {item.mediaType === 'image' && item.image && (
               <div className="relative aspect-[21/9] rounded-lg overflow-hidden mb-8">
-                <Image src={item.image} alt={item.title} fill className="object-cover" sizes="100vw" />
+                <Image data-edit-image="image" src={item.image} alt={item.title} fill className="object-cover" sizes="100vw" />
               </div>
             )}
             <div className="max-w-2xl">
@@ -130,7 +130,7 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
             className="flex flex-col lg:flex-row gap-6 p-6 border-3 border-[var(--token-card-border)] shadow-[4px_4px_0_var(--token-body)] bg-[var(--token-card-bg)]" data-edit-collection="items" data-edit-index={i}>
             {item.mediaType === 'image' && item.image && (
               <div className="relative w-full lg:w-64 aspect-[4/3] lg:aspect-square shrink-0 overflow-hidden">
-                <Image src={item.image} alt={item.title} fill className="object-cover" sizes="256px" />
+                <Image data-edit-image="image" src={item.image} alt={item.title} fill className="object-cover" sizes="256px" />
               </div>
             )}
             <div className="flex-1">

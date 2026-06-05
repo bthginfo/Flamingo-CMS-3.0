@@ -46,7 +46,7 @@ export function BeforeAfterSection({ data }: Props) {
         {/* After image (full) */}
         <div className="absolute inset-0">
           {imageAfter ? (
-            <img src={imageAfter} alt={labelAfter} className="w-full h-full object-cover" />
+            <img data-edit-image="imageAfter" src={imageAfter} alt={labelAfter} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-gradient-to-r from-green-50 to-green-100 flex items-center justify-center text-green-300 text-2xl">{labelAfter}</div>
           )}
@@ -55,7 +55,7 @@ export function BeforeAfterSection({ data }: Props) {
         {/* Before image (clipped) */}
         <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}>
           {imageBefore ? (
-            <img src={imageBefore} alt={labelBefore} className="w-full h-full object-cover" />
+            <img data-edit-image="imageBefore" src={imageBefore} alt={labelBefore} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-gradient-to-r from-amber-50 to-amber-100 flex items-center justify-center text-amber-300 text-2xl">{labelBefore}</div>
           )}

@@ -43,11 +43,11 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
           {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
           {introText && <div className="mt-6 text-[color:var(--token-muted)] leading-7 rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
-          {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+          {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-md"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-          {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-md"><Image data-edit-image="imagePrimary" src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image data-edit-image="imageSecondary" src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
       </div>
       {features.length > 0 && (
@@ -65,7 +65,7 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {treatments.map((treatment, index) => (
           <motion.article key={`${treatment.title}-${index}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 shadow-md" data-edit-collection="treatments" data-edit-index={index}>
-            {treatment.image && <div className="relative mb-4 aspect-[16/9] overflow-hidden rounded-xl"><Image src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
+            {treatment.image && <div className="relative mb-4 aspect-[16/9] overflow-hidden rounded-xl"><Image data-edit-image="image" src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="flex justify-between gap-4"><h3 className="font-bold text-[color:var(--token-heading)]" data-edit-path="title">{treatment.title || ''}</h3><span className="text-sm text-[color:var(--token-muted)]" data-edit-path="priceLabel">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: treatment.text }} />}
             {treatment.durationLabel && <p className="mt-2 text-xs text-[color:var(--token-muted)]">{treatment.durationLabel}</p>}
@@ -97,16 +97,16 @@ function WellnessModern({ headline, subline, badgeText, introText, imagePrimary,
             </div>
           ))}
         </div>
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 font-light text-[color:var(--token-heading)] underline underline-offset-4"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={14} /></a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 font-light text-[color:var(--token-heading)] underline underline-offset-4"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={14} /></a>}
       </div>
       <div className="space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-px border border-black/10">
-          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-          {imageSecondary && <div className="relative aspect-square overflow-hidden border-t border-black/10"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden"><Image data-edit-image="imagePrimary" src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {imageSecondary && <div className="relative aspect-square overflow-hidden border-t border-black/10"><Image data-edit-image="imageSecondary" src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
         {treatments.map((treatment, index) => (
           <article key={`$<span data-edit-path="title">{treatment.title}</span>-${index}`} className="border border-black/10 bg-[var(--token-card-bg)] p-6" data-edit-collection="treatments" data-edit-index={index}>
-            {treatment.image && <div className="relative mb-5 aspect-[16/9] overflow-hidden"><Image src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
+            {treatment.image && <div className="relative mb-5 aspect-[16/9] overflow-hidden"><Image data-edit-image="image" src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="flex justify-between gap-4"><h3 className="font-light text-[color:var(--token-heading)]" data-edit-path="title">{treatment.title || ''}</h3><span className="text-sm font-light text-[color:var(--token-muted)]" data-edit-path="priceLabel">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: treatment.text }} />}
             {treatment.durationLabel && <p className="mt-2 text-xs font-light text-[color:var(--token-muted)]">{treatment.durationLabel}</p>}
@@ -137,16 +137,16 @@ function WellnessBold({ headline, subline, badgeText, introText, imagePrimary, i
             </div>
           ))}
         </div>
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
       </div>
       <div className="space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-          {imageSecondary && <div className="relative aspect-square overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image data-edit-image="imagePrimary" src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {imageSecondary && <div className="relative aspect-square overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image data-edit-image="imageSecondary" src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
         {treatments.map((treatment, index) => (
           <article key={`$<span data-edit-path="title">{treatment.title}</span>-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="treatments" data-edit-index={index}>
-            {treatment.image && <div className="relative mb-4 aspect-[16/9] overflow-hidden"><Image src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
+            {treatment.image && <div className="relative mb-4 aspect-[16/9] overflow-hidden"><Image data-edit-image="image" src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="flex justify-between gap-4"><h3 className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{treatment.title || ''}</h3><span className="text-sm font-bold text-[color:var(--token-muted)]" data-edit-path="priceLabel">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: treatment.text }} />}
             {treatment.durationLabel && <p className="mt-2 text-xs font-bold text-[color:var(--token-muted)]">{treatment.durationLabel}</p>}

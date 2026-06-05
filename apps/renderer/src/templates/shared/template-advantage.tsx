@@ -52,7 +52,7 @@ export function TemplateAdvantageSection({ data }: Props) {
               className="group overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_24px_70px_rgba(20,17,26,0.08)]"
              data-edit-collection="cards" data-edit-index={index}>
               <div className="relative aspect-[16/11] overflow-hidden bg-zinc-200">
-                {card.image && <img src={card.image} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />}
+                {card.image && <img data-edit-image="image" src={card.image} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                 {card.label && <span className="absolute bottom-4 left-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-zinc-950" data-edit-path="label">{card.label}</span>}
               </div>
@@ -66,7 +66,7 @@ export function TemplateAdvantageSection({ data }: Props) {
 
         {cta.label && (
           <div className="mt-10">
-            <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[var(--token-btn-text)]">
+            <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[var(--token-btn-text)]">
               <span data-edit-path="label">{cta.label}</span><ArrowRight size={16} />
             </a>
           </div>

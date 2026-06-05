@@ -25,7 +25,7 @@ export function EditorialFeatureRailSection({ data }: Props) {
         <div className="flex snap-x gap-5 overflow-x-auto pb-4 [scrollbar-width:thin]">
           {items.map((item, index) => (
             <motion.article key={index} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-80px' }} transition={{ delay: index * 0.06 }} className="group relative min-h-[560px] w-[82vw] shrink-0 snap-center overflow-hidden rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] md:w-[520px]" data-edit-collection="items" data-edit-index={index}>
-              {item.image && <img src={item.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-74 transition duration-700 group-hover:scale-105 group-hover:opacity-86" />}
+              {item.image && <img data-edit-image="image" src={item.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-74 transition duration-700 group-hover:scale-105 group-hover:opacity-86" />}
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
               <div className="relative z-10 flex h-full flex-col justify-end p-6 md:p-8">
                 {item.kicker && <div className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[var(--token-muted)]" data-edit-path="kicker">{item.kicker}</div>}

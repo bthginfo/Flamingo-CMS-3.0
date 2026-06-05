@@ -36,7 +36,7 @@ export function FoodMenuSection({ data }: Props) {
              data-edit-collection="items" data-edit-index={i}>
               {item.image && (
                 <div className="relative aspect-[16/10] overflow-hidden">
-                  <Image src={item.image} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 33vw" />
+                  <Image data-edit-image="image" src={item.image} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 33vw" />
                   {item.badge && (
                     <span className="absolute top-3 left-3 bg-amber-600 text-[color:var(--token-on-dark-heading)] text-[10px] font-bold px-2.5 py-1 rounded-full" data-edit-path="badge">{item.badge}</span>
                   )}

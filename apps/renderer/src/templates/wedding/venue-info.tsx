@@ -28,7 +28,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
           <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-16 break-words" data-edit-path="headline">{headline}</h2>
           {image && (
             <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="relative w-full aspect-[16/9] mb-12">
-              <Image src={image} alt={headline} fill className="object-cover" />
+              <Image data-edit-image="image" src={image} alt={headline} fill className="object-cover" />
             </motion.div>
           )}
           <div className="grid md:grid-cols-2 gap-12">
@@ -55,7 +55,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
           <div className="grid md:grid-cols-2 gap-8">
             {image && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative aspect-[4/3]">
-                <Image src={image} alt={headline} fill className="object-cover" />
+                <Image data-edit-image="image" src={image} alt={headline} fill className="object-cover" />
                 <div className="absolute inset-0 border-2 border-[color:var(--token-card-border)]" />
               </motion.div>
             )}
@@ -84,7 +84,7 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           {image && (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative aspect-[3/2] rounded-2xl overflow-hidden shadow-lg">
-              <Image src={image} alt={headline} fill className="object-cover" />
+              <Image data-edit-image="image" src={image} alt={headline} fill className="object-cover" />
             </motion.div>
           )}
           <div className={image ? '' : 'md:col-span-2 max-w-3xl mx-auto text-center'}>
@@ -139,7 +139,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
             <div className="grid md:grid-cols-2 gap-8">
               {accommodations.map((a, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-t border-[color:var(--token-card-border)] pt-6" data-edit-collection="accommodations" data-edit-index={i}>
-                  {a.image && <div className="relative h-40 mb-4"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
+                  {a.image && <div className="relative h-40 mb-4"><Image data-edit-image="image" src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <h4 className="font-medium text-[color:var(--token-heading)]" data-edit-path="name">{a.name}</h4>
                   {a.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: a.description }} />}
                   {a.link && <a href={a.link} target="_blank" rel="noopener noreferrer" className="text-sm text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)] mt-3 inline-block hover:opacity-70">Details →</a>}
@@ -176,7 +176,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {accommodations.map((a, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border)] overflow-hidden" data-edit-collection="accommodations" data-edit-index={i}>
-                  {a.image && <div className="relative h-40"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
+                  {a.image && <div className="relative h-40"><Image data-edit-image="image" src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <div className="p-5">
                     <h4 className="font-bold text-[color:var(--token-heading)]" data-edit-path="name">{a.name}</h4>
                     {a.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: a.description }} />}
@@ -221,7 +221,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {accommodations.map((a, i) => (
                 <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl overflow-hidden bg-[var(--token-card-bg)] shadow-sm border border-[color:var(--token-card-border)]" data-edit-collection="accommodations" data-edit-index={i}>
-                  {a.image && <div className="relative h-40"><Image src={a.image} alt={a.name} fill className="object-cover" /></div>}
+                  {a.image && <div className="relative h-40"><Image data-edit-image="image" src={a.image} alt={a.name} fill className="object-cover" /></div>}
                   <div className="p-5">
                     <h4 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{a.name}</h4>
                     {a.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: a.description }} />}

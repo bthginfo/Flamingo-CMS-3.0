@@ -39,7 +39,7 @@ function Classic({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: P
         <div className="grid gap-4">
           {places.map((place, index) => (
             <motion.article key={`$<span data-edit-path="title">{place.title}</span>-${index}`} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: index * 0.1 }} className="grid gap-4 border-t border-[var(--token-card-border)] pt-4 sm:grid-cols-[120px_1fr]" data-edit-collection="places" data-edit-index={index}>
-              {place.image && <div className="relative aspect-[4/3] overflow-hidden rounded-xl"><Image src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
+              {place.image && <div className="relative aspect-[4/3] overflow-hidden rounded-xl"><Image data-edit-image="image" src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-[var(--token-badge-text)]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-bold text-[var(--token-heading)]" data-edit-path="title">{place.title || ''}</h3>
@@ -50,7 +50,7 @@ function Classic({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: P
             </motion.article>
           ))}
         </div>
-        {ctaPrimary.label && <div className="mt-8"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
+        {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
       </div>
       <MapEmbed mapEmbedUrl={mapEmbedUrl} mapFallbackText={mapFallbackText} className="min-h-[420px] overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" />
     </div>
@@ -65,7 +65,7 @@ function Modern({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Pr
         <div className="grid gap-4">
           {places.map((place, index) => (
             <article key={`${place.title}-${index}`} className="grid gap-4 border-t border-[var(--token-card-border)] pt-4 sm:grid-cols-[120px_1fr]" data-edit-collection="places" data-edit-index={index}>
-              {place.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
+              {place.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
                 <p className="text-xs font-light uppercase tracking-widest text-[var(--token-badge-text)]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-light text-[var(--token-heading)]" data-edit-path="title">{place.title || ''}</h3>
@@ -76,7 +76,7 @@ function Modern({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Pr
             </article>
           ))}
         </div>
-        {ctaPrimary.label && <div className="mt-8"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
+        {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
       </div>
       <MapEmbed mapEmbedUrl={mapEmbedUrl} mapFallbackText={mapFallbackText} className="min-h-[420px] overflow-hidden border border-[var(--token-card-border)] bg-[var(--token-card-bg)]" />
     </div>
@@ -95,7 +95,7 @@ function Bold({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Prop
         <div className="grid gap-4">
           {places.map((place, index) => (
             <article key={`$<span data-edit-path="title">{place.title}</span>-${index}`} className="grid gap-4 border-t-2 border-[var(--token-card-border)] pt-4 sm:grid-cols-[120px_1fr]" data-edit-collection="places" data-edit-index={index}>
-              {place.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
+              {place.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
                 <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text)]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-black uppercase text-[var(--token-heading)]" data-edit-path="title">{place.title || ''}</h3>
@@ -106,7 +106,7 @@ function Bold({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Prop
             </article>
           ))}
         </div>
-        {ctaPrimary.label && <div className="mt-8"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
+        {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
       </div>
       <MapEmbed mapEmbedUrl={mapEmbedUrl} mapFallbackText={mapFallbackText} className="min-h-[420px] overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" />
     </div>

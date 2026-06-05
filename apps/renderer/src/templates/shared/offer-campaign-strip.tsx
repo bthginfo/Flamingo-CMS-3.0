@@ -22,7 +22,7 @@ export function OfferCampaignStripSection({ data }: Props) {
       <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-2xl">
         <div className="grid md:grid-cols-[0.9fr_1.1fr]">
           <div className="relative min-h-[280px] overflow-hidden">
-            {image ? <img src={image} alt="" className="h-full w-full object-cover" /> : <div className="h-full bg-[var(--token-section-bg-alt)]" />}
+            {image ? <img data-edit-image="image" src={image} alt="" className="h-full w-full object-cover" /> : <div className="h-full bg-[var(--token-section-bg-alt)]" />}
             <div className="absolute inset-0 bg-gradient-to-r from-black/10 to-black/58" />
             {offerLabel && (
               <div className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-[var(--token-badge-bg)] px-4 py-2 text-xs font-black uppercase text-[var(--token-badge-text)]">
@@ -44,7 +44,7 @@ export function OfferCampaignStripSection({ data }: Props) {
               ))}
             </div>
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              {cta.label && <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[var(--token-btn-text)]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>}
+              {cta.label && <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[var(--token-btn-text)]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>}
               {deadline && <div className="text-sm text-[var(--token-muted)]">Gültig bis {deadline}</div>}
             </div>
           </div>

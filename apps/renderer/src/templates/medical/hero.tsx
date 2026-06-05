@@ -56,8 +56,8 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
       {(bgMode === 'image' && bgImage) ? (
         <>
           <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
-            <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
-            {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
+            <Image data-edit-image="bgImage" src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
+            {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
           </ImageEffectWrapper>
           {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.6 }} />) : (<div className="absolute inset-0 bg-gradient-to-b from-black/65 via-slate-950/45 to-cyan-950/55" />)}
         </>
@@ -76,9 +76,9 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }} className="max-w-5xl text-3xl md:text-5xl font-[700] leading-[0.95] text-[var(--token-heading)] sm:text-6xl lg:text-8xl" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }} data-edit-path="headline">{headline}</motion.h1>
         {subline && <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mt-7 max-w-2xl text-lg leading-8 text-[var(--token-body)] rt-content" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }} className="mt-8 flex flex-wrap justify-center gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
-          {emergencyCta.label && <a href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)]">{emergencyCta.icon && <DynamicIcon name={emergencyCta.icon} size={17} />}<span data-edit-path="label">{emergencyCta.label}</span></a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] px-6 py-3 font-semibold text-[var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
+          {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+          {emergencyCta.label && <a data-edit-link="emergencyCta" href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-red-600 px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)]">{emergencyCta.icon && <DynamicIcon name={emergencyCta.icon} size={17} />}<span data-edit-path="label">{emergencyCta.label}</span></a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] px-6 py-3 font-semibold text-[var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-[var(--token-on-dark-body)]">
           {specialtyLabel && <span className="inline-flex items-center gap-2 rounded-full bg-[var(--token-badge-bg)] px-4 py-2"><Heart size={15} className="text-[var(--token-icon)]" />{specialtyLabel}</span>}
@@ -100,9 +100,9 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageM
           <h1 className="mt-5 text-3xl md:text-5xl font-light leading-[0.95] text-[var(--token-heading)] sm:text-6xl lg:text-7xl" data-edit-path="headline">{headline}</h1>
           {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-[var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="mt-8 flex flex-wrap gap-3">
-            {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
-            {emergencyCta.label && <a href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)]">{emergencyCta.icon && <DynamicIcon name={emergencyCta.icon} size={17} />}<span data-edit-path="label">{emergencyCta.label}</span></a>}
-            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-card-border)] px-5 py-3 font-semibold text-[var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
+            {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+            {emergencyCta.label && <a data-edit-link="emergencyCta" href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)]">{emergencyCta.icon && <DynamicIcon name={emergencyCta.icon} size={17} />}<span data-edit-path="label">{emergencyCta.label}</span></a>}
+            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-card-border)] px-5 py-3 font-semibold text-[var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
           </div>
           <div className="mt-10 flex flex-wrap gap-3 text-sm text-[var(--token-body)]">
             {specialtyLabel && <span className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] px-4 py-2"><Heart size={15} />{specialtyLabel}</span>}
@@ -113,8 +113,8 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageM
         <div className="relative min-h-[500px] overflow-hidden rounded-xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)]">
           {(bgMode === 'image' && bgImage) ? (
             <>
-              <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="50vw" />
-              {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="50vw" />}
+              <Image data-edit-image="bgImage" src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="50vw" />
+              {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="50vw" />}
             </>
           ) : (bgMode === 'color' && bgColor) ? (
             <div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
@@ -131,8 +131,8 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMob
     <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-section-bg)]">
       {(bgMode === 'image' && bgImage) ? (
         <>
-          <Image src={bgImage} alt="" fill priority className={`object-cover opacity-40${bgImageMobile ? ' hidden md:block' : ''}`} sizes="100vw" />
-          {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover opacity-40 md:hidden" sizes="100vw" />}
+          <Image data-edit-image="bgImage" src={bgImage} alt="" fill priority className={`object-cover opacity-40${bgImageMobile ? ' hidden md:block' : ''}`} sizes="100vw" />
+          {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill priority className="object-cover opacity-40 md:hidden" sizes="100vw" />}
           <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--token-section-bg)_60%,transparent)]" />
         </>
       ) : (bgMode === 'color' && bgColor) ? (
@@ -148,9 +148,9 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMob
         <h1 className="mt-5 max-w-5xl text-3xl md:text-5xl font-black uppercase leading-[0.95] text-[var(--token-heading)] sm:text-6xl lg:text-8xl" data-edit-path="headline">{headline}</h1>
         {subline && <div className="mt-7 max-w-2xl text-lg leading-8 text-[var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-wrap gap-3">
-          {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-6 py-3 font-black uppercase text-[var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
-          {emergencyCta.label && <a href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-red-500 bg-red-500 px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_theme(colors.red.800)]">{emergencyCta.icon && <DynamicIcon name={emergencyCta.icon} size={17} />}<span data-edit-path="label">{emergencyCta.label}</span></a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-card-border)] px-6 py-3 font-black uppercase text-[var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
+          {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-6 py-3 font-black uppercase text-[var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
+          {emergencyCta.label && <a data-edit-link="emergencyCta" href={emergencyCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-red-500 bg-red-500 px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_theme(colors.red.800)]">{emergencyCta.icon && <DynamicIcon name={emergencyCta.icon} size={17} />}<span data-edit-path="label">{emergencyCta.label}</span></a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-card-border)] px-6 py-3 font-black uppercase text-[var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
         <div className="mt-10 flex flex-wrap gap-3 text-sm text-[var(--token-body)]">
           {specialtyLabel && <span className="inline-flex items-center gap-2 border border-[color:var(--token-card-border)/20] px-4 py-2 font-bold uppercase"><Heart size={15} />{specialtyLabel}</span>}

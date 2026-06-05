@@ -52,7 +52,7 @@ export function StyleGallerySection({ data }: Props) {
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
               className="break-inside-avoid mb-3 group relative overflow-hidden rounded-lg" data-edit-collection="displayed" data-edit-index={i}>
               {item.image && (
-                <Image src={item.image} alt={item.name} width={400} height={500} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500" />
+                <Image data-edit-image="image" src={item.image} alt={item.name} width={400} height={500} className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                 <div>

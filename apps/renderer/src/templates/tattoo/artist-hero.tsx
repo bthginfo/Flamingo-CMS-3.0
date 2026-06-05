@@ -18,7 +18,7 @@ export function ArtistHeroSection({ data }: Props) {
         <div className="flex flex-col md:flex-row gap-10 items-center md:items-start">
           {image && (
             <div className="relative w-64 h-80 rounded-lg overflow-hidden shrink-0">
-              <Image src={image} alt={name} fill className="object-cover" sizes="256px" />
+              <Image data-edit-image="image" src={image} alt={name} fill className="object-cover" sizes="256px" />
             </div>
           )}
           <div className="flex-1 text-center md:text-left">

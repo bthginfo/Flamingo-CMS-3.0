@@ -32,7 +32,7 @@ export function CafeTestimonialsSection({ data }: Props) {
               )}
               <p className="text-[color:var(--token-muted)] text-sm leading-relaxed italic">&ldquo;<span data-edit-path="text">{plain(t.text)}</span>&rdquo;</p>
               <div className="flex items-center gap-3 mt-4 pt-3 border-t border-[color:var(--token-card-border)]">
-                {t.image && <Image src={t.image} alt={t.name} width={32} height={32} className="rounded-full object-cover" />}
+                {t.image && <Image data-edit-image="image" src={t.image} alt={t.name} width={32} height={32} className="rounded-full object-cover" />}
                 <div>
                   <p className="text-sm font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{t.name}</p>
                   {t.source && <p className="text-xs text-[color:var(--token-muted)]">{t.source}</p>}

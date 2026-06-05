@@ -34,7 +34,7 @@ export function ConsultingTeamSection({ data }: Props) {
            data-edit-collection="members" data-edit-index={i}>
             {member.image && (
               <div className="w-48 h-48 mx-auto mb-5 rounded-full overflow-hidden border-4 border-[color:var(--token-card-border)] shadow-md group-hover:border-[var(--token-card-border)/30] transition-colors">
-                <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                <img data-edit-image="image" src={member.image} alt={member.name} className="w-full h-full object-cover" />
               </div>
             )}
             <h3 className="text-lg font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{member.name}</h3>

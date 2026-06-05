@@ -63,8 +63,8 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
       {(bgMode === 'image' && bgImage) ? (
         <>
           <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
-            <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
-            {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
+            <Image data-edit-image="bgImage" src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
+            {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
           </ImageEffectWrapper>
           {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? (<div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity ?? 0.5 }} />) : (<div className="absolute inset-0 bg-black/58" />)}
         </>
@@ -114,14 +114,14 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.9 }}
             className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
             {primaryCta.label && (
-              <a href={primaryCta.href || '#'}
+              <a data-edit-link="primaryCta" href={primaryCta.href || '#'}
                 className="group inline-flex items-center justify-between sm:justify-center sm:gap-2 rounded-full bg-[var(--token-btn-bg)] px-8 py-4 font-semibold text-[color:var(--token-btn-text)] transition-all hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto">
                 <span data-edit-path="label">{primaryCta.label}</span>
                 {primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} className="transition-transform group-hover:translate-x-1" />}
               </a>
             )}
             {secondaryCta.label && (
-              <a href={secondaryCta.href || '#'}
+              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'}
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_8%,transparent)] px-8 py-4 text-[color:var(--token-on-dark-heading)] font-medium hover:border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_62%,transparent)] transition-all text-sm w-full sm:w-auto">
                 <span data-edit-path="label">{secondaryCta.label}</span>
                 {secondaryCta.icon && <DynamicIcon name={secondaryCta.icon} size={14} />}
@@ -166,14 +166,14 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
           )}
           <div className="flex flex-col sm:flex-row items-start gap-6 mt-12">
             {primaryCta.label && (
-              <a href={primaryCta.href || '#'}
+              <a data-edit-link="primaryCta" href={primaryCta.href || '#'}
                 className="group inline-flex items-center justify-between sm:justify-center sm:gap-3 text-[color:var(--token-heading)] font-medium text-base border-b-2 border-[color:var(--token-card-border)] pb-1 hover:border-[var(--token-card-border)] hover:text-[color:var(--token-eyebrow)] transition-colors w-full sm:w-auto">
                 <span data-edit-path="label">{primaryCta.label}</span>
                 {primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={16} className="transition-transform group-hover:translate-x-1" />}
               </a>
             )}
             {secondaryCta.label && (
-              <a href={secondaryCta.href || '#'}
+              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'}
                 className="inline-flex items-center gap-2 text-[color:var(--token-muted)] hover:text-[color:var(--token-muted)] transition-colors text-sm" data-edit-path="label">
                 {secondaryCta.label}
               </a>
@@ -190,8 +190,8 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
         <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
           {(bgMode === 'image' && bgImage) ? (
             <div className="relative aspect-[4/5] rounded-[0.5rem] overflow-hidden">
-              <Image src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="50vw" />
-              {bgImageMobile && <Image src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="50vw" />}
+              <Image data-edit-image="bgImage" src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="50vw" />
+              {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="50vw" />}
             </div>
           ) : (bgMode === 'color' && bgColor) ? (
             <div className="aspect-[4/5] rounded-[0.5rem] overflow-hidden" style={{ backgroundColor: bgColor }} />
@@ -211,8 +211,8 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgI
       {/* Background image + dark overlay */}
       {(bgMode === 'image' && bgImage) ? (
         <>
-          <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
-          {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
+          <Image data-edit-image="bgImage" src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} sizes="100vw" />
+          {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} sizes="100vw" />}
           <div className="absolute inset-0 bg-black/40" />
           <div className="absolute inset-0 bg-[#111827]/75" style={{ background: 'var(--token-section-bg, transparent)' }} />
         </>
@@ -255,13 +255,13 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgI
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta.label && (
-              <a href={primaryCta.href || '#'}
+              <a data-edit-link="primaryCta" href={primaryCta.href || '#'}
                 className="inline-flex items-center justify-between sm:justify-center sm:gap-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] w-full sm:w-auto">
                 <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={18} />}
               </a>
             )}
             {secondaryCta.label && (
-              <a href={secondaryCta.href || '#'}
+              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'}
                 className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_34%,transparent)] text-[color:var(--token-on-dark-heading)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-on-dark-heading)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.1)]" data-edit-path="label">
                 {secondaryCta.label}
               </a>

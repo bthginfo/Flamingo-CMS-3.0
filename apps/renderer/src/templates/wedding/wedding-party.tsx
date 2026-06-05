@@ -30,7 +30,7 @@ function Classic({ badge, headline, members }: P) {
           {members.map((m, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center" data-edit-collection="members" data-edit-index={i}>
               <div className="relative w-32 h-32 mx-auto mb-5 rounded-full overflow-hidden bg-[var(--token-btn-bg)/5]">
-                {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full flex items-center justify-center text-4xl text-[color:var(--token-icon)/30]">{m.name[0]}</div>}
+                {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full flex items-center justify-center text-4xl text-[color:var(--token-icon)/30]">{m.name[0]}</div>}
               </div>
               <h3 className="text-lg font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h3>
               <p className="text-[color:var(--token-icon)] text-sm font-medium mt-1" data-edit-path="role">{m.role}</p>
@@ -53,7 +53,7 @@ function Modern({ badge, headline, members }: P) {
           {members.map((m, i) => (
             <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex gap-6 items-start border-t border-[color:var(--token-card-border)] pt-6" data-edit-collection="members" data-edit-index={i}>
               <div className="relative w-20 h-20 shrink-0">
-                {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full bg-[var(--token-section-bg-alt)] flex items-center justify-center text-2xl text-[color:var(--token-body)]">{m.name[0]}</div>}
+                {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full bg-[var(--token-section-bg-alt)] flex items-center justify-center text-2xl text-[color:var(--token-body)]">{m.name[0]}</div>}
               </div>
               <div>
                 <h3 className="text-base font-medium text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h3>
@@ -78,7 +78,7 @@ function Bold({ badge, headline, members }: P) {
           {members.map((m, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-2 border-[color:var(--token-card-border)] p-6 text-center hover:border-[var(--token-card-border)/50] transition-colors" data-edit-collection="members" data-edit-index={i}>
               <div className="relative w-24 h-24 mx-auto mb-4">
-                {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full bg-[var(--token-section-bg-alt)] flex items-center justify-center text-3xl text-[color:var(--token-body)]">{m.name[0]}</div>}
+                {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover" /> : <div className="w-full h-full bg-[var(--token-section-bg-alt)] flex items-center justify-center text-3xl text-[color:var(--token-body)]">{m.name[0]}</div>}
               </div>
               <h3 className="text-lg font-bold text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h3>
               <p className="text-[color:var(--token-eyebrow)] text-xs font-bold uppercase tracking-widest mt-1" data-edit-path="role">{m.role}</p>

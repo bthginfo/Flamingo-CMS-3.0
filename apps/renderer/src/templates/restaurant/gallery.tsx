@@ -34,7 +34,7 @@ function GalleryClassic({ headline, subline, badgeText, images, ctaPrimary }: Pr
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((img, i) => (
           <motion.figure key={`${img.src}-${i}`} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }} className="group overflow-hidden rounded-xl border border-black/10 bg-[var(--token-card-bg)] shadow-md" data-edit-collection="images" data-edit-index={i}>
-            {img.src && <div className="relative aspect-[4/3]"><Image src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
+            {img.src && <div className="relative aspect-[4/3]"><Image data-edit-image="src" src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <figcaption className="p-4">
               {img.category && <p className="text-xs uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="category">{img.category}</p>}
               {img.caption && <p className="mt-1 text-sm text-[color:var(--token-heading)]" data-edit-path="caption">{img.caption}</p>}
@@ -42,7 +42,7 @@ function GalleryClassic({ headline, subline, badgeText, images, ctaPrimary }: Pr
           </motion.figure>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }
@@ -59,7 +59,7 @@ function GalleryModern({ headline, subline, badgeText, images, ctaPrimary }: Pro
       <div className="grid gap-px border border-black/5 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((img, i) => (
           <figure key={`${img.src}-${i}`} className="group overflow-hidden border border-black/5 bg-[var(--token-card-bg)]" data-edit-collection="images" data-edit-index={i}>
-            {img.src && <div className="relative aspect-[4/3]"><Image src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
+            {img.src && <div className="relative aspect-[4/3]"><Image data-edit-image="src" src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <figcaption className="p-5">
               {img.category && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]" data-edit-path="category">{img.category}</p>}
               {img.caption && <p className="mt-1 text-sm font-light text-[color:var(--token-heading)]" data-edit-path="caption">{img.caption}</p>}
@@ -67,7 +67,7 @@ function GalleryModern({ headline, subline, badgeText, images, ctaPrimary }: Pro
           </figure>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={14} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={14} /></a>}
     </div>
   );
 }
@@ -84,7 +84,7 @@ function GalleryBold({ headline, subline, badgeText, images, ctaPrimary }: Props
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((img, i) => (
           <figure key={`${img.src}-${i}`} className="group overflow-hidden border-2 border-[color:var(--token-card-border)/20] shadow-[4px_4px_0_rgba(255,255,255,0.15)]" data-edit-collection="images" data-edit-index={i}>
-            {img.src && <div className="relative aspect-[4/3]"><Image src={img.src} alt={img.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
+            {img.src && <div className="relative aspect-[4/3]"><Image data-edit-image="src" src={img.src} alt={img.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
             <figcaption className="p-4">
               {img.category && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="category">{img.category}</p>}
               {img.caption && <p className="mt-1 text-sm font-bold" data-edit-path="caption">{img.caption}</p>}
@@ -92,7 +92,7 @@ function GalleryBold({ headline, subline, badgeText, images, ctaPrimary }: Props
           </figure>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_rgba(255,255,255,0.3)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_rgba(255,255,255,0.3)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }

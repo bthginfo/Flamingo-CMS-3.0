@@ -45,7 +45,7 @@ export function ShopCategoryOverviewSection({ data }: Props) {
             <div className="bg-[var(--token-card-bg)] rounded-2xl border border-[color:var(--token-card-border)] overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-[4/3] bg-[var(--token-section-bg-alt)] relative overflow-hidden">
                 {cat.image ? (
-                  <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <img data-edit-image="image" src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <FolderOpen size={40} className="text-[color:var(--token-body)]" />

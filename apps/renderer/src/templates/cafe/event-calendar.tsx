@@ -45,7 +45,7 @@ export function CafeEventCalendarSection({ data }: Props) {
               >
                 {event.image && (
                   <div className="relative aspect-[16/9] overflow-hidden">
-                    <Image src={event.image} alt={event.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
+                    <Image data-edit-image="image" src={event.image} alt={event.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
                   </div>
                 )}
                 <div className="p-5">

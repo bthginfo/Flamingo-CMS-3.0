@@ -17,13 +17,13 @@ export function SectionHeader({ headline, subline, badgeText }: HeaderData) {
 
 export function CtaButton({ cta }: { cta: ButtonValue }) {
   if (!cta.label) return null;
-  return <a href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>;
+  return <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>;
 }
 
 export function ImageCard({ image, title, text, meta, cta }: { image?: string; title?: string; text?: string; meta?: string; cta?: ButtonValue }) {
   return (
     <article className="group overflow-hidden rounded-xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm">
-      {image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={image} alt={title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
+      {image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={image} alt={title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
       <div className="p-5">
         {meta && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text)]">{meta}</p>}
         <h3 className="mt-2 text-xl font-bold text-[var(--token-heading)]" data-edit-path="title">{title || ''}</h3>

@@ -69,7 +69,7 @@ export function MaterialGallerySection({ data }: Props) {
            data-edit-collection="filtered" data-edit-index={i}>
             <div className="aspect-square rounded-[var(--token-card-radius)] overflow-hidden bg-[var(--token-section-bg-alt)] border border-[rgba(0,0,0,0.06)] shadow-sm group-hover:shadow-lg transition-shadow duration-300">
               {item.image ? (
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <img data-edit-image="image" src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />
               )}

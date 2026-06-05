@@ -33,9 +33,9 @@ function BookingClassic({ headline, subline, badgeText, introText, onlineCta, ph
       </div>
       {introText && <div className="max-w-2xl text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
-        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md"><CalendarDays size={17} /><span data-edit-path="label">{onlineCta.label}</span></a>}
-        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-icon)]/30 px-5 py-3 font-semibold text-[color:var(--token-heading)]"><Phone size={17} /><span data-edit-path="label">{phoneCta.label}</span></a>}
-        {whatsappCta.label && <a href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-icon)]/30 px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{whatsappCta.label}</a>}
+        {onlineCta.label && <a data-edit-link="onlineCta" href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md"><CalendarDays size={17} /><span data-edit-path="label">{onlineCta.label}</span></a>}
+        {phoneCta.label && <a data-edit-link="phoneCta" href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-icon)]/30 px-5 py-3 font-semibold text-[color:var(--token-heading)]"><Phone size={17} /><span data-edit-path="label">{phoneCta.label}</span></a>}
+        {whatsappCta.label && <a data-edit-link="whatsappCta" href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-icon)]/30 px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{whatsappCta.label}</a>}
       </div>
       <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="rounded-full bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs text-[var(--token-eyebrow)]" data-edit-path="note">{note}</span>)}</div>
     </motion.div>
@@ -52,9 +52,9 @@ function BookingModern({ headline, subline, badgeText, introText, onlineCta, pho
       </div>
       {introText && <div className="max-w-2xl font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
-        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]"><CalendarDays size={16} /><span data-edit-path="label">{onlineCta.label}</span></a>}
-        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted)]"><Phone size={16} /><span data-edit-path="label">{phoneCta.label}</span></a>}
-        {whatsappCta.label && <a href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted)]" data-edit-path="label">{whatsappCta.label}</a>}
+        {onlineCta.label && <a data-edit-link="onlineCta" href={onlineCta.href || '#'} className="inline-flex items-center gap-2 border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]"><CalendarDays size={16} /><span data-edit-path="label">{onlineCta.label}</span></a>}
+        {phoneCta.label && <a data-edit-link="phoneCta" href={phoneCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted)]"><Phone size={16} /><span data-edit-path="label">{phoneCta.label}</span></a>}
+        {whatsappCta.label && <a data-edit-link="whatsappCta" href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted)]" data-edit-path="label">{whatsappCta.label}</a>}
       </div>
       <div className="mt-6 flex flex-wrap gap-3">{notes.map((note) => <span key={note} className="border-b border-[var(--token-card-border)] pb-1 text-xs font-light text-[color:var(--token-muted)]" data-edit-path="note">{note}</span>)}</div>
     </div>
@@ -71,9 +71,9 @@ function BookingBold({ headline, subline, badgeText, introText, onlineCta, phone
       </div>
       {introText && <div className="max-w-2xl font-bold text-[color:var(--token-on-dark-heading)/70] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
-        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 bg-[var(--token-badge-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]"><CalendarDays size={17} /><span data-edit-path="label">{onlineCta.label}</span></a>}
-        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]"><Phone size={17} /><span data-edit-path="label">{phoneCta.label}</span></a>}
-        {whatsappCta.label && <a href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{whatsappCta.label}</a>}
+        {onlineCta.label && <a data-edit-link="onlineCta" href={onlineCta.href || '#'} className="inline-flex items-center gap-2 bg-[var(--token-badge-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]"><CalendarDays size={17} /><span data-edit-path="label">{onlineCta.label}</span></a>}
+        {phoneCta.label && <a data-edit-link="phoneCta" href={phoneCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]"><Phone size={17} /><span data-edit-path="label">{phoneCta.label}</span></a>}
+        {whatsappCta.label && <a data-edit-link="whatsappCta" href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{whatsappCta.label}</a>}
       </div>
       <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="note">{note}</span>)}</div>
     </div>

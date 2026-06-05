@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
       deletePage: { method: 'DELETE', path: '/api/v1/content/pages/:id', description: 'Delete a page' },
       seoGlobal: { method: 'PUT', path: '/api/v1/content/seo', description: 'Set global SEO defaults (titleTemplate, defaultDescription, canonicalBase, locale)' },
       seoPage: { method: 'PUT', path: '/api/v1/content/seo/:pageId', description: 'Set page-level SEO (metaTitle, metaDescription, ogImage, canonical, noindex)' },
-      design: { method: 'PUT', path: '/api/v1/content/design', description: 'Set GLOBAL design overrides (single hex string per key). Supported keys: textPrimary, textSecondary, sectionBg, sectionBgAlt, cardBg, cardBorder, badgeBg, badgeText, badgeBorder, brand, accent, heading, subheading, body, muted, icon, btnBg, btnText, dividerColor, eyebrow, statValue, quote, ratingStar, check, onDarkHeading, onDarkBody, onDarkMuted. These cascade as fallbacks for every section. For PER-SECTION colour tuning use section.styleOverrides instead.' },
+      design: { method: 'PUT', path: '/api/v1/content/design', description: 'Set GLOBAL design overrides (single hex string per key). Supported keys: sectionBg, sectionBgAlt, cardBg, cardBorder, badgeBg, badgeText, badgeBorder, brand, accent, heading, subheading, body, muted, icon, btnBg, btnText, dividerColor, eyebrow, statValue, quote, ratingStar, check, onDarkHeading, onDarkBody, onDarkMuted. These cascade as fallbacks for every section. For PER-SECTION colour tuning use section.styleOverrides instead.' },
       formFields: { method: 'PUT', path: '/api/v1/content/form-fields', description: 'Set contact form fields: { fields: [{ name, label, type: "text"|"email"|"tel"|"textarea"|"select", placeholder?, required?, options?, halfWidth? }] }' },
       openingHours: { method: 'PUT', path: '/api/v1/content/opening-hours', description: 'Set opening hours: { hours: [{ type?: "regular"|"special", day?: string, date?: "YYYY-MM-DD", hours?: string, closed?: boolean, note?: string }] }. Use regular rows for weekly hours and special rows for holidays, vacations or one-off changes.' },
       listCollections: { method: 'GET', path: '/api/v1/content/collections', description: 'List all collections' },
@@ -100,7 +100,7 @@ export async function GET(req: NextRequest) {
       'Only fill fields defined in sectionDataSchemas — do not invent custom fields.',
       'Section colors are NOT normal data fields. Put per-section colors into section.styleOverrides using CSS variables from sectionStyleContracts.',
       'For every section with an image, dark background or overlay, explicitly set contrasting text/button colors in styleOverrides. Do not rely on global theme colors when contrast is uncertain.',
-      'Never send text and background colors with low contrast. Use dark text on light backgrounds, light text on dark backgrounds, and pair --brand-btn-bg with a readable --brand-btn-text. WCAG AA requires a contrast ratio of 4.5:1 for body text and 3:1 for large text.',
+      'Never send text and background colors with low contrast. Use dark text on light backgrounds, light text on dark backgrounds, and pair --token-btn-bg with a readable --token-btn-text. WCAG AA requires a contrast ratio of 4.5:1 for body text and 3:1 for large text.',
       'Every section MUST have ALL required fields filled with real content — never leave fields empty or with placeholder text like "Lorem ipsum".',
       'Every array field (items, services, steps, etc.) MUST have at least 3 entries unless the real business has fewer.',
       'The footer MUST contain columns with items arrays. Each item needs text and optionally href. Never send empty columns or columns without items.',
@@ -482,11 +482,11 @@ function getStyleSystemInstructions() {
       type: 'sectionType',
       data: '{ content fields from sectionDataSchemas }',
       styleOverrides: {
-        '--style-section-bg': '#ffffff',
-        '--style-heading-color': '#111111',
-        '--style-body-color': '#3f3f46',
-        '--brand-btn-bg': '#111111',
-        '--brand-btn-text': '#ffffff',
+        '--token-section-bg': '#ffffff',
+        '--token-heading': '#111111',
+        '--token-body': '#3f3f46',
+        '--token-btn-bg': '#111111',
+        '--token-btn-text': '#ffffff',
       },
     },
     globalVsSection: [
@@ -496,10 +496,20 @@ function getStyleSystemInstructions() {
     ],
     contrastRules: [
       'Every background/text pair must be readable: section/card/image backgrounds must contrast with heading, body and muted text.',
-      'Every primary CTA must define both --brand-btn-bg and --brand-btn-text when overriding one of them.',
+      'Every primary CTA must define both --token-btn-bg and --token-btn-text when overriding one of them.',
       'Image sections should use a dark overlay with light text OR a light overlay with dark text. Do not use dark text on dark images.',
-      'Badge colors must pair --style-badge-bg with --style-badge-text.',
-      'If a section has cards on a dark section background, set --style-card-bg and text colors independently so card content remains readable.',
+      'Badge colors must pair --token-badge-bg with --token-badge-text.',
+      'If a section has cards on a dark section background, set --token-card-bg and text colors independently so card content remains readable.',
+    ],
+    canonicalSlots: [
+      '--token-section-bg', '--token-section-bg-alt', '--token-card-bg', '--token-card-border',
+      '--token-heading', '--token-subheading', '--token-body', '--token-muted',
+      '--token-icon', '--token-accent', '--token-eyebrow', '--token-stat-value',
+      '--token-quote', '--token-rating-star', '--token-check',
+      '--token-badge-bg', '--token-badge-text', '--token-badge-border',
+      '--token-btn-bg', '--token-btn-text', '--token-divider',
+      '--token-on-dark-heading', '--token-on-dark-body', '--token-on-dark-muted',
+      '--token-image-overlay', '--token-card-radius', '--token-button-radius',
     ],
     commonCssVariables: Object.fromEntries(
       Object.entries(SECTION_COLOR_SLOT_DEFINITIONS).map(([slot, def]) => [slot, {
@@ -533,21 +543,22 @@ function getSectionStyleContracts(sectionTypes: Array<{ type?: string; id?: stri
 function getRecommendedMinimumStyle(colorSlots: string[]) {
   const slots = new Set(colorSlots);
   const style: Record<string, string> = {};
-  if (slots.has('sectionBg')) style['--style-section-bg'] = 'background color';
-  if (slots.has('cardBg')) style['--style-card-bg'] = 'card background color';
-  if (slots.has('headingColor')) style['--style-heading-color'] = 'readable heading color';
-  if (slots.has('bodyColor')) style['--style-body-color'] = 'readable body text color';
-  if (slots.has('textPrimary')) style['--style-text-primary'] = 'readable primary text color';
-  if (slots.has('textSecondary')) style['--style-text-secondary'] = 'readable secondary text color';
-  if (slots.has('imageTextColor')) style['--style-image-text-color'] = 'readable text color on image/overlay';
-  if (slots.has('accentColor')) style['--style-accent-color'] = 'accent color';
-  if (slots.has('iconColor')) style['--style-icon-color'] = 'icon color';
-  if (slots.has('btnBg')) style['--brand-btn-bg'] = 'button background color';
-  if (slots.has('btnText')) style['--brand-btn-text'] = 'button text color';
-  if (slots.has('badgeBg')) style['--style-badge-bg'] = 'badge background color';
-  if (slots.has('badgeText')) style['--style-badge-text'] = 'badge text color';
-  if (slots.has('borderColor')) style['--style-border-color'] = 'border color';
-  if (slots.has('overlayColor')) style['--style-overlay-color'] = 'image overlay color';
+  if (slots.has('sectionBg')) style['--token-section-bg'] = 'background color';
+  if (slots.has('cardBg')) style['--token-card-bg'] = 'card background color';
+  if (slots.has('headingColor')) style['--token-heading'] = 'readable heading color';
+  if (slots.has('bodyColor')) style['--token-body'] = 'readable body text color';
+  if (slots.has('mutedColor')) style['--token-muted'] = 'dezenter text color';
+  if (slots.has('textPrimary')) style['--token-body'] = 'readable body color';
+  if (slots.has('textSecondary')) style['--token-muted'] = 'readable secondary text color';
+  if (slots.has('imageTextColor')) style['--token-on-dark-heading'] = 'readable text color on image/overlay';
+  if (slots.has('accentColor')) style['--token-accent'] = 'accent color';
+  if (slots.has('iconColor')) style['--token-icon'] = 'icon color';
+  if (slots.has('btnBg')) style['--token-btn-bg'] = 'button background color';
+  if (slots.has('btnText')) style['--token-btn-text'] = 'button text color';
+  if (slots.has('badgeBg')) style['--token-badge-bg'] = 'badge background color';
+  if (slots.has('badgeText')) style['--token-badge-text'] = 'badge text color';
+  if (slots.has('borderColor')) style['--token-card-border'] = 'border color';
+  if (slots.has('overlayColor')) style['--token-image-overlay'] = 'image overlay color';
   return style;
 }
 

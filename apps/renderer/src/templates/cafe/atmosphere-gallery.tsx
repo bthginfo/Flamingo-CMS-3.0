@@ -33,7 +33,7 @@ export function AtmosphereGallerySection({ data }: Props) {
               transition={{ delay: i * 0.08 }}
               className="relative break-inside-avoid rounded-lg overflow-hidden group"
              data-edit-collection="images" data-edit-index={i}>
-              <Image
+              <Image data-edit-image="src"
                 src={img.src}
                 alt={img.caption || ''}
                 width={600}

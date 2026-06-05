@@ -21,7 +21,7 @@ export function BrandShowroomSection({ data }: Props) {
   return (
     <div ref={ref} className="relative rounded-[var(--token-card-radius)] overflow-hidden min-h-[500px] md:min-h-[600px] flex items-end">
       {image ? (
-        <img src={image} alt={headline} className="absolute inset-0 w-full h-full object-cover" />
+        <img data-edit-image="image" src={image} alt={headline} className="absolute inset-0 w-full h-full object-cover" />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-[var(--token-icon)] to-[var(--token-subheading)]" />
       )}
@@ -55,7 +55,7 @@ export function BrandShowroomSection({ data }: Props) {
           )}
 
           {cta?.label && (
-            <a href={cta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-[var(--token-button-radius)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
+            <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-[var(--token-button-radius)] hover:brightness-110 transition-all shadow-lg" data-edit-path="label">
               {cta.label}
             </a>
           )}

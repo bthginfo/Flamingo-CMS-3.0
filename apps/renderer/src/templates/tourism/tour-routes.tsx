@@ -39,7 +39,7 @@ function Classic({ header, routes, ctaPrimary }: Props) {
       <div className="grid gap-6 lg:grid-cols-2">
         {routes.map((route, index) => (
           <motion.article key={`$<span data-edit-path="title">{route.title}</span>-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" data-edit-collection="routes" data-edit-index={index}>
-            {route.image && <div className="relative aspect-[16/9]"><Image src={route.image} alt={route.title || ''} fill className="object-cover" sizes="50vw" /></div>}
+            {route.image && <div className="relative aspect-[16/9]"><Image data-edit-image="image" src={route.image} alt={route.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="p-6">
               <RouteMeta route={route} className="text-[var(--token-badge-text)]" />
               <h3 className="mt-3 text-2xl font-bold text-[var(--token-heading)]" data-edit-path="title">{route.title || ''}</h3>
@@ -50,7 +50,7 @@ function Classic({ header, routes, ctaPrimary }: Props) {
           </motion.article>
         ))}
       </div>
-      {ctaPrimary.label && <div className="mt-8"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
+      {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
     </div>
   );
 }
@@ -62,7 +62,7 @@ function Modern({ header, routes, ctaPrimary }: Props) {
       <div className="grid gap-6 lg:grid-cols-2">
         {routes.map((route, index) => (
           <article key={`$<span data-edit-path="title">{route.title}</span>-${index}`} className="overflow-hidden border border-[var(--token-card-border)] bg-[var(--token-card-bg)]" data-edit-collection="routes" data-edit-index={index}>
-            {route.image && <div className="relative aspect-[16/9]"><Image src={route.image} alt={route.title || ''} fill className="object-cover" sizes="50vw" /></div>}
+            {route.image && <div className="relative aspect-[16/9]"><Image data-edit-image="image" src={route.image} alt={route.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="p-6">
               <RouteMeta route={route} className="text-[var(--token-badge-text)] font-light" />
               <h3 className="mt-3 text-2xl font-light text-[var(--token-heading)]" data-edit-path="title">{route.title || ''}</h3>
@@ -73,7 +73,7 @@ function Modern({ header, routes, ctaPrimary }: Props) {
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <div className="mt-8"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
+      {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
     </div>
   );
 }
@@ -89,7 +89,7 @@ function Bold({ header, routes, ctaPrimary }: Props) {
       <div className="grid gap-6 lg:grid-cols-2">
         {routes.map((route, index) => (
           <article key={`$<span data-edit-path="title">{route.title}</span>-${index}`} className="overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="routes" data-edit-index={index}>
-            {route.image && <div className="relative aspect-[16/9]"><Image src={route.image} alt={route.title || ''} fill className="object-cover" sizes="50vw" /></div>}
+            {route.image && <div className="relative aspect-[16/9]"><Image data-edit-image="image" src={route.image} alt={route.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="p-6">
               <RouteMeta route={route} className="text-[var(--token-badge-text)] font-black" />
               <h3 className="mt-3 text-2xl font-black uppercase text-[var(--token-heading)]" data-edit-path="title">{route.title || ''}</h3>
@@ -100,7 +100,7 @@ function Bold({ header, routes, ctaPrimary }: Props) {
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <div className="mt-8"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
+      {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
     </div>
   );
 }

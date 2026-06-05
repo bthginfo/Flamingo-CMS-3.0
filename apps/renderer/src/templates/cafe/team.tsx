@@ -36,7 +36,7 @@ function Classic({ headline, subline, members, ref, inView }: TProps) {
             className="group relative bg-[var(--token-card-bg)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-[color:var(--token-card-border)]" data-edit-collection="members" data-edit-index={i}>
             <div className="relative aspect-[3/4] overflow-hidden">
               {m.image ? (
-                <Image src={m.image} alt={m.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 25vw" />
+                <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 25vw" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-amber-50 to-orange-50 flex items-center justify-center">
                   <span className="text-5xl">☕</span>
@@ -75,7 +75,7 @@ function Modern({ headline, subline, members, ref, inView }: TProps) {
             className="group" data-edit-collection="members" data-edit-index={i}>
             <div className="relative aspect-square rounded-xl overflow-hidden mb-3">
               {m.image ? (
-                <Image src={m.image} alt={m.name} fill className="object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500" sizes="(max-width: 640px) 50vw, 25vw" />
+                <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover grayscale-[30%] group-hover:grayscale-0 transition-all duration-500" sizes="(max-width: 640px) 50vw, 25vw" />
               ) : (
                 <div className="w-full h-full bg-[var(--token-section-bg-alt)]" />
               )}
@@ -103,7 +103,7 @@ function Bold({ headline, subline, members, ref, inView }: TProps) {
           <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} animate={inView ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }}
             className="group relative aspect-[3/4] rounded-lg overflow-hidden" data-edit-collection="members" data-edit-index={i}>
             {m.image ? (
-              <Image src={m.image} alt={m.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 640px) 100vw, 25vw" />
+              <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 640px) 100vw, 25vw" />
             ) : (
               <div className="w-full h-full bg-[var(--token-section-bg-alt)]" />
             )}

@@ -37,7 +37,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
       {bgImage ? (
         <>
           <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
-            <Image src={bgImage} alt={headline} fill className="object-cover" style={{ objectPosition: bgPosition }} priority />
+            <Image data-edit-image="bgImage" src={bgImage} alt={headline} fill className="object-cover" style={{ objectPosition: bgPosition }} priority />
           </ImageEffectWrapper>
           <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
         </>

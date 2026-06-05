@@ -104,7 +104,7 @@ export function CollectionListSection({ data }: Props) {
              data-edit-collection="sorted" data-edit-index={i}>
               {showImage && item.image && (
                 <div className="aspect-[16/10] overflow-hidden">
-                  <img
+                  <img data-edit-image="image"
                     src={item.image}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

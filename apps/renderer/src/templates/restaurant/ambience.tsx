@@ -40,9 +40,9 @@ function AmbienceClassic({ headline, subline, badgeText, imagePrimary, imageSeco
   return (
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="grid gap-10 lg:grid-cols-2 lg:items-center">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-lg"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
-        {imageTertiary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image src={imageTertiary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+        {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-lg"><Image data-edit-image="imagePrimary" src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image data-edit-image="imageSecondary" src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+        {imageTertiary && <div className="relative aspect-square overflow-hidden rounded-xl shadow-md"><Image data-edit-image="imageTertiary" src={imageTertiary} alt="" fill className="object-cover" sizes="25vw" /></div>}
       </div>
       <div>
         {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg)/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
@@ -59,7 +59,7 @@ function AmbienceClassic({ headline, subline, badgeText, imagePrimary, imageSeco
             </motion.div>
           ))}
         </div>
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md transition-shadow hover:shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md transition-shadow hover:shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
       </div>
     </motion.div>
   );
@@ -69,9 +69,9 @@ function AmbienceModern({ headline, subline, badgeText, imagePrimary, imageSecon
   return (
     <div className="grid gap-16 lg:grid-cols-2 lg:items-start">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border border-black/5"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {imageSecondary && <div className="relative aspect-square overflow-hidden border border-black/5"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
-        {imageTertiary && <div className="relative aspect-square overflow-hidden border border-black/5"><Image src={imageTertiary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+        {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border border-black/5"><Image data-edit-image="imagePrimary" src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {imageSecondary && <div className="relative aspect-square overflow-hidden border border-black/5"><Image data-edit-image="imageSecondary" src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+        {imageTertiary && <div className="relative aspect-square overflow-hidden border border-black/5"><Image data-edit-image="imageTertiary" src={imageTertiary} alt="" fill className="object-cover" sizes="25vw" /></div>}
       </div>
       <div>
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
@@ -89,7 +89,7 @@ function AmbienceModern({ headline, subline, badgeText, imagePrimary, imageSecon
             </div>
           ))}
         </div>
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
       </div>
     </div>
   );
@@ -100,9 +100,9 @@ function AmbienceBold({ headline, subline, badgeText, imagePrimary, imageSeconda
     <div className="bg-[#111827] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
       <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-none border-2 border-[color:var(--token-card-border)/20]"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-          {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-none border-2 border-[color:var(--token-card-border)/20]"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
-          {imageTertiary && <div className="relative aspect-square overflow-hidden rounded-none border-2 border-[color:var(--token-card-border)/20]"><Image src={imageTertiary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-none border-2 border-[color:var(--token-card-border)/20]"><Image data-edit-image="imagePrimary" src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {imageSecondary && <div className="relative aspect-square overflow-hidden rounded-none border-2 border-[color:var(--token-card-border)/20]"><Image data-edit-image="imageSecondary" src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+          {imageTertiary && <div className="relative aspect-square overflow-hidden rounded-none border-2 border-[color:var(--token-card-border)/20]"><Image data-edit-image="imageTertiary" src={imageTertiary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
         <div>
           {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{badgeText}</p>}
@@ -120,7 +120,7 @@ function AmbienceBold({ headline, subline, badgeText, imagePrimary, imageSeconda
               </div>
             ))}
           </div>
-          {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-none border-2 border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_rgba(255,255,255,0.3)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+          {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-none border-2 border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_rgba(255,255,255,0.3)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
         </div>
       </div>
     </div>

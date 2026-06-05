@@ -39,7 +39,7 @@ export function InspirationGridSection({ data }: Props) {
             className="group relative aspect-[3/4] md:aspect-square rounded-[var(--token-card-radius)] overflow-hidden ring-2 ring-transparent hover:ring-[var(--token-icon)] transition-all duration-300"
            data-edit-collection="items" data-edit-index={i}>
             {item.image ? (
-              <img src={item.image} alt={item.title || ''} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <img data-edit-image="image" src={item.image} alt={item.title || ''} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300" />
             )}

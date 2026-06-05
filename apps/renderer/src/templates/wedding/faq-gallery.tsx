@@ -118,7 +118,7 @@ export function WeddingGallerySection({ data, styleVariant }: Props) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
             {images.map((img, i) => (
               <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="relative aspect-square" data-edit-collection="images" data-edit-index={i}>
-                <Image src={img.src} alt={img.alt || ''} fill className="object-cover" />
+                <Image data-edit-image="src" src={img.src} alt={img.alt || ''} fill className="object-cover" />
               </motion.div>
             ))}
           </div>
@@ -136,7 +136,7 @@ export function WeddingGallerySection({ data, styleVariant }: Props) {
           <div className="columns-2 md:columns-3 gap-2 space-y-2">
             {images.map((img, i) => (
               <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative break-inside-avoid overflow-hidden" data-edit-collection="images" data-edit-index={i}>
-                <Image src={img.src} alt={img.alt || ''} width={600} height={800} className="w-full h-auto object-cover" />
+                <Image data-edit-image="src" src={img.src} alt={img.alt || ''} width={600} height={800} className="w-full h-auto object-cover" />
                 <div className="absolute inset-0 border border-[color:var(--token-card-border)]" />
               </motion.div>
             ))}
@@ -156,7 +156,7 @@ export function WeddingGallerySection({ data, styleVariant }: Props) {
         <div className="columns-2 md:columns-3 gap-4 space-y-4">
           {images.map((img, i) => (
             <motion.div key={i} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="relative break-inside-avoid rounded-xl overflow-hidden" data-edit-collection="images" data-edit-index={i}>
-              <Image src={img.src} alt={img.alt || ''} width={600} height={800} className="w-full h-auto object-cover" />
+              <Image data-edit-image="src" src={img.src} alt={img.alt || ''} width={600} height={800} className="w-full h-auto object-cover" />
             </motion.div>
           ))}
         </div>

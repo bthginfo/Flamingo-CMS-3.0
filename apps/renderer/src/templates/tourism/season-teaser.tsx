@@ -26,7 +26,7 @@ function Classic({ header, seasons }: Props) {
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {seasons.map((season, index) => (
           <motion.article key={`${season.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="group overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" data-edit-collection="seasons" data-edit-index={index}>
-            {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={season.image} alt={season.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="25vw" /></div>}
+            {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={season.image} alt={season.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="25vw" /></div>}
             <div className="p-5">
               <p className="text-xs font-bold uppercase tracking-widest text-green-700">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
               <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{season.title || ''}</h3>
@@ -47,7 +47,7 @@ function Modern({ header, seasons }: Props) {
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {seasons.map((season, index) => (
           <article key={`${season.title}-${index}`} className="group overflow-hidden border border-black/10 bg-[var(--token-card-bg)]" data-edit-collection="seasons" data-edit-index={index}>
-            {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={season.image} alt={season.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+            {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={season.image} alt={season.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             <div className="p-5">
               <p className="text-xs font-light uppercase tracking-widest text-teal-600">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
               <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading)]" data-edit-path="title">{season.title || ''}</h3>
@@ -72,7 +72,7 @@ function Bold({ header, seasons }: Props) {
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {seasons.map((season, index) => (
           <article key={`$<span data-edit-path="title">{season.title}</span>-${index}`} className="group overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg)] shadow-[4px_4px_0_#111827]" data-edit-collection="seasons" data-edit-index={index}>
-            {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={season.image} alt={season.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+            {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={season.image} alt={season.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             <div className="p-5">
               <p className="text-xs font-black uppercase tracking-widest text-orange-500">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>
               <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{season.title || ''}</h3>

@@ -43,7 +43,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
       <div className="grid gap-6 lg:grid-cols-3">
         {spaces.map((space, index) => (
           <motion.article key={`$<span data-edit-path="name">{space.name}</span>-${index}`} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }} className="overflow-hidden rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md" data-edit-collection="spaces" data-edit-index={index}>
-            {space.image && <div className="relative aspect-[4/3]"><Image src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
+            {space.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <h3 className="text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="name">{space.name || ''}</h3>
               {space.description && <div className="mt-3 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: space.description }} />}
@@ -65,7 +65,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
           </motion.div>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }
@@ -82,7 +82,7 @@ function EventModern({ headline, subline, badgeText, spaces, processHeadline, pr
       <div className="grid gap-px border border-black/10 lg:grid-cols-3">
         {spaces.map((space, index) => (
           <article key={`$<span data-edit-path="name">{space.name}</span>-${index}`} className="overflow-hidden border border-black/10 bg-[var(--token-card-bg)]" data-edit-collection="spaces" data-edit-index={index}>
-            {space.image && <div className="relative aspect-[4/3]"><Image src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
+            {space.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-6">
               <h3 className="text-lg font-light text-[color:var(--token-heading)]" data-edit-path="name">{space.name || ''}</h3>
               {space.description && <div className="mt-3 text-sm font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: space.description }} />}
@@ -104,7 +104,7 @@ function EventModern({ headline, subline, badgeText, spaces, processHeadline, pr
           </div>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 font-light text-[color:var(--token-heading)] underline underline-offset-4"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={14} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 font-light text-[color:var(--token-heading)] underline underline-offset-4"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={14} /></a>}
     </div>
   );
 }
@@ -121,7 +121,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
       <div className="grid gap-4 lg:grid-cols-3">
         {spaces.map((space, index) => (
           <article key={`$<span data-edit-path="name">{space.name}</span>-${index}`} className="overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg)] shadow-[4px_4px_0_#111827]" data-edit-collection="spaces" data-edit-index={index}>
-            {space.image && <div className="relative aspect-[4/3]"><Image src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
+            {space.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={space.image} alt={space.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <h3 className="text-xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="name">{space.name || ''}</h3>
               {space.description && <div className="mt-3 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: space.description }} />}
@@ -143,7 +143,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
           </div>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }

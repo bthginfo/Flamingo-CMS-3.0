@@ -29,7 +29,7 @@ export function FeatureShowcaseSection({ data }: Props) {
         style={{ y: imageY }}
         className={`relative overflow-hidden rounded-2xl aspect-[4/3] lg:aspect-auto lg:h-[500px] ${reversed ? 'lg:order-2 lg:direction-ltr' : ''}`}
       >
-        {image && <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover scale-110" />}
+        {image && <img data-edit-image="image" src={image} alt="" className="absolute inset-0 w-full h-full object-cover scale-110" />}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
       </motion.div>
 

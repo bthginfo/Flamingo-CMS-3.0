@@ -48,7 +48,7 @@ export function ProductShowcaseSection({ data }: Props) {
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
                 {item.image ? (
-                  <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img data-edit-image="image" src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-300">
                     <ShoppingBag size={48} />

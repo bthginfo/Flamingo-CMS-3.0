@@ -73,13 +73,13 @@ export function PopupSection({ data }: SectionProps) {
         {(primaryCta.label || secondaryCta.label) && (
           <div className="relative mt-7 flex flex-col gap-3 sm:flex-row">
             {primaryCta.label && (
-              <a href={primaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center gap-2 rounded-[var(--token-button-radius)] bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[var(--token-btn-text)] shadow-lg transition hover:brightness-110">
+              <a data-edit-link="primaryCta" href={primaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center gap-2 rounded-[var(--token-button-radius)] bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[var(--token-btn-text)] shadow-lg transition hover:brightness-110">
                 <span data-edit-path="label">{primaryCta.label}</span>
                 <ArrowRight size={16} />
               </a>
             )}
             {secondaryCta.label && (
-              <a href={secondaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center rounded-[var(--token-button-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)/70] px-5 py-3 text-sm font-bold text-[var(--token-heading)] transition hover:bg-[var(--token-card-bg)]" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center rounded-[var(--token-button-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)/70] px-5 py-3 text-sm font-bold text-[var(--token-heading)] transition hover:bg-[var(--token-card-bg)]" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

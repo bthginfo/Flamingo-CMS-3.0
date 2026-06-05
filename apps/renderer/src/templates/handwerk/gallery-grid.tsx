@@ -75,7 +75,7 @@ export function GalleryGridSection({ data }: Props) {
                   className="relative w-full rounded-xl overflow-hidden group cursor-pointer"
                   style={{ aspectRatio }}
                 >
-                  <Image src={img.src} alt={img.alt || ''} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes={`(max-width: 768px) 50vw, ${Math.round(100 / colCount)}vw`} />
+                  <Image data-edit-image="src" src={img.src} alt={img.alt || ''} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes={`(max-width: 768px) 50vw, ${Math.round(100 / colCount)}vw`} />
                   <div className="absolute inset-0 bg-[var(--token-section-bg-alt)/0] group-hover:bg-[var(--token-section-bg-alt)/20] transition-colors" />
                   {img.caption && (
                     <div className="absolute bottom-0 left-0 right-0 px-3 py-2 bg-gradient-to-t from-black/60 to-transparent text-[color:var(--token-on-dark-heading)] text-xs opacity-0 group-hover:opacity-100 transition-opacity" data-edit-path="caption">

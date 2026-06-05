@@ -71,7 +71,7 @@ export function LocationVibeSection({ data }: Props) {
                   title="Google Maps"
                 />
               ) : (
-                <img src={mapImage} alt="Standort" className="w-full h-full object-cover" />
+                <img data-edit-image="mapImage" src={mapImage} alt="Standort" className="w-full h-full object-cover" />
               )}
             </motion.div>
           )}

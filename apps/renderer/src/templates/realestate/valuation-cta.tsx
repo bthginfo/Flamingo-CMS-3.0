@@ -23,7 +23,7 @@ export function ValuationCtaSection({ data }: Props) {
       {/* Background image or gradient */}
       {bgImage ? (
         <>
-          <img src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img data-edit-image="bgImage" src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
           <div className="absolute inset-0 bg-[var(--token-section-bg-alt)/80]" />
         </>
       ) : (

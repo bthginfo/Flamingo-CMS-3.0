@@ -60,7 +60,7 @@ export function LocationHighlightSection({ data }: Props) {
               animate={inView ? { opacity: 1, x: 0 } : {}}
               className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-lg"
             >
-              <img src={image} alt={headline} className="w-full h-full object-cover" />
+              <img data-edit-image="image" src={image} alt={headline} className="w-full h-full object-cover" />
             </motion.div>
           )}
         </div>

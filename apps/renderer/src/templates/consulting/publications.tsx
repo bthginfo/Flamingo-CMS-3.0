@@ -37,7 +37,7 @@ export function PublicationsSection({ data }: Props) {
            data-edit-collection="articles" data-edit-index={i}>
             {article.image && (
               <div className="aspect-[16/9] overflow-hidden bg-[var(--token-section-bg-alt)]">
-                <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img data-edit-image="image" src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
             )}
             <div className="p-6">

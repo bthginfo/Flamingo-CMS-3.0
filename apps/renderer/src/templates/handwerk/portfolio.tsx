@@ -57,7 +57,7 @@ export function PortfolioSection({ data }: Props) {
               className="group relative rounded-3xl overflow-hidden bg-[var(--token-card-bg)] border border-[var(--token-card-border)] shadow-sm hover:shadow-xl transition-all duration-500"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
-                <Image
+                <Image data-edit-image="image"
                   src={project.image}
                   alt={project.title}
                   fill

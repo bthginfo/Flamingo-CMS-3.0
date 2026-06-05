@@ -26,7 +26,7 @@ function Classic({ header, doctors }: Props) {
       <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="grid gap-6 md:grid-cols-3">
         {doctors.map((item, index) => (
           <article key={`${item.name}-${index}`} className="group overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg" data-edit-collection="doctors" data-edit-index={index}>
-            {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
+            {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {item.specialty && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text)]">{item.specialty}</p>}
               <h3 className="mt-2 text-xl font-bold text-[var(--token-heading)]">{[item.title, item.name].filter(Boolean).join(' ')}</h3>
@@ -48,7 +48,7 @@ function Modern({ header, doctors }: Props) {
       <div className="grid gap-6 md:grid-cols-3">
         {doctors.map((item, index) => (
           <article key={`${item.name}-${index}`} className="group overflow-hidden border border-[var(--token-card-border)] bg-[var(--token-card-bg)]" data-edit-collection="doctors" data-edit-index={index}>
-            {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
+            {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {item.specialty && <p className="text-xs font-light uppercase tracking-widest text-[var(--token-badge-text)]">{item.specialty}</p>}
               <h3 className="mt-2 text-xl font-light text-[var(--token-heading)]">{[item.title, item.name].filter(Boolean).join(' ')}</h3>
@@ -74,7 +74,7 @@ function Bold({ header, doctors }: Props) {
       <div className="grid gap-6 md:grid-cols-3">
         {doctors.map((item, index) => (
           <article key={`$<span data-edit-path="name">{item.name}</span>-${index}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="doctors" data-edit-index={index}>
-            {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
+            {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {item.specialty && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text)]">{item.specialty}</p>}
               <h3 className="mt-2 text-xl font-black uppercase text-[var(--token-heading)]">{[item.title, item.name].filter(Boolean).join(' ')}</h3>

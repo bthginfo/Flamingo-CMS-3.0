@@ -60,8 +60,8 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
       {bgImage ? (
         <>
           <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
-            <Image src={bgImage} alt={names} fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority />
-            {bgImageMobile && <Image src={bgImageMobile} alt={names} fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority />}
+            <Image data-edit-image="bgImage" src={bgImage} alt={names} fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority />
+            {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt={names} fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority />}
           </ImageEffectWrapper>
           {isBold ? (
             overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />

@@ -40,7 +40,7 @@ function Classic({ header, events, fallbackText }: Props) {
       <div className="grid gap-6 lg:grid-cols-2">
         {events.map((event, index) => (
           <motion.article key={`$<span data-edit-path="title">{event.title}</span>-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-xl bg-white shadow-lg sm:grid-cols-[180px_1fr]" data-edit-collection="events" data-edit-index={index}>
-            {event.image && <div className="relative min-h-48"><Image src={event.image} alt={event.title || ''} fill className="object-cover" sizes="220px" /></div>}
+            {event.image && <div className="relative min-h-48"><Image data-edit-image="image" src={event.image} alt={event.title || ''} fill className="object-cover" sizes="220px" /></div>}
             <div className="p-5">
               <EventMeta event={event} />
               <h3 className="mt-3 text-xl font-bold text-[var(--token-heading)]" data-edit-path="title">{event.title || ''}</h3>
@@ -62,7 +62,7 @@ function Modern({ header, events, fallbackText }: Props) {
       <div className="grid gap-6 lg:grid-cols-2">
         {events.map((event, index) => (
           <article key={`$<span data-edit-path="title">{event.title}</span>-${index}`} className="grid overflow-hidden border border-black/10 bg-white sm:grid-cols-[180px_1fr]" data-edit-collection="events" data-edit-index={index}>
-            {event.image && <div className="relative min-h-48"><Image src={event.image} alt={event.title || ''} fill className="object-cover" sizes="220px" /></div>}
+            {event.image && <div className="relative min-h-48"><Image data-edit-image="image" src={event.image} alt={event.title || ''} fill className="object-cover" sizes="220px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-light uppercase tracking-widest text-[var(--token-accent)]">
                 {event.dateLabel && <span className="inline-flex items-center gap-1"><CalendarDays size={13} />{event.dateLabel}</span>}
@@ -94,7 +94,7 @@ function Bold({ header, events, fallbackText }: Props) {
       <div className="grid gap-6 lg:grid-cols-2">
         {events.map((event, index) => (
           <article key={`$<span data-edit-path="title">{event.title}</span>-${index}`} className="grid overflow-hidden border-2 border-[var(--token-card-border)] bg-white shadow-[4px_4px_0_var(--token-card-border)] sm:grid-cols-[180px_1fr]" data-edit-collection="events" data-edit-index={index}>
-            {event.image && <div className="relative min-h-48"><Image src={event.image} alt={event.title || ''} fill className="object-cover" sizes="220px" /></div>}
+            {event.image && <div className="relative min-h-48"><Image data-edit-image="image" src={event.image} alt={event.title || ''} fill className="object-cover" sizes="220px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-black uppercase tracking-widest text-[var(--token-accent)]">
                 {event.dateLabel && <span className="inline-flex items-center gap-1"><CalendarDays size={13} />{event.dateLabel}</span>}

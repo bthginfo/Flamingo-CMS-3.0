@@ -39,7 +39,7 @@ function Classic({ header, items, ctaPrimary }: Props) {
       <div className="grid gap-5 lg:grid-cols-2">
         {items.map((item, index) => (
           <motion.article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="grid overflow-hidden rounded-xl bg-[var(--token-card-bg)] shadow-lg sm:grid-cols-[220px_1fr]" data-edit-collection="items" data-edit-index={index}>
-            {item.image && <div className="relative min-h-56"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
+            {item.image && <div className="relative min-h-56"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
             <div className="p-5">
               <ExperienceMeta item={item} className="text-[var(--token-badge-text)]" />
               <h3 className="mt-3 text-2xl font-bold text-[var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
@@ -49,7 +49,7 @@ function Classic({ header, items, ctaPrimary }: Props) {
           </motion.article>
         ))}
       </div>
-      {ctaPrimary.label && <div className="mt-8"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
+      {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
     </div>
   );
 }
@@ -61,7 +61,7 @@ function Modern({ header, items, ctaPrimary }: Props) {
       <div className="grid gap-5 lg:grid-cols-2">
         {items.map((item, index) => (
           <article key={`${item.title}-${index}`} className="grid overflow-hidden border border-[var(--token-card-border)] bg-[var(--token-card-bg)] sm:grid-cols-[220px_1fr]" data-edit-collection="items" data-edit-index={index}>
-            {item.image && <div className="relative min-h-56"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
+            {item.image && <div className="relative min-h-56"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
             <div className="p-5">
               <ExperienceMeta item={item} className="text-[var(--token-badge-text)] font-light" />
               <h3 className="mt-3 text-2xl font-light text-[var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
@@ -71,7 +71,7 @@ function Modern({ header, items, ctaPrimary }: Props) {
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <div className="mt-8"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
+      {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
     </div>
   );
 }
@@ -87,7 +87,7 @@ function Bold({ header, items, ctaPrimary }: Props) {
       <div className="grid gap-5 lg:grid-cols-2">
         {items.map((item, index) => (
           <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="grid overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)] sm:grid-cols-[220px_1fr]" data-edit-collection="items" data-edit-index={index}>
-            {item.image && <div className="relative min-h-56"><Image src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
+            {item.image && <div className="relative min-h-56"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="260px" /></div>}
             <div className="p-5">
               <ExperienceMeta item={item} className="text-[var(--token-badge-text)] font-black" />
               <h3 className="mt-3 text-2xl font-black uppercase text-[var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
@@ -97,7 +97,7 @@ function Bold({ header, items, ctaPrimary }: Props) {
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <div className="mt-8"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
+      {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
     </div>
   );
 }

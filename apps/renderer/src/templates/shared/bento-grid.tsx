@@ -55,7 +55,7 @@ export function BentoGridSection({ data }: Props) {
 
             {item.image && (
               <div className="absolute inset-0 z-0">
-                <img src={item.image} alt="" className="w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
+                <img data-edit-image="image" src={item.image} alt="" className="w-full h-full object-cover opacity-20 group-hover:opacity-30 transition-opacity duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--token-card-bg)] via-[color-mix(in_srgb,var(--token-card-bg)_80%,transparent)] to-transparent" />
               </div>
             )}

@@ -44,7 +44,7 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
         {kitchenHoursHeadline && <h3 className="mt-8 font-semibold text-[color:var(--token-heading)]">{kitchenHoursHeadline}</h3>}
         {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-[color:var(--token-muted)]">{kitchenHoursText}</p>}
         {holidayNote && <p className="mt-4 text-xs text-[color:var(--token-muted)]">{holidayNote}</p>}
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
       </div>
       <div className="overflow-hidden rounded-xl border border-black/10 bg-[var(--token-card-bg)] shadow-lg">
         {days.map((day, index) => (
@@ -75,7 +75,7 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
         {kitchenHoursHeadline && <h3 className="mt-8 font-medium text-[color:var(--token-heading)]">{kitchenHoursHeadline}</h3>}
         {kitchenHoursText && <p className="mt-2 text-sm font-light leading-6 text-[color:var(--token-muted)]">{kitchenHoursText}</p>}
         {holidayNote && <p className="mt-4 text-xs font-light text-[color:var(--token-muted)]">{holidayNote}</p>}
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
       </div>
       <div className="border border-black/5">
         {days.map((day, index) => (
@@ -107,7 +107,7 @@ function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHead
           {kitchenHoursHeadline && <h3 className="mt-8 font-bold uppercase">{kitchenHoursHeadline}</h3>}
           {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-[color:var(--token-on-dark-heading)/60]">{kitchenHoursText}</p>}
           {holidayNote && <p className="mt-4 text-xs text-[color:var(--token-on-dark-heading)/50]">{holidayNote}</p>}
-          {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-none border-2 border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_rgba(255,255,255,0.3)]" data-edit-path="label">{ctaPrimary.label}</a>}
+          {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-none border-2 border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_rgba(255,255,255,0.3)]" data-edit-path="label">{ctaPrimary.label}</a>}
         </div>
         <div className="border-2 border-[color:var(--token-card-border)/20]">
           {days.map((day, index) => (

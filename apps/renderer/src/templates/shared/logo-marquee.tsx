@@ -38,7 +38,7 @@ export function LogoMarqueeSection({ data }: Props) {
             {doubled.map((item, i) => (
               <div key={i} className="flex-shrink-0 flex items-center justify-center h-12 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0" data-edit-collection="doubled" data-edit-index={i}>
                 {item.image ? (
-                  <img src={item.image} alt={item.name} className="h-8 md:h-10 w-auto object-contain" />
+                  <img data-edit-image="image" src={item.image} alt={item.name} className="h-8 md:h-10 w-auto object-contain" />
                 ) : (
                   <span className="text-lg font-bold text-[color:var(--token-body)] whitespace-nowrap" data-edit-path="name">{item.name}</span>
                 )}

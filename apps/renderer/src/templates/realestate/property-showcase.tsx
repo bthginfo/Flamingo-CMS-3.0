@@ -45,7 +45,7 @@ export function PropertyShowcaseSection({ data }: Props) {
               className="group bg-[var(--token-card-bg)] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
              data-edit-collection="properties" data-edit-index={i}>
               <div className="relative aspect-[4/3] overflow-hidden">
-                <Image src={property.image} alt={property.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
+                <Image data-edit-image="image" src={property.image} alt={property.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
                 {property.badge && (
                   <span className="absolute top-4 left-4 bg-amber-600 text-[color:var(--token-on-dark-heading)] text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide" data-edit-path="badge">
                     {property.badge}

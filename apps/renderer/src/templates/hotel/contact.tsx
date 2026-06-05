@@ -56,12 +56,12 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {contactCta.label && <a href={contactCta.href || '#'} className="rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{contactCta.label}</a>}
-          {routeCta.label && <a href={routeCta.href || '#'} className="rounded-xl border border-black/15 px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{routeCta.label}</a>}
+          {contactCta.label && <a data-edit-link="contactCta" href={contactCta.href || '#'} className="rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{contactCta.label}</a>}
+          {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="rounded-xl border border-black/15 px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{routeCta.label}</a>}
         </div>
       </div>
       <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 shadow-lg">
-        {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </motion.div>
     </div>
@@ -88,12 +88,12 @@ function ContactModern({ headline, subline, badgeText, introText, submitLabel, f
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-4">
-          {contactCta.label && <a href={contactCta.href || '#'} className="font-light text-[color:var(--token-heading)] underline underline-offset-4" data-edit-path="label">{contactCta.label}</a>}
-          {routeCta.label && <a href={routeCta.href || '#'} className="font-light text-[color:var(--token-muted)] underline underline-offset-4" data-edit-path="label">{routeCta.label}</a>}
+          {contactCta.label && <a data-edit-link="contactCta" href={contactCta.href || '#'} className="font-light text-[color:var(--token-heading)] underline underline-offset-4" data-edit-path="label">{contactCta.label}</a>}
+          {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="font-light text-[color:var(--token-muted)] underline underline-offset-4" data-edit-path="label">{routeCta.label}</a>}
         </div>
       </div>
       <div className="border border-black/10 bg-[var(--token-card-bg)] p-8">
-        {image && <div className="relative mb-6 aspect-[16/10] overflow-hidden"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {image && <div className="relative mb-6 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>
@@ -120,12 +120,12 @@ function ContactBold({ headline, subline, badgeText, introText, submitLabel, for
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {contactCta.label && <a href={contactCta.href || '#'} className="border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{contactCta.label}</a>}
-          {routeCta.label && <a href={routeCta.href || '#'} className="border-2 border-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="label">{routeCta.label}</a>}
+          {contactCta.label && <a data-edit-link="contactCta" href={contactCta.href || '#'} className="border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{contactCta.label}</a>}
+          {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="border-2 border-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="label">{routeCta.label}</a>}
         </div>
       </div>
       <div className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]">
-        {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>
     </div>

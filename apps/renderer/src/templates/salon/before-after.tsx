@@ -33,8 +33,8 @@ function BeforeAfterClassic({ headline, subline, badgeText, items }: Props) {
         {items.map((item, i) => (
           <motion.article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md" data-edit-collection="items" data-edit-index={i}>
             <div className="grid grid-cols-2">
-              {item.beforeImage && <div className="relative aspect-square"><Image src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
-              {item.afterImage && <div className="relative aspect-square"><Image src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+              {item.beforeImage && <div className="relative aspect-square"><Image data-edit-image="beforeImage" src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+              {item.afterImage && <div className="relative aspect-square"><Image data-edit-image="afterImage" src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             </div>
             <div className="p-5">
               {item.category && <span className="inline-block rounded-full bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase text-[var(--token-eyebrow)]" data-edit-path="category">{item.category}</span>}
@@ -62,8 +62,8 @@ function BeforeAfterModern({ headline, subline, badgeText, items }: Props) {
         {items.map((item, i) => (
           <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="border-b border-black/10 pb-8" data-edit-collection="items" data-edit-index={i}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-              {item.beforeImage && <div className="relative aspect-square"><Image src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
-              {item.afterImage && <div className="relative aspect-square"><Image src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+              {item.beforeImage && <div className="relative aspect-square"><Image data-edit-image="beforeImage" src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+              {item.afterImage && <div className="relative aspect-square"><Image data-edit-image="afterImage" src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             </div>
             <div className="mt-5">
               {item.category && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="category">{item.category}</p>}
@@ -90,8 +90,8 @@ function BeforeAfterBold({ headline, subline, badgeText, items }: Props) {
         {items.map((item, i) => (
           <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="items" data-edit-index={i}>
             <div className="grid grid-cols-2">
-              {item.beforeImage && <div className="relative aspect-square"><Image src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
-              {item.afterImage && <div className="relative aspect-square"><Image src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+              {item.beforeImage && <div className="relative aspect-square"><Image data-edit-image="beforeImage" src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
+              {item.afterImage && <div className="relative aspect-square"><Image data-edit-image="afterImage" src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             </div>
             <div className="p-5">
               {item.category && <span className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="category">{item.category}</span>}

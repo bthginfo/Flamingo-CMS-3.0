@@ -51,7 +51,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
       {(storyHeadline || storyText) && (
         <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} className="flex flex-col lg:flex-row gap-12 lg:gap-8 lg:gap-16 items-center mb-12 md:mb-24">
           {storyImage && (
-            <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-xl"><Image src={storyImage} alt={storyHeadline || ''} fill className="object-cover" sizes="50vw" /></div></div>
+            <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-xl"><Image data-edit-image="storyImage" src={storyImage} alt={storyHeadline || ''} fill className="object-cover" sizes="50vw" /></div></div>
           )}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'w-full max-w-3xl mx-auto'}>
             {storyHeadline && <h3 className="font-display mb-4 text-2xl font-bold text-[var(--token-heading)] lg:text-3xl">{storyHeadline}</h3>}
@@ -90,7 +90,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
             {members.map((m, i) => (
               <div key={i} className="text-center group" data-edit-collection="members" data-edit-index={i}>
                 <div className="relative w-48 h-48 mx-auto mb-5 rounded-3xl overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow">
-                  {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover transition-transform group-hover:scale-105" sizes="200px" /> : <div className="flex h-full w-full items-center justify-center bg-[var(--token-accent)]/5"><DynamicIcon name="users" size={48} className="text-[var(--token-accent)]/30" /></div>}
+                  {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover transition-transform group-hover:scale-105" sizes="200px" /> : <div className="flex h-full w-full items-center justify-center bg-[var(--token-accent)]/5"><DynamicIcon name="users" size={48} className="text-[var(--token-accent)]/30" /></div>}
                 </div>
                 <h4 className="text-lg font-semibold text-[var(--token-heading)]" data-edit-path="name">{m.name}</h4>
                 <p className="mb-2 text-sm font-medium text-[var(--token-accent)]" data-edit-path="role">{m.role}</p>
@@ -115,7 +115,7 @@ function TeamModern({ headline, subline, badgeText, storyHeadline, storyText, st
       </motion.div>
       {(storyHeadline || storyText) && (
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center mb-12 md:mb-24">
-          {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[3/2] rounded-lg overflow-hidden"><Image src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
+          {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[3/2] rounded-lg overflow-hidden"><Image data-edit-image="storyImage" src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
             {storyHeadline && <h3 className="mb-4 text-2xl font-light text-[var(--token-heading)]">{storyHeadline}</h3>}
             {storyText && <div className="rt-content whitespace-pre-line leading-loose text-[var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
@@ -134,7 +134,7 @@ function TeamModern({ headline, subline, badgeText, storyHeadline, storyText, st
             {members.map((m, i) => (
               <div key={i} className="group" data-edit-collection="members" data-edit-index={i}>
                 <div className="relative aspect-[3/4] rounded-lg overflow-hidden mb-4">
-                  {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover grayscale transition-all duration-500 group-hover:grayscale-0" sizes="300px" /> : <div className="h-full w-full bg-[var(--token-card-bg)]" />}
+                  {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover grayscale transition-all duration-500 group-hover:grayscale-0" sizes="300px" /> : <div className="h-full w-full bg-[var(--token-card-bg)]" />}
                 </div>
                 <h4 className="font-medium text-[var(--token-heading)]" data-edit-path="name">{m.name}</h4>
                 <p className="text-sm text-[var(--token-muted)]" data-edit-path="role">{m.role}</p>
@@ -158,7 +158,7 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
       </motion.div>
       {(storyHeadline || storyText) && (
         <div className="flex flex-col lg:flex-row gap-8 items-start mb-10 md:mb-16">
-          {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] overflow-hidden border-3 border-[var(--token-card-border)] shadow-[6px_6px_0_var(--token-body)]"><Image src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
+          {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] overflow-hidden border-3 border-[var(--token-card-border)] shadow-[6px_6px_0_var(--token-body)]"><Image data-edit-image="storyImage" src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
             {storyHeadline && <h3 className="mb-3 text-xl font-bold uppercase text-[var(--token-heading)]">{storyHeadline}</h3>}
             {storyText && <div className="rt-content whitespace-pre-line leading-relaxed text-[var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
@@ -182,7 +182,7 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
             {members.map((m, i) => (
               <div key={i} className="flex items-start gap-4 border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-4 shadow-[3px_3px_0_var(--token-accent)]" data-edit-collection="members" data-edit-index={i}>
                 <div className="relative w-20 h-20 shrink-0 overflow-hidden">
-                  {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" sizes="80px" /> : <div className="h-full w-full bg-[var(--token-muted)]" />}
+                  {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover" sizes="80px" /> : <div className="h-full w-full bg-[var(--token-muted)]" />}
                 </div>
                 <div>
                   <h4 className="text-sm font-bold uppercase text-[var(--token-heading)]" data-edit-path="name">{m.name}</h4>

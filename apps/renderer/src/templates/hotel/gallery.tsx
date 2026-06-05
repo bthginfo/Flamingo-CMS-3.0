@@ -38,7 +38,7 @@ function GalleryClassic({ headline, subline, badgeText, images, ctaPrimary }: Pr
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((image, index) => (
           <motion.figure key={`${image.src}-${index}`} initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: index * 0.06 }} className="group overflow-hidden rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md" data-edit-collection="images" data-edit-index={index}>
-            {image.src && <div className="relative aspect-[4/3]"><Image src={image.src} alt={image.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
+            {image.src && <div className="relative aspect-[4/3]"><Image data-edit-image="src" src={image.src} alt={image.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <figcaption className="p-4">
               {image.category && <p className="text-xs uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="category">{image.category}</p>}
               {image.caption && <p className="mt-1 text-sm text-[color:var(--token-heading)]" data-edit-path="caption">{image.caption}</p>}
@@ -46,7 +46,7 @@ function GalleryClassic({ headline, subline, badgeText, images, ctaPrimary }: Pr
           </motion.figure>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }
@@ -63,7 +63,7 @@ function GalleryModern({ headline, subline, badgeText, images, ctaPrimary }: Pro
       <div className="grid gap-px border border-black/10 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((image, index) => (
           <figure key={`${image.src}-${index}`} className="group overflow-hidden border border-black/10 bg-[var(--token-card-bg)]" data-edit-collection="images" data-edit-index={index}>
-            {image.src && <div className="relative aspect-[4/3]"><Image src={image.src} alt={image.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
+            {image.src && <div className="relative aspect-[4/3]"><Image data-edit-image="src" src={image.src} alt={image.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <figcaption className="p-5">
               {image.category && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="category">{image.category}</p>}
               {image.caption && <p className="mt-1 text-sm font-light text-[color:var(--token-heading)]" data-edit-path="caption">{image.caption}</p>}
@@ -71,7 +71,7 @@ function GalleryModern({ headline, subline, badgeText, images, ctaPrimary }: Pro
           </figure>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 font-light text-[color:var(--token-heading)] underline underline-offset-4"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={14} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 font-light text-[color:var(--token-heading)] underline underline-offset-4"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={14} /></a>}
     </div>
   );
 }
@@ -88,7 +88,7 @@ function GalleryBold({ headline, subline, badgeText, images, ctaPrimary }: Props
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((image, index) => (
           <figure key={`${image.src}-${index}`} className="group overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg)] shadow-[4px_4px_0_#111827]" data-edit-collection="images" data-edit-index={index}>
-            {image.src && <div className="relative aspect-[4/3]"><Image src={image.src} alt={image.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
+            {image.src && <div className="relative aspect-[4/3]"><Image data-edit-image="src" src={image.src} alt={image.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
             <figcaption className="p-4">
               {image.category && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="category">{image.category}</p>}
               {image.caption && <p className="mt-1 text-sm font-bold text-[color:var(--token-heading)]" data-edit-path="caption">{image.caption}</p>}
@@ -96,7 +96,7 @@ function GalleryBold({ headline, subline, badgeText, images, ctaPrimary }: Props
           </figure>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }

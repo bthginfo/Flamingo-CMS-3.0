@@ -27,7 +27,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
           <div className="grid md:grid-cols-2 gap-16 items-start">
             {image && (
               <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="relative aspect-[3/4]">
-                <Image src={image} alt={headline || 'Fotograf'} fill className="object-cover" />
+                <Image data-edit-image="image" src={image} alt={headline || 'Fotograf'} fill className="object-cover" />
               </motion.div>
             )}
             <div className={image ? '' : 'md:col-span-2 max-w-2xl'}>
@@ -65,7 +65,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
           <div className="grid md:grid-cols-5 gap-8 items-start">
             {image && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="md:col-span-2 relative aspect-[3/4]">
-                <Image src={image} alt={headline || 'Fotograf'} fill className="object-cover" />
+                <Image data-edit-image="image" src={image} alt={headline || 'Fotograf'} fill className="object-cover" />
                 <div className="absolute inset-0 border-2 border-[color:var(--token-card-border)/20]" />
               </motion.div>
             )}
@@ -102,7 +102,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
           {image && (
             <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="md:col-span-2 relative">
               <div className="aspect-[3/4] rounded-2xl overflow-hidden shadow-lg">
-                <Image src={image} alt={headline || 'Fotograf'} fill className="object-cover" />
+                <Image data-edit-image="image" src={image} alt={headline || 'Fotograf'} fill className="object-cover" />
               </div>
             </motion.div>
           )}

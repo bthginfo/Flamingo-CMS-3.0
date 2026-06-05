@@ -60,7 +60,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
       <div className="rounded-xl border border-black/10 bg-[var(--token-card-bg)] px-6 shadow-md">
         <Accordion items={items} variant="classic" />
       </div>
-      {ctaPrimary.label && <div className="mt-8 text-center"><a href={ctaPrimary.href || '#'} className="inline-flex rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a></div>}
+      {ctaPrimary.label && <div className="mt-8 text-center"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a></div>}
     </div>
   );
 }
@@ -75,7 +75,7 @@ function FaqModern({ headline, subline, badgeText, items, ctaPrimary }: Props) {
         {subline && <div className="mt-6 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <Accordion items={items} variant="modern" />
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -92,7 +92,7 @@ function FaqBold({ headline, subline, badgeText, items, ctaPrimary }: Props) {
       <div className="border-2 border-[#111827] bg-[var(--token-card-bg)] px-6 shadow-[4px_4px_0_#111827]">
         <Accordion items={items} variant="bold" />
       </div>
-      {ctaPrimary.label && <div className="mt-8"><a href={ctaPrimary.href || '#'} className="inline-flex border-2 border-[#111827] bg-[#111827] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-path="label">{ctaPrimary.label}</a></div>}
+      {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex border-2 border-[#111827] bg-[#111827] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-path="label">{ctaPrimary.label}</a></div>}
     </div>
   );
 }

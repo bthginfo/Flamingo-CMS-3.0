@@ -29,7 +29,7 @@ export function ConsultingHeroSection({ data }: Props) {
     <div ref={ref} className="relative min-h-[82vh] flex items-center overflow-hidden -mt-[112px] pt-[112px]">
       {bgImage && (
         <ImageEffectWrapper effect={imageEffect} className="absolute inset-0">
-          <Image src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
+          <Image data-edit-image="bgImage" src={bgImage} alt="" fill className="object-cover" priority sizes="100vw" />
         </ImageEffectWrapper>
       )}
       <div className="absolute inset-0 bg-[var(--token-section-bg-alt)]" style={{ opacity: bgImage ? overlayOpacity : 1 }} />
@@ -57,13 +57,13 @@ export function ConsultingHeroSection({ data }: Props) {
           )}
           <div className="flex flex-wrap justify-center gap-4 mt-10">
             {primaryCta && (
-              <a href={primaryCta.href} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-7 py-3.5 font-semibold text-[var(--token-btn-text)] shadow-lg transition-all hover:brightness-110">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-7 py-3.5 font-semibold text-[var(--token-btn-text)] shadow-lg transition-all hover:brightness-110">
                 <DynamicIcon name="phone" size={18} />
                 <span data-edit-path="label">{primaryCta.label}</span>
               </a>
             )}
             {secondaryCta && (
-              <a href={secondaryCta.href} className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-7 py-3.5 font-semibold backdrop-blur transition-all hover:bg-white/15" style={{ background: 'var(--token-badge-bg)', color: heroHeading }} data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-7 py-3.5 font-semibold backdrop-blur transition-all hover:bg-white/15" style={{ background: 'var(--token-badge-bg)', color: heroHeading }} data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

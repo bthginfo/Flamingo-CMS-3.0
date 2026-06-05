@@ -33,8 +33,8 @@ function HeroClassic({ headline, subline, bgImage, bgImageMobile, overlayOpacity
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-section-bg-alt)]">
       {bgImage && (
         <ImageEffectWrapper effect={imageEffect} className="absolute inset-0">
-          <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} sizes="100vw" />
-          {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" sizes="100vw" />}
+          <Image data-edit-image="bgImage" src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} sizes="100vw" />
+          {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" sizes="100vw" />}
         </ImageEffectWrapper>
       )}
       <div className="absolute inset-0 bg-[var(--token-section-bg-alt)]" style={{ opacity: overlayOpacity }} />
@@ -60,12 +60,12 @@ function HeroClassic({ headline, subline, bgImage, bgImageMobile, overlayOpacity
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.7 }}
             className="mt-10 flex flex-col sm:flex-row gap-4">
             {primaryCta && (
-              <a href={primaryCta.href} className="inline-flex items-center justify-center px-8 py-4 font-bold uppercase tracking-wider text-sm transition-colors" style={{ background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' }} data-edit-path="label">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center justify-center px-8 py-4 font-bold uppercase tracking-wider text-sm transition-colors" style={{ background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' }} data-edit-path="label">
                 {primaryCta.label}
               </a>
             )}
             {secondaryCta && (
-              <a href={secondaryCta.href} className="inline-flex items-center justify-center px-8 py-4 border border-[color:var(--token-card-border)/30] text-[color:var(--token-on-dark-heading)] font-medium uppercase tracking-wider text-sm hover:border-[color:var(--token-card-border)/60] transition-colors" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center justify-center px-8 py-4 border border-[color:var(--token-card-border)/30] text-[color:var(--token-on-dark-heading)] font-medium uppercase tracking-wider text-sm hover:border-[color:var(--token-card-border)/60] transition-colors" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}
@@ -81,8 +81,8 @@ function HeroModern({ headline, subline, bgImage, bgImageMobile, overlayOpacity,
     <section className="relative min-h-[90vh] flex items-end overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-section-bg-alt)]">
       {bgImage && (
         <ImageEffectWrapper effect={imageEffect} className="absolute inset-0">
-          <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} sizes="100vw" />
-          {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" sizes="100vw" />}
+          <Image data-edit-image="bgImage" src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} sizes="100vw" />
+          {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" sizes="100vw" />}
         </ImageEffectWrapper>
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-transparent" style={{ opacity: overlayOpacity }} />
@@ -91,8 +91,8 @@ function HeroModern({ headline, subline, bgImage, bgImageMobile, overlayOpacity,
         <h1 className="text-4xl sm:text-6xl font-light text-[color:var(--token-on-dark-heading)] tracking-tight" data-edit-path="headline">{headline}</h1>
         {subline && <p className="mt-4 text-[color:var(--token-on-dark-heading)/50] max-w-lg" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-col sm:flex-row gap-3">
-          {primaryCta && <a href={primaryCta.href} className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-sm" style={{ background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' }} data-edit-path="label">{primaryCta.label}</a>}
-          {secondaryCta && <a href={secondaryCta.href} className="inline-flex items-center justify-center px-6 py-3 border border-[color:var(--token-card-border)/20] text-[color:var(--token-on-dark-heading)/80] text-sm rounded-sm" data-edit-path="label">{secondaryCta.label}</a>}
+          {primaryCta && <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-sm" style={{ background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' }} data-edit-path="label">{primaryCta.label}</a>}
+          {secondaryCta && <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center justify-center px-6 py-3 border border-[color:var(--token-card-border)/20] text-[color:var(--token-on-dark-heading)/80] text-sm rounded-sm" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
     </section>
@@ -104,8 +104,8 @@ function HeroBold({ headline, subline, bgImage, bgImageMobile, overlayOpacity, p
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-section-bg-alt)]">
       {bgImage && (
         <ImageEffectWrapper effect={imageEffect} className="absolute inset-0">
-          <Image src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} sizes="100vw" />
-          {bgImageMobile && <Image src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" sizes="100vw" />}
+          <Image data-edit-image="bgImage" src={bgImage} alt="" fill priority className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} sizes="100vw" />
+          {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill priority className="object-cover md:hidden" sizes="100vw" />}
         </ImageEffectWrapper>
       )}
       <div className="absolute inset-0 bg-[var(--token-section-bg-alt)]" style={{ opacity: overlayOpacity }} />
@@ -116,8 +116,8 @@ function HeroBold({ headline, subline, bgImage, bgImageMobile, overlayOpacity, p
         </h1>
         {subline && <p className="mt-6 text-[color:var(--token-on-dark-heading)/50] text-lg max-w-lg mx-auto" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
-          {primaryCta && <a href={primaryCta.href} className="px-10 py-4 font-black uppercase tracking-wider text-sm transition-colors shadow-[4px_4px_0_rgba(0,0,0,1)]" style={{ background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' }} data-edit-path="label">{primaryCta.label}</a>}
-          {secondaryCta && <a href={secondaryCta.href} className="px-10 py-4 border-2 border-[color:var(--token-card-border)] text-[color:var(--token-on-dark-heading)] font-black uppercase tracking-wider text-sm hover:bg-[var(--token-card-bg)] hover:text-[color:var(--token-heading)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.2)]" data-edit-path="label">{secondaryCta.label}</a>}
+          {primaryCta && <a data-edit-link="primaryCta" href={primaryCta.href} className="px-10 py-4 font-black uppercase tracking-wider text-sm transition-colors shadow-[4px_4px_0_rgba(0,0,0,1)]" style={{ background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' }} data-edit-path="label">{primaryCta.label}</a>}
+          {secondaryCta && <a data-edit-link="secondaryCta" href={secondaryCta.href} className="px-10 py-4 border-2 border-[color:var(--token-card-border)] text-[color:var(--token-on-dark-heading)] font-black uppercase tracking-wider text-sm hover:bg-[var(--token-card-bg)] hover:text-[color:var(--token-heading)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.2)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
     </section>

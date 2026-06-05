@@ -31,7 +31,7 @@ function Classic({ badge, headline, story, image, milestones }: P) {
         <div className="grid md:grid-cols-2 gap-8 lg:gap-16 items-center">
           {image && (
             <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative aspect-[4/5] rounded-2xl overflow-hidden">
-              <Image src={image} alt={headline} fill className="object-cover" />
+              <Image data-edit-image="image" src={image} alt={headline} fill className="object-cover" />
             </motion.div>
           )}
           <div className={image ? '' : 'md:col-span-2 max-w-3xl mx-auto'}>
@@ -61,7 +61,7 @@ function Modern({ badge, headline, story, image, milestones }: P) {
         <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-16 break-words" data-edit-path="headline">{headline}</h2>
         {image && (
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="relative w-full aspect-[16/9] mb-16">
-            <Image src={image} alt={headline} fill className="object-cover" />
+            <Image data-edit-image="image" src={image} alt={headline} fill className="object-cover" />
           </motion.div>
         )}
         {story && <p className="text-[color:var(--token-muted)] text-lg leading-relaxed max-w-3xl mb-16">{story}</p>}
@@ -89,7 +89,7 @@ function Bold({ badge, headline, story, image, milestones }: P) {
         <div className="grid md:grid-cols-2 gap-8 items-start">
           {image && (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="relative aspect-[3/4]">
-              <Image src={image} alt={headline} fill className="object-cover" />
+              <Image data-edit-image="image" src={image} alt={headline} fill className="object-cover" />
               <div className="absolute inset-0 border-2 border-[color:var(--token-card-border)]" />
             </motion.div>
           )}

@@ -132,7 +132,7 @@ function ReservationClassic(props: ReservationViewProps) {
         {props.policyText && <p className="text-xs text-[color:var(--token-muted)] opacity-70">{props.policyText}</p>}
       </div>
       <div className="overflow-hidden rounded-xl border border-black/10 bg-[var(--token-card-bg)] p-5 shadow-lg">
-        {props.image && <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-xl"><Image src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {props.image && <div className="relative mb-5 aspect-[4/3] overflow-hidden rounded-xl"><Image data-edit-image="image" src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {props.formEnabled && <ReservationForm submitLabel={props.submitLabel} />}
       </div>
     </motion.div>
@@ -156,7 +156,7 @@ function ReservationModern(props: ReservationViewProps) {
         {props.policyText && <p className="text-xs font-light text-[color:var(--token-muted)]">{props.policyText}</p>}
       </div>
       <div className="border border-black/5 p-6">
-        {props.image && <div className="relative mb-6 aspect-[4/3] overflow-hidden border border-black/5"><Image src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {props.image && <div className="relative mb-6 aspect-[4/3] overflow-hidden border border-black/5"><Image data-edit-image="image" src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {props.formEnabled && <ReservationForm submitLabel={props.submitLabel} />}
       </div>
     </div>
@@ -181,7 +181,7 @@ function ReservationBold(props: ReservationViewProps) {
           {props.policyText && <p className="text-xs text-[color:var(--token-on-dark-heading)/40]">{props.policyText}</p>}
         </div>
         <div className="border-2 border-[color:var(--token-card-border)/20] p-5 shadow-[4px_4px_0_rgba(255,255,255,0.15)]">
-          {props.image && <div className="relative mb-5 aspect-[4/3] overflow-hidden border-2 border-[color:var(--token-card-border)/20]"><Image src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {props.image && <div className="relative mb-5 aspect-[4/3] overflow-hidden border-2 border-[color:var(--token-card-border)/20]"><Image data-edit-image="image" src={props.image} alt="" fill className="object-cover" sizes="50vw" /></div>}
           {props.formEnabled && <ReservationForm submitLabel={props.submitLabel} dark />}
         </div>
       </div>

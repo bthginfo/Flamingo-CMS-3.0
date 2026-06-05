@@ -48,8 +48,8 @@ function BookingClassic({ headline, subline, badgeText, submitCta, secondaryCta,
         </div>
       )}
       <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-        {submitCta.label && <a href={submitCta.href || '#'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-[#111827] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md transition-transform hover:scale-105"><CalendarDays size={17} /><span data-edit-path="label">{submitCta.label}</span><ExternalLink size={14} /></a>}
-        {secondaryCta.label && <a href={secondaryCta.href || '#'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-black/15 px-6 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
+        {submitCta.label && <a data-edit-link="submitCta" href={submitCta.href || '#'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-[#111827] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md transition-transform hover:scale-105"><CalendarDays size={17} /><span data-edit-path="label">{submitCta.label}</span><ExternalLink size={14} /></a>}
+        {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl border border-black/15 px-6 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
       </div>
       {bookingNote && <p className="mt-4 text-sm text-[color:var(--token-muted)]">{bookingNote}</p>}
     </motion.div>
@@ -74,8 +74,8 @@ function BookingModern({ headline, subline, badgeText, submitCta, secondaryCta, 
         </div>
       )}
       <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
-        {submitCta.label && <a href={submitCta.href || '#'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-light text-[color:var(--token-heading)] underline underline-offset-4"><CalendarDays size={16} /><span data-edit-path="label">{submitCta.label}</span></a>}
-        {secondaryCta.label && <a href={secondaryCta.href || '#'} target="_blank" rel="noopener noreferrer" className="font-light text-[color:var(--token-muted)] underline underline-offset-4" data-edit-path="label">{secondaryCta.label}</a>}
+        {submitCta.label && <a data-edit-link="submitCta" href={submitCta.href || '#'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-light text-[color:var(--token-heading)] underline underline-offset-4"><CalendarDays size={16} /><span data-edit-path="label">{submitCta.label}</span></a>}
+        {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} target="_blank" rel="noopener noreferrer" className="font-light text-[color:var(--token-muted)] underline underline-offset-4" data-edit-path="label">{secondaryCta.label}</a>}
       </div>
       {bookingNote && <p className="mt-4 text-sm font-light text-[color:var(--token-muted)]">{bookingNote}</p>}
     </div>
@@ -100,8 +100,8 @@ function BookingBold({ headline, subline, badgeText, submitCta, secondaryCta, bo
         </div>
       )}
       <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-        {submitCta.label && <a href={submitCta.href || '#'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><CalendarDays size={17} /><span data-edit-path="label">{submitCta.label}</span><ExternalLink size={14} /></a>}
-        {secondaryCta.label && <a href={secondaryCta.href || '#'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border-2 border-[#111827] px-6 py-3 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
+        {submitCta.label && <a data-edit-link="submitCta" href={submitCta.href || '#'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><CalendarDays size={17} /><span data-edit-path="label">{submitCta.label}</span><ExternalLink size={14} /></a>}
+        {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border-2 border-[#111827] px-6 py-3 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
       </div>
       {bookingNote && <p className="mt-4 text-sm font-bold text-[color:var(--token-muted)]">{bookingNote}</p>}
     </div>

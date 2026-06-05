@@ -78,7 +78,7 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
           <AnimatePresence mode="popLayout">
             {filtered.map((img, i) => (
               <motion.div key={img.src} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }} className={`${isModern ? 'relative aspect-square' : 'break-inside-avoid'} cursor-pointer group relative ${!isModern ? 'rounded-lg' : ''} overflow-hidden`} onClick={() => setLightbox(i)} data-edit-collection="filtered" data-edit-index={i}>
-                <Image src={img.src} alt={img.alt || ''} {...(isModern ? { fill: true, className: 'object-cover transition-transform duration-500 group-hover:scale-105' } : { width: 600, height: 800, className: 'w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105' })} />
+                <Image data-edit-image="src" src={img.src} alt={img.alt || ''} {...(isModern ? { fill: true, className: 'object-cover transition-transform duration-500 group-hover:scale-105' } : { width: 600, height: 800, className: 'w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105' })} />
                 {isBold && <div className="absolute inset-0 border border-[color:var(--token-card-border)/10]" />}
                 <div className={`absolute inset-0 ${isBold ? 'bg-[var(--token-section-bg-alt)/0] group-hover:bg-[var(--token-section-bg-alt)/50]' : 'bg-[var(--token-section-bg-alt)/0] group-hover:bg-[var(--token-section-bg-alt)/30]'} transition-colors duration-300 flex items-end`}>
                   {(img.alt || img.location) && (
@@ -95,7 +95,7 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
 
         {cta?.label && (
           <div className={`${isModern ? '' : 'text-center'} mt-12`}>
-            <a href={cta.href} className={isModern ? 'inline-block text-sm text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)] hover:opacity-70' : isBold ? 'inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity' : 'inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full hover:opacity-90 transition-opacity shadow-lg'}>
+            <a data-edit-link="cta" href={cta.href} className={isModern ? 'inline-block text-sm text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)] hover:opacity-70' : isBold ? 'inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] font-bold uppercase tracking-wider hover:opacity-90 transition-opacity' : 'inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full hover:opacity-90 transition-opacity shadow-lg'}>
               <span data-edit-path="label">{cta.label}</span>
               {cta.icon && <DynamicIcon name={cta.icon} size={18} />}
             </a>

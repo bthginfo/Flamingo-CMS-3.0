@@ -42,7 +42,7 @@ export function ReferencesSoldSection({ data }: Props) {
               transition={{ delay: i * 0.08 }}
               className="relative group rounded-xl overflow-hidden aspect-[3/4]"
              data-edit-collection="properties" data-edit-index={i}>
-              <Image src={prop.image} alt={prop.title} fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
+              <Image data-edit-image="image" src={prop.image} alt={prop.title} fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
               {/* Sold overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               <div className="absolute top-4 right-4 bg-emerald-600 text-[color:var(--token-on-dark-heading)] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">

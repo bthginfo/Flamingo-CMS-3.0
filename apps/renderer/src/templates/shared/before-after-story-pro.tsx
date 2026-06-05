@@ -32,7 +32,7 @@ export function BeforeAfterStoryProSection({ data }: Props) {
             </motion.div>
           ))}
         </div>
-        {cta.label && <a href={cta.href || '#'} className="mt-7 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[var(--token-btn-text)]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>}
+        {cta.label && <a data-edit-link="cta" href={cta.href || '#'} className="mt-7 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[var(--token-btn-text)]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>}
       </div>
 
       <div className="space-y-4">
@@ -59,7 +59,7 @@ export function BeforeAfterStoryProSection({ data }: Props) {
 function ImagePanel({ label, image, prominent }: { label: string; image: string; prominent?: boolean }) {
   return (
     <div className={`relative min-h-[360px] overflow-hidden rounded-3xl ${prominent ? 'shadow-2xl' : 'opacity-85'}`}>
-      {image ? <img src={image} alt="" className="h-full w-full object-cover" /> : <div className="h-full bg-zinc-200" />}
+      {image ? <img data-edit-image="image" src={image} alt="" className="h-full w-full object-cover" /> : <div className="h-full bg-zinc-200" />}
       <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
       <div className="absolute bottom-4 left-4 rounded-full bg-white px-3 py-1 text-xs font-black uppercase text-zinc-950" data-edit-path="label">{label}</div>
     </div>
