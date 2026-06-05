@@ -7,6 +7,8 @@ on:
       - 'apps/renderer/src/templates/**'
       - 'scripts/audit-color-fields.cjs'
       - 'scripts/audit-colors-strict.cjs'
+      - 'scripts/regenerate-section-fields.cjs'
+      - '.github/workflows/color-audit.yml'
   workflow_dispatch:
 jobs:
   audit:
@@ -15,7 +17,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
-      - name: Run color audit (strict)
+      - name: Drift check (SECTION_FIELDS must match codegen)
+        run: node scripts/regenerate-section-fields.cjs --check
+      - name: Strict color audit (no DEAD/SHADOWED/MISSING regression)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node scripts/audit-colors-strict.cjs
