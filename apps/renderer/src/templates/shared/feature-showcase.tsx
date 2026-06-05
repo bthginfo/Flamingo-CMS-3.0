@@ -6,15 +6,30 @@ import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
+function normalizeFeatures(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => {
+      if (typeof item === 'string') return item;
+      if (item && typeof item === 'object') {
+        const feature = item as { title?: unknown; text?: unknown; label?: unknown };
+        return [feature.title, feature.text || feature.label].filter(Boolean).join(': ');
+      }
+      return '';
+    })
+    .filter(Boolean);
+}
+
 export function FeatureShowcaseSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const badge = (data.badge as string) || '';
   const text = (data.text as string) || '';
   const image = (data.image as string) || '';
-  const features = (data.features as string[]) || [];
-  const ctaLabel = (data.ctaLabel as string) || '';
-  const ctaHref = (data.ctaHref as string) || '';
+  const features = normalizeFeatures(data.features);
+  const ctaPrimary = (data.ctaPrimary && typeof data.ctaPrimary === 'object' ? data.ctaPrimary : {}) as { label?: string; href?: string };
+  const ctaLabel = (data.ctaLabel as string) || ctaPrimary.label || '';
+  const ctaHref = (data.ctaHref as string) || ctaPrimary.href || '';
   const reversed = data.reversed === true;
 
   const ref = useRef<HTMLDivElement>(null);

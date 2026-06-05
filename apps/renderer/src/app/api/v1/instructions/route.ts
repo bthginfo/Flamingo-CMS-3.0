@@ -583,7 +583,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
     statsCounter: { fields: { headline: 'string', subline: 'string?', stats: '{ value: number|string, suffix?: string, prefix?: string, label: string }[] (4 items recommended, value can be a number for animated counter OR a string like "seit 2019" for non-numeric facts)' } },
     bentoGrid: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text: string, icon?: lucide-icon-name, image?: url, span?: "1"|"2" }[] (asymmetric grid with hover spotlight)' } },
     testimonialMarquee: { fields: { headline: 'string?', items: '{ quote: string, name: string, role?: string, image?: url, rating?: 1-5 }[] (min 6 items, auto-scrolling in 2 rows)' } },
-    featureShowcase: { fields: { headline: 'string', subline: 'string?', image: 'url', features: '{ icon?: lucide-icon-name, title: string, text: string }[]', ctaPrimary: '{ label: string, href: string }?' } },
+    featureShowcase: { fields: { headline: 'string', subline: 'string?', badge: 'string?', text: 'string? (html)', image: 'url', features: 'string[] (kurze Feature-Texte; Objekt-Features werden defensiv gerendert, empfohlen ist string[])', ctaLabel: 'string?', ctaHref: 'string?', reversed: 'boolean?' } },
     logoMarquee: { fields: { headline: 'string?', logos: '{ src: url, alt: string, href?: url }[] (min 6 logos, auto-scrolling)' } },
     // Shared section schemas available to all industries
     servicesGrid: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', ctaLabel: 'string?', ctaHref: 'string?', manualCards: '{ title: string, text: string, icon?: lucide-icon-name, image?: url, mediaType?: icon|image, href?: string }[]' } },

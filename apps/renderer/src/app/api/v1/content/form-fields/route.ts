@@ -14,7 +14,7 @@ export const PUT = withApiHandler(async (req, auth) => {
   const body = await req.json();
   const db = getDb();
 
-  const fields = body.fields;
+  const fields = Array.isArray(body) ? body : body.fields;
   if (!Array.isArray(fields)) return NextResponse.json({ error: 'fields must be an array' }, { status: 400 });
 
   const [existing] = await db.select({ id: globalSettings.id }).from(globalSettings).where(eq(globalSettings.tenantId, auth.tenantId));

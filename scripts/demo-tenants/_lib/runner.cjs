@@ -41,6 +41,53 @@
 
 const Api = require('./api.cjs');
 
+function normalizeOpeningHours(value) {
+  if (!value) return null;
+  if (Array.isArray(value)) return { hours: value };
+  if (Array.isArray(value.hours)) return value;
+  if (typeof value !== 'object') return { hours: [] };
+
+  const labels = [
+    ['monday', 'Montag'],
+    ['tuesday', 'Dienstag'],
+    ['wednesday', 'Mittwoch'],
+    ['thursday', 'Donnerstag'],
+    ['friday', 'Freitag'],
+    ['saturday', 'Samstag'],
+    ['sunday', 'Sonntag'],
+  ];
+
+  const hours = labels
+    .map(([key, label]) => {
+      const row = value[key];
+      if (row == null) return null;
+      if (typeof row === 'string') return { type: 'regular', day: label, hours: row };
+      if (typeof row === 'object') {
+        const open = row.open || row.from || row.start || '';
+        const close = row.close || row.to || row.end || '';
+        const closed = Boolean(row.closed);
+        return {
+          type: 'regular',
+          day: label,
+          hours: closed ? '' : [open, close].filter(Boolean).join('-'),
+          closed,
+          note: row.note || '',
+        };
+      }
+      return null;
+    })
+    .filter(Boolean);
+
+  return { hours };
+}
+
+function normalizeFormFields(value) {
+  if (!value) return null;
+  if (Array.isArray(value)) return { fields: value };
+  if (Array.isArray(value.fields)) return value;
+  return { fields: [] };
+}
+
 async function run(tenant) {
   if (!tenant.slug) throw new Error('tenant.slug required');
   if (!tenant.pat)  throw new Error('tenant.pat required');
@@ -70,8 +117,8 @@ async function run(tenant) {
   if (tenant.design)       { log('PUT design');        await api.design(tenant.design); }
   if (tenant.style)        { log('PUT style');         await api.style(tenant.style); }
   if (tenant.socialLinks)  { log('PUT social-links'); await api.socialLinks(tenant.socialLinks); }
-  if (tenant.openingHours) { log('PUT opening-hours');await api.openingHours(tenant.openingHours); }
-  if (tenant.formFields)   { log('PUT form-fields');  await api.formFields(tenant.formFields); }
+  if (tenant.openingHours) { log('PUT opening-hours');await api.openingHours(normalizeOpeningHours(tenant.openingHours)); }
+  if (tenant.formFields)   { log('PUT form-fields');  await api.formFields(normalizeFormFields(tenant.formFields)); }
   if (tenant.seoGlobal)    { log('PUT seo global');   await api.seoGlobal(tenant.seoGlobal); }
 
   // Collections must exist before items are created.
