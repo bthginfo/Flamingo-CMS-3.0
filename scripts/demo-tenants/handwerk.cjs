@@ -30,14 +30,35 @@ const C = {
   steel:   '#1B4D6B', // hover-blue
 };
 
-// Convenience: light-section button override (rarely needed since global covers it)
-// On DARK section backgrounds (section-bg = C.brand), use cream button bg + brand text.
+// On DARK section backgrounds we override BOTH the base slots (--token-heading,
+// --token-body, --token-muted) AND the on-dark equivalents, because different
+// renderer sections read different slots. Buttons use the warm cream as bg
+// against the dark section so they pop without the copper accent (which is
+// reserved for icons/eyebrows/stars).
 const darkSectionTokens = {
+  '--token-heading':         '#FFFFFF',
+  '--token-body':            'rgba(255,255,255,0.92)',
+  '--token-muted':           'rgba(255,255,255,0.7)',
+  '--token-eyebrow':         '#E2B58D',
   '--token-on-dark-heading': '#FFFFFF',
-  '--token-on-dark-body':    'rgba(255,255,255,0.9)',
-  '--token-on-dark-muted':   'rgba(255,255,255,0.65)',
+  '--token-on-dark-body':    'rgba(255,255,255,0.92)',
+  '--token-on-dark-muted':   'rgba(255,255,255,0.7)',
   '--token-btn-bg':          C.cream,
   '--token-btn-text':        C.brand,
+  '--token-badge-bg':        'rgba(255,255,255,0.14)',
+  '--token-badge-text':      '#FFFFFF',
+  '--token-badge-border':    'rgba(255,255,255,0.28)',
+};
+
+// Light cream-section: heading stays brand-blue, body stays ink, button stays
+// brand-blue + white. Used for cream-coloured CTA bands on light pages.
+const lightAccentSection = {
+  '--token-section-bg':  C.cream,
+  '--token-heading':     C.brand,
+  '--token-body':        '#2A3340',
+  '--token-muted':       '#637381',
+  '--token-btn-bg':      C.brand,
+  '--token-btn-text':    '#FFFFFF',
 };
 
 // ── tenant spec ───────────────────────────────────────────────────────────────
@@ -71,8 +92,6 @@ const tenant = {
     whatsappColor: '#25D366',
   },
 
-  // Globally: buttons are deep brand-blue with white text (10.9:1 contrast).
-  // Accent (copper) is reserved for eyebrows, icons, badges, stars — never buttons.
   design: {
     sectionBg: '#FFFFFF',
     sectionBgAlt: C.cream,
@@ -97,8 +116,8 @@ const tenant = {
     ratingStar: '#E8A52B',
     check: C.accent,
     onDarkHeading: '#FFFFFF',
-    onDarkBody:    'rgba(255,255,255,0.88)',
-    onDarkMuted:   'rgba(255,255,255,0.65)',
+    onDarkBody:    'rgba(255,255,255,0.92)',
+    onDarkMuted:   'rgba(255,255,255,0.7)',
   },
 
   socialLinks: {
@@ -325,7 +344,7 @@ const tenant = {
             bgImage: img('1581094271901-8022df4466f9'),
             bgMode: 'image',
             overlayColor: '#0E3A53',
-            overlayOpacity: 0.55,
+            overlayOpacity: 0.6,
             imageEffect: 'kenBurns',
             primaryCta:   { label: 'Termin vereinbaren', href: '/kontakt', icon: 'CalendarCheck' },
             secondaryCta: { label: 'Leistungen ansehen', href: '/leistungen', icon: 'ArrowRight' },
@@ -441,12 +460,9 @@ const tenant = {
             headline: 'Vier Kerndisziplinen, ein Meisterbetrieb',
             subline: 'Wir behalten gerne den ganzen Bauablauf in der Hand — von Aufmaß und Förderantrag bis zur jährlichen Wartung.',
             bgImage: img('1581244277943-fe4a9c777189'),
-            overlayColor: '#0E3A53', overlayOpacity: 0.5,
+            overlayColor: '#0E3A53', overlayOpacity: 0.6,
           },
-          styleOverrides: {
-            '--token-on-dark-heading':'#FFFFFF',
-            '--token-on-dark-body':  'rgba(255,255,255,0.9)',
-          },
+          styleOverrides: darkSectionTokens,
         },
         {
           type: 'servicesGrid',
@@ -468,7 +484,7 @@ const tenant = {
             subline: 'Rufen Sie an oder schreiben Sie auf WhatsApp — wir hören zu und sagen Ihnen ehrlich, was sinnvoll ist.',
             ctaPrimary: { label: 'Beratung anfragen', href: '/kontakt', icon: 'PhoneCall' },
           },
-          styleOverrides: { '--token-section-bg': C.cream, '--token-heading': C.brand },
+          styleOverrides: { '--token-section-bg': C.brand, ...darkSectionTokens },
         },
       ],
     },
@@ -487,9 +503,9 @@ const tenant = {
             headline: 'Drei Generationen Handwerk in Köln',
             subline: 'Was 1958 mit einer Werkbank in Köln-Sülz begann, ist heute ein Meisterbetrieb mit 14 Mitarbeitenden — und derselben Handschrift.',
             bgImage: img('1521791136064-7986c2920216'),
-            overlayColor: '#0E3A53', overlayOpacity: 0.5,
+            overlayColor: '#0E3A53', overlayOpacity: 0.55,
           },
-          styleOverrides: { '--token-on-dark-heading':'#FFFFFF', '--token-on-dark-body':'rgba(255,255,255,0.9)' },
+          styleOverrides: darkSectionTokens,
         },
         {
           type: 'textImage',
@@ -557,9 +573,9 @@ const tenant = {
             headline: 'Projekte, an denen wir hängen',
             subline: 'Eine kleine Auswahl aus dem letzten Jahr — von der denkmalgeschützten Villa bis zur Kita-Wärmepumpe.',
             bgImage: img('1521791055366-0d553872125f'),
-            overlayColor: '#0E3A53', overlayOpacity: 0.55,
+            overlayColor: '#0E3A53', overlayOpacity: 0.6,
           },
-          styleOverrides: { '--token-on-dark-heading':'#FFFFFF', '--token-on-dark-body':'rgba(255,255,255,0.9)' },
+          styleOverrides: darkSectionTokens,
         },
         {
           type: 'collectionList',
@@ -577,7 +593,7 @@ const tenant = {
             subline: 'Sprechen Sie uns an — wir besprechen Ihr Vorhaben unverbindlich.',
             ctaPrimary: { label: 'Termin vereinbaren', href: '/kontakt', icon: 'CalendarCheck' },
           },
-          styleOverrides: { '--token-section-bg': C.cream, '--token-heading': C.brand },
+          styleOverrides: { '--token-section-bg': C.brand, ...darkSectionTokens },
         },
       ],
     },
@@ -596,9 +612,9 @@ const tenant = {
             headline: 'Notizen aus Werkstatt und Baustelle',
             subline: 'Was uns gerade beschäftigt — von Förderänderungen bis zu Wartungs-Checklisten.',
             bgImage: img('1581094288338-2314dddb7ece'),
-            overlayColor: '#0E3A53', overlayOpacity: 0.55,
+            overlayColor: '#0E3A53', overlayOpacity: 0.6,
           },
-          styleOverrides: { '--token-on-dark-heading':'#FFFFFF', '--token-on-dark-body':'rgba(255,255,255,0.9)' },
+          styleOverrides: darkSectionTokens,
         },
         {
           type: 'newsGrid',
@@ -625,9 +641,9 @@ const tenant = {
             headline: 'Direkt zum Meisterbetrieb',
             subline: 'Werktags zwischen 7:30 und 17 Uhr persönlich am Telefon. Notfälle 24/7. WhatsApp ganztägig.',
             bgImage: img('1556761175-5973dc0f32e7'),
-            overlayColor: '#0E3A53', overlayOpacity: 0.55,
+            overlayColor: '#0E3A53', overlayOpacity: 0.6,
           },
-          styleOverrides: { '--token-on-dark-heading':'#FFFFFF', '--token-on-dark-body':'rgba(255,255,255,0.9)' },
+          styleOverrides: darkSectionTokens,
         },
         {
           type: 'contact',
@@ -704,6 +720,8 @@ const tenant = {
 };
 
 // ── builders for collection items ─────────────────────────────────────────────
+// NOTE: collection items default to published=false on create. The runner
+// auto-sets published=true when the item spec doesn't specify it explicitly.
 function buildServiceItem({ slug, title, excerpt, heroImage, intro, highlights }) {
   return {
     title, slug,
@@ -712,8 +730,8 @@ function buildServiceItem({ slug, title, excerpt, heroImage, intro, highlights }
       sections: [
         {
           id: uuid(), type: 'collectionHero',
-          data: { headline: title, subline: excerpt, bgImage: img(heroImage), overlayColor: '#0E3A53', overlayOpacity: 0.55 },
-          styleOverrides: { '--token-on-dark-heading':'#FFFFFF', '--token-on-dark-body':'rgba(255,255,255,0.9)' },
+          data: { headline: title, subline: excerpt, bgImage: img(heroImage), backgroundImage: img(heroImage), overlayColor: '#0E3A53', overlayOpacity: 0.6 },
+          styleOverrides: darkSectionTokens,
         },
         {
           id: uuid(), type: 'textImage',
@@ -755,8 +773,8 @@ function buildProjectItem({ slug, title, excerpt, heroImage, summary, facts }) {
       sections: [
         {
           id: uuid(), type: 'collectionHero',
-          data: { headline: title, subline: excerpt, bgImage: img(heroImage), overlayColor: '#0E3A53', overlayOpacity: 0.55 },
-          styleOverrides: { '--token-on-dark-heading':'#FFFFFF', '--token-on-dark-body':'rgba(255,255,255,0.9)' },
+          data: { headline: title, subline: excerpt, bgImage: img(heroImage), backgroundImage: img(heroImage), overlayColor: '#0E3A53', overlayOpacity: 0.6 },
+          styleOverrides: darkSectionTokens,
         },
         {
           id: uuid(), type: 'textImage',
@@ -773,7 +791,7 @@ function buildProjectItem({ slug, title, excerpt, heroImage, summary, facts }) {
             subline: 'Wir besprechen Ihr Vorhaben unverbindlich — gerne auch vor Ort.',
             ctaPrimary: { label: 'Termin vereinbaren', href: '/kontakt', icon: 'CalendarCheck' },
           },
-          styleOverrides: { '--token-section-bg': C.cream, '--token-heading': C.brand },
+          styleOverrides: { '--token-section-bg': C.brand, ...darkSectionTokens },
         },
       ],
     },
@@ -788,8 +806,8 @@ function buildNewsItem({ slug, title, excerpt, heroImage, body }) {
       sections: [
         {
           id: uuid(), type: 'collectionHero',
-          data: { headline: title, subline: excerpt, bgImage: img(heroImage), overlayColor: '#0E3A53', overlayOpacity: 0.55 },
-          styleOverrides: { '--token-on-dark-heading':'#FFFFFF', '--token-on-dark-body':'rgba(255,255,255,0.9)' },
+          data: { headline: title, subline: excerpt, bgImage: img(heroImage), backgroundImage: img(heroImage), overlayColor: '#0E3A53', overlayOpacity: 0.6 },
+          styleOverrides: darkSectionTokens,
         },
         {
           id: uuid(), type: 'freeText',
@@ -802,7 +820,7 @@ function buildNewsItem({ slug, title, excerpt, heroImage, body }) {
             subline: 'Rufen Sie an oder schreiben Sie eine kurze Nachricht — wir antworten persönlich.',
             ctaPrimary: { label: 'Beratung anfragen', href: '/kontakt', icon: 'PhoneCall' },
           },
-          styleOverrides: { '--token-section-bg': C.cream, '--token-heading': C.brand },
+          styleOverrides: { '--token-section-bg': C.brand, ...darkSectionTokens },
         },
       ],
     },

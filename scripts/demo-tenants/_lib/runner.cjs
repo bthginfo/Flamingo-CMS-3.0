@@ -113,8 +113,12 @@ async function run(tenant) {
     for (const col of tenant.collections) {
       for (const item of col.items || []) {
         log('POST item', col.key, '/', item.slug);
-        try { await api.createItem(col.key, item); }
-        catch (e) { log('  warn: createItem failed', col.key, item.slug, e.message); }
+        try {
+          // Items default to published=false on create. Force-publish unless
+          // the caller explicitly set it.
+          const body = item.published === undefined ? { ...item, published: true } : item;
+          await api.createItem(col.key, body);
+        } catch (e) { log('  warn: createItem failed', col.key, item.slug, e.message); }
       }
     }
   }
