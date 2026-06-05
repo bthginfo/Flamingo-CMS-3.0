@@ -7,7 +7,7 @@ Letzter Stand: siehe Commit-Datum.
 | 1 | handwerk     | SHK-Meisterbetrieb (Köln)     | ✅ DONE | Müller & Söhne — Referenz-Implementierung, 35+ Sections, Premium-Mix |
 | 2 | restaurant   | Restaurant                    | ✅ DONE | Trattoria Dal Maestro — 9 Pages, 10 Collection Items, Premium-Mix, Live-Routen geprüft |
 | 3 | hotel        | Hotel                         | ✅ DONE | Premium-Demo live geprüft                         |
-| 4 | salon        | Friseur / Beauty              | ⬜ TODO | Booking-Addon prüfen                             |
+| 4 | salon        | Friseur / Beauty              | ✅ DONE | Atelier Isabelle — Classic, Premium-Mix, Live-Routen geprüft |
 | 5 | tourismus    | Tourismus / Destination       | ⬜ TODO |                                                  |
 | 6 | medical      | Arztpraxis                    | ⬜ TODO | Datenschutz besonders sorgfältig                 |
 | 7 | wedding      | Hochzeitslocation / -planung  | ⬜ TODO | RSVP-Section nutzen                              |
