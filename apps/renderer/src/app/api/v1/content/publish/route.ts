@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
-import { pages, pageSections, collections, collectionItems } from '@flamingo/db';
+import { pages, pageSections, collections, collectionItems, globalSettings } from '@flamingo/db';
 import { publishedSnapshots, publishHistory } from '@flamingo/db';
 import { eq, asc, and, inArray, desc } from 'drizzle-orm';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { createHash } from 'crypto';
 import { getDraftSnapshot } from '@/lib/snapshot';
+import {
+  validateDesignPayload,
+  validateBrandPayload,
+  validateSectionStyleOverrides,
+  type ColorIssue,
+} from '@/lib/color-validation';
 
 export async function POST(req: NextRequest) {
   try {
@@ -54,9 +60,22 @@ export async function POST(req: NextRequest) {
 
     // Build warnings by scanning sections for incomplete content
     const warnings: string[] = [];
+    const colorWarnings: ColorIssue[] = [];
+
+    // ── Brand + design color audit ────────────────────────────────────────
+    const [settingsRow] = await db
+      .select({ brand: globalSettings.brand, design: globalSettings.design })
+      .from(globalSettings)
+      .where(eq(globalSettings.tenantId, auth.tenantId));
+    if (settingsRow?.brand && typeof settingsRow.brand === 'object') {
+      colorWarnings.push(...validateBrandPayload(settingsRow.brand as Record<string, unknown>));
+    }
+    if (settingsRow?.design && typeof settingsRow.design === 'object') {
+      colorWarnings.push(...validateDesignPayload(settingsRow.design as Record<string, unknown>));
+    }
     const allPageIds = allPages.map(p => p.id);
     const allSections = allPageIds.length > 0
-      ? await db.select({ pageId: pageSections.pageId, type: pageSections.type, data: pageSections.data })
+      ? await db.select({ pageId: pageSections.pageId, type: pageSections.type, data: pageSections.data, styleOverrides: pageSections.styleOverrides })
           .from(pageSections).where(inArray(pageSections.pageId, allPageIds)).orderBy(asc(pageSections.sortOrder))
       : [];
     const sectionsByPage = new Map<string, typeof allSections>();
@@ -66,7 +85,8 @@ export async function POST(req: NextRequest) {
       if (sections.length === 0) {
         warnings.push(`Page "${p.title || p.slug}" has no sections`);
       }
-      for (const s of sections) {
+      for (let i = 0; i < sections.length; i++) {
+        const s = sections[i];
         const data = (s.data || {}) as Record<string, unknown>;
         const label = `"${p.title || p.slug}" → ${s.type}`;
         if (s.type === 'servicesGrid' && (!Array.isArray(data.manualCards) || data.manualCards.length === 0))
@@ -77,6 +97,15 @@ export async function POST(req: NextRequest) {
           warnings.push(`${label}: items array is empty`);
         if ((s.type === 'team' || s.type === 'teamShowcase' || s.type === 'doctorTeam') && (!Array.isArray(data.members || data.doctors) || ((data.members || data.doctors) as any[]).length === 0))
           warnings.push(`${label}: members/doctors array is empty`);
+        // Section-level color/contrast audit
+        if (s.styleOverrides && typeof s.styleOverrides === 'object') {
+          const issues = validateSectionStyleOverrides(i, s.type, s.styleOverrides as Record<string, unknown>);
+          for (const issue of issues) {
+            // Prefix the existing location with the page name so the AI sees
+            // which page each warning belongs to.
+            colorWarnings.push({ ...issue, location: `${p.title || p.slug} → ${issue.location ?? `sections[${i}]`}` });
+          }
+        }
       }
     }
 
@@ -123,6 +152,7 @@ export async function POST(req: NextRequest) {
       message: 'Published successfully',
       pagesRevalidated: allPages.length,
       ...(warnings.length > 0 ? { warnings } : {}),
+      ...(colorWarnings.length > 0 ? { colorWarnings } : {}),
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);

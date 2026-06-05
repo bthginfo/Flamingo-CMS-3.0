@@ -69,7 +69,8 @@ export async function GET(req: NextRequest) {
       getCollectionItem: { method: 'GET', path: '/api/v1/content/collections/:key/items/:id', description: 'Get a single collection item with all data' },
       deleteCollectionItem: { method: 'DELETE', path: '/api/v1/content/collections/:key/items/:id', description: 'Delete a collection item' },
       patchPage: { method: 'PATCH', path: '/api/v1/content/pages/:id', description: 'Partially update a page. Send patchSections: [{id, data: {partial fields}}] to merge section data without full replace.' },
-      publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content. Returns warnings for empty sections or missing images.' },
+      publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content. Returns warnings (incomplete content) AND colorWarnings (low contrast / malformed colors). Call /validate FIRST.' },
+      validate: { method: 'GET', path: '/api/v1/content/validate', description: 'Pre-publish audit. Returns { readyToPublish, summary, contentIssues, colorIssues }. ALWAYS call before /publish, fix every error + critical warning, repeat until readyToPublish=true.' },
       debug: { method: 'GET', path: '/api/v1/content/debug', description: 'Get raw stored data for all pages, sections, collections and items (for debugging)' },
       socialLinks: { method: 'PUT', path: '/api/v1/content/social-links', description: 'Set social media links: { facebook?: url, instagram?: url, linkedin?: url, youtube?: url, tiktok?: url, xing?: url, google?: url, pinterest?: url, twitter?: url }' },
       style: { method: 'PUT', path: '/api/v1/content/style', description: 'Set active style variant. Only { style: "classic" } is supported; old modern/bold values are ignored by the renderer.' },
@@ -99,13 +100,14 @@ export async function GET(req: NextRequest) {
       'Only fill fields defined in sectionDataSchemas — do not invent custom fields.',
       'Section colors are NOT normal data fields. Put per-section colors into section.styleOverrides using CSS variables from sectionStyleContracts.',
       'For every section with an image, dark background or overlay, explicitly set contrasting text/button colors in styleOverrides. Do not rely on global theme colors when contrast is uncertain.',
-      'Never send text and background colors with low contrast. Use dark text on light backgrounds, light text on dark backgrounds, and pair --brand-btn-bg with a readable --brand-btn-text.',
+      'Never send text and background colors with low contrast. Use dark text on light backgrounds, light text on dark backgrounds, and pair --brand-btn-bg with a readable --brand-btn-text. WCAG AA requires a contrast ratio of 4.5:1 for body text and 3:1 for large text.',
       'Every section MUST have ALL required fields filled with real content — never leave fields empty or with placeholder text like "Lorem ipsum".',
       'Every array field (items, services, steps, etc.) MUST have at least 3 entries unless the real business has fewer.',
       'The footer MUST contain columns with items arrays. Each item needs text and optionally href. Never send empty columns or columns without items.',
       'Navigation items MUST link to existing pages using their slug (e.g. href: "/leistungen", NOT href: "/services").',
       'When using section.styleOverrides, the keys MUST be EXACTLY one of the documented --token-* slot names (see point 12 in instructions). Unknown keys are ignored by the renderer.',
       'Per-section styleOverrides values are CSS colour strings — hex (#rrggbb), rgb() or rgba() are all valid. Do NOT pass slot enums or label names like "primary" — these are not colours.',
+      'BEFORE calling /publish, ALWAYS call GET /api/v1/content/validate. Fix every "error" issue and every contrast warning. Only publish when readyToPublish=true.',
       ...(hasShop ? ['This tenant has the SHOP addon active. Include shop pages (slug: "shop", "warenkorb") with shopProductGrid and shopCart sections. Add a "Shop" / "Produkte" link in the navigation. Create product categories and products via the shop endpoints.'] : ['This tenant does NOT have the shop addon. Do NOT create shop pages or use shop section types.']),
       ...(hasBooking ? ['This tenant has the BOOKING addon active. You may use bookingWidget, bookingSlotPicker, bookingDateRange, availabilityCalendar, resourceBookingShowcase and bookingCtaPro sections where they make sense. Use bookingSlotPicker for restaurants/cafes/salons/appointments where the visitor chooses a day and sees available times. Use bookingDateRange for hotels, apartments, locations, rooms and multi-day requests. The actual booking logic is configured in Admin > Funktionen > Buchungen.'] : ['This tenant does NOT have the booking addon. Do NOT use bookingWidget, bookingSlotPicker, bookingDateRange, availabilityCalendar, resourceBookingShowcase or bookingCtaPro. Keep simple reservation/contact sections if needed.']),
     ],
@@ -192,6 +194,66 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
 
 8. PUBLISH (POST /api/v1/content/publish):
    - IMMER als letzter Schritt aufrufen!
+   - VORHER: Call GET /api/v1/content/validate. Wenn readyToPublish=false → fixe ALLE contentIssues mit severity "error" und ALLE colorIssues mit code "INVALID_COLOR_FORMAT" oder severity "error". Wiederhole bis readyToPublish=true.
+   - Beachte auch die "warnings" (z.B. LOW_CONTRAST). Setze passende styleOverrides damit Texte lesbar werden, dann erneut /validate aufrufen.
+
+═══════════════════════════════════════════
+FARB- & KONTRAST-PFLICHTREGELN (verhindert "weiß auf weiß" / "dunkel auf dunkel"):
+═══════════════════════════════════════════
+
+A) JEDES Background+Text-Paar MUSS WCAG AA erfüllen:
+   - Body-Text auf Hintergrund:  Kontrastverhältnis ≥ 4.5:1
+   - Headlines (groß, ≥18pt):    Kontrastverhältnis ≥ 3.0:1
+   - Button-Text auf Button-Bg:  ≥ 4.5:1
+
+B) WENN sectionBg DUNKEL ist (Helligkeit < 50%, also rel. Luminanz < 0.5):
+   MUSST du im SELBEN Section/Design-Payload SETZEN:
+   - onDarkHeading: "#ffffff"  (oder ähnlich hell)
+   - onDarkBody:    "rgba(255,255,255,0.85)"
+   - onDarkMuted:   "rgba(255,255,255,0.6)"
+   ANSONSTEN bleibt der Default-Dark-Text aktiv → unsichtbar auf dunklem Hintergrund.
+
+   Beispiel (Dark CTA-Band):
+   {
+     "type": "ctaBand",
+     "data": { "headline": "...", "subline": "..." },
+     "styleOverrides": {
+       "--token-section-bg": "#0f4c4c",
+       "--token-on-dark-heading": "#ffffff",
+       "--token-on-dark-body": "rgba(255,255,255,0.88)",
+       "--token-on-dark-muted": "rgba(255,255,255,0.65)",
+       "--token-btn-bg": "#f5e8d8",
+       "--token-btn-text": "#0f4c4c"
+     }
+   }
+
+C) BUTTONS: Wenn du --token-btn-bg setzt, MUSST du --token-btn-text mitsetzen.
+   Ebenso für Sekundär-Buttons.
+
+D) BADGES/EYEBROWS: Wenn du --token-badge-bg setzt, MUSST du --token-badge-text mitsetzen.
+
+E) BILD-HEROES mit overlayColor/overlayOpacity:
+   - Bild ist meist hell-bis-mittel → dunkles Overlay (rgba(0,0,0,0.5–0.7)) + hellen Headline-Text.
+   - ODER helles Overlay (rgba(255,255,255,0.85)) + dunklen Headline-Text.
+   - NIE: hell-Overlay + heller Text. NIE: ohne Overlay + heller Text auf hellem Bild.
+
+F) VERBOTENE KOMBINATIONEN (führen zu unsichtbaren Texten in der Live-Vorschau):
+   ❌ sectionBg: #ffffff + heading: #f5f5f5    (weiß-grau auf weiß)
+   ❌ sectionBg: #0a0a0a + heading: #1a1a1a    (fast-schwarz auf schwarz)
+   ❌ btnBg: #ffffff + btnText: #cccccc        (hellgrau auf weiß)
+   ❌ Dunkler Header (#1a1a1a) ohne onDarkHeading gesetzt
+   ❌ Hero mit dunklem Bild ohne overlayOpacity ≥ 0.4 + onDarkHeading
+
+G) SICHERER WORKFLOW:
+   1) Setze JEDES Mal wenn du eine eigene sectionBg setzt AUCH passende Text-Farben.
+   2) Nach allen PUT/POSTs: GET /api/v1/content/validate.
+   3) Fixe alle "colorIssues" bevor /publish aufgerufen wird.
+   4) Der Server filtert ungültige Farben (#xyz, "primary", "blue") und gibt 400 zurück — verwende NUR hex (#rrggbb), #rrggbbaa, rgb() oder rgba().
+
+H) AUTO-FIX: Wenn du PUT /content/design mit einem dunklen sectionBg ohne onDark*-Tokens sendest,
+   setzt der Server automatisch onDarkHeading/Body/Muted auf weiße Defaults. Das ist eine Rettungsleine,
+   keine Erlaubnis — die Response enthält ein "autoFixes"-Array, das du in deinem nächsten Schritt
+   prüfen und ggf. mit besseren Werten überschreiben solltest.
 
 ═══════════════════════════════════════════
 i18n — MEHRSPRACHIGKEIT:
