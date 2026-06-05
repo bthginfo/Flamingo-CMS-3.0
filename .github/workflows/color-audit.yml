@@ -1,0 +1,21 @@
+name: color-audit
+on:
+  pull_request:
+    paths:
+      - 'apps/renderer/src/app/admin/pages/[id]/section-color-editor.tsx'
+      - 'apps/renderer/src/lib/brand-colors.ts'
+      - 'apps/renderer/src/templates/**'
+      - 'scripts/audit-color-fields.cjs'
+      - 'scripts/audit-colors-strict.cjs'
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Run color audit (strict)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/audit-colors-strict.cjs

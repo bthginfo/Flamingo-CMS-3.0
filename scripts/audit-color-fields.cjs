@@ -3,7 +3,7 @@ const https = require('https');
 const fs = require('fs');
 const TOKEN = process.env.GITHUB_TOKEN || '';
 
-function raw(p) { return new Promise((res, rej) => { https.get({ hostname: 'raw.githubusercontent.com', path: '/bthginfo/Flamingo-CMS-3.0/main/' + p }, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => r.statusCode === 200 ? res(d) : rej(new Error(r.statusCode + ' ' + p))) }).on('error', rej) }) }
+function raw(p) { return new Promise((res, rej) => { https.get({ hostname: 'api.github.com', path: '/repos/bthginfo/Flamingo-CMS-3.0/contents/' + p + '?ref=main', headers: { 'User-Agent': 'x', 'Accept': 'application/vnd.github.raw', ...(TOKEN ? { Authorization: 'Bearer ' + TOKEN } : {}) } }, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => r.statusCode === 200 ? res(d) : rej(new Error(r.statusCode + ' ' + p))) }).on('error', rej) }) }
 function api(p) { return new Promise((res, rej) => { https.get({ hostname: 'api.github.com', path: p, headers: { 'User-Agent': 'x', ...(TOKEN ? { Authorization: 'Bearer ' + TOKEN } : {}) } }, r => { let d = ''; r.on('data', c => d += c); r.on('end', () => res(JSON.parse(d))) }).on('error', rej) }) }
 
 (async () => {

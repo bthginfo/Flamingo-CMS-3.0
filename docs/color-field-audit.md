@@ -21,39 +21,39 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 | Total fields shown | 1331 |
 | Unique templates referenced | 197 |
 | Unresolved component refs | 2 |
-| **DEAD fields** | **417** (31.3%) |
-| **SHADOWED fields** | **408** (30.7%) |
-| **MISSING fields** | **767** |
+| **DEAD fields** | **397** (29.8%) |
+| **SHADOWED fields** | **19** (1.4%) |
+| **MISSING fields** | **747** |
 
 ## Top 25 Worst Offenders (by dead+shadowed)
 
 | Section | Dead | Shadowed | Missing | Total | Templates |
 |---|---:|---:|---:|---:|---|
-| `downloadForms` | 14 | 0 | 3 | 14 | medical/download-forms.tsx |
+| `offerCampaignStrip` | 18 | 0 | 11 | 20 | shared/offer-campaign-strip.tsx |
+| `seasonalCampaign` | 16 | 0 | 11 | 18 | shared/offer-campaign-strip.tsx |
 | `bookingWidget` | 14 | 0 | 2 | 18 | shared/booking-widget.tsx |
 | `bookingCtaPro` | 14 | 0 | 2 | 18 | shared/booking-widget.tsx |
-| `hero` | 0 | 13 | 23 | 20 | handwerk/hero.tsx, restaurant/hero.tsx, hotel/hero.tsx, tourism/hero.tsx, salon/hero.tsx, medical/hero.tsx, wedding/hero.tsx, consulting/hero.tsx, realestate/hero.tsx, cafe/hero.tsx, tattoo/hero.tsx, shared/glow-hero.tsx, shared/cinematic-hero.tsx |
-| `appointmentCta` | 4 | 8 | 11 | 18 | medical/appointment-cta.tsx |
-| `cinematicHero` | 5 | 7 | 7 | 19 | shared/cinematic-hero.tsx |
-| `ctaBand` | 5 | 7 | 11 | 18 | handwerk/cta-band.tsx |
-| `emergencyInfo` | 5 | 7 | 9 | 15 | medical/emergency-info.tsx |
-| `fitnessHero` | 4 | 8 | 11 | 17 | shared/glow-hero.tsx |
-| `floristHero` | 4 | 8 | 11 | 17 | shared/glow-hero.tsx |
-| `glowHero` | 4 | 8 | 9 | 19 | shared/glow-hero.tsx |
-| `locationHero` | 5 | 7 | 7 | 19 | shared/cinematic-hero.tsx |
-| `proofWall` | 5 | 7 | 6 | 16 | shared/proof-wall.tsx |
-| `additionalLocations` | 1 | 10 | 12 | 17 | shared/additional-locations.tsx |
-| `immersiveCtaBanner` | 3 | 8 | 15 | 18 | shared/immersive-cta-banner.tsx |
+| `downloadForms` | 11 | 0 | 0 | 14 | medical/download-forms.tsx |
 | `bookingSlotPicker` | 11 | 0 | 2 | 15 | shared/booking-widget.tsx |
 | `bookingDateRange` | 11 | 0 | 2 | 15 | shared/booking-widget.tsx |
 | `availabilityCalendar` | 11 | 0 | 2 | 15 | shared/booking-widget.tsx |
 | `resourceBookingShowcase` | 11 | 0 | 2 | 15 | shared/booking-widget.tsx |
-| `templateAdvantage` | 2 | 9 | 11 | 14 | shared/template-advantage.tsx |
-| `visitorInfo` | 3 | 8 | 8 | 15 | tourism/visitor-info.tsx |
-| `availabilityCta` | 2 | 8 | 16 | 16 | shared/immersive-cta-banner.tsx |
-| `beforeAfter` | 10 | 0 | 10 | 11 | salon/before-after.tsx |
-| `beforeAfterStoryPro` | 4 | 6 | 8 | 14 | shared/before-after-story-pro.tsx |
-| `heroEcommerce` | 10 | 0 | 11 | 11 | handwerk/hero.tsx |
+| `editorialFeatureRail` | 10 | 0 | 8 | 15 | shared/editorial-feature-rail.tsx |
+| `beforeAfter` | 9 | 0 | 9 | 11 | salon/before-after.tsx |
+| `cinematicHero` | 9 | 0 | 11 | 19 | shared/cinematic-hero.tsx |
+| `locationHero` | 9 | 0 | 11 | 19 | shared/cinematic-hero.tsx |
+| `ctaBand` | 6 | 1 | 12 | 18 | handwerk/cta-band.tsx |
+| `portfolio` | 7 | 0 | 9 | 14 | handwerk/portfolio.tsx |
+| `fitnessHero` | 5 | 1 | 12 | 17 | shared/glow-hero.tsx |
+| `floristHero` | 5 | 1 | 12 | 17 | shared/glow-hero.tsx |
+| `glowHero` | 5 | 1 | 10 | 19 | shared/glow-hero.tsx |
+| `headerBanner` | 6 | 0 | 2 | 6 | handwerk/header-banner.tsx |
+| `heroEcommerce` | 6 | 0 | 7 | 11 | handwerk/hero.tsx |
+| `heroHandwerk` | 6 | 0 | 7 | 11 | handwerk/hero.tsx |
+| `proofWall` | 5 | 1 | 6 | 16 | shared/proof-wall.tsx |
+| `shopCheckout` | 6 | 0 | 2 | 12 | shared/shop-checkout.tsx |
+| `shopProductDetail` | 6 | 0 | 2 | 11 | shared/shop-product-detail.tsx |
+| `shopProductGrid` | 6 | 0 | 2 | 11 | shared/shop-product-grid.tsx |
 
 ## Per-Section Detail
 
@@ -61,33 +61,21 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `tourism/accommodation-grid.tsx`
 
-**Dead fields (2):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `iconColor` (Icons) → --style-icon-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Shadowed fields (7):**
+**Missing fields (9):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (10):**
-
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 
 ### `additionalLocations` (17 fields)
 
@@ -95,91 +83,57 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-
-**Shadowed fields (10):**
-
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `subheadingColor` (Subheadline) — writes `--style-subheading-color` but template reads `--token-subheading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
 
 **Missing fields (12):**
 
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-subheading` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-subheading-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `amenitiesGrid` (8 fields)
 
 **Templates:** `shared/bento-grid.tsx`
 
-**Shadowed fields (5):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
 **Missing fields (5):**
 
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 
 ### `appointmentCta` (18 fields)
 
 **Templates:** `medical/appointment-cta.tsx`
 
-**Dead fields (4):**
+**Dead fields (3):**
 
-- `iconColor` (Icons) → --style-icon-color — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (8):**
+**Missing fields (10):**
 
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (11):**
-
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-section-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
 
 ### `availabilityCalendar` (15 fields)
 
@@ -187,22 +141,22 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (11):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `headingColor` (Headline) → --style-heading-color — cssVar never referenced
-- `bodyColor` (Fließtext) → --style-body-color — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `headingColor` (Headline) → --token-heading — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --style-badge-bg — cssVar never referenced
-- `badgeText` (Badge/Eyebrow Text) → --style-badge-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
 **Missing fields (2):**
 
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `availabilityCta` (16 fields)
 
@@ -210,48 +164,40 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (2):**
 
-- `subheadingColor` (Subheadline) → --style-subheading-color — cssVar never referenced
+- `subheadingColor` (Subheadline) → --token-subheading — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Shadowed fields (8):**
+**Shadowed fields (1):**
 
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (16):**
 
 - `--style-on-dark-heading` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
 - `--style-on-dark-body` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 - `--style-on-dark-muted` — used by template, no editor field exposes it
 - `--token-muted` — used by template, no editor field exposes it
 - `--style-text-muted` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 - `--token-stat-value` — used by template, no editor field exposes it
 
 ### `beforeAfter` (11 fields)
 
 **Templates:** `salon/before-after.tsx`
 
-**Dead fields (10):**
+**Dead fields (9):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
 - `cardRadius` (Karten-Radius) → --style-card-radius — cssVar never referenced
 - `cardShadow` (Karten-Schatten) → --style-card-shadow — cssVar never referenced
@@ -260,12 +206,11 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 - `headingWeight` (Headline-Stärke) → --style-heading-weight — cssVar never referenced
 - `headingTracking` (Headline-Laufweite) → --style-heading-tracking — cssVar never referenced
 
-**Missing fields (10):**
+**Missing fields (9):**
 
 - `--token-muted` — used by template, no editor field exposes it
 - `--token-heading` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
 - `--token-btn-bg` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
 - `--brand-accent` — used by template, no editor field exposes it
@@ -277,22 +222,14 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `shared/before-after-slider.tsx`
 
-**Shadowed fields (5):**
-
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `subheadingColor` (Subheadline) — writes `--style-subheading-color` but template reads `--token-subheading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-
 **Missing fields (6):**
 
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-subheading` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-subheading-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 
 ### `beforeAfterStoryPro` (14 fields)
 
@@ -300,50 +237,37 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (4):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `check` (Checkmarks) → --token-check — cssVar never referenced
 - `statValue` (Statistik-Wert) → --token-stat-value — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Shadowed fields (6):**
+**Shadowed fields (1):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-eyebrow` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (8):**
 
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 
 ### `bentoGrid` (8 fields)
 
 **Templates:** `shared/bento-grid.tsx`
 
-**Shadowed fields (5):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
 **Missing fields (5):**
 
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 
 ### `bookingCtaPro` (18 fields)
 
@@ -351,15 +275,15 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (14):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `headingColor` (Headline) → --style-heading-color — cssVar never referenced
-- `bodyColor` (Fließtext) → --style-body-color — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `headingColor` (Headline) → --token-heading — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --style-badge-bg — cssVar never referenced
-- `badgeText` (Badge/Eyebrow Text) → --style-badge-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
@@ -368,8 +292,8 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Missing fields (2):**
 
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `bookingDateRange` (15 fields)
 
@@ -377,22 +301,22 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (11):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `headingColor` (Headline) → --style-heading-color — cssVar never referenced
-- `bodyColor` (Fließtext) → --style-body-color — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `headingColor` (Headline) → --token-heading — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --style-badge-bg — cssVar never referenced
-- `badgeText` (Badge/Eyebrow Text) → --style-badge-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
 **Missing fields (2):**
 
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `bookingSlotPicker` (15 fields)
 
@@ -400,22 +324,22 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (11):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `headingColor` (Headline) → --style-heading-color — cssVar never referenced
-- `bodyColor` (Fließtext) → --style-body-color — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `headingColor` (Headline) → --token-heading — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --style-badge-bg — cssVar never referenced
-- `badgeText` (Badge/Eyebrow Text) → --style-badge-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
 **Missing fields (2):**
 
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `bookingWidget` (18 fields)
 
@@ -423,15 +347,15 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (14):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `headingColor` (Headline) → --style-heading-color — cssVar never referenced
-- `bodyColor` (Fließtext) → --style-body-color — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `headingColor` (Headline) → --token-heading — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --style-badge-bg — cssVar never referenced
-- `badgeText` (Badge/Eyebrow Text) → --style-badge-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
@@ -440,8 +364,8 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Missing fields (2):**
 
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `bouquetShowcase` (11 fields)
 
@@ -449,36 +373,28 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 
 **Missing fields (2):**
 
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 
 ### `brandShowroom` (6 fields)
 
 **Templates:** `shared/brand-showroom.tsx`
 
-**Dead fields (3):**
+**Dead fields (1):**
 
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Missing fields (6):**
+**Missing fields (4):**
 
 - `--token-icon` — used by template, no editor field exposes it
 - `--token-subheading` — used by template, no editor field exposes it
 - `--brand-secondary` — used by template, no editor field exposes it
 - `--token-on-dark-heading` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
 
 ### `categoryMosaic` (8 fields)
 
@@ -486,7 +402,7 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
 **Missing fields (2):**
 
@@ -497,33 +413,31 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `shared/cinematic-hero.tsx`
 
-**Dead fields (5):**
+**Dead fields (9):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `subheadingColor` (Subheadline) → --style-subheading-color — cssVar never referenced
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `headingColor` (Headline) → --token-heading — cssVar never referenced
+- `subheadingColor` (Subheadline) → --token-subheading — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `brandPrimary` (Primärer Markenwert) → --brand-primary — cssVar never referenced
 
-**Shadowed fields (7):**
+**Missing fields (11):**
 
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-on-dark-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-on-dark-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-on-dark-muted` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `badgeBorder` (Badge/Eyebrow Rahmen) — writes `--style-badge-border` but template reads `--token-badge-border` first (token defaulted at :root)
-
-**Missing fields (7):**
-
-- `--token-section-bg` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
-- `--token-badge-border` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--style-badge-border` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 
 ### `collectionHero` (15 fields)
 
@@ -531,49 +445,33 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-
-**Shadowed fields (7):**
-
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
 
 **Missing fields (11):**
 
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 - `--token-heading` — used by template, no editor field exposes it
 - `--style-heading-color` — used by template, no editor field exposes it
 - `--token-body` — used by template, no editor field exposes it
 - `--style-body-color` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 
 ### `collectionList` (5 fields)
 
 **Templates:** `shared/collection-list.tsx`
 
-**Dead fields (4):**
+**Dead fields (1):**
 
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
-**Missing fields (4):**
+**Missing fields (1):**
 
-- `--token-muted` — used by template, no editor field exposes it
 - `--token-body` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
 
 ### `comparisonCardsPro` (11 fields)
 
@@ -583,42 +481,34 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Shadowed fields (5):**
+**Shadowed fields (1):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-check` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (9):**
 
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 - `--token-badge-bg` — used by template, no editor field exposes it
 - `--token-badge-text` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `comparisonTable` (6 fields)
 
 **Templates:** `shared/comparison-table.tsx`
 
-**Dead fields (5):**
+**Dead fields (3):**
 
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
-**Missing fields (4):**
+**Missing fields (2):**
 
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
 - `--token-heading` — used by template, no editor field exposes it
 - `--token-body` — used by template, no editor field exposes it
 
@@ -628,51 +518,32 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (4):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (1):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-
 **Missing fields (2):**
 
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 
 ### `contact` (11 fields)
 
 **Templates:** `handwerk/contact.tsx`, `restaurant/contact.tsx`, `hotel/contact.tsx`, `consulting/contact.tsx`, `realestate/contact.tsx`, `cafe/contact.tsx`
 
-**Dead fields (2):**
+**Missing fields (10):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `bodyColor` (Fließtext) → --style-body-color — cssVar never referenced
-
-**Shadowed fields (5):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (12):**
-
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
 - `--brand-accent` — used by template, no editor field exposes it
 - `--token-on-dark-heading` — used by template, no editor field exposes it
 - `--token-badge-bg` — used by template, no editor field exposes it
 - `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
 
 ### `courseSchedule` (5 fields)
 
@@ -680,8 +551,8 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (4):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
@@ -689,37 +560,33 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `handwerk/cta-band.tsx`
 
-**Dead fields (5):**
+**Dead fields (6):**
 
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (7):**
+**Shadowed fields (1):**
 
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `badgeBorder` (Badge/Eyebrow Rahmen) — writes `--style-badge-border` but template reads `--token-badge-border` first (token defaulted at :root)
 
-**Missing fields (11):**
+**Missing fields (12):**
 
-- `--token-section-bg` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
 - `--brand-accent-15` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-badge-border` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-badge-border` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `ctaLinks` (11 fields)
 
@@ -727,25 +594,16 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-
-**Shadowed fields (6):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
 
 **Missing fields (6):**
 
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 
 ### `deliveryTimeline` (5 fields)
 
@@ -759,126 +617,105 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `tourism/destination-highlights.tsx`
 
-**Dead fields (4):**
+**Dead fields (3):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
-- `iconColor` (Icons) → --style-icon-color — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --style-badge-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
 
-**Shadowed fields (5):**
+**Missing fields (7):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (8):**
-
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 
 ### `diagnostics` (14 fields)
 
 **Templates:** `medical/diagnostics.tsx`
 
-**Dead fields (3):**
+**Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
-- `iconColor` (Icons) → --style-icon-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 
-**Shadowed fields (5):**
+**Missing fields (7):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (8):**
-
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 
 ### `doctorTeam` (14 fields)
 
 **Templates:** `medical/doctor-team.tsx`
 
-**Dead fields (2):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `iconColor` (Icons) → --style-icon-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Shadowed fields (6):**
+**Missing fields (8):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (9):**
-
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 
 ### `downloadForms` (14 fields)
 
 **Templates:** `medical/download-forms.tsx`
 
-**Dead fields (14):**
+**Dead fields (11):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `headingColor` (Headline) → --style-heading-color — cssVar never referenced
-- `bodyColor` (Fließtext) → --style-body-color — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
-- `iconColor` (Icons) → --style-icon-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `iconColor` (Icons) → --token-icon — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `btnBg` (Button Hintergrund) → --brand-btn-bg — cssVar never referenced
-- `btnText` (Button Text) → --brand-btn-text — cssVar never referenced
-- `badgeText` (Badge/Eyebrow Text) → --style-badge-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `btnBg` (Button Hintergrund) → --token-btn-bg — cssVar never referenced
+- `btnText` (Button Text) → --token-btn-text — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 - `brandPrimary` (Primärer Markenwert) → --brand-primary — cssVar never referenced
-
-**Missing fields (3):**
-
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
 
 ### `editorialFeatureRail` (15 fields)
 
 **Templates:** `shared/editorial-feature-rail.tsx`
 
-**Dead fields (2):**
+**Dead fields (10):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `headingColor` (Headline) → --token-heading — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 - `eyebrow` (Eyebrow / Kicker) → --token-eyebrow — cssVar never referenced
+- `btnBg` (Button Hintergrund) → --token-btn-bg — cssVar never referenced
+- `btnText` (Button Text) → --token-btn-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
+
+**Missing fields (8):**
+
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `embed` (2 fields)
 
@@ -886,7 +723,7 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 
 **Missing fields (1):**
 
@@ -898,62 +735,42 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (5):**
 
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --style-badge-bg — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 - `brandPrimary` (Primärer Markenwert) → --brand-primary — cssVar never referenced
 
-**Shadowed fields (7):**
-
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
 **Missing fields (9):**
 
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
 
 ### `equipmentHighlights` (14 fields)
 
 **Templates:** `medical/equipment-highlights.tsx`
 
-**Dead fields (3):**
+**Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
-- `iconColor` (Icons) → --style-icon-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 
-**Shadowed fields (5):**
+**Missing fields (7):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (8):**
-
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 
 ### `eventTypes` (8 fields)
 
@@ -961,7 +778,7 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
 **Missing fields (2):**
 
@@ -972,32 +789,21 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `tourism/experience-grid.tsx`
 
-**Dead fields (3):**
+**Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `iconColor` (Icons) → --style-icon-color — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --style-badge-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
 
-**Shadowed fields (6):**
+**Missing fields (8):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (9):**
-
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 
 ### `faq` (14 fields)
 
@@ -1005,32 +811,22 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-
-**Shadowed fields (7):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
 **Missing fields (15):**
 
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
 - `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 - `--token-btn-bg` — used by template, no editor field exposes it
 - `--token-on-dark-heading` — used by template, no editor field exposes it
 - `--brand-btn-bg` — used by template, no editor field exposes it
@@ -1041,7 +837,7 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (3):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
@@ -1049,35 +845,30 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `shared/glow-hero.tsx`
 
-**Dead fields (4):**
+**Dead fields (5):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (8):**
+**Shadowed fields (1):**
 
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `subheadingColor` (Subheadline) — writes `--style-subheading-color` but template reads `--token-subheading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-eyebrow` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
-**Missing fields (11):**
+**Missing fields (12):**
 
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-subheading` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-subheading-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--token-stat-value` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 
@@ -1087,19 +878,15 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (5):**
 
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `btnBg` (Button Hintergrund) → --brand-btn-bg — cssVar never referenced
-- `btnText` (Button Text) → --brand-btn-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
+- `btnBg` (Button Hintergrund) → --token-btn-bg — cssVar never referenced
+- `btnText` (Button Text) → --token-btn-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 
 **Missing fields (6):**
 
-- `--token-section-bg` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
 - `--style-accent` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 - `--style-button-bg` — used by template, no editor field exposes it
@@ -1110,35 +897,30 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `shared/glow-hero.tsx`
 
-**Dead fields (4):**
+**Dead fields (5):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (8):**
+**Shadowed fields (1):**
 
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `subheadingColor` (Subheadline) — writes `--style-subheading-color` but template reads `--token-subheading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-eyebrow` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
-**Missing fields (11):**
+**Missing fields (12):**
 
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-subheading` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-subheading-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--token-stat-value` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 
@@ -1146,18 +928,14 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `shared/material-gallery.tsx`
 
-**Dead fields (3):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Missing fields (5):**
+**Missing fields (3):**
 
 - `--token-icon` — used by template, no editor field exposes it
 - `--token-on-dark-heading` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
 - `--token-section-bg-alt` — used by template, no editor field exposes it
 
 ### `freeText` (1 fields)
@@ -1177,64 +955,55 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `handwerk/gallery-grid.tsx`
 
-**Dead fields (3):**
+**Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Missing fields (2):**
+**Missing fields (1):**
 
-- `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--token-on-dark-heading` — used by template, no editor field exposes it
 
 ### `galleryMoodboard` (3 fields)
 
 **Templates:** `handwerk/gallery-grid.tsx`
 
-**Dead fields (3):**
+**Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Missing fields (2):**
+**Missing fields (1):**
 
-- `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--token-on-dark-heading` — used by template, no editor field exposes it
 
 ### `glowHero` (19 fields)
 
 **Templates:** `shared/glow-hero.tsx`
 
-**Dead fields (4):**
+**Dead fields (5):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (8):**
+**Shadowed fields (1):**
 
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `subheadingColor` (Subheadline) — writes `--style-subheading-color` but template reads `--token-subheading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-eyebrow` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
-**Missing fields (9):**
+**Missing fields (10):**
 
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-subheading` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-subheading-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 
 ### `headerBanner` (6 fields)
@@ -1243,7 +1012,7 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (6):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
@@ -1259,150 +1028,116 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `handwerk/hero.tsx`, `restaurant/hero.tsx`, `hotel/hero.tsx`, `tourism/hero.tsx`, `salon/hero.tsx`, `medical/hero.tsx`, `wedding/hero.tsx`, `consulting/hero.tsx`, `realestate/hero.tsx`, `cafe/hero.tsx`, `tattoo/hero.tsx`, `shared/glow-hero.tsx`, `shared/cinematic-hero.tsx`
 
-**Shadowed fields (13):**
+**Shadowed fields (1):**
 
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `sectionBgAlt` (Sekundärer Hintergrund) — writes `--style-section-bg-alt` but template reads `--token-section-bg-alt` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-on-dark-heading` first (token defaulted at :root)
-- `subheadingColor` (Subheadline) — writes `--style-subheading-color` but template reads `--token-subheading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-on-dark-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-on-dark-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `badgeBorder` (Badge/Eyebrow Rahmen) — writes `--style-badge-border` but template reads `--token-badge-border` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (23):**
 
-- `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
 - `--brand-accent` — used by template, no editor field exposes it
 - `--brand-secondary` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-section-bg-alt` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 - `--style-text-secondary` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
 - `--style-image-text-color` — used by template, no editor field exposes it
 - `--style-image-body-color` — used by template, no editor field exposes it
 - `--style-image-muted-color` — used by template, no editor field exposes it
-- `--token-subheading` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-subheading-color` — used by template, no editor field exposes it
 - `--token-stat-value` — used by template, no editor field exposes it
-- `--token-badge-border` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-badge-border` — used by template, no editor field exposes it
 
 ### `heroEcommerce` (11 fields)
 
 **Templates:** `handwerk/hero.tsx`
 
-**Dead fields (10):**
+**Dead fields (6):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Missing fields (11):**
+**Missing fields (7):**
 
-- `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
 - `--token-badge-bg` — used by template, no editor field exposes it
 - `--brand-accent` — used by template, no editor field exposes it
 - `--brand-secondary` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
 - `--token-heading` — used by template, no editor field exposes it
 - `--token-body` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
 
 ### `heroHandwerk` (11 fields)
 
 **Templates:** `handwerk/hero.tsx`
 
-**Dead fields (10):**
+**Dead fields (6):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Missing fields (11):**
+**Missing fields (7):**
 
-- `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
 - `--token-badge-bg` — used by template, no editor field exposes it
 - `--brand-accent` — used by template, no editor field exposes it
 - `--brand-secondary` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
 - `--token-heading` — used by template, no editor field exposes it
 - `--token-body` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
 
 ### `horizontalScrollShowcase` (3 fields)
 
 **Templates:** `shared/horizontal-scroll-showcase.tsx`
 
-**Missing fields (1):**
+**Dead fields (2):**
 
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+
+**Missing fields (3):**
+
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 
 ### `hostTeam` (15 fields)
 
 **Templates:** `handwerk/team.tsx`
 
-**Dead fields (2):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Shadowed fields (8):**
+**Missing fields (10):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (11):**
-
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
 
 ### `immersiveCtaBanner` (18 fields)
@@ -1411,52 +1146,43 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (3):**
 
-- `subheadingColor` (Subheadline) → --style-subheading-color — cssVar never referenced
+- `subheadingColor` (Subheadline) → --token-subheading — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
-**Shadowed fields (8):**
+**Shadowed fields (1):**
 
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (15):**
 
 - `--style-on-dark-heading` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
 - `--style-on-dark-body` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 - `--style-on-dark-muted` — used by template, no editor field exposes it
 - `--token-muted` — used by template, no editor field exposes it
 - `--style-text-muted` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `inspirationGrid` (9 fields)
 
 **Templates:** `shared/inspiration-grid.tsx`
 
-**Dead fields (2):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Missing fields (3):**
+**Missing fields (2):**
 
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--token-on-dark-heading` — used by template, no editor field exposes it
 
 ### `legalContent` (2 fields)
@@ -1479,55 +1205,46 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-
-**Shadowed fields (4):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
 **Missing fields (6):**
 
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--style-section-bg-alt` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 
 ### `locationHero` (19 fields)
 
 **Templates:** `shared/cinematic-hero.tsx`
 
-**Dead fields (5):**
+**Dead fields (9):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `subheadingColor` (Subheadline) → --style-subheading-color — cssVar never referenced
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `headingColor` (Headline) → --token-heading — cssVar never referenced
+- `subheadingColor` (Subheadline) → --token-subheading — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `brandPrimary` (Primärer Markenwert) → --brand-primary — cssVar never referenced
 
-**Shadowed fields (7):**
+**Missing fields (11):**
 
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-on-dark-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-on-dark-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-on-dark-muted` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `badgeBorder` (Badge/Eyebrow Rahmen) — writes `--style-badge-border` but template reads `--token-badge-border` first (token defaulted at :root)
-
-**Missing fields (7):**
-
-- `--token-section-bg` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
-- `--token-badge-border` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--style-badge-border` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 
 ### `locationPackages` (9 fields)
 
@@ -1537,27 +1254,23 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Shadowed fields (5):**
+**Shadowed fields (1):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-check` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (11):**
 
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 - `--token-badge-bg` — used by template, no editor field exposes it
 - `--token-badge-text` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 - `--token-check` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `logoCloud` (1 fields)
 
@@ -1573,8 +1286,8 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 
 **Missing fields (1):**
 
@@ -1586,40 +1299,29 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-
-**Shadowed fields (4):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
 **Missing fields (6):**
 
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--style-section-bg-alt` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 
 ### `materialGallery` (9 fields)
 
 **Templates:** `shared/material-gallery.tsx`
 
-**Dead fields (3):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Missing fields (5):**
+**Missing fields (3):**
 
 - `--token-icon` — used by template, no editor field exposes it
 - `--token-on-dark-heading` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
 - `--token-section-bg-alt` — used by template, no editor field exposes it
 
 ### `membershipPlans` (9 fields)
@@ -1630,57 +1332,43 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Shadowed fields (5):**
+**Shadowed fields (1):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-check` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (11):**
 
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 - `--token-badge-bg` — used by template, no editor field exposes it
 - `--token-badge-text` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 - `--token-check` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `newsGrid` (6 fields)
 
 **Templates:** `handwerk/news-preview.tsx`
 
-**Shadowed fields (2):**
-
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-
 **Missing fields (3):**
 
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
 
 ### `newsPreview` (6 fields)
 
 **Templates:** `handwerk/news-preview.tsx`
 
-**Shadowed fields (2):**
-
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-
 **Missing fields (3):**
 
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
 
 ### `noticeBanner` (4 fields)
 
@@ -1702,7 +1390,7 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
 **Missing fields (2):**
 
@@ -1713,15 +1401,40 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `shared/offer-campaign-strip.tsx`
 
-**Dead fields (7):**
+**Dead fields (18):**
 
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `headingColor` (Headline) → --token-heading — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 - `eyebrow` (Eyebrow / Kicker) → --token-eyebrow — cssVar never referenced
 - `check` (Checkmarks) → --token-check — cssVar never referenced
+- `btnBg` (Button Hintergrund) → --token-btn-bg — cssVar never referenced
+- `btnText` (Button Text) → --token-btn-text — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
+
+**Missing fields (11):**
+
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-section-bg-alt` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 
 ### `openingHours` (14 fields)
 
@@ -1729,64 +1442,43 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-
-**Shadowed fields (7):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
 **Missing fields (13):**
 
 - `--token-badge-bg` — used by template, no editor field exposes it
 - `--brand-accent` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
 - `--token-on-dark-heading` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
 
 ### `placesMap` (15 fields)
 
 **Templates:** `tourism/places-map.tsx`
 
-**Dead fields (3):**
+**Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `iconColor` (Icons) → --style-icon-color — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --style-badge-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
 
-**Shadowed fields (6):**
+**Missing fields (8):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (9):**
-
-- `--token-body` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 
 ### `popup` (17 fields)
 
@@ -1794,30 +1486,26 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (4):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (5):**
+**Shadowed fields (1):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-eyebrow` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (9):**
 
 - `--token-section-bg-alt` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 - `--token-muted` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `portfolio` (14 fields)
 
@@ -1825,26 +1513,20 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (7):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `btnBg` (Button Hintergrund) → --brand-btn-bg — cssVar never referenced
-- `btnText` (Button Text) → --brand-btn-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
-
-**Shadowed fields (3):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
+- `btnBg` (Button Hintergrund) → --token-btn-bg — cssVar never referenced
+- `btnText` (Button Text) → --token-btn-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 
 **Missing fields (9):**
 
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--style-border` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
 - `--style-accent` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 - `--style-muted` — used by template, no editor field exposes it
@@ -1855,20 +1537,13 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `shared/premium-comparison.tsx`
 
-**Shadowed fields (4):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
 **Missing fields (5):**
 
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
 
 ### `principlesGrid` (15 fields)
 
@@ -1876,67 +1551,46 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `subheadingColor` (Subheadline) → --style-subheading-color — cssVar never referenced
+- `subheadingColor` (Subheadline) → --token-subheading — cssVar never referenced
 
-**Shadowed fields (9):**
+**Shadowed fields (1):**
 
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-eyebrow` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (12):**
 
-- `--token-section-bg` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
 - `--token-badge-border` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 - `--style-text-secondary` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `processSteps` (15 fields)
 
 **Templates:** `handwerk/process-steps.tsx`
 
-**Dead fields (2):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Shadowed fields (8):**
+**Missing fields (10):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (11):**
-
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
 
 ### `productShowcase` (11 fields)
@@ -1945,53 +1599,36 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 
 **Missing fields (2):**
 
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 
 ### `programGrid` (17 fields)
 
 **Templates:** `handwerk/services-grid.tsx`
 
-**Dead fields (2):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Shadowed fields (8):**
+**Missing fields (12):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (13):**
-
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
 
 ### `proofWall` (16 fields)
 
@@ -1999,30 +1636,24 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (5):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --style-badge-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (7):**
+**Shadowed fields (1):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-rating-star` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (6):**
 
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 
 ### `resourceBookingShowcase` (15 fields)
 
@@ -2030,22 +1661,22 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (11):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `headingColor` (Headline) → --style-heading-color — cssVar never referenced
-- `bodyColor` (Fließtext) → --style-body-color — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `headingColor` (Headline) → --token-heading — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --style-badge-bg — cssVar never referenced
-- `badgeText` (Badge/Eyebrow Text) → --style-badge-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
 **Missing fields (2):**
 
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `richText` (1 fields)
 
@@ -2070,194 +1701,159 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (4):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
 **Missing fields (5):**
 
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 
 ### `seasonalCampaign` (18 fields)
 
 **Templates:** `shared/offer-campaign-strip.tsx`
 
-**Dead fields (5):**
+**Dead fields (16):**
 
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `headingColor` (Headline) → --token-heading — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
+- `btnBg` (Button Hintergrund) → --token-btn-bg — cssVar never referenced
+- `btnText` (Button Text) → --token-btn-text — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
+**Missing fields (11):**
+
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-section-bg-alt` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+
 ### `serviceDetail` (10 fields)
 
 **Templates:** `handwerk/service-detail.tsx`
 
-**Dead fields (5):**
+**Dead fields (4):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 
-**Shadowed fields (1):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-
-**Missing fields (8):**
+**Missing fields (7):**
 
 - `--style-accent` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 - `--style-muted` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
 - `--style-border` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 
 ### `serviceOverview` (14 fields)
 
 **Templates:** `medical/service-overview.tsx`
 
-**Dead fields (3):**
+**Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
-- `iconColor` (Icons) → --style-icon-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 
-**Shadowed fields (5):**
+**Missing fields (7):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (8):**
-
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 
 ### `servicesGrid` (17 fields)
 
 **Templates:** `handwerk/services-grid.tsx`
 
-**Dead fields (2):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Shadowed fields (8):**
+**Missing fields (12):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (13):**
-
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
 
 ### `shopCart` (8 fields)
 
 **Templates:** `shared/shop-cart.tsx`
 
-**Dead fields (8):**
+**Dead fields (4):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
-**Missing fields (6):**
+**Missing fields (2):**
 
 - `--token-body` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--token-on-dark-heading` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
 
 ### `shopCategoryOverview` (5 fields)
 
 **Templates:** `shared/shop-category-overview.tsx`
 
-**Dead fields (5):**
+**Dead fields (1):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
-**Missing fields (5):**
+**Missing fields (1):**
 
 - `--token-body` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
 
 ### `shopCheckout` (12 fields)
 
 **Templates:** `shared/shop-checkout.tsx`
 
-**Dead fields (10):**
+**Dead fields (6):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Missing fields (6):**
+**Missing fields (2):**
 
-- `--token-muted` — used by template, no editor field exposes it
 - `--token-body` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
 
 ### `shopFeaturedProducts` (3 fields)
 
@@ -2265,60 +1861,44 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (3):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 
 ### `shopProductDetail` (11 fields)
 
 **Templates:** `shared/shop-product-detail.tsx`
 
-**Dead fields (10):**
+**Dead fields (6):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Missing fields (6):**
+**Missing fields (2):**
 
 - `--token-body` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
 - `--token-heading` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
 
 ### `shopProductGrid` (11 fields)
 
 **Templates:** `shared/shop-product-grid.tsx`
 
-**Dead fields (10):**
+**Dead fields (6):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Missing fields (6):**
+**Missing fields (2):**
 
 - `--token-body` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 
 ### `shopThankYou` (4 fields)
@@ -2327,7 +1907,7 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (4):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
@@ -2338,41 +1918,45 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Shadowed fields (7):**
+**Shadowed fields (1):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (8):**
 
 - `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--style-section-bg-alt` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 
 ### `socialProofBar` (10 fields)
 
 **Templates:** `shared/social-proof-bar.tsx`
 
-**Dead fields (1):**
+**Dead fields (6):**
 
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `headingColor` (Headline) → --token-heading — cssVar never referenced
+- `bodyColor` (Fließtext) → --token-body — cssVar never referenced
+- `badgeText` (Badge/Eyebrow Text) → --token-badge-text — cssVar never referenced
 - `cardBorderColor` (Karten-Rahmenfarbe) → --style-card-border-color — cssVar never referenced
 
-**Missing fields (1):**
+**Missing fields (6):**
 
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--style-border-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 
 ### `spaceShowcase` (11 fields)
 
@@ -2380,38 +1964,26 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 
 **Missing fields (2):**
 
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 
 ### `spotlightCards` (9 fields)
 
 **Templates:** `shared/spotlight-cards.tsx`
 
-**Shadowed fields (5):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
 **Missing fields (6):**
 
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--brand-primary-rgb` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 
 ### `stats` (8 fields)
 
@@ -2419,21 +1991,18 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Shadowed fields (5):**
+**Shadowed fields (2):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 - `textPrimary` (Primärer Text) — writes `--style-text-primary` but template reads `--token-heading` first (token defaulted at :root)
 - `textSecondary` (Sekundärer Text) — writes `--style-text-secondary` but template reads `--token-body` first (token defaulted at :root)
 
 **Missing fields (6):**
 
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
 - `--token-stat-value` — used by template, no editor field exposes it
 - `--token-heading` — used by template, no editor field exposes it
 - `--token-body` — used by template, no editor field exposes it
@@ -2444,54 +2013,37 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-
-**Shadowed fields (4):**
-
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
 **Missing fields (6):**
 
 - `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--style-section-bg-alt` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 
 ### `story` (12 fields)
 
 **Templates:** `restaurant/story.tsx`, `handwerk/text-image.tsx`, `hotel/story.tsx`, `tourism/story.tsx`, `medical/story.tsx`
 
-**Dead fields (7):**
+**Dead fields (4):**
 
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `btnBg` (Button Hintergrund) → --brand-btn-bg — cssVar never referenced
-- `btnText` (Button Text) → --brand-btn-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `btnText` (Button Text) → --token-btn-text — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (1):**
-
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-
-**Missing fields (15):**
+**Missing fields (12):**
 
 - `--token-badge-bg` — used by template, no editor field exposes it
 - `--brand-accent` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
 - `--token-heading` — used by template, no editor field exposes it
 - `--token-muted` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
 - `--token-section-bg-alt` — used by template, no editor field exposes it
-- `--token-section-bg` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
 - `--style-accent` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 - `--style-button-bg` — used by template, no editor field exposes it
@@ -2502,54 +2054,33 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `shared/bento-grid.tsx`
 
-**Shadowed fields (5):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
 **Missing fields (5):**
 
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 
 ### `team` (15 fields)
 
 **Templates:** `handwerk/team.tsx`, `consulting/team.tsx`, `cafe/team.tsx`
 
-**Dead fields (2):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Shadowed fields (8):**
+**Missing fields (11):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (12):**
-
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
 - `--token-on-dark-heading` — used by template, no editor field exposes it
 
@@ -2559,34 +2090,22 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (2):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
-
-**Shadowed fields (9):**
-
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `subheadingColor` (Subheadline) — writes `--style-subheading-color` but template reads `--token-subheading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (11):**
 
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-subheading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-subheading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 
 ### `testimonialMarquee` (11 fields)
 
@@ -2598,21 +2117,13 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (5):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
 **Missing fields (5):**
 
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
 
 ### `testimonials` (15 fields)
 
@@ -2620,30 +2131,20 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (3):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (7):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
 **Missing fields (13):**
 
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
 - `--token-section-bg-alt` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
 - `--token-btn-bg` — used by template, no editor field exposes it
@@ -2656,19 +2157,15 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (5):**
 
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
 - `accentColor` (Akzentfarbe) → --style-accent-color — cssVar never referenced
-- `btnBg` (Button Hintergrund) → --brand-btn-bg — cssVar never referenced
-- `btnText` (Button Text) → --brand-btn-text — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
-
-**Shadowed fields (1):**
-
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
+- `btnBg` (Button Hintergrund) → --token-btn-bg — cssVar never referenced
+- `btnText` (Button Text) → --token-btn-text — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 
 **Missing fields (6):**
 
-- `--token-section-bg` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
 - `--style-accent` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
 - `--style-button-bg` — used by template, no editor field exposes it
@@ -2681,8 +2178,8 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (4):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 - `textSecondary` (Sekundärer Text) → --style-text-secondary — cssVar never referenced
 
@@ -2690,33 +2187,21 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Templates:** `tourism/tour-routes.tsx`
 
-**Dead fields (2):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `iconColor` (Icons) → --style-icon-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Shadowed fields (7):**
+**Missing fields (9):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (10):**
-
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 
 ### `tourismContact` (15 fields)
 
@@ -2724,63 +2209,40 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `badgeBg` (Badge/Eyebrow BG) → --style-badge-bg — cssVar never referenced
-
-**Shadowed fields (7):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `badgeBg` (Badge/Eyebrow BG) → --token-badge-bg — cssVar never referenced
 
 **Missing fields (9):**
 
-- `--token-body` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
 
 ### `trainerProfiles` (15 fields)
 
 **Templates:** `handwerk/team.tsx`
 
-**Dead fields (2):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Shadowed fields (8):**
+**Missing fields (10):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (11):**
-
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-section-bg-alt` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
 - `--brand-dark` — used by template, no editor field exposes it
 
 ### `transformationStories` (11 fields)
@@ -2789,59 +2251,43 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (2):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Shadowed fields (6):**
+**Shadowed fields (1):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-eyebrow` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (9):**
 
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--token-eyebrow` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 
 ### `treatmentDetail` (14 fields)
 
 **Templates:** `medical/treatment-detail.tsx`
 
-**Dead fields (2):**
+**Dead fields (1):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `iconColor` (Icons) → --style-icon-color — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 
-**Shadowed fields (6):**
+**Missing fields (8):**
 
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
-
-**Missing fields (9):**
-
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
 
 ### `trialSessionCta` (16 fields)
 
@@ -2849,50 +2295,47 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (2):**
 
-- `subheadingColor` (Subheadline) → --style-subheading-color — cssVar never referenced
+- `subheadingColor` (Subheadline) → --token-subheading — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Shadowed fields (8):**
+**Shadowed fields (1):**
 
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
 - `accentColor` (Akzentfarbe) — writes `--style-accent-color` but template reads `--token-stat-value` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
 
 **Missing fields (16):**
 
 - `--style-on-dark-heading` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
 - `--style-on-dark-body` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
 - `--style-on-dark-muted` — used by template, no editor field exposes it
 - `--token-muted` — used by template, no editor field exposes it
 - `--style-text-muted` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-btn-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--brand-btn-bg` — used by template, no editor field exposes it
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-btn-text` — used by template, no editor field exposes it
+- `--brand-btn-text` — used by template, no editor field exposes it
 - `--token-stat-value` — used by template, no editor field exposes it
 
 ### `uspStrip` (6 fields)
 
 **Templates:** `handwerk/usp-strip.tsx`
 
-**Dead fields (1):**
+**Dead fields (3):**
 
-- `sectionBgAlt` (Sekundärer Hintergrund) → --style-section-bg-alt — cssVar never referenced
+- `sectionBgAlt` (Sekundärer Hintergrund) → --token-section-bg-alt — cssVar never referenced
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
+- `borderColor` (Rahmenfarbe) → --token-card-border — cssVar never referenced
 
-**Missing fields (3):**
+**Missing fields (5):**
 
 - `--brand-primary` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 - `--style-heading-color` — used by template, no editor field exposes it
 - `--style-body-color` — used by template, no editor field exposes it
 
@@ -2902,26 +2345,17 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-
-**Shadowed fields (6):**
-
-- `sectionBg` (Hintergrund) — writes `--style-section-bg` but template reads `--token-section-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `subheadingColor` (Subheadline) — writes `--style-subheading-color` but template reads `--token-subheading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `dividerColor` (Trennlinie) — writes `--style-divider-color` but template reads `--token-divider` first (token defaulted at :root)
+- `cardBg` (Karten-Hintergrund) → --token-card-bg — cssVar never referenced
 
 **Missing fields (7):**
 
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-divider` — used by template, no editor field exposes it
-- `--token-section-bg` — used by template, no editor field exposes it
-- `--token-body` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-subheading` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-divider-color` — used by template, no editor field exposes it
+- `--style-section-bg` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-subheading-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 
 ### `videoEmbed` (1 fields)
 
@@ -2929,7 +2363,7 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (1):**
 
-- `mutedColor` (Dezenter Text) → --style-text-muted — cssVar never referenced
+- `mutedColor` (Dezenter Text) → --token-muted — cssVar never referenced
 
 ### `visitorInfo` (15 fields)
 
@@ -2937,50 +2371,35 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (3):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
-- `btnBg` (Button Hintergrund) → --brand-btn-bg — cssVar never referenced
-- `btnText` (Button Text) → --brand-btn-text — cssVar never referenced
-
-**Shadowed fields (8):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-- `headingColor` (Headline) — writes `--style-heading-color` but template reads `--token-heading` first (token defaulted at :root)
-- `bodyColor` (Fließtext) — writes `--style-body-color` but template reads `--token-body` first (token defaulted at :root)
-- `mutedColor` (Dezenter Text) — writes `--style-text-muted` but template reads `--token-muted` first (token defaulted at :root)
-- `iconColor` (Icons) — writes `--style-icon-color` but template reads `--token-icon` first (token defaulted at :root)
-- `badgeBg` (Badge/Eyebrow BG) — writes `--style-badge-bg` but template reads `--token-badge-bg` first (token defaulted at :root)
-- `badgeText` (Badge/Eyebrow Text) — writes `--style-badge-text` but template reads `--token-badge-text` first (token defaulted at :root)
-- `borderColor` (Rahmenfarbe) — writes `--style-border-color` but template reads `--token-card-border` first (token defaulted at :root)
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
+- `btnBg` (Button Hintergrund) → --token-btn-bg — cssVar never referenced
+- `btnText` (Button Text) → --token-btn-text — cssVar never referenced
 
 **Missing fields (8):**
 
-- `--token-body` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-icon` — used by template, no editor field exposes it
-- `--token-heading` — used by template, no editor field exposes it
-- `--token-badge-bg` — used by template, no editor field exposes it
-- `--token-badge-text` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
-- `--token-muted` — used by template, no editor field exposes it
+- `--style-body-color` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
+- `--style-icon-color` — used by template, no editor field exposes it
+- `--style-heading-color` — used by template, no editor field exposes it
+- `--style-badge-bg` — used by template, no editor field exposes it
+- `--style-badge-text` — used by template, no editor field exposes it
+- `--style-border-color` — used by template, no editor field exposes it
+- `--style-text-muted` — used by template, no editor field exposes it
 
 ### `weddingFloristry` (6 fields)
 
 **Templates:** `shared/brand-showroom.tsx`
 
-**Dead fields (3):**
+**Dead fields (1):**
 
-- `cardBg` (Karten-Hintergrund) → --style-card-bg — cssVar never referenced
-- `borderColor` (Rahmenfarbe) → --style-border-color — cssVar never referenced
 - `textPrimary` (Primärer Text) → --style-text-primary — cssVar never referenced
 
-**Missing fields (6):**
+**Missing fields (4):**
 
 - `--token-icon` — used by template, no editor field exposes it
 - `--token-subheading` — used by template, no editor field exposes it
 - `--brand-secondary` — used by template, no editor field exposes it
 - `--token-on-dark-heading` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
-- `--token-card-border` — used by template, no editor field exposes it
 
 ### `workshopBooking` (13 fields)
 
@@ -2988,19 +2407,15 @@ For every `sectionType` in the editor's `SECTION_FIELDS`:
 
 **Dead fields (4):**
 
-- `sectionBg` (Hintergrund) → --style-section-bg — cssVar never referenced
+- `sectionBg` (Hintergrund) → --token-section-bg — cssVar never referenced
 - `onDarkHeading` (Headline (auf Dunkel)) → --token-on-dark-heading — cssVar never referenced
 - `onDarkBody` (Fließtext (auf Dunkel)) → --token-on-dark-body — cssVar never referenced
 - `onDarkMuted` (Dezent (auf Dunkel)) → --token-on-dark-muted — cssVar never referenced
 
-**Shadowed fields (1):**
-
-- `cardBg` (Karten-Hintergrund) — writes `--style-card-bg` but template reads `--token-card-bg` first (token defaulted at :root)
-
 **Missing fields (2):**
 
 - `--token-icon` — used by template, no editor field exposes it
-- `--token-card-bg` — used by template, no editor field exposes it
+- `--style-card-bg` — used by template, no editor field exposes it
 
 ## Section Types in Template Registry but Missing from SECTION_FIELDS
 
@@ -3099,157 +2514,3 @@ These components are referenced in the template registry but no source file with
 - `beforeAfter` → SharedBeforeAfterSection
 - `treatmentDetail` → MedicalTreatmentDetailSection
 
-
----
-
-## Fix Plan
-
-### Root Causes
-
-| Bucket | Count | Why |
-|---|---:|---|
-| **DEAD** | 417 | Editor exposes a field but no template implementing that sectionType references the field's CSS variable. The field is purely cosmetic — it changes inline style on the section but nothing reads it. |
-| **SHADOWED** | 408 | Editor writes a legacy `--style-X` value. Templates read `var(--token-X, var(--style-X, fallback))`. `--token-X` is defined at `:root` by [brand-colors.ts](apps/renderer/src/lib/brand-colors.ts) (defaulted from the brand chain) so the lookup *always* resolves before the fallback is evaluated. The user-set `--style-X` is never read. |
-| **MISSING** | 767 | Templates use a CSS variable that is not exposed by any editor field. Mostly `--token-*` slots whose editor counterparts still write the obsolete `--style-*` aliases. |
-
-### Phase A — Editor writes the token layer (cures most SHADOWED)
-
-Update [FIELD_DEFS](apps/renderer/src/app/admin/pages/[id]/section-color-editor.tsx) so every slot field writes its **`--token-*`** variable instead of the legacy `--style-*` alias.
-
-Concrete renames (each FIELD_DEFS entry's `cssVar`):
-
-| Field key | Old `cssVar` | New `cssVar` |
-|---|---|---|
-| sectionBg | `--style-section-bg` | `--token-section-bg` |
-| sectionBgAlt | `--style-section-bg-alt` | `--token-section-bg-alt` |
-| cardBg | `--style-card-bg` | `--token-card-bg` |
-| headingColor | `--style-heading-color` | `--token-heading` |
-| subheadingColor | `--style-subheading-color` | `--token-subheading` |
-| bodyColor | `--style-body-color` | `--token-body` |
-| mutedColor | `--style-text-muted` | `--token-muted` |
-| iconColor | `--style-icon-color` | `--token-icon` |
-| accentColor | `--style-accent-color` | _unchanged — no `--token-accent` exists yet (add it if/when needed)_ |
-| borderColor | `--style-border-color` | `--token-card-border` |
-| dividerColor | `--style-divider-color` | `--token-divider` |
-| badgeBg | `--style-badge-bg` | `--token-badge-bg` |
-| badgeText | `--style-badge-text` | `--token-badge-text` |
-| badgeBorder | `--style-badge-border` | `--token-badge-border` |
-| btnBg | `--brand-btn-bg` | `--token-btn-bg` |
-| btnText | `--brand-btn-text` | `--token-btn-text` |
-
-After this change, when the user sets `headingColor: #ff0000` the section element gets `style="--token-heading: #ff0000"` — the templates' `var(--token-heading, …)` lookup now resolves to the user's value directly. The `--style-X` fallback chain remains intact for the rare templates that have not been migrated.
-
-**Migration of existing DB rows**: One-off script that takes every `section.styleOverrides` row and rewrites any key in the table above from `--style-X` to `--token-X` (preserving value). `text` legacy fields (`textPrimary`, `textSecondary`, etc.) stay on `--style-*` because they are still consumed by older shared templates as a documented legacy slot.
-
-### Phase B — Add MISSING editor fields
-
-For every per-section `--token-*` slot that templates consume but the editor cannot write (see "Missing fields" in the per-section detail above), add it via:
-
-1. Add a new entry to `FIELD_DEFS` with a label and the `--token-*` cssVar.
-2. Add the new field key to every `SECTION_FIELDS[type]` entry whose templates consume it.
-
-Examples from the audit:
-- `--token-on-dark-heading|body|muted` already have editor entries (Phase 5d) — no action.
-- `--token-btn-bg|btn-text` already have entries after Phase A — no action.
-- Industry-specific slots (e.g. wedding's `--token-romantic-bg`) should only be added if more than one template uses them.
-
-Pruning policy: only expose slots that **at least one template actively reads** for that sectionType.
-
-### Phase C — Trim DEAD fields
-
-Use the per-section diff above as the source of truth and **remove** every entry from `SECTION_FIELDS[type]` whose CSS variable is in the "Dead fields" list for that section.
-
-This is a mechanical edit that can be performed by a follow-up codegen step (`scripts/regenerate-section-fields.ts`) that emits a new `SECTION_FIELDS` object from the audit's `allUsedVars` set per section.
-
-Acceptance criterion: after Phase C, the editor for a section should show **only fields whose value, when changed, visibly affects the rendered output of that section**.
-
-### Phase D — Naming consolidation
-
-A few editor fields are simply duplicates exposed through different CSS variable namespaces. Consolidate:
-
-| Keep | Drop (alias for) |
-|---|---|
-| `headingColor` (`--token-heading`) | `textPrimary` (`--style-text-primary`) when used as alias for heading |
-| `bodyColor` (`--token-body`) | `textSecondary` (`--style-text-secondary`) when used as alias for body |
-| `accentColor` (`--style-accent-color`) | `styleBrand` (`--style-brand`), `brandAccent` (`--brand-accent`), `brandPrimary` (`--brand-primary`), `colorPrimary` (`--color-primary`) — these are all the same concept |
-| `iconColor` (`--token-icon`) | — |
-
-Drop the duplicates from every `SECTION_FIELDS[type]` that currently lists multiple aliases for the same concept. Keep the legacy `--style-*` and `--brand-*` cssVars in `FIELD_DEFS` for backward-compat (for tenants whose old DB rows still reference them) but **do not list them in SECTION_FIELDS by default**.
-
----
-
-## Preventing FE / CMS Drift in the Future
-
-The drift exists because two parallel sources of truth grew apart:
-
-- **Templates** (FE): a forest of `.tsx` files that decide which CSS vars they consume.
-- **Editor** (CMS): a hand-curated `SECTION_FIELDS` map that decides which fields a user sees.
-
-There is no compile-time link between them, so a developer who adds a new var to a template doesn't get reminded to update the editor — and vice versa.
-
-### Recommended infrastructure (in order of ROI)
-
-#### 1. `pnpm run audit:colors` (low effort, immediate value)
-Move this audit script into the repo at [scripts/audit-color-fields.ts](scripts/audit-color-fields.ts) and add a workspace npm script. Engineers can run it locally before every PR.
-
-#### 2. CI guard (low effort, prevents regressions)
-Add a GitHub Actions job that runs `pnpm audit:colors --strict` on every PR. `--strict` exits non-zero when any of the following increase compared to `main`:
-- Total DEAD fields
-- Total SHADOWED fields
-- Number of sections with no template
-
-Allowing the count to *decrease* but not *increase* lets the codebase improve over time without blocking unrelated work on legacy debt.
-
-#### 3. Section meta sidecar (medium effort, single source of truth)
-Each template declares the slots it consumes via a small sidecar:
-
-```ts
-// apps/renderer/src/templates/shared/cinematic-hero.tsx
-export const cinematicHeroMeta = {
-  consumes: [
-    '--token-section-bg',
-    '--token-on-dark-heading',
-    '--token-on-dark-body',
-    '--token-on-dark-muted',
-    '--token-badge-bg',
-    '--token-badge-text',
-    '--token-badge-border',
-    '--token-btn-bg',
-    '--token-btn-text',
-  ] as const,
-};
-```
-
-A codegen step then derives `SECTION_FIELDS` automatically from these declarations, eliminating drift by construction. The audit script verifies the meta block against the actual `var(--…)` usages in the same file at build time.
-
-#### 4. Type-safe slot consumption (high effort, full guarantee)
-Templates stop writing CSS classes by hand and instead use a typed slot helper:
-
-```tsx
-const slots = useSectionSlots('cinematicHero');
-<h1 className={cn('text-5xl', slots.heading)}>…</h1>
-```
-
-The slot helper has a typed return shape that mirrors the editor's field keys. Adding a slot to the editor and reading it in a template become the same thing. Significant refactor — only worth it once the lower-tier checks are in place.
-
-### Decision matrix
-
-| Step | Effort | Coverage of future drift |
-|---|---|---|
-| 1. `pnpm audit:colors` (manual) | trivial | requires discipline |
-| 2. CI `--strict` guard | small | catches drift in PRs automatically |
-| 3. Sidecar meta + codegen | medium | drift becomes structurally impossible |
-| 4. Typed slot helper | large | drift + style consistency guaranteed |
-
-Recommend **shipping #1 + #2 immediately**, plan #3 for the next refactor sprint, and only do #4 if templates start growing well beyond 200.
-
----
-
-## Execution Order (proposal)
-
-1. **Phase A** (editor cssVar rename to `--token-*`) + DB migration → biggest single quality win.
-2. **`pnpm audit:colors` + CI guard** (Step 1+2 above) → prevent regression while we work.
-3. **Phase C** (codegen-trim of dead fields) → ships clean editor UX.
-4. **Phase B** (add missing fields where needed) → completes the loop.
-5. **Phase D** (naming consolidation) → polish.
-6. **Sidecar meta + codegen** (Step 3 above) → permanent fix.
