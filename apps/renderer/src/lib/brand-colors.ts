@@ -125,23 +125,25 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   vars['--token-section-bg-alt']= brand.sectionBgAlt  ?? 'var(--style-section-bg-alt, var(--style-section-bg, transparent))';
   vars['--token-card-bg']       = brand.cardBg        ?? 'var(--style-card-bg, #ffffff)';
   vars['--token-card-border']   = brand.borderColor   ?? brand.cardBorder ?? 'var(--style-border-color, rgba(15,23,42,0.08))';
-  vars['--token-heading']       = brand.headingColor  ?? 'var(--brand-heading, #0f172a)';
-  vars['--token-subheading']    = brand.headingColor  ?? 'var(--brand-heading, #0f172a)';
-  vars['--token-body']          = brand.bodyTextColor ?? 'var(--brand-body-text, #27272a)';
+  vars['--token-heading']       = brand.headingColor  ?? 'var(--style-text-primary, var(--brand-heading, #0f172a))';
+  vars['--token-subheading']    = brand.headingColor  ?? 'var(--style-text-primary, var(--brand-heading, #0f172a))';
+  vars['--token-body']          = brand.bodyTextColor ?? 'var(--style-text-secondary, var(--brand-body-text, #27272a))';
   vars['--token-muted']         = brand.mutedTextColor ?? 'var(--style-text-muted, #71717a)';
   // Inverse contrast tokens for content on dark backgrounds (Phase 5c).
   // Defaults are bright values so hardcoded `text-white` / `text-zinc-300` migration
   // keeps rendering identically when no tenant override is set.
-  vars['--token-on-dark-heading']= 'var(--brand-on-dark-heading, #ffffff)';
-  vars['--token-on-dark-body']   = 'var(--brand-on-dark-body, rgba(255,255,255,0.82))';
-  vars['--token-on-dark-muted']  = 'var(--brand-on-dark-muted, rgba(255,255,255,0.62))';
+  vars['--token-on-dark-heading']= 'var(--style-image-text-color, var(--brand-on-dark-heading, #ffffff))';
+  vars['--token-on-dark-body']   = 'var(--style-image-text-color, var(--brand-on-dark-body, rgba(255,255,255,0.82)))';
+  vars['--token-on-dark-muted']  = 'var(--style-image-text-color, var(--brand-on-dark-muted, rgba(255,255,255,0.62)))';
   // Accent family — independently overridable per section.
-  vars['--token-eyebrow']       = 'var(--brand-accent, var(--brand-primary, #f39c12))';
-  vars['--token-icon']          = brand.iconColor ?? 'var(--brand-primary, #2563eb)';
-  vars['--token-stat-value']    = 'var(--brand-accent, var(--brand-primary, #f39c12))';
-  vars['--token-quote']         = 'var(--brand-accent, var(--brand-primary, #f39c12))';
-  vars['--token-rating-star']   = 'var(--brand-accent, var(--brand-primary, #f39c12))';
-  vars['--token-check']         = 'var(--brand-accent, var(--brand-primary, #f39c12))';
+  // Fallback chain: --style-accent-color (per-section override via editor's "accentColor" field)
+  //              -> --brand-accent (tenant brand) -> --brand-primary (tenant primary) -> hex.
+  vars['--token-eyebrow']       = 'var(--style-accent-color, var(--brand-accent, var(--brand-primary, #f39c12)))';
+  vars['--token-icon']          = brand.iconColor ?? 'var(--style-accent-color, var(--brand-primary, #2563eb))';
+  vars['--token-stat-value']    = 'var(--style-accent-color, var(--brand-accent, var(--brand-primary, #f39c12)))';
+  vars['--token-quote']         = 'var(--style-accent-color, var(--brand-accent, var(--brand-primary, #f39c12)))';
+  vars['--token-rating-star']   = 'var(--style-accent-color, var(--brand-accent, var(--brand-primary, #f39c12)))';
+  vars['--token-check']         = 'var(--style-accent-color, var(--brand-accent, var(--brand-primary, #f39c12)))';
   vars['--token-badge-bg']      = brand.badgeBg     ?? 'var(--style-badge-bg, rgba(0,0,0,0.06))';
   vars['--token-badge-text']    = brand.badgeText   ?? 'var(--brand-primary, #2563eb)';
   vars['--token-badge-border']  = brand.badgeBorder ?? 'var(--style-badge-border, transparent)';
