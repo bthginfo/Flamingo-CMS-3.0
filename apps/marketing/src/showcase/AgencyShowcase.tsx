@@ -243,94 +243,6 @@ const TEMPLATE_META: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tou
   },
 };
 
-const STYLE_PREVIEW: Record<'handwerk' | 'restaurant' | 'salon' | 'hotel' | 'tourism' | 'medical' | 'wedding' | 'photography' | 'consulting' | 'realestate' | 'cafe' | 'tattoo' | 'shop' | 'retail' | 'florist' | 'fitness' | 'location', { classic: string; modern: string; bold: string }> = {
-  handwerk: {
-    classic: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1400&q=80',
-  },
-  restaurant: {
-    classic: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=1400&q=80',
-  },
-  salon: {
-    classic: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=1400&q=80',
-  },
-  hotel: {
-    classic: 'https://images.unsplash.com/photo-1455587734955-081b22074882?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?auto=format&fit=crop&w=1400&q=80',
-  },
-  tourism: {
-    classic: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1400&q=80',
-  },
-  medical: {
-    classic: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&w=1400&q=80',
-  },
-  wedding: {
-    classic: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=1400&q=80',
-  },
-  photography: {
-    classic: 'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=1400&q=80',
-  },
-  consulting: {
-    classic: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1400&q=80',
-  },
-  realestate: {
-    classic: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80',
-  },
-  cafe: {
-    classic: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1400&q=80',
-  },
-  tattoo: {
-    classic: 'https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1598371839696-5c5bb1fed6e0?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1590246814883-57c511e76ca4?auto=format&fit=crop&w=1400&q=80',
-  },
-  shop: {
-    classic: 'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1400&q=80',
-  },
-  retail: {
-    classic: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1483389127117-b6a2102724ae?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=1400&q=80',
-  },
-  florist: {
-    classic: 'https://images.unsplash.com/photo-1487070183336-b863922373d4?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1468327768560-75b778cbb551?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=1400&q=80',
-  },
-  fitness: {
-    classic: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1549060279-7e168fcee0c2?auto=format&fit=crop&w=1400&q=80',
-  },
-  location: {
-    classic: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1400&q=80',
-    modern: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=80',
-    bold: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1400&q=80',
-  },
-};
-
 /* ─── Showcase root ────────────────────────────────────────────────── */
 export default function AgencyShowcase() {
   useEffect(() => {
@@ -950,7 +862,7 @@ function TemplatesPreviewSection() {
             </h2>
           </div>
           <p className="md:col-span-5 text-lg text-muted reveal">
-            Branchenspezifische Templates mit echten Seiten, passenden Sections, drei Stilrichtungen und einem Admin,
+            Branchenspezifische Templates mit echten Seiten, passenden Sections, einem konsistenten Basisstil und einem Admin,
             der nur zeigt, was Du wirklich brauchst. Deine Branche fehlt? Dann bauen wir sie sauber nach.
           </p>
         </div>
@@ -1511,14 +1423,14 @@ function NumbersSection() {
             In <em className="italic-pop">Zahlen.</em>
           </h2>
           <p className="md:col-span-5 text-lg text-muted reveal">
-            17 Branchen live, drei Stilrichtungen, über 80 Sections — ein Admin, mit dem Du alles selbst pflegst. Kein Agentur-Ticket nötig.
+            17 Branchen live, über 80 Sections und volle Farbanpassung global oder je Section — ein Admin, mit dem Du alles selbst pflegst. Kein Agentur-Ticket nötig.
           </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 md:gap-y-0 reveal-stagger">
           {[
             { v: 17, s: '', l: 'Branchen-Templates' },
-            { v: 3, s: '', l: 'Stilrichtungen je Branche' },
+            { v: 100, s: '%', l: 'CMS-gesteuerte Designs' },
             { v: 80, s: '+', l: 'Sections kombinierbar' },
             { v: 7, s: ' Tage', l: 'Bis online (Ø)' },
           ].map((m, i) => (
@@ -2047,7 +1959,7 @@ function Pricing() {
       sub: 'einmalig',
       monthly: '+ 29 € / Monat Hosting & Pflege',
       features: [
-        'Eines unserer Branchen-Templates (17 Branchen, 3 Stile)',
+        'Eines unserer Branchen-Templates mit konsistentem Basisstil',
         'Globales Marke-&-Design-Setup plus Farben je Section fein steuerbar',
         'Admin-Bereich zum selbst Pflegen von Texten, Bildern, Seiten und Navigation',
         'Responsive Website mit sauberer SEO-Grundstruktur',

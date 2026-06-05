@@ -143,7 +143,8 @@ function sanitizeRenderValue(value: unknown): unknown {
   return value;
 }
 
-export function SectionRenderer({ section, collections, styleVariant, industry = 'tradesman', locale, linkPrefix = '' }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string; industry?: string; locale?: string; linkPrefix?: string }) {
+export function SectionRenderer({ section, collections, styleVariant: _styleVariant, industry = 'tradesman', locale, linkPrefix = '' }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string; industry?: string; locale?: string; linkPrefix?: string }) {
+  const effectiveStyleVariant = 'classic';
   // i18n locale resolution: if section.data contains locale keys, resolve to the active locale
   if (locale && section.data && typeof section.data[locale] === 'object' && section.data[locale] !== null) {
     section = { ...section, data: section.data[locale] as Record<string, unknown> };
@@ -264,7 +265,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
       <section id={section.anchorId ?? undefined} data-section-id={section.id} className="bg-[var(--style-section-bg,transparent)]" {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
         {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
         <SectionErrorBoundary sectionType={section.type}>
-          <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
+          <Component data={section.data} variant={section.variant} styleVariant={effectiveStyleVariant} />
         </SectionErrorBoundary>
       </section>
     );
@@ -279,7 +280,7 @@ export function SectionRenderer({ section, collections, styleVariant, industry =
       {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
       <div className={containerClass}>
         <SectionErrorBoundary sectionType={section.type}>
-          <Component data={section.data} variant={section.variant} styleVariant={styleVariant} />
+          <Component data={section.data} variant={section.variant} styleVariant={effectiveStyleVariant} />
         </SectionErrorBoundary>
       </div>
     </section>

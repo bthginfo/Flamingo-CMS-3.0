@@ -157,7 +157,7 @@ export async function getItemWithIndustryAction(itemId: string) {
   return {
     item,
     industry: tenant?.industry ?? 'tradesman',
-    styleVariant: tenant?.activeStyle ?? 'classic',
+    styleVariant: 'classic',
     brand: (brandResult[0]?.brand as Record<string, string>) || {},
     hasShop: !!shopAddonResult[0]?.active,
     hasBooking: !!bookingAddonResult[0]?.active,

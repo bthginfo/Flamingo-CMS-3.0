@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Palette, ChevronDown, ExternalLink, Settings, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ExternalLink, Palette, Settings, X } from 'lucide-react';
 
 const INDUSTRIES = [
   { key: 'handwerk', label: 'Handwerk' },
@@ -17,34 +17,29 @@ const INDUSTRIES = [
   { key: 'florist', label: 'Floristik' },
   { key: 'fitness', label: 'Fitness' },
   { key: 'location', label: 'Location' },
-  { key: 'cafe', label: 'Café & Bar' },  { key: 'tattoo', label: 'Tattoo Studio' },  { key: 'shop', label: 'Weinhandel (Shop)' },  { key: 'retail', label: 'Möbelhaus (Retail)' },  { key: 'showcase', label: '📦 Sektionen-Demo' },
-] as const;
-
-const STYLES = [
-  { key: 'classic', label: 'Classic' },
-  { key: 'modern', label: 'Modern' },
-  { key: 'bold', label: 'Bold' },
+  { key: 'cafe', label: 'Café & Bar' },
+  { key: 'tattoo', label: 'Tattoo Studio' },
+  { key: 'shop', label: 'Weinhandel (Shop)' },
+  { key: 'retail', label: 'Möbelhaus (Retail)' },
+  { key: 'showcase', label: 'Sektionen-Demo' },
 ] as const;
 
 interface DemoFabProps {
   currentIndustry: string;
-  currentStyle: string;
-  onStyleChange?: (style: string) => void;
 }
 
-export function DemoFab({ currentIndustry, currentStyle, onStyleChange }: DemoFabProps) {
+export function DemoFab({ currentIndustry }: DemoFabProps) {
   const [open, setOpen] = useState(false);
   const [showTooltip, setShowTooltip] = useState(true);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // On desktop, open by default
   useEffect(() => {
     if (window.innerWidth >= 768) setOpen(true);
   }, []);
 
   useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+    function handleClick(event: MouseEvent) {
+      if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
         setOpen(false);
       }
     }
@@ -56,7 +51,6 @@ export function DemoFab({ currentIndustry, currentStyle, onStyleChange }: DemoFa
     <div ref={panelRef} className="fixed bottom-6 right-6 z-[9999]">
       {open && (
         <div className="mb-3 w-72 rounded-2xl bg-gray-900 text-white shadow-2xl ring-1 ring-white/10 overflow-hidden animate-in slide-in-from-bottom-2 fade-in duration-200">
-          {/* Header */}
           <div className="px-5 pt-5 pb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="w-6 h-6 rounded-md bg-gradient-to-br from-pink-500 to-orange-400 text-white text-[10px] font-bold flex items-center justify-center">F</span>
@@ -67,47 +61,25 @@ export function DemoFab({ currentIndustry, currentStyle, onStyleChange }: DemoFa
             </button>
           </div>
 
-          {/* Industry selector */}
           <div className="px-5 pb-3">
             <p className="text-[10px] uppercase tracking-widest text-white/40 mb-2">Branche</p>
             <div className="grid grid-cols-2 gap-1.5">
-              {INDUSTRIES.map(ind => (
+              {INDUSTRIES.map((industry) => (
                 <a
-                  key={ind.key}
-                  href={`/demo/${ind.key}`}
+                  key={industry.key}
+                  href={`/demo/${industry.key}`}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    ind.key === currentIndustry
+                    industry.key === currentIndustry
                       ? 'bg-white/15 text-white'
                       : 'text-white/50 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  {ind.label}
+                  {industry.label}
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Style selector */}
-          <div className="px-5 pb-4">
-            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-2">Stil</p>
-            <div className="flex gap-1.5">
-              {STYLES.map(s => (
-                <button
-                  key={s.key}
-                  onClick={() => onStyleChange?.(s.key)}
-                  className={`flex-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    s.key === currentStyle
-                      ? 'bg-white/15 text-white'
-                      : 'text-white/50 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Links */}
           <div className="border-t border-white/10 px-5 py-3 space-y-1.5">
             <a
               href={`/admin/demo-login?industry=${encodeURIComponent(currentIndustry)}&next=${encodeURIComponent('/admin')}&public=1`}
@@ -127,7 +99,6 @@ export function DemoFab({ currentIndustry, currentStyle, onStyleChange }: DemoFa
             </a>
           </div>
 
-          {/* Disclaimer */}
           <div className="border-t border-white/10 px-5 py-3">
             <p className="text-[10px] leading-relaxed text-white/35">
               Dies ist eine Demo. Farben, Schriften, Inhalte und Layouts können im Admin individuell angepasst werden.
@@ -136,15 +107,14 @@ export function DemoFab({ currentIndustry, currentStyle, onStyleChange }: DemoFa
         </div>
       )}
 
-      {/* FAB button */}
       {!open && showTooltip && (
         <div className="absolute bottom-16 right-0 md:hidden bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-lg animate-in fade-in slide-in-from-bottom-1">
-          Branche & Stil wechseln
+          Branche wechseln
           <div className="absolute -bottom-1 right-5 w-2 h-2 bg-gray-900 rotate-45" />
         </div>
       )}
       <button
-        onClick={() => { setOpen(o => !o); setShowTooltip(false); }}
+        onClick={() => { setOpen((value) => !value); setShowTooltip(false); }}
         className="h-14 w-14 rounded-full bg-gradient-to-br from-pink-500 to-orange-400 text-white shadow-lg shadow-pink-500/25 hover:shadow-xl hover:shadow-pink-500/30 hover:scale-105 transition-all flex items-center justify-center"
         aria-label="Demo-Optionen"
       >

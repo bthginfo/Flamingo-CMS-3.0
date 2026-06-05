@@ -19,8 +19,8 @@ function isPlaceholderCompanyName(value?: string): boolean {
 
 export async function getTenantStyle(tenantId: string): Promise<{ industry: string; activeStyle: string }> {
   const db = getDb();
-  const [t] = await db.select({ industry: tenants.industry, activeStyle: tenants.activeStyle }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
-  return { industry: t?.industry ?? 'tradesman', activeStyle: t?.activeStyle ?? 'classic' };
+  const [t] = await db.select({ industry: tenants.industry }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  return { industry: t?.industry ?? 'tradesman', activeStyle: 'classic' };
 }
 
 export async function getTenantI18n(tenantId: string): Promise<{ enabled: boolean; locales: string[]; defaultLocale: string }> {

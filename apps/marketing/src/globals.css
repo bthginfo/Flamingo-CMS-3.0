@@ -70,37 +70,7 @@
 }
 .showcase-root .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
 
-/* ─── Per-style font swaps ─────────────────────────────────────────
- * Each template root carries .tpl-style-<style>; we scope font-family
- * so switching style also visibly changes typography.
- */
 .tpl-style-classic { /* defaults — Instrument Serif display, Geist body */ }
-
-.tpl-style-modern {
-  font-family: 'Space Grotesk', 'Geist', system-ui, sans-serif;
-}
-.tpl-style-modern h1,
-.tpl-style-modern h2,
-.tpl-style-modern h3,
-.tpl-style-modern .font-display {
-  font-family: 'Space Grotesk', 'Geist', system-ui, sans-serif;
-  letter-spacing: -0.025em;
-  font-weight: 600;
-}
-.tpl-style-modern .italic-pop { font-style: normal; }
-
-.tpl-style-bold {
-  font-family: 'Geist', system-ui, sans-serif;
-}
-.tpl-style-bold h1,
-.tpl-style-bold h2,
-.tpl-style-bold h3,
-.tpl-style-bold .font-display {
-  font-family: 'Bricolage Grotesque', 'Instrument Serif', serif;
-  letter-spacing: -0.035em;
-  font-weight: 700;
-  font-stretch: 110%;
-}
 
 /* ─── Per-variant flavour (5 main templates) ──────────────────────
  * .tpl-variant-<key> — visual identity per branch even within the
@@ -112,16 +82,12 @@
 .tpl-variant-restaurant .eyebrow::before { content: '· '; }
 .tpl-variant-restaurant .eyebrow::after { content: ' ·'; }
 .tpl-variant-restaurant.tpl-style-classic .font-display { font-weight: 400; }
-.tpl-variant-restaurant.tpl-style-modern .rounded-3xl { border-radius: 1rem; }
-.tpl-variant-restaurant.tpl-style-bold h1 { font-stretch: 100%; letter-spacing: -0.04em; }
 
 /* SALON — soft, rounded, fluid */
 .tpl-variant-salon .rounded-3xl { border-radius: 2rem; }
 .tpl-variant-salon .rounded-2xl { border-radius: 1.5rem; }
 .tpl-variant-salon.tpl-style-classic .btn-primary,
 .tpl-variant-salon.tpl-style-classic .btn-accent { border-radius: 999px; }
-.tpl-variant-salon.tpl-style-modern .italic-pop { font-style: italic; }
-.tpl-variant-salon.tpl-style-bold .eyebrow { text-transform: none; letter-spacing: 0.05em; }
 
 /* TRADESMAN — sharp, industrial, no-nonsense */
 .tpl-variant-tradesman .rounded-3xl { border-radius: 0.75rem; }
@@ -129,72 +95,36 @@
 .tpl-variant-tradesman .btn-primary { border-radius: 0.5rem; }
 .tpl-variant-tradesman .btn-outline { border-radius: 0.5rem; }
 .tpl-variant-tradesman.tpl-style-classic .italic-pop { font-style: normal; font-weight: 700; }
-.tpl-variant-tradesman.tpl-style-modern h1,
-.tpl-variant-tradesman.tpl-style-modern h2 { letter-spacing: -0.03em; }
-.tpl-variant-tradesman.tpl-style-bold .eyebrow { text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; }
 
 /* HOTEL — elegant, calm, generous whitespace */
 .tpl-variant-hotel .rounded-3xl { border-radius: 1.25rem; }
 .tpl-variant-hotel.tpl-style-classic .font-display { font-weight: 400; letter-spacing: -0.015em; }
-.tpl-variant-hotel.tpl-style-modern .italic-pop { font-style: italic; font-weight: 300; }
-.tpl-variant-hotel.tpl-style-bold h1 { font-weight: 800; letter-spacing: -0.05em; }
 .tpl-variant-hotel .btn-primary { border-radius: 0.375rem; letter-spacing: 0.03em; text-transform: uppercase; font-size: 0.8125rem; }
 
 /* TOURISM — adventurous, open, energetic */
 .tpl-variant-tourism .rounded-3xl { border-radius: 1.5rem; }
 .tpl-variant-tourism.tpl-style-classic .italic-pop { color: var(--accent-color); }
-.tpl-variant-tourism.tpl-style-modern h1,
-.tpl-variant-tourism.tpl-style-modern h2 { font-weight: 500; }
-.tpl-variant-tourism.tpl-style-bold .eyebrow::before { content: '↗ '; }
-.tpl-variant-tourism.tpl-style-bold h1 { font-stretch: 110%; }
 
 /* consulting */
 .tpl-variant-consulting .rounded-3xl { border-radius: 0.75rem; }
 .tpl-variant-consulting .btn-primary { border-radius: 0.375rem; letter-spacing: 0.02em; }
 .tpl-variant-consulting.tpl-style-classic .font-display { font-weight: 500; }
-.tpl-variant-consulting.tpl-style-modern h1,
-.tpl-variant-consulting.tpl-style-modern h2 { letter-spacing: -0.02em; font-weight: 600; }
-.tpl-variant-consulting.tpl-style-bold .eyebrow { text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; }
 
 /* medical */
 .tpl-variant-medical .rounded-3xl { border-radius: 1rem; }
 .tpl-variant-medical .btn-primary { border-radius: 0.5rem; }
 .tpl-variant-medical.tpl-style-classic .italic-pop { font-style: normal; }
-.tpl-variant-medical.tpl-style-modern h1 { font-weight: 400; letter-spacing: -0.01em; }
-.tpl-variant-medical.tpl-style-bold .eyebrow { text-transform: uppercase; letter-spacing: 0.1em; }
 
 /* fitness */
 .tpl-variant-fitness .rounded-3xl { border-radius: 0.5rem; }
 .tpl-variant-fitness .btn-primary { border-radius: 0.375rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 .tpl-variant-fitness.tpl-style-classic h1 { font-weight: 700; }
-.tpl-variant-fitness.tpl-style-modern h1,
-.tpl-variant-fitness.tpl-style-modern h2 { font-weight: 800; letter-spacing: -0.03em; }
-.tpl-variant-fitness.tpl-style-bold .eyebrow::before { content: '💪 '; }
-.tpl-variant-fitness.tpl-style-bold h1 { font-stretch: 105%; letter-spacing: -0.02em; }
 
 /* wedding */
 .tpl-variant-wedding .rounded-3xl { border-radius: 1.5rem; }
 .tpl-variant-wedding .btn-primary { border-radius: 999px; letter-spacing: 0.02em; }
 .tpl-variant-wedding.tpl-style-classic .font-display { font-weight: 300; letter-spacing: -0.01em; }
-.tpl-variant-wedding.tpl-style-modern h1,
-.tpl-variant-wedding.tpl-style-modern h2 { font-weight: 300; letter-spacing: -0.02em; }
-.tpl-variant-wedding.tpl-style-bold h1 { font-weight: 200; letter-spacing: -0.03em; }
-
-/* ─── Cross-variant style enhancements ────────────────────────────
- * Additional spacing / layout tweaks that differ per style across all variants.
- */
-.tpl-style-bold .hover-lift:hover { transform: translateY(-6px) scale(1.01); }
-.tpl-style-modern .hover-lift:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1); }
 .tpl-style-classic .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 12px 24px -8px rgba(0,0,0,0.08); }
-
-.tpl-style-bold section { padding-top: 5rem; padding-bottom: 5rem; }
-.tpl-style-modern section { padding-top: 4rem; padding-bottom: 4rem; }
-
-/* Bold style: larger section titles */
-.tpl-style-bold section h2 { font-size: clamp(2.5rem, 5vw, 4rem); }
-
-/* Modern style: tighter cards */
-.tpl-style-modern .border-line { border-color: color-mix(in oklab, var(--text-color), transparent 90%); }
 
 /* Classic style: subtle dividers between sections */
 .tpl-style-classic section + section { border-top: 1px solid color-mix(in oklab, var(--text-color), transparent 92%); }
@@ -204,15 +134,12 @@
 /* ─── Deeper variant personality ─────────────────────────────────── */
 /* Restaurant: warm, decorative, serif feel */
 .tpl-variant-restaurant.tpl-style-classic .section-title { border-bottom: 2px solid color-mix(in oklab, var(--primary-color), transparent 70%); padding-bottom: 0.5em; display: inline-block; }
-.tpl-variant-restaurant.tpl-style-bold .grain h1 { text-shadow: 0 2px 20px rgba(0,0,0,0.3); }
 
 /* Salon: soft, rounded, feminine */
 .tpl-variant-salon .card { box-shadow: 0 4px 20px -4px rgba(0,0,0,0.06); }
-.tpl-variant-salon.tpl-style-bold .section-title { font-weight: 300; letter-spacing: 0.05em; }
 
 /* Tradesman: industrial, sharp, no-nonsense */
 .tpl-variant-tradesman .card { border-left: 3px solid var(--primary-color); }
-.tpl-variant-tradesman.tpl-style-bold .btn-primary { text-transform: uppercase; letter-spacing: 0.08em; }
 
 /* Hotel: elegant, calm, spacious */
 .tpl-variant-hotel section { letter-spacing: 0.01em; }
@@ -220,19 +147,15 @@
 
 /* Tourism: adventurous, vibrant, outdoorsy */
 .tpl-variant-tourism .card { border-radius: 1rem; overflow: hidden; }
-.tpl-variant-tourism.tpl-style-bold .btn-primary { border-radius: 999px; }
 
 /* Consulting: corporate, clean, structured */
 .tpl-variant-consulting .card { border-top: 2px solid var(--primary-color); border-radius: 0.25rem; }
-.tpl-variant-consulting.tpl-style-modern section { --section-gap: 1.5rem; }
 
 /* Medical: clinical, trustworthy, bright */
 .tpl-variant-medical .card { border-radius: 0.75rem; background: color-mix(in oklab, var(--surface-color), white 40%); }
 .tpl-variant-medical.tpl-style-classic .eyebrow { color: var(--primary-color); font-weight: 600; }
 
-/* Fitness: energetic, bold, high-contrast */
 .tpl-variant-fitness .card { border-bottom: 3px solid var(--primary-color); }
-.tpl-variant-fitness.tpl-style-bold section h2 { text-transform: uppercase; letter-spacing: -0.02em; }
 
 /* ─── Per-branch flavour (extras) ─────────────────────────────────
  * Each extras root carries .tpl-branch-<key>; subtle visual cues

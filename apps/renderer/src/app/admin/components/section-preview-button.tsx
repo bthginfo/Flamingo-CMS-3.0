@@ -9,14 +9,13 @@ interface SectionPreviewButtonProps {
   style?: string;
 }
 
-export function SectionPreviewButton({ sectionType, industry, style = 'classic' }: SectionPreviewButtonProps) {
+export function SectionPreviewButton({ sectionType, industry }: SectionPreviewButtonProps) {
   const [open, setOpen] = useState(false);
   const [viewport, setViewport] = useState<'desktop' | 'mobile'>('desktop');
-  const [previewStyle, setPreviewStyle] = useState(style);
   const frameShellRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.6);
 
-  const previewUrl = `/section-preview?type=${sectionType}&industry=${industry}&style=${previewStyle}`;
+  const previewUrl = `/section-preview?type=${sectionType}&industry=${industry}&style=classic`;
   const frameWidth = viewport === 'desktop' ? 1440 : 390;
   const frameHeight = viewport === 'desktop' ? 900 : 844;
 
@@ -52,15 +51,7 @@ export function SectionPreviewButton({ sectionType, industry, style = 'classic' 
             <div className="flex items-center justify-between px-5 py-3 border-b bg-gray-50 rounded-t-xl">
               <div className="flex items-center gap-3">
                 <h3 className="font-semibold text-sm text-gray-700">Sektions-Vorschau: <span className="text-blue-600">{sectionType}</span></h3>
-                <select
-                  className="text-xs border rounded px-2 py-1 bg-white"
-                  value={previewStyle}
-                  onChange={(e) => setPreviewStyle(e.target.value)}
-                >
-                  <option value="classic">Classic</option>
-                  <option value="modern">Modern</option>
-                  <option value="bold">Bold</option>
-                </select>
+                <span className="rounded-full border border-zinc-200 bg-white px-2.5 py-1 text-xs text-zinc-500">Klassisch</span>
               </div>
               <div className="flex items-center gap-2">
                 <button

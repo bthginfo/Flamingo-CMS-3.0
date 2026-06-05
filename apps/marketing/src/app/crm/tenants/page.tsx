@@ -38,8 +38,6 @@ export default async function TenantsPage() {
                 <span className="font-mono">{t.slug}</span>
                 <span className="hidden sm:inline">·</span>
                 <span className="capitalize">{t.industry}</span>
-                <span className="hidden sm:inline">·</span>
-                <span className="hidden sm:inline">Stil: {t.activeStyle}</span>
               </div>
               {tDomains.length > 0 && (
                 <div className="flex items-center gap-1.5 mt-1 text-xs text-indigo-600">

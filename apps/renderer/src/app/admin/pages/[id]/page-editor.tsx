@@ -229,7 +229,6 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
             section={section}
             industry={industry}
             sectionTypes={sectionTypes}
-            styleVariant={styleVariant}
             resolvedVars={resolvedVars}
             iframeRef={preview.iframeRef}
             onDelete={() => handleDeleteSection(section.id)}

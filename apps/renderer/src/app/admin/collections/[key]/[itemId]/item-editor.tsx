@@ -222,7 +222,6 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
                 section={section}
                 industry={industry}
                 sectionTypes={sectionTypes}
-                styleVariant={styleVariant}
                 resolvedVars={resolvedVars}
                 iframeRef={preview.iframeRef}
                 onDelete={() => handleDeleteSection(section.id)}

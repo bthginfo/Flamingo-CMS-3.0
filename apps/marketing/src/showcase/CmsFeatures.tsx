@@ -17,9 +17,9 @@ const FEATURES = [
   },
   {
     badge: 'Design-Kontrolle',
-    title: 'Drei Stile.\nEin Klick.',
-    description: 'Wechsle den gesamten Look deiner Website zwischen Classic, Modern und Bold — oder steuere den Stil pro Sektion im Individuell-Modus.',
-    highlights: ['Classic: zeitlos & warm', 'Modern: clean & minimal', 'Bold: dynamisch & markant', 'Individuell: pro Sektion steuerbar'],
+    title: 'Design sauber.\nDirekt steuerbar.',
+    description: 'Steuere Farben, Schriften, Buttons und einzelne Sections direkt im CMS. Der Look bleibt konsistent, aber jede wichtige Fläche kann gezielt angepasst werden.',
+    highlights: ['Globale Markenfarben', 'Section-Farben pro Bereich', 'Button- und Textfarben steuerbar', 'Live-Vorschau vor dem Veröffentlichen'],
     demoUrl: demoAdminUrl('/admin/brand'),
   },
   {
@@ -224,7 +224,7 @@ function FeatureBlock({ feature, index }: { feature: typeof FEATURES[0]; index: 
 export default function CmsFeaturesPage() {
   return (
     <>
-      <Seo title="CMS-Funktionen · Flamingo CMS" description="Flamingo CMS macht Website-Pflege einfach: Seiten-Builder, Design-Stile, Mediathek, SEO, Navigation, Shop-Inhalte und Ein-Klick-Publishing." />
+      <Seo title="CMS-Funktionen · Flamingo CMS" description="Flamingo CMS macht Website-Pflege einfach: Seiten-Builder, Design-Farben, Mediathek, SEO, Navigation, Shop-Inhalte und Ein-Klick-Publishing." />
 
       {/* Hero */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
@@ -298,7 +298,7 @@ export function CmsFeaturesTeaserSection() {
         <div className="grid sm:grid-cols-3 gap-6 mt-14 text-left max-w-4xl mx-auto">
           {[
             { icon: '🧩', title: '35+ Sektionstypen', desc: 'Hero, Services, Galerie, Testimonials und mehr — per Drag & Drop.' },
-            { icon: '🎨', title: '3 Stile + Individuell', desc: 'Classic, Modern oder Bold — global oder pro Sektion steuerbar.' },
+            { icon: '🎨', title: 'Design-Farben', desc: 'Globale Markenfarben und gezielte Section-Overrides direkt im CMS.' },
             { icon: '🚀', title: 'Ein-Klick-Publishing', desc: 'Draft-Modus, Vorschau und atomares Veröffentlichen.' },
           ].map(item => (
             <div key={item.title} className="p-6 rounded-2xl border border-line bg-white hover:shadow-lg transition-shadow">

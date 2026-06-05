@@ -24,7 +24,7 @@ const tdPair = z.object({
 });
 
 const templateKeyZ = z.enum(['restaurant', 'hotel', 'tourism', 'salon', 'tradesman', 'consulting', 'medical', 'fitness', 'wedding', 'photography', 'realestate', 'cafe', 'tattoo', 'shop', 'retail', 'florist', 'location']);
-const templateStyleZ = z.enum(['classic', 'modern', 'bold']);
+const templateStyleZ = z.literal('classic');
 
 /**
  * Spec-first modular page block (v1). `type` matches CMS spec block ids
@@ -296,7 +296,7 @@ export const SiteContentSchema = z.object({
     galleryTeaserTitle: z.string().optional().default(''),
     /** Eyebrow of the gallery teaser section on the home page. */
     galleryTeaserEyebrow: z.string().optional().default(''),
-    /** Eyebrow of the about teaser section on the home page (modern style). */
+    /** Eyebrow of the about teaser section on the home page . */
     aboutTeaserEyebrow: z.string().optional().default(''),
     /** FAQ section eyebrow + title (used on home + services page). */
     faqEyebrow: z.string().optional().default(''),
@@ -317,10 +317,10 @@ export const SiteContentSchema = z.object({
     /** Eyebrow + headline for the testimonials block on the /ueber-uns page (optional; falls back to home testimonials titles). */
     aboutTestimonialsEyebrow: z.string().optional().default(''),
     aboutTestimonialsTitle: z.string().optional().default(''),
-    /** "Manifest" block (Bold style only). */
+    /** "Manifest" block . */
     manifestEyebrow: z.string().optional().default(''),
     manifestTitle: z.string().optional().default(''),
-    /** Eyebrow + lead used by the soft CTA at the bottom of the modern home. */
+    /** Eyebrow + lead used by the soft CTA at the bottom of the home page. */
     softCtaEyebrow: z.string().optional().default(''),
     softCtaTitle: z.string().optional().default(''),
     softCtaText: z.string().optional().default(''),
@@ -349,20 +349,20 @@ export const SiteContentSchema = z.object({
     /** Label + link for the news teaser “all posts” button. */
     newsAllLabel: z.string().optional().default(''),
     newsAllHref: z.string().optional().default(''),
-    /** Eyebrow shown on the about-page sidebar (modern style "Auf einen Blick"). */
+    /** Eyebrow shown on the about-page sidebar. */
     aboutSidebarEyebrow: z.string().optional().default(''),
-    /** Eyebrow above the services teaser on the home page (modern/bold). */
+    /** Eyebrow above the services teaser on the home page . */
     servicesTeaserEyebrow: z.string().optional().default(''),
     /** Title of the services teaser on the home page. */
     servicesTeaserTitle: z.string().optional().default(''),
-    /** Label + target of the services teaser action button (used in bold home teaser). */
+    /** Label + target of the services teaser action button . */
     servicesAllLabel: z.string().optional().default(''),
     servicesAllHref: z.string().optional().default(''),
-    /** Eyebrow shown above the hero headline (bold style). */
+    /** Eyebrow shown above the hero headline . */
     heroEyebrow: z.string().optional().default(''),
-    /** Hero image shown on modern and bold home pages. Defaults to first gallery image. */
+    /** Hero image shown on the home page. Defaults to first gallery image. */
     heroImageUrl: z.string().url().optional().or(z.literal('')).default(''),
-    /** Services page header image (modern style). Defaults to gallery[2] or gallery[0]. */
+    /** Services page header image . Defaults to gallery[2] or gallery[0]. */
     servicesPageImageUrl: z.string().url().optional().or(z.literal('')).default(''),
   }).optional().default({}),
 
@@ -454,14 +454,14 @@ export const SiteContentSchema = z.object({
   }).optional().default({}),
 
   /**
-   * Signature/feature heading block under the hero (classic/modern home).
+   * Signature/feature heading block under the hero .
    */
   homeSignature: z.object({
     eyebrow: z.string().optional().default(''),
     titleA: z.string().optional().default(''),
     titleB: z.string().optional().default(''),
     intro: z.string().optional().default(''),
-    /** Modern signature layout — label next to the title (e.g. “Saisonal”). */
+    /** Optional signature layout — label next to the title (e.g. “Saisonal”). */
     metaLabel: z.string().optional().default(''),
   }).optional().default({}),
 
@@ -642,7 +642,7 @@ export const SiteContentSchema = z.object({
     label: z.string().optional().default(''),
     value: z.string().optional().default(''),
   })).optional().default([]),
-  /** Extras / modern hero — floating rating pill. */
+  /** Extras / hero — floating rating pill. */
   heroBadge: z.object({
     text: z.string().optional().default(''),
     label: z.string().optional().default(''),

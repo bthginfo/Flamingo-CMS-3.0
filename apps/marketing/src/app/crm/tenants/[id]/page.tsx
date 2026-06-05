@@ -114,7 +114,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
 
         {/* Right sidebar */}
         <div className="space-y-6">
-          <TenantActions tenantId={id} currentStatus={tenant.status} currentStyle={tenant.activeStyle} isDemo={tenant.isDemo} isLead={tenant.isLead} deploymentMode={tenant.deploymentMode} shopActive={shopActive} bookingActive={bookingActive} i18nEnabled={tenant.i18nEnabled} i18nMaxLanguages={tenant.i18nMaxLanguages} />
+          <TenantActions tenantId={id} currentStatus={tenant.status} isDemo={tenant.isDemo} isLead={tenant.isLead} deploymentMode={tenant.deploymentMode} shopActive={shopActive} bookingActive={bookingActive} i18nEnabled={tenant.i18nEnabled} i18nMaxLanguages={tenant.i18nMaxLanguages} />
 
           {/* Info */}
           <div className="crm-card p-5 space-y-3 text-sm">
@@ -123,10 +123,6 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
               <div className="flex justify-between">
                 <span>Erstellt</span>
                 <span className="text-slate-900">{new Date(tenant.createdAt).toLocaleDateString('de-DE')}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Stil</span>
-                <span className="text-slate-900 capitalize">{tenant.activeStyle}</span>
               </div>
               <div className="flex justify-between">
                 <span>Deployment</span>

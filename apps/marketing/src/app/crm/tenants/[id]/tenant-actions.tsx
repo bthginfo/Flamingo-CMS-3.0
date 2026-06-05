@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { CalendarCheck, Power, Pause, Trash2, Eye, ShoppingBag, UserCheck, Globe, CloudUpload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export function TenantActions({ tenantId, currentStatus, currentStyle, isDemo, isLead, deploymentMode, shopActive, bookingActive, i18nEnabled, i18nMaxLanguages }: { tenantId: string; currentStatus: string; currentStyle: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: string; shopActive?: boolean; bookingActive?: boolean; i18nEnabled?: boolean; i18nMaxLanguages?: number }) {
+export function TenantActions({ tenantId, currentStatus, isDemo, isLead, deploymentMode, shopActive, bookingActive, i18nEnabled, i18nMaxLanguages }: { tenantId: string; currentStatus: string; isDemo?: boolean; isLead?: boolean; deploymentMode?: string; shopActive?: boolean; bookingActive?: boolean; i18nEnabled?: boolean; i18nMaxLanguages?: number }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 

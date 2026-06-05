@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
       publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content. Returns warnings for empty sections or missing images.' },
       debug: { method: 'GET', path: '/api/v1/content/debug', description: 'Get raw stored data for all pages, sections, collections and items (for debugging)' },
       socialLinks: { method: 'PUT', path: '/api/v1/content/social-links', description: 'Set social media links: { facebook?: url, instagram?: url, linkedin?: url, youtube?: url, tiktok?: url, xing?: url, google?: url, pinterest?: url, twitter?: url }' },
-      style: { method: 'PUT', path: '/api/v1/content/style', description: 'Set active style variant: { style: "classic"|"modern"|"bold" }' },
+      style: { method: 'PUT', path: '/api/v1/content/style', description: 'Set active style variant. Only { style: "classic" } is supported; old modern/bold values are ignored by the renderer.' },
       upload: { method: 'POST', path: '/api/v1/content/upload', description: 'Upload an image (multipart/form-data with "file" field). Returns { url, filename, size }. Use the returned url in bgImage, image fields etc.' },
       i18nGet: { method: 'GET', path: '/api/v1/content/i18n', description: 'Get i18n config (enabled, locales, defaultLocale), all pages with section data, AND all collections with their items and embedded sections. Use to discover which sections/items need translation.' },
       i18nPut: { method: 'PUT', path: '/api/v1/content/i18n', description: 'Update locale-specific data. Body: { sections?: [{ id, locale, data }], items?: [{ id: "collection-item-id", locale, title?, excerpt?, sections?: [{ id: "section-id-in-item", data }] }] }. Works for both page sections and collection item sections.' },
@@ -261,8 +261,8 @@ REIHENFOLGE: Immer NACH dem Erstellen aller Inhalte + VOR dem Publish übersetze
    - Typisch je Branche: Handwerk (Google, Facebook, Instagram), Restaurant (Instagram, Facebook, Google, TripAdvisor), Hotel (Instagram, Facebook, TripAdvisor, Google), Salon (Instagram, Facebook, Google), Medical (Google, Jameda-Link als google), Tourism (Instagram, Facebook, YouTube), Photography (Instagram, Pinterest, Facebook), Wedding (Instagram), Consulting (LinkedIn, Google), Realestate (LinkedIn, Instagram, Google), Cafe (Instagram, Facebook, Google), Retail (Instagram, Facebook, Google, Pinterest)
 
 10. STYLE (PUT /api/v1/content/style):
-    - Wähle den passenden Stil: { style: "classic" } oder "modern" oder "bold"
-    - Empfehlung: Hotels/Restaurants → classic, Handwerk/Medical → modern, Fotografie/Salons → bold
+    - Verwende immer { style: "classic" }.
+    - Es gibt keine alternativen Website-Stile mehr. Unterschiede entstehen über Brand-Farben, globale Design-Farben und section.styleOverrides.
 
 11. DESIGN-FARBEN — GLOBAL (PUT /api/v1/content/design):
     - Setze die globalen Farbtöne für die gesamte Site. Jeder Wert ist EIN Hex-String (z.B. "#1a5276"):

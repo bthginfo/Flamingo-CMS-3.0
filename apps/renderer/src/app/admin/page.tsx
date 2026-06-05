@@ -1,4 +1,4 @@
-import { getSession } from '@/lib/session';
+﻿import { getSession } from '@/lib/session';
 import { getDb } from '@/lib/db';
 import { pages, pageSections, collectionItems, publishedSnapshots, tenants, mediaAssets, seoGlobal, seoPage } from '@flamingo/db';
 import { eq, count, and } from 'drizzle-orm';
@@ -55,7 +55,7 @@ export default async function DashboardPage() {
         <div>
           <h1 className="text-2xl font-semibold text-zinc-900">Dashboard</h1>
           <p className="text-sm text-zinc-500 mt-1">
-            {tenant?.name ?? 'Tenant'} · {tenant?.industry ?? '–'} · Stil: {tenant?.activeStyle ?? 'classic'}
+            {tenant?.name ?? 'Tenant'} · {tenant?.industry ?? '–'}
           </p>
         </div>
         <div className="flex gap-2">
@@ -104,10 +104,10 @@ export default async function DashboardPage() {
           <h2 className="font-semibold text-zinc-900 mb-4">Schnellzugriff</h2>
           <div className="space-y-2">
             {[
-              { label: 'Startseite bearbeiten', href: '/admin/pages', icon: '🏠' },
-              { label: 'Leistung hinzufügen', href: '/admin/collections', icon: '⚡' },
-              { label: 'Referenz hinzufügen', href: '/admin/collections', icon: '📸' },
-              { label: 'SEO prüfen', href: '/admin/seo', icon: '🔍' },
+              { label: 'Startseite bearbeiten', href: '/admin/pages', icon: 'ðŸ ' },
+              { label: 'Leistung hinzufÃ¼gen', href: '/admin/collections', icon: 'âš¡' },
+              { label: 'Referenz hinzufÃ¼gen', href: '/admin/collections', icon: 'ðŸ“¸' },
+              { label: 'SEO prÃ¼fen', href: '/admin/seo', icon: 'ðŸ”' },
             ].map((q) => (
               <Link
                 key={q.label}
@@ -116,7 +116,7 @@ export default async function DashboardPage() {
               >
                 <span>{q.icon}</span>
                 <span>{q.label}</span>
-                <span className="ml-auto text-zinc-300">→</span>
+                <span className="ml-auto text-zinc-300">â†’</span>
               </Link>
             ))}
           </div>
@@ -130,7 +130,7 @@ export default async function DashboardPage() {
               {seoGlobalComplete ? (
                 <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium"><CheckCircle2 size={14} /> Gepflegt</span>
               ) : (
-                <Link href="/admin/seo" className="inline-flex items-center gap-1.5 text-amber-600 font-medium hover:underline"><AlertTriangle size={14} /> Unvollständig</Link>
+                <Link href="/admin/seo" className="inline-flex items-center gap-1.5 text-amber-600 font-medium hover:underline"><AlertTriangle size={14} /> UnvollstÃ¤ndig</Link>
               )}
             </div>
             <div className="flex items-center justify-between text-sm">
@@ -158,7 +158,7 @@ export default async function DashboardPage() {
               {(snapCount?.value ?? 0) > 0 ? (
                 <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Online</span>
               ) : (
-                <span className="text-zinc-400">Nicht veröffentlicht</span>
+                <span className="text-zinc-400">Nicht verÃ¶ffentlicht</span>
               )}
             </div>
           </div>
@@ -167,3 +167,4 @@ export default async function DashboardPage() {
     </>
   );
 }
+

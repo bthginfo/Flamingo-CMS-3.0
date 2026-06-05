@@ -457,12 +457,13 @@ async function ensureCollection(key, label, collections) {
 async function replaceCollectionItems(key, label, items, makeSections, collections) {
   const collection = await ensureCollection(key, label, collections);
   for (const item of collection.items || []) await api('DELETE', `/api/v1/content/collections/${key}/items/${item.id}`);
-  for (const item of items) {
+  for (const [index, item] of items.entries()) {
     await api('POST', `/api/v1/content/collections/${key}/items`, {
       title: item.title,
       slug: item.slug,
       excerpt: item.excerpt,
       published: true,
+      priority: index,
       data: { image: item.image, category: item.category, author: 'Bergmann & Partner', date: '2026-06-04', sections: makeSections(item) },
     });
   }

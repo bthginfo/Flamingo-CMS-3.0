@@ -219,14 +219,14 @@ export async function saveFooterSettings(data: {
 export async function getTenantInfo() {
   const tenantId = await requireTenant();
   const db = getDb();
-  const [t] = await db.select().from(tenants).where(eq(tenants.id, tenantId)).limit(1);
-  return { industry: t?.industry ?? 'handwerk', activeStyle: t?.activeStyle ?? 'classic' };
+  const [t] = await db.select({ industry: tenants.industry }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  return { industry: t?.industry ?? 'handwerk', activeStyle: 'classic' };
 }
 
-export async function saveActiveStyle(style: string) {
+export async function saveActiveStyle(_style: string) {
   const tenantId = await requireTenant();
   const db = getDb();
-  await db.update(tenants).set({ activeStyle: style, updatedAt: new Date() }).where(eq(tenants.id, tenantId));
+  await db.update(tenants).set({ activeStyle: 'classic', updatedAt: new Date() }).where(eq(tenants.id, tenantId));
   revalidatePath('/admin/design');
   return { success: true };
 }

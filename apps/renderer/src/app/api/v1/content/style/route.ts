@@ -4,13 +4,13 @@ import { tenants } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { withApiHandler } from '@/lib/api-utils';
 
-const VALID_STYLES = ['classic', 'modern', 'bold'];
+const VALID_STYLES = ['classic'];
 
 export const PUT = withApiHandler(async (req, auth) => {
   const body = await req.json();
-  const { style } = body;
+  const style = 'classic';
 
-  if (!style || !VALID_STYLES.includes(style)) {
+  if (body.style && !VALID_STYLES.includes(body.style)) {
     return NextResponse.json({ error: `Invalid style. Must be one of: ${VALID_STYLES.join(', ')}` }, { status: 400 });
   }
 

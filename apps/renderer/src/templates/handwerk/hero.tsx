@@ -134,13 +134,18 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
         </div>
       </motion.div>
       {trustItems.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.3 }}
-          className="relative z-20 mt-auto"
-          style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.3 }}
+          className="relative z-20 max-w-7xl mx-auto w-full px-6 pb-10 md:pb-14"
         >
-          <div className={`flex flex-wrap justify-center items-center gap-x-8 gap-y-2 text-sm px-6 py-3 ${trustStripColor ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'bg-[var(--token-section-bg-alt,#000000)/30] backdrop-blur-sm text-[color:var(--token-on-dark-heading,#ffffff)/80]'}`}>
+          <div
+            className={`inline-flex max-w-full flex-wrap justify-center items-center gap-x-5 gap-y-2 rounded-2xl px-4 py-3 text-sm shadow-sm ${trustStripColor ? 'text-[color:var(--token-on-dark-heading,#ffffff)]' : 'bg-[var(--token-card-bg,#ffffff)]/10 backdrop-blur-md text-[color:var(--token-on-dark-heading,#ffffff)/86] ring-1 ring-[color:var(--token-card-border,#ffffff)]/18'}`}
+            style={trustStripColor ? { backgroundColor: trustStripColor } : undefined}
+          >
             {trustItems.map((item, i) => (
-              <span key={i} className="flex items-center gap-2"><CheckCircle size={14} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))/80]" />{item}</span>
+              <span key={i} className="flex items-center gap-2 whitespace-nowrap"><CheckCircle size={14} className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />{item}</span>
             ))}
           </div>
         </motion.div>
