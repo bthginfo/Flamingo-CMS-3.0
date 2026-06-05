@@ -34,14 +34,14 @@ export function SpotlightCardsSection({ data }: Props) {
                 event.currentTarget.style.setProperty('--x', `${event.clientX - rect.left}px`);
                 event.currentTarget.style.setProperty('--y', `${event.clientY - rect.top}px`);
               }}
-              className="group relative min-h-[260px] overflow-hidden rounded-[var(--style-card-radius,1rem)] border border-[var(--token-card-border, var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08))))] bg-[var(--token-card-bg, var(--token-card-bg, var(--style-card-bg,#fff)))] p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+              className="group relative min-h-[260px] overflow-hidden rounded-[var(--style-card-radius,1rem)] border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
             >
               <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100" style={{ background: 'radial-gradient(720px circle at var(--x,50%) var(--y,30%), rgb(var(--brand-primary-rgb,0 0 0) / 0.12), transparent 42%)' }} />
               {card.image && <img src={card.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-12 transition duration-500 group-hover:opacity-20" />}
               <div className="relative z-10 flex h-full flex-col justify-end">
-                {card.icon && <DynamicIcon name={card.icon} size={34} className="mb-6 text-[var(--token-icon, var(--token-icon, var(--style-icon-color,var(--token-icon, var(--brand-primary)))))]" />}
-                <h3 className="text-xl font-bold text-[var(--token-heading, var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111))))]">{card.title}</h3>
-                {card.text && <p className="mt-3 text-sm leading-6 text-[var(--token-body, var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b))))]">{plain(card.text)}</p>}
+                {card.icon && <DynamicIcon name={card.icon} size={34} className="mb-6 text-[var(--token-icon, var(--style-icon-color,var(--token-icon, var(--brand-primary))))]" />}
+                <h3 className="text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111)))]">{card.title}</h3>
+                {card.text && <p className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b)))]">{plain(card.text)}</p>}
               </div>
             </motion.article>
           );

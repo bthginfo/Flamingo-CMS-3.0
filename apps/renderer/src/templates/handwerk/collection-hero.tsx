@@ -42,7 +42,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
         </>
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--token-section-bg,var(--token-section-bg, var(--style-section-bg,#111827)))] via-[var(--token-card-bg,var(--token-card-bg, var(--style-card-bg,#1f2937)))] to-[var(--token-section-bg,var(--token-section-bg, var(--style-section-bg,#111827)))]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--token-section-bg,var(--style-section-bg,#111827))] via-[var(--token-card-bg,var(--style-card-bg,#1f2937))] to-[var(--token-section-bg,var(--style-section-bg,#111827))]" />
       )}
 
       {/* Content */}
@@ -55,12 +55,12 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-[var(--token-badge-bg, var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,.2))))] backdrop-blur-sm text-[var(--token-badge-text, var(--token-badge-text, var(--style-badge-text,#fff)))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,.2)))] backdrop-blur-sm text-[var(--token-badge-text, var(--style-badge-text,#fff))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
               {category}
             </span>
           )}
           {date && (
-            <span className="text-[var(--token-on-dark-muted,var(--token-muted,var(--token-muted, var(--style-text-muted,rgba(255,255,255,.7)))))] text-sm">{date}</span>
+            <span className="text-[var(--token-on-dark-muted,var(--token-muted,var(--style-text-muted,rgba(255,255,255,.7))))] text-sm">{date}</span>
           )}
         </motion.div>
 
@@ -69,7 +69,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--token-on-dark-heading,var(--token-heading,var(--token-heading, var(--style-heading-color,#fff))))] tracking-tight leading-tight break-words"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--token-on-dark-heading,var(--token-heading,var(--style-heading-color,#fff)))] tracking-tight leading-tight break-words"
         >
           {headline}
         </motion.h1>
@@ -80,7 +80,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-4 text-lg md:text-xl text-[var(--token-on-dark-body,var(--token-body,var(--token-body, var(--style-body-color,rgba(255,255,255,.8)))))] max-w-2xl leading-relaxed rt-content"
+            className="mt-4 text-lg md:text-xl text-[var(--token-on-dark-body,var(--token-body,var(--style-body-color,rgba(255,255,255,.8))))] max-w-2xl leading-relaxed rt-content"
             dangerouslySetInnerHTML={{ __html: subline }}
           />
         )}
@@ -100,12 +100,12 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-[var(--token-badge-bg,var(--token-badge-bg, var(--style-badge-bg,color-mix(in_srgb,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))_10%,transparent))))_10%,transparent)))] text-[var(--token-badge-text,var(--token-badge-text, var(--style-badge-text,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))))brand-primary)))))))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="inline-block bg-[var(--token-badge-bg,var(--style-badge-bg,color-mix(in_srgb,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))_10%,transparent)))] text-[var(--token-badge-text,var(--style-badge-text,var(--token-icon,var(--style-icon-color,var(--style-accent-color,var(--brand-primary))))))] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
               {category}
             </span>
           )}
           {date && (
-            <span className="text-[var(--token-muted,var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#9ca3af))))] text-sm">{date}</span>
+            <span className="text-[var(--token-muted,var(--style-text-muted,var(--style-text-secondary,#9ca3af)))] text-sm">{date}</span>
           )}
         </motion.div>
 
@@ -113,7 +113,7 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight break-words text-[var(--token-heading,var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827))))]"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight break-words text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#111827)))]"
         >
           {headline}
         </motion.h1>
@@ -123,12 +123,12 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-4 text-lg md:text-xl text-[var(--token-body,var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563))))] max-w-2xl leading-relaxed rt-content"
+            className="mt-4 text-lg md:text-xl text-[var(--token-body,var(--style-body-color,var(--style-text-secondary,#4b5563)))] max-w-2xl leading-relaxed rt-content"
             dangerouslySetInnerHTML={{ __html: subline }}
           />
         )}
 
-        <div className="mt-10 border-b border-[var(--token-card-border,var(--token-card-border, var(--style-border-color,#e5e7eb)))]" />
+        <div className="mt-10 border-b border-[var(--token-card-border,var(--style-border-color,#e5e7eb))]" />
       </div>
     </section>
   );

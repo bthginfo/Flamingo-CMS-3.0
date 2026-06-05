@@ -45,7 +45,7 @@ export function ConsultationBookingSection({ data }: Props) {
               className={`w-full text-left flex items-start gap-4 p-5 rounded-[var(--style-card-radius,1rem)] border transition-all duration-300 ${
                 selected === i
                   ? 'bg-[var(--token-icon, var(--brand-primary,#2563eb))]/5 border-[var(--token-icon, var(--brand-primary,#2563eb))]/30 shadow-md'
-                  : 'bg-[var(--token-card-bg, var(--token-card-bg, var(--style-card-bg,#fff)))] border-[rgba(0,0,0,0.06)] hover:border-[var(--token-icon, var(--brand-primary,#2563eb))]/20'
+                  : 'bg-[var(--token-card-bg, var(--style-card-bg,#fff))] border-[rgba(0,0,0,0.06)] hover:border-[var(--token-icon, var(--brand-primary,#2563eb))]/20'
               }`}
             >
               {service.icon && (
@@ -68,7 +68,7 @@ export function ConsultationBookingSection({ data }: Props) {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="lg:col-span-2 sticky top-8"
         >
-          <div className="rounded-[var(--style-card-radius,1rem)] overflow-hidden bg-[var(--token-card-bg, var(--token-card-bg, var(--style-card-bg,#fff)))] shadow-[var(--style-card-shadow,0_4px_20px_rgba(0,0,0,0.06))] border border-[rgba(0,0,0,0.06)]">
+          <div className="rounded-[var(--style-card-radius,1rem)] overflow-hidden bg-[var(--token-card-bg, var(--style-card-bg,#fff))] shadow-[var(--style-card-shadow,0_4px_20px_rgba(0,0,0,0.06))] border border-[rgba(0,0,0,0.06)]">
             {image && (
               <img src={image} alt={headline} className="w-full aspect-[4/3] object-cover" />
             )}
