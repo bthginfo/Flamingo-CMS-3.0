@@ -63,46 +63,52 @@ export type ColorFieldKey =
   | 'cardRadius' | 'cardShadow' | 'buttonRadius' | 'headingWeight' | 'headingTracking';
 
 type FieldType = 'color' | 'size';
+// 'core'     — always visible (the 6–12 obvious knobs every section needs)
+// 'special'  — collapsed by default (eyebrow, ratings, quote glyphs, …)
+// 'advanced' — collapsed by default (legacy/duplicate vars from --style-* and
+//              --brand-* that overlap with --token-* and exist only for older
+//              templates; surfaced for power users, hidden for normal use)
+type FieldGroup = 'core' | 'special' | 'advanced';
 
-const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; description: string; type?: FieldType }> = {
-  sectionBg:        { cssVar: '--token-section-bg',       label: 'Hintergrund',            description: 'Hintergrundfarbe der Sektion' },
-  sectionBgAlt:     { cssVar: '--token-section-bg-alt',   label: 'Sekundärer Hintergrund', description: 'Nur für Sections mit einem zweiten sichtbaren Hintergrund-Layer' },
-  cardBg:           { cssVar: '--token-card-bg',          label: 'Karten-Hintergrund',     description: 'Hintergrund von Karten/Containern' },
-  headingColor:     { cssVar: '--token-heading',    label: 'Headline',               description: 'Farbe der Hauptüberschrift' },
-  subheadingColor:  { cssVar: '--token-subheading', label: 'Subheadline',            description: 'Farbe der Unterüberschrift' },
-  bodyColor:        { cssVar: '--token-body',       label: 'Fließtext',              description: 'Farbe des Fließtexts' },
-  mutedColor:       { cssVar: '--token-muted',       label: 'Dezenter Text',          description: 'Dezente Texte, Labels, Eyebrow' },
-  textPrimary:      { cssVar: '--style-text-primary',     label: 'Primärer Text',          description: 'Primär-Textfarbe innerhalb dieser Section' },
-  textSecondary:    { cssVar: '--style-text-secondary',   label: 'Sekundärer Text',        description: 'Sekundär-Textfarbe innerhalb dieser Section' },
-  imageTextColor:   { cssVar: '--style-image-text-color', label: 'Bild-Text',              description: 'Textfarbe für Texte direkt auf Bildern oder Overlays' },
-  iconColor:        { cssVar: '--token-icon',       label: 'Icons',                  description: 'Farbe der Icons' },
-  accentColor:      { cssVar: '--style-accent-color',     label: 'Akzentfarbe',            description: 'Akzente, Linien, Hervorhebungen' },
-  styleBrand:       { cssVar: '--style-brand',            label: 'Brand-Akzent',           description: 'Section-spezifischer Markenakzent' },
-  brandPrimary:     { cssVar: '--brand-primary',          label: 'Primärer Markenwert',    description: 'Primärer Markenwert innerhalb dieser Section' },
-  brandAccent:      { cssVar: '--brand-accent',           label: 'Marken-Akzentwert',      description: 'Akzentwert innerhalb dieser Section' },
-  colorPrimary:     { cssVar: '--color-primary',          label: 'Primärfarbe',            description: 'Primärfarbe für ältere Templates' },
+const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; description: string; type?: FieldType; group?: FieldGroup }> = {
+  sectionBg:        { cssVar: '--token-section-bg',       label: 'Hintergrund',            description: 'Hintergrundfarbe der Sektion', group: 'core' },
+  sectionBgAlt:     { cssVar: '--token-section-bg-alt',   label: 'Sekundärer Hintergrund', description: 'Nur für Sections mit einem zweiten sichtbaren Hintergrund-Layer', group: 'special' },
+  cardBg:           { cssVar: '--token-card-bg',          label: 'Karten-Hintergrund',     description: 'Hintergrund von Karten/Containern', group: 'core' },
+  headingColor:     { cssVar: '--token-heading',    label: 'Headline',               description: 'Farbe der Hauptüberschrift', group: 'core' },
+  subheadingColor:  { cssVar: '--token-subheading', label: 'Subheadline',            description: 'Farbe der Unterüberschrift', group: 'core' },
+  bodyColor:        { cssVar: '--token-body',       label: 'Fließtext',              description: 'Farbe des Fließtexts', group: 'core' },
+  mutedColor:       { cssVar: '--token-muted',       label: 'Dezenter Text',          description: 'Dezente Texte, Labels, Eyebrow', group: 'core' },
+  textPrimary:      { cssVar: '--style-text-primary',     label: 'Primärer Text (Legacy)', description: 'Legacy-Variable für ältere Sections — neuere Sections nutzen "Headline" / "Fließtext".', group: 'advanced' },
+  textSecondary:    { cssVar: '--style-text-secondary',   label: 'Sekundärer Text (Legacy)', description: 'Legacy-Variable — neuere Sections nutzen "Dezenter Text".', group: 'advanced' },
+  imageTextColor:   { cssVar: '--style-image-text-color', label: 'Bild-Text',              description: 'Textfarbe für Texte direkt auf Bildern oder Overlays', group: 'special' },
+  iconColor:        { cssVar: '--token-icon',       label: 'Icons',                  description: 'Farbe der Icons', group: 'core' },
+  accentColor:      { cssVar: '--style-accent-color',     label: 'Akzentfarbe',            description: 'Akzente, Linien, Hervorhebungen', group: 'core' },
+  styleBrand:       { cssVar: '--style-brand',            label: 'Brand-Akzent (Legacy)',  description: 'Section-spezifischer Markenakzent (ältere Sections).', group: 'advanced' },
+  brandPrimary:     { cssVar: '--brand-primary',          label: 'Primärer Markenwert (Legacy)', description: 'Überschreibt --brand-primary lokal. Für migrierte Sections nutze "Akzentfarbe".', group: 'advanced' },
+  brandAccent:      { cssVar: '--brand-accent',           label: 'Marken-Akzentwert (Legacy)', description: 'Überschreibt --brand-accent lokal in dieser Section.', group: 'advanced' },
+  colorPrimary:     { cssVar: '--color-primary',          label: 'Primärfarbe (Legacy)',   description: 'Primärfarbe für ältere Templates.', group: 'advanced' },
   // ─── Layer-2 slot fields (Phase 4) �� granular per-role overrides ���──
-  eyebrow:          { cssVar: '--token-eyebrow',          label: 'Eyebrow / Kicker',       description: 'Kleine Label-Texte über der Überschrift (in migrierten Sections)' },
-  statValue:        { cssVar: '--token-stat-value',       label: 'Statistik-Wert',         description: 'Große Zahlenwerte (Stats, Metrics) in migrierten Sections' },
-  quoteMark:        { cssVar: '--token-quote',            label: 'Anführungszeichen',      description: 'Anführungszeichen-Glyph in Testimonial-Karten' },
-  ratingStar:       { cssVar: '--token-rating-star',      label: 'Rating-Sterne',          description: 'Sterne in Reviews / Bewertungen' },
-  check:            { cssVar: '--token-check',            label: 'Checkmarks',             description: 'Häkchen in Feature-/Vergleichs-Listen' },
+  eyebrow:          { cssVar: '--token-eyebrow',          label: 'Eyebrow / Kicker',       description: 'Kleine Label-Texte über der Überschrift (in migrierten Sections)', group: 'special' },
+  statValue:        { cssVar: '--token-stat-value',       label: 'Statistik-Wert',         description: 'Große Zahlenwerte (Stats, Metrics) in migrierten Sections', group: 'special' },
+  quoteMark:        { cssVar: '--token-quote',            label: 'Anführungszeichen',      description: 'Anführungszeichen-Glyph in Testimonial-Karten', group: 'special' },
+  ratingStar:       { cssVar: '--token-rating-star',      label: 'Rating-Sterne',          description: 'Sterne in Reviews / Bewertungen', group: 'special' },
+  check:            { cssVar: '--token-check',            label: 'Checkmarks',             description: 'Häkchen in Feature-/Vergleichs-Listen', group: 'special' },
   // ─── Layer-2 inverse tokens (Phase 5c) — for content on DARK backgrounds ───
-  onDarkHeading:    { cssVar: '--token-on-dark-heading', label: 'Headline (auf Dunkel)', description: 'Hauptüberschrift wenn auf dunklem Hintergrund (Hero, CTA, dunkle Sections)' },
-  onDarkBody:       { cssVar: '--token-on-dark-body',    label: 'Fließtext (auf Dunkel)', description: 'Flie��text wenn auf dunklem Hintergrund' },
-  onDarkMuted:      { cssVar: '--token-on-dark-muted',   label: 'Dezent (auf Dunkel)',    description: 'Dezenter / abgeschwächter Text auf dunklem Hintergrund' },
-  btnBg:            { cssVar: '--token-btn-bg',           label: 'Button Hintergrund',     description: 'CTA-Button Hintergrund' },
-  btnText:          { cssVar: '--token-btn-text',         label: 'Button Text',            description: 'CTA-Button Textfarbe' },
-  btnSecondaryBg:   { cssVar: '--brand-btn-secondary-bg', label: 'Sekundär-Button BG',    description: 'Sekundärer Button Hintergrund' },
-  btnSecondaryText: { cssVar: '--brand-btn-secondary-text',label: 'Sekundär-Button Text', description: 'Sekundärer Button Textfarbe' },
-  badgeBg:          { cssVar: '--token-badge-bg',         label: 'Badge/Eyebrow BG',       description: 'Badge/Eyebrow Hintergrund' },
-  badgeText:        { cssVar: '--token-badge-text',       label: 'Badge/Eyebrow Text',     description: 'Badge/Eyebrow Textfarbe' },
-  badgeBorder:      { cssVar: '--token-badge-border',     label: 'Badge/Eyebrow Rahmen',   description: 'Badge/Eyebrow Rahmenfarbe' },
-  imageOverlay:     { cssVar: '--style-image-overlay',    label: 'Bild-Overlay',           description: 'Abdunklung/Farbfläche über Bildern und Medien' },
-  borderColor:      { cssVar: '--token-card-border',     label: 'Rahmenfarbe',            description: 'Rahmen/Border von Karten' },
-  dividerColor:     { cssVar: '--token-divider',    label: 'Trennlinie',             description: 'Trennlinien zwischen Elementen' },
+  onDarkHeading:    { cssVar: '--token-on-dark-heading', label: 'Headline (auf Dunkel)', description: 'Hauptüberschrift wenn auf dunklem Hintergrund (Hero, CTA, dunkle Sections)', group: 'core' },
+  onDarkBody:       { cssVar: '--token-on-dark-body',    label: 'Fließtext (auf Dunkel)', description: 'Fließtext wenn auf dunklem Hintergrund', group: 'core' },
+  onDarkMuted:      { cssVar: '--token-on-dark-muted',   label: 'Dezent (auf Dunkel)',    description: 'Dezenter / abgeschwächter Text auf dunklem Hintergrund', group: 'core' },
+  btnBg:            { cssVar: '--token-btn-bg',           label: 'Button Hintergrund',     description: 'CTA-Button Hintergrund', group: 'core' },
+  btnText:          { cssVar: '--token-btn-text',         label: 'Button Text',            description: 'CTA-Button Textfarbe', group: 'core' },
+  btnSecondaryBg:   { cssVar: '--brand-btn-secondary-bg', label: 'Sekundär-Button BG',    description: 'Sekundärer Button Hintergrund', group: 'advanced' },
+  btnSecondaryText: { cssVar: '--brand-btn-secondary-text',label: 'Sekundär-Button Text', description: 'Sekundärer Button Textfarbe', group: 'advanced' },
+  badgeBg:          { cssVar: '--token-badge-bg',         label: 'Badge/Eyebrow BG',       description: 'Badge/Eyebrow Hintergrund', group: 'core' },
+  badgeText:        { cssVar: '--token-badge-text',       label: 'Badge/Eyebrow Text',     description: 'Badge/Eyebrow Textfarbe', group: 'core' },
+  badgeBorder:      { cssVar: '--token-badge-border',     label: 'Badge/Eyebrow Rahmen',   description: 'Badge/Eyebrow Rahmenfarbe', group: 'special' },
+  imageOverlay:     { cssVar: '--style-image-overlay',    label: 'Bild-Overlay',           description: 'Abdunklung/Farbfläche über Bildern und Medien', group: 'special' },
+  borderColor:      { cssVar: '--token-card-border',     label: 'Rahmenfarbe',            description: 'Rahmen/Border von Karten', group: 'core' },
+  dividerColor:     { cssVar: '--token-divider',    label: 'Trennlinie',             description: 'Trennlinien zwischen Elementen', group: 'core' },
   cardBorder:       { cssVar: '--style-card-border',      label: 'Karten-Rahmen',          description: 'Kompletter Border-Wert für Karten', type: 'size' },
-  cardBorderColor:  { cssVar: '--style-card-border-color',label: 'Karten-Rahmenfarbe',     description: 'Rahmenfarbe für Karten' },
+  cardBorderColor:  { cssVar: '--style-card-border-color',label: 'Karten-Rahmenfarbe',     description: 'Rahmenfarbe für Karten', group: 'advanced' },
   cardRadius:       { cssVar: '--style-card-radius',      label: 'Karten-Radius',          description: 'Abrundung der Kartenecken', type: 'size' },
   cardShadow:       { cssVar: '--style-card-shadow',      label: 'Karten-Schatten',        description: 'Schatten der Karten', type: 'size' },
   buttonRadius:     { cssVar: '--style-button-radius',    label: 'Button-Radius',          description: 'Abrundung der Buttons', type: 'size' },
@@ -180,12 +186,12 @@ const SECTION_FIELDS: Record<string, ColorFieldKey[]> = {
   offerCampaignStrip: ['sectionBg', 'sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'accentColor', 'brandPrimary', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
   openingHours: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'textPrimary', 'textSecondary', 'iconColor', 'accentColor', 'brandPrimary', 'brandAccent', 'eyebrow', 'onDarkHeading', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
   popup: ['sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'textPrimary', 'textSecondary', 'iconColor', 'accentColor', 'brandPrimary', 'eyebrow', 'btnBg', 'btnText', 'borderColor', 'cardRadius', 'buttonRadius'],
-  bookingWidget: ['btnBg', 'btnText', 'cardRadius', 'buttonRadius'],
-  bookingSlotPicker: ['btnBg', 'btnText', 'cardRadius', 'buttonRadius'],
-  bookingDateRange: ['btnBg', 'btnText', 'cardRadius', 'buttonRadius'],
+  bookingWidget: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor', 'cardRadius', 'buttonRadius'],
+  bookingSlotPicker: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor', 'cardRadius', 'buttonRadius'],
+  bookingDateRange: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor', 'cardRadius', 'buttonRadius'],
   availabilityCalendar: ['btnBg', 'btnText', 'cardRadius', 'buttonRadius'],
   resourceBookingShowcase: ['btnBg', 'btnText', 'cardRadius', 'buttonRadius'],
-  bookingCtaPro: ['btnBg', 'btnText', 'cardRadius', 'buttonRadius'],
+  bookingCtaPro: ['sectionBg', 'cardBg', 'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor', 'iconColor', 'accentColor', 'onDarkHeading', 'onDarkBody', 'onDarkMuted', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor', 'cardRadius', 'buttonRadius'],
   portfolio: ['cardBg', 'mutedColor', 'textPrimary', 'textSecondary', 'iconColor', 'brandPrimary', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'imageOverlay', 'borderColor'],
   premiumComparison: ['cardBg', 'headingColor', 'mutedColor', 'textPrimary', 'iconColor', 'brandPrimary', 'borderColor', 'cardRadius'],
   principlesGrid: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'textPrimary', 'textSecondary', 'iconColor', 'accentColor', 'brandPrimary', 'eyebrow', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'badgeBorder', 'borderColor'],
@@ -375,6 +381,13 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
   // Split into color fields and design token fields
   const colorFields = allFields.filter(f => FIELD_DEFS[f]?.type !== 'size');
   const designFields = allFields.filter(f => FIELD_DEFS[f]?.type === 'size');
+  // Split color fields by visibility group so the editor isn't overwhelming:
+  //  - core:     always visible (the obvious 6–12 knobs)
+  //  - special:  collapsed by default (eyebrow / stat / quote / rating / overlay…)
+  //  - advanced: collapsed by default (legacy --style-* / --brand-* duplicates)
+  const coreFields     = colorFields.filter(f => (FIELD_DEFS[f]?.group ?? 'core') === 'core');
+  const specialFields  = colorFields.filter(f =>  FIELD_DEFS[f]?.group === 'special');
+  const advancedFields = colorFields.filter(f =>  FIELD_DEFS[f]?.group === 'advanced');
 
   // All CSS vars we need to read
   const allVarKeys = [
@@ -568,8 +581,28 @@ export function SectionColorEditor({ value, onChange, sectionType, resolvedVars,
         {activeCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-[10px] font-medium">{activeCount}</span>}
       </summary>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-        {colorFields.map(renderColorField)}
+        {coreFields.map(renderColorField)}
       </div>
+      {specialFields.length > 0 && (
+        <details className="mt-3 pt-3 border-t border-zinc-100">
+          <summary className="text-xs text-zinc-500 cursor-pointer flex items-center gap-1 mb-2">
+            <ChevronDown size={12} /> Spezial-Felder ({specialFields.length})
+          </summary>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+            {specialFields.map(renderColorField)}
+          </div>
+        </details>
+      )}
+      {advancedFields.length > 0 && (
+        <details className="mt-3 pt-3 border-t border-zinc-100">
+          <summary className="text-xs text-zinc-500 cursor-pointer flex items-center gap-1 mb-2">
+            <ChevronDown size={12} /> Erweitert – Legacy / Marken-Variablen ({advancedFields.length})
+          </summary>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+            {advancedFields.map(renderColorField)}
+          </div>
+        </details>
+      )}
       {designFields.length > 0 && (
         <div className="mt-3 pt-3 border-t border-zinc-100">
           <button type="button" className="text-xs text-zinc-500 flex items-center gap-1 mb-2" onClick={() => setShowAdvanced(!showAdvanced)}>
