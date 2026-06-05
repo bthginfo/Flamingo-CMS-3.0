@@ -61,7 +61,7 @@ function StoryClassic(p: Props) {
       {p.stats.length > 0 && (
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-5 md:grid-cols-4">
           {p.stats.map((s, i) => (
-            <motion.div key={`${s.label}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 text-center shadow-sm" data-edit-collection="stats" data-edit-index={i}>
+            <motion.div key={`$<span data-edit-path="label">{s.label}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 text-center shadow-sm" data-edit-collection="stats" data-edit-index={i}>
               <p className="text-3xl font-bold text-[color:var(--token-heading)]" data-edit-path="value">{s.value || ''}</p>
               <p className="mt-1 text-xs uppercase tracking-widest text-[color:var(--token-muted)]" data-edit-path="label">{s.label || ''}</p>
             </motion.div>
@@ -71,7 +71,7 @@ function StoryClassic(p: Props) {
       {p.values.length > 0 && (
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
-            <motion.div key={`${v.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 shadow-sm" data-edit-collection="values" data-edit-index={i}>
+            <motion.div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-5 shadow-sm" data-edit-collection="values" data-edit-index={i}>
               <div className="shrink-0 text-[color:var(--token-icon)]"><DynamicIcon name={v.icon || 'heart'} size={20} /></div>
               <div><h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
             </motion.div>
@@ -120,7 +120,7 @@ function StoryModern(p: Props) {
       {p.stats.length > 0 && (
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-px border border-black/10 md:grid-cols-4">
           {p.stats.map((s, i) => (
-            <div key={`${s.label}-${i}`} className="border border-black/10 bg-[var(--token-card-bg)] p-6 text-center" data-edit-collection="stats" data-edit-index={i}>
+            <div key={`$<span data-edit-path="label">{s.label}</span>-${i}`} className="border border-black/10 bg-[var(--token-card-bg)] p-6 text-center" data-edit-collection="stats" data-edit-index={i}>
               <p className="text-3xl font-light text-[color:var(--token-heading)]" data-edit-path="value">{s.value || ''}</p>
               <p className="mt-1 text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted)]" data-edit-path="label">{s.label || ''}</p>
             </div>
@@ -130,7 +130,7 @@ function StoryModern(p: Props) {
       {p.values.length > 0 && (
         <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
-            <div key={`${v.title}-${i}`} className="border-l border-black/20 pl-5" data-edit-collection="values" data-edit-index={i}>
+            <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-l border-black/20 pl-5" data-edit-collection="values" data-edit-index={i}>
               <DynamicIcon name={v.icon || 'heart'} size={18} className="text-[color:var(--token-muted)]" />
               <h3 className="mt-2 font-medium text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>
               {v.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}
@@ -179,7 +179,7 @@ function StoryBold(p: Props) {
       {p.stats.length > 0 && (
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-4 md:grid-cols-4">
           {p.stats.map((s, i) => (
-            <div key={`${s.label}-${i}`} className="border-2 border-[#111827] p-5 text-center shadow-[4px_4px_0_var(--token-icon)]" data-edit-collection="stats" data-edit-index={i}>
+            <div key={`$<span data-edit-path="label">{s.label}</span>-${i}`} className="border-2 border-[#111827] p-5 text-center shadow-[4px_4px_0_var(--token-icon)]" data-edit-collection="stats" data-edit-index={i}>
               <p className="text-3xl font-black text-[color:var(--token-heading)]" data-edit-path="value">{s.value || ''}</p>
               <p className="mt-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]" data-edit-path="label">{s.label || ''}</p>
             </div>
@@ -189,7 +189,7 @@ function StoryBold(p: Props) {
       {p.values.length > 0 && (
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
-            <div key={`${v.title}-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="values" data-edit-index={i}>
+            <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="values" data-edit-index={i}>
               <DynamicIcon name={v.icon || 'heart'} size={20} className="text-[color:var(--token-icon)]" />
               <h3 className="mt-2 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>
               {v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />}

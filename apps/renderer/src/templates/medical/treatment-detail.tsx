@@ -75,7 +75,7 @@ function Bold({ header, treatments }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {treatments.map((item, index) => (
-          <article key={`${item.title}-${index}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="treatments" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="treatments" data-edit-index={index}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={item.image} alt={item.title || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="50vw" /></div>}
             <div className="p-5">
               {(item.durationLabel || item.requirementLabel) && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text)]">{[item.durationLabel, item.requirementLabel].filter(Boolean).join(' / ')}</p>}

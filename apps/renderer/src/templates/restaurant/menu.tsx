@@ -118,7 +118,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
       </div>
       <div className="space-y-5">
         {items.map((item, index) => (
-          <article key={`${item.name}-${index}`} className={`grid gap-4 ${item.image ? 'sm:grid-cols-[96px_1fr]' : ''} ${item.highlighted ? 'bg-[var(--token-section-bg-alt)] p-4' : ''}`} data-edit-collection="items" data-edit-index={index}>
+          <article key={`$<span data-edit-path="name">{item.name}</span>-${index}`} className={`grid gap-4 ${item.image ? 'sm:grid-cols-[96px_1fr]' : ''} ${item.highlighted ? 'bg-[var(--token-section-bg-alt)] p-4' : ''}`} data-edit-collection="items" data-edit-index={index}>
             {item.image && (
               <div className="relative h-24 w-24 overflow-hidden rounded-lg">
                 <Image src={item.image} alt={item.name || ''} fill className="object-cover" sizes="96px" />

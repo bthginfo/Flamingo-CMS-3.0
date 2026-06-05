@@ -210,7 +210,7 @@ export function ShopCheckoutSection({ data }: Props) {
                   <input value={form.company} onChange={e => set('company', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" />
                 </div>
               </div>
-              <button onClick={() => setStep(1)} disabled=<span data-edit-path="name">{!form.name || !form.email}</span> className="px-6 py-3 bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
+              <button onClick={() => setStep(1)} disabled={!form.name || !form.email} className="px-6 py-3 bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] rounded-xl font-medium hover:opacity-90 transition disabled:opacity-50">
                 Weiter zu Versand
               </button>
             </div>

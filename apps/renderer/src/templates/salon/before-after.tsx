@@ -31,7 +31,7 @@ function BeforeAfterClassic({ headline, subline, badgeText, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {items.map((item, i) => (
-          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md" data-edit-collection="items" data-edit-index={i}>
+          <motion.article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md" data-edit-collection="items" data-edit-index={i}>
             <div className="grid grid-cols-2">
               {item.beforeImage && <div className="relative aspect-square"><Image src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               {item.afterImage && <div className="relative aspect-square"><Image src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
@@ -60,7 +60,7 @@ function BeforeAfterModern({ headline, subline, badgeText, items }: Props) {
       </div>
       <div className="grid gap-8 md:grid-cols-2">
         {items.map((item, i) => (
-          <article key={`${item.title}-${i}`} className="border-b border-black/10 pb-8" data-edit-collection="items" data-edit-index={i}>
+          <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="border-b border-black/10 pb-8" data-edit-collection="items" data-edit-index={i}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
               {item.beforeImage && <div className="relative aspect-square"><Image src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               {item.afterImage && <div className="relative aspect-square"><Image src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
@@ -88,7 +88,7 @@ function BeforeAfterBold({ headline, subline, badgeText, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {items.map((item, i) => (
-          <article key={`${item.title}-${i}`} className="overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="items" data-edit-index={i}>
+          <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="items" data-edit-index={i}>
             <div className="grid grid-cols-2">
               {item.beforeImage && <div className="relative aspect-square"><Image src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               {item.afterImage && <div className="relative aspect-square"><Image src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}

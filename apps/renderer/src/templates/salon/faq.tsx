@@ -31,7 +31,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
       </div>
       <div className="divide-y divide-[var(--token-icon)]/20 rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] shadow-md">
         {items.map((item, i) => (
-          <motion.details key={`${item.question}-${i}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="group p-5" data-edit-collection="items" data-edit-index={i}>
+          <motion.details key={`$<span data-edit-path="question">{item.question}</span>-${i}`} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="group p-5" data-edit-collection="items" data-edit-index={i}>
             <summary className="cursor-pointer font-semibold text-[color:var(--token-heading)]">{item.question || ''}</summary>
             {item.answer && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </motion.details>
@@ -52,7 +52,7 @@ function FaqModern({ headline, subline, badgeText, items, ctaPrimary }: Props) {
       </div>
       <div className="divide-y divide-black/10 border-y border-black/10">
         {items.map((item, i) => (
-          <details key={`${item.question}-${i}`} className="py-6" data-edit-collection="items" data-edit-index={i}>
+          <details key={`$<span data-edit-path="question">{item.question}</span>-${i}`} className="py-6" data-edit-collection="items" data-edit-index={i}>
             <summary className="cursor-pointer font-light text-[color:var(--token-heading)]">{item.question || ''}</summary>
             {item.answer && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>
@@ -73,7 +73,7 @@ function FaqBold({ headline, subline, badgeText, items, ctaPrimary }: Props) {
       </div>
       <div className="divide-y-2 divide-[#111827] border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]">
         {items.map((item, i) => (
-          <details key={`${item.question}-${i}`} className="p-5" data-edit-collection="items" data-edit-index={i}>
+          <details key={`$<span data-edit-path="question">{item.question}</span>-${i}`} className="p-5" data-edit-collection="items" data-edit-index={i}>
             <summary className="cursor-pointer font-black uppercase text-[color:var(--token-on-dark-heading)]">{item.question || ''}</summary>
             {item.answer && <div className="mt-3 text-sm leading-6 text-[color:var(--token-on-dark-heading)/70] rt-content" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>

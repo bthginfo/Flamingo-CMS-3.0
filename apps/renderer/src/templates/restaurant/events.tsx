@@ -40,7 +40,7 @@ function EventsClassic({ headline, subline, badgeText, events, fallbackText }: E
       {events.length === 0 && fallbackText ? <p className="text-center text-[color:var(--token-muted)]">{fallbackText}</p> : null}
       <div className="grid gap-6 lg:grid-cols-2">
         {events.map((event, index) => (
-          <motion.article key={`${event.title}-${index}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} className="grid overflow-hidden rounded-xl border border-black/10 bg-[var(--token-card-bg)] shadow-md sm:grid-cols-[180px_1fr]" data-edit-collection="events" data-edit-index={index}>
+          <motion.article key={`$<span data-edit-path="title">{event.title}</span>-${index}`} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }} className="grid overflow-hidden rounded-xl border border-black/10 bg-[var(--token-card-bg)] shadow-md sm:grid-cols-[180px_1fr]" data-edit-collection="events" data-edit-index={index}>
             {event.image && <div className="relative min-h-48"><Image src={event.image} alt={event.title || ''} fill className="object-cover" sizes="240px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-widest text-[color:var(--token-muted)]">
@@ -74,7 +74,7 @@ function EventsModern({ headline, subline, badgeText, events, fallbackText }: Ev
       {events.length === 0 && fallbackText ? <p className="font-light text-[color:var(--token-muted)]">{fallbackText}</p> : null}
       <div className="grid gap-8 lg:grid-cols-2">
         {events.map((event, index) => (
-          <article key={`${event.title}-${index}`} className="grid border border-black/5 sm:grid-cols-[160px_1fr]" data-edit-collection="events" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{event.title}</span>-${index}`} className="grid border border-black/5 sm:grid-cols-[160px_1fr]" data-edit-collection="events" data-edit-index={index}>
             {event.image && <div className="relative min-h-48"><Image src={event.image} alt={event.title || ''} fill className="object-cover" sizes="200px" /></div>}
             <div className="p-6">
               <div className="flex flex-wrap gap-4 text-xs font-light uppercase tracking-[0.15em] text-[color:var(--token-muted)]">
@@ -108,7 +108,7 @@ function EventsBold({ headline, subline, badgeText, events, fallbackText }: Even
       {events.length === 0 && fallbackText ? <p className="text-[color:var(--token-on-dark-heading)/60]">{fallbackText}</p> : null}
       <div className="grid gap-5 lg:grid-cols-2">
         {events.map((event, index) => (
-          <article key={`${event.title}-${index}`} className="grid overflow-hidden rounded-none border-2 border-[color:var(--token-card-border)/20] shadow-[4px_4px_0_rgba(255,255,255,0.15)] sm:grid-cols-[160px_1fr]" data-edit-collection="events" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{event.title}</span>-${index}`} className="grid overflow-hidden rounded-none border-2 border-[color:var(--token-card-border)/20] shadow-[4px_4px_0_rgba(255,255,255,0.15)] sm:grid-cols-[160px_1fr]" data-edit-collection="events" data-edit-index={index}>
             {event.image && <div className="relative min-h-48"><Image src={event.image} alt={event.title || ''} fill className="object-cover" sizes="200px" /></div>}
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-widest text-[color:var(--token-on-dark-heading)/50]">

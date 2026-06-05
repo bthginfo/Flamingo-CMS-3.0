@@ -33,7 +33,7 @@ function PriceClassic({ headline, subline, badgeText, categories, footnote, ctaP
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         {categories.map((cat, ci) => (
-          <motion.article key={`${cat.title}-${ci}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: ci * 0.1 }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-6 shadow-md" data-edit-collection="categories" data-edit-index={ci}>
+          <motion.article key={`$<span data-edit-path="title">{cat.title}</span>-${ci}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: ci * 0.1 }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-6 shadow-md" data-edit-collection="categories" data-edit-index={ci}>
             <h3 className="text-2xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{cat.title || ''}</h3>
             {cat.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: cat.text }} />}
             <div className="mt-5 divide-y divide-[var(--token-icon)]/20">
@@ -63,7 +63,7 @@ function PriceModern({ headline, subline, badgeText, categories, footnote, ctaPr
       </div>
       <div className="grid gap-10 lg:grid-cols-2">
         {categories.map((cat, ci) => (
-          <article key={`${cat.title}-${ci}`} className="border-t border-black/10 pt-6" data-edit-collection="categories" data-edit-index={ci}>
+          <article key={`$<span data-edit-path="title">{cat.title}</span>-${ci}`} className="border-t border-black/10 pt-6" data-edit-collection="categories" data-edit-index={ci}>
             <h3 className="text-2xl font-light text-[color:var(--token-heading)]" data-edit-path="title">{cat.title || ''}</h3>
             {cat.text && <div className="mt-2 text-sm font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: cat.text }} />}
             <div className="mt-5 divide-y divide-black/10">
@@ -93,7 +93,7 @@ function PriceBold({ headline, subline, badgeText, categories, footnote, ctaPrim
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         {categories.map((cat, ci) => (
-          <article key={`${cat.title}-${ci}`} className="border-2 border-[#111827] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="categories" data-edit-index={ci}>
+          <article key={`$<span data-edit-path="title">{cat.title}</span>-${ci}`} className="border-2 border-[#111827] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="categories" data-edit-index={ci}>
             <h3 className="text-2xl font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="title">{cat.title || ''}</h3>
             {cat.text && <div className="mt-2 text-sm text-[color:var(--token-on-dark-heading)/60] rt-content" dangerouslySetInnerHTML={{ __html: cat.text }} />}
             <div className="mt-5 divide-y-2 divide-[#111827]">

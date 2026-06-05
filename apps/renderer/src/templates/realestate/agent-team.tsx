@@ -55,12 +55,12 @@ export function AgentTeamSection({ data }: Props) {
                 )}
                 <div className="flex gap-3 mt-4 pt-4 border-t border-[color:var(--token-card-border)]">
                   {agent.phone && (
-                    <a href={`tel:${agent.phone}`} className="flex items-center gap-1.5 text-xs text-[color:var(--token-muted)] hover:text-[color:var(--token-icon)] transition-colors">
+                    <a href={`tel:$<span data-edit-path="phone">{agent.phone}</span>`} className="flex items-center gap-1.5 text-xs text-[color:var(--token-muted)] hover:text-[color:var(--token-icon)] transition-colors">
                       <Phone size={14} /><span data-edit-path="phone">{agent.phone}</span>
                     </a>
                   )}
                   {agent.email && (
-                    <a href={`mailto:${agent.email}`} className="flex items-center gap-1.5 text-xs text-[color:var(--token-muted)] hover:text-[color:var(--token-icon)] transition-colors">
+                    <a href={`mailto:$<span data-edit-path="email">{agent.email}</span>`} className="flex items-center gap-1.5 text-xs text-[color:var(--token-muted)] hover:text-[color:var(--token-icon)] transition-colors">
                       <Mail size={14} />E-Mail
                     </a>
                   )}

@@ -328,10 +328,27 @@ function wrapMixedContentText(src) {
     if (!field) continue;
     const openIdx = m.index;
     // Skip if expression sits inside an opening tag (it's an attribute).
+    // Walk backward, balancing braces and strings, so a `>` inside an
+    // arrow function (`onClick={() => …}`) doesn't trick us into
+    // thinking we already escaped the parent tag.
     let insideTag = false;
-    for (let k = openIdx - 1; k >= 0; k--) {
-      if (src[k] === '>') break;
-      if (src[k] === '<') { insideTag = true; break; }
+    {
+      let depth = 0;
+      let inSingle = false, inDouble = false, inBack = false;
+      for (let k = openIdx - 1; k >= 0; k--) {
+        const ch = src[k];
+        if (inSingle) { if (ch === "'" && src[k - 1] !== '\\') inSingle = false; continue; }
+        if (inDouble) { if (ch === '"' && src[k - 1] !== '\\') inDouble = false; continue; }
+        if (inBack)   { if (ch === '`' && src[k - 1] !== '\\') inBack = false; continue; }
+        if (ch === "'") { inSingle = true; continue; }
+        if (ch === '"') { inDouble = true; continue; }
+        if (ch === '`') { inBack = true; continue; }
+        if (ch === '}') { depth++; continue; }
+        if (ch === '{') { depth--; continue; }
+        if (depth > 0) continue; // inside a brace expression — ignore <>
+        if (ch === '>') break;
+        if (ch === '<') { insideTag = true; break; }
+      }
     }
     if (insideTag) continue;
     // Re-run safety: don't wrap if already wrapped by a previous Pass C.

@@ -31,7 +31,7 @@ function ExpertiseClassic({ headline, subline, badgeText, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
-          <motion.article key={`${item.title}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-6 shadow-md" data-edit-collection="items" data-edit-index={i}>
+          <motion.article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[var(--token-icon)]/20 bg-[var(--token-card-bg)] p-6 shadow-md" data-edit-collection="items" data-edit-index={i}>
             {item.metaLabel && <span className="inline-block rounded-full bg-[var(--token-btn-bg)/10] px-3 py-1 text-xs font-bold uppercase text-[var(--token-eyebrow)]">{item.metaLabel}</span>}
             <div className="mt-4 flex gap-4">
               <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-[color:var(--token-eyebrow)]" />
@@ -57,7 +57,7 @@ function ExpertiseModern({ headline, subline, badgeText, items }: Props) {
       </div>
       <div className="grid gap-8 md:grid-cols-3">
         {items.map((item, i) => (
-          <article key={`${item.title}-${i}`} className="border-t border-black/10 pt-6" data-edit-collection="items" data-edit-index={i}>
+          <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="border-t border-black/10 pt-6" data-edit-collection="items" data-edit-index={i}>
             {item.metaLabel && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]">{item.metaLabel}</p>}
             <div className="mt-3 flex gap-4">
               <DynamicIcon name={item.icon || 'sparkles'} size={18} className="text-[color:var(--token-eyebrow)]" />
@@ -83,7 +83,7 @@ function ExpertiseBold({ headline, subline, badgeText, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
-          <article key={`${item.title}-${i}`} className="border-2 border-[#111827] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="items" data-edit-index={i}>
+          <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="border-2 border-[#111827] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="items" data-edit-index={i}>
             {item.metaLabel && <span className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]">{item.metaLabel}</span>}
             <div className="mt-4 flex gap-4">
               <DynamicIcon name={item.icon || 'sparkles'} size={20} className="text-[color:var(--token-eyebrow)]" />

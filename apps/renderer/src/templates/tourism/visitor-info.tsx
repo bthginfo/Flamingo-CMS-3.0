@@ -29,7 +29,7 @@ function Classic({ header, introText, blocks }: Props) {
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {blocks.map((block, index) => (
-          <motion.article key={`${block.title}-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg" data-edit-collection="blocks" data-edit-index={index}>
+          <motion.article key={`$<span data-edit-path="title">{block.title}</span>-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg" data-edit-collection="blocks" data-edit-index={index}>
             <div className="flex gap-4">
               <DynamicIcon name={block.icon || 'map-pin'} size={20} className="text-[var(--token-icon)]" />
               <div>
@@ -54,7 +54,7 @@ function Modern({ header, introText, blocks }: Props) {
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {blocks.map((block, index) => (
-          <article key={`${block.title}-${index}`} className="border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5" data-edit-collection="blocks" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{block.title}</span>-${index}`} className="border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5" data-edit-collection="blocks" data-edit-index={index}>
             <div className="flex gap-4">
               <DynamicIcon name={block.icon || 'map-pin'} size={20} className="text-[var(--token-icon)]" />
               <div>
@@ -83,7 +83,7 @@ function Bold({ header, introText, blocks }: Props) {
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {blocks.map((block, index) => (
-          <article key={`${block.title}-${index}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="blocks" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{block.title}</span>-${index}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="blocks" data-edit-index={index}>
             <div className="flex gap-4">
               <DynamicIcon name={block.icon || 'map-pin'} size={20} className="text-[var(--token-icon)]" />
               <div>

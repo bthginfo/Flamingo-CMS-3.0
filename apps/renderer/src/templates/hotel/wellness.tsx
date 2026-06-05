@@ -91,7 +91,7 @@ function WellnessModern({ headline, subline, badgeText, introText, imagePrimary,
         {introText && <div className="font-light text-[color:var(--token-muted)] leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-8 grid gap-4">
           {features.map((feature, index) => (
-            <div key={`${feature.title}-${index}`} className="flex gap-4 border-t border-black/10 pt-4" data-edit-collection="features" data-edit-index={index}>
+            <div key={`$<span data-edit-path="title">{feature.title}</span>-${index}`} className="flex gap-4 border-t border-black/10 pt-4" data-edit-collection="features" data-edit-index={index}>
               <DynamicIcon name={feature.icon || 'heart'} size={18} className="text-[color:var(--token-muted)]" />
               <div><h3 className="font-light text-[color:var(--token-heading)]" data-edit-path="title">{feature.title || ''}</h3>{feature.text && <div className="text-sm font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: feature.text }} />}</div>
             </div>
@@ -105,7 +105,7 @@ function WellnessModern({ headline, subline, badgeText, introText, imagePrimary,
           {imageSecondary && <div className="relative aspect-square overflow-hidden border-t border-black/10"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
         {treatments.map((treatment, index) => (
-          <article key={`${treatment.title}-${index}`} className="border border-black/10 bg-[var(--token-card-bg)] p-6" data-edit-collection="treatments" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{treatment.title}</span>-${index}`} className="border border-black/10 bg-[var(--token-card-bg)] p-6" data-edit-collection="treatments" data-edit-index={index}>
             {treatment.image && <div className="relative mb-5 aspect-[16/9] overflow-hidden"><Image src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="flex justify-between gap-4"><h3 className="font-light text-[color:var(--token-heading)]" data-edit-path="title">{treatment.title || ''}</h3><span className="text-sm font-light text-[color:var(--token-muted)]" data-edit-path="priceLabel">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm font-light text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: treatment.text }} />}
@@ -131,7 +131,7 @@ function WellnessBold({ headline, subline, badgeText, introText, imagePrimary, i
         {introText && <div className="text-[color:var(--token-muted)] leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-8 grid gap-4">
           {features.map((feature, index) => (
-            <div key={`${feature.title}-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4" data-edit-collection="features" data-edit-index={index}>
+            <div key={`$<span data-edit-path="title">{feature.title}</span>-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4" data-edit-collection="features" data-edit-index={index}>
               <div className="text-[color:var(--token-icon)]"><DynamicIcon name={feature.icon || 'heart'} size={20} /></div>
               <div><h3 className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{feature.title || ''}</h3>{feature.text && <div className="text-sm text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: feature.text }} />}</div>
             </div>
@@ -145,7 +145,7 @@ function WellnessBold({ headline, subline, badgeText, introText, imagePrimary, i
           {imageSecondary && <div className="relative aspect-square overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
         {treatments.map((treatment, index) => (
-          <article key={`${treatment.title}-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="treatments" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{treatment.title}</span>-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="treatments" data-edit-index={index}>
             {treatment.image && <div className="relative mb-4 aspect-[16/9] overflow-hidden"><Image src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="flex justify-between gap-4"><h3 className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{treatment.title || ''}</h3><span className="text-sm font-bold text-[color:var(--token-muted)]" data-edit-path="priceLabel">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" dangerouslySetInnerHTML={{ __html: treatment.text }} />}

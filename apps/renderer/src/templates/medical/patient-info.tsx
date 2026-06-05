@@ -28,7 +28,7 @@ function Classic({ header, introText, cards }: Props) {
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {cards.map((card, index) => (
-          <article key={`${card.title}-${index}`} className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg" data-edit-collection="cards" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{card.title}</span>-${index}`} className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg" data-edit-collection="cards" data-edit-index={index}>
             <IconRows items={[card]} />
             <div className="mt-4 flex flex-wrap gap-2">{asList<string>(card.items).map((item) => <span key={item} className="rounded-full bg-teal-50 px-3 py-1 text-xs text-teal-800">{item}</span>)}</div>
           </article>
@@ -47,7 +47,7 @@ function Modern({ header, introText, cards }: Props) {
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {cards.map((card, index) => (
-          <article key={`${card.title}-${index}`} className="border border-black/10 bg-[var(--token-card-bg)] p-5" data-edit-collection="cards" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{card.title}</span>-${index}`} className="border border-black/10 bg-[var(--token-card-bg)] p-5" data-edit-collection="cards" data-edit-index={index}>
             <IconRows items={[card]} />
             <div className="mt-4 flex flex-wrap gap-2">{asList<string>(card.items).map((item) => <span key={item} className="border border-black/10 px-3 py-1 text-xs text-[color:var(--token-muted)]">{item}</span>)}</div>
           </article>
@@ -70,7 +70,7 @@ function Bold({ header, introText, cards }: Props) {
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {cards.map((card, index) => (
-          <article key={`${card.title}-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="cards" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{card.title}</span>-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="cards" data-edit-index={index}>
             <IconRows items={[card]} />
             <div className="mt-4 flex flex-wrap gap-2">{asList<string>(card.items).map((item) => <span key={item} className="border border-teal-400 px-3 py-1 text-xs font-bold uppercase text-teal-600">{item}</span>)}</div>
           </article>
