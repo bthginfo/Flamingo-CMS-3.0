@@ -32,8 +32,8 @@ export function TattooBookingSection({ data }: Props) {
     <section className="py-20 px-6 bg-[var(--token-section-bg-alt,#09090b)]" id="kontakt">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-10">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]">{headline}</h2>
-          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50]">{plain(subline)}</p>}
+          <h2 className="text-3xl sm:text-4xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50]" data-edit-path="subline">{plain(subline)}</p>}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">

@@ -9,7 +9,7 @@ export function SectionHeader({ headline, subline, badgeText }: HeaderData) {
   return (
     <div className="mb-10 max-w-3xl">
       {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-muted, var(--style-text-muted,#4b5563))))]">{badgeText}</p>}
-      <h2 className="mt-3 text-3xl font-[700] text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-3xl md:text-5xl">{headline}</h2>
+      <h2 className="mt-3 text-3xl font-[700] text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
       {subline && <div className="mt-4 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
     </div>
   );

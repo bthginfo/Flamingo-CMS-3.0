@@ -14,8 +14,8 @@ export function ShopThankYouSection({ data }: Props) {
   return (
     <section className="py-16 md:py-24 text-center">
       <CheckCircle2 size={64} className="mx-auto mb-6 text-green-500" />
-      <h1 className="text-3xl font-bold mb-3">{headline}</h1>
-      <p className="text-zinc-500 text-lg mb-8 max-w-md mx-auto">{plain(subline)}</p>
+      <h1 className="text-3xl font-bold mb-3" data-edit-path="headline">{headline}</h1>
+      <p className="text-zinc-500 text-lg mb-8 max-w-md mx-auto" data-edit-path="subline">{plain(subline)}</p>
       <Link href="/shop" className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition">
         {continueLabel} <ArrowRight size={16} />
       </Link>

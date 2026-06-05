@@ -66,8 +66,8 @@ export function CollectionListSection({ data }: Props) {
     <div>
       {(headline || subline) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="text-3xl md:text-4xl font-bold">{headline}</h2>}
-          {subline && <p className="text-lg text-[color:var(--token-muted,#71717a)] mt-2">{plain(subline)}</p>}
+          {headline && <h2 className="text-3xl md:text-4xl font-bold" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="text-lg text-[color:var(--token-muted,#71717a)] mt-2" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 

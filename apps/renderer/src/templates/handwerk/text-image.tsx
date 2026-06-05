@@ -31,8 +31,8 @@ export function TextImageSection({ data, variant }: Props) {
           </motion.div>
         )}
         <div className={!image ? 'md:col-span-2 max-w-3xl mx-auto' : ''}>
-          {badge && <span className="section-badge">{badge}</span>}
-          {headline && <h2 className="section-headline">{headline}</h2>}
+          {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
+          {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
           {text && <div className="text-[var(--style-text-secondary,#4b5563)] text-lg leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <ul className="mt-6 space-y-3">
@@ -40,7 +40,7 @@ export function TextImageSection({ data, variant }: Props) {
                 <li key={i} className="flex items-start gap-3">
                   <span className="w-2 h-2 mt-2 rounded-full bg-[var(--token-icon, var(--style-accent,var(--token-icon, var(--brand-primary))))] shrink-0" />
                   <div>
-                    <span className="font-medium text-[var(--style-text-primary,#111827)]">{item.title}</span>
+                    <span className="font-medium text-[var(--style-text-primary,#111827)]" data-edit-path="title">{item.title}</span>
                     {item.text && <span className="text-[var(--style-text-secondary,#4b5563)]"> - {plain(item.text)}</span>}
                   </div>
                 </li>

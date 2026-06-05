@@ -26,8 +26,8 @@ export function MarketReportSection({ data }: Props) {
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="mb-14">
           <span className="text-amber-500 text-sm font-semibold uppercase tracking-wider">{region}</span>
-          <h2 className="text-3xl md:text-4xl font-bold mt-2">{headline}</h2>
-          {subline && <p className="text-lg text-[color:var(--token-on-dark-heading,#ffffff)/70] mt-4 max-w-2xl">{plain(subline)}</p>}
+          <h2 className="text-3xl md:text-4xl font-bold mt-2" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="text-lg text-[color:var(--token-on-dark-heading,#ffffff)/70] mt-4 max-w-2xl" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -43,7 +43,7 @@ export function MarketReportSection({ data }: Props) {
               >
                 <Icon size={20} className="text-amber-500 mb-3" />
                 <p className="text-3xl font-bold">{stat.value}</p>
-                <p className="text-sm text-[color:var(--token-on-dark-heading,#ffffff)/60] mt-1">{stat.label}</p>
+                <p className="text-sm text-[color:var(--token-on-dark-heading,#ffffff)/60] mt-1" data-edit-path="label">{stat.label}</p>
                 {stat.trend && <span className="text-xs text-emerald-400 mt-2 inline-block">↑ {stat.trend}</span>}
               </motion.div>
             );

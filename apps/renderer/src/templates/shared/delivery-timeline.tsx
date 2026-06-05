@@ -25,8 +25,8 @@ export function DeliveryTimelineSection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-12">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{plain(subline)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 
@@ -57,8 +57,8 @@ export function DeliveryTimelineSection({ data }: Props) {
                 <div className="hidden lg:block absolute top-12 -right-2 text-[var(--token-icon, var(--brand-primary,#2563eb))]/30 text-xl">→</div>
               )}
 
-              <h3 className="font-display font-semibold text-lg text-[var(--style-text-primary,#0f172a)] mb-2">{step.title}</h3>
-              {step.text && <p className="text-sm text-[var(--style-text-secondary,#64748b)] max-w-[200px] mx-auto">{plain(step.text)}</p>}
+              <h3 className="font-display font-semibold text-lg text-[var(--style-text-primary,#0f172a)] mb-2" data-edit-path="title">{step.title}</h3>
+              {step.text && <p className="text-sm text-[var(--style-text-secondary,#64748b)] max-w-[200px] mx-auto" data-edit-path="text">{plain(step.text)}</p>}
             </motion.div>
           ))}
         </div>

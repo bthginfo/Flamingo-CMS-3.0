@@ -31,8 +31,8 @@ export function CategoryMosaicSection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{plain(subline)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 
@@ -54,7 +54,7 @@ export function CategoryMosaicSection({ data }: Props) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6 flex items-center gap-3">
               <span className="w-1 h-6 rounded-full bg-[var(--token-icon, var(--brand-primary,var(--style-brand,#2563eb)))]" />
-              <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-display font-bold text-xl md:text-2xl">{item.title}</h3>
+              <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-display font-bold text-xl md:text-2xl" data-edit-path="title">{item.title}</h3>
             </div>
           </motion.a>
         ))}
@@ -75,7 +75,7 @@ export function CategoryMosaicSection({ data }: Props) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center gap-2">
               <span className="w-0.5 h-4 rounded-full bg-[var(--token-icon, var(--brand-primary,var(--style-brand,#2563eb)))]" />
-              <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold text-sm md:text-base">{item.title}</h3>
+              <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold text-sm md:text-base" data-edit-path="title">{item.title}</h3>
             </div>
           </motion.a>
         ))}

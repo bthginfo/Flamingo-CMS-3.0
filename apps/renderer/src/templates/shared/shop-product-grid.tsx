@@ -89,7 +89,7 @@ export function ShopProductGridSection({ data }: Props) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-7xl mx-auto">
-      <h2 className="text-3xl md:text-4xl font-bold mb-10 text-center">{headline}</h2>
+      <h2 className="text-3xl md:text-4xl font-bold mb-10 text-center" data-edit-path="headline">{headline}</h2>
 
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
@@ -187,7 +187,7 @@ export function ShopProductGridSection({ data }: Props) {
                 </div>
                 <div className="p-5">
                   {product.categoryName && <p className="text-xs text-[color:var(--token-body,#a1a1aa)] uppercase tracking-wide mb-1">{product.categoryName}</p>}
-                  <h3 className="font-semibold group-hover:text-[color:var(--token-muted,#52525b)] transition">{product.title}</h3>
+                  <h3 className="font-semibold group-hover:text-[color:var(--token-muted,#52525b)] transition" data-edit-path="title">{product.title}</h3>
                   {product.shortDescription && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1.5 line-clamp-2">{product.shortDescription}</p>}
                   <div className="flex items-center gap-2 mt-3">
                     <span className="font-bold text-lg">{formatPrice(product.priceCents)}</span>

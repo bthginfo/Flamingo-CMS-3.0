@@ -67,7 +67,7 @@ function AmenitiesModern({ headline, subline, badgeText, items, ctaPrimary }: Pr
     <div>
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-px border border-black/10 sm:grid-cols-2 lg:grid-cols-3">
@@ -94,7 +94,7 @@ function AmenitiesBold({ headline, subline, badgeText, items, ctaPrimary }: Prop
     <div>
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

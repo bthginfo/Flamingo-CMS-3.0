@@ -28,8 +28,8 @@ export function ReferencesSoldSection({ data }: Props) {
     <section ref={ref} className="py-20 md:py-28">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-14">
-          <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-          {subline && <p className="text-lg text-[color:var(--token-muted,#52525b)] mt-4">{plain(subline)}</p>}
+          <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="text-lg text-[color:var(--token-muted,#52525b)] mt-4" data-edit-path="subline">{plain(subline)}</p>}
           {totalSold && <p className="text-sm text-[color:var(--token-icon,var(--brand-primary,#1a5276))] font-semibold mt-2">{totalSold}</p>}
         </motion.div>
 
@@ -49,9 +49,9 @@ export function ReferencesSoldSection({ data }: Props) {
                 Verkauft
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-4">
-                <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold text-sm">{prop.title}</h3>
+                <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold text-sm" data-edit-path="title">{prop.title}</h3>
                 <p className="text-[color:var(--token-on-dark-heading,#ffffff)/70] text-xs mt-0.5">{prop.location}</p>
-                {prop.price && <p className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold text-sm mt-1">{prop.price}</p>}
+                {prop.price && <p className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold text-sm mt-1" data-edit-path="price">{prop.price}</p>}
                 {prop.soldIn && <p className="text-emerald-400 text-xs mt-1">Vermittelt in {prop.soldIn}</p>}
               </div>
             </motion.div>

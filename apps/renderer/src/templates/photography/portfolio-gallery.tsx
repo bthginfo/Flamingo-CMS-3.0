@@ -48,15 +48,15 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
     <section className={sectionClasses}>
       <div className="max-w-7xl mx-auto">
         <div className={isModern ? 'mb-16' : 'text-center mb-12'}>
-          {isBold && <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>}
-          {isModern && <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4">{badge}</p>}
-          {!isBold && !isModern && <span className="section-badge">{badge}</span>}
+          {isBold && <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>}
+          {isModern && <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4" data-edit-path="badge">{badge}</p>}
+          {!isBold && !isModern && <span className="section-badge" data-edit-path="badge">{badge}</span>}
           {isModern ? (
-            <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] break-words">{headline}</h2>
+            <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] break-words" data-edit-path="headline">{headline}</h2>
           ) : isBold ? (
-            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide break-words">{headline}</h2>
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide break-words" data-edit-path="headline">{headline}</h2>
           ) : (
-            <h2 className="section-headline">{headline}</h2>
+            <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
           )}
           {subline && !isModern && !isBold && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>

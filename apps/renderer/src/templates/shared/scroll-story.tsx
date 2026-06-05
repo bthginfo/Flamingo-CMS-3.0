@@ -19,8 +19,8 @@ export function ScrollStorySection({ data }: Props) {
   return (
     <div ref={ref} className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
       <div className="lg:sticky lg:top-28 lg:h-fit">
-        {headline && <h2 className="section-headline text-left">{headline}</h2>}
-        {subline && <p className="section-subline mx-0 text-left">{plain(subline)}</p>}
+        {headline && <h2 className="section-headline text-left" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="section-subline mx-0 text-left" data-edit-path="subline">{plain(subline)}</p>}
         <div className="mt-8 h-1 overflow-hidden rounded-full bg-[var(--token-card-bg, var(--style-card-bg,#e5e7eb))]">
           <motion.div className="h-full rounded-full bg-[var(--token-icon, var(--brand-primary))]" style={{ width: progress }} />
         </div>
@@ -31,8 +31,8 @@ export function ScrollStorySection({ data }: Props) {
             {step.image && <img src={step.image} alt="" className="h-64 w-full object-cover" />}
             <div className="p-6 md:p-8">
               <div className="mb-3 text-xs font-bold uppercase text-[var(--token-icon, var(--brand-primary))]">{step.kicker || String(i + 1).padStart(2, '0')}</div>
-              <h3 className="text-2xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111)))]">{step.title}</h3>
-              {step.text && <p className="mt-3 leading-7 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b)))]">{plain(step.text)}</p>}
+              <h3 className="text-2xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111)))]" data-edit-path="title">{step.title}</h3>
+              {step.text && <p className="mt-3 leading-7 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b)))]" data-edit-path="text">{plain(step.text)}</p>}
             </div>
           </motion.article>
         ))}

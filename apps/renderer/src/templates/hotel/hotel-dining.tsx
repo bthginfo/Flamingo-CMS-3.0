@@ -50,7 +50,7 @@ function DiningClassic({ headline, subline, badgeText, introText, image, opening
               <div className="flex justify-between gap-4"><h3 className="font-bold text-[color:var(--token-heading,#18181b)]">{menu.title || ''}</h3><span className="text-sm text-[color:var(--token-muted,#52525b)]">{menu.priceLabel || ''}</span></div>
               {menu.description && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: menu.description }} />}
               {menu.timeLabel && <p className="mt-2 text-xs text-[color:var(--token-muted,#52525b)]">{menu.timeLabel}</p>}
-              {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{menu.cta.label}</a>}
+              {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" data-edit-path="label">{menu.cta.label}</a>}
             </motion.article>
           ))}
         </div>
@@ -79,7 +79,7 @@ function DiningModern({ headline, subline, badgeText, introText, image, openingT
       <div>
         <div className="mb-8 max-w-3xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+          <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
           {subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {introText && <div className="font-light text-[color:var(--token-muted,#52525b)] leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
@@ -90,7 +90,7 @@ function DiningModern({ headline, subline, badgeText, introText, image, openingT
               <div className="flex justify-between gap-4"><h3 className="font-light text-[color:var(--token-heading,#18181b)]">{menu.title || ''}</h3><span className="text-sm font-light text-[color:var(--token-muted,#52525b)]">{menu.priceLabel || ''}</span></div>
               {menu.description && <div className="mt-2 text-sm font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: menu.description }} />}
               {menu.timeLabel && <p className="mt-2 text-xs font-light text-[color:var(--token-muted,#52525b)]">{menu.timeLabel}</p>}
-              {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4">{menu.cta.label}</a>}
+              {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4" data-edit-path="label">{menu.cta.label}</a>}
             </article>
           ))}
         </div>
@@ -119,7 +119,7 @@ function DiningBold({ headline, subline, badgeText, introText, image, openingTex
       <div>
         <div className="mb-6 max-w-3xl">
           {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+          <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
           {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {introText && <div className="text-[color:var(--token-muted,#52525b)] leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
@@ -130,7 +130,7 @@ function DiningBold({ headline, subline, badgeText, introText, image, openingTex
               <div className="flex justify-between gap-4"><h3 className="font-black uppercase text-[color:var(--token-heading,#18181b)]">{menu.title || ''}</h3><span className="text-sm font-bold text-[color:var(--token-muted,#52525b)]">{menu.priceLabel || ''}</span></div>
               {menu.description && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: menu.description }} />}
               {menu.timeLabel && <p className="mt-2 text-xs font-bold text-[color:var(--token-muted,#52525b)]">{menu.timeLabel}</p>}
-              {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-black uppercase text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{menu.cta.label}</a>}
+              {menu.cta?.label && <a href={menu.cta.href || '#'} className="mt-3 inline-flex font-black uppercase text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" data-edit-path="label">{menu.cta.label}</a>}
             </article>
           ))}
         </div>

@@ -18,8 +18,8 @@ export function FlashDayBannerSection({ data }: Props) {
       <div className="max-w-4xl mx-auto text-center">
         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
           {date && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/70] text-sm font-mono uppercase tracking-widest mb-2">{date}</p>}
-          <h2 className="text-3xl sm:text-5xl font-black text-[color:var(--token-on-dark-heading,#ffffff)] uppercase">{headline}</h2>
-          {description && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/80] max-w-xl mx-auto">{plain(description)}</p>}
+          <h2 className="text-3xl sm:text-5xl font-black text-[color:var(--token-on-dark-heading,#ffffff)] uppercase" data-edit-path="headline">{headline}</h2>
+          {description && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/80] max-w-xl mx-auto" data-edit-path="description">{plain(description)}</p>}
           <a href={ctaHref} className="inline-flex items-center justify-center mt-6 px-8 py-3 bg-[var(--token-section-bg-alt,#000000)] text-[color:var(--token-on-dark-heading,#ffffff)] font-bold uppercase tracking-wider text-sm hover:bg-[var(--token-section-bg-alt,#000000)/80] transition-colors">
             {ctaLabel}
           </a>

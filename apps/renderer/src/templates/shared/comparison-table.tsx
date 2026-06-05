@@ -25,9 +25,9 @@ export function ComparisonTableSection({ data }: Props) {
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-10">
-        {badge && <span className="section-badge">{badge}</span>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
-        {text && <p className="section-subline max-w-3xl mx-auto">{plain(text)}</p>}
+        {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+        {text && <p className="section-subline max-w-3xl mx-auto" data-edit-path="text">{plain(text)}</p>}
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.15 }} className="overflow-x-auto">

@@ -65,8 +65,8 @@ export function PopupSection({ data }: SectionProps) {
         </button>
 
         <div className="relative pr-10">
-          {subtitle && <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[var(--token-eyebrow,var(--style-accent-color,var(--token-icon, var(--brand-primary,#f24171))))]">{subtitle}</p>}
-          <h2 className="max-w-lg text-3xl font-black leading-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] md:text-4xl">{title}</h2>
+          {subtitle && <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[var(--token-eyebrow,var(--style-accent-color,var(--token-icon, var(--brand-primary,#f24171))))]" data-edit-path="subtitle">{subtitle}</p>}
+          <h2 className="max-w-lg text-3xl font-black leading-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] md:text-4xl" data-edit-path="title">{title}</h2>
           {text && <div className="rt-content mt-5 text-base leading-8 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b)))]" dangerouslySetInnerHTML={{ __html: text }} />}
         </div>
 

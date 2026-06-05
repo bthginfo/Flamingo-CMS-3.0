@@ -55,7 +55,7 @@ export function UspStripSection({ data }: Props) {
                   <DynamicIcon name={item.icon} size={32} className="text-[var(--style-accent-color,var(--brand-primary,#1a5276))]" />
                 </div>
               )}
-              <h3 className="font-display mb-1.5 text-lg font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#18181b)))]">{item.title}</h3>
+              <h3 className="font-display mb-1.5 text-lg font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#18181b)))]" data-edit-path="title">{item.title}</h3>
               <div className="rt-content text-sm leading-relaxed text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#71717a)))]" dangerouslySetInnerHTML={{ __html: item.text }} />
             </motion.div>
           ))}

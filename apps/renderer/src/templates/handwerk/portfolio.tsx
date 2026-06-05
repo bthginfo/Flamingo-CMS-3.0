@@ -42,7 +42,7 @@ export function PortfolioSection({ data }: Props) {
             <span>{badgeText}</span>
           </div>
         )}
-        {headline && <h2 className="section-headline">{headline}</h2>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
 
@@ -72,7 +72,7 @@ export function PortfolioSection({ data }: Props) {
                 )}
               </div>
               <div className="p-6 lg:p-8">
-                <h3 className="font-display font-bold text-xl mb-2 text-[var(--style-text-primary,#111827)]">{project.title}</h3>
+                <h3 className="font-display font-bold text-xl mb-2 text-[var(--style-text-primary,#111827)]" data-edit-path="title">{project.title}</h3>
                 {project.description && (
                   <div className="text-[var(--style-text-secondary,#6b7280)] text-sm leading-relaxed mb-4 rt-content" dangerouslySetInnerHTML={{ __html: project.description }} />
                 )}

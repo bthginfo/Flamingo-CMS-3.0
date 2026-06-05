@@ -58,9 +58,9 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
     return (
       <section className="py-24 md:py-36 px-4 md:px-6">
         <div className="max-w-md mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4">{badge}</p>
-          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-4 break-words">{headline}</h2>
-          {subline && <p className="text-[color:var(--token-body,#a1a1aa)] text-sm mb-2">{plain(subline)}</p>}
+          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4" data-edit-path="badge">{badge}</p>
+          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-4 break-words" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="text-[color:var(--token-body,#a1a1aa)] text-sm mb-2" data-edit-path="subline">{plain(subline)}</p>}
           {deadlineStr && <p className="text-[color:var(--token-body,#a1a1aa)] text-xs uppercase tracking-wider mb-12">Bis {deadlineStr}</p>}
           <form onSubmit={handleSubmit} className="space-y-6">
             {status === 'error' && <p className="text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errorMsg}</p>}
@@ -104,9 +104,9 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
     return (
       <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-lg mx-auto">
-          <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
-          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wide mb-4 break-words">{headline}</h2>
-          {subline && <p className="text-[color:var(--token-muted,#71717a)] mb-2">{plain(subline)}</p>}
+          <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
+          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-wide mb-4 break-words" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="text-[color:var(--token-muted,#71717a)] mb-2" data-edit-path="subline">{plain(subline)}</p>}
           {deadlineStr && <p className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] text-sm font-bold mb-10">Bis {deadlineStr}</p>}
           <form onSubmit={handleSubmit} className="space-y-5 border-2 border-[color:var(--token-card-border,#18181b)] p-8">
             {status === 'error' && <p className="text-sm text-red-500 flex items-center gap-1"><AlertCircle size={14} />{errorMsg}</p>}
@@ -150,8 +150,8 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
     <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))]/[0.02]">
       <div className="max-w-lg mx-auto">
         <div className="text-center mb-12">
-          <span className="section-badge">{badge}</span>
-          <h2 className="section-headline">{headline}</h2>
+          <span className="section-badge" data-edit-path="badge">{badge}</span>
+          <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
           {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           {deadlineStr && <p className="text-sm text-[color:var(--token-icon,var(--brand-primary,#1a5276))] font-medium mt-4">Bitte bis {deadlineStr}</p>}
         </div>

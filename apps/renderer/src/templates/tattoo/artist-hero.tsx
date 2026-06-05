@@ -22,7 +22,7 @@ export function ArtistHeroSection({ data }: Props) {
             </div>
           )}
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-4xl sm:text-5xl font-black text-[color:var(--token-on-dark-heading,#ffffff)] uppercase">{name}</h1>
+            <h1 className="text-4xl sm:text-5xl font-black text-[color:var(--token-on-dark-heading,#ffffff)] uppercase" data-edit-path="name">{name}</h1>
             <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
               {styles.map(s => (
                 <span key={s} className="text-xs uppercase tracking-wider bg-[var(--token-card-bg,#ffffff)/10] text-[color:var(--token-on-dark-heading,#ffffff)/70] px-3 py-1 rounded-full">{s}</span>

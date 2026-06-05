@@ -23,7 +23,7 @@ export function CafeFaqSection({ data }: Props) {
           {items.map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: i * 0.05 }} className="bg-[var(--token-card-bg,#ffffff)] rounded-lg border border-[color:var(--token-card-border,#f4f4f5)]">
               <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between p-5 text-left">
-                <span className="font-medium text-[color:var(--token-heading,#18181b)] pr-4">{item.question}</span>
+                <span className="font-medium text-[color:var(--token-heading,#18181b)] pr-4" data-edit-path="question">{item.question}</span>
                 {open === i ? <Minus size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] shrink-0" /> : <Plus size={18} className="text-[color:var(--token-body,#a1a1aa)] shrink-0" />}
               </button>
               {open === i && <div className="px-5 pb-5 text-[color:var(--token-muted,#52525b)] text-sm leading-relaxed">{plain(item.answer)}</div>}

@@ -36,8 +36,8 @@ export function VideoEmbedSection({ data }: Props) {
         transition={{ duration: 0.5 }}
         className="text-center mb-8"
       >
-        {badge && <span className="section-badge">{badge}</span>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
+        {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {text && <div className="section-subline max-w-3xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
       </motion.div>
 

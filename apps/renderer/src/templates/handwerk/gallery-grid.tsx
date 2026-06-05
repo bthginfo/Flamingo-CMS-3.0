@@ -53,7 +53,7 @@ export function GalleryGridSection({ data }: Props) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-10"
         >
-          <h2 className="section-headline">{headline}</h2>
+          <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
           {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </motion.div>
       )}
@@ -128,7 +128,7 @@ export function GalleryGridSection({ data }: Props) {
             </motion.div>
             {/* Counter + Caption */}
             <div className="absolute bottom-6 left-0 right-0 text-center">
-              {images[lightbox].caption && <p className="text-[color:var(--token-on-dark-heading,#ffffff)] text-sm mb-2">{images[lightbox].caption}</p>}
+              {images[lightbox].caption && <p className="text-[color:var(--token-on-dark-heading,#ffffff)] text-sm mb-2" data-edit-path="caption">{images[lightbox].caption}</p>}
               <span className="text-[color:var(--token-on-dark-heading,#ffffff)/50] text-xs">{lightbox + 1} / {images.length}</span>
             </div>
           </motion.div>

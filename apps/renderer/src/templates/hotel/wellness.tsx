@@ -69,7 +69,7 @@ function WellnessClassic({ headline, subline, badgeText, introText, imagePrimary
             <div className="flex justify-between gap-4"><h3 className="font-bold text-[color:var(--token-heading,#18181b)]">{treatment.title || ''}</h3><span className="text-sm text-[color:var(--token-muted,#52525b)]">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: treatment.text }} />}
             {treatment.durationLabel && <p className="mt-2 text-xs text-[color:var(--token-muted,#52525b)]">{treatment.durationLabel}</p>}
-            {treatment.cta?.label && <a href={treatment.cta.href || '#'} className="mt-4 inline-flex font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{treatment.cta.label}</a>}
+            {treatment.cta?.label && <a href={treatment.cta.href || '#'} className="mt-4 inline-flex font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" data-edit-path="label">{treatment.cta.label}</a>}
           </motion.article>
         ))}
         </div>
@@ -85,7 +85,7 @@ function WellnessModern({ headline, subline, badgeText, introText, imagePrimary,
       <div>
         <div className="mb-8 max-w-3xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+          <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
           {subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {introText && <div className="font-light text-[color:var(--token-muted,#52525b)] leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
@@ -110,7 +110,7 @@ function WellnessModern({ headline, subline, badgeText, introText, imagePrimary,
             <div className="flex justify-between gap-4"><h3 className="font-light text-[color:var(--token-heading,#18181b)]">{treatment.title || ''}</h3><span className="text-sm font-light text-[color:var(--token-muted,#52525b)]">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: treatment.text }} />}
             {treatment.durationLabel && <p className="mt-2 text-xs font-light text-[color:var(--token-muted,#52525b)]">{treatment.durationLabel}</p>}
-            {treatment.cta?.label && <a href={treatment.cta.href || '#'} className="mt-4 inline-flex font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4">{treatment.cta.label}</a>}
+            {treatment.cta?.label && <a href={treatment.cta.href || '#'} className="mt-4 inline-flex font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4" data-edit-path="label">{treatment.cta.label}</a>}
           </article>
         ))}
       </div>
@@ -125,7 +125,7 @@ function WellnessBold({ headline, subline, badgeText, introText, imagePrimary, i
       <div>
         <div className="mb-6 max-w-3xl">
           {badgeText && <p className="inline-block bg-[color:color-mix(in_srgb,var(--token-btn-bg,var(--brand-primary,#1a5276))_12%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+          <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
           {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {introText && <div className="text-[color:var(--token-muted,#52525b)] leading-7 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
@@ -150,7 +150,7 @@ function WellnessBold({ headline, subline, badgeText, introText, imagePrimary, i
             <div className="flex justify-between gap-4"><h3 className="font-black uppercase text-[color:var(--token-heading,#18181b)]">{treatment.title || ''}</h3><span className="text-sm font-bold text-[color:var(--token-muted,#52525b)]">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: treatment.text }} />}
             {treatment.durationLabel && <p className="mt-2 text-xs font-bold text-[color:var(--token-muted,#52525b)]">{treatment.durationLabel}</p>}
-            {treatment.cta?.label && <a href={treatment.cta.href || '#'} className="mt-4 inline-flex font-black uppercase text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{treatment.cta.label}</a>}
+            {treatment.cta?.label && <a href={treatment.cta.href || '#'} className="mt-4 inline-flex font-black uppercase text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" data-edit-path="label">{treatment.cta.label}</a>}
           </article>
         ))}
       </div>

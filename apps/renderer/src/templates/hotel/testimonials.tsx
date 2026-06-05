@@ -53,7 +53,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
           </motion.article>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] shadow-md">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -64,7 +64,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
     <div>
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="mb-8 flex flex-wrap gap-3 text-sm font-light text-[color:var(--token-muted,#52525b)]">
@@ -82,7 +82,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -93,7 +93,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
     <div>
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="mb-6 flex flex-wrap gap-3 text-sm font-bold text-[color:var(--token-muted,#52525b)]">
@@ -111,7 +111,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)] shadow-[4px_4px_0_var(--token-icon, var(--brand-primary))]">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)] shadow-[4px_4px_0_var(--token-icon, var(--brand-primary))]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }

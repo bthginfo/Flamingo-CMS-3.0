@@ -45,7 +45,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-12 md:mb-20">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       {(storyHeadline || storyText) && (
@@ -76,7 +76,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
             {values.map((v, i) => (
               <div key={i} className="group rounded-2xl border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-8 shadow-sm transition-all hover:shadow-lg">
                 {v.icon && <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]/10 transition-transform group-hover:scale-110"><DynamicIcon name={v.icon} size={28} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" /></div>}
-                <h4 className="mb-2 text-lg font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{v.title}</h4>
+                <h4 className="mb-2 text-lg font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{v.title}</h4>
                 <div className="rt-content text-sm leading-relaxed text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: v.text }} />
               </div>
             ))}
@@ -92,8 +92,8 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
                 <div className="relative w-48 h-48 mx-auto mb-5 rounded-3xl overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow">
                   {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover transition-transform group-hover:scale-105" sizes="200px" /> : <div className="flex h-full w-full items-center justify-center bg-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]/5"><DynamicIcon name="users" size={48} className="text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]/30" /></div>}
                 </div>
-                <h4 className="text-lg font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{m.name}</h4>
-                <p className="mb-2 text-sm font-medium text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">{m.role}</p>
+                <h4 className="text-lg font-semibold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="name">{m.name}</h4>
+                <p className="mb-2 text-sm font-medium text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]" data-edit-path="role">{m.role}</p>
                 {m.bio && <div className="rt-content mx-auto max-w-xs text-sm text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: m.bio }} />}
               </div>
             ))}
@@ -110,7 +110,7 @@ function TeamModern({ headline, subline, badgeText, storyHeadline, storyText, st
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
         {badgeText && <div className="mb-4 flex items-center gap-3 text-sm uppercase tracking-wide text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#9ca3af)))]"><span className="h-px w-8 bg-[var(--token-card-border, var(--style-border-color,#d1d5db))]" />{badgeText}</div>}
-        {headline && <h2 className="text-4xl font-light tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] md:text-5xl lg:text-3xl">{headline}</h2>}
+        {headline && <h2 className="text-4xl font-light tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="rt-content mt-4 max-w-2xl text-lg text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#9ca3af)))]" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       {(storyHeadline || storyText) && (
@@ -136,8 +136,8 @@ function TeamModern({ headline, subline, badgeText, storyHeadline, storyText, st
                 <div className="relative aspect-[3/4] rounded-lg overflow-hidden mb-4">
                   {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover grayscale transition-all duration-500 group-hover:grayscale-0" sizes="300px" /> : <div className="h-full w-full bg-[var(--token-card-bg, var(--style-card-bg,#f3f4f6))]" />}
                 </div>
-                <h4 className="font-medium text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{m.name}</h4>
-                <p className="text-sm text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#9ca3af)))]">{m.role}</p>
+                <h4 className="font-medium text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="name">{m.name}</h4>
+                <p className="text-sm text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#9ca3af)))]" data-edit-path="role">{m.role}</p>
               </div>
             ))}
           </div>
@@ -153,7 +153,7 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12">
         {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg, var(--style-badge-bg,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--token-section-bg-alt, var(--brand-dark))))]">{badgeText}</span>}
-        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] lg:text-4xl">{headline}</h2>}
+        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="rt-content mt-3 font-medium text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       {(storyHeadline || storyText) && (
@@ -185,8 +185,8 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
                   {m.image ? <Image src={m.image} alt={m.name} fill className="object-cover" sizes="80px" /> : <div className="h-full w-full bg-[var(--token-muted, var(--style-text-muted,#e5e7eb))]" />}
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{m.name}</h4>
-                  <p className="text-xs font-bold uppercase text-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))]">{m.role}</p>
+                  <h4 className="text-sm font-bold uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="name">{m.name}</h4>
+                  <p className="text-xs font-bold uppercase text-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))]" data-edit-path="role">{m.role}</p>
                   {m.bio && <div className="rt-content mt-1 text-xs text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: m.bio }} />}
                 </div>
               </div>

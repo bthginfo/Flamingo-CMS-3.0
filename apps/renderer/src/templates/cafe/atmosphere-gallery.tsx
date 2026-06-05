@@ -43,7 +43,7 @@ export function AtmosphereGallerySection({ data }: Props) {
               />
               {img.caption && (
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                  <span className="text-white text-sm font-medium">{img.caption}</span>
+                  <span className="text-white text-sm font-medium" data-edit-path="caption">{img.caption}</span>
                 </div>
               )}
             </motion.div>

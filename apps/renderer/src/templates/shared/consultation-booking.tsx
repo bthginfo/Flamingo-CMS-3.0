@@ -27,8 +27,8 @@ export function ConsultationBookingSection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{plain(subline)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 
@@ -54,8 +54,8 @@ export function ConsultationBookingSection({ data }: Props) {
                 </div>
               )}
               <div>
-                <h3 className="font-semibold text-[var(--style-text-primary,#0f172a)]">{service.title}</h3>
-                {service.description && <p className="text-sm text-[var(--style-text-secondary,#64748b)] mt-1">{plain(service.description)}</p>}
+                <h3 className="font-semibold text-[var(--style-text-primary,#0f172a)]" data-edit-path="title">{service.title}</h3>
+                {service.description && <p className="text-sm text-[var(--style-text-secondary,#64748b)] mt-1" data-edit-path="description">{plain(service.description)}</p>}
               </div>
             </motion.button>
           ))}

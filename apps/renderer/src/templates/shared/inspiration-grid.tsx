@@ -23,8 +23,8 @@ export function InspirationGridSection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{plain(subline)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 
@@ -48,7 +48,7 @@ export function InspirationGridSection({ data }: Props) {
               {item.title && (
                 <div className="p-4 md:p-6 w-full translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
                   <span className="inline-block w-8 h-0.5 rounded bg-[var(--token-icon, var(--brand-primary,var(--style-brand,#2563eb)))] mb-2" />
-                  <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold text-sm md:text-base">{item.title}</h3>
+                  <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold text-sm md:text-base" data-edit-path="title">{item.title}</h3>
                 </div>
               )}
             </div>

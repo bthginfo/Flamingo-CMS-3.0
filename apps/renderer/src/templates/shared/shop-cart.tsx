@@ -23,7 +23,7 @@ export function ShopCartSection({ data }: Props) {
     return (
       <section className="py-16 text-center">
         <ShoppingBag size={48} className="mx-auto mb-4 text-[color:var(--token-body,#d4d4d8)]" />
-        <h2 className="text-2xl font-bold mb-2">{headline}</h2>
+        <h2 className="text-2xl font-bold mb-2" data-edit-path="headline">{headline}</h2>
         <p className="text-[color:var(--token-muted,#71717a)] mb-6">{emptyText}</p>
         <Link href={shopBase} className="inline-block px-6 py-3 bg-[var(--token-section-bg-alt,#18181b)] text-[color:var(--token-on-dark-heading,#ffffff)] rounded-xl font-medium hover:bg-[var(--token-section-bg-alt,#27272a)] transition">
           {continueLabel}
@@ -34,7 +34,7 @@ export function ShopCartSection({ data }: Props) {
 
   return (
     <section className="py-12 md:py-16">
-      <h2 className="text-2xl font-bold mb-8">{headline}</h2>
+      <h2 className="text-2xl font-bold mb-8" data-edit-path="headline">{headline}</h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Items */}

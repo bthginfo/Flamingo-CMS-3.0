@@ -21,7 +21,7 @@ export function LogoCloudSection({ data }: Props) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-10"
         >
-          {headline && <h2 className="text-lg font-semibold text-gray-500 uppercase tracking-wider">{headline}</h2>}
+          {headline && <h2 className="text-lg font-semibold text-gray-500 uppercase tracking-wider" data-edit-path="headline">{headline}</h2>}
           {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </motion.div>
       )}

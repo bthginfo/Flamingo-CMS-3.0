@@ -17,9 +17,9 @@ export function SpotlightCardsSection({ data }: Props) {
   return (
     <div className="relative">
       <div className="mb-12 max-w-3xl">
-        {badge && <span className="section-badge">{badge}</span>}
-        {headline && <h2 className="section-headline text-left">{headline}</h2>}
-        {subline && <p className="section-subline mx-0 text-left">{plain(subline)}</p>}
+        {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
+        {headline && <h2 className="section-headline text-left" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="section-subline mx-0 text-left" data-edit-path="subline">{plain(subline)}</p>}
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {cards.map((card, i) => {
@@ -40,12 +40,12 @@ export function SpotlightCardsSection({ data }: Props) {
               {card.image && <img src={card.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-12 transition duration-500 group-hover:opacity-20" />}
               <div className="relative z-10 flex h-full flex-col justify-end">
                 {card.icon && <DynamicIcon name={card.icon} size={34} className="mb-6 text-[var(--token-icon, var(--style-icon-color,var(--token-icon, var(--brand-primary))))]" />}
-                <h3 className="text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111)))]">{card.title}</h3>
-                {card.text && <p className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b)))]">{plain(card.text)}</p>}
+                <h3 className="text-xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111)))]" data-edit-path="title">{card.title}</h3>
+                {card.text && <p className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#52525b)))]" data-edit-path="text">{plain(card.text)}</p>}
               </div>
             </motion.article>
           );
-          return card.href ? <a key={i} href={card.href}>{body}</a> : <div key={i}>{body}</div>;
+          return card.href ? <a key={i} href={card.href} data-edit-path="body">{body}</a> : <div key={i}>{body}</div>;
         })}
       </div>
     </div>

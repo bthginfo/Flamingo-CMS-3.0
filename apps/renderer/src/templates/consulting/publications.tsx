@@ -23,8 +23,8 @@ export function PublicationsSection({ data }: Props) {
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{plain(subline)}</p>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {articles.map((article, i) => (
@@ -45,7 +45,7 @@ export function PublicationsSection({ data }: Props) {
                 {article.category && <span className="bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] text-[color:var(--token-icon,var(--brand-primary,#1a5276))] px-2 py-0.5 rounded font-medium">{article.category}</span>}
                 {article.date && <span>{article.date}</span>}
               </div>
-              <h3 className="text-lg font-semibold text-[color:var(--token-heading,#18181b)] group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors mb-2">{article.title}</h3>
+              <h3 className="text-lg font-semibold text-[color:var(--token-heading,#18181b)] group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors mb-2" data-edit-path="title">{article.title}</h3>
               {article.excerpt && <p className="text-[color:var(--token-muted,#71717a)] text-sm leading-relaxed line-clamp-3">{article.excerpt}</p>}
               {article.href && (
                 <Link href={article.href} className="inline-flex items-center gap-1 text-sm font-medium text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-4">

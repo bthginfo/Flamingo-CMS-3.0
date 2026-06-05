@@ -37,7 +37,7 @@ function GalleryClassic({ headline, subline, badgeText, images, ctaPrimary }: Pr
             {img.src && <div className="relative aspect-[4/3]"><Image src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <figcaption className="p-4">
               {img.category && <p className="text-xs uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{img.category}</p>}
-              {img.caption && <p className="mt-1 text-sm text-[color:var(--token-heading,#18181b)]">{img.caption}</p>}
+              {img.caption && <p className="mt-1 text-sm text-[color:var(--token-heading,#18181b)]" data-edit-path="caption">{img.caption}</p>}
             </figcaption>
           </motion.figure>
         ))}
@@ -52,7 +52,7 @@ function GalleryModern({ headline, subline, badgeText, images, ctaPrimary }: Pro
     <div>
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
         {subline && <div className="mt-6 font-light text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
@@ -62,7 +62,7 @@ function GalleryModern({ headline, subline, badgeText, images, ctaPrimary }: Pro
             {img.src && <div className="relative aspect-[4/3]"><Image src={img.src} alt={img.alt || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <figcaption className="p-5">
               {img.category && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]">{img.category}</p>}
-              {img.caption && <p className="mt-1 text-sm font-light text-[color:var(--token-heading,#18181b)]">{img.caption}</p>}
+              {img.caption && <p className="mt-1 text-sm font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="caption">{img.caption}</p>}
             </figcaption>
           </figure>
         ))}
@@ -77,7 +77,7 @@ function GalleryBold({ headline, subline, badgeText, images, ctaPrimary }: Props
     <div className="bg-[#111827] p-6 text-[color:var(--token-on-dark-heading,#ffffff)] sm:p-10">
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading,#18181b)]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase">{headline}</h2>
+        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
         {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading,#ffffff)/70] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
@@ -87,7 +87,7 @@ function GalleryBold({ headline, subline, badgeText, images, ctaPrimary }: Props
             {img.src && <div className="relative aspect-[4/3]"><Image src={img.src} alt={img.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
             <figcaption className="p-4">
               {img.category && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{img.category}</p>}
-              {img.caption && <p className="mt-1 text-sm font-bold">{img.caption}</p>}
+              {img.caption && <p className="mt-1 text-sm font-bold" data-edit-path="caption">{img.caption}</p>}
             </figcaption>
           </figure>
         ))}

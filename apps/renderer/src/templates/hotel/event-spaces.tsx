@@ -50,7 +50,7 @@ function EventClassic({ headline, subline, badgeText, spaces, processHeadline, p
               <p className="mt-3 text-xs text-[color:var(--token-muted,#52525b)]">{[space.capacityLabel, space.sizeLabel].filter(Boolean).join(' / ')}</p>
               {asList<string>(space.seatingOptions).length > 0 && <p className="mt-2 text-xs text-[color:var(--token-muted,#52525b)]">{asList<string>(space.seatingOptions).join(' / ')}</p>}
               {asList<string>(space.features).length > 0 && <p className="mt-2 text-xs text-[color:var(--token-muted,#52525b)]">{asList<string>(space.features).join(' / ')}</p>}
-              {space.inquiryCta?.label && <a href={space.inquiryCta.href || '#'} className="mt-4 inline-flex font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{space.inquiryCta.label}</a>}
+              {space.inquiryCta?.label && <a href={space.inquiryCta.href || '#'} className="mt-4 inline-flex font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" data-edit-path="label">{space.inquiryCta.label}</a>}
             </div>
           </motion.article>
         ))}
@@ -76,7 +76,7 @@ function EventModern({ headline, subline, badgeText, spaces, processHeadline, pr
     <div>
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-px border border-black/10 lg:grid-cols-3">
@@ -89,7 +89,7 @@ function EventModern({ headline, subline, badgeText, spaces, processHeadline, pr
               <p className="mt-3 text-xs font-light text-[color:var(--token-muted,#52525b)]">{[space.capacityLabel, space.sizeLabel].filter(Boolean).join(' / ')}</p>
               {asList<string>(space.seatingOptions).length > 0 && <p className="mt-2 text-xs font-light text-[color:var(--token-muted,#52525b)]">{asList<string>(space.seatingOptions).join(' / ')}</p>}
               {asList<string>(space.features).length > 0 && <p className="mt-2 text-xs font-light text-[color:var(--token-muted,#52525b)]">{asList<string>(space.features).join(' / ')}</p>}
-              {space.inquiryCta?.label && <a href={space.inquiryCta.href || '#'} className="mt-4 inline-flex font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4">{space.inquiryCta.label}</a>}
+              {space.inquiryCta?.label && <a href={space.inquiryCta.href || '#'} className="mt-4 inline-flex font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4" data-edit-path="label">{space.inquiryCta.label}</a>}
             </div>
           </article>
         ))}
@@ -115,7 +115,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
     <div>
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
@@ -128,7 +128,7 @@ function EventBold({ headline, subline, badgeText, spaces, processHeadline, proc
               <p className="mt-3 text-xs font-bold uppercase text-[color:var(--token-muted,#52525b)]">{[space.capacityLabel, space.sizeLabel].filter(Boolean).join(' / ')}</p>
               {asList<string>(space.seatingOptions).length > 0 && <p className="mt-2 text-xs text-[color:var(--token-muted,#52525b)]">{asList<string>(space.seatingOptions).join(' / ')}</p>}
               {asList<string>(space.features).length > 0 && <p className="mt-2 text-xs text-[color:var(--token-muted,#52525b)]">{asList<string>(space.features).join(' / ')}</p>}
-              {space.inquiryCta?.label && <a href={space.inquiryCta.href || '#'} className="mt-4 inline-flex font-black uppercase text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{space.inquiryCta.label}</a>}
+              {space.inquiryCta?.label && <a href={space.inquiryCta.href || '#'} className="mt-4 inline-flex font-black uppercase text-[color:var(--token-icon,var(--brand-primary,#1a5276))]" data-edit-path="label">{space.inquiryCta.label}</a>}
             </div>
           </article>
         ))}

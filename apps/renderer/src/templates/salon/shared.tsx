@@ -15,7 +15,7 @@ export function SectionHeader({ headline, subline, badgeText }: { headline: stri
   return (
     <div className="mb-10 max-w-3xl">
       {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
-      <h2 className="mt-3 text-3xl font-[700] text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl">{headline}</h2>
+      <h2 className="mt-3 text-3xl font-[700] text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
       {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
     </div>
   );

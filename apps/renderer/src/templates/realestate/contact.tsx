@@ -42,8 +42,8 @@ export function RealestateContactSection({ data }: Props) {
         <div className={formEnabled ? 'grid lg:grid-cols-2 gap-12' : ''}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}>
             {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mb-3">{badgeText}</p>}
-            <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-            {subline && <p className="text-lg text-[color:var(--token-muted,#52525b)] mt-4">{plain(subline)}</p>}
+            <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
+            {subline && <p className="text-lg text-[color:var(--token-muted,#52525b)] mt-4" data-edit-path="subline">{plain(subline)}</p>}
             {introText && <div className="text-[color:var(--token-muted,#52525b)] mt-4 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
 
             <div className="mt-8 space-y-4">

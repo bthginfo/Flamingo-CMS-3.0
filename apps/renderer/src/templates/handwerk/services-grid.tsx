@@ -45,7 +45,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-10 md:mb-16">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.2 }}>
@@ -75,7 +75,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
             <span className="h-px w-8 bg-[var(--token-card-border, var(--style-border-color,#d1d5db))]" />{badgeText}
           </div>
         )}
-        {headline && <h2 className="text-4xl font-light tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] md:text-5xl lg:text-3xl">{headline}</h2>}
+        {headline && <h2 className="text-4xl font-light tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="rt-content mt-4 max-w-2xl text-lg text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#9ca3af)))]" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
@@ -88,7 +88,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
                 </div>
               )}
               <div>
-                <h3 className="text-lg font-medium text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] transition-colors group-hover:text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">{card.title}</h3>
+                <h3 className="text-lg font-medium text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] transition-colors group-hover:text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]" data-edit-path="title">{card.title}</h3>
                 {card.text && <div className="rt-content mt-2 leading-relaxed text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#9ca3af)))]" dangerouslySetInnerHTML={{ __html: card.text }} />}
                 {card.href && (
                   <span className="mt-3 inline-flex items-center gap-1 text-sm text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))] opacity-0 transition-opacity group-hover:opacity-100">
@@ -135,7 +135,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
             {badgeText}
           </span>
         )}
-        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] lg:text-4xl">{headline}</h2>}
+        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="rt-content mt-3 font-medium text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -147,7 +147,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
                   <DynamicIcon name={card.icon} size={20} className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))))]" />
                 </div>
               )}
-              <h3 className="text-base font-bold uppercase tracking-wide text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{card.title}</h3>
+              <h3 className="text-base font-bold uppercase tracking-wide text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">{card.title}</h3>
               {card.text && <div className="rt-content mt-2 text-sm leading-relaxed text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#6b7280)))]" dangerouslySetInnerHTML={{ __html: card.text }} />}
               {card.href && (
                 <span className="mt-3 inline-flex items-center gap-1 text-xs font-bold uppercase text-[var(--style-accent-color,var(--token-eyebrow, var(--brand-accent)))]">

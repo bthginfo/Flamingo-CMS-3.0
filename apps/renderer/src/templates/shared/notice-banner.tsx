@@ -23,8 +23,8 @@ export function NoticeBannerSection({ data }: Props) {
         viewport={{ once: true }}
         className="max-w-5xl mx-auto px-6 py-12 md:py-16 text-center"
       >
-        {headline && <h2 className="text-2xl md:text-3xl font-bold mb-3">{headline}</h2>}
-        {subline && <p className="text-lg md:text-xl opacity-80 mb-4">{plain(subline)}</p>}
+        {headline && <h2 className="text-2xl md:text-3xl font-bold mb-3" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="text-lg md:text-xl opacity-80 mb-4" data-edit-path="subline">{plain(subline)}</p>}
         {text && <div className="opacity-70 leading-relaxed max-w-2xl mx-auto mb-6 rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {(primaryCta?.label || secondaryCta?.label) && (
           <div className="flex flex-wrap justify-center gap-4 mt-6">

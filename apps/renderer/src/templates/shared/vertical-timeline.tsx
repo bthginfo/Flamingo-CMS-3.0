@@ -37,8 +37,8 @@ export function VerticalTimelineSection({ data }: Props) {
             transition={{ duration: 0.5 }}
             className="text-center mb-14"
           >
-            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,inherit)))]">{headline}</h2>}
-            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--token-subheading, var(--style-subheading-color,var(--style-text-secondary,#71717a)))]">{plain(subline)}</p>}
+            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,inherit)))]" data-edit-path="headline">{headline}</h2>}
+            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--token-subheading, var(--style-subheading-color,var(--style-text-secondary,#71717a)))]" data-edit-path="subline">{plain(subline)}</p>}
           </motion.div>
         )}
 
@@ -90,8 +90,8 @@ function TimelineStep({ step, index, total, accentColor }: { step: Step; index: 
           </span>
         {step.timeLabel && <span className="text-xs text-[var(--token-muted, var(--style-text-muted,#a1a1aa))]">{step.timeLabel}</span>}
         </div>
-        <h3 className="text-xl md:text-2xl font-bold mt-1">{step.title}</h3>
-        {step.text && <p className="mt-2 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#71717a)))] leading-relaxed">{plain(step.text)}</p>}
+        <h3 className="text-xl md:text-2xl font-bold mt-1" data-edit-path="title">{step.title}</h3>
+        {step.text && <p className="mt-2 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#71717a)))] leading-relaxed" data-edit-path="text">{plain(step.text)}</p>}
         {step.checkmarks && step.checkmarks.length > 0 && (
           <ul className="mt-3 space-y-1.5">
             {step.checkmarks.map((item, j) => (

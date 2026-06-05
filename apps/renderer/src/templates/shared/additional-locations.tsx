@@ -44,9 +44,9 @@ export function AdditionalLocationsSection({ data }: Props) {
                 {badge}
               </div>
             )}
-            {headline && <h2 className="max-w-3xl text-4xl font-black leading-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#0f172a)))] md:text-6xl">{headline}</h2>}
+            {headline && <h2 className="max-w-3xl text-4xl font-black leading-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#0f172a)))] md:text-6xl" data-edit-path="headline">{headline}</h2>}
           </div>
-          {subline && <p className="max-w-2xl text-base leading-8 text-[var(--token-subheading, var(--style-subheading-color,var(--style-text-secondary,#64748b)))] md:text-lg">{plain(subline)}</p>}
+          {subline && <p className="max-w-2xl text-base leading-8 text-[var(--token-subheading, var(--style-subheading-color,var(--style-text-secondary,#64748b)))] md:text-lg" data-edit-path="subline">{plain(subline)}</p>}
         </div>
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -77,8 +77,8 @@ export function AdditionalLocationsSection({ data }: Props) {
                       <MapPin size={22} />
                     </div>
                     <div>
-                      {location.name && <h3 className="text-xl font-black leading-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#0f172a)))]">{location.name}</h3>}
-                      {location.address && <p className="mt-2 text-sm leading-6 text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#64748b)))]">{location.address}</p>}
+                      {location.name && <h3 className="text-xl font-black leading-tight text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#0f172a)))]" data-edit-path="name">{location.name}</h3>}
+                      {location.address && <p className="mt-2 text-sm leading-6 text-[var(--token-muted, var(--style-text-muted,var(--style-text-secondary,#64748b)))]" data-edit-path="address">{location.address}</p>}
                     </div>
                   </div>
 
@@ -92,13 +92,13 @@ export function AdditionalLocationsSection({ data }: Props) {
                     {location.phone && (
                       <a href={`tel:${location.phone}`} className="flex gap-3 text-[var(--token-body, var(--style-body-color,var(--style-text-primary,#111827)))] transition hover:text-[var(--style-accent-color,var(--token-icon, var(--brand-primary,#111827)))]">
                         <Phone size={17} className="mt-0.5 shrink-0 text-[var(--token-icon, var(--style-icon-color,var(--token-icon, var(--brand-primary,#111827))))]" />
-                        <span>{location.phone}</span>
+                        <span data-edit-path="phone">{location.phone}</span>
                       </a>
                     )}
                     {email && (
                       <a href={`mailto:${email}`} className="flex gap-3 break-all text-[var(--token-body, var(--style-body-color,var(--style-text-primary,#111827)))] transition hover:text-[var(--style-accent-color,var(--token-icon, var(--brand-primary,#111827)))]">
                         <Mail size={17} className="mt-0.5 shrink-0 text-[var(--token-icon, var(--style-icon-color,var(--token-icon, var(--brand-primary,#111827))))]" />
-                        <span>{email}</span>
+                        <span data-edit-path="email">{email}</span>
                       </a>
                     )}
                   </div>

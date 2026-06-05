@@ -25,8 +25,8 @@ function ScheduleClassic({ badge, headline, events }: P) {
     <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))]/[0.02]">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
-          <span className="section-badge">{badge}</span>
-          <h2 className="section-headline">{headline}</h2>
+          <span className="section-badge" data-edit-path="badge">{badge}</span>
+          <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
         </div>
         <div className="relative">
           <div className="absolute left-[23px] md:left-1/2 top-0 bottom-0 w-px bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/15]" />
@@ -37,7 +37,7 @@ function ScheduleClassic({ badge, headline, events }: P) {
                 <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className={`flex items-start gap-6 md:gap-12 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
                   <div className={`flex-1 ${i % 2 === 0 ? 'md:text-right' : 'md:text-left'} hidden md:block`}>
                     <span className="text-sm font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{event.time}</span>
-                    <h3 className="text-xl font-semibold text-[color:var(--token-heading,#18181b)] mt-1">{event.title}</h3>
+                    <h3 className="text-xl font-semibold text-[color:var(--token-heading,#18181b)] mt-1" data-edit-path="title">{event.title}</h3>
                     {event.description && <div className="text-[color:var(--token-muted,#52525b)] mt-1 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
                     {event.location && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" />{event.location}</p>}
                   </div>
@@ -46,7 +46,7 @@ function ScheduleClassic({ badge, headline, events }: P) {
                   </div>
                   <div className="flex-1 md:hidden">
                     <span className="text-sm font-semibold text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{event.time}</span>
-                    <h3 className="text-xl font-semibold text-[color:var(--token-heading,#18181b)] mt-1">{event.title}</h3>
+                    <h3 className="text-xl font-semibold text-[color:var(--token-heading,#18181b)] mt-1" data-edit-path="title">{event.title}</h3>
                     {event.description && <div className="text-[color:var(--token-muted,#52525b)] mt-1 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
                     {event.location && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" />{event.location}</p>}
                   </div>
@@ -65,14 +65,14 @@ function ScheduleModern({ badge, headline, events }: P) {
   return (
     <section className="py-24 md:py-36 px-4 md:px-6">
       <div className="max-w-4xl mx-auto">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4">{badge}</p>
-        <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-20 break-words">{headline}</h2>
+        <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4" data-edit-path="badge">{badge}</p>
+        <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-20 break-words" data-edit-path="headline">{headline}</h2>
         <div className="space-y-0">
           {events.map((event, i) => (
             <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="grid grid-cols-[80px_1fr] md:grid-cols-[120px_1fr] border-t border-[color:var(--token-card-border,#e4e4e7)] py-8">
               <span className="text-sm font-light text-[color:var(--token-body,#a1a1aa)] pt-1">{event.time}</span>
               <div>
-                <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]">{event.title}</h3>
+                <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{event.title}</h3>
                 {event.description && <div className="text-[color:var(--token-muted,#71717a)] text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
                 {event.location && <p className="text-xs text-[color:var(--token-body,#a1a1aa)] mt-2 uppercase tracking-wider">{event.location}</p>}
               </div>
@@ -88,8 +88,8 @@ function ScheduleBold({ badge, headline, events }: P) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-5xl mx-auto">
-        <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
-        <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-16 break-words">{headline}</h2>
+        <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
+        <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-16 break-words" data-edit-path="headline">{headline}</h2>
         <div className="grid md:grid-cols-2 gap-4">
           {events.map((event, i) => {
             const Icon = ICONS[(event.icon || 'heart').toLowerCase()] || Heart;
@@ -99,7 +99,7 @@ function ScheduleBold({ badge, headline, events }: P) {
                   <Icon className="w-5 h-5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
                   <span className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] font-bold text-sm">{event.time}</span>
                 </div>
-                <h3 className="text-xl font-bold text-[color:var(--token-heading,#18181b)]">{event.title}</h3>
+                <h3 className="text-xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{event.title}</h3>
                 {event.description && <div className="text-[color:var(--token-muted,#52525b)] text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: event.description }} />}
                 {event.location && <p className="text-xs text-[color:var(--token-body,#a1a1aa)] mt-3 uppercase tracking-wider flex items-center gap-1"><MapPin className="w-3 h-3" />{event.location}</p>}
               </motion.div>

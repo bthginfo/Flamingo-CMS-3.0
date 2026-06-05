@@ -17,15 +17,15 @@ export function PricingInfoSection({ data }: Props) {
     <section className="py-20 px-6 bg-[var(--token-section-bg-alt,#09090b)]">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]">{headline}</h2>
-          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50]">{plain(subline)}</p>}
+          <h2 className="text-3xl sm:text-4xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50]" data-edit-path="subline">{plain(subline)}</p>}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
               className="bg-[var(--token-card-bg,#ffffff)/5] border border-[color:var(--token-card-border,#ffffff)/10] rounded-lg p-6 text-center">
-              <p className="text-[color:var(--token-on-dark-heading,#ffffff)/50] text-sm uppercase tracking-wider">{item.label}</p>
+              <p className="text-[color:var(--token-on-dark-heading,#ffffff)/50] text-sm uppercase tracking-wider" data-edit-path="label">{item.label}</p>
               <p className="text-3xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)] mt-2">{item.value}</p>
               {item.note && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/30] text-xs mt-2">{item.note}</p>}
             </motion.div>

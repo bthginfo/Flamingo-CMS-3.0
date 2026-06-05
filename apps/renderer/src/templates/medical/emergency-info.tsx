@@ -66,7 +66,7 @@ function Bold({ header, introText, items, ctaPrimary }: Props) {
     <div className="border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-accent-color,#ef4444)))] bg-[var(--token-section-bg, var(--style-section-bg,#030712))] p-6 sm:p-8">
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,#f87171)))]">{header.badgeText}</p>}
-        <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,#fff))] sm:text-3xl md:text-5xl">{header.headline}</h2>
+        <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,#fff))] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
         {header.subline && <div className="mt-4 text-[var(--token-body, var(--style-body-color,rgba(255,255,255,.7)))] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
       {introText && <div className="max-w-3xl text-sm leading-6 text-[var(--token-body, var(--style-body-color,rgba(255,255,255,.7)))] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}

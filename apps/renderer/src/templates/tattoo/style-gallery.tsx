@@ -26,8 +26,8 @@ export function StyleGallerySection({ data }: Props) {
     <section className="py-20 px-6 bg-[var(--token-section-bg-alt,#09090b)]">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-5xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]">{headline}</h2>
-          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50] max-w-2xl mx-auto">{plain(subline)}</p>}
+          <h2 className="text-3xl sm:text-5xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50] max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
 
         {/* Filter pills */}
@@ -56,8 +56,8 @@ export function StyleGallerySection({ data }: Props) {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
                 <div>
-                  <p className="text-[color:var(--token-on-dark-heading,#ffffff)] font-medium text-sm">{item.name}</p>
-                  {item.description && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/60] text-xs mt-0.5">{plain(item.description)}</p>}
+                  <p className="text-[color:var(--token-on-dark-heading,#ffffff)] font-medium text-sm" data-edit-path="name">{item.name}</p>
+                  {item.description && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/60] text-xs mt-0.5" data-edit-path="description">{plain(item.description)}</p>}
                 </div>
               </div>
             </motion.div>

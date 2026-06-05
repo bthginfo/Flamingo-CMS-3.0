@@ -41,7 +41,7 @@ export function NewsPreviewSection({ data }: Props) {
         className="flex items-end justify-between mb-10"
       >
         <div>
-          <h2 className="section-headline">{headline}</h2>
+          <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
           {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         <Link href={linkHref} className="hidden items-center gap-1.5 text-sm font-medium text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))] hover:underline sm:flex">
@@ -69,7 +69,7 @@ export function NewsPreviewSection({ data }: Props) {
                   {new Date(item.date).toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
               )}
-              <h3 className="line-clamp-2 text-lg font-semibold text-[var(--style-text-primary,var(--token-heading, var(--style-heading-color,#111827)))] transition-colors group-hover:text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">{item.title}</h3>
+              <h3 className="line-clamp-2 text-lg font-semibold text-[var(--style-text-primary,var(--token-heading, var(--style-heading-color,#111827)))] transition-colors group-hover:text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]" data-edit-path="title">{item.title}</h3>
               {item.excerpt && <p className="mt-1.5 line-clamp-2 text-sm text-[var(--style-text-secondary,var(--token-muted, var(--style-text-muted,#6b7280)))]">{item.excerpt}</p>}
             </Link>
           </motion.article>

@@ -64,8 +64,8 @@ function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, do
         {/* Header */}
         {(headline || subline) && (
           <div className="absolute top-6 left-6 md:top-10 md:left-10 z-10 max-w-md">
-            {headline && <h2 className="text-2xl md:text-3xl font-bold">{headline}</h2>}
-            {subline && <p className="mt-1 text-sm opacity-70">{plain(subline)}</p>}
+            {headline && <h2 className="text-2xl md:text-3xl font-bold" data-edit-path="headline">{headline}</h2>}
+            {subline && <p className="mt-1 text-sm opacity-70" data-edit-path="subline">{plain(subline)}</p>}
           </div>
         )}
 
@@ -84,7 +84,7 @@ function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, do
                 >
                   {panel.title}
                 </motion.h3>
-                {panel.text && <p className="mt-3 opacity-80 leading-relaxed">{plain(panel.text)}</p>}
+                {panel.text && <p className="mt-3 opacity-80 leading-relaxed" data-edit-path="text">{plain(panel.text)}</p>}
                 {panel.ctaLabel && panel.ctaHref && (
                   <a href={panel.ctaHref} className="mt-5 inline-flex items-center gap-2 text-sm font-semibold opacity-90 hover:opacity-100 transition-opacity">
                     {panel.ctaLabel} <span>→</span>
@@ -126,8 +126,8 @@ function MobileCarousel({ headline, subline, panels, bgColor, textColor, dotColo
     <section className="py-16" style={{ backgroundColor: bgColor, color: textColor }}>
       {(headline || subline) && (
         <div className="px-5 mb-6">
-          {headline && <h2 className="text-2xl font-bold">{headline}</h2>}
-          {subline && <p className="mt-1 text-sm opacity-70">{plain(subline)}</p>}
+          {headline && <h2 className="text-2xl font-bold" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-1 text-sm opacity-70" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 
@@ -138,8 +138,8 @@ function MobileCarousel({ headline, subline, panels, bgColor, textColor, dotColo
               <img src={panel.image} alt={panel.title} className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0" style={{ backgroundColor: panel.overlayColor || 'rgba(0,0,0,0.4)' }} />
               <div className="relative z-10 flex flex-col justify-end h-full p-6">
-                <h3 className="text-xl font-bold">{panel.title}</h3>
-                {panel.text && <p className="mt-2 text-sm opacity-80">{plain(panel.text)}</p>}
+                <h3 className="text-xl font-bold" data-edit-path="title">{panel.title}</h3>
+                {panel.text && <p className="mt-2 text-sm opacity-80" data-edit-path="text">{plain(panel.text)}</p>}
                 {panel.ctaLabel && panel.ctaHref && (
                   <a href={panel.ctaHref} className="mt-3 text-sm font-semibold opacity-90">{panel.ctaLabel} →</a>
                 )}

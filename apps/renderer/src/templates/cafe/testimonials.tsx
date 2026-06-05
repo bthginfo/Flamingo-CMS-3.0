@@ -34,7 +34,7 @@ export function CafeTestimonialsSection({ data }: Props) {
               <div className="flex items-center gap-3 mt-4 pt-3 border-t border-[color:var(--token-card-border,#e4e4e7)]">
                 {t.image && <Image src={t.image} alt={t.name} width={32} height={32} className="rounded-full object-cover" />}
                 <div>
-                  <p className="text-sm font-semibold text-[color:var(--token-heading,#18181b)]">{t.name}</p>
+                  <p className="text-sm font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{t.name}</p>
                   {t.source && <p className="text-xs text-[color:var(--token-muted,#71717a)]">{t.source}</p>}
                 </div>
               </div>

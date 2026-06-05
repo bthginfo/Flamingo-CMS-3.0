@@ -23,7 +23,7 @@ export function HeaderBannerSection({ data }: Props) {
         {items.map((item, i) => (
           <span key={i}>
             {item.link ? (
-              <a href={item.link} className="hover:underline font-medium">{plain(item.text)}</a>
+              <a href={item.link} className="hover:underline font-medium" data-edit-path="text">{plain(item.text)}</a>
             ) : (
               <span className="rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />
             )}

@@ -87,7 +87,7 @@ function HeroClassic({ headline, subline, badgeText, bgImage, bgImageMobile, bgC
               {primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}
             </a>
           )}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_8%,transparent)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] backdrop-blur">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_8%,transparent)] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] backdrop-blur" data-edit-path="label">{secondaryCta.label}</a>}
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 0.6 }} className="mt-10 flex flex-wrap justify-center gap-3 text-sm text-[color:var(--token-on-dark-muted,rgba(255,255,255,.74))]">
           {locationLabel && <span className="inline-flex items-center gap-2 rounded-full bg-[color:color-mix(in_srgb,var(--token-on-dark-heading,#ffffff)_12%,transparent)] px-4 py-2 backdrop-blur"><MapPin size={15} />{locationLabel}</span>}
@@ -106,11 +106,11 @@ function HeroModern({ headline, subline, badgeText, bgImage, bgImageMobile, bgCo
       <div className="relative z-10 mx-auto grid min-h-[calc(100vh-112px)] max-w-7xl items-center gap-10 px-6 py-12 md:py-20 lg:grid-cols-2">
         <div className="max-w-xl">
           {badgeText && <p className="text-xs font-light uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{badgeText}</p>}
-          <h1 className="mt-5 text-3xl md:text-5xl font-light leading-[0.95] text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-6xl lg:text-7xl">{headline}</h1>
+          <h1 className="mt-5 text-3xl md:text-5xl font-light leading-[0.95] text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-6xl lg:text-7xl" data-edit-path="headline">{headline}</h1>
           {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="mt-8 flex flex-wrap gap-3">
             {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
-            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.15)))] px-5 py-3 font-semibold text-[var(--style-text-primary,#111827)]">{secondaryCta.label}</a>}
+            {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.15)))] px-5 py-3 font-semibold text-[var(--style-text-primary,#111827)]" data-edit-path="label">{secondaryCta.label}</a>}
           </div>
           <div className="mt-10 flex flex-wrap gap-3 text-sm text-[var(--style-text-secondary,#4b5563)]">
             {locationLabel && <span className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] px-4 py-2"><MapPin size={15} />{locationLabel}</span>}
@@ -152,11 +152,11 @@ function HeroBold({ headline, subline, badgeText, bgImage, bgImageMobile, bgColo
           <Compass className="text-[var(--token-icon, var(--style-icon-color,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]" size={28} />
           {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{badgeText}</p>}
         </div>
-        <h1 className="mt-5 max-w-5xl text-3xl md:text-5xl font-black uppercase leading-[0.95] text-[var(--token-heading, var(--style-heading-color,#fff))] sm:text-6xl lg:text-8xl">{headline}</h1>
+        <h1 className="mt-5 max-w-5xl text-3xl md:text-5xl font-black uppercase leading-[0.95] text-[var(--token-heading, var(--style-heading-color,#fff))] sm:text-6xl lg:text-8xl" data-edit-path="headline">{headline}</h1>
         {subline && <div className="mt-7 max-w-2xl text-lg leading-8 text-[var(--token-body, var(--style-body-color,rgba(255,255,255,.7)))] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-6 py-3 font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}{primaryCta.icon && <DynamicIcon name={primaryCta.icon} size={17} />}</a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,.4)))] px-6 py-3 font-black uppercase text-[var(--token-heading, var(--style-heading-color,#fff))]">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,.4)))] px-6 py-3 font-black uppercase text-[var(--token-heading, var(--style-heading-color,#fff))]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
         <div className="mt-10 flex flex-wrap gap-3 text-sm text-[var(--token-body, var(--style-body-color,rgba(255,255,255,.7)))]">
           {locationLabel && <span className="inline-flex items-center gap-2 border border-[var(--token-card-border, var(--style-border-color,rgba(255,255,255,.2)))] px-4 py-2 font-bold uppercase"><MapPin size={15} />{locationLabel}</span>}

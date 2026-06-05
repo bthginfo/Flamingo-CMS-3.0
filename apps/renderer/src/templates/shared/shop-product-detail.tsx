@@ -129,7 +129,7 @@ export function ShopProductDetailSection({ data }: Props) {
             <span className="inline-block text-xs font-medium text-[color:var(--token-muted,#71717a)] bg-[var(--token-section-bg-alt,#f4f4f5)] px-3 py-1 rounded-full w-fit mb-3">{product.categoryName}</span>
           )}
 
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">{product.title}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2" data-edit-path="title">{product.title}</h1>
 
           {product.shortDescription && (
             <p className="text-[color:var(--token-muted,#71717a)] mb-4">{product.shortDescription}</p>
@@ -160,7 +160,7 @@ export function ShopProductDetailSection({ data }: Props) {
           {/* Variant options */}
           {product.variantOptions?.map(opt => (
             <div key={opt.name} className="mb-5">
-              <label className="text-sm font-medium text-[color:var(--token-muted,#3f3f46)] mb-2 block">{opt.name}</label>
+              <label className="text-sm font-medium text-[color:var(--token-muted,#3f3f46)] mb-2 block" data-edit-path="name">{opt.name}</label>
               <div className="flex flex-wrap gap-2">
                 {opt.values.map(val => {
                   const matchVariant = variants.find(v => v.name.includes(val));

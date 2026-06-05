@@ -22,8 +22,8 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
     return (
       <section className="py-24 md:py-36 px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4">{badge}</p>
-          {headline && <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-16 break-words">{headline}</h2>}
+          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4" data-edit-path="badge">{badge}</p>
+          {headline && <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-16 break-words" data-edit-path="headline">{headline}</h2>}
           <div className="grid md:grid-cols-2 gap-16 items-start">
             {image && (
               <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="relative aspect-[3/4]">
@@ -42,7 +42,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                 <div className="mt-10 space-y-4 border-t border-[color:var(--token-card-border,#e4e4e7)] pt-8">
                   {values.map((v, i) => (
                     <div key={i}>
-                      <h4 className="text-sm font-medium text-[color:var(--token-heading,#18181b)]">{v.title}</h4>
+                      <h4 className="text-sm font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{v.title}</h4>
                       <div className="text-[color:var(--token-body,#a1a1aa)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                     </div>
                   ))}
@@ -60,8 +60,8 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
     return (
       <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg-alt,#09090b)] text-[color:var(--token-on-dark-heading,#ffffff)]">
         <div className="max-w-6xl mx-auto">
-          <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
-          {headline && <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>}
+          <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
+          {headline && <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words" data-edit-path="headline">{headline}</h2>}
           <div className="grid md:grid-cols-5 gap-8 items-start">
             {image && (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="md:col-span-2 relative aspect-[3/4]">
@@ -81,7 +81,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
                 <div className="mt-8 grid sm:grid-cols-2 gap-4">
                   {values.map((v, i) => (
                     <div key={i} className="border border-[color:var(--token-card-border,#ffffff)/10] p-4">
-                      <h4 className="font-bold text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] text-sm">{v.title}</h4>
+                      <h4 className="font-bold text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] text-sm" data-edit-path="title">{v.title}</h4>
                       <div className="text-[color:var(--token-on-dark-heading,#ffffff)/80] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                     </div>
                   ))}
@@ -107,8 +107,8 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
             </motion.div>
           )}
           <div className={image ? 'md:col-span-3' : 'md:col-span-5 max-w-3xl mx-auto'}>
-            <span className="section-badge">{badge}</span>
-            {headline && <h2 className="section-headline">{headline}</h2>}
+            <span className="section-badge" data-edit-path="badge">{badge}</span>
+            {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
             {intro && <div className="text-[color:var(--token-muted,#3f3f46)] text-lg leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: intro }} />}
             {story && <div className="text-[color:var(--token-muted,#52525b)] leading-relaxed mt-4 rt-content" dangerouslySetInnerHTML={{ __html: story }} />}
             {facts.length > 0 && (
@@ -125,7 +125,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
               <div className="mt-8 grid sm:grid-cols-2 gap-4">
                 {values.map((v, i) => (
                   <div key={i} className="p-4 rounded-xl bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))]/[0.03] border border-[var(--token-card-border,var(--brand-primary,#1a5276))/10]">
-                    <h4 className="font-semibold text-[color:var(--token-heading,#18181b)] text-sm">{v.title}</h4>
+                    <h4 className="font-semibold text-[color:var(--token-heading,#18181b)] text-sm" data-edit-path="title">{v.title}</h4>
                     <div className="text-[color:var(--token-muted,#52525b)] text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: v.text }} />
                   </div>
                 ))}

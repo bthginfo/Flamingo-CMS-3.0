@@ -20,8 +20,8 @@ export function ConsultingTeamSection({ data }: Props) {
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12 md:mb-16">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{plain(subline)}</p>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {members.map((member, i) => (
@@ -37,8 +37,8 @@ export function ConsultingTeamSection({ data }: Props) {
                 <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
               </div>
             )}
-            <h3 className="text-lg font-semibold text-[color:var(--token-heading,#18181b)]">{member.name}</h3>
-            {member.role && <p className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] font-medium text-sm mt-1">{member.role}</p>}
+            <h3 className="text-lg font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{member.name}</h3>
+            {member.role && <p className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] font-medium text-sm mt-1" data-edit-path="role">{member.role}</p>}
             {member.specialization && <p className="text-[color:var(--token-muted,#71717a)] text-sm mt-1">{member.specialization}</p>}
             <div className="flex items-center justify-center gap-4 mt-4">
               {member.phone && (

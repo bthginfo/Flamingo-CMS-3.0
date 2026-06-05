@@ -30,8 +30,8 @@ export function AgentTeamSection({ data }: Props) {
     <section ref={ref} className="py-20 md:py-28">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-14">
-          <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-          {subline && <p className="text-lg text-[color:var(--token-muted,#52525b)] mt-4">{plain(subline)}</p>}
+          <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="text-lg text-[color:var(--token-muted,#52525b)] mt-4" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -47,8 +47,8 @@ export function AgentTeamSection({ data }: Props) {
                 <Image src={agent.image} alt={agent.name} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
               </div>
               <div className="p-6">
-                <h3 className="text-lg font-bold text-[color:var(--token-heading,#18181b)]">{agent.name}</h3>
-                <p className="text-sm text-[color:var(--token-icon,var(--brand-primary,#1a5276))] font-medium">{agent.role}</p>
+                <h3 className="text-lg font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{agent.name}</h3>
+                <p className="text-sm text-[color:var(--token-icon,var(--brand-primary,#1a5276))] font-medium" data-edit-path="role">{agent.role}</p>
                 <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1">{agent.specialization}</p>
                 {agent.soldCount && (
                   <p className="text-xs text-[color:var(--token-body,#a1a1aa)] mt-2">{agent.soldCount} vermittelte Objekte</p>

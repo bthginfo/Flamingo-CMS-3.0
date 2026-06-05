@@ -22,13 +22,13 @@ export function BeforeAfterStoryProSection({ data }: Props) {
   return (
     <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
       <div>
-        {badge && <span className="section-badge">{badge}</span>}
-        {headline && <h2 className="section-headline text-left">{headline}</h2>}
+        {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
+        {headline && <h2 className="section-headline text-left" data-edit-path="headline">{headline}</h2>}
         <div className="mt-8 grid gap-3">
           {[['Ausgangslage', problem], ['Lösung', solution], ['Ergebnis', result]].filter(([, text]) => text).map(([label, text], index) => (
             <motion.div key={label} initial={{ opacity: 0, x: -18 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg,var(--style-card-bg,#fff))] p-5">
               <div className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--token-eyebrow,var(--style-accent-color,var(--token-icon, var(--brand-primary))))]">{label}</div>
-              <p className="mt-2 text-sm leading-7 text-[var(--token-body,var(--style-body-color,#3f3f46))]">{plain(text)}</p>
+              <p className="mt-2 text-sm leading-7 text-[var(--token-body,var(--style-body-color,#3f3f46))]" data-edit-path="text">{plain(text)}</p>
             </motion.div>
           ))}
         </div>

@@ -57,9 +57,9 @@ export function StatsCounterSection({ data }: Props) {
       <div className="relative z-10">
         {(headline || badge) && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-16">
-            {badge && <span className="inline-block text-xs font-semibold tracking-widest uppercase text-[var(--token-badge-text, var(--style-badge-text,var(--color-primary)))] bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,0.10)))] rounded-full px-4 py-1.5 mb-4">{badge}</span>}
-            {headline && <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#ffffff)))]">{headline}</h2>}
-            {subline && <p className="mt-3 text-lg text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#a1a1aa)))] max-w-xl mx-auto">{plain(subline)}</p>}
+            {badge && <span className="inline-block text-xs font-semibold tracking-widest uppercase text-[var(--token-badge-text, var(--style-badge-text,var(--color-primary)))] bg-[var(--token-badge-bg, var(--style-badge-bg,rgba(255,255,255,0.10)))] rounded-full px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>}
+            {headline && <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#ffffff)))]" data-edit-path="headline">{headline}</h2>}
+            {subline && <p className="mt-3 text-lg text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#a1a1aa)))] max-w-xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
           </motion.div>
         )}
 

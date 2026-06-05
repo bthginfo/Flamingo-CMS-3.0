@@ -32,8 +32,8 @@ export function PropertySearchSection({ data }: Props) {
     <section ref={ref} className="py-16 md:py-20" style={bgColor ? { backgroundColor: bgColor } : undefined}>
       <div className="max-w-4xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-          {subline && <p className="mt-2 text-[color:var(--token-muted,#52525b)]">{plain(subline)}</p>}
+          <h2 className="text-2xl md:text-3xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="mt-2 text-[color:var(--token-muted,#52525b)]" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
 
         <motion.div
@@ -54,7 +54,7 @@ export function PropertySearchSection({ data }: Props) {
                 <div className="rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] p-3 text-[color:var(--token-icon,var(--brand-primary,#1a5276))] group-hover:bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] group-hover:text-[color:var(--token-on-dark-heading,#ffffff)] transition-colors">
                   <Icon size={24} />
                 </div>
-                <span className="font-semibold text-[color:var(--token-heading,#18181b)]">{cat.label}</span>
+                <span className="font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="label">{cat.label}</span>
                 {cat.count && <span className="text-xs text-[color:var(--token-muted,#71717a)]">{cat.count}</span>}
                 <ArrowRight size={16} className="absolute top-4 right-4 text-[color:var(--token-body,#d4d4d8)] group-hover:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] transition-colors" />
               </a>

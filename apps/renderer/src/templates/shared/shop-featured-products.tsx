@@ -51,7 +51,7 @@ export function ShopFeaturedProductsSection({ data }: Props) {
 
   return (
     <section className="py-12 md:py-16">
-      <h2 className="text-2xl font-bold mb-8 text-center">{headline}</h2>
+      <h2 className="text-2xl font-bold mb-8 text-center" data-edit-path="headline">{headline}</h2>
       <div className={`grid grid-cols-2 ${colsClass} gap-4 md:gap-6`}>
         {products.map(product => (
           <Link key={product.id} href={`${shopBase}/${product.slug}`} className="group">
@@ -64,7 +64,7 @@ export function ShopFeaturedProductsSection({ data }: Props) {
                 )}
               </div>
               <div className="p-3">
-                <h3 className="font-medium text-sm truncate">{product.title}</h3>
+                <h3 className="font-medium text-sm truncate" data-edit-path="title">{product.title}</h3>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="font-bold">{formatPrice(product.priceCents)}</span>
                   {product.comparePriceCents && <span className="text-xs text-zinc-400 line-through">{formatPrice(product.comparePriceCents)}</span>}

@@ -22,8 +22,8 @@ export function PrinciplesGridSection({ data }: Props) {
       <div className="relative mx-auto max-w-7xl px-6">
         <div className="max-w-4xl">
           {badge && <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--token-badge-border,var(--style-border-color,rgba(15,23,42,0.10)))] bg-[var(--token-badge-bg,var(--style-badge-bg,rgba(15,23,42,0.04)))] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[var(--token-badge-text,var(--style-badge-text,var(--style-accent-color,var(--brand-primary,#0f172a))))]"><Sparkles size={14} />{badge}</div>}
-          {headline && <h2 className="text-4xl font-black leading-none text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#0f172a)))] md:text-6xl lg:text-7xl">{headline}</h2>}
-          {subline && <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--token-body,var(--style-body-color,var(--style-text-secondary,#475569)))]">{plain(subline)}</p>}
+          {headline && <h2 className="text-4xl font-black leading-none text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#0f172a)))] md:text-6xl lg:text-7xl" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--token-body,var(--style-body-color,var(--style-text-secondary,#475569)))]" data-edit-path="subline">{plain(subline)}</p>}
         </div>
 
         <div className="mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -40,8 +40,8 @@ export function PrinciplesGridSection({ data }: Props) {
                 {String(index + 1).padStart(2, '0')}
               </div>
               {item.eyebrow && <div className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--token-eyebrow,var(--style-accent-color,var(--token-icon, var(--brand-primary,#f24171))))]">{item.eyebrow}</div>}
-              {item.title && <h3 className="text-2xl font-black leading-tight text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#0f172a)))]">{item.title}</h3>}
-              {item.text && <p className="mt-4 text-sm leading-7 text-[var(--token-body,var(--style-body-color,var(--style-text-secondary,#475569)))]">{plain(item.text)}</p>}
+              {item.title && <h3 className="text-2xl font-black leading-tight text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#0f172a)))]" data-edit-path="title">{item.title}</h3>}
+              {item.text && <p className="mt-4 text-sm leading-7 text-[var(--token-body,var(--style-body-color,var(--style-text-secondary,#475569)))]" data-edit-path="text">{plain(item.text)}</p>}
             </motion.article>
           ))}
         </div>

@@ -24,8 +24,8 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
     return (
       <section className="py-24 md:py-36 px-4 md:px-6">
         <div className="max-w-4xl mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4">{badge}</p>
-          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-16 break-words">{headline}</h2>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4" data-edit-path="badge">{badge}</p>
+          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-16 break-words" data-edit-path="headline">{headline}</h2>
           <div className="space-y-0">
             {steps.map((step, i) => {
               const Icon = ICONS[(step.icon || 'camera').toLowerCase()] || Camera;
@@ -36,7 +36,7 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
                     <Icon className="w-4 h-4 text-[color:var(--token-body,#a1a1aa)]" />
                   </div>
                   <div>
-                    <h3 className="font-light text-[color:var(--token-heading,#18181b)] text-lg">{step.title}</h3>
+                    <h3 className="font-light text-[color:var(--token-heading,#18181b)] text-lg" data-edit-path="title">{step.title}</h3>
                     <div className="text-[color:var(--token-muted,#71717a)] text-sm mt-2 rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />
                   </div>
                 </motion.div>
@@ -52,8 +52,8 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
     return (
       <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg-alt,#09090b)] text-[color:var(--token-on-dark-heading,#ffffff)]">
         <div className="max-w-6xl mx-auto">
-          <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
+          <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
+          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words" data-edit-path="headline">{headline}</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {steps.map((step, i) => {
               const Icon = ICONS[(step.icon || 'camera').toLowerCase()] || Camera;
@@ -63,7 +63,7 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
                     <span className="text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] font-black text-2xl">{String(i + 1).padStart(2, '0')}</span>
                     <Icon className="w-5 h-5 text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" />
                   </div>
-                  <h3 className="font-bold text-[color:var(--token-on-dark-heading,#ffffff)] mb-2">{step.title}</h3>
+                  <h3 className="font-bold text-[color:var(--token-on-dark-heading,#ffffff)] mb-2" data-edit-path="title">{step.title}</h3>
                   <div className="text-[color:var(--token-on-dark-heading,#ffffff)/80] text-sm rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />
                 </motion.div>
               );
@@ -78,8 +78,8 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
     <section className="py-12 md:py-24 px-4 md:px-6 bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))]/[0.02]">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
-          <span className="section-badge">{badge}</span>
-          <h2 className="section-headline">{headline}</h2>
+          <span className="section-badge" data-edit-path="badge">{badge}</span>
+          <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
           {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         <div className="relative">
@@ -97,7 +97,7 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
                     <div className={`flex items-center gap-3 mb-2 ${isLeft ? 'md:justify-end' : ''}`}>
                       <span className="text-xs font-bold text-[color:var(--token-icon,var(--brand-primary,#1a5276))] uppercase tracking-wider">Schritt {i + 1}</span>
                     </div>
-                    <h3 className="text-lg md:text-xl font-semibold text-[color:var(--token-heading,#18181b)]">{step.title}</h3>
+                    <h3 className="text-lg md:text-xl font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="title">{step.title}</h3>
                     <div className="text-[color:var(--token-muted,#52525b)] mt-1 md:mt-2 text-sm md:text-base rt-content" dangerouslySetInnerHTML={{ __html: step.text }} />
                   </div>
                   {isLeft && <div className="hidden md:block" />}

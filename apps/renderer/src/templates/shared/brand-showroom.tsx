@@ -34,8 +34,8 @@ export function BrandShowroomSection({ data }: Props) {
         className="relative z-10 w-full p-8 md:p-12"
       >
         <div className="max-w-5xl">
-          {headline && <h2 className="font-display text-3xl md:text-5xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)] mb-3">{headline}</h2>}
-          {subline && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/80] text-lg md:text-xl max-w-2xl mb-8">{plain(subline)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-5xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)] mb-3" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/80] text-lg md:text-xl max-w-2xl mb-8" data-edit-path="subline">{plain(subline)}</p>}
 
           {highlights.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -47,8 +47,8 @@ export function BrandShowroomSection({ data }: Props) {
                   transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
                   className="bg-[var(--token-card-bg,#ffffff)/10] backdrop-blur-sm border border-[color:var(--token-card-border,#ffffff)/20] rounded-lg p-4"
                 >
-                  <h4 className="font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] text-sm">{h.title}</h4>
-                  <p className="text-[color:var(--token-on-dark-heading,#ffffff)/70] text-xs mt-1">{plain(h.text)}</p>
+                  <h4 className="font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] text-sm" data-edit-path="title">{h.title}</h4>
+                  <p className="text-[color:var(--token-on-dark-heading,#ffffff)/70] text-xs mt-1" data-edit-path="text">{plain(h.text)}</p>
                 </motion.div>
               ))}
             </div>

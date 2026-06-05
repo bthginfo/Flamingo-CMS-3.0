@@ -21,9 +21,9 @@ export function TimelineSection({ data }: Props) {
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-12">
-        {badge && <span className="section-badge">{badge}</span>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline max-w-2xl mx-auto">{plain(subline)}</p>}
+        {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
 
       <div className="relative max-w-3xl mx-auto">
@@ -40,8 +40,8 @@ export function TimelineSection({ data }: Props) {
               {/* Content */}
               <div className={`ml-14 md:ml-0 md:w-1/2 ${isLeft ? 'md:pr-10 md:text-right' : 'md:pl-10 md:text-left'}`}>
                 <span className="inline-block text-xs font-bold text-[var(--color-primary)] bg-[var(--color-primary)]/10 rounded-full px-3 py-0.5 mb-2">{entry.year}</span>
-                <h3 className="font-semibold text-zinc-800 text-base mb-1">{entry.title}</h3>
-                <p className="text-sm text-zinc-600 leading-relaxed">{plain(entry.text)}</p>
+                <h3 className="font-semibold text-zinc-800 text-base mb-1" data-edit-path="title">{entry.title}</h3>
+                <p className="text-sm text-zinc-600 leading-relaxed" data-edit-path="text">{plain(entry.text)}</p>
               </div>
             </motion.div>
           );

@@ -42,7 +42,7 @@ export function ShopCheckoutSection({ data }: Props) {
   if (isDemo) {
     return (
       <section className="py-16 text-center">
-        <h2 className="text-2xl font-bold mb-4">{headline}</h2>
+        <h2 className="text-2xl font-bold mb-4" data-edit-path="headline">{headline}</h2>
         <p className="text-[color:var(--token-muted,#71717a)] mb-2">Der Checkout ist in der Demo nicht verfügbar.</p>
         <p className="text-sm text-[color:var(--token-body,#a1a1aa)]">In einem echten Shop können Kunden hier ihre Bestellung abschließen — mit Stripe, PayPal, SumUp oder Vorkasse.</p>
       </section>
@@ -172,7 +172,7 @@ export function ShopCheckoutSection({ data }: Props) {
 
   return (
     <section className="py-12 md:py-16">
-      <h2 className="text-2xl font-bold mb-8">{headline}</h2>
+      <h2 className="text-2xl font-bold mb-8" data-edit-path="headline">{headline}</h2>
 
       {/* Step indicator */}
       <div className="flex items-center gap-2 mb-8">
@@ -253,7 +253,7 @@ export function ShopCheckoutSection({ data }: Props) {
                         <div className="flex items-center gap-3">
                           <input type="radio" name="shipping" value={method.id} checked={form.shippingMethod === method.id} onChange={e => set('shippingMethod', e.target.value)} className="accent-[var(--token-icon, var(--brand-primary))]" />
                           <div>
-                            <p className="text-sm font-medium">{method.name}</p>
+                            <p className="text-sm font-medium" data-edit-path="name">{method.name}</p>
                             {method.estimatedDays && <p className="text-xs text-[color:var(--token-body,#a1a1aa)]">{method.estimatedDays}</p>}
                           </div>
                         </div>

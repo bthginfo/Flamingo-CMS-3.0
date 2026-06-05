@@ -28,11 +28,11 @@ export function LegalContentSection({ data }: Props) {
   return (
     <section className="py-16">
       <div className="max-w-3xl mx-auto px-6">
-        {headline && <h1 className="font-display text-3xl md:text-4xl font-bold mb-12 text-gray-900">{headline}</h1>}
+        {headline && <h1 className="font-display text-3xl md:text-4xl font-bold mb-12 text-gray-900" data-edit-path="headline">{headline}</h1>}
         <div className="space-y-10">
           {blocks.map((block, i) => (
             <article key={i}>
-              {block.headline && <h2 className="text-xl font-semibold text-gray-900 mb-3">{block.headline}</h2>}
+              {block.headline && <h2 className="text-xl font-semibold text-gray-900 mb-3" data-edit-path="headline">{block.headline}</h2>}
               {block.text && (
                 <div
                   className="prose prose-slate max-w-none prose-headings:font-display prose-a:text-[color:var(--token-icon,var(--brand-primary,#1a5276))] prose-a:no-underline hover:prose-a:underline rt-content"

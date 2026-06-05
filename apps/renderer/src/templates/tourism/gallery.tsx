@@ -61,7 +61,7 @@ function Bold({ header, images }: Props) {
     <div>
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-orange-500">{header.badgeText}</p>}
-        <h2 className="mt-3 text-3xl font-black uppercase text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl">{header.headline}</h2>
+        <h2 className="mt-3 text-3xl font-black uppercase text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
         {header.subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

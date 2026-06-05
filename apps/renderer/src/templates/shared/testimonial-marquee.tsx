@@ -64,9 +64,9 @@ export function TestimonialMarqueeSection({ data }: Props) {
     <div ref={ref} className="overflow-hidden -mx-6 md:-mx-12 lg:-mx-20">
       {(headline || badge) && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-10 px-6">
-          {badge && <span className="section-badge">{badge}</span>}
-          {headline && <h2 className="section-headline">{headline}</h2>}
-          {subline && <p className="section-subline max-w-2xl mx-auto">{plain(subline)}</p>}
+          {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
+          {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="section-subline max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
       )}
 

@@ -34,7 +34,7 @@ export function SocialProofBarSection({ data }: Props) {
               <div className="flex gap-0.5 mb-1">{Array.from({ length: 5 }).map((_, si) => <Star key={si} size={14} className="fill-yellow-400 text-yellow-400" />)}</div>
             ) : null}
             <span className="text-2xl md:text-3xl font-bold leading-tight">{item.value}</span>
-            <span className="text-xs text-[var(--style-text-secondary,var(--token-body, var(--style-body-color,#71717a)))] md:text-sm">{item.label}</span>
+            <span className="text-xs text-[var(--style-text-secondary,var(--token-body, var(--style-body-color,#71717a)))] md:text-sm" data-edit-path="label">{item.label}</span>
           </motion.div>
         ))}
       </motion.div>

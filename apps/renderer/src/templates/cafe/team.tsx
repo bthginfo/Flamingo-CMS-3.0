@@ -26,8 +26,8 @@ function Classic({ headline, subline, members, ref, inView }: TProps) {
   return (
     <div ref={ref} className="py-16 md:py-24">
       <motion.div initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-14">
-        <h2 className="section-headline">{headline}</h2>
-        {subline && <p className="section-subline">{plain(subline)}</p>}
+        <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
@@ -50,8 +50,8 @@ function Classic({ headline, subline, members, ref, inView }: TProps) {
               )}
             </div>
             <div className="p-5 text-center">
-              <h4 className="font-semibold text-lg text-[color:var(--token-heading,#18181b)]">{m.name}</h4>
-              <p className="text-sm text-amber-700 font-medium mt-0.5">{m.role}</p>
+              <h4 className="font-semibold text-lg text-[color:var(--token-heading,#18181b)]" data-edit-path="name">{m.name}</h4>
+              <p className="text-sm text-amber-700 font-medium mt-0.5" data-edit-path="role">{m.role}</p>
             </div>
           </motion.div>
         ))}
@@ -65,8 +65,8 @@ function Modern({ headline, subline, members, ref, inView }: TProps) {
     <div ref={ref} className="py-16 md:py-24">
       <motion.div initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="mb-14">
         <div className="flex items-center gap-3 text-xs text-[color:var(--token-body,#a1a1aa)] uppercase tracking-widest mb-3"><span className="w-8 h-px bg-stone-300" />Team</div>
-        <h2 className="text-3xl md:text-4xl font-light text-[color:var(--token-heading,#18181b)] tracking-tight">{headline}</h2>
-        {subline && <p className="text-[color:var(--token-body,#a1a1aa)] mt-3 text-lg">{plain(subline)}</p>}
+        <h2 className="text-3xl md:text-4xl font-light text-[color:var(--token-heading,#18181b)] tracking-tight" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="text-[color:var(--token-body,#a1a1aa)] mt-3 text-lg" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
@@ -80,8 +80,8 @@ function Modern({ headline, subline, members, ref, inView }: TProps) {
                 <div className="w-full h-full bg-[var(--token-section-bg-alt,#f4f4f5)]" />
               )}
             </div>
-            <h4 className="font-medium text-[color:var(--token-heading,#18181b)] text-sm">{m.name}</h4>
-            <p className="text-xs text-[color:var(--token-body,#a1a1aa)] mt-0.5">{m.role}</p>
+            <h4 className="font-medium text-[color:var(--token-heading,#18181b)] text-sm" data-edit-path="name">{m.name}</h4>
+            <p className="text-xs text-[color:var(--token-body,#a1a1aa)] mt-0.5" data-edit-path="role">{m.role}</p>
             {m.bio && <p className="text-xs text-[color:var(--token-muted,#71717a)] mt-1.5 leading-relaxed">{plain(m.bio)}</p>}
           </motion.div>
         ))}
@@ -94,8 +94,8 @@ function Bold({ headline, subline, members, ref, inView }: TProps) {
   return (
     <div ref={ref} className="py-16 md:py-24">
       <motion.div initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-14">
-        <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-wider">{headline}</h2>
-        {subline && <p className="text-[color:var(--token-body,#a1a1aa)] mt-3">{plain(subline)}</p>}
+        <h2 className="text-3xl md:text-4xl font-bold uppercase tracking-wider" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="text-[color:var(--token-body,#a1a1aa)] mt-3" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -109,8 +109,8 @@ function Bold({ headline, subline, members, ref, inView }: TProps) {
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-5">
-              <h4 className="font-bold text-[color:var(--token-on-dark-heading,#ffffff)] text-lg">{m.name}</h4>
-              <p className="text-amber-400 text-sm font-medium">{m.role}</p>
+              <h4 className="font-bold text-[color:var(--token-on-dark-heading,#ffffff)] text-lg" data-edit-path="name">{m.name}</h4>
+              <p className="text-amber-400 text-sm font-medium" data-edit-path="role">{m.role}</p>
               {m.bio && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/70] text-xs mt-1.5 leading-relaxed">{plain(m.bio)}</p>}
             </div>
           </motion.div>

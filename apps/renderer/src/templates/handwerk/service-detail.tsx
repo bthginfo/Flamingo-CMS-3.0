@@ -32,7 +32,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-12 md:mb-20">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <div className="space-y-24">
@@ -51,7 +51,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
               ) : null}
             </div>
             <div className="w-full lg:w-1/2">
-              <h3 className="font-display font-bold text-2xl lg:text-3xl mb-4 text-[var(--style-text-primary,#111827)]">{item.title}</h3>
+              <h3 className="font-display font-bold text-2xl lg:text-3xl mb-4 text-[var(--style-text-primary,#111827)]" data-edit-path="title">{item.title}</h3>
               <p className="text-[var(--style-text-secondary,#6b7280)] leading-relaxed mb-6 rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />
               {item.features && item.features.length > 0 && (
                 <ul className="space-y-2 mb-6">
@@ -80,7 +80,7 @@ function ServiceModern({ headline, subline, badgeText, items }: SProps) {
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
         {badgeText && <div className="flex items-center gap-3 text-sm text-[var(--token-muted, var(--style-muted,var(--style-text-secondary,#9ca3af)))] mb-4 tracking-wide uppercase"><span className="w-8 h-px bg-[var(--token-card-border, var(--style-border,#d1d5db))]" />{badgeText}</div>}
-        {headline && <h2 className="text-4xl lg:text-3xl md:text-5xl font-light text-[var(--style-text-primary,#111827)] tracking-tight">{headline}</h2>}
+        {headline && <h2 className="text-4xl lg:text-3xl md:text-5xl font-light text-[var(--style-text-primary,#111827)] tracking-tight" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="text-lg text-[var(--style-text-secondary,#9ca3af)] mt-4 max-w-2xl rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <div className="space-y-20">
@@ -92,7 +92,7 @@ function ServiceModern({ headline, subline, badgeText, items }: SProps) {
               </div>
             )}
             <div className="max-w-2xl">
-              <h3 className="text-2xl font-medium text-[var(--style-text-primary,#111827)] mb-3">{item.title}</h3>
+              <h3 className="text-2xl font-medium text-[var(--style-text-primary,#111827)] mb-3" data-edit-path="title">{item.title}</h3>
               <p className="text-[var(--style-text-secondary,#9ca3af)] leading-loose rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />
               {item.features && item.features.length > 0 && (
                 <div className="flex flex-wrap gap-3 mt-4">
@@ -121,7 +121,7 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12">
         {badgeText && <span className="inline-block bg-[var(--token-icon, var(--style-accent,var(--token-eyebrow, var(--brand-accent))))] text-[var(--style-text-primary,var(--token-section-bg-alt, var(--brand-dark)))] font-bold text-xs uppercase tracking-widest px-3 py-1.5 mb-4">{badgeText}</span>}
-        {headline && <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-tight text-[var(--style-text-primary,#111827)]">{headline}</h2>}
+        {headline && <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-tight text-[var(--style-text-primary,#111827)]" data-edit-path="headline">{headline}</h2>}
         {subline && <div className="text-[var(--style-text-secondary,#6b7280)] mt-3 font-medium rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       <div className="space-y-6">
@@ -136,7 +136,7 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-3">
                 <span className="w-8 h-8 bg-[var(--token-icon, var(--style-accent,var(--token-eyebrow, var(--brand-accent))))] text-[var(--style-text-primary,var(--token-section-bg-alt, var(--brand-dark)))] font-black text-sm flex items-center justify-center">{i + 1}</span>
-                <h3 className="font-bold uppercase tracking-wide text-lg text-[var(--style-text-primary,#111827)]">{item.title}</h3>
+                <h3 className="font-bold uppercase tracking-wide text-lg text-[var(--style-text-primary,#111827)]" data-edit-path="title">{item.title}</h3>
               </div>
               <p className="text-[var(--style-text-secondary,#4b5563)] leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />
               {item.features && item.features.length > 0 && (

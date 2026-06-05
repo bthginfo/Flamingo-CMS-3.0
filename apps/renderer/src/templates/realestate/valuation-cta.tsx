@@ -43,15 +43,15 @@ export function ValuationCtaSection({ data }: Props) {
             <Home size={16} />
             Immobilienbewertung
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]">{headline}</h2>
-          <p className="text-lg text-[color:var(--token-on-dark-heading,#ffffff)/70] mt-5 max-w-2xl mx-auto">{plain(subline)}</p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="headline">{headline}</h2>
+          <p className="text-lg text-[color:var(--token-on-dark-heading,#ffffff)/70] mt-5 max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>
 
           {stats.length > 0 && (
             <div className="flex flex-wrap justify-center gap-8 mt-10">
               {stats.map((stat, i) => (
                 <div key={i} className="text-center">
                   <p className="text-2xl font-bold text-amber-400">{stat.value}</p>
-                  <p className="text-xs text-[color:var(--token-on-dark-heading,#ffffff)/50] mt-1">{stat.label}</p>
+                  <p className="text-xs text-[color:var(--token-on-dark-heading,#ffffff)/50] mt-1" data-edit-path="label">{stat.label}</p>
                 </div>
               ))}
             </div>

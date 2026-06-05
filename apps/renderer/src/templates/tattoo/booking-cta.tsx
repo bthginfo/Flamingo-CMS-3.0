@@ -14,8 +14,8 @@ export function BookingCtaSection({ data }: Props) {
   return (
     <section className="py-16 px-6 bg-[var(--token-section-bg-alt,#18181b)] border-y border-[color:var(--token-card-border,#ffffff)/5]">
       <div className="max-w-3xl mx-auto text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]">{headline}</h2>
-        {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50]">{plain(subline)}</p>}
+        <h2 className="text-3xl sm:text-4xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50]" data-edit-path="subline">{plain(subline)}</p>}
         {hints.length > 0 && (
           <div className="flex flex-wrap justify-center gap-4 mt-6 text-xs text-[color:var(--token-on-dark-heading,#ffffff)/40]">
             {hints.map((h, i) => <span key={i} className="flex items-center gap-1.5">✓ {h}</span>)}

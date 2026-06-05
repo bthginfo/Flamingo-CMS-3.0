@@ -35,8 +35,8 @@ export function ShopCategoryOverviewSection({ data }: Props) {
   return (
     <section className="py-12 md:py-16">
       <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold">{headline}</h2>
-        {subline && <p className="text-[color:var(--token-muted,#71717a)] mt-2 max-w-lg mx-auto">{plain(subline)}</p>}
+        <h2 className="text-3xl font-bold" data-edit-path="headline">{headline}</h2>
+        {subline && <p className="text-[color:var(--token-muted,#71717a)] mt-2 max-w-lg mx-auto" data-edit-path="subline">{plain(subline)}</p>}
       </div>
 
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns >= 3 ? 'lg:grid-cols-3' : ''} ${columns >= 4 ? 'xl:grid-cols-4' : ''} gap-6`}>
@@ -53,8 +53,8 @@ export function ShopCategoryOverviewSection({ data }: Props) {
                 )}
               </div>
               <div className="p-5 text-center">
-                <h3 className="font-semibold text-lg group-hover:text-[color:var(--token-muted,#52525b)] transition">{cat.name}</h3>
-                {cat.description && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1 line-clamp-2">{plain(cat.description)}</p>}
+                <h3 className="font-semibold text-lg group-hover:text-[color:var(--token-muted,#52525b)] transition" data-edit-path="name">{cat.name}</h3>
+                {cat.description && <p className="text-sm text-[color:var(--token-muted,#71717a)] mt-1 line-clamp-2" data-edit-path="description">{plain(cat.description)}</p>}
               </div>
             </div>
           </Link>

@@ -46,7 +46,7 @@ function Classic(p: Props) {
               {p.founderRole && <p className="text-xs text-[color:var(--token-muted,#52525b)]">{p.founderRole}</p>}
             </blockquote>
           )}
-          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-lg bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)]">{p.ctaPrimary.label}</a>}
+          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-lg bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="label">{p.ctaPrimary.label}</a>}
         </motion.div>
         <div className="grid gap-4">
           {p.imagePrimary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative aspect-[16/10] overflow-hidden rounded-xl shadow-lg"><Image src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></motion.div>}
@@ -93,7 +93,7 @@ function Mod(p: Props) {
               {p.founderRole && <p className="text-xs font-light text-[color:var(--token-muted,#52525b)]">{p.founderRole}</p>}
             </blockquote>
           )}
-          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-10 inline-flex font-medium text-[color:var(--token-heading,#18181b)] underline underline-offset-4">{p.ctaPrimary.label}</a>}
+          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-10 inline-flex font-medium text-[color:var(--token-heading,#18181b)] underline underline-offset-4" data-edit-path="label">{p.ctaPrimary.label}</a>}
         </div>
         <div className="grid gap-3">
           {p.imagePrimary && <div className="relative aspect-[16/10] overflow-hidden border border-black/10"><Image src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
@@ -140,7 +140,7 @@ function Bold(p: Props) {
               {p.founderRole && <p className="text-xs font-bold text-[color:var(--token-muted,#52525b)]">{p.founderRole}</p>}
             </div>
           )}
-          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)] shadow-[4px_4px_0_var(--token-icon, var(--brand-primary))]">{p.ctaPrimary.label}</a>}
+          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)] shadow-[4px_4px_0_var(--token-icon, var(--brand-primary))]" data-edit-path="label">{p.ctaPrimary.label}</a>}
         </div>
         <div className="grid gap-2">
           {p.imagePrimary && <div className="relative aspect-[16/10] overflow-hidden border-2 border-[#111827]"><Image src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}

@@ -17,9 +17,9 @@ export function ComparisonCardsProSection({ data }: Props) {
   return (
     <div>
       <div className="mx-auto mb-12 max-w-3xl text-center">
-        {badge && <span className="section-badge">{badge}</span>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{plain(subline)}</p>}
+        {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         {plans.map((plan, index) => (
@@ -32,7 +32,7 @@ export function ComparisonCardsProSection({ data }: Props) {
               {(plan.features || []).map((feature, i) => <div key={i} className="flex gap-2 text-sm"><Check size={17} className="text-[var(--token-check,var(--style-accent-color,var(--token-icon,var(--brand-primary))))]" />{feature}</div>)}
               {(plan.missing || []).map((feature, i) => <div key={i} className="flex gap-2 text-sm text-[var(--token-muted,var(--style-text-muted,#a1a1aa))]"><Minus size={17} />{feature}</div>)}
             </div>
-            {plan.ctaLabel && <a href={plan.ctaHref || '#'} className="mt-auto inline-flex justify-center rounded-full bg-[var(--token-btn-bg,var(--brand-btn-bg,var(--token-icon,var(--brand-primary,#111))))] px-5 py-3 text-sm font-bold text-[var(--token-btn-text,var(--brand-btn-text,#fff))]">{plan.ctaLabel}</a>}
+            {plan.ctaLabel && <a href={plan.ctaHref || '#'} className="mt-auto inline-flex justify-center rounded-full bg-[var(--token-btn-bg,var(--brand-btn-bg,var(--token-icon,var(--brand-primary,#111))))] px-5 py-3 text-sm font-bold text-[var(--token-btn-text,var(--brand-btn-text,#fff))]" data-edit-path="ctaLabel">{plan.ctaLabel}</a>}
           </motion.article>
         ))}
       </div>

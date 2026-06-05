@@ -26,14 +26,14 @@ export function LocationVibeSection({ data }: Props) {
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-12">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : {}}>
-            <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]">{headline}</h2>
-            {description && <p className="text-[color:var(--token-muted,#52525b)] mt-4 leading-relaxed">{plain(description)}</p>}
+            <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
+            {description && <p className="text-[color:var(--token-muted,#52525b)] mt-4 leading-relaxed" data-edit-path="description">{plain(description)}</p>}
             {vibeText && <p className="text-amber-700 font-medium mt-3 italic">{plain(vibeText)}</p>}
 
             {address && (
               <div className="flex items-start gap-3 mt-8">
                 <MapPin size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] mt-0.5 shrink-0" />
-                <p className="text-[color:var(--token-muted,#3f3f46)]">{address}</p>
+                <p className="text-[color:var(--token-muted,#3f3f46)]" data-edit-path="address">{address}</p>
               </div>
             )}
 

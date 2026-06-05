@@ -42,8 +42,8 @@ export function CaseResultsSection({ data }: Props) {
       </div>
       <div className="relative z-10">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
-          {headline && <h2 className="text-3xl md:text-4xl font-serif font-bold text-[color:var(--token-on-dark-heading,#ffffff)]">{headline}</h2>}
-          {subline && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/60] mt-3 max-w-xl mx-auto">{plain(subline)}</p>}
+          {headline && <h2 className="text-3xl md:text-4xl font-serif font-bold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="text-[color:var(--token-on-dark-heading,#ffffff)/60] mt-3 max-w-xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, i) => (

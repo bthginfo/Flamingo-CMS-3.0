@@ -37,10 +37,10 @@ function StoryClassic({ headline, subline, badgeText, storyText, imagePrimary, i
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
           {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+          <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
           {subline && <div className="mt-4 text-lg text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           {storyText && <div className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: storyText }} />}
-          {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] shadow-md">{ctaPrimary.label}</a>}
+          {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
         </motion.div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {imagePrimary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-lg"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></motion.div>}
@@ -91,7 +91,7 @@ function StoryModern({ headline, subline, badgeText, storyText, imagePrimary, im
       <div className="grid gap-16 lg:grid-cols-2 lg:items-start">
         <div>
           {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl font-light text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl">{headline}</h2>
+          <h2 className="mt-4 text-3xl font-light text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
           <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
           {subline && <div className="mt-6 font-light leading-relaxed text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           {storyText && <div className="mt-6 whitespace-pre-line font-light leading-7 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: storyText }} />}
@@ -102,7 +102,7 @@ function StoryModern({ headline, subline, badgeText, storyText, imagePrimary, im
               {founderRole && <p className="text-xs font-light text-[color:var(--token-muted,#71717a)]">{founderRole}</p>}
             </blockquote>
           )}
-          {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading,#18181b)]">{ctaPrimary.label}</a>}
+          {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-10 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="label">{ctaPrimary.label}</a>}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border border-black/5"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
@@ -141,7 +141,7 @@ function StoryBold({ headline, subline, badgeText, storyText, imagePrimary, imag
       <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
         <div>
           {badgeText && <p className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-on-dark-heading,#ffffff)]">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+          <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
           <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
           {subline && <div className="mt-4 font-bold text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           {storyText && <div className="mt-6 whitespace-pre-line leading-7 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: storyText }} />}
@@ -152,7 +152,7 @@ function StoryBold({ headline, subline, badgeText, storyText, imagePrimary, imag
               {founderRole && <p className="text-xs font-bold text-[color:var(--token-muted,#71717a)]">{founderRole}</p>}
             </div>
           )}
-          {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{ctaPrimary.label}</a>}
+          {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-8 inline-flex bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading,#ffffff)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{ctaPrimary.label}</a>}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border-2 border-[#111827]"><Image src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}

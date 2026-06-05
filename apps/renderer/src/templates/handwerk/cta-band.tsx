@@ -105,7 +105,7 @@ function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
       className={`flex flex-col items-start justify-between gap-8 p-10 text-[var(--token-heading,var(--style-heading-color,#ffffff))] lg:flex-row lg:items-center lg:p-16 ${!colors?.bgColor ? 'bg-[var(--token-section-bg,var(--style-section-bg,var(--brand-dark,#0d2137)))]' : ''}`} style={wrapStyle}>
       <div>
         {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg,var(--style-badge-bg,var(--style-accent-color,var(--brand-accent))))] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text,var(--style-badge-text,#ffffff))]">{badgeText}</span>}
-        <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tight">{headline}</h2>
+        <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tight" data-edit-path="headline">{headline}</h2>
         {subline && <div className="rt-content mt-3 max-w-xl font-medium text-[var(--token-body,var(--style-body-color,rgba(255,255,255,0.72)))]" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {cta?.label && (

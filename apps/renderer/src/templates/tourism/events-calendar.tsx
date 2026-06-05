@@ -27,7 +27,7 @@ function EventMeta({ event }: { event: EventItem }) {
       {event.timeLabel && <span>{event.timeLabel}</span>}
       {event.locationLabel && <span className="inline-flex items-center gap-1"><MapPin size={13} />{event.locationLabel}</span>}
       {event.category && <span>{event.category}</span>}
-      {event.priceLabel && <span>{event.priceLabel}</span>}
+      {event.priceLabel && <span data-edit-path="priceLabel">{event.priceLabel}</span>}
     </div>
   );
 }
@@ -69,7 +69,7 @@ function Modern({ header, events, fallbackText }: Props) {
                 {event.timeLabel && <span>{event.timeLabel}</span>}
                 {event.locationLabel && <span className="inline-flex items-center gap-1"><MapPin size={13} />{event.locationLabel}</span>}
                 {event.category && <span>{event.category}</span>}
-                {event.priceLabel && <span>{event.priceLabel}</span>}
+                {event.priceLabel && <span data-edit-path="priceLabel">{event.priceLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-light text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{event.title || ''}</h3>
               {event.text && <div className="mt-3 text-sm font-light leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: event.text }} />}
@@ -87,7 +87,7 @@ function Bold({ header, events, fallbackText }: Props) {
     <div>
       <div className="mb-10 max-w-3xl">
         {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--style-accent-color,var(--token-icon, var(--brand-primary)))]">{header.badgeText}</p>}
-        <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-3xl md:text-5xl">{header.headline}</h2>
+        <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
         {header.subline && <div className="mt-4 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
       {events.length === 0 && fallbackText ? <p className="text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))]">{fallbackText}</p> : null}
@@ -101,7 +101,7 @@ function Bold({ header, events, fallbackText }: Props) {
                 {event.timeLabel && <span>{event.timeLabel}</span>}
                 {event.locationLabel && <span className="inline-flex items-center gap-1"><MapPin size={13} />{event.locationLabel}</span>}
                 {event.category && <span>{event.category}</span>}
-                {event.priceLabel && <span>{event.priceLabel}</span>}
+                {event.priceLabel && <span data-edit-path="priceLabel">{event.priceLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))]">{event.title || ''}</h3>
               {event.text && <div className="mt-3 text-sm leading-6 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: event.text }} />}

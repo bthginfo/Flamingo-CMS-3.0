@@ -16,8 +16,8 @@ export function AftercarStepsSection({ data }: Props) {
     <section className="py-20 px-6 bg-[var(--token-section-bg-alt,#18181b)]">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]">{headline}</h2>
-          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50]">{plain(subline)}</p>}
+          <h2 className="text-3xl sm:text-4xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50]" data-edit-path="subline">{plain(subline)}</p>}
         </div>
 
         <div className="space-y-6">
@@ -28,8 +28,8 @@ export function AftercarStepsSection({ data }: Props) {
                 {i + 1}
               </div>
               <div>
-                <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold">{step.title}</h3>
-                <p className="text-[color:var(--token-on-dark-heading,#ffffff)/50] text-sm mt-1">{plain(step.description)}</p>
+                <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-semibold" data-edit-path="title">{step.title}</h3>
+                <p className="text-[color:var(--token-on-dark-heading,#ffffff)/50] text-sm mt-1" data-edit-path="description">{plain(step.description)}</p>
               </div>
             </motion.div>
           ))}

@@ -39,12 +39,12 @@ function OpeningHoursClassic({ headline, subline, badgeText, days, kitchenHoursH
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
         {badgeText && <p className="inline-block rounded-full bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))/10] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         {kitchenHoursHeadline && <h3 className="mt-8 font-semibold text-[color:var(--token-heading,#18181b)]">{kitchenHoursHeadline}</h3>}
         {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-[color:var(--token-muted,#71717a)]">{kitchenHoursText}</p>}
         {holidayNote && <p className="mt-4 text-xs text-[color:var(--token-muted,#71717a)]">{holidayNote}</p>}
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] shadow-md">{ctaPrimary.label}</a>}
+        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))] px-6 py-3 font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
       </div>
       <div className="overflow-hidden rounded-xl border border-black/10 bg-[var(--token-card-bg,#ffffff)] shadow-lg">
         {days.map((day, index) => (
@@ -69,13 +69,13 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
     <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.2em] text-[color:var(--token-muted,#71717a)]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light text-[color:var(--token-heading,#18181b)] sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
         <div className="mt-2 h-px w-16 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
         {subline && <div className="mt-6 font-light text-[color:var(--token-muted,#71717a)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
         {kitchenHoursHeadline && <h3 className="mt-8 font-medium text-[color:var(--token-heading,#18181b)]">{kitchenHoursHeadline}</h3>}
         {kitchenHoursText && <p className="mt-2 text-sm font-light leading-6 text-[color:var(--token-muted,#71717a)]">{kitchenHoursText}</p>}
         {holidayNote && <p className="mt-4 text-xs font-light text-[color:var(--token-muted,#71717a)]">{holidayNote}</p>}
-        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading,#18181b)]">{ctaPrimary.label}</a>}
+        {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading,#18181b)]" data-edit-path="label">{ctaPrimary.label}</a>}
       </div>
       <div className="border border-black/5">
         {days.map((day, index) => (
@@ -101,13 +101,13 @@ function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHead
       <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
           {badgeText && <p className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading,#18181b)]">{badgeText}</p>}
-          <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl">{headline}</h2>
+          <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>
           <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))]" />
           {subline && <div className="mt-4 text-[color:var(--token-on-dark-heading,#ffffff)/70] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
           {kitchenHoursHeadline && <h3 className="mt-8 font-bold uppercase">{kitchenHoursHeadline}</h3>}
           {kitchenHoursText && <p className="mt-2 text-sm leading-6 text-[color:var(--token-on-dark-heading,#ffffff)/60]">{kitchenHoursText}</p>}
           {holidayNote && <p className="mt-4 text-xs text-[color:var(--token-on-dark-heading,#ffffff)/50]">{holidayNote}</p>}
-          {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-none border-2 border-[color:var(--token-card-border,#ffffff)] bg-[var(--token-card-bg,#ffffff)] px-6 py-3 font-black uppercase text-[color:var(--token-heading,#18181b)] shadow-[4px_4px_0_rgba(255,255,255,0.3)]">{ctaPrimary.label}</a>}
+          {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-none border-2 border-[color:var(--token-card-border,#ffffff)] bg-[var(--token-card-bg,#ffffff)] px-6 py-3 font-black uppercase text-[color:var(--token-heading,#18181b)] shadow-[4px_4px_0_rgba(255,255,255,0.3)]" data-edit-path="label">{ctaPrimary.label}</a>}
         </div>
         <div className="border-2 border-[color:var(--token-card-border,#ffffff)/20]">
           {days.map((day, index) => (

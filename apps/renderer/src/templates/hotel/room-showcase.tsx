@@ -42,7 +42,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="text-xl font-bold text-[color:var(--token-heading,#18181b)]">{room.name || ''}</h3>
-                {room.priceLabel && <p className="text-sm font-semibold text-[color:var(--token-heading,#18181b)]">{room.priceLabel}</p>}
+                {room.priceLabel && <p className="text-sm font-semibold text-[color:var(--token-heading,#18181b)]" data-edit-path="priceLabel">{room.priceLabel}</p>}
               </div>
               {room.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: room.description }} />}
               <div className="mt-4 grid gap-2 text-xs text-[color:var(--token-muted,#52525b)]">
@@ -54,7 +54,7 @@ function RoomClassic({ headline, subline, badgeText, rooms, footerText }: Props)
               {asList<string>(room.galleryImages).length > 0 && <p className="mt-2 text-xs text-[color:var(--token-muted,#52525b)]">{asList<string>(room.galleryImages).length} Bilder</p>}
               <div className="mt-5 flex flex-wrap gap-3">
                 {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-semibold text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{room.detailCta.label}<ArrowRight size={15} /></a>}
-                {room.bookingCta?.label && <a href={room.bookingCta.href || '#'} className="font-semibold text-[color:var(--token-muted,#52525b)]">{room.bookingCta.label}</a>}
+                {room.bookingCta?.label && <a href={room.bookingCta.href || '#'} className="font-semibold text-[color:var(--token-muted,#52525b)]" data-edit-path="label">{room.bookingCta.label}</a>}
               </div>
             </div>
           </motion.article>
@@ -71,7 +71,7 @@ function RoomModern({ headline, subline, badgeText, rooms, footerText }: Props) 
     <div>
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-px border border-black/10 lg:grid-cols-3">
@@ -81,7 +81,7 @@ function RoomModern({ headline, subline, badgeText, rooms, footerText }: Props) 
             <div className="p-6">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="text-lg font-light text-[color:var(--token-heading,#18181b)]">{room.name || ''}</h3>
-                {room.priceLabel && <p className="text-sm font-light text-[color:var(--token-muted,#52525b)]">{room.priceLabel}</p>}
+                {room.priceLabel && <p className="text-sm font-light text-[color:var(--token-muted,#52525b)]" data-edit-path="priceLabel">{room.priceLabel}</p>}
               </div>
               {room.description && <div className="mt-3 text-sm font-light leading-7 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: room.description }} />}
               <div className="mt-4 grid gap-2 text-xs font-light text-[color:var(--token-muted,#52525b)]">
@@ -93,7 +93,7 @@ function RoomModern({ headline, subline, badgeText, rooms, footerText }: Props) 
               {asList<string>(room.galleryImages).length > 0 && <p className="mt-2 text-xs font-light text-[color:var(--token-muted,#52525b)]">{asList<string>(room.galleryImages).length} Bilder</p>}
               <div className="mt-5 flex flex-wrap gap-3">
                 {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4">{room.detailCta.label}<ArrowRight size={14} /></a>}
-                {room.bookingCta?.label && <a href={room.bookingCta.href || '#'} className="font-light text-[color:var(--token-muted,#52525b)] underline underline-offset-4">{room.bookingCta.label}</a>}
+                {room.bookingCta?.label && <a href={room.bookingCta.href || '#'} className="font-light text-[color:var(--token-muted,#52525b)] underline underline-offset-4" data-edit-path="label">{room.bookingCta.label}</a>}
               </div>
             </div>
           </article>
@@ -110,7 +110,7 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
     <div>
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
@@ -120,7 +120,7 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">
                 <h3 className="text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{room.name || ''}</h3>
-                {room.priceLabel && <p className="text-sm font-black text-[color:var(--token-heading,#18181b)]">{room.priceLabel}</p>}
+                {room.priceLabel && <p className="text-sm font-black text-[color:var(--token-heading,#18181b)]" data-edit-path="priceLabel">{room.priceLabel}</p>}
               </div>
               {room.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: room.description }} />}
               <div className="mt-4 grid gap-2 text-xs font-bold text-[color:var(--token-muted,#52525b)]">
@@ -132,7 +132,7 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
               {asList<string>(room.galleryImages).length > 0 && <p className="mt-2 text-xs text-[color:var(--token-muted,#52525b)]">{asList<string>(room.galleryImages).length} Bilder</p>}
               <div className="mt-5 flex flex-wrap gap-3">
                 {room.detailCta?.label && <a href={room.detailCta.href || '#'} className="inline-flex items-center gap-1 font-black uppercase text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{room.detailCta.label}<ArrowRight size={15} /></a>}
-                {room.bookingCta?.label && <a href={room.bookingCta.href || '#'} className="font-bold uppercase text-[color:var(--token-muted,#52525b)]">{room.bookingCta.label}</a>}
+                {room.bookingCta?.label && <a href={room.bookingCta.href || '#'} className="font-bold uppercase text-[color:var(--token-muted,#52525b)]" data-edit-path="label">{room.bookingCta.label}</a>}
               </div>
             </div>
           </article>

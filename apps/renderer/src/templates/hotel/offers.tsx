@@ -43,14 +43,14 @@ function OffersClassic({ headline, subline, badgeText, offers, fallbackText }: P
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-semibold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">
                 {offer.durationLabel && <span>{offer.durationLabel}</span>}
-                {offer.priceLabel && <span>{offer.priceLabel}</span>}
+                {offer.priceLabel && <span data-edit-path="priceLabel">{offer.priceLabel}</span>}
                 {offer.validUntilLabel && <span>{offer.validUntilLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-bold text-[color:var(--token-heading,#18181b)]">{offer.title || ''}</h3>
               {offer.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: offer.description }} />}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs text-[color:var(--token-muted,#52525b)]">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">
-                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-semibold text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{offer.cta.label}</a>}
+                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-semibold text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" data-edit-path="label">{offer.cta.label}</a>}
                 {offer.detailHref && offer.detailLabel && <a href={offer.detailHref} className="inline-flex items-center gap-1 text-sm text-[color:var(--token-muted,#52525b)]">{offer.detailLabel}<ArrowRight size={14} /></a>}
               </div>
             </div>
@@ -67,7 +67,7 @@ function OffersModern({ headline, subline, badgeText, offers, fallbackText }: Pr
     <div>
       <div className="mb-14 max-w-3xl">
         {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 font-light text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {offers.length === 0 && fallbackText ? <p className="font-light text-[color:var(--token-muted,#52525b)]">{fallbackText}</p> : null}
@@ -78,14 +78,14 @@ function OffersModern({ headline, subline, badgeText, offers, fallbackText }: Pr
             <div className="p-6">
               <div className="flex flex-wrap gap-3 text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted,#52525b)]">
                 {offer.durationLabel && <span>{offer.durationLabel}</span>}
-                {offer.priceLabel && <span>{offer.priceLabel}</span>}
+                {offer.priceLabel && <span data-edit-path="priceLabel">{offer.priceLabel}</span>}
                 {offer.validUntilLabel && <span>{offer.validUntilLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-light text-[color:var(--token-heading,#18181b)]">{offer.title || ''}</h3>
               {offer.description && <div className="mt-3 text-sm font-light leading-7 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: offer.description }} />}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs font-light text-[color:var(--token-muted,#52525b)]">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">
-                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4">{offer.cta.label}</a>}
+                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-light text-[color:var(--token-heading,#18181b)] underline underline-offset-4" data-edit-path="label">{offer.cta.label}</a>}
                 {offer.detailHref && offer.detailLabel && <a href={offer.detailHref} className="inline-flex items-center gap-1 text-sm font-light text-[color:var(--token-muted,#52525b)] underline underline-offset-4">{offer.detailLabel}<ArrowRight size={14} /></a>}
               </div>
             </div>
@@ -102,7 +102,7 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
     <div>
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-[var(--token-btn-bg,var(--brand-primary,#1a5276))/10] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon,var(--brand-primary,#1a5276))]">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{headline}</h2>
+        <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading,#18181b)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {offers.length === 0 && fallbackText ? <p className="text-[color:var(--token-muted,#52525b)]">{fallbackText}</p> : null}
@@ -113,14 +113,14 @@ function OffersBold({ headline, subline, badgeText, offers, fallbackText }: Prop
             <div className="p-5">
               <div className="flex flex-wrap gap-3 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted,#52525b)]">
                 {offer.durationLabel && <span>{offer.durationLabel}</span>}
-                {offer.priceLabel && <span>{offer.priceLabel}</span>}
+                {offer.priceLabel && <span data-edit-path="priceLabel">{offer.priceLabel}</span>}
                 {offer.validUntilLabel && <span>{offer.validUntilLabel}</span>}
               </div>
               <h3 className="mt-3 text-xl font-black uppercase text-[color:var(--token-heading,#18181b)]">{offer.title || ''}</h3>
               {offer.description && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted,#52525b)] rt-content" dangerouslySetInnerHTML={{ __html: offer.description }} />}
               {asList<string>(offer.includes).length > 0 && <p className="mt-3 text-xs text-[color:var(--token-muted,#52525b)]">{asList<string>(offer.includes).join(' / ')}</p>}
               <div className="mt-5 flex flex-wrap gap-4">
-                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-black uppercase text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]">{offer.cta.label}</a>}
+                {offer.cta?.label && <a href={offer.cta.href || '#'} className="font-black uppercase text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))]" data-edit-path="label">{offer.cta.label}</a>}
                 {offer.detailHref && offer.detailLabel && <a href={offer.detailHref} className="inline-flex items-center gap-1 text-sm font-bold text-[color:var(--token-muted,#52525b)]">{offer.detailLabel}<ArrowRight size={14} /></a>}
               </div>
             </div>

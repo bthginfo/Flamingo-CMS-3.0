@@ -20,9 +20,9 @@ export function ProofWallSection({ data }: Props) {
   return (
     <div className="relative">
       <div className="mx-auto mb-12 max-w-3xl text-center">
-        {badge && <span className="section-badge">{badge}</span>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{plain(subline)}</p>}
+        {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
@@ -42,7 +42,7 @@ export function ProofWallSection({ data }: Props) {
             {reviews.map((review, index) => (
               <article key={index} className="rounded-2xl border border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,0.06)))] bg-transparent p-5">
                 <Quote className="mb-4 text-[var(--token-quote,var(--style-accent-color,var(--brand-primary,#111)))]" size={24} />
-                {review.quote && <p className="text-sm leading-7 text-[var(--token-body,var(--style-body-color,#3f3f46))]">{plain(review.quote)}</p>}
+                {review.quote && <p className="text-sm leading-7 text-[var(--token-body,var(--style-body-color,#3f3f46))]" data-edit-path="quote">{plain(review.quote)}</p>}
                 <div className="mt-5 flex items-center justify-between gap-3">
                   <div>
                     <div className="font-bold text-[var(--token-heading,var(--style-heading-color,#111))]">{review.name || review.author || ''}</div>

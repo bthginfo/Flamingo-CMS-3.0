@@ -24,8 +24,8 @@ export function ArtistGridSection({ data }: Props) {
     <section className="py-20 px-6 bg-[var(--token-section-bg-alt,#18181b)]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-14">
-          <h2 className="text-3xl sm:text-5xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]">{headline}</h2>
-          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50] max-w-xl mx-auto">{plain(subline)}</p>}
+          <h2 className="text-3xl sm:text-5xl font-bold text-[color:var(--token-on-dark-heading,#ffffff)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="mt-3 text-[color:var(--token-on-dark-heading,#ffffff)/50] max-w-xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -42,7 +42,7 @@ export function ArtistGridSection({ data }: Props) {
                     </div>
                   )}
                 </div>
-                <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-bold text-lg group-hover:text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-colors">{artist.name}</h3>
+                <h3 className="text-[color:var(--token-on-dark-heading,#ffffff)] font-bold text-lg group-hover:text-[color:var(--token-eyebrow,var(--brand-accent,#f39c12))] transition-colors" data-edit-path="name">{artist.name}</h3>
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {artist.styles.map(s => (
                     <span key={s} className="text-[10px] uppercase tracking-wider bg-[var(--token-card-bg,#ffffff)/10] text-[color:var(--token-on-dark-heading,#ffffff)/60] px-2 py-0.5 rounded-full">{s}</span>

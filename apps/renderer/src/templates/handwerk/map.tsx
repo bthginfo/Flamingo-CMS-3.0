@@ -21,7 +21,7 @@ export function MapSection({ data }: Props) {
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6 }}
     >
-      {headline && <h2 className="section-headline mb-10 text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,inherit)))]">{headline}</h2>}
+      {headline && <h2 className="section-headline mb-10 text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,inherit)))]" data-edit-path="headline">{headline}</h2>}
       <div className="overflow-hidden rounded-3xl border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg, var(--style-card-bg,#ffffff))] p-2 shadow-xl">
         <div className="rounded-2xl overflow-hidden">
           {embedUrl ? (

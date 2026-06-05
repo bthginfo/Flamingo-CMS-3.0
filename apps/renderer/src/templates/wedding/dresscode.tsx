@@ -24,8 +24,8 @@ function Classic({ badge, headline, text, colors, hints }: P) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-card-bg,#ffffff)]">
       <div className="max-w-3xl mx-auto text-center">
-        <span className="section-badge">{badge}</span>
-        <h2 className="section-headline">{headline}</h2>
+        <span className="section-badge" data-edit-path="badge">{badge}</span>
+        <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
         {text && <div className="text-[color:var(--token-muted,#52525b)] text-lg mt-6 leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {colors.length > 0 && (
           <div className="flex items-center justify-center gap-4 mt-10">
@@ -53,8 +53,8 @@ function Modern({ badge, headline, text, colors, hints }: P) {
   return (
     <section className="py-24 md:py-36 px-4 md:px-6">
       <div className="max-w-3xl mx-auto">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4">{badge}</p>
-        <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-10 break-words">{headline}</h2>
+        <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body,#a1a1aa)] mb-4" data-edit-path="badge">{badge}</p>
+        <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading,#18181b)] mb-10 break-words" data-edit-path="headline">{headline}</h2>
         {text && <div className="text-[color:var(--token-muted,#71717a)] text-base leading-relaxed mb-12 rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {colors.length > 0 && (
           <div className="flex items-center gap-6 mb-12">
@@ -79,8 +79,8 @@ function Bold({ badge, headline, text, colors, hints }: P) {
   return (
     <section className="py-16 md:py-24 px-4 md:px-6">
       <div className="max-w-4xl mx-auto text-center">
-        <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
-        <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words">{headline}</h2>
+        <span className="inline-block bg-[var(--token-badge-bg,var(--brand-accent,#f39c12))] text-[color:var(--token-heading,#000000)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
+        <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words" data-edit-path="headline">{headline}</h2>
         {text && <div className="text-[color:var(--token-muted,#52525b)] text-lg leading-relaxed mb-10 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
         {colors.length > 0 && (
           <div className="flex items-center justify-center gap-4 mb-10">

@@ -23,10 +23,10 @@ export function TemplateAdvantageSection({ data }: Props) {
         <div className="grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-end">
           <div>
             {badge && <div className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-[var(--token-badge-text, var(--style-badge-text,var(--token-icon, var(--brand-primary,#f24171))))]">{badge}</div>}
-            {headline && <h2 className="max-w-3xl text-4xl font-black leading-none text-[var(--token-heading, var(--style-heading-color,#14111a))] md:text-6xl">{headline}</h2>}
+            {headline && <h2 className="max-w-3xl text-4xl font-black leading-none text-[var(--token-heading, var(--style-heading-color,#14111a))] md:text-6xl" data-edit-path="headline">{headline}</h2>}
           </div>
           <div>
-            {subline && <p className="text-lg leading-8 text-[var(--token-subheading, var(--style-subheading-color,#585164))]">{plain(subline)}</p>}
+            {subline && <p className="text-lg leading-8 text-[var(--token-subheading, var(--style-subheading-color,#585164))]" data-edit-path="subline">{plain(subline)}</p>}
             {bullets.length > 0 && (
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {bullets.map((item, index) => (
@@ -54,11 +54,11 @@ export function TemplateAdvantageSection({ data }: Props) {
               <div className="relative aspect-[16/11] overflow-hidden bg-zinc-200">
                 {card.image && <img src={card.image} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                {card.label && <span className="absolute bottom-4 left-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-zinc-950">{card.label}</span>}
+                {card.label && <span className="absolute bottom-4 left-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-zinc-950" data-edit-path="label">{card.label}</span>}
               </div>
               <div className="p-5">
-                {card.title && <h3 className="text-2xl font-black leading-tight text-[var(--token-heading, var(--style-heading-color,#14111a))]">{card.title}</h3>}
-                {card.text && <p className="mt-3 text-sm leading-6 text-[var(--token-muted, var(--style-text-muted,#6b6472))]">{plain(card.text)}</p>}
+                {card.title && <h3 className="text-2xl font-black leading-tight text-[var(--token-heading, var(--style-heading-color,#14111a))]" data-edit-path="title">{card.title}</h3>}
+                {card.text && <p className="mt-3 text-sm leading-6 text-[var(--token-muted, var(--style-text-muted,#6b6472))]" data-edit-path="text">{plain(card.text)}</p>}
               </div>
             </motion.a>
           ))}

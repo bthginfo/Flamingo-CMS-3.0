@@ -49,7 +49,7 @@ function Classic({ header, introText, image, formEnabled, submitLabel, formField
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}<ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.15)))] px-5 py-3 font-semibold text-[var(--style-text-primary,#111827)]">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.15)))] px-5 py-3 font-semibold text-[var(--style-text-primary,#111827)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </motion.div>
       <div className="rounded-xl bg-[var(--token-card-bg, var(--style-card-bg,#fff))] p-5 shadow-lg">
@@ -76,7 +76,7 @@ function Modern({ header, introText, image, formEnabled, submitLabel, formFields
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-3 font-semibold text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}<ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.15)))] px-5 py-3 font-semibold text-[var(--style-text-primary,#111827)]">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.15)))] px-5 py-3 font-semibold text-[var(--style-text-primary,#111827)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
       <div className="border border-[var(--token-card-border, var(--style-border-color,rgba(0,0,0,.1)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] p-5">
@@ -93,7 +93,7 @@ function Bold({ header, introText, image, formEnabled, submitLabel, formFields, 
       <div>
         <div className="mb-10 max-w-3xl">
           {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text, var(--style-badge-text,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))]">{header.badgeText}</p>}
-          <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-3xl md:text-5xl">{header.headline}</h2>
+          <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading, var(--style-heading-color,var(--style-text-primary,#111827)))] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
           {header.subline && <div className="mt-4 text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
         </div>
         {introText && <div className="text-[var(--token-body, var(--style-body-color,var(--style-text-secondary,#4b5563)))] rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
@@ -107,7 +107,7 @@ function Bold({ header, introText, image, formEnabled, submitLabel, formFields, 
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] bg-[var(--token-btn-bg, var(--brand-btn-bg,var(--style-accent-color,var(--token-icon, var(--brand-primary)))))] px-5 py-3 font-black uppercase text-[var(--token-btn-text, var(--brand-btn-text,#fff))]">{primaryCta.label}<ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] px-5 py-3 font-black uppercase text-[var(--style-text-primary,#111827)]">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] px-5 py-3 font-black uppercase text-[var(--style-text-primary,#111827)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
       <div className="border-2 border-[var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))] bg-[var(--token-card-bg, var(--style-card-bg,#fff))] p-5 shadow-[4px_4px_0_var(--token-card-border, var(--style-border-color,var(--style-text-primary,#111827)))]">

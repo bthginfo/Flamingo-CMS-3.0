@@ -40,7 +40,7 @@ export function ContactSection({ data }: Props) {
             <span>{badgeText}</span>
           </div>
         )}
-        <h2 className="section-headline">{headline}</h2>
+        <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
         {introText && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
       </motion.div>
 

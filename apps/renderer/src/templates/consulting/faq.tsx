@@ -21,8 +21,8 @@ export function ConsultingFaqSection({ data }: Props) {
     <div ref={ref} className="max-w-3xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
         {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{plain(subline)}</p>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
       <div className="space-y-3">
         {items.map((item, i) => (
@@ -37,7 +37,7 @@ export function ConsultingFaqSection({ data }: Props) {
               onClick={() => setOpen(open === i ? null : i)}
               className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-slate-50 transition-colors"
             >
-              <span className="font-medium text-slate-900 pr-4">{item.question}</span>
+              <span className="font-medium text-slate-900 pr-4" data-edit-path="question">{item.question}</span>
               <DynamicIcon name={open === i ? 'minus' : 'plus'} size={18} className="text-[color:var(--token-icon,var(--brand-primary,#1a5276))] shrink-0" />
             </button>
             <AnimatePresence>
