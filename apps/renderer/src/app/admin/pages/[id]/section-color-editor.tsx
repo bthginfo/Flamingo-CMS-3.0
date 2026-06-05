@@ -63,6 +63,7 @@ export type ColorFieldKey =
   | 'iconColor' | 'accentColor'
   | 'eyebrow' | 'statValue' | 'quoteMark' | 'ratingStar' | 'check'
   | 'onDarkHeading' | 'onDarkBody' | 'onDarkMuted'
+  | 'imageOverlay'
   | 'btnBg' | 'btnText'
   | 'badgeBg' | 'badgeText' | 'badgeBorder'
   | 'borderColor' | 'dividerColor'
@@ -84,11 +85,11 @@ export const LEGACY_FIELD_ALIASES: Record<string, ColorFieldKey | null> = {
   styleBrand:      'accentColor',
   imageTextColor:  'onDarkHeading',
   cardBorderColor: 'borderColor',
+  imageOverlay:    'imageOverlay',
   cardBorder:      null,
   cardShadow:      null,
   headingWeight:   null,
   headingTracking: null,
-  imageOverlay:    null,
   btnSecondaryBg:  null,
   btnSecondaryText:null,
 };
@@ -120,7 +121,7 @@ const LEGACY_CSS_VAR_ALIASES: Record<string, string | null> = {
   '--brand-btn-secondary-bg':  null,
   '--brand-btn-secondary-text':null,
   '--style-card-border-color': '--token-card-border',
-  '--style-image-overlay':     null,
+  '--style-image-overlay':     '--token-image-overlay',
   '--style-card-shadow':       null,
   '--style-heading-weight':    null,
   '--style-heading-tracking':  null,
@@ -180,6 +181,7 @@ const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; descrip
   onDarkHeading:    { cssVar: '--token-on-dark-heading',  label: 'Headline (auf Dunkel)',  description: 'Hauptueberschrift auf dunklem Hintergrund', group: 'core' },
   onDarkBody:       { cssVar: '--token-on-dark-body',     label: 'Fließtext (auf Dunkel)', description: 'Fließtext auf dunklem Hintergrund', group: 'core' },
   onDarkMuted:      { cssVar: '--token-on-dark-muted',    label: 'Dezent (auf Dunkel)',    description: 'Dezenter Text auf dunklem Hintergrund', group: 'core' },
+  imageOverlay:     { cssVar: '--token-image-overlay',    label: 'Bild-Overlay',           description: 'Abdunklung / Farbfläche über Hintergrund-Bildern (Hero, Galerie)', group: 'special' },
   btnBg:            { cssVar: '--token-btn-bg',           label: 'Button Hintergrund',     description: 'CTA-Button Hintergrund', group: 'core' },
   btnText:          { cssVar: '--token-btn-text',         label: 'Button Text',            description: 'CTA-Button Textfarbe', group: 'core' },
   badgeBg:          { cssVar: '--token-badge-bg',         label: 'Badge/Eyebrow BG',       description: 'Badge/Eyebrow Hintergrund', group: 'core' },
@@ -425,7 +427,8 @@ const CONTRACT_FIELD_BY_SLOT: Partial<Record<SectionColorSlot, ColorFieldKey>> =
   badgeBorder: 'badgeBorder',
   borderColor: 'borderColor',
   dividerColor: 'dividerColor',
-  // btnSecondary* and overlayColor are no longer surfaced — see
+  overlayColor: 'imageOverlay',
+  // btnSecondary* are no longer surfaced — see
   // LEGACY_FIELD_ALIASES + migrateLegacyOverrides above.
 };
 
@@ -436,21 +439,29 @@ const CONTRACT_FIELDS_BY_TYPE = new Map(
   ]),
 );
 
-function getFieldsForSection(sectionType: string): ColorFieldKey[] {
+function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
   // Priority chain (highest → lowest):
-  //   1. Hand-curated overrides (section-color-contracts.ts) — manual truth
+  //   1. Industry-specific generated contract (e.g. heroSalon for salon+hero) —
+  //      built from the EXACT template that will render (no cross-industry
+  //      pollution).
+  //   2. Hand-curated overrides (section-color-contracts.ts) — manual truth
   //      for sections the codegen mis-detects.
-  //   2. Smart codegen (section-color-contracts-generated.ts) — built from
-  //      actual CSS-var references in template files. Regenerate with
-  //      `node scripts/generate-section-color-contracts.cjs`.
-  //   3. Legacy regex-based SECTION_FIELDS (kept for backwards compat).
-  //   4. Heuristic derived from the global section-contracts registry.
-  //   5. Minimal default.
+  //   3. Generic generated contract (section-color-contracts-generated.ts)
+  //      keyed by section.type alone (union across industries).
+  //   4. Legacy regex-based SECTION_FIELDS (kept for backwards compat).
+  //   5. Heuristic derived from the global section-contracts registry.
+  //   6. Minimal default.
+  const industryKey = industry
+    ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
+    : null;
+  const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
+  const hasIndustrySpecific = Array.isArray(industrySpecific) && industrySpecific.length > 0;
   const curated = getCuratedContractFields(sectionType);
   const generated = SECTION_COLOR_CONTRACTS_GENERATED[sectionType];
   const hasGenerated = Array.isArray(generated) && generated.length > 0;
   const fields =
-    curated
+    (hasIndustrySpecific ? (industrySpecific as ColorFieldKey[]) : undefined)
+    ?? curated
     ?? (hasGenerated ? (generated as ColorFieldKey[]) : undefined)
     ?? SECTION_FIELDS[sectionType]
     ?? CONTRACT_FIELDS_BY_TYPE.get(sectionType)
@@ -459,14 +470,14 @@ function getFieldsForSection(sectionType: string): ColorFieldKey[] {
 }
 
 
-export function SectionColorEditor({ value, onChange, sectionType, resolvedVars, iframeRef, sectionId }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string; resolvedVars?: Record<string, string>; iframeRef?: React.RefObject<HTMLIFrameElement | null>; sectionId?: string }) {
+export function SectionColorEditor({ value, onChange, sectionType, industry, resolvedVars, iframeRef, sectionId }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string; industry?: string; resolvedVars?: Record<string, string>; iframeRef?: React.RefObject<HTMLIFrameElement | null>; sectionId?: string }) {
   const [open, setOpen] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [computedVars, setComputedVars] = useState<Record<string, string>>({});
   const probeRef = useRef<HTMLDivElement>(null);
   const overrides = migrateLegacyOverrides<ColorOverrides>(value);
   const activeCount = Object.values(overrides).filter(Boolean).length;
-  const allFields = sectionType ? getFieldsForSection(sectionType) : Object.keys(FIELD_DEFS) as ColorFieldKey[];
+  const allFields = sectionType ? getFieldsForSection(sectionType, industry) : Object.keys(FIELD_DEFS) as ColorFieldKey[];
   
   // Split into color fields and design token fields
   const colorFields = allFields.filter(f => FIELD_DEFS[f]?.type !== 'size');

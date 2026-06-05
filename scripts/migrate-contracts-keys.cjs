@@ -22,7 +22,7 @@ const ALIAS = {
 };
 const DROP = new Set([
   'cardBorder', 'cardShadow', 'headingWeight', 'headingTracking',
-  'imageOverlay', 'btnSecondaryBg', 'btnSecondaryText',
+  'btnSecondaryBg', 'btnSecondaryText',
 ]);
 
 const FILES = [

@@ -52,7 +52,7 @@ const ALIAS_TO_MODERN = {
 };
 const DROP = new Set([
   'cardBorder', 'cardShadow', 'headingWeight', 'headingTracking',
-  'imageOverlay', 'btnSecondaryBg', 'btnSecondaryText',
+  'btnSecondaryBg', 'btnSecondaryText',
 ]);
 
 const src = fs.readFileSync(TARGET, 'utf8');
