@@ -54,7 +54,7 @@ export function PortfolioSection({ data }: Props) {
               initial={{ opacity: 0, y: 40 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="group relative rounded-3xl overflow-hidden bg-[var(--token-card-bg, var(--style-card-bg,#fff))] border border-[var(--style-border,rgba(0,0,0,.08))] shadow-sm hover:shadow-xl transition-all duration-500"
+              className="group relative rounded-3xl overflow-hidden bg-[var(--token-card-bg, var(--style-card-bg,#fff))] border border-[var(--token-card-border, var(--style-border,rgba(0,0,0,.08)))] shadow-sm hover:shadow-xl transition-all duration-500"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
                 <Image
@@ -77,17 +77,17 @@ export function PortfolioSection({ data }: Props) {
                   <div className="text-[var(--style-text-secondary,#6b7280)] text-sm leading-relaxed mb-4 rt-content" dangerouslySetInnerHTML={{ __html: project.description }} />
                 )}
                 {project.stats && project.stats.length > 0 && (
-                  <div className="flex gap-6 pt-4 border-t border-[var(--style-border,rgba(0,0,0,.08))]">
+                  <div className="flex gap-6 pt-4 border-t border-[var(--token-card-border, var(--style-border,rgba(0,0,0,.08)))]">
                     {project.stats.map((stat, j) => (
                       <div key={j}>
-                        <div className="text-lg font-bold text-[var(--style-accent,var(--token-icon, var(--brand-primary)))]">{stat.value}</div>
-                        <div className="text-xs text-[var(--style-muted,var(--style-text-secondary,#9ca3af))]">{stat.label}</div>
+                        <div className="text-lg font-bold text-[var(--token-icon, var(--style-accent,var(--token-icon, var(--brand-primary))))]">{stat.value}</div>
+                        <div className="text-xs text-[var(--token-muted, var(--style-muted,var(--style-text-secondary,#9ca3af)))]">{stat.label}</div>
                       </div>
                     ))}
                   </div>
                 )}
                 {project.href && (
-                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--style-accent,var(--token-icon, var(--brand-primary)))] mt-4 group-hover:underline">
+                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--token-icon, var(--style-accent,var(--token-icon, var(--brand-primary))))] mt-4 group-hover:underline">
                     Projekt ansehen {project.icon && <DynamicIcon name={project.icon} size={14} />}
                   </span>
                 )}
@@ -99,7 +99,7 @@ export function PortfolioSection({ data }: Props) {
       </div>
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }} className="text-center mt-12">
-          <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--style-button-bg,var(--token-icon, var(--brand-primary)))] text-[var(--style-button-text,#fff)] font-semibold rounded-full transition-all shadow-md hover:shadow-lg">
+          <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg, var(--style-button-bg,var(--token-icon, var(--brand-primary))))] text-[var(--token-btn-text, var(--style-button-text,#fff))] font-semibold rounded-full transition-all shadow-md hover:shadow-lg">
             {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={16} />}
           </Link>
         </motion.div>
