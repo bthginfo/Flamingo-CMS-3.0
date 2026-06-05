@@ -55,8 +55,9 @@ function tokenise(file) {
   //     picks a colour in the editor it wins because inline style > Tailwind
   //     utility specificity.
   src = src.replace(
-    /<div className="(absolute inset-0\s+bg-gradient-to-[a-z]+\s+from-\[#[0-9a-fA-F]{3,8}\](?:\/\d+)?\s+(?:via-\[#[0-9a-fA-F]{3,8}\](?:\/\d+)?\s+)?to-\[#[0-9a-fA-F]{3,8}\](?:\/\d+)?)" \/>/g,
-    (full, cls) => {
+    /<div className="(absolute inset-0\s+bg-gradient-to-[a-z]+\s+from-\[#[0-9a-fA-F]{3,8}\](?:\/\d+)?\s+(?:via-\[#[0-9a-fA-F]{3,8}\](?:\/\d+)?\s+)?to-\[#[0-9a-fA-F]{3,8}\](?:\/\d+)?)"(\s+style=\{[^}]*\})?\s*\/>/g,
+    (full, cls, existingStyle) => {
+      if (existingStyle) return full; // already styled — don't duplicate
       if (full.includes('--token-section-bg')) return full;
       changed += 1;
       return `<div className="${cls}" style={{ background: 'var(--token-section-bg, transparent)' }} />`;
@@ -67,8 +68,9 @@ function tokenise(file) {
   //       <div className="absolute inset-0 bg-[#xxxxxx]" />
   //     Same treatment.
   src = src.replace(
-    /<div className="(absolute inset-0\s+bg-\[#[0-9a-fA-F]{3,8}\](?:\/\d+)?)" \/>/g,
-    (full, cls) => {
+    /<div className="(absolute inset-0\s+bg-\[#[0-9a-fA-F]{3,8}\](?:\/\d+)?)"(\s+style=\{[^}]*\})?\s*\/>/g,
+    (full, cls, existingStyle) => {
+      if (existingStyle) return full;
       if (full.includes('--token-section-bg')) return full;
       changed += 1;
       return `<div className="${cls}" style={{ background: 'var(--token-section-bg, transparent)' }} />`;
@@ -90,8 +92,9 @@ function tokenise(file) {
   //     because the badge uses bg-white/15. Map it to --token-badge-bg with
   //     the original utility as the fallback colour.
   src = src.replace(
-    /className="(inline-flex[^"]*?\bbg-(?:white|black)\/\d+[^"]*?)"/g,
-    (full, cls) => {
+    /className="(inline-flex[^"]*?\bbg-(?:white|black)\/\d+[^"]*?)"(\s+style=\{[^}]*\})?/g,
+    (full, cls, existingStyle) => {
+      if (existingStyle) return full;
       if (full.includes('--token-badge-bg')) return full;
       changed += 1;
       return `className="${cls}" style={{ background: 'var(--token-badge-bg)' }}`;

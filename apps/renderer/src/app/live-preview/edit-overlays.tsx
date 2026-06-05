@@ -323,14 +323,69 @@ function Modal({ title, onClose, children }: { title: string; onClose: () => voi
 
 // ── color modal ────────────────────────────────────────────────────────────
 
+// Scans the section's outerHTML for literal `var(--token-X)` references and
+// returns the set of token cssVars in use. This covers BOTH inline styles
+// (style="…var(--token-X)…") AND Tailwind arbitrary-value classes
+// (class="bg-[var(--token-X)]") because Tailwind keeps the literal string
+// in the class attribute. Re-runs whenever the section DOM mutates so freshly
+// added/removed elements are reflected.
+function useUsedTokens(sectionId: string): Set<string> {
+  const [tokens, setTokens] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    const root = document.querySelector<HTMLElement>(`[data-section-id="${CSS.escape(sectionId)}"]`);
+    if (!root) return;
+    function scan() {
+      if (!root) return;
+      const html = root.outerHTML;
+      const found = new Set<string>();
+      // Match every `var(--token-NAME)` occurrence (NAME = kebab letters/digits).
+      const re = /var\(\s*(--token-[\w-]+)\s*(?:,[^)]*)?\)/g;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(html)) !== null) found.add(m[1]);
+      setTokens((prev) => {
+        // Cheap shallow comparison so we don't trigger downstream renders.
+        if (prev.size === found.size) {
+          let same = true;
+          for (const v of found) if (!prev.has(v)) { same = false; break; }
+          if (same) return prev;
+        }
+        return found;
+      });
+    }
+    scan();
+    const mo = new MutationObserver(scan);
+    mo.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+    return () => mo.disconnect();
+  }, [sectionId]);
+  return tokens;
+}
+
 function ColorModal({ sectionId, sectionsMeta, industry, onClose }: { sectionId: string; sectionsMeta: SectionMeta[]; industry?: string; onClose: () => void }) {
   const section = sectionsMeta.find((s) => s.id === sectionId);
   if (!section) return <Modal title="Section nicht gefunden" onClose={onClose}>—</Modal>;
 
   const [overrides, setOverrides] = useState<Record<string, string>>(section.styleOverrides || {});
+  const [showAll, setShowAll] = useState(false);
   const allFields = getFieldsForSection(section.type, industry || section.industry);
   // Hide the dark-pair fields — they are auto-written by FIELD_FANOUT.
-  const fields = allFields.filter((f) => !HIDDEN_FIELDS.has(f));
+  const candidateFields = allFields.filter((f) => !HIDDEN_FIELDS.has(f));
+
+  // ─── Runtime detection: which fields ACTUALLY paint pixels in this DOM? ───
+  // Both inline styles (style="background:var(--token-X)") and Tailwind
+  // arbitrary-value classes (class="bg-[var(--token-X)]") put the literal
+  // string "var(--token-X)" into outerHTML. A simple substring scan tells
+  // us which fields are wired up. Fields not detected are hidden behind an
+  // "Erweitert" toggle so the user is never shown a no-op picker.
+  const usedTokens = useUsedTokens(sectionId);
+  const liveFields = candidateFields.filter((f) => {
+    const v = FIELD_DEFS[f]?.cssVar;
+    if (!v) return false;
+    // Always treat the user's existing overrides as live (they typed them).
+    if (overrides[v]) return true;
+    return usedTokens.has(v);
+  });
+  const inactiveFields = candidateFields.filter((f) => !liveFields.includes(f));
+  const fields = showAll ? candidateFields : liveFields;
 
   const update = useCallback((key: ColorFieldKey, value: string) => {
     const def = FIELD_DEFS[key];
@@ -357,7 +412,7 @@ function ColorModal({ sectionId, sectionsMeta, industry, onClose }: { sectionId:
   return (
     <Modal title={`Farben — ${section.type}`} onClose={onClose}>
       <p style={{ marginTop: 0, color: '#64748b', fontSize: 12 }}>
-        Änderungen werden sofort gespeichert. Mit ✕ schließen.
+        Nur Felder, die diese Section auch tatsächlich rendert. Änderungen werden sofort gespeichert.
       </p>
       <div style={{ display: 'grid', gap: 10 }}>
         {fields.map((fieldKey) => {
@@ -384,7 +439,7 @@ function ColorModal({ sectionId, sectionsMeta, industry, onClose }: { sectionId:
                   <input
                     type="color"
                     value={normalizeColor(current)}
-                    onChange={(e) => update(fieldKey, e.target.value)}
+                    onChange={(e) => update(fieldKey, composeWithAlpha(e.target.value, parseAlpha(current) ?? 1))}
                     style={{ width: 36, height: 28, padding: 0, border: '1px solid #cbd5e1', borderRadius: 6, background: 'transparent', cursor: 'pointer' }}
                   />
                   <input
@@ -394,6 +449,20 @@ function ColorModal({ sectionId, sectionsMeta, industry, onClose }: { sectionId:
                     onChange={(e) => update(fieldKey, e.target.value)}
                     style={{ width: 90, padding: '6px 8px', border: '1px solid #cbd5e1', borderRadius: 6, fontSize: 12, fontFamily: 'monospace' }}
                   />
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    step={1}
+                    value={Math.round(((parseAlpha(current) ?? 1)) * 100)}
+                    onChange={(e) => {
+                      const a = Number(e.target.value) / 100;
+                      const base = normalizeColor(current);
+                      update(fieldKey, composeWithAlpha(base, a));
+                    }}
+                    title="Transparenz"
+                    style={{ width: 56 }}
+                  />
                 </>
               )}
               <button type="button" onClick={() => reset(fieldKey)} title="Zurücksetzen" style={{ background: 'transparent', border: 0, color: '#94a3b8', cursor: 'pointer', fontSize: 16, padding: 4 }}>↺</button>
@@ -401,8 +470,38 @@ function ColorModal({ sectionId, sectionsMeta, industry, onClose }: { sectionId:
           );
         })}
       </div>
+      {inactiveFields.length > 0 && (
+        <button
+          type="button"
+          onClick={() => setShowAll((v) => !v)}
+          style={{ marginTop: 14, background: 'transparent', border: 0, color: '#64748b', cursor: 'pointer', fontSize: 12, textDecoration: 'underline' }}
+        >
+          {showAll
+            ? 'Nur aktive Felder zeigen'
+            : `Erweitert: ${inactiveFields.length} ungenutzte Slots anzeigen`}
+        </button>
+      )}
     </Modal>
   );
+}
+
+// Extract alpha from #rrggbbaa or rgba(...). Returns null if no explicit alpha.
+function parseAlpha(v: string): number | null {
+  if (!v) return null;
+  const hex = v.match(/^#([0-9a-fA-F]{8})$/);
+  if (hex) return parseInt(hex[1].slice(6, 8), 16) / 255;
+  const rgba = v.match(/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*([\d.]+)\s*\)$/);
+  if (rgba) return Math.min(1, Math.max(0, Number(rgba[1])));
+  return null;
+}
+
+// Compose #rrggbb + alpha (0..1) → #rrggbbaa (or plain #rrggbb if alpha===1).
+function composeWithAlpha(hex: string, alpha: number): string {
+  const m = hex.match(/^#([0-9a-fA-F]{6})$/);
+  if (!m) return hex;
+  if (alpha >= 0.999) return hex;
+  const a = Math.round(Math.max(0, Math.min(1, alpha)) * 255).toString(16).padStart(2, '0');
+  return `#${m[1]}${a}`;
 }
 
 function normalizeColor(v: string): string {
@@ -411,6 +510,7 @@ function normalizeColor(v: string): string {
   // to black to keep the picker functional; the text input still shows the
   // real value.
   if (/^#[0-9a-fA-F]{6}$/.test(v)) return v;
+  if (/^#[0-9a-fA-F]{8}$/.test(v)) return v.slice(0, 7);
   if (/^#[0-9a-fA-F]{3}$/.test(v)) {
     const r = v[1], g = v[2], b = v[3];
     return `#${r}${r}${g}${g}${b}${b}`;

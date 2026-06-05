@@ -69,7 +69,7 @@ export function CinematicHeroSection({ data }: Props) {
 
         <div className="mt-9 flex flex-wrap items-center gap-3">
           {primaryCta.label && <a href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[var(--token-btn-text)] shadow-xl transition hover:brightness-110"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] bg-white/10 px-6 py-3 text-sm font-bold backdrop-blur transition hover:bg-white/15" style={{ background: 'var(--token-badge-bg)' }} style={{ color: heroText }}><Play size={15} /><span data-edit-path="label">{secondaryCta.label}</span></a>}
+          {secondaryCta.label && <a href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] bg-white/10 px-6 py-3 text-sm font-bold backdrop-blur transition hover:bg-white/15" style={{ background: 'var(--token-badge-bg)', color: heroText }}><Play size={15} /><span data-edit-path="label">{secondaryCta.label}</span></a>}
         </div>
 
         {facts.length > 0 && (
