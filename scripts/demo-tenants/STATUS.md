@@ -5,7 +5,7 @@ Letzter Stand: siehe Commit-Datum.
 | # | Tenant       | Branche                       | Status | Notizen                                          |
 |---|--------------|-------------------------------|--------|--------------------------------------------------|
 | 1 | handwerk     | SHK-Meisterbetrieb (Köln)     | ✅ DONE | Müller & Söhne — Referenz-Implementierung, 35+ Sections, Premium-Mix |
-| 2 | restaurant   | Restaurant                    | ⬜ TODO |                                                  |
+| 2 | restaurant   | Restaurant                    | ✅ DONE | Trattoria Dal Maestro — 9 Pages, 10 Collection Items, Premium-Mix, Live-Routen geprüft |
 | 3 | hotel        | Hotel                         | ⬜ TODO | Booking-Addon prüfen                             |
 | 4 | salon        | Friseur / Beauty              | ⬜ TODO | Booking-Addon prüfen                             |
 | 5 | tourismus    | Tourismus / Destination       | ⬜ TODO |                                                  |
