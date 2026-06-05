@@ -162,9 +162,11 @@ async function loadDbUsage() {
 (async () => {
   await loadDbUsage();
 
-  // 7) Compute desired SECTION_FIELDS
+  // 7) Compute desired SECTION_FIELDS for every sectionType found in templates/index.ts
+  //    (not just types already present in the editor — adds missing ones too).
+  const allTypes = new Set([...Object.keys(currentSectionFields), ...Object.keys(typeToPaths)]);
   const desired = {};
-  for (const type of Object.keys(currentSectionFields)) {
+  for (const type of allTypes) {
     const tpaths = typeToPaths[type] || new Set();
     const used = new Set();
     const wraps = new Map();
@@ -181,9 +183,10 @@ async function loadDbUsage() {
       const fld = cssVarToField[tokenVar];
       if (fld) want.add(fld);
     }
-    // Preserve DB-active fields (keep tenant data working)
+    // Preserve DB-active fields (keep tenant data working). Only relevant for
+    // sections that already exist in SECTION_FIELDS.
     const inUse = dbInUse[type] || new Set();
-    for (const field of currentSectionFields[type]) {
+    for (const field of (currentSectionFields[type] || [])) {
       const cv = fieldDefs[field];
       if (cv && inUse.has(cv)) want.add(field);
     }
@@ -193,30 +196,38 @@ async function loadDbUsage() {
 
   // 8) Diff vs current
   const changes = [];
-  for (const type of Object.keys(currentSectionFields)) {
+  const inserts = [];
+  for (const type of Object.keys(desired)) {
     const cur = currentSectionFields[type];
     const next = desired[type];
+    if (!cur) {
+      if (next.length) inserts.push({ type, next });
+      continue;
+    }
     const added = next.filter(f => !cur.includes(f));
     const removed = cur.filter(f => !next.includes(f));
     if (added.length || removed.length) changes.push({ type, added, removed, next });
   }
 
-  if (!changes.length) { console.log('SECTION_FIELDS already canonical — no changes.'); return; }
+  if (!changes.length && !inserts.length) { console.log('SECTION_FIELDS already canonical — no changes.'); return; }
 
-  console.log(`Codegen wants ${changes.length} section(s) updated:`);
+  console.log(`Codegen wants ${changes.length} updated, ${inserts.length} new section(s):`);
   for (const c of changes.slice(0, 20)) {
     const a = c.added.length ? ' +' + c.added.join(',') : '';
     const r = c.removed.length ? ' -' + c.removed.join(',') : '';
-    console.log(' ', c.type + a + r);
+    console.log(' ~', c.type + a + r);
   }
-  if (changes.length > 20) console.log('  …and', changes.length - 20, 'more');
+  for (const i of inserts.slice(0, 20)) {
+    console.log(' +', i.type, '=', i.next.join(','));
+  }
+  if (changes.length + inserts.length > 40) console.log('  …more truncated');
 
   if (CHECK_ONLY) {
     console.error('\nSECTION_FIELDS is out of sync with templates. Run: node scripts/regenerate-section-fields.cjs');
     process.exit(1);
   }
 
-  // 9) Splice each entry in editor source
+  // 9) Splice each existing entry in editor source
   let patched = editor;
   for (const c of changes) {
     const re = new RegExp('(^\\s*' + c.type + '\\s*:\\s*\\[)([^\\]]*?)(\\])', 'm');
@@ -225,6 +236,38 @@ async function loadDbUsage() {
     const arr = c.next.map(f => `'${f}'`).join(', ');
     patched = patched.slice(0, m.index) + m[1] + arr + m[3] + patched.slice(m.index + m[0].length);
   }
+
+  // 10) Insert new entries before SECTION_FIELDS closing brace
+  if (inserts.length) {
+    // Find SECTION_FIELDS: Record<...> = { ... };  — match the closing `};` of that object.
+    const startRe = /const\s+SECTION_FIELDS\s*:\s*Record<[^>]+>\s*=\s*\{/;
+    const startMatch = patched.match(startRe);
+    if (!startMatch) {
+      console.warn('  ! cannot find SECTION_FIELDS opening — skipping inserts');
+    } else {
+      // Walk braces from start to find matching close.
+      let depth = 0;
+      let i = startMatch.index + startMatch[0].length - 1; // position of opening '{'
+      let closeIdx = -1;
+      for (; i < patched.length; i++) {
+        const ch = patched[i];
+        if (ch === '{') depth++;
+        else if (ch === '}') {
+          depth--;
+          if (depth === 0) { closeIdx = i; break; }
+        }
+      }
+      if (closeIdx === -1) {
+        console.warn('  ! cannot find SECTION_FIELDS closing brace — skipping inserts');
+      } else {
+        const block = inserts
+          .map(ins => `  ${ins.type}: [${ins.next.map(f => `'${f}'`).join(', ')}],`)
+          .join('\n') + '\n';
+        patched = patched.slice(0, closeIdx) + block + patched.slice(closeIdx);
+      }
+    }
+  }
+
   fs.writeFileSync(EDITOR_PATH, patched);
   console.log('\nWrote', EDITOR_PATH);
 })().catch(e => { console.error(e); process.exit(1); });
