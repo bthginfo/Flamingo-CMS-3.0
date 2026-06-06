@@ -141,7 +141,8 @@ export async function POST(req: NextRequest) {
           html: notificationHtml,
         });
 
-        //// Replace {name} with the escaped name so an attacker can't smuggle
+        if (autoResponse?.enabled && autoResponse.subject && autoResponse.body) {
+          // Replace {name} with the escaped name so an attacker can't smuggle
           // HTML/JS via their submitted name. Body itself is admin-authored,
           // so we treat it as trusted template content (kept as-is).
           const responseBody = autoResponse.body.replace(/\{name\}/g, escapeHtml(name || ''));
@@ -150,9 +151,7 @@ export async function POST(req: NextRequest) {
 <div style="max-width:600px;margin:0 auto;padding:32px 16px">
   <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
     <div style="background:linear-gradient(135deg,#1a5276,#2e86c1);padding:24px 32px">
-      <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:600">${escapeHtml(autoResponse.subject)0,0,0,0.1)">
-    <div style="background:linear-gradient(135deg,#1a5276,#2e86c1);padding:24px 32px">
-      <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:600">${autoResponse.subject}</h1>
+      <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:600">${escapeHtml(autoResponse.subject)}</h1>
     </div>
     <div style="padding:24px 32px">
       <p style="margin:0;color:#374151;font-size:15px;line-height:1.6;white-space:pre-line">${responseBody}</p>
