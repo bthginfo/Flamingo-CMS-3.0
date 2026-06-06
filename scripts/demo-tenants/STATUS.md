@@ -11,7 +11,7 @@ Letzter Stand: siehe Commit-Datum.
 | 5 | tourismus    | Tourismus / Destination       | ✅ DONE | Karwendel Kompass — Classic, Premium-Mix, Branchensections, Live-Routen geprüft |
 | 6 | medical      | Arztpraxis                    | ✅ DONE | Praxis am Stadtgarten — Classic, Premium-Mix, Ratgeber und Patientenwege, Live-Routen geprüft |
 | 7 | wedding      | Hochzeitslocation / -planung  | ✅ DONE | Mara & Elias — Classic, RSVP, Gästeinfos, Updates, Live-Routen geprüft |
-| 8 | photography  | Fotograf:in                   | ⬜ TODO | Galerie-Sections                                 |
+| 8 | photography  | Fotograf:in                   | ✅ DONE | Lisa Morgenthaler Fotografie — Classic, Portfolio-Collections, Premium-Mix, Live-Routen geprüft |
 | 9 | consulting   | Beratung                      | ⬜ TODO | LinkedIn-Footer, B2B-Tonalität                   |
 |10 | realestate   | Immobilienmakler:in           | ⬜ TODO | propertySearch / Collection                      |
 |11 | cafe         | Café                          | ⬜ TODO | Speisekarte als Collection                       |
