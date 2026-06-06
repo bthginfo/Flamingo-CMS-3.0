@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next';
 const BASE = 'https://www.flamingomedia.online';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const pages = ['', 'templates', 'cms', 'shop', 'booking', 'prozess', 'preise', 'blog', 'ueber-uns', 'kontakt', 'foerderrechner', 'demo', 'impressum', 'datenschutz', 'agb'];
+  const pages = ['', 'templates', 'cms', 'shop', 'booking', 'prozess', 'preise', 'blog', 'ueber-uns', 'kontakt', 'foerderrechner', 'demo', 'impressum', 'datenschutz', 'agb', 'nutzungsbedingungen', 'datenloeschung'];
   return pages.map(p => ({
     url: `${BASE}/${p}`,
     lastModified: new Date(),
