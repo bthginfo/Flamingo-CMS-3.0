@@ -14,7 +14,7 @@ Letzter Stand: siehe Commit-Datum.
 | 8 | photography  | Fotograf:in                   | ✅ DONE | Lisa Morgenthaler Fotografie — Classic, Portfolio-Collections, Premium-Mix, Live-Routen geprüft |
 | 9 | consulting   | Beratung                      | ✅ DONE | Bergmann & Partner Beratung — Classic, B2B-Tonalität, 8 Pages, 24 Collection Items, readyToPublish |
 |10 | realestate   | Immobilienmakler:in           | ✅ DONE | Stadtkante Immobilien — Classic, Bewertung/Verkauf/Kauf, Realestate-Sections, Live-Routen geprüft |
-|11 | cafe         | Café                          | ⬜ TODO | Speisekarte als Collection                       |
+|11 | cafe         | Café                          | ✅ DONE | SPIRAL Coffee & Plants — Classic, Karte/Events/Angebote/Journal, readyToPublish |
 |12 | tattoo       | Tattoo-Studio                 | ⬜ TODO | Portfolio-Galerie                                |
 |13 | ecommerce    | Online-Shop                   | ⬜ TODO | Shop-Addon vermutlich aktiv                      |
 |14 | retail       | Stationärer Handel            | ⬜ TODO |                                                  |
