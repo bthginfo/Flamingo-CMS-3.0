@@ -3,6 +3,11 @@
 Premium content per Branche, eingespielt über die öffentliche Content-API
 (`https://flamingo-renderer.vercel.app/api/v1/*`). Ein Skript pro Tenant.
 
+Wichtig: Das Befüllen der Demo-Tenants läuft über PAT/API und braucht keinen
+Git-Push. Ein Push ist nur nötig, wenn sich Code, Runner, API-Instructions,
+Dokumentation oder der Status im Repo ändern sollen. Tenant-Content selbst ist
+nach `publish` live und triggert keinen Vercel-Build.
+
 ## Schnellstart
 
 ```bash
@@ -20,7 +25,7 @@ node scripts/demo-tenants/handwerk.cjs
 | ------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | `_lib/api.cjs`                        | Minimaler HTTPS-Client, ein Wrapper pro Endpoint. Keine externen Abhängigkeiten.                   |
 | `_lib/runner.cjs`                     | `run(tenantSpec)` — wipt vorhandenen Content, schreibt brand/contact/design/nav/footer/pages/etc., publiziert und validiert. |
-| `fetch-instructions.cjs <tenant>`     | Speichert die per-Tenant API-Anweisung (`GET /instructions`) lokal. **Vor jedem neuen Tenant zuerst aufrufen.** |
+| `fetch-instructions.cjs <tenant>`     | Speichert die per-Tenant API-Anweisung (`GET /instructions`) lokal. Enthält Textanweisung, strukturiertes AI-Playbook, Style-System und Section-Style-Contracts. **Vor jedem neuen Tenant zuerst aufrufen.** |
 | `handwerk.cjs`                        | Vollständige Referenz-Implementierung. Template für alle weiteren Tenants.                         |
 | `STATUS.md`                           | Welcher Tenant ist fertig, was steht noch offen.                                                   |
 | `HANDOFF-PROMPT.md`                   | Konkreter Prompt, den die nächste AI bekommt.                                                      |
@@ -69,6 +74,15 @@ node scripts/demo-tenants/restaurant.cjs
 
 # 6) STATUS.md aktualisieren
 ```
+
+## Push-Policy
+
+- **Kein Push pro Tenant nötig**, wenn nur Live-Content über die API befüllt
+  wurde und die Repo-Skripte nicht dokumentiert werden müssen.
+- **Push sinnvoll**, wenn ein neues `<tenant>.cjs`, `STATUS.md` oder ein
+  Runner-/Renderer-Fix festgehalten werden soll.
+- **Push zwingend**, wenn die Live-API-Instructions oder Renderer-Code geändert
+  wurden. Sonst sehen andere AIs weiterhin die alte API-Doku.
 
 ## Sicherheit
 

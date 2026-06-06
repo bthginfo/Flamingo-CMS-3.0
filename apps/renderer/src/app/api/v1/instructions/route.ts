@@ -48,6 +48,7 @@ export async function GET(req: NextRequest) {
     sectionDataSchemas: getSectionSchemas(auth.tenant.industry),
     styleSystem: getStyleSystemInstructions(),
     sectionStyleContracts: getSectionStyleContracts(allowedSectionTypes),
+    aiContentPlaybook: getAiContentPlaybook(auth.tenant.industry, { hasShop, hasBooking }),
     endpoints: {
       brand: { method: 'PUT', path: '/api/v1/content/brand', description: 'Set brand data (companyName, tagline, primaryColor, logo, etc.)' },
       contact: { method: 'PUT', path: '/api/v1/content/contact', description: 'Set contact info (email, phone, address, whatsapp, whatsappEnabled, whatsappColor)' },
@@ -519,6 +520,166 @@ function getStyleSystemInstructions() {
         contrastWith: def.contrastWith || [],
       }])
     ),
+  };
+}
+
+function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasBooking: boolean }) {
+  const industryHints: Record<string, {
+    tone: string;
+    preferredCollectionKeys: string[];
+    preferredSections: string[];
+    avoidPatterns: string[];
+  }> = {
+    tradesman: {
+      tone: 'klar, verlässlich, meisterlich, konkret; Probleme und Ablauf erklären statt nur Versprechen machen',
+      preferredCollectionKeys: ['leistungen', 'referenzen', 'news'],
+      preferredSections: ['hero', 'servicesGrid', 'processSteps', 'serviceDetail', 'portfolio', 'testimonials', 'faq', 'ctaBand'],
+      avoidPatterns: ['Luxus-Sprache ohne Substanz', 'zu viel Lifestyle statt handwerklicher Ablauf', 'Notdienst ohne Kontakt-CTA'],
+    },
+    restaurant: {
+      tone: 'sinnlich, produktnah, gastgeberhaft, kurze Sätze; Herkunft, Saison, Atmosphäre und Reservierung klar machen',
+      preferredCollectionKeys: ['speisekarte', 'events', 'news'],
+      preferredSections: ['hero', 'menu', 'signatureDishes', 'reservation', 'ambience', 'events', 'testimonials', 'gallery', 'contact'],
+      avoidPatterns: ['generische Food-Floskeln', 'Speisekarte ohne Preise oder Kategorien', 'Reservierung ohne Telefon-Alternative'],
+    },
+    hotel: {
+      tone: 'warm, ruhig, gastgeberhaft, ortsverliebt; Zimmer, Lage, Spa und Direktanfrage sauber einordnen',
+      preferredCollectionKeys: ['leistungen', 'angebote', 'news'],
+      preferredSections: ['hero', 'bookingStrip', 'roomShowcase', 'wellness', 'hotelDining', 'location', 'offers', 'testimonials', 'faq'],
+      avoidPatterns: ['Portal-Sprache', 'Zimmer ohne Preis-/Größenhinweise', 'zu laute Superlative'],
+    },
+    salon: {
+      tone: 'modern, persönlich, beratend; Ergebnis, Alltagstauglichkeit, Preislogik und Termin klar machen',
+      preferredCollectionKeys: ['leistungen', 'news'],
+      preferredSections: ['hero', 'priceList', 'packages', 'team', 'gallery', 'expertise', 'beforeAfter', 'testimonials', 'bookingCta'],
+      avoidPatterns: ['Beauty-Floskeln ohne konkrete Beratung', 'Preise ohne Dauer/Hinweis', 'zu viel Weiß-auf-hell bei Foto-Sections'],
+    },
+    tourism: {
+      tone: 'bildreich, lokal, einladend, aber konkret; Routen, Saison, Wetter, Mobilität und Alternativen erklären',
+      preferredCollectionKeys: ['erlebnisse', 'routen', 'news'],
+      preferredSections: ['hero', 'destinationHighlights', 'experienceGrid', 'seasonTeaser', 'tourRoutes', 'placesMap', 'visitorInfo', 'downloadGuides', 'tourismContact'],
+      avoidPatterns: ['beliebige Reiseführer-Sprache', 'Routen ohne Dauer/Schwierigkeit', 'Saisonhinweise ohne konkrete Konsequenz'],
+    },
+    medical: {
+      tone: 'sachlich, vertrauensbildend, ruhig; Datenschutz, klare Abläufe, Terminarten und verständliche Befunde betonen',
+      preferredCollectionKeys: ['leistungen', 'ratgeber', 'team'],
+      preferredSections: ['hero', 'doctorTeam', 'servicesGrid', 'equipmentHighlights', 'downloadForms', 'practiceGallery', 'faq', 'contact'],
+      avoidPatterns: ['Heilsversprechen', 'zu aggressive CTAs', 'medizinische Aussagen ohne Vorsicht'],
+    },
+    wedding: {
+      tone: 'persönlich, emotional, aber nicht kitschig; Ablauf, Ort, RSVP und Gastinfos klar machen',
+      preferredCollectionKeys: ['updates', 'orte', 'news'],
+      preferredSections: ['hero', 'coupleStory', 'eventSchedule', 'venueInfo', 'travelInfo', 'rsvp', 'dresscode', 'weddingMenu', 'faq'],
+      avoidPatterns: ['Kitsch ohne Information', 'RSVP ohne Deadline', 'zu dunkle Overlays mit dunklem Text'],
+    },
+    photography: {
+      tone: 'visuell ruhig, präzise, beobachtend; Bildstil, Ablauf, Pakete und Auswahlprozess zeigen',
+      preferredCollectionKeys: ['leistungen', 'portfolio', 'news'],
+      preferredSections: ['hero', 'portfolioGallery', 'servicesGrid', 'featureShowcase', 'beforeAfterStoryPro', 'testimonials', 'contact'],
+      avoidPatterns: ['zu viel Text vor den Bildern', 'leere Galerie-Kacheln', 'Kontakt ohne Einsatzgebiet'],
+    },
+    consulting: {
+      tone: 'präzise, outcome-orientiert, B2B-tauglich; Probleme, Vorgehen, Ergebnis und Entscheidungslogik zeigen',
+      preferredCollectionKeys: ['leistungen', 'cases', 'news'],
+      preferredSections: ['hero', 'servicesGrid', 'comparisonTable', 'processSteps', 'statsCounter', 'portfolio', 'proofWall', 'ctaBand'],
+      avoidPatterns: ['Berater-Buzzwords ohne Ergebnis', 'Cases ohne Ausgangslage/Resultat', 'CTA ohne Erstgespräch-Kontext'],
+    },
+  };
+
+  const fallback = {
+    tone: 'branchenspezifisch, lokal verankert, klar, hochwertig und ohne generische AI-Floskeln',
+    preferredCollectionKeys: ['leistungen', 'news'],
+    preferredSections: ['hero', 'servicesGrid', 'featureShowcase', 'processSteps', 'bentoGrid', 'statsCounter', 'testimonials', 'faq', 'ctaBand'],
+    avoidPatterns: ['Platzhaltertexte', 'leere Bildfelder', 'wiederholte Section-Reihenfolgen über mehrere Demos'],
+  };
+
+  return {
+    goal: 'Build a full premium demo website that feels custom-made for this exact tenant and industry. Use the API only; do not invent fields or section types.',
+    workflow: [
+      '1. Read tenant, existingPages, hasShopAddon, hasBookingAddon, availableSectionTypes, sectionDataSchemas, sectionStyleContracts.',
+      '2. Design a tenant identity before writing content: company name, city/region, story, tone, brand palette, image world.',
+      '3. Create global brand/contact/design/style/navigation/footer/SEO first.',
+      '4. Create collections before pages when pages link to collection items.',
+      '5. Create pages with complete sections and real content.',
+      '6. Create collection items with embedded sections and stable UUIDs for every item section.',
+      '7. Call /validate before /publish. Fix every error and every contrast warning. Repeat until readyToPublish=true.',
+      '8. Publish only after validation passes, then manually check live pages and collection routes.',
+    ],
+    style: {
+      supportedWebsiteStyle: 'classic',
+      deprecatedStyles: ['modern', 'bold'],
+      rule: 'Always send PUT /api/v1/content/style with { "style": "classic" }. Visual variety must come from brand/design colors, section choice, copy, imagery and layout, not from old style variants.',
+    },
+    minimumContentStandard: {
+      homePage: {
+        minSections: 12,
+        requiredMix: ['hero', 'socialProofBar', 'storytelling/textImage or branch equivalent', 'branch-specific offer/overview section', 'featureShowcase', 'processSteps', 'bentoGrid', 'statsCounter', 'timeline', 'testimonials/proof', 'faq', 'ctaBand'],
+      },
+      overviewPages: {
+        minSections: 6,
+        requiredMix: ['hero/collectionHero', 'branch-specific overview', 'premium section', 'collectionList or cards', 'faq/testimonials', 'ctaBand'],
+      },
+      aboutPage: {
+        minSections: 6,
+        requiredMix: ['hero/collectionHero', 'textImage/story', 'team or values', 'timeline', 'stats/proof', 'ctaBand'],
+      },
+      contactPage: {
+        minSections: 4,
+        requiredMix: ['hero/collectionHero', 'contact or branch contact', 'map/places/additionalLocations', 'visitorInfo/openingHours/faq', 'ctaBand optional'],
+      },
+      collectionItems: {
+        minSections: 4,
+        requiredMix: ['collectionHero with bgImage/backgroundImage', 'textImage or detail section', 'benefits/process/info section', 'faq or proof', 'ctaBand'],
+      },
+      arrays: {
+        cardArraysMinItems: 4,
+        faqMinItems: 4,
+        collectionMinItems: 3,
+        footerLinksPerColumnMin: 2,
+      },
+    },
+    routingRules: [
+      'Page slug values never start with "/". Use "leistungen", not "/leistungen".',
+      'Navigation/footer href values do start with "/". Use "/leistungen".',
+      'Only link to pages and collection items that actually exist.',
+      'Collection detail links use "/c/<collectionKey>/<itemSlug>".',
+      'If the API validation lists a required page, create that exact slug even if the visible nav label differs.',
+    ],
+    contentRules: [
+      'Use real German copy with umlauts and no mojibake.',
+      'Write from the business perspective, not as a neutral directory.',
+      'Avoid generic phrases such as "maßgeschneiderte Lösungen", "Ihre Zufriedenheit ist unser Ziel" unless backed by concrete content.',
+      'Every image field must be filled with a contextually fitting image URL or uploaded media URL.',
+      'Every image should have meaningful alt text when the schema exposes an alt field.',
+      'No placeholder labels like "Mehr erfahren" repeated everywhere; CTAs should be specific to the action.',
+      'Use branch-specific sections before generic shared sections when available.',
+    ],
+    colorRules: [
+      'Global design colors should establish readable defaults for all light sections: sectionBg, cardBg, heading, body, muted, btnBg, btnText, badgeBg, badgeText.',
+      'For every image hero or dark/overlay section, set overlayColor/overlayOpacity and section.styleOverrides for --token-heading, --token-body, --token-muted, --token-on-dark-heading, --token-on-dark-body, --token-on-dark-muted.',
+      'If overriding --token-btn-bg, always set --token-btn-text in the same styleOverrides.',
+      'If overriding --token-badge-bg, always set --token-badge-text.',
+      'If cards sit on a dark section, set --token-card-bg, --token-card-border and readable text tokens.',
+      'Do not use white text on pale backgrounds or dark text on dark imagery. Validate contrast before publishing.',
+      'Use sectionStyleContracts[type].colorSlots to know which visual parts a section supports.',
+    ],
+    addons: {
+      shop: addons.hasShop
+        ? 'Shop addon is active. It is valid to create shop pages, categories, products and shop sections.'
+        : 'Shop addon is not active. Do not create shop pages/products or use shop sections.',
+      booking: addons.hasBooking
+        ? 'Booking addon is active. Use bookingSlotPicker for time-slot bookings, bookingDateRange for multi-day stays/rooms/locations, availabilityCalendar for availability overview, and resourceBookingShowcase for resources.'
+        : 'Booking addon is not active. Do not use premium booking sections; simple contact/reservation sections are still allowed when listed in availableSectionTypes.',
+    },
+    industry: industryHints[industry] || fallback,
+    finalValidation: [
+      'GET /api/v1/content/validate returns readyToPublish=true.',
+      'No colorIssues warnings remain.',
+      'Every main route returns 200.',
+      'Every collection item linked from nav/cards/footer returns 200.',
+      'Visible content is not repeated mechanically across pages.',
+      'The page would convince a real prospect in this industry.',
+    ],
   };
 }
 

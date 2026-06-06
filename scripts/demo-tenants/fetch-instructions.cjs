@@ -42,13 +42,28 @@ async function main() {
     console.error('Known tenants:', Object.keys(PATS).join(', '));
     process.exit(2);
   }
-  const api = new Api({ pat: PATS[tenant], verbose: false });
+  const api = new Api({ pat: PATS[tenant], host: process.env.FLAMINGO_API_HOST, verbose: false });
   const data = await api.instructions();
   const outFile = outArg || path.join(__dirname, '_cache', `instructions-${tenant}.json`);
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
   fs.writeFileSync(outFile, JSON.stringify(data, null, 2));
   const txtFile = outFile.replace(/\.json$/, '.txt');
-  fs.writeFileSync(txtFile, data.instructions || '');
+  const textDump = [
+    data.instructions || '',
+    '',
+    '---',
+    'STRUCTURED_AI_CONTENT_PLAYBOOK',
+    JSON.stringify(data.aiContentPlaybook || {}, null, 2),
+    '',
+    '---',
+    'STYLE_SYSTEM',
+    JSON.stringify(data.styleSystem || {}, null, 2),
+    '',
+    '---',
+    'SECTION_STYLE_CONTRACTS',
+    JSON.stringify(data.sectionStyleContracts || [], null, 2),
+  ].join('\n');
+  fs.writeFileSync(txtFile, textDump);
   console.log('wrote', outFile, '(' + (JSON.stringify(data).length / 1024).toFixed(1) + ' kB)');
   console.log('wrote', txtFile);
   console.log('endpoints:', Object.keys(data.endpoints || {}).length);
