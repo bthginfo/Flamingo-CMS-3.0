@@ -70,8 +70,12 @@ export function InstagramFeedSection({ data }: Props) {
     if (injectedTenantId) {
       qs += `&tenantId=${encodeURIComponent(injectedTenantId)}`;
     } else if (typeof window !== 'undefined') {
-      const seg = window.location.pathname.split('/').filter(Boolean)[0];
-      if (seg) qs += `&slug=${encodeURIComponent(seg)}`;
+      // Demo URLs look like /demo/<industry>/... — the tenant slug is
+      // `demo-<industry>`, not the literal "demo" prefix. For everything else
+      // the first path segment IS the tenant slug (shared-renderer style).
+      const segs = window.location.pathname.split('/').filter(Boolean);
+      const slug = segs[0] === 'demo' && segs[1] ? `demo-${segs[1]}` : segs[0];
+      if (slug) qs += `&slug=${encodeURIComponent(slug)}`;
     }
     fetch(`/api/instagram/feed?${qs}`)
       .then(r => r.json())
