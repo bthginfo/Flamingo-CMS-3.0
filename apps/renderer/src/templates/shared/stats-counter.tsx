@@ -49,7 +49,8 @@ export function StatsCounterSection({ data }: Props) {
   if (!stats.length) return null;
 
   return (
-    <div ref={ref} className="relative overflow-hidden rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-14 text-[var(--token-body)] shadow-sm md:px-10 md:py-16">
+    <div ref={ref} className="relative overflow-hidden rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-section-bg)] px-6 py-14 text-[var(--token-body)] shadow-sm md:px-10 md:py-16">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,color-mix(in_srgb,var(--token-accent)_10%,transparent),transparent_42%)]" />
       <div className="relative z-10">
         {(headline || badge) && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="mx-auto mb-12 max-w-3xl text-center">
@@ -59,13 +60,14 @@ export function StatsCounterSection({ data }: Props) {
           </motion.div>
         )}
 
-        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-5 md:grid-cols-4">
+        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 md:grid-cols-4 md:gap-5">
           {stats.map((stat, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.45, delay: i * 0.08 }} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-section-bg)] px-4 py-6 text-center md:px-5" data-edit-collection="stats" data-edit-index={i}>
-              <div className="text-3xl font-bold text-[var(--token-accent)] md:text-4xl lg:text-5xl">
+            <motion.div key={i} initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.45, delay: i * 0.08 }} className="min-h-[140px] rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-4 py-7 text-center shadow-[0_18px_50px_color-mix(in_srgb,var(--token-heading)_6%,transparent)] md:px-5" data-edit-collection="stats" data-edit-index={i}>
+              <div className="text-3xl font-bold leading-none text-[var(--token-stat-value,var(--token-accent))] md:text-4xl lg:text-5xl">
                 <AnimatedNumber value={stat.value} prefix={stat.prefix} suffix={stat.suffix} inView={inView} />
               </div>
-              <div className="mt-2 text-sm md:text-base text-[var(--token-body)] font-medium" data-edit-path="label">{stat.label}</div>
+              <div className="mx-auto mt-4 h-px w-10 bg-[var(--token-divider,var(--token-card-border))]" />
+              <div className="mt-4 text-sm font-medium leading-snug text-[var(--token-body)] md:text-base" data-edit-path="label">{stat.label}</div>
             </motion.div>
           ))}
         </div>

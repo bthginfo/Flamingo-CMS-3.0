@@ -27,10 +27,12 @@ export function CtaBandSection({ data, styleVariant }: Props) {
 
 type ColorOverrides = { bgColor?: string; textColor?: string; accentColor?: string };
 type CProps = { headline: string; subline: string; badgeText: string; cta?: { label: string; href: string; icon?: string }; colors?: ColorOverrides };
-const CTA_CARD_HEADING = 'color-mix(in srgb, var(--token-primary, #0f172a) 84%, #050505)';
-const CTA_CARD_BODY = 'color-mix(in srgb, var(--token-primary, #0f172a) 58%, #64748b)';
-const CTA_CARD_BADGE_BG = 'color-mix(in srgb, var(--token-card-bg, #ffffff) 84%, var(--token-accent, #f59e0b))';
-const CTA_CARD_BADGE_TEXT = 'color-mix(in srgb, var(--token-primary, #0f172a) 78%, #050505)';
+const CTA_CARD_BG = 'linear-gradient(135deg, var(--token-section-bg, #ffffff), color-mix(in srgb, var(--token-accent, #f59e0b) 14%, var(--token-section-bg, #ffffff)))';
+const CTA_CARD_HEADING = 'var(--token-heading, var(--style-heading-color, #0f172a))';
+const CTA_CARD_BODY = 'var(--token-body, var(--style-body-color, #475569))';
+const CTA_CARD_BADGE_BG = 'var(--token-badge-bg, color-mix(in srgb, var(--token-card-bg, #ffffff) 84%, var(--token-accent, #f59e0b)))';
+const CTA_CARD_BADGE_TEXT = 'var(--token-badge-text, var(--token-heading, #0f172a))';
+const CTA_CARD_BADGE_BORDER = 'var(--token-badge-border, var(--token-card-border, rgba(15,23,42,0.08)))';
 
 /* ─── CLASSIC: Gradient bg, centered, pill cta, floating orbs ─── */
 function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
@@ -40,7 +42,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
   const bgY = useTransform(scrollYProgress, [0, 1], ['-10%', '10%']);
 
   const wrapStyle: React.CSSProperties = {
-    background: colors?.bgColor ?? 'linear-gradient(135deg, color-mix(in srgb, var(--token-card-bg, #ffffff) 96%, var(--token-section-bg, #f8fafc)), color-mix(in srgb, var(--token-accent, #f59e0b) 14%, var(--token-card-bg, #ffffff)))',
+    background: colors?.bgColor ?? CTA_CARD_BG,
     border: '1px solid var(--token-card-border, rgba(15,23,42,0.08))',
     boxShadow: '0 24px 70px color-mix(in srgb, var(--token-heading, #0f172a) 10%, transparent)',
   };
@@ -48,21 +50,19 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
 
   return (
     <motion.div ref={ref} initial={{ opacity: 0, scale: 0.98 }} animate={inView ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.7 }} className="relative overflow-hidden rounded-4xl" style={wrapStyle}>
-      {!colors?.bgColor && (
-        <motion.div
-          style={{
-            y: bgY,
-            background: 'radial-gradient(circle at 78% 22%, color-mix(in srgb, var(--token-accent, #f59e0b) 22%, transparent), transparent 42%), radial-gradient(circle at 14% 82%, color-mix(in srgb, var(--token-primary, #0f172a) 10%, transparent), transparent 46%)',
-          }}
-          className="absolute inset-0 scale-110"
-        />
-      )}
+      <motion.div
+        style={{
+          y: bgY,
+          background: 'radial-gradient(circle at 78% 22%, color-mix(in srgb, var(--token-accent, #f59e0b) 18%, transparent), transparent 42%), radial-gradient(circle at 14% 82%, color-mix(in srgb, var(--token-heading, #0f172a) 8%, transparent), transparent 46%)',
+        }}
+        className="absolute inset-0 scale-110 opacity-80"
+      />
       <div className="absolute inset-0">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] animate-pulse-slow" style={{ backgroundColor: colors?.accentColor ? `${colors.accentColor}26` : 'color-mix(in srgb, var(--token-accent, #f59e0b) 16%, transparent)' }} />
       </div>
       <div className="relative z-10 px-6 py-12 text-center sm:py-16 md:py-24 lg:py-32" style={{ color: CTA_CARD_HEADING }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
-          className="mb-8 inline-flex items-center gap-2 rounded-full border px-5 py-2 text-sm backdrop-blur-sm" style={{ background: CTA_CARD_BADGE_BG, borderColor: 'var(--token-card-border, rgba(15,23,42,0.08))', color: CTA_CARD_BADGE_TEXT }}>
+          className="mb-8 inline-flex items-center gap-2 rounded-full border px-5 py-2 text-sm backdrop-blur-sm" style={{ background: CTA_CARD_BADGE_BG, borderColor: CTA_CARD_BADGE_BORDER, color: CTA_CARD_BADGE_TEXT }}>
           <Sparkles size={14} className="text-[var(--token-icon)]" /><span data-edit-path="badgeText">{badgeText || 'Jetzt Termin sichern'}</span>
         </motion.div>
         <motion.h2 initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 }}
@@ -86,7 +86,7 @@ function CtaModern({ headline, subline, cta, colors }: CProps) {
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   const wrapStyle: React.CSSProperties = {
-    background: colors?.bgColor ?? 'var(--token-card-bg, #ffffff)',
+    background: colors?.bgColor ?? CTA_CARD_BG,
     border: '1px solid var(--token-card-border, rgba(15,23,42,0.08))',
     boxShadow: '0 18px 50px color-mix(in srgb, var(--token-heading, #0f172a) 8%, transparent)',
   };
@@ -114,7 +114,7 @@ function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   const wrapStyle: React.CSSProperties = {
-    background: colors?.bgColor ?? 'linear-gradient(135deg, var(--token-card-bg, #ffffff), color-mix(in srgb, var(--token-accent, #f59e0b) 12%, var(--token-card-bg, #ffffff)))',
+    background: colors?.bgColor ?? CTA_CARD_BG,
     border: '1px solid var(--token-card-border, rgba(15,23,42,0.08))',
     boxShadow: '0 18px 50px color-mix(in srgb, var(--token-heading, #0f172a) 8%, transparent)',
   };
@@ -124,7 +124,7 @@ function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
     <motion.div ref={ref} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}
       className="flex flex-col items-start justify-between gap-8 rounded-4xl p-10 lg:flex-row lg:items-center lg:p-16" style={{ ...wrapStyle, color: CTA_CARD_HEADING }}>
       <div>
-        {badgeText && <span className="mb-4 inline-block rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-widest" style={{ background: CTA_CARD_BADGE_BG, borderColor: 'var(--token-card-border, rgba(15,23,42,0.08))', color: CTA_CARD_BADGE_TEXT }} data-edit-path="badgeText">{badgeText}</span>}
+        {badgeText && <span className="mb-4 inline-block rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-widest" style={{ background: CTA_CARD_BADGE_BG, borderColor: CTA_CARD_BADGE_BORDER, color: CTA_CARD_BADGE_TEXT }} data-edit-path="badgeText">{badgeText}</span>}
         <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tight" data-edit-path="headline">{headline}</h2>
         {subline && <div className="rt-content mt-3 max-w-xl font-medium" style={{ color: CTA_CARD_BODY }} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
