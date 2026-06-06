@@ -47,7 +47,7 @@ export function PropertyShowcaseSection({ data }: Props) {
               <div className="relative aspect-[4/3] overflow-hidden">
                 <Image data-edit-image="image" src={property.image} alt={property.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
                 {property.badge && (
-                  <span className="absolute top-4 left-4 bg-amber-600 text-[color:var(--token-on-dark-heading)] text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide" data-edit-path="badge">
+                  <span className="absolute left-4 top-4 rounded-full border border-[color:var(--token-badge-border,var(--token-card-border))] bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[var(--token-badge-text)] shadow-sm backdrop-blur" data-edit-path="badge">
                     {property.badge}
                   </span>
                 )}
@@ -59,7 +59,7 @@ export function PropertyShowcaseSection({ data }: Props) {
                   <span className="text-sm text-[color:var(--token-muted)]"><strong>{property.rooms}</strong> Zimmer</span>
                   <span className="text-sm text-[color:var(--token-muted)]"><strong>{property.size}</strong></span>
                 </div>
-                <p className="text-xl font-bold text-[color:var(--token-icon)] mt-3" data-edit-path="price">{property.price}</p>
+                <p className="text-xl font-bold text-[color:var(--token-stat-value,var(--token-icon))] mt-3" data-edit-path="price">{property.price}</p>
               </div>
             </motion.a>
           ))}
