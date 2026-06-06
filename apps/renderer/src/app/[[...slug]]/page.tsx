@@ -15,9 +15,52 @@ import { SectionRenderer } from '@/components/section-renderer';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { WhatsAppFab } from '@/components/whatsapp-fab';
+import { generateCollectionItemMetadata, renderCollectionItemPage } from '@/app/c/[collection]/[slug]/collection-item-page';
 
 // Known locale codes for i18n routing (first slug segment)
 const LOCALE_PATTERN = /^[a-z]{2}$/;
+
+/**
+ * Detect `<locale>/c/<collection>/<slug>` URLs after tenant-prefix is stripped.
+ * Bare `/c/...` is handled by the dedicated route under app/c/[collection]/[slug]
+ * (Next routes that more specifically). The locale-prefixed variant falls
+ * through to this catch-all instead, so we delegate it back to the same
+ * renderer with an explicit locale.
+ */
+async function tryResolveCollectionItemRoute(slug: string[] | undefined) {
+  const requestedSlug = slug || [];
+  const tenantId = await resolveTenant(requestedSlug[0]);
+  if (!tenantId) return null;
+
+  let pathSegments = requestedSlug;
+  let linkPrefix = '';
+
+  // Strip optional shared-renderer tenant slug prefix.
+  const db = getDb();
+  const [tenant] = await db.select({ slug: tenants.slug }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  if (tenant?.slug && pathSegments[0] === tenant.slug) {
+    linkPrefix = `/${tenant.slug}`;
+    pathSegments = pathSegments.slice(1);
+  }
+
+  const i18n = await getTenantI18n(tenantId);
+  let locale: string | undefined;
+  if (i18n.enabled && pathSegments.length > 0 && LOCALE_PATTERN.test(pathSegments[0]) && i18n.locales.includes(pathSegments[0])) {
+    locale = pathSegments[0];
+    pathSegments = pathSegments.slice(1);
+  }
+
+  if (pathSegments.length === 3 && pathSegments[0] === 'c') {
+    return {
+      collection: pathSegments[1],
+      slug: pathSegments[2],
+      tenantSlug: tenant?.slug && requestedSlug[0] === tenant.slug ? tenant.slug : undefined,
+      linkPrefix,
+      locale,
+    };
+  }
+  return null;
+}
 
 async function resolvePageData(slug?: string[]) {
   const requestedSlug = slug || [];
@@ -66,6 +109,15 @@ async function resolvePageData(slug?: string[]) {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug?: string[] }> }): Promise<Metadata> {
   const { slug } = await params;
+  // Collection-item URLs with locale prefix (/en/c/blog/foo) land here because
+  // the static c/[collection]/[slug] route only matches the bare /c/... form.
+  const collectionRoute = await tryResolveCollectionItemRoute(slug);
+  if (collectionRoute) {
+    return generateCollectionItemMetadata(
+      Promise.resolve({ collection: collectionRoute.collection, slug: collectionRoute.slug }),
+      collectionRoute.tenantSlug,
+    );
+  }
   const result = await resolvePageData(slug);
   if (!result) return {};
 
@@ -151,6 +203,16 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
 
 async function renderPage(params: Promise<{ slug?: string[] }>) {
   const { slug } = await params;
+  // Locale-prefixed collection item: /en/c/blog/foo (or /:tenant/en/c/blog/foo).
+  const collectionRoute = await tryResolveCollectionItemRoute(slug);
+  if (collectionRoute) {
+    return renderCollectionItemPage(
+      Promise.resolve({ collection: collectionRoute.collection, slug: collectionRoute.slug }),
+      collectionRoute.tenantSlug,
+      collectionRoute.linkPrefix,
+      collectionRoute.locale,
+    );
+  }
   const result = await resolvePageData(slug);
   if (!result) notFound();
 
