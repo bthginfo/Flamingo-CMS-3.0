@@ -54,7 +54,12 @@ export function InstagramFeedSection({ data }: Props) {
   useEffect(() => {
     setMounted(true);
     let cancelled = false;
-    fetch(`/api/instagram/feed?limit=${maxPosts}`)
+    // Shared-renderer mode uses path-prefix routing (e.g. /<tenant-slug>/...).
+    // Pass the first path segment so the API can resolve the tenant when the
+    // request doesn't come in on a tenant-specific custom domain.
+    const seg = typeof window !== 'undefined' ? window.location.pathname.split('/').filter(Boolean)[0] : '';
+    const slugParam = seg ? `&slug=${encodeURIComponent(seg)}` : '';
+    fetch(`/api/instagram/feed?limit=${maxPosts}${slugParam}`)
       .then(r => r.json())
       .then((d: { connected: boolean; username?: string; posts?: IgPost[] }) => {
         if (cancelled) return;
