@@ -26,13 +26,13 @@ function Classic({ header, introText, items, ctaPrimary }: Props) {
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-lg sm:p-8">
       <SectionHeader {...header} />
       {introText && <div className="max-w-3xl text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
+      <div className="mt-8 grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="border-t border-[var(--token-card-border)] pt-4" data-edit-collection="items" data-edit-index={index}>
-            <AlertCircle size={18} className="text-[var(--token-icon)]" />
-            <h3 className="mt-2 font-bold text-[var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
+          <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_76%,var(--token-section-bg-alt,#f8fafc))] p-5 shadow-sm" data-edit-collection="items" data-edit-index={index}>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-badge-bg)] text-[var(--token-icon)]"><AlertCircle size={18} /></div>
+            <h3 className="mt-4 font-bold text-[var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
-            {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-3 inline-flex font-semibold text-[var(--token-heading)]">{item.phoneLabel}</a>}
+            {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-4 inline-flex rounded-full bg-[var(--token-btn-bg)] px-4 py-2 text-sm font-semibold text-[var(--token-btn-text)]">{item.phoneLabel}</a>}
           </article>
         ))}
       </div>
@@ -46,13 +46,13 @@ function Modern({ header, introText, items, ctaPrimary }: Props) {
     <div className="border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 sm:p-8">
       <SectionHeader {...header} />
       {introText && <div className="max-w-3xl text-sm font-light leading-6 text-[var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
+      <div className="mt-8 grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="border-t border-[var(--token-card-border)] pt-4" data-edit-collection="items" data-edit-index={index}>
-            <AlertCircle size={18} className="text-[var(--token-icon)]" />
-            <h3 className="mt-2 font-light text-[var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
+          <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_76%,var(--token-section-bg-alt,#f8fafc))] p-5" data-edit-collection="items" data-edit-index={index}>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-badge-bg)] text-[var(--token-icon)]"><AlertCircle size={18} /></div>
+            <h3 className="mt-4 font-medium text-[var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm font-light leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
-            {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-3 inline-flex font-semibold text-[var(--token-accent)]">{item.phoneLabel}</a>}
+            {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-4 inline-flex rounded-full bg-[var(--token-btn-bg)] px-4 py-2 text-sm font-semibold text-[var(--token-btn-text)]">{item.phoneLabel}</a>}
           </article>
         ))}
       </div>
@@ -70,13 +70,13 @@ function Bold({ header, introText, items, ctaPrimary }: Props) {
         {header.subline && <div className="mt-4 text-[var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
       {introText && <div className="max-w-3xl text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
+      <div className="mt-8 grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="border-t border-[var(--token-card-border)] pt-4" data-edit-collection="items" data-edit-index={index}>
-            <AlertCircle size={18} className="text-[var(--token-icon)]" />
-            <h3 className="mt-2 font-black uppercase text-[var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
+          <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="rounded-2xl border-2 border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_76%,var(--token-section-bg-alt,#f8fafc))] p-5" data-edit-collection="items" data-edit-index={index}>
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--token-badge-bg)] text-[var(--token-icon)]"><AlertCircle size={18} /></div>
+            <h3 className="mt-4 font-black uppercase text-[var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
-            {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-3 inline-flex font-black uppercase text-[var(--token-accent)]">{item.phoneLabel}</a>}
+            {item.phoneLabel && <a href={item.phoneHref || '#'} className="mt-4 inline-flex bg-[var(--token-btn-bg)] px-4 py-2 text-sm font-black uppercase text-[var(--token-btn-text)]">{item.phoneLabel}</a>}
           </article>
         ))}
       </div>

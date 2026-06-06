@@ -105,12 +105,17 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
           <TextGenerateEffect words={headline} className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-[color:var(--token-on-dark-heading)] !leading-[1.02] break-words" duration={0.6} />
           {badgeText && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
-              className="inline-flex items-center gap-2.5 bg-[color-mix(in_srgb,var(--token-card-bg)_7%,transparent)] backdrop-blur-md border border-[color:color-mix(in_srgb,var(--token-card-border)_12%,transparent)] rounded-full px-5 py-2.5 text-sm text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_90%,transparent)] mt-6">
-              <DynamicIcon name={badgeIcon} size={15} className="text-[color:var(--token-eyebrow)]" />
+              className="inline-flex items-center gap-2.5 rounded-full border px-5 py-2.5 text-sm shadow-sm backdrop-blur-md mt-6"
+              style={{
+                background: 'var(--token-badge-bg, color-mix(in srgb, var(--token-on-dark-heading) 14%, transparent))',
+                borderColor: 'var(--token-badge-border, color-mix(in srgb, var(--token-on-dark-heading) 24%, transparent))',
+                color: 'var(--token-badge-text, var(--token-on-dark-heading))',
+              }}>
+              <DynamicIcon name={badgeIcon} size={15} className="text-[color:var(--token-icon,var(--token-badge-text))]" />
               <span className="font-medium" data-edit-path="badgeText">{badgeText}</span>
               {badgeStarsIcon && (
                 <div className="flex -space-x-0.5 ml-2">
-                  {[1,2,3,4,5].map(i => <DynamicIcon key={i} name={badgeStarsIcon} size={12} className="fill-[var(--token-eyebrow)] text-[color:var(--token-eyebrow)]" />)}
+                  {[1,2,3,4,5].map(i => <DynamicIcon key={i} name={badgeStarsIcon} size={12} className="fill-[var(--token-icon,var(--token-badge-text))] text-[color:var(--token-icon,var(--token-badge-text))]" />)}
                 </div>
               )}
             </motion.div>
@@ -121,7 +126,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
           )}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.0 }} className="flex flex-col items-center sm:items-start sm:flex-row gap-4">
             {primaryCta?.label && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="group relative inline-flex items-center overflow-hidden rounded-full bg-[var(--token-badge-bg)] px-8 py-4 font-semibold text-[color:var(--token-heading)] transition-all duration-300 hover:shadow-glow-accent hover:-translate-y-0.5 text-base sm:w-auto">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="group relative inline-flex items-center overflow-hidden rounded-full bg-[var(--token-btn-bg)] px-8 py-4 font-semibold text-[color:var(--token-btn-text)] transition-all duration-300 hover:shadow-glow-accent hover:-translate-y-0.5 text-base sm:w-auto">
                 <span className="relative z-10 flex items-center w-full justify-between gap-4 sm:justify-center sm:gap-2.5"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={18} className="transition-transform group-hover:translate-x-1" />}</span>
                 <div className="absolute inset-0 animate-shimmer bg-[linear-gradient(110deg,transparent,rgba(255,255,255,0.3),transparent)] bg-[length:200%_100%]" />
               </a>
@@ -226,7 +231,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
         <div className="max-w-5xl">
           {badgeText && (
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
-              className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8" data-edit-path="badgeText">
+              className="inline-block bg-[var(--token-badge-bg)] text-[var(--token-badge-text,var(--token-on-dark-heading))] font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8" data-edit-path="badgeText">
               {badgeText}
             </motion.div>
           )}
@@ -241,7 +246,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta?.label && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto bg-[var(--token-btn-bg,var(--token-badge-bg))] text-[var(--token-btn-text,var(--token-badge-text,var(--token-on-dark-heading)))] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
                 <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={18} />}
               </a>
             )}

@@ -44,7 +44,18 @@ export function FeatureShowcaseSection({ data }: Props) {
         style={{ y: imageY }}
         className={`relative overflow-hidden rounded-2xl aspect-[4/3] lg:aspect-auto lg:h-[500px] ${reversed ? 'lg:order-2 lg:direction-ltr' : ''}`}
       >
-        {image && <img data-edit-image="image" src={image} alt="" className="absolute inset-0 w-full h-full object-cover scale-110" />}
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--token-card-bg,#fff)_86%,var(--token-section-bg-alt,#f8fafc)),color-mix(in_srgb,var(--token-accent,#f59e0b)_12%,var(--token-card-bg,#fff)))]" />
+        {image && (
+          <img
+            data-edit-image="image"
+            src={image}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover scale-110"
+            onError={(event) => {
+              event.currentTarget.style.display = 'none';
+            }}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
       </motion.div>
 

@@ -27,7 +27,7 @@ export function CtaBandSection({ data, styleVariant }: Props) {
 
 type ColorOverrides = { bgColor?: string; textColor?: string; accentColor?: string };
 type CProps = { headline: string; subline: string; badgeText: string; cta?: { label: string; href: string; icon?: string }; colors?: ColorOverrides };
-const CTA_CARD_BG = 'linear-gradient(135deg, var(--token-section-bg, #ffffff), color-mix(in srgb, var(--token-accent, #f59e0b) 14%, var(--token-section-bg, #ffffff)))';
+const CTA_CARD_BG = 'linear-gradient(135deg, var(--token-card-bg, #ffffff) 0%, color-mix(in srgb, var(--token-accent, #f59e0b) 10%, var(--token-card-bg, #ffffff)) 100%)';
 const CTA_CARD_HEADING = 'var(--token-heading, var(--style-heading-color, #0f172a))';
 const CTA_CARD_BODY = 'var(--token-body, var(--style-body-color, #475569))';
 const CTA_CARD_BADGE_BG = 'var(--token-badge-bg, color-mix(in srgb, var(--token-card-bg, #ffffff) 84%, var(--token-accent, #f59e0b)))';
@@ -44,7 +44,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
   const wrapStyle: React.CSSProperties = {
     background: colors?.bgColor ?? CTA_CARD_BG,
     border: '1px solid var(--token-card-border, rgba(15,23,42,0.08))',
-    boxShadow: '0 24px 70px color-mix(in srgb, var(--token-heading, #0f172a) 10%, transparent)',
+    boxShadow: '0 24px 70px color-mix(in srgb, var(--token-heading, #0f172a) 12%, transparent), inset 0 1px 0 color-mix(in srgb, #fff 60%, transparent)',
   };
   if (colors?.textColor) wrapStyle.color = colors.textColor;
 
@@ -53,13 +53,10 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
       <motion.div
         style={{
           y: bgY,
-          background: 'radial-gradient(circle at 78% 22%, color-mix(in srgb, var(--token-accent, #f59e0b) 18%, transparent), transparent 42%), radial-gradient(circle at 14% 82%, color-mix(in srgb, var(--token-heading, #0f172a) 8%, transparent), transparent 46%)',
+          background: 'linear-gradient(135deg, transparent 0%, color-mix(in srgb, var(--token-accent, #f59e0b) 14%, transparent) 100%)',
         }}
         className="absolute inset-0 scale-110 opacity-80"
       />
-      <div className="absolute inset-0">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] animate-pulse-slow" style={{ backgroundColor: colors?.accentColor ? `${colors.accentColor}26` : 'color-mix(in srgb, var(--token-accent, #f59e0b) 16%, transparent)' }} />
-      </div>
       <div className="relative z-10 px-6 py-12 text-center sm:py-16 md:py-24 lg:py-32" style={{ color: CTA_CARD_HEADING }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
           className="mb-8 inline-flex items-center gap-2 rounded-full border px-5 py-2 text-sm backdrop-blur-sm" style={{ background: CTA_CARD_BADGE_BG, borderColor: CTA_CARD_BADGE_BORDER, color: CTA_CARD_BADGE_TEXT }}>

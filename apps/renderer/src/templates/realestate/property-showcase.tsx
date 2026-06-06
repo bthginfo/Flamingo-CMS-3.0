@@ -42,22 +42,31 @@ export function PropertyShowcaseSection({ data }: Props) {
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.1 }}
-              className="group bg-[var(--token-card-bg)] rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+              className="group overflow-hidden rounded-3xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_18px_50px_color-mix(in_srgb,var(--token-shadow)_8%,transparent)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_70px_color-mix(in_srgb,var(--token-shadow)_13%,transparent)]"
              data-edit-collection="properties" data-edit-index={i}>
               <div className="relative aspect-[4/3] overflow-hidden">
-                <Image data-edit-image="image" src={property.image} alt={property.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--token-card-bg,#fff)_84%,var(--token-section-bg-alt,#f8fafc)),color-mix(in_srgb,var(--token-accent,#f59e0b)_12%,var(--token-card-bg,#fff)))]" />
+                {property.image && (
+                  <Image data-edit-image="image" src={property.image} alt={property.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
+                )}
                 {property.badge && (
                   <span className="absolute left-4 top-4 rounded-full border border-[color:var(--token-badge-border,var(--token-card-border))] bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[var(--token-badge-text)] shadow-sm backdrop-blur" data-edit-path="badge">
                     {property.badge}
                   </span>
                 )}
               </div>
-              <div className="p-6">
+              <div className="p-6 md:p-7">
                 <h3 className="font-semibold text-[color:var(--token-heading)] text-lg group-hover:text-[color:var(--token-icon)] transition-colors" data-edit-path="title">{property.title}</h3>
                 <p className="text-sm text-[color:var(--token-muted)] mt-1" data-edit-path="location">{property.location}</p>
-                <div className="flex items-center gap-4 mt-4 pt-4 border-t border-[color:var(--token-card-border)]">
-                  <span className="text-sm text-[color:var(--token-muted)]"><strong>{property.rooms}</strong> Zimmer</span>
-                  <span className="text-sm text-[color:var(--token-muted)]"><strong>{property.size}</strong></span>
+                <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl border border-[color:var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-card-bg,#fff)_82%,var(--token-section-bg,#fff))] p-3 shadow-inner">
+                  <span className="rounded-xl px-3 py-2">
+                    <strong className="block text-lg leading-none text-[color:var(--token-heading)]">{property.rooms}</strong>
+                    <span className="mt-1 block text-xs font-medium text-[color:var(--token-muted)]">Zimmer</span>
+                  </span>
+                  <span className="rounded-xl px-3 py-2">
+                    <strong className="block text-lg leading-none text-[color:var(--token-heading)]">{property.size}</strong>
+                    <span className="mt-1 block text-xs font-medium text-[color:var(--token-muted)]">Wohnfläche</span>
+                  </span>
                 </div>
                 <p className="text-xl font-bold text-[color:var(--token-stat-value,var(--token-icon))] mt-3" data-edit-path="price">{property.price}</p>
               </div>

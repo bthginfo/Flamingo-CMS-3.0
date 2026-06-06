@@ -53,14 +53,14 @@ export function AgentTeamSection({ data }: Props) {
                 {agent.soldCount && (
                   <p className="text-xs text-[color:var(--token-body)] mt-2">{agent.soldCount} vermittelte Objekte</p>
                 )}
-                <div className="flex gap-3 mt-4 pt-4 border-t border-[color:var(--token-card-border)]">
+                <div className="mt-5 flex flex-wrap gap-2 rounded-2xl border border-[color:var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_58%,var(--token-card-bg,#fff))] p-2">
                   {agent.phone && (
-                    <a href={`tel:${agent.phone}`} className="flex items-center gap-1.5 text-xs text-[color:var(--token-muted)] hover:text-[color:var(--token-icon)] transition-colors">
+                    <a href={`tel:${agent.phone}`} className="flex min-w-0 items-center gap-1.5 rounded-xl px-2 py-1.5 text-xs font-medium text-[color:var(--token-body)] hover:text-[color:var(--token-icon)] transition-colors">
                       <Phone size={14} /><span data-edit-path="phone">{agent.phone}</span>
                     </a>
                   )}
                   {agent.email && (
-                    <a href={`mailto:${agent.email}`} className="flex items-center gap-1.5 text-xs text-[color:var(--token-muted)] hover:text-[color:var(--token-icon)] transition-colors">
+                    <a href={`mailto:${agent.email}`} className="flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-xs font-medium text-[color:var(--token-body)] hover:text-[color:var(--token-icon)] transition-colors">
                       <Mail size={14} />E-Mail
                     </a>
                   )}

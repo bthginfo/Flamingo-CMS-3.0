@@ -77,11 +77,11 @@ export function PortfolioSection({ data }: Props) {
                   <div className="rt-content mt-3 text-sm leading-relaxed text-[var(--token-body)]" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: project.description }} />
                 )}
                 {project.stats && project.stats.length > 0 && (
-                  <div className="mt-5 grid grid-cols-2 gap-3">
+                  <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_58%,var(--token-card-bg,#fff))] p-3">
                     {project.stats.map((stat, j) => (
-                      <div key={j} className="rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_72%,var(--token-card-bg,#fff))] px-4 py-3" data-edit-collection="stats" data-edit-index={j}>
-                        <div className="text-base font-extrabold leading-none text-[var(--token-icon)]" data-edit-path="value">{stat.value}</div>
-                        <div className="mt-1 text-[11px] font-medium leading-tight text-[var(--token-muted)]" data-edit-path="label">{stat.label}</div>
+                      <div key={j} className="min-w-0 rounded-xl px-3 py-2" data-edit-collection="stats" data-edit-index={j}>
+                        <div className="text-lg font-extrabold leading-none text-[var(--token-heading)]" data-edit-path="value">{stat.value}</div>
+                        <div className="mt-1 text-xs font-medium leading-tight text-[var(--token-muted)]" data-edit-path="label">{stat.label}</div>
                       </div>
                     ))}
                   </div>

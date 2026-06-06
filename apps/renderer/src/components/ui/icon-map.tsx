@@ -17,6 +17,10 @@ const LEGACY_ALIASES: Record<string, string> = {
   Send: 'SendHorizonal', Zap: 'Zap', ZapOff: 'ZapOff',
   Palmtree: 'TreePalm', Flower: 'Flower2',
   Clipboard: 'ClipboardList', ClipboardCheck: 'ClipboardCheck',
+  Towel: 'Bath', Towels: 'Bath', Spa: 'Sparkles', Wellness: 'Sparkles',
+  WineGlass: 'Wine', GlassWine: 'Wine', WineBottle: 'Wine',
+  Train: 'TrainFront', TrainIcon: 'TrainFront',
+  Places: 'Armchair', Seats: 'Armchair', Room: 'House', Rooms: 'House',
 };
 
 /** Convert kebab-case or lowercase to PascalCase for lucide-react lookup */
@@ -92,7 +96,10 @@ export function DynamicIcon({
 }) {
   const Icon = resolveIcon(name);
   const editAttr = editPath ? ({ 'data-edit-icon': editPath } as Record<string, string>) : null;
-  if (!Icon) return <span className={className} {...(editAttr ?? {})}>{name || ''}</span>;
+  if (!Icon) {
+    const FallbackIcon = (icons as Record<string, LucideIcon>).Sparkles;
+    return <FallbackIcon size={size} className={className} {...(editAttr ?? {})} />;
+  }
   return <Icon size={size} className={className} {...(editAttr ?? {})} />;
 }
 
