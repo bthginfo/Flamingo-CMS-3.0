@@ -1,5 +1,5 @@
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
-import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle, getTenantSeoGlobal, getTenantSeoItem } from '@/lib/tenant-data';
+import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle, getTenantSeoGlobal, getTenantSeoItem, getTenantI18n } from '@/lib/tenant-data';
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { getDesignCssVars } from '@/lib/design-vars';
@@ -87,13 +87,21 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
   }
   if (!tenantId) notFound();
 
-  const [snapshot, navData, footerData, { brand, contact, socialLinks, design }, tenantStyle] = await Promise.all([
+  const [snapshot, navData, footerData, { brand, contact, socialLinks, design }, tenantStyle, i18n] = await Promise.all([
     getActiveSnapshot(tenantId),
     getTenantNav(tenantId),
     getTenantFooter(tenantId),
     getTenantBrand(tenantId),
     getTenantStyle(tenantId),
+    getTenantI18n(tenantId),
   ]);
+
+  // Until collection items get proper /[locale]/c/... routing, render with
+  // the tenant's default locale. This at minimum unpacks `_localized` section
+  // data and item titles/excerpts correctly instead of leaking the raw locale
+  // object structure into templates.
+  const activeLocale = i18n.enabled ? i18n.defaultLocale : undefined;
+  const defaultLocale = i18n.enabled ? i18n.defaultLocale : undefined;
 
   if (!snapshot?.collections) notFound();
 
@@ -142,7 +150,7 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
       {importantOverrides.length > 0 && <style dangerouslySetInnerHTML={{ __html: importantOverrides.join('\n') }} />}
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} linkPrefix={linkPrefix} />
       <main>
-        <CollectionDetail item={item} collection={col} collections={snapshot.collections} backHrefPrefix={linkPrefix} linkPrefix={linkPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} />
+        <CollectionDetail item={item} collection={col} collections={snapshot.collections} backHrefPrefix={linkPrefix} linkPrefix={linkPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={activeLocale} defaultLocale={defaultLocale} />
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} />
       {contact.whatsappEnabled && contact.whatsapp && <WhatsAppFab phone={contact.whatsapp} color={contact.whatsappColor} />}
