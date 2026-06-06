@@ -1032,3 +1032,45 @@ export const emailTemplates = pgTable('email_templates', {
 }, (t) => [
   uniqueIndex('email_templates_tenant_trigger_idx').on(t.tenantId, t.trigger),
 ]);
+
+// ─── Instagram Integration ─────────────────────────────────────────────────
+// One connection per tenant (unique). Long-lived access token (60 days)
+// stored encrypted; auto-refreshed by cron when within 30 days of expiry.
+export const instagramConnections = pgTable('instagram_connections', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  igUserId: varchar('ig_user_id', { length: 64 }).notNull(),
+  igUsername: varchar('ig_username', { length: 64 }).notNull(),
+  igAccountType: varchar('ig_account_type', { length: 20 }).notNull().default('BUSINESS'),
+  accessTokenEncrypted: text('access_token_encrypted').notNull(),
+  tokenExpiresAt: timestamp('token_expires_at', { withTimezone: true }).notNull(),
+  lastSyncedAt: timestamp('last_synced_at', { withTimezone: true }),
+  lastRefreshedAt: timestamp('last_refreshed_at', { withTimezone: true }).notNull().defaultNow(),
+  syncStatus: varchar('sync_status', { length: 20 }).notNull().default('ok'),
+  syncError: text('sync_error'),
+  scopes: varchar('scopes', { length: 255 }).notNull().default('instagram_business_basic'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('instagram_connections_tenant_idx').on(t.tenantId),
+  index('instagram_connections_ig_user_idx').on(t.igUserId),
+]);
+
+export const instagramPosts = pgTable('instagram_posts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  connectionId: uuid('connection_id').notNull().references(() => instagramConnections.id, { onDelete: 'cascade' }),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  igMediaId: varchar('ig_media_id', { length: 64 }).notNull(),
+  mediaType: varchar('media_type', { length: 32 }).notNull(),
+  mediaUrl: text('media_url').notNull(),
+  thumbnailUrl: text('thumbnail_url'),
+  permalink: text('permalink').notNull(),
+  caption: text('caption'),
+  timestamp: timestamp('timestamp', { withTimezone: true }).notNull(),
+  position: integer('position').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('instagram_posts_connection_media_idx').on(t.connectionId, t.igMediaId),
+  index('instagram_posts_tenant_idx').on(t.tenantId),
+  index('instagram_posts_position_idx').on(t.tenantId, t.position),
+]);

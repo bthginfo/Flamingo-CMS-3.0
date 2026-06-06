@@ -374,5 +374,16 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "headline": "Jetzt passenden Termin sichern",
     "subline": "Senden Sie eine Anfrage oder buchen Sie direkt, je nachdem wie diese Website eingerichtet ist.",
     "submitLabel": ""
+  },
+  "instagramFeed": {
+    "badgeText": "Instagram",
+    "headline": "Folge uns auf Instagram",
+    "subline": "Aktuelle Eindrücke direkt aus unserem Account",
+    "layout": "grid",
+    "columns": 3,
+    "maxPosts": 9,
+    "showCaptions": true,
+    "showProfileLink": true,
+    "ctaLabel": "Auf Instagram folgen"
   }
 };

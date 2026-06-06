@@ -58,6 +58,7 @@ import { TemplateAdvantageSection } from './shared/template-advantage';
 import { PrinciplesGridSection } from './shared/principles-grid';
 import { GlowHeroSection } from './shared/glow-hero';
 import { CollectionListSection } from './shared/collection-list';
+import { InstagramFeedSection } from './shared/instagram-feed';
 import { ShopProductGridSection } from './shared/shop-product-grid';
 import { ShopProductDetailSection } from './shared/shop-product-detail';
 import { ShopCartSection } from './shared/shop-cart';
@@ -703,7 +704,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   featureShowcase: FeatureShowcaseSection,
   logoMarquee: LogoMarqueeSection,
   collectionList: CollectionListSection,
-  shopProductGrid: ShopProductGridSection,
+  instagramFeed: InstagramFeedSection,
   shopProductDetail: ShopProductDetailSection,
   shopCart: ShopCartSection,
   shopCheckout: ShopCheckoutSection,

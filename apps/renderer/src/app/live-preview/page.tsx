@@ -58,7 +58,15 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
   const cssVars = { ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides };
 
   return (
-    <LivePreviewClient
+    <>
+      {/* Expose the active tenant ID to client sections (e.g. InstagramFeed)
+          that need to call session-gated APIs from inside the live preview. */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `window.__FLAMINGO_TENANT_ID__=${JSON.stringify(tenantId)};`,
+        }}
+      />
+      <LivePreviewClient
       initialData={{
         industry: tenantStyle.industry,
         styleVariant: tenantStyle.activeStyle,
@@ -73,6 +81,7 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
         sections: initialSections,
       }}
     />
+    </>
   );
   } catch (err) {
     console.error('[live-preview] Error loading tenant data:', err);
