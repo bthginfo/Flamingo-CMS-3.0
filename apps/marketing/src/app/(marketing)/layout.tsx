@@ -326,6 +326,8 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                   <li><MarketingAnchor href="/impressum" className="hover:text-accent">Impressum</MarketingAnchor></li>
                   <li><MarketingAnchor href="/datenschutz" className="hover:text-accent">Datenschutz</MarketingAnchor></li>
                   <li><MarketingAnchor href="/agb" className="hover:text-accent">AGB</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/nutzungsbedingungen" className="hover:text-accent">Nutzungsbedingungen</MarketingAnchor></li>
+                  <li><MarketingAnchor href="/datenloeschung" className="hover:text-accent">Datenlöschung</MarketingAnchor></li>
                 </ul>
               </div>
             </div>
