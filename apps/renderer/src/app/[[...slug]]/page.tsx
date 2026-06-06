@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
   const result = await resolvePageData(slug);
   if (!result) return {};
 
-  const { tenantId, page } = result;
+  const { tenantId, page, i18n } = result;
   const [seoGlobal, seoPage, { brand }] = await Promise.all([
     getTenantSeoGlobal(tenantId),
     getTenantSeoPage(tenantId, page.id),
@@ -83,6 +83,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
   const description = seoPage?.metaDescription || seoGlobal?.defaultDescription || undefined;
   const ogImage = seoPage?.ogImage || seoGlobal?.defaultOgImage || undefined;
   const canonical = seoPage?.canonical || (seoGlobal?.canonicalBase ? `${seoGlobal.canonicalBase}/${page.slug}` : undefined);
+
+  // Build hreflang `alternates.languages` map when i18n is enabled so search
+  // engines understand which URL serves which language and don't penalise us
+  // for duplicate content across locale variants.
+  let languageAlternates: Record<string, string> | undefined;
+  if (i18n?.enabled && i18n.locales.length > 0 && seoGlobal?.canonicalBase) {
+    const base = seoGlobal.canonicalBase.replace(/\/$/, '');
+    const isHome = page.slug === '' || page.slug === 'home' || page.slug === 'startseite';
+    const slugForUrl = isHome ? '' : page.slug;
+    languageAlternates = {};
+    for (const loc of i18n.locales) {
+      const prefix = loc !== i18n.defaultLocale ? `/${loc}` : '';
+      languageAlternates[loc] = `${base}${prefix}${slugForUrl ? `/${slugForUrl}` : ''}` || base;
+    }
+    languageAlternates['x-default'] = `${base}${slugForUrl ? `/${slugForUrl}` : ''}` || base;
+  }
 
   return {
     title,
@@ -107,7 +123,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
       description,
       ...(ogImage && { images: [ogImage] }),
     },
-    ...(canonical && { alternates: { canonical } }),
+    ...((canonical || languageAlternates) && {
+      alternates: {
+        ...(canonical && { canonical }),
+        ...(languageAlternates && { languages: languageAlternates }),
+      },
+    }),
     robots: seoPage?.noindex ? 'noindex,nofollow' : (seoGlobal?.robots || 'index,follow'),
   };
 }
@@ -280,7 +301,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} i18n={i18n ? { locales: i18n.locales, currentLocale: locale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} linkPrefix={linkPrefix} />
       <main>
         {visibleSections.map((section) => (
-          <SectionRenderer key={section.id} section={(section.type.startsWith('shop') || sectionsNeedingTenantId.has(section.type)) ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={locale} linkPrefix={linkPrefix} />
+          <SectionRenderer key={section.id} section={(section.type.startsWith('shop') || sectionsNeedingTenantId.has(section.type)) ? { ...section, data: { ...section.data, tenantId } } : section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={locale} defaultLocale={i18n?.defaultLocale} linkPrefix={linkPrefix} />
         ))}
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} />

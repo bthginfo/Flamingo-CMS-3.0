@@ -97,9 +97,23 @@ export const PUT = withApiHandler(async (req, auth) => {
 
   const db = getDb();
 
-  // Get tenant's default locale
-  const [tenant] = await db.select({ defaultLocale: tenants.i18nDefaultLocale }).from(tenants).where(eq(tenants.id, auth.tenantId)).limit(1);
+  // Get tenant's i18n config to validate incoming locale claims against the
+  // configured allow-list. Without this an authenticated agent could pollute
+  // JSONB with arbitrary keys (e.g. "<script>") that later end up in section
+  // data and confuse the locale resolver.
+  const [tenant] = await db.select({
+    defaultLocale: tenants.i18nDefaultLocale,
+    locales: tenants.i18nLocales,
+  }).from(tenants).where(eq(tenants.id, auth.tenantId)).limit(1);
   const defaultLocale = tenant?.defaultLocale || 'de';
+  const allowedLocales = new Set(
+    (tenant?.locales || defaultLocale).split(',').map(s => s.trim()).filter(Boolean)
+  );
+  allowedLocales.add(defaultLocale);
+
+  function isValidLocale(loc: unknown): loc is string {
+    return typeof loc === 'string' && /^[a-z]{2}(-[A-Z]{2})?$/.test(loc) && allowedLocales.has(loc);
+  }
 
   let updated = 0;
   const errors: string[] = [];
@@ -109,6 +123,10 @@ export const PUT = withApiHandler(async (req, auth) => {
     for (const entry of sections) {
       if (!entry.id || !entry.locale || !entry.data) {
         errors.push(`Invalid section entry: id, locale, and data are required`);
+        continue;
+      }
+      if (!isValidLocale(entry.locale)) {
+        errors.push(`Section ${entry.id}: locale "${entry.locale}" is not enabled for this tenant`);
         continue;
       }
 
@@ -142,6 +160,10 @@ export const PUT = withApiHandler(async (req, auth) => {
     for (const entry of items) {
       if (!entry.id || !entry.locale) {
         errors.push(`Invalid item entry: id and locale are required`);
+        continue;
+      }
+      if (!isValidLocale(entry.locale)) {
+        errors.push(`Item ${entry.id}: locale "${entry.locale}" is not enabled for this tenant`);
         continue;
       }
 
