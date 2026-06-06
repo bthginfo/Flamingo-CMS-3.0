@@ -48,6 +48,30 @@ function resolveIcon(name: string): LucideIcon | null {
 }
 
 /**
+ * Resolves any icon name (PascalCase, kebab-case, legacy alias) to the
+ * canonical lucide-react PascalCase name. Returns the input unchanged if
+ * the icon cannot be resolved. Useful for normalizing user-entered or
+ * legacy-data icon names before saving them back to the CMS.
+ */
+export function canonicalIconName(name: string): string {
+  if (!name) return '';
+  const iconMap = icons as Record<string, LucideIcon>;
+  if (iconMap[name]) return name;
+  const pascal = toPascalCase(name);
+  if (iconMap[pascal]) return pascal;
+  const parts = name.split(/[-_\s]+/);
+  if (parts.length === 2) {
+    const reversed = parts[1].charAt(0).toUpperCase() + parts[1].slice(1) + parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+    if (iconMap[reversed]) return reversed;
+  }
+  const alias = LEGACY_ALIASES[name] || LEGACY_ALIASES[pascal];
+  if (alias && iconMap[alias]) return alias;
+  return name;
+}
+
+export { resolveIcon };
+
+/**
  * DynamicIcon — looks up a lucide icon by name and renders it.
  * If `editPath` is provided, a `data-edit-icon="<path>"` attribute is set
  * on the SVG so the live-preview overlay can attach a pencil icon and
