@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { baseHeader, IconRows, SectionHeader, asList } from './shared';
 import type { SectionProps } from './types';
+import { DynamicIcon } from '@/components/ui/icon-map';
 
 type InfoCard = { icon?: string; title?: string; text?: string; items?: string[] };
 
@@ -21,16 +22,24 @@ type Props = { header: { headline: string; subline: string; badgeText: string };
 
 function Classic({ header, introText, cards }: Props) {
   return (
-    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-      <div>
+    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="grid gap-12 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+      <div className="lg:sticky lg:top-28">
         <SectionHeader {...header} />
-        {introText && <div className="text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="-mt-3 max-w-xl text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       </div>
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         {cards.map((card, index) => (
-          <article key={`$<span data-edit-path="title">{card.title}</span>-${index}`} className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg" data-edit-collection="cards" data-edit-index={index}>
-            <IconRows items={[card]} />
-            <div className="mt-4 flex flex-wrap gap-2">{asList<string>(card.items).map((item) => <span key={item} className="rounded-full bg-teal-50 px-3 py-1 text-xs text-teal-800">{item}</span>)}</div>
+          <article key={`${card.title}-${index}`} className="group rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-xl" data-edit-collection="cards" data-edit-index={index}>
+            <div className="flex items-start gap-4">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--token-icon)_13%,transparent)] text-[var(--token-icon)]">
+                <DynamicIcon editPath="icon" name={card.icon || 'stethoscope'} size={20} />
+              </span>
+              <div className="min-w-0">
+                <h3 className="text-base font-bold text-[var(--token-heading)]" data-edit-path="title">{card.title || ''}</h3>
+                {card.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: card.text }} />}
+              </div>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">{asList<string>(card.items).map((item) => <span key={item} className="rounded-full bg-[color-mix(in_srgb,var(--token-icon)_10%,transparent)] px-3 py-1 text-xs font-medium text-[var(--token-heading)]">{item}</span>)}</div>
           </article>
         ))}
       </div>

@@ -659,7 +659,7 @@ function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasB
       'For every image hero or dark/overlay section, set overlayColor/overlayOpacity and section.styleOverrides for --token-heading, --token-body, --token-muted, --token-on-dark-heading, --token-on-dark-body, --token-on-dark-muted.',
       'If overriding --token-btn-bg, always set --token-btn-text in the same styleOverrides.',
       'If overriding --token-badge-bg, always set --token-badge-text.',
-      'If cards sit on a dark section, set --token-card-bg, --token-card-border and readable text tokens.',
+      'If cards sit on a dark section, set --token-card-bg, --token-card-border and readable text tokens. Do NOT use rgba(255,255,255,0.05-0.2) with white heading/body tokens; use a solid dark card bg (for example #0A2A33) with white text, or a solid light card bg with dark text.',
       'Do not use white text on pale backgrounds or dark text on dark imagery. Validate contrast before publishing.',
       'Use sectionStyleContracts[type].colorSlots to know which visual parts a section supports.',
     ],
@@ -705,7 +705,7 @@ function getRecommendedMinimumStyle(colorSlots: string[]) {
   const slots = new Set(colorSlots);
   const style: Record<string, string> = {};
   if (slots.has('sectionBg')) style['--token-section-bg'] = 'background color';
-  if (slots.has('cardBg')) style['--token-card-bg'] = 'card background color';
+  if (slots.has('cardBg')) style['--token-card-bg'] = 'card background color; on dark sections prefer a solid dark card bg with light text or a solid light card bg with dark text, not translucent white with white text';
   if (slots.has('headingColor')) style['--token-heading'] = 'readable heading color';
   if (slots.has('bodyColor')) style['--token-body'] = 'readable body text color';
   if (slots.has('mutedColor')) style['--token-muted'] = 'dezenter text color';
