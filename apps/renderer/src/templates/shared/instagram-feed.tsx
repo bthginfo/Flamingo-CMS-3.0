@@ -37,22 +37,22 @@ export function InstagramFeedSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
-  const layout = (data.layout as 'grid' | 'masonry') || 'grid';
   const columns = (data.columns as number) || 3;
   const maxPosts = Math.min(Math.max((data.maxPosts as number) || 9, 3), 24);
   const showCaptions = data.showCaptions !== false;
   const showProfileLink = data.showProfileLink !== false;
   const ctaLabel = (data.ctaLabel as string) || 'Auf Instagram folgen';
-  // Preview data (editor live preview) — used when the renderer is rendered
-  // inside the editor before any real posts exist.
-  const previewPosts = (data.posts as IgPost[] | undefined) || [];
 
-  const [posts, setPosts] = useState<IgPost[]>(previewPosts);
-  const [username, setUsername] = useState<string>((data.username as string) || '');
-  const [loading, setLoading] = useState(previewPosts.length === 0);
-  const [connected, setConnected] = useState<boolean>(previewPosts.length > 0);
+  // IMPORTANT: SSR + first client render MUST be identical (skeleton state).
+  // Anything dynamic (real posts, fetched username, hide-when-not-connected)
+  // only happens AFTER mount to avoid React hydration error #418.
+  const [mounted, setMounted] = useState(false);
+  const [posts, setPosts] = useState<IgPost[]>([]);
+  const [username, setUsername] = useState<string>('');
+  const [connected, setConnected] = useState<boolean | null>(null);
 
   useEffect(() => {
+    setMounted(true);
     let cancelled = false;
     fetch(`/api/instagram/feed?limit=${maxPosts}`)
       .then(r => r.json())
@@ -62,18 +62,21 @@ export function InstagramFeedSection({ data }: Props) {
         setUsername(d.username || '');
         setPosts(d.posts || []);
       })
-      .catch(() => { /* swallow — show empty state */ })
-      .finally(() => { if (!cancelled) setLoading(false); });
+      .catch(() => { if (!cancelled) setConnected(false); });
     return () => { cancelled = true; };
   }, [maxPosts]);
 
-  if (!loading && !connected && posts.length === 0) {
-    // Render nothing on the public site if not connected — prevents broken UI.
-    return null;
-  }
+  // After mount + fetch: if no account is connected (or no posts at all),
+  // render nothing on the live site so there's no broken UI.
+  if (mounted && connected === false) return null;
+  if (mounted && connected === true && posts.length === 0) return null;
 
   const colClass = COLUMN_CLASSES[columns] || COLUMN_CLASSES[3];
   const profileUrl = username ? `https://instagram.com/${username.replace(/^@/, '')}` : '';
+  const showSkeleton = !mounted || posts.length === 0;
+  const tiles: Array<IgPost | null> = showSkeleton
+    ? Array.from({ length: maxPosts }, () => null)
+    : posts.slice(0, maxPosts);
 
   return (
     <div className="space-y-8">
@@ -96,17 +99,25 @@ export function InstagramFeedSection({ data }: Props) {
         </div>
       )}
 
-      <div className={`grid gap-3 ${colClass} ${layout === 'masonry' ? 'auto-rows-[200px]' : ''}`}>
-        {posts.slice(0, maxPosts).map((p, idx) => {
-          const tall = layout === 'masonry' && idx % 5 === 0;
+      <div className={`grid gap-3 ${colClass}`}>
+        {tiles.map((p, idx) => {
+          if (!p) {
+            return (
+              <div
+                key={`skeleton-${idx}`}
+                className="rounded-xl bg-zinc-100 animate-pulse"
+                style={{ aspectRatio: '1 / 1' }}
+              />
+            );
+          }
           return (
             <a
               key={p.id}
               href={p.permalink}
               target="_blank"
               rel="noreferrer noopener"
-              className={`group relative overflow-hidden rounded-xl bg-zinc-100 ${tall ? 'row-span-2' : ''}`}
-              style={{ aspectRatio: layout === 'masonry' && !tall ? undefined : '1 / 1' }}
+              className="group relative overflow-hidden rounded-xl bg-zinc-100"
+              style={{ aspectRatio: '1 / 1' }}
               title={trimCaption(p.caption, 120)}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
