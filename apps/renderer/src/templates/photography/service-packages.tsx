@@ -7,6 +7,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 
 type Package = {
   name: string;
+  title?: string;
   price?: string;
   priceNote?: string;
   description?: string;
@@ -14,13 +15,19 @@ type Package = {
   highlighted?: boolean;
   ctaLabel?: string;
   ctaHref?: string;
+  cta?: { label?: string; href?: string };
 };
 
 export function ServicePackagesSection({ data, styleVariant }: Props) {
   const badge = (data.badge as string) || 'Pakete';
   const headline = (data.headline as string) || 'Leistungen & Pakete';
   const subline = (data.subline as string) || '';
-  const packages = (data.packages as Package[]) || [];
+  const packages = ((data.packages as Package[]) || []).map((pkg) => ({
+    ...pkg,
+    name: pkg.name || pkg.title || '',
+    ctaLabel: pkg.ctaLabel || pkg.cta?.label || '',
+    ctaHref: pkg.ctaHref || pkg.cta?.href || '',
+  }));
   const note = (data.note as string) || '';
   const isBold = styleVariant === 'bold';
   const isModern = styleVariant === 'modern';

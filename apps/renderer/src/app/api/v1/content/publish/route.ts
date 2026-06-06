@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
         const sections = data.sections as Array<{ type: string; data: Record<string, unknown> }> | undefined;
         if (!sections) return true;
         const hero = sections.find(s => s.type === 'hero' || s.type === 'collectionHero');
-        return !hero?.data?.backgroundImage && !hero?.data?.image;
+        return !hero?.data?.backgroundImage && !hero?.data?.bgImage && !hero?.data?.image;
       });
       if (withoutImage.length > 0) {
         warnings.push(`Collection "${col.label}" (${col.key}): ${withoutImage.length}/${items.length} published items have no image (set backgroundImage in hero section)`);

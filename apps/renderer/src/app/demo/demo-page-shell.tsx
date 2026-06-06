@@ -27,6 +27,7 @@ export function DemoPageShell({ sections, industry, industryKey, defaultStyle: _
   const styleCssVars = getStyleCssVars(industry, style);
   const { navItems, cta, brand, contact, socialLinks, footer } = siteData;
   const brandCssVars = getBrandCssVars(brand);
+  const linkPrefix = `/demo/${industryKey}`;
 
   // Auto-detect: if first section is a hero with bgImage, nav should be light on dark
   const resolvedDarkBg = darkBg ?? (() => {
@@ -42,7 +43,7 @@ export function DemoPageShell({ sections, industry, industryKey, defaultStyle: _
       <SiteHeader navItems={navItems} brand={brand} contact={contact} darkBg={resolvedDarkBg} cta={cta} homeHref={`/demo/${industryKey}`} showTopBar={false} forceDarkNav={resolvedDarkBg} />
       <main>
         {sections.map((section) => (
-          <SectionRenderer key={section.id} section={section} styleVariant={style} industry={industry} />
+          <SectionRenderer key={section.id} section={section} styleVariant={style} industry={industry} linkPrefix={linkPrefix} />
         ))}
         {children}
       </main>
