@@ -96,13 +96,14 @@ export async function GET(req: NextRequest) {
       connectionId = inserted.id;
     }
 
-    // Fire-and-forget initial sync — but await so the user sees posts immediately.
-    await syncConnection(connectionId).catch(() => {
-      /* sync errors are recorded on the connection row */
-    });
+    // Run an initial sync immediately so the user sees real posts as soon as
+    // they land back in the editor. Errors are recorded on the connection row.
+    const syncResult = await syncConnection(connectionId).catch(() => null);
+    const importedCount = syncResult && 'ok' in syncResult && syncResult.ok ? syncResult.count : 0;
 
     return redirectBack(returnTo, {
       igConnected: '1',
+      igImported: String(importedCount),
       openSection: state.sectionId,
     }, req);
   } catch (err) {

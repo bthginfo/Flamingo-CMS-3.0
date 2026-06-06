@@ -30,9 +30,19 @@ export function InstagramConnectPanel({
   // Surface any redirect-flash from the OAuth callback (igConnected=1 etc.)
   useEffect(() => {
     const connected = searchParams.get('igConnected');
+    const imported = searchParams.get('igImported');
     const igError = searchParams.get('igError');
-    if (connected === '1') setMessage({ kind: 'ok', text: 'Instagram erfolgreich verbunden. Beiträge werden synchronisiert.' });
-    else if (connected === '0' && igError) setMessage({ kind: 'err', text: `Verbindung fehlgeschlagen: ${igError}` });
+    if (connected === '1') {
+      const count = Number(imported || '0');
+      setMessage({
+        kind: 'ok',
+        text: count > 0
+          ? `Instagram erfolgreich verbunden. ${count} Beiträge importiert.`
+          : 'Instagram erfolgreich verbunden. Beiträge werden synchronisiert.',
+      });
+    } else if (connected === '0' && igError) {
+      setMessage({ kind: 'err', text: `Verbindung fehlgeschlagen: ${igError}` });
+    }
   }, [searchParams]);
 
   const reload = () => {

@@ -54,12 +54,20 @@ export function InstagramFeedSection({ data }: Props) {
   useEffect(() => {
     setMounted(true);
     let cancelled = false;
-    // Shared-renderer mode uses path-prefix routing (e.g. /<tenant-slug>/...).
-    // Pass the first path segment so the API can resolve the tenant when the
-    // request doesn't come in on a tenant-specific custom domain.
-    const seg = typeof window !== 'undefined' ? window.location.pathname.split('/').filter(Boolean)[0] : '';
-    const slugParam = seg ? `&slug=${encodeURIComponent(seg)}` : '';
-    fetch(`/api/instagram/feed?limit=${maxPosts}${slugParam}`)
+    // Build the feed URL with the right tenant signal:
+    //   • Live preview (admin) injects window.__FLAMINGO_TENANT_ID__ so we can
+    //     ask for the session-gated tenantId variant.
+    //   • Public shared-renderer pages use the first path segment as slug.
+    //   • Custom-domain tenants need no hint (host header is enough).
+    const injectedTenantId = typeof window !== 'undefined' ? (window as unknown as { __FLAMINGO_TENANT_ID__?: string }).__FLAMINGO_TENANT_ID__ : '';
+    let qs = `limit=${maxPosts}`;
+    if (injectedTenantId) {
+      qs += `&tenantId=${encodeURIComponent(injectedTenantId)}`;
+    } else if (typeof window !== 'undefined') {
+      const seg = window.location.pathname.split('/').filter(Boolean)[0];
+      if (seg) qs += `&slug=${encodeURIComponent(seg)}`;
+    }
+    fetch(`/api/instagram/feed?${qs}`)
       .then(r => r.json())
       .then((d: { connected: boolean; username?: string; posts?: IgPost[] }) => {
         if (cancelled) return;
