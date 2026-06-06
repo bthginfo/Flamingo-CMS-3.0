@@ -79,7 +79,7 @@ const img = {
 const colors = {
   ink: '#151A1E',
   body: '#5E6468',
-  muted: '#7A8185',
+  muted: '#5F676C',
   cream: '#F7F4ED',
   alt: '#ECE5D8',
   card: '#FFFDF8',
@@ -120,7 +120,7 @@ const alt = { ...light, sectionBg: colors.alt, cardBg: '#FFFCF5' };
 const dark = {
   sectionBg: colors.slate,
   sectionBgAlt: colors.slate,
-  cardBg: 'rgba(255,248,234,0.11)',
+  cardBg: colors.slateSoft,
   cardBorder: 'rgba(255,248,234,0.24)',
   borderColor: 'rgba(255,248,234,0.22)',
   heading: colors.onDark,
@@ -145,7 +145,7 @@ const dark = {
   heroHeading: colors.onDark,
   heroBody: colors.onDarkBody,
 };
-const heroStyle = { ...dark, '--token-hero-content-y': '46%' };
+const heroStyle = { ...dark };
 
 const phone = '+49 89 215 47 30';
 const email = 'kontakt@bergmann-partner.de';
@@ -456,16 +456,30 @@ async function ensureCollection(key, label, collections) {
 
 async function replaceCollectionItems(key, label, items, makeSections, collections) {
   const collection = await ensureCollection(key, label, collections);
-  for (const item of collection.items || []) await api('DELETE', `/api/v1/content/collections/${key}/items/${item.id}`);
+  const existingBySlug = new Map((collection.items || []).map((item) => [item.slug, item]));
   for (const [index, item] of items.entries()) {
-    await api('POST', `/api/v1/content/collections/${key}/items`, {
+    const payload = {
       title: item.title,
       slug: item.slug,
       excerpt: item.excerpt,
       published: true,
       priority: index,
-      data: { image: item.image, category: item.category, author: 'Bergmann & Partner', date: '2026-06-04', sections: makeSections(item) },
-    });
+      data: {
+        image: item.image,
+        category: item.category,
+        author: 'Bergmann & Partner',
+        date: '2026-06-04',
+        description: item.excerpt,
+        features: item.features || item.tags || [],
+        cta: { label: 'Gespräch anfragen', href: '/kontakt' },
+      },
+    };
+    const existing = existingBySlug.get(item.slug);
+    if (existing?.id) {
+      await api('PUT', `/api/v1/content/collections/${key}/items/${existing.id}`, payload);
+    } else {
+      await api('POST', `/api/v1/content/collections/${key}/items`, payload);
+    }
   }
 }
 
@@ -473,7 +487,9 @@ async function main() {
   const pagesBefore = await api('GET', '/api/v1/content/pages');
   const collectionsBefore = await api('GET', '/api/v1/content/collections');
   const existingPages = pagesBefore.pages || [];
-  const existingCollections = collectionsBefore.collections || [];
+  const existingCollections = Array.isArray(collectionsBefore)
+    ? collectionsBefore
+    : (collectionsBefore.collections || []);
 
   await api('PUT', '/api/v1/content/style', { style: 'classic' });
   await api('PUT', '/api/v1/content/brand', {
