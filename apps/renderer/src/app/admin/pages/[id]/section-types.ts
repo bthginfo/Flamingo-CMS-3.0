@@ -85,6 +85,7 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'templateAdvantage', label: 'Template Advantage', description: 'Editoriale Template-/Vorteils-Section mit Bildkarten, Benefits und CTA', category: 'Premium' },
   { type: 'principlesGrid', label: 'Principles Grid', description: 'Hochwertige Werte- oder Prinzipien-Section mit konsistentem Headline-Stil', category: 'Premium' },
   { type: 'glowHero', label: 'Glow Hero', description: 'Interaktiver Premium-Hero mit Mouse-Glow, Bild, Fakten und CTAs', category: 'Premium' },
+  { type: 'instagramFeed', label: 'Instagram-Feed', description: 'Live-Feed deines Instagram-Business-Accounts (Posts, Reels, Carousels) — direkt im Editor verbinden', category: 'Social Proof' },
 ];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [

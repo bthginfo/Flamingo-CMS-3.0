@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useParams } from 'next/navigation';
 import { Info } from 'lucide-react';
 import { ImageUploadField } from '@/components/image-upload-field';
 import { ButtonField, DetailLinkField } from '@/components/button-field';
@@ -13,6 +14,7 @@ import { EMBED_PROVIDERS, EMBED_CATEGORIES, getProvider } from '@/lib/embed-prov
 import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
 import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
 import { getCollectionKeysAction } from '@/app/admin/collections/actions';
+import { InstagramConnectPanel } from './instagram-connect-panel';
 
 // Reports current editor data to parent on every change (skip initial render).
 function useReport(data: Record<string, unknown>, onChange: (d: Record<string, unknown>) => void) {
@@ -347,12 +349,12 @@ function HelpHint({ fieldKey }: { fieldKey: string }) {
 }
 
 // Generic section data editor that renders a form per section type.
-export function SectionDataEditor({ type, data, onChange }: { type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void }) {
+export function SectionDataEditor({ type, data, onChange, sectionId }: { type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void; sectionId?: string }) {
   const Editor = EDITORS[type] ?? SchemaSectionEditor;
-  return <Editor type={type} data={data} onChange={onChange} />;
+  return <Editor type={type} data={data} onChange={onChange} sectionId={sectionId} />;
 }
 
-type EditorProps = { type?: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void };
+type EditorProps = { type?: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void; sectionId?: string };
 
 // Generic structured editor for schema-shaped section data.
 function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
@@ -3448,8 +3450,79 @@ function LocationList({ items, onChange }: { items: AdditionalLocationDraft[]; o
   return <div className="space-y-3"><div className="text-xs font-semibold text-zinc-600">Standorte</div>{items.map((item, i) => <div key={i} className="relative rounded-lg border p-3 space-y-2"><button type="button" onClick={() => onChange(items.filter((_, idx) => idx !== i))} className="absolute right-2 top-2 text-xs text-red-400">×</button><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('name')} value={item.name} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, name: v } : x))} /><Field label="Telefon" value={item.phone} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, phone: v } : x))} /></div><Field label="Adresse" value={item.address} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, address: v } : x))} multiline /><Field label="E-Mail" value={item.email} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, email: v } : x))} /><Field label="Öffnungszeiten" value={item.openingHours} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, openingHours: v } : x))} multiline /><Field label="Google Maps Embed URL" value={item.mapEmbedUrl} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, mapEmbedUrl: v } : x))} multiline /><div className="grid grid-cols-1 sm:grid-cols-2 gap-2"><Field label={fieldLabel('ctaLabel')} value={item.ctaLabel} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaLabel: v } : x))} /><Field label={fieldLabel('ctaHref')} value={item.ctaHref} onChange={(v) => onChange(items.map((x, idx) => idx === i ? { ...x, ctaHref: v } : x))} /></div></div>)}<button type="button" onClick={() => onChange([...items, { name: '', address: '', phone: '', email: '', mapEmbedUrl: '', openingHours: '', ctaLabel: '', ctaHref: '' }])} className="text-sm text-blue-600 hover:underline">+ Standort hinzufügen</button></div>;
 }
 
+function InstagramFeedEditor({ data, onChange, sectionId }: EditorProps) {
+  const params = useParams();
+  const pageId = (params?.id as string) || '';
+  const [d, setD] = useState({
+    headline: (data.headline as string) || 'Folge uns auf Instagram',
+    subline: (data.subline as string) || 'Aktuelle Eindrücke direkt aus unserem Account',
+    badgeText: (data.badgeText as string) || 'Instagram',
+    layout: ((data.layout as string) === 'masonry' ? 'masonry' : 'grid') as 'grid' | 'masonry',
+    columns: typeof data.columns === 'number' ? (data.columns as number) : 3,
+    maxPosts: typeof data.maxPosts === 'number' ? (data.maxPosts as number) : 9,
+    showCaptions: data.showCaptions !== false,
+    showProfileLink: data.showProfileLink !== false,
+    ctaLabel: (data.ctaLabel as string) || 'Auf Instagram folgen',
+  });
+  useReport(d, onChange);
+
+  return (
+    <div className="space-y-5">
+      {sectionId && pageId && <InstagramConnectPanel sectionId={sectionId} pageId={pageId} />}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Field label="Badge" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
+        <Field label="CTA-Label" value={d.ctaLabel} onChange={(v) => setD({ ...d, ctaLabel: v })} />
+      </div>
+      <Field label="Überschrift" value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label="Unterzeile" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <label className="block text-sm">
+          <span className="text-gray-600 text-xs">Layout</span>
+          <select className="admin-input mt-1" value={d.layout} onChange={(e) => setD({ ...d, layout: e.target.value as 'grid' | 'masonry' })}>
+            <option value="grid">Grid</option>
+            <option value="masonry">Masonry</option>
+          </select>
+        </label>
+        <label className="block text-sm">
+          <span className="text-gray-600 text-xs">Spalten</span>
+          <select className="admin-input mt-1" value={String(d.columns)} onChange={(e) => setD({ ...d, columns: Number(e.target.value) })}>
+            <option value="2">2 Spalten</option>
+            <option value="3">3 Spalten</option>
+            <option value="4">4 Spalten</option>
+            <option value="6">6 Spalten</option>
+          </select>
+        </label>
+        <label className="block text-sm">
+          <span className="text-gray-600 text-xs">Max. Beiträge</span>
+          <select className="admin-input mt-1" value={String(d.maxPosts)} onChange={(e) => setD({ ...d, maxPosts: Number(e.target.value) })}>
+            <option value="6">6 Beiträge</option>
+            <option value="9">9 Beiträge</option>
+            <option value="12">12 Beiträge</option>
+            <option value="16">16 Beiträge</option>
+            <option value="24">24 Beiträge</option>
+          </select>
+        </label>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={d.showCaptions} onChange={(e) => setD({ ...d, showCaptions: e.target.checked })} />
+          Bildunterschriften beim Hover zeigen
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" checked={d.showProfileLink} onChange={(e) => setD({ ...d, showProfileLink: e.target.checked })} />
+          „Auf Instagram folgen"-Button anzeigen
+        </label>
+      </div>
+    </div>
+  );
+}
+
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
+  instagramFeed: InstagramFeedEditor,
   faq: FaqEditor,
   ctaBand: CtaBandEditor,
   testimonials: TestimonialsEditor,

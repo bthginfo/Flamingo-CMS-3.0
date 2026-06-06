@@ -1864,4 +1864,15 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     subline: '',
     events: [{ title: 'Event Titel', date: '2025-06-15', description: '', image: '' }],
   },
+  instagramFeed: {
+    badgeText: 'Instagram',
+    headline: 'Folge uns auf Instagram',
+    subline: 'Aktuelle Eindrücke direkt aus unserem Account',
+    layout: 'grid',
+    columns: 3,
+    maxPosts: 9,
+    showCaptions: true,
+    showProfileLink: true,
+    ctaLabel: 'Auf Instagram folgen',
+  },
 };

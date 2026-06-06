@@ -12,7 +12,7 @@ import { hasRealestateEditor, RealestateSectionDataEditor } from './realestate-s
 import { hasCafeEditor, CafeSectionDataEditor } from './cafe-section-data-editor';
 import { hasConsultingEditor, ConsultingSectionDataEditor } from './consulting-section-data-editor';
 
-export function IndustrySectionDataEditor({ industry, type, data, onChange }: { industry: string; type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void }) {
+export function IndustrySectionDataEditor({ industry, type, data, onChange, sectionId }: { industry: string; type: string; data: Record<string, unknown>; onChange: (data: Record<string, unknown>) => void; sectionId?: string }) {
   if (industry === 'wedding' && hasWeddingEditor(type)) {
     return <WeddingSectionDataEditor type={type} data={data} onChange={onChange} />;
   }
@@ -53,5 +53,5 @@ export function IndustrySectionDataEditor({ industry, type, data, onChange }: { 
     return <ConsultingSectionDataEditor type={type} data={data} onChange={onChange} />;
   }
 
-  return <SectionDataEditor type={type} data={data} onChange={onChange} />;
+  return <SectionDataEditor type={type} data={data} onChange={onChange} sectionId={sectionId} />;
 }
