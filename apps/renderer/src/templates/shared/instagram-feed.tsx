@@ -70,8 +70,12 @@ export function InstagramFeedSection({ data }: Props) {
     if (injectedTenantId) {
       qs += `&tenantId=${encodeURIComponent(injectedTenantId)}`;
     } else if (typeof window !== 'undefined') {
-      const seg = window.location.pathname.split('/').filter(Boolean)[0];
-      if (seg) qs += `&slug=${encodeURIComponent(seg)}`;
+      // Demo URLs look like /demo/<industry>/... — the tenant slug is
+      // `demo-<industry>`, not the literal "demo" prefix. For everything else
+      // the first path segment IS the tenant slug (shared-renderer style).
+      const segs = window.location.pathname.split('/').filter(Boolean);
+      const slug = segs[0] === 'demo' && segs[1] ? `demo-${segs[1]}` : segs[0];
+      if (slug) qs += `&slug=${encodeURIComponent(slug)}`;
     }
     fetch(`/api/instagram/feed?${qs}`)
       .then(r => r.json())
@@ -98,23 +102,40 @@ export function InstagramFeedSection({ data }: Props) {
     ? Array.from({ length: maxPosts }, () => null)
     : posts.slice(0, maxPosts);
 
+  // In live-preview always render the text container (even when empty) so the
+  // inline edit overlays have something to attach `data-edit-path` clicks to.
+  const showTextBlock = isPreview || headline || subline || badgeText;
+
   return (
     <div className="space-y-8">
-      {(headline || subline || badgeText) && (
+      {showTextBlock && (
         <div className="text-center max-w-3xl mx-auto">
-          {badgeText && (
+          {(badgeText || isPreview) && (
             <span
               className="inline-block text-xs font-semibold tracking-wider uppercase mb-3 section-badge px-3 py-1 rounded-full"
               style={{ color: 'var(--style-badge-text, var(--style-accent-color, currentColor))', backgroundColor: 'var(--style-badge-bg, rgba(0,0,0,0.04))' }}
+              data-edit-path="badgeText"
             >
-              {badgeText}
+              {badgeText || (isPreview ? 'Badge' : '')}
             </span>
           )}
-          {headline && (
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight" style={{ color: 'var(--style-heading-color, inherit)' }}>{headline}</h2>
+          {(headline || isPreview) && (
+            <h2
+              className="text-3xl md:text-4xl font-bold tracking-tight"
+              style={{ color: 'var(--style-heading-color, inherit)' }}
+              data-edit-path="headline"
+            >
+              {headline || (isPreview ? 'Überschrift' : '')}
+            </h2>
           )}
-          {subline && (
-            <p className="mt-3 text-base md:text-lg" style={{ color: 'var(--style-body-color, inherit)' }}>{subline}</p>
+          {(subline || isPreview) && (
+            <p
+              className="mt-3 text-base md:text-lg"
+              style={{ color: 'var(--style-body-color, inherit)' }}
+              data-edit-path="subline"
+            >
+              {subline || (isPreview ? 'Unterzeile' : '')}
+            </p>
           )}
         </div>
       )}
@@ -163,10 +184,10 @@ export function InstagramFeedSection({ data }: Props) {
         })}
       </div>
 
-      {showProfileLink && profileUrl && (
+      {showProfileLink && (profileUrl || isPreview) && (
         <div className="flex justify-center">
           <a
-            href={profileUrl}
+            href={profileUrl || '#'}
             target="_blank"
             rel="noreferrer noopener"
             className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-sm transition-transform hover:-translate-y-0.5"
@@ -176,7 +197,7 @@ export function InstagramFeedSection({ data }: Props) {
             }}
           >
             <Instagram className="h-4 w-4" />
-            {ctaLabel}{username ? ` (@${username.replace(/^@/, '')})` : ''}
+            <span data-edit-path="ctaLabel">{ctaLabel}</span>{username ? ` (@${username.replace(/^@/, '')})` : ''}
           </a>
         </div>
       )}

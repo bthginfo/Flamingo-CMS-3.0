@@ -1,5 +1,5 @@
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
-import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle, getTenantSeoGlobal, getTenantSeoItem } from '@/lib/tenant-data';
+import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle, getTenantSeoGlobal, getTenantSeoItem, getTenantI18n } from '@/lib/tenant-data';
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { getDesignCssVars } from '@/lib/design-vars';
@@ -50,12 +50,13 @@ async function resolveItem(params: Promise<{ collection: string; slug: string }>
 export async function generateCollectionItemMetadata(params: Promise<{ collection: string; slug: string }>, tenantSlug?: string): Promise<Metadata> {
   const resolved = await resolveItem(params, tenantSlug);
   if (!resolved) return {};
-  const { tenantId, item } = resolved;
+  const { tenantId, item, col } = resolved;
 
-  const [seoGlobal, seoItemData, { brand }] = await Promise.all([
+  const [seoGlobal, seoItemData, { brand }, i18n] = await Promise.all([
     getTenantSeoGlobal(tenantId),
     getTenantSeoItem(tenantId, item.id),
     getTenantBrand(tenantId),
+    getTenantI18n(tenantId),
   ]);
 
   const itemTitle = seoItemData?.metaTitle || item.title;
@@ -64,6 +65,20 @@ export async function generateCollectionItemMetadata(params: Promise<{ collectio
     : itemTitle;
   const description = seoItemData?.metaDescription || seoGlobal?.defaultDescription || undefined;
   const ogImage = seoItemData?.ogImage || seoGlobal?.defaultOgImage || undefined;
+
+  // hreflang alternates per enabled locale so Google understands /en/c/... is
+  // the English version of /c/...
+  let languageAlternates: Record<string, string> | undefined;
+  if (i18n.enabled && i18n.locales.length > 0 && seoGlobal?.canonicalBase) {
+    const base = seoGlobal.canonicalBase.replace(/\/$/, '');
+    const slugForUrl = `c/${col.key}/${item.slug}`;
+    languageAlternates = {};
+    for (const loc of i18n.locales) {
+      const prefix = loc !== i18n.defaultLocale ? `/${loc}` : '';
+      languageAlternates[loc] = `${base}${prefix}/${slugForUrl}`;
+    }
+    languageAlternates['x-default'] = `${base}/${slugForUrl}`;
+  }
 
   return {
     title,
@@ -74,11 +89,14 @@ export async function generateCollectionItemMetadata(params: Promise<{ collectio
       siteName: brand.companyName || undefined,
       ...(ogImage ? { images: [{ url: ogImage }] } : {}),
     },
+    ...(languageAlternates && {
+      alternates: { languages: languageAlternates },
+    }),
     robots: seoItemData?.noindex ? 'noindex,nofollow' : (seoGlobal?.robots || 'index,follow'),
   };
 }
 
-export async function renderCollectionItemPage(params: Promise<{ collection: string; slug: string }>, tenantSlug?: string, linkPrefix = '') {
+export async function renderCollectionItemPage(params: Promise<{ collection: string; slug: string }>, tenantSlug?: string, linkPrefix = '', explicitLocale?: string) {
   const { collection, slug } = await params;
   const tenantId = await resolveTenant(tenantSlug);
   if (!tenantId && !tenantSlug) {
@@ -87,13 +105,22 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
   }
   if (!tenantId) notFound();
 
-  const [snapshot, navData, footerData, { brand, contact, socialLinks, design }, tenantStyle] = await Promise.all([
+  const [snapshot, navData, footerData, { brand, contact, socialLinks, design }, tenantStyle, i18n] = await Promise.all([
     getActiveSnapshot(tenantId),
-    getTenantNav(tenantId),
-    getTenantFooter(tenantId),
+    getTenantNav(tenantId, explicitLocale),
+    getTenantFooter(tenantId, explicitLocale),
     getTenantBrand(tenantId),
     getTenantStyle(tenantId),
+    getTenantI18n(tenantId),
   ]);
+
+  // Locale resolution: explicit param from /<locale>/c/... routing takes
+  // precedence, otherwise default to the tenant's default locale (so
+  // _localized data is unpacked instead of leaking as a raw object).
+  const activeLocale = i18n.enabled
+    ? (explicitLocale && i18n.locales.includes(explicitLocale) ? explicitLocale : i18n.defaultLocale)
+    : undefined;
+  const defaultLocale = i18n.enabled ? i18n.defaultLocale : undefined;
 
   if (!snapshot?.collections) notFound();
 
@@ -140,9 +167,9 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
       {fontFaceRules.length > 0 && <style dangerouslySetInnerHTML={{ __html: fontFaceRules.join('\n') }} />}
       {bodyFontName && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
       {importantOverrides.length > 0 && <style dangerouslySetInnerHTML={{ __html: importantOverrides.join('\n') }} />}
-      <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} linkPrefix={linkPrefix} />
+      <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} linkPrefix={linkPrefix} i18n={i18n.enabled ? { locales: i18n.locales, currentLocale: activeLocale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} />
       <main>
-        <CollectionDetail item={item} collection={col} collections={snapshot.collections} backHrefPrefix={linkPrefix} linkPrefix={linkPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} />
+        <CollectionDetail item={item} collection={col} collections={snapshot.collections} backHrefPrefix={linkPrefix} linkPrefix={linkPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={activeLocale} defaultLocale={defaultLocale} />
       </main>
       <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} />
       {contact.whatsappEnabled && contact.whatsapp && <WhatsAppFab phone={contact.whatsapp} color={contact.whatsappColor} />}
