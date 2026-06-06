@@ -54,7 +54,7 @@ export function PortfolioSection({ data }: Props) {
               initial={{ opacity: 0, y: 40 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="group relative rounded-3xl overflow-hidden bg-[var(--token-card-bg)] border border-[var(--token-card-border)] shadow-sm hover:shadow-xl transition-all duration-500"
+              className="group relative overflow-hidden rounded-[28px] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm shadow-black/5 transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/10"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
                 <Image data-edit-image="image"
@@ -64,30 +64,30 @@ export function PortfolioSection({ data }: Props) {
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--token-image-overlay,rgba(0,0,0,.6))] via-black/10 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-black/25" />
                 {project.category && (
-                  <span className="absolute top-4 left-4 bg-[var(--token-badge-bg)] backdrop-blur-sm text-xs font-medium px-3 py-1.5 rounded-full text-[var(--token-badge-text)]" data-edit-path="category">
+                  <span className="absolute top-4 left-4 rounded-full border border-white/25 bg-black/35 px-3 py-1.5 text-xs font-semibold text-white shadow-sm backdrop-blur-md" data-edit-path="category">
                     {project.category}
                   </span>
                 )}
               </div>
               <div className="p-6 lg:p-8">
-                <h3 className="font-display font-bold text-xl mb-2 text-[var(--token-body)]" data-edit-path="title">{project.title}</h3>
+                <h3 className="font-display text-xl font-extrabold leading-tight text-[var(--token-heading)]" data-edit-path="title">{project.title}</h3>
                 {project.description && (
-                  <div className="text-[var(--token-body)] text-sm leading-relaxed mb-4 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: project.description }} />
+                  <div className="rt-content mt-3 text-sm leading-relaxed text-[var(--token-body)]" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: project.description }} />
                 )}
                 {project.stats && project.stats.length > 0 && (
-                  <div className="flex gap-6 pt-4 border-t border-[var(--token-card-border)]">
+                  <div className="mt-5 grid grid-cols-2 gap-3">
                     {project.stats.map((stat, j) => (
-                      <div key={j} data-edit-collection="stats" data-edit-index={j}>
-                        <div className="text-lg font-bold text-[var(--token-icon)]" data-edit-path="value">{stat.value}</div>
-                        <div className="text-xs text-[var(--token-muted)]" data-edit-path="label">{stat.label}</div>
+                      <div key={j} className="rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_72%,var(--token-card-bg,#fff))] px-4 py-3" data-edit-collection="stats" data-edit-index={j}>
+                        <div className="text-base font-extrabold leading-none text-[var(--token-icon)]" data-edit-path="value">{stat.value}</div>
+                        <div className="mt-1 text-[11px] font-medium leading-tight text-[var(--token-muted)]" data-edit-path="label">{stat.label}</div>
                       </div>
                     ))}
                   </div>
                 )}
                 {project.href && (
-                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--token-icon)] mt-4 group-hover:underline">
+                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[var(--token-icon)] transition group-hover:translate-x-1">
                     Projekt ansehen {project.icon && <DynamicIcon editPath="icon" name={project.icon} size={14} />}
                   </span>
                 )}

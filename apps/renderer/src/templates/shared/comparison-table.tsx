@@ -30,16 +30,16 @@ export function ComparisonTableSection({ data }: Props) {
         {text && <p className="section-subline max-w-3xl mx-auto" data-edit-path="text">{plain(text)}</p>}
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.15 }} className="overflow-hidden rounded-2xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm">
-        <div className="overflow-x-auto">
-        <table className="w-full min-w-[720px] border-collapse text-sm">
+      <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.15 }} className="rounded-[30px] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_72%,transparent)] p-2 shadow-xl shadow-black/5 ring-1 ring-[color:var(--token-card-border)] backdrop-blur-sm md:p-3">
+        <div className="overflow-x-auto pb-1">
+        <table className="w-full min-w-[760px] border-separate [border-spacing:8px_12px] text-sm md:[border-spacing:12px_14px]">
           <thead>
-            <tr className="bg-[color-mix(in_srgb,var(--token-section-bg-alt)_65%,transparent)]">
-              <th className="w-1/3 border-b border-[color:var(--token-card-border)] px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-[color:var(--token-muted)]">
+            <tr>
+              <th className="w-1/3 rounded-2xl border border-[color:var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_70%,var(--token-card-bg,#fff))] px-5 py-4 text-left text-xs font-black uppercase tracking-wider text-[color:var(--token-muted)] shadow-sm shadow-black/[0.025] md:px-6">
                 Vergleich
               </th>
               {columns.map((col, i) => (
-                <th key={i} className={`border-b border-l border-[color:var(--token-card-border)] px-6 py-4 text-center text-sm font-bold ${i === highlightCol ? 'bg-[color-mix(in_srgb,var(--token-accent)_14%,transparent)] text-[color:var(--token-accent)]' : 'text-[color:var(--token-heading)]'}`} data-edit-collection="columns" data-edit-index={i}>
+                <th key={i} className={`rounded-2xl border border-[color:var(--token-card-border)] px-5 py-4 text-center text-sm font-extrabold shadow-sm shadow-black/[0.025] md:px-6 ${i === highlightCol ? 'bg-[color:color-mix(in_srgb,var(--token-accent,#f59e0b)_16%,var(--token-card-bg,#fff))] text-[color:var(--token-accent)] ring-1 ring-[color:color-mix(in_srgb,var(--token-accent,#f59e0b)_28%,transparent)]' : 'bg-[color:var(--token-card-bg)] text-[color:var(--token-heading)]'}`} data-edit-collection="columns" data-edit-index={i}>
                   {col.label}
                 </th>
               ))}
@@ -47,11 +47,11 @@ export function ComparisonTableSection({ data }: Props) {
           </thead>
           <tbody>
             {rows.map((row, ri) => (
-              <tr key={ri} className="transition-colors last:[&_td]:border-b-0 hover:bg-[color-mix(in_srgb,var(--token-section-bg-alt)_35%,transparent)]" data-edit-collection="rows" data-edit-index={ri}>
-                <td className="border-b border-[color:var(--token-card-border)] px-6 py-4 font-semibold text-[color:var(--token-heading)]">{row.feature}</td>
+              <tr key={ri} className="group transition-colors" data-edit-collection="rows" data-edit-index={ri}>
+                <td className="rounded-2xl border border-[color:var(--token-card-border)] bg-[color:var(--token-card-bg)] px-5 py-4 font-bold text-[color:var(--token-heading)] shadow-sm shadow-black/[0.025] transition group-hover:bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_58%,var(--token-card-bg,#fff))] md:px-6">{row.feature}</td>
                 {row.values.map((val, ci) => (
-                  <td key={ci} className={`border-b border-l border-[color:var(--token-card-border)] px-6 py-4 text-center ${ci === highlightCol ? 'bg-[color-mix(in_srgb,var(--token-accent)_8%,transparent)]' : ''}`} data-edit-collection="values" data-edit-index={ci}>
-                    {val === 'true' ? <Check size={18} className="mx-auto text-green-600" /> : val === 'false' ? <X size={18} className="mx-auto text-[color:var(--token-body)]" /> : <span className="font-medium text-[color:var(--token-body)]">{val}</span>}
+                  <td key={ci} className={`rounded-2xl border border-[color:var(--token-card-border)] px-5 py-4 text-center shadow-sm shadow-black/[0.025] transition md:px-6 ${ci === highlightCol ? 'bg-[color:color-mix(in_srgb,var(--token-accent,#f59e0b)_10%,var(--token-card-bg,#fff))] ring-1 ring-[color:color-mix(in_srgb,var(--token-accent,#f59e0b)_18%,transparent)]' : 'bg-[color:var(--token-card-bg)] group-hover:bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_58%,var(--token-card-bg,#fff))]'}`} data-edit-collection="values" data-edit-index={ci}>
+                    {val === 'true' ? <Check size={18} className="mx-auto text-[color:var(--token-check,var(--token-accent))]" /> : val === 'false' ? <X size={18} className="mx-auto text-[color:var(--token-muted)]" /> : <span className="font-semibold leading-relaxed text-[color:var(--token-body)]">{val}</span>}
                   </td>
                 ))}
               </tr>
