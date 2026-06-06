@@ -92,7 +92,7 @@ async function run(tenant) {
   if (!tenant.slug) throw new Error('tenant.slug required');
   if (!tenant.pat)  throw new Error('tenant.pat required');
 
-  const api = new Api({ pat: tenant.pat });
+  const api = new Api({ pat: tenant.pat, host: tenant.host });
   const t0 = Date.now();
   const log = (...a) => console.log(`[${tenant.slug}]`, ...a);
 
