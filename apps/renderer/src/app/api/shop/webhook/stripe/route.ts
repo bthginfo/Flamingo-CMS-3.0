@@ -30,7 +30,10 @@ export async function POST(req: NextRequest) {
   }
 
   if (!candidateTenantId) {
-    return new NextResponse('Missing tenant metadata', { status: 400 });
+    // Stripe may send event types we don't care about (e.g. invoice.paid).
+    // Those carry no tenantId metadata. Acknowledge with 200 so Stripe stops
+    // retrying — we only act on events we recognise.
+    return new NextResponse('ok (no tenant metadata, ignored)', { status: 200 });
   }
 
   const [settings] = await db.select().from(shopSettings)

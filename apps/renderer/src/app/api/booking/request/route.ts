@@ -7,6 +7,7 @@ import { getOrCreateBookingSettings, hasBookingAddon, hasBookingBlackout, hasBoo
 import { getBookingNotificationEmail, sendBookingEmail } from '@/lib/booking-email';
 import { formatBookingDate, normalizeTimezone } from '@/lib/booking-time';
 import { bookingCustomers, bookingRequests, bookingResources, bookingServices } from '@flamingo/db';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 function resolveExplicitTenant(value: unknown) {
   if (typeof value !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) return null;
@@ -21,6 +22,18 @@ export async function POST(req: NextRequest) {
     const tenantId = resolveExplicitTenant(body.tenantId) || await resolveTenant();
     if (!tenantId) return NextResponse.json({ error: 'Tenant nicht gefunden.' }, { status: 404 });
     if (!(await hasBookingAddon(tenantId))) return NextResponse.json({ error: 'Booking ist nicht aktiviert.' }, { status: 403 });
+
+    // Rate limit: 10 booking requests / 10 min per IP+tenant. Stops bots from
+    // flooding the calendar with fake reservations and the admin's inbox with
+    // notification emails. Real customers comfortably stay under this.
+    const ip = getClientIp(req);
+    const rl = rateLimit(`booking:${tenantId}:${ip}`, 10, 10 * 60 * 1000);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: 'Zu viele Buchungsanfragen. Bitte später erneut versuchen.' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetMs / 1000)) } },
+      );
+    }
 
     const customerName = clean(body.customerName, 255);
     const customerEmail = clean(body.customerEmail, 320);
