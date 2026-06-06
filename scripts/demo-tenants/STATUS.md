@@ -13,7 +13,7 @@ Letzter Stand: siehe Commit-Datum.
 | 7 | wedding      | Hochzeitslocation / -planung  | ✅ DONE | Mara & Elias — Classic, RSVP, Gästeinfos, Updates, Live-Routen geprüft |
 | 8 | photography  | Fotograf:in                   | ✅ DONE | Lisa Morgenthaler Fotografie — Classic, Portfolio-Collections, Premium-Mix, Live-Routen geprüft |
 | 9 | consulting   | Beratung                      | ✅ DONE | Bergmann & Partner Beratung — Classic, B2B-Tonalität, 8 Pages, 24 Collection Items, readyToPublish |
-|10 | realestate   | Immobilienmakler:in           | ⬜ TODO | propertySearch / Collection                      |
+|10 | realestate   | Immobilienmakler:in           | ✅ DONE | Stadtkante Immobilien — Classic, Bewertung/Verkauf/Kauf, Realestate-Sections, Live-Routen geprüft |
 |11 | cafe         | Café                          | ⬜ TODO | Speisekarte als Collection                       |
 |12 | tattoo       | Tattoo-Studio                 | ⬜ TODO | Portfolio-Galerie                                |
 |13 | ecommerce    | Online-Shop                   | ⬜ TODO | Shop-Addon vermutlich aktiv                      |
