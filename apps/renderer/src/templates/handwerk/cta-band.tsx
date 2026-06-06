@@ -35,16 +35,26 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const bgY = useTransform(scrollYProgress, [0, 1], ['-10%', '10%']);
 
-  const wrapStyle: React.CSSProperties = {};
-  if (colors?.bgColor) wrapStyle.background = colors.bgColor;
+  const wrapStyle: React.CSSProperties = {
+    background: colors?.bgColor ?? 'linear-gradient(135deg, color-mix(in srgb, var(--token-card-bg, #ffffff) 96%, var(--token-section-bg, #f8fafc)), color-mix(in srgb, var(--token-accent, #f59e0b) 14%, var(--token-card-bg, #ffffff)))',
+    border: '1px solid var(--token-card-border, rgba(15,23,42,0.08))',
+    boxShadow: '0 24px 70px color-mix(in srgb, var(--token-heading, #0f172a) 10%, transparent)',
+  };
   if (colors?.textColor) wrapStyle.color = colors.textColor;
 
   return (
     <motion.div ref={ref} initial={{ opacity: 0, scale: 0.98 }} animate={inView ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.7 }} className="relative overflow-hidden rounded-4xl" style={wrapStyle}>
-      {!colors?.bgColor && <motion.div style={{ y: bgY }} className="absolute inset-0 scale-110 bg-[var(--token-section-bg)]" />}
+      {!colors?.bgColor && (
+        <motion.div
+          style={{
+            y: bgY,
+            background: 'radial-gradient(circle at 78% 22%, color-mix(in srgb, var(--token-accent, #f59e0b) 22%, transparent), transparent 42%), radial-gradient(circle at 14% 82%, color-mix(in srgb, var(--token-primary, #0f172a) 10%, transparent), transparent 46%)',
+          }}
+          className="absolute inset-0 scale-110"
+        />
+      )}
       <div className="absolute inset-0">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] animate-pulse-slow" style={{ backgroundColor: colors?.accentColor ? `${colors.accentColor}26` : 'rgba(243,156,18,0.15)' }} />
-        <div className="absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-white/5 blur-[100px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-[120px] animate-pulse-slow" style={{ backgroundColor: colors?.accentColor ? `${colors.accentColor}26` : 'color-mix(in srgb, var(--token-accent, #f59e0b) 16%, transparent)' }} />
       </div>
       <div className="relative z-10 px-6 py-12 text-center text-[var(--token-heading)] sm:py-16 md:py-24 lg:py-32">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
@@ -71,13 +81,16 @@ function CtaModern({ headline, subline, cta, colors }: CProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
-  const wrapStyle: React.CSSProperties = {};
-  if (colors?.bgColor) wrapStyle.background = colors.bgColor;
+  const wrapStyle: React.CSSProperties = {
+    background: colors?.bgColor ?? 'var(--token-card-bg, #ffffff)',
+    border: '1px solid var(--token-card-border, rgba(15,23,42,0.08))',
+    boxShadow: '0 18px 50px color-mix(in srgb, var(--token-heading, #0f172a) 8%, transparent)',
+  };
   if (colors?.textColor) wrapStyle.color = colors.textColor;
 
   return (
     <motion.div ref={ref} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.8 }}
-      className="text-center py-16 md:py-24 lg:py-32" style={wrapStyle}>
+      className="rounded-4xl px-6 py-16 text-center md:py-24 lg:py-32" style={wrapStyle}>
       <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight !leading-[1.1] max-w-4xl mx-auto" style={colors?.textColor ? { color: colors.textColor } : undefined} data-edit-path="headline">
         {headline}
       </h2>
@@ -96,13 +109,16 @@ function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
-  const wrapStyle: React.CSSProperties = {};
-  if (colors?.bgColor) wrapStyle.background = colors.bgColor;
+  const wrapStyle: React.CSSProperties = {
+    background: colors?.bgColor ?? 'linear-gradient(135deg, var(--token-card-bg, #ffffff), color-mix(in srgb, var(--token-accent, #f59e0b) 12%, var(--token-card-bg, #ffffff)))',
+    border: '1px solid var(--token-card-border, rgba(15,23,42,0.08))',
+    boxShadow: '0 18px 50px color-mix(in srgb, var(--token-heading, #0f172a) 8%, transparent)',
+  };
   if (colors?.textColor) wrapStyle.color = colors.textColor;
 
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}
-      className={`flex flex-col items-start justify-between gap-8 p-10 text-[var(--token-heading)] lg:flex-row lg:items-center lg:p-16 ${!colors?.bgColor ? 'bg-[var(--token-section-bg)]' : ''}`} style={wrapStyle}>
+      className="flex flex-col items-start justify-between gap-8 rounded-4xl p-10 text-[var(--token-heading)] lg:flex-row lg:items-center lg:p-16" style={wrapStyle}>
       <div>
         {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</span>}
         <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tight" data-edit-path="headline">{headline}</h2>

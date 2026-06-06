@@ -24,10 +24,10 @@ function useCountdown(targetDate: string) {
 }
 
 export function WeddingHeroSection({ data, styleVariant }: Props) {
-  const names = (data.names as string) || 'Anna & Max';
+  const names = (data.coupleName as string) || (data.names as string) || (data.headline as string) || 'Anna & Max';
   const date = (data.date as string) || '2026-09-12';
   const venue = (data.venue as string) || '';
-  const subline = (data.subline as string) || 'Wir heiraten!';
+  const subline = (data.tagline as string) || (data.subline as string) || 'Wir heiraten!';
   const bgImage = (data.bgImage as string) || '';
   const bgImageMobile = (data.bgImageMobile as string) || '';
   const bgPosition = (data.bgPosition as string) || 'center';
@@ -80,7 +80,7 @@ export function WeddingHeroSection({ data, styleVariant }: Props) {
           {names}
         </motion.h1>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className={`mt-6 ${isBold ? 'text-sm font-bold uppercase tracking-widest' : isModern ? 'text-sm tracking-[0.15em] uppercase' : 'text-lg'} ${bgImage ? 'text-[color:var(--token-on-dark-body)] opacity-90' : 'text-[color:var(--token-muted)]'}`}>
-          {formattedDate}{venue && ` · $<span data-edit-path="venue">{venue}</span>`}
+          {formattedDate}{venue && <> · <span data-edit-path="venue">{venue}</span></>}
         </motion.p>
         {showCountdown && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className={`mt-10 md:mt-14 flex ${isBold ? 'gap-4 md:gap-8' : 'gap-4 md:gap-12 justify-center'} ${bgImage ? 'text-[color:var(--token-on-dark-heading)]' : (isBold ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]')}`}>

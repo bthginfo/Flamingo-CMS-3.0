@@ -4,13 +4,14 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
+type Milestone = { date?: string; year?: string; title?: string; text?: string; image?: string };
 
 export function WeddingCoupleStorySection({ data, styleVariant }: Props) {
   const badge = (data.badge as string) || 'Unsere Geschichte';
   const headline = (data.headline as string) || 'Wie alles begann';
-  const story = (data.story as string) || '';
+  const story = (data.story as string) || (data.subline as string) || '';
   const image = (data.image as string) || '';
-  const milestones = (data.milestones as Array<{ date: string; text: string }>) || [];
+  const milestones = (data.milestones as Milestone[]) || [];
   const p = { badge, headline, story, image, milestones };
 
   if (styleVariant === 'modern') return <Modern {...p} />;
@@ -18,7 +19,7 @@ export function WeddingCoupleStorySection({ data, styleVariant }: Props) {
   return <Classic {...p} />;
 }
 
-type P = { badge: string; headline: string; story: string; image: string; milestones: Array<{ date: string; text: string }> };
+type P = { badge: string; headline: string; story: string; image: string; milestones: Milestone[] };
 
 function Classic({ badge, headline, story, image, milestones }: P) {
   return (
@@ -28,21 +29,25 @@ function Classic({ badge, headline, story, image, milestones }: P) {
           <span className="section-badge" data-edit-path="badge">{badge}</span>
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
         </div>
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-16 items-center">
+        <div className={image ? 'grid md:grid-cols-2 gap-8 lg:gap-16 items-center' : ''}>
           {image && (
             <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative aspect-[4/5] rounded-2xl overflow-hidden">
               <Image data-edit-image="image" src={image} alt={headline} fill className="object-cover" />
             </motion.div>
           )}
-          <div className={image ? '' : 'md:col-span-2 max-w-3xl mx-auto'}>
-            {story && <p className="text-[color:var(--token-muted)] text-lg leading-relaxed mb-10">{story}</p>}
+          <div className={image ? '' : 'max-w-6xl mx-auto'}>
+            {story && <p className="mx-auto max-w-3xl text-center text-[color:var(--token-muted)] text-lg leading-relaxed mb-10">{story}</p>}
             {milestones.length > 0 && (
-              <div className="space-y-6 border-l-2 border-[color-mix(in_srgb,var(--token-card-border)_20%,transparent)] pl-6">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {milestones.map((m, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} data-edit-collection="milestones" data-edit-index={i}>
-                    <span className="text-sm font-semibold text-[color:var(--token-icon)]" data-edit-path="date">{m.date}</span>
-                    <div className="text-[color:var(--token-muted)] mt-1 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />
-                  </motion.div>
+                  <motion.article key={i} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="overflow-hidden rounded-2xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm" data-edit-collection="milestones" data-edit-index={i}>
+                    {m.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={m.image} alt={m.title || headline} fill className="object-cover" /></div>}
+                    <div className="p-5">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-[color:var(--token-icon)]" data-edit-path={m.year ? 'year' : 'date'}>{m.year || m.date}</span>
+                      {m.title && <h3 className="mt-3 text-lg font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{m.title}</h3>}
+                      {m.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}
+                    </div>
+                  </motion.article>
                 ))}
               </div>
             )}
@@ -69,8 +74,9 @@ function Modern({ badge, headline, story, image, milestones }: P) {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {milestones.map((m, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="border-t border-[color:var(--token-card-border)] pt-6" data-edit-collection="milestones" data-edit-index={i}>
-                <span className="text-xs uppercase tracking-[0.2em] text-[color:var(--token-body)]" data-edit-path="date">{m.date}</span>
-                <div className="text-[color:var(--token-muted)] mt-3 text-sm leading-relaxed rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />
+                <span className="text-xs uppercase tracking-[0.2em] text-[color:var(--token-body)]" data-edit-path={m.year ? 'year' : 'date'}>{m.year || m.date}</span>
+                {m.title && <h3 className="mt-3 text-lg font-medium text-[color:var(--token-heading)]" data-edit-path="title">{m.title}</h3>}
+                {m.text && <div className="text-[color:var(--token-muted)] mt-3 text-sm leading-relaxed rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}
               </motion.div>
             ))}
           </div>
@@ -99,8 +105,9 @@ function Bold({ badge, headline, story, image, milestones }: P) {
               <div className="space-y-6">
                 {milestones.map((m, i) => (
                   <motion.div key={i} initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="border-l-4 border-[var(--token-card-border)] pl-5" data-edit-collection="milestones" data-edit-index={i}>
-                    <span className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="date">{m.date}</span>
-                    <div className="text-[color:var(--token-muted)] mt-2 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />
+                    <span className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path={m.year ? 'year' : 'date'}>{m.year || m.date}</span>
+                    {m.title && <h3 className="mt-2 text-lg font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{m.title}</h3>}
+                    {m.text && <div className="text-[color:var(--token-muted)] mt-2 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}
                   </motion.div>
                 ))}
               </div>
