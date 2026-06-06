@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, X } from 'lucide-react';
 import * as icons from 'lucide-react';
+import { resolveIcon, canonicalIconName } from './ui/icon-map';
 
 // Get all icon names (filter out non-icon exports)
 const ALL_ICONS = Object.keys(icons).filter(
@@ -12,7 +13,7 @@ const ALL_ICONS = Object.keys(icons).filter(
 );
 
 function renderIcon(name: string, size = 18) {
-  const Icon = (icons as unknown as Record<string, React.FC<{ size?: number }>>)[name];
+  const Icon = resolveIcon(name);
   if (!Icon) return null;
   return <Icon size={size} />;
 }
@@ -50,10 +51,15 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
   }, [open]);
 
   const filtered = useMemo(() => {
-    if (!search) return ALL_ICONS.slice(0, 200);
+    if (!search) return ALL_ICONS;
     const q = search.toLowerCase();
-    return ALL_ICONS.filter(k => k.toLowerCase().includes(q)).slice(0, 200);
+    return ALL_ICONS.filter(k => k.toLowerCase().includes(q));
   }, [search]);
+
+  // Resolve legacy/kebab-case stored value to its canonical name so the
+  // grid can highlight the currently-selected icon even if the saved value
+  // is non-canonical.
+  const canonicalValue = useMemo(() => canonicalIconName(value || ''), [value]);
 
   const handleSelect = useCallback((name: string) => {
     onChange(name);
@@ -116,7 +122,7 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
                       type="button"
                       title={name}
                       onClick={() => handleSelect(name)}
-                      className={`flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all hover:bg-blue-50 hover:scale-105 ${value === name ? 'bg-blue-100 ring-2 ring-blue-400 scale-105' : ''}`}
+                      className={`flex flex-col items-center gap-1 p-2.5 rounded-xl transition-all hover:bg-blue-50 hover:scale-105 ${canonicalValue === name ? 'bg-blue-100 ring-2 ring-blue-400 scale-105' : ''}`}
                     >
                       {renderIcon(name, 22)}
                       <span className="text-[8px] text-gray-500 truncate w-full text-center leading-tight">{name}</span>
