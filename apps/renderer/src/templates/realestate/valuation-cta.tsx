@@ -39,7 +39,7 @@ export function ValuationCtaSection({ data }: Props) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           className="text-center"
         >
-          <div className="inline-flex items-center gap-2 bg-amber-500/10 text-amber-400 px-4 py-2 rounded-full text-sm font-medium mb-6">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--token-badge-border,var(--token-card-border))] bg-[var(--token-badge-bg)] px-4 py-2 text-sm font-medium text-[var(--token-badge-text)]">
             <Home size={16} />
             Immobilienbewertung
           </div>
@@ -50,7 +50,7 @@ export function ValuationCtaSection({ data }: Props) {
             <div className="flex flex-wrap justify-center gap-8 mt-10">
               {stats.map((stat, i) => (
                 <div key={i} className="text-center" data-edit-collection="stats" data-edit-index={i}>
-                  <p className="text-2xl font-bold text-amber-400" data-edit-path="value">{stat.value}</p>
+                  <p className="text-2xl font-bold text-[color:var(--token-stat-value,var(--token-accent))]" data-edit-path="value">{stat.value}</p>
                   <p className="text-xs text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] mt-1" data-edit-path="label">{stat.label}</p>
                 </div>
               ))}
@@ -59,7 +59,7 @@ export function ValuationCtaSection({ data }: Props) {
 
           <a
             href={ctaHref}
-            className="inline-flex items-center gap-2 mt-10 px-10 py-4 bg-amber-600 hover:bg-amber-700 text-[color:var(--token-on-dark-heading)] font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
+            className="mt-10 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-10 py-4 font-semibold text-[var(--token-btn-text)] shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl"
           >
             <span data-edit-path="ctaLabel">{ctaLabel}</span>
             <ArrowRight size={18} />

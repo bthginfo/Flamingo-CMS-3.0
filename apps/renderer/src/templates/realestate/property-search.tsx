@@ -48,10 +48,10 @@ export function PropertySearchSection({ data }: Props) {
               <a
                 key={i}
                 href={cat.href || ctaHref}
-                className={`group relative flex flex-col items-center gap-3 rounded-xl border p-6 text-center transition-all hover:shadow-lg hover:border-[color-mix(in_srgb,var(--token-card-border)_30%,transparent)] ${i === activeCategory ? 'border-[color-mix(in_srgb,var(--token-card-border)_40%,transparent)] bg-[color-mix(in_srgb,var(--token-btn-bg)_5%,transparent)]' : 'border-[color:var(--token-card-border)] bg-[var(--token-card-bg)]'}`}
+                className={`group relative flex flex-col items-center gap-3 rounded-2xl border p-6 text-center transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/5 ${i === activeCategory ? 'border-[color:color-mix(in_srgb,var(--token-accent,var(--token-icon))_34%,var(--token-card-border))] bg-[color:color-mix(in_srgb,var(--token-accent,var(--token-icon))_8%,var(--token-card-bg,#fff))]' : 'border-[color:var(--token-card-border)] bg-[var(--token-card-bg)]'}`}
                 onMouseEnter={() => setActiveCategory(i)}
               >
-                <div className="rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] p-3 text-[color:var(--token-icon)] group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-on-dark-heading)] transition-colors">
+                <div className="rounded-full bg-[color:color-mix(in_srgb,var(--token-accent,var(--token-icon))_12%,transparent)] p-3 text-[color:var(--token-icon)] transition-colors group-hover:bg-[var(--token-btn-bg)] group-hover:text-[var(--token-btn-text)]">
                   <Icon size={24} />
                 </div>
                 <span className="font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{cat.label}</span>
@@ -63,7 +63,7 @@ export function PropertySearchSection({ data }: Props) {
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.4 }} className="mt-8 text-center">
-          <a href={ctaHref} className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-lg hover:bg-[var(--token-section-bg-alt)] transition-colors">
+          <a href={ctaHref} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[var(--token-btn-text)] shadow-sm shadow-black/5 transition hover:-translate-y-0.5 hover:shadow-lg">
             <Search size={18} />
             <span data-edit-path="ctaLabel">{ctaLabel}</span>
           </a>
