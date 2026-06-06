@@ -143,14 +143,19 @@ function sanitizeRenderValue(value: unknown): unknown {
   return value;
 }
 
-export function SectionRenderer({ section, collections, styleVariant: _styleVariant, industry = 'tradesman', locale, linkPrefix = '' }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string; industry?: string; locale?: string; linkPrefix?: string }) {
+export function SectionRenderer({ section, collections, styleVariant: _styleVariant, industry = 'tradesman', locale, defaultLocale, linkPrefix = '' }: { section: SnapshotSection; collections?: SnapshotCollection[]; styleVariant?: string; industry?: string; locale?: string; defaultLocale?: string; linkPrefix?: string }) {
   const effectiveStyleVariant = 'classic';
   // i18n locale resolution: if section.data contains locale keys, resolve to the active locale
   if (locale && section.data && typeof section.data[locale] === 'object' && section.data[locale] !== null) {
     section = { ...section, data: section.data[locale] as Record<string, unknown> };
   } else if (locale && section.data && section.data._localized) {
-    // Fallback: if _localized flag exists but requested locale missing, try 'de'
-    const fallback = (section.data['de'] as Record<string, unknown>) ?? section.data;
+    // Fallback: requested locale missing → try the tenant's default locale,
+    // then 'de' as a last resort. Hardcoding 'de' was wrong for tenants that
+    // configured a different default (e.g. 'en').
+    const fb = defaultLocale ? section.data[defaultLocale] : undefined;
+    const fallback = (typeof fb === 'object' && fb !== null)
+      ? (fb as Record<string, unknown>)
+      : ((section.data['de'] as Record<string, unknown>) ?? section.data);
     section = { ...section, data: fallback };
   }
 

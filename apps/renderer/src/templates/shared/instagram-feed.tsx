@@ -51,6 +51,12 @@ export function InstagramFeedSection({ data }: Props) {
   const [username, setUsername] = useState<string>('');
   const [connected, setConnected] = useState<boolean | null>(null);
 
+  // In live-preview (admin) the global tenantId is injected. We use that as a
+  // signal to ALWAYS render the section UI (including text fields) so editors
+  // can author headlines/badges/CTAs even before Instagram is connected.
+  const isPreview = typeof window !== 'undefined'
+    && Boolean((window as unknown as { __FLAMINGO_TENANT_ID__?: string }).__FLAMINGO_TENANT_ID__);
+
   useEffect(() => {
     setMounted(true);
     let cancelled = false;
@@ -81,8 +87,9 @@ export function InstagramFeedSection({ data }: Props) {
 
   // After mount + fetch: if no account is connected (or no posts at all),
   // render nothing on the live site so there's no broken UI.
-  if (mounted && connected === false) return null;
-  if (mounted && connected === true && posts.length === 0) return null;
+  // Exception: in live-preview we ALWAYS render so the editor can author texts.
+  if (!isPreview && mounted && connected === false) return null;
+  if (!isPreview && mounted && connected === true && posts.length === 0) return null;
 
   const colClass = COLUMN_CLASSES[columns] || COLUMN_CLASSES[3];
   const profileUrl = username ? `https://instagram.com/${username.replace(/^@/, '')}` : '';
