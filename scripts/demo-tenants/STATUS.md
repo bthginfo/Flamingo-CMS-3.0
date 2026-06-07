@@ -16,8 +16,8 @@ Letzter Stand: siehe Commit-Datum.
 |10 | realestate   | Immobilienmakler:in           | ✅ DONE | Stadtkante Immobilien — Classic, Bewertung/Verkauf/Kauf, Realestate-Sections, Live-Routen geprüft |
 |11 | cafe         | Café                          | ✅ DONE | SPIRAL Coffee & Plants — Classic, Karte/Events/Angebote/Journal, readyToPublish |
 |12 | tattoo       | Tattoo-Studio                 | ✅ DONE | INK DISTRICT — Classic, Artists/Portfolio/Pflege/Journal, readyToPublish |
-|13 | ecommerce    | Online-Shop                   | ⬜ TODO | Shop-Addon vermutlich aktiv                      |
-|14 | retail       | Stationärer Handel            | ⬜ TODO |                                                  |
+|13 | ecommerce    | Online-Shop                   | ✅ DONE | Vinothek Goldberg — Classic, Produkte/Kategorien/Checkout, readyToPublish |
+|14 | retail       | Stationärer Handel            | ✅ DONE | Möbelhaus Lichtblick — Classic, Showroom/Beratung/Sortiment, readyToPublish |
 |15 | florist      | Floristik                     | ⬜ TODO |                                                  |
 |16 | fitness      | Fitness-Studio                | ⬜ TODO | Mitgliederpakete                                 |
 |17 | location     | Eventlocation                 | ⬜ TODO | Verfügbarkeits-Kalender                          |

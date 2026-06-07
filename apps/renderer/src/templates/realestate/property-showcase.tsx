@@ -58,12 +58,12 @@ export function PropertyShowcaseSection({ data }: Props) {
               <div className="p-6 md:p-7">
                 <h3 className="font-semibold text-[color:var(--token-heading)] text-lg group-hover:text-[color:var(--token-icon)] transition-colors" data-edit-path="title">{property.title}</h3>
                 <p className="text-sm text-[color:var(--token-muted)] mt-1" data-edit-path="location">{property.location}</p>
-                <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl border border-[color:var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-card-bg,#fff)_82%,var(--token-section-bg,#fff))] p-3 shadow-inner">
-                  <span className="rounded-xl px-3 py-2">
+                <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl border border-[color:var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-card-bg,#fff)_82%,var(--token-section-bg,#fff))] p-4 shadow-inner">
+                  <span className="rounded-xl bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_82%,transparent)] px-4 py-3">
                     <strong className="block text-lg leading-none text-[color:var(--token-heading)]">{property.rooms}</strong>
                     <span className="mt-1 block text-xs font-medium text-[color:var(--token-muted)]">Zimmer</span>
                   </span>
-                  <span className="rounded-xl px-3 py-2">
+                  <span className="rounded-xl bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_82%,transparent)] px-4 py-3">
                     <strong className="block text-lg leading-none text-[color:var(--token-heading)]">{property.size}</strong>
                     <span className="mt-1 block text-xs font-medium text-[color:var(--token-muted)]">Wohnfläche</span>
                   </span>

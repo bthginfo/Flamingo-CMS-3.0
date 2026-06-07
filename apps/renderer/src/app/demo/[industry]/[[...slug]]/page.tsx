@@ -21,7 +21,7 @@ const INDUSTRY_MAP: Record<string, string> = {
   cafe: 'cafe',
   tattoo: 'tattoo',
   showcase: 'tradesman',
-  shop: 'restaurant',
+  shop: 'ecommerce',
   retail: 'retail',
   florist: 'florist',
   fitness: 'fitness',

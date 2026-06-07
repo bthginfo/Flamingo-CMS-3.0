@@ -49,14 +49,14 @@ export function TemplateAdvantageSection({ data }: Props) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ delay: index * 0.06 }}
-              className="group overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_24px_70px_rgba(20,17,26,0.08)]"
+              className="group overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_24px_70px_rgba(20,17,26,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_90px_rgba(20,17,26,0.13)]"
              data-edit-collection="cards" data-edit-index={index}>
-              <div className="relative aspect-[16/11] overflow-hidden bg-zinc-200">
+              <div className="relative aspect-[16/11] overflow-hidden bg-[color:color-mix(in_srgb,var(--token-card-border)_35%,var(--token-card-bg,#fff))]">
                 {card.image && <img data-edit-image="image" src={card.image} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                {card.label && <span className="absolute bottom-4 left-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-zinc-950" data-edit-path="label">{card.label}</span>}
+                {card.image && <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10" />}
+                {card.label && <span className="absolute left-4 top-4 rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-bold text-[var(--token-badge-text)] shadow-sm" data-edit-path="label">{card.label}</span>}
               </div>
-              <div className="p-5">
+              <div className="p-6">
                 {card.title && <h3 className="text-2xl font-black leading-tight text-[var(--token-heading)]" data-edit-path="title">{card.title}</h3>}
                 {card.text && <p className="mt-3 text-sm leading-6 text-[var(--token-muted)]" data-edit-path="text">{plain(card.text)}</p>}
               </div>

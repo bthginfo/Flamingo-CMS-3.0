@@ -28,8 +28,8 @@ export function IconRows({ items }: { items: unknown }) {
   return (
     <div className="grid gap-4">
       {asList<{ icon?: string; title?: string; text?: string }>(items).map((item, index) => (
-        <div key={`${item.title}-${index}`} className="flex items-start gap-4 border-t border-[var(--token-card-border)] pt-4" data-edit-collection="items" data-edit-index={index}>
-          <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--token-icon)_12%,transparent)] text-[var(--token-icon)]">
+        <div key={`${item.title}-${index}`} className="flex items-start gap-5 rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_76%,var(--token-section-bg,#fff))] p-5" data-edit-collection="items" data-edit-index={index}>
+          <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--token-icon)_12%,transparent)] text-[var(--token-icon)]">
             <DynamicIcon editPath="icon" name={item.icon || 'stethoscope'} size={18} />
           </span>
           <div className="min-w-0">

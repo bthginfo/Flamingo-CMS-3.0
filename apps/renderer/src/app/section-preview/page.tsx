@@ -6,7 +6,8 @@ import { SectionRenderer } from '@/components/section-renderer';
 
 export default async function SectionPreviewPage({ searchParams }: { searchParams: Promise<{ type?: string; industry?: string; style?: string }> }) {
   const params = await searchParams;
-  const { type, industry = 'tradesman', style = 'classic' } = params;
+  const { type, industry = 'tradesman' } = params;
+  const style = 'classic';
   if (!type) return notFound();
 
   const templates = getIndustryTemplates(industry);

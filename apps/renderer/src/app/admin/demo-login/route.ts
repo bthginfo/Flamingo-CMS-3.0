@@ -27,7 +27,7 @@ const INDUSTRY_MAP: Record<string, string> = {
   florist: 'florist',
   fitness: 'fitness',
   location: 'location',
-  shop: 'restaurant',
+  shop: 'ecommerce',
   showcase: 'tradesman',
 };
 

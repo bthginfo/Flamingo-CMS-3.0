@@ -27,12 +27,12 @@ export function CtaBandSection({ data, styleVariant }: Props) {
 
 type ColorOverrides = { bgColor?: string; textColor?: string; accentColor?: string };
 type CProps = { headline: string; subline: string; badgeText: string; cta?: { label: string; href: string; icon?: string }; colors?: ColorOverrides };
-const CTA_CARD_BG = 'linear-gradient(135deg, var(--token-card-bg, #ffffff) 0%, color-mix(in srgb, var(--token-accent, #f59e0b) 10%, var(--token-card-bg, #ffffff)) 100%)';
-const CTA_CARD_HEADING = 'var(--token-heading, var(--style-heading-color, #0f172a))';
-const CTA_CARD_BODY = 'var(--token-body, var(--style-body-color, #475569))';
-const CTA_CARD_BADGE_BG = 'var(--token-badge-bg, color-mix(in srgb, var(--token-card-bg, #ffffff) 84%, var(--token-accent, #f59e0b)))';
-const CTA_CARD_BADGE_TEXT = 'var(--token-badge-text, var(--token-heading, #0f172a))';
-const CTA_CARD_BADGE_BORDER = 'var(--token-badge-border, var(--token-card-border, rgba(15,23,42,0.08)))';
+const CTA_CARD_BG = 'linear-gradient(135deg, color-mix(in srgb, var(--token-btn-bg, #0f172a) 92%, #000) 0%, color-mix(in srgb, var(--token-accent, #f59e0b) 30%, var(--token-btn-bg, #0f172a)) 100%)';
+const CTA_CARD_HEADING = 'var(--token-btn-text, #fff)';
+const CTA_CARD_BODY = 'color-mix(in srgb, var(--token-btn-text, #fff) 82%, transparent)';
+const CTA_CARD_BADGE_BG = 'color-mix(in srgb, var(--token-btn-text, #fff) 14%, transparent)';
+const CTA_CARD_BADGE_TEXT = 'var(--token-btn-text, #fff)';
+const CTA_CARD_BADGE_BORDER = 'color-mix(in srgb, var(--token-btn-text, #fff) 24%, transparent)';
 
 /* ─── CLASSIC: Gradient bg, centered, pill cta, floating orbs ─── */
 function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
@@ -67,7 +67,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
         {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="rt-content mx-auto mb-10 max-w-2xl text-lg leading-8 sm:text-xl" style={{ color: CTA_CARD_BODY }} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         {cta?.label && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }}>
-          <a data-edit-link="cta" href={cta.href} className="group inline-flex items-center gap-2.5 rounded-full bg-[var(--token-btn-bg)] px-8 py-4 font-semibold text-[var(--token-btn-text)] transition-all hover:-translate-y-0.5 hover:brightness-110">
+          <a data-edit-link="cta" href={cta.href} className="group inline-flex items-center gap-2.5 rounded-full bg-[var(--token-card-bg,#fff)] px-8 py-4 font-semibold text-[var(--token-heading,#0f172a)] transition-all hover:-translate-y-0.5 hover:brightness-110">
               <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon editPath="cta.icon" name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
             </a>
           </motion.div>

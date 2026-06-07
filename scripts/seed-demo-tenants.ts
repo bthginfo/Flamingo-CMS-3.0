@@ -332,7 +332,7 @@ const DEMO_TENANTS: DemoTenantConfig[] = [
     slug: 'demo-cafe',
     name: 'Röstwerk',
     industry: 'cafe',
-    activeStyle: 'modern',
+    activeStyle: 'classic',
     brand: { companyName: 'Röstwerk', tagline: 'Third-Wave-Coffee & Craft-Bar in München-Haidhausen', primaryColor: '#8b4513' },
     contact: { phone: '+49 89 2345 6789', email: 'hello@roestwerk-muenchen.de', address: 'Wörthstraße 23, 81667 München' },
     socialLinks: { instagram: '#' },

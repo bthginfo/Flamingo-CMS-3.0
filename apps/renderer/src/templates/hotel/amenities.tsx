@@ -49,14 +49,14 @@ function AmenitiesClassic({ headline, subline, badgeText, items, ctaPrimary }: P
             {item.mediaType === 'image' && item.image ? (
               <div className="relative mb-4 aspect-[16/10] overflow-hidden rounded-xl"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>
             ) : (
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)]/10 text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={item.icon || 'star'} size={20} /></div>
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon)_12%,transparent)] text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={item.icon || 'star'} size={20} /></div>
             )}
             <h3 className="font-bold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
             {item.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
           </motion.article>
         ))}
       </div>
-      {ctaPrimary.label && <motion.a initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></motion.a>}
+      {ctaPrimary.label && <motion.a initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[var(--token-btn-text)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></motion.a>}
     </div>
   );
 }

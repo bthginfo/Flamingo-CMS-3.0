@@ -42,12 +42,12 @@ export function ConsultingTeamSection({ data }: Props) {
             {member.specialization && <p className="text-[color:var(--token-muted)] text-sm mt-1">{member.specialization}</p>}
             <div className="flex items-center justify-center gap-4 mt-4">
               {member.phone && (
-                <a href={`tel:$<span data-edit-path="phone">{member.phone}</span>`} className="text-[color:var(--token-body)] hover:text-[color:var(--token-icon)] transition-colors">
+                <a href={`tel:${member.phone}`} className="text-[color:var(--token-body)] hover:text-[color:var(--token-icon)] transition-colors" data-edit-path="phone">
                   <DynamicIcon name="phone" size={16} />
                 </a>
               )}
               {member.email && (
-                <a href={`mailto:$<span data-edit-path="email">{member.email}</span>`} className="text-[color:var(--token-body)] hover:text-[color:var(--token-icon)] transition-colors">
+                <a href={`mailto:${member.email}`} className="text-[color:var(--token-body)] hover:text-[color:var(--token-icon)] transition-colors" data-edit-path="email">
                   <DynamicIcon name="mail" size={16} />
                 </a>
               )}

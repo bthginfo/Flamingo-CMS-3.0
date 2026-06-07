@@ -678,30 +678,6 @@ html {
   border-top: var(--style-divider, 1px solid rgba(0,0,0,0.06));
 }
 
-/* Bold style: extra contrast for bold variant */
-[data-style="bold"] button,
-[data-style="bold"] a[class*="btn"],
-[data-style="bold"] [role="button"] {
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* Modern style: extra whitespace, thin fonts */
-[data-style="modern"] section {
-  padding-top: 7rem;
-  padding-bottom: 7rem;
-}
-[data-style="modern"] p {
-  line-height: 1.8;
-}
-
-/* Bold style: tight spacing */
-[data-style="bold"] section {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
-}
-
 /* Rich text inline content */
 @layer base {
   .rt-content p + p { margin-top: 0.5em; }

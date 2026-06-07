@@ -5,7 +5,7 @@ export const CAFE_CONFIG = {
   slug: 'demo-cafe',
   name: 'Röstwerk München',
   industry: 'cafe' as const,
-  activeStyle: 'modern',
+  activeStyle: 'classic',
   brand: {
     companyName: 'Röstwerk München',
     tagline: 'Third-Wave-Coffee tagsüber, Craft-Cocktails am Abend',

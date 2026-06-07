@@ -535,7 +535,7 @@ INDUSTRY_STYLES.location = {
 };
 
 export function getStyleConfig(industry: string, style: string): StyleConfig | null {
-  return INDUSTRY_STYLES[industry]?.styles[style] ?? INDUSTRY_STYLES[industry]?.styles['classic'] ?? null;
+  return INDUSTRY_STYLES[industry]?.styles['classic'] ?? INDUSTRY_STYLES[industry]?.styles[style] ?? null;
 }
 
 export function getStyleCssVars(industry: string, style: string): Record<string, string> {

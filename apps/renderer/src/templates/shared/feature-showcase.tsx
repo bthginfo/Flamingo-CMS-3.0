@@ -6,6 +6,13 @@ import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
+function pickString(...values: unknown[]): string {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) return value;
+  }
+  return '';
+}
+
 function normalizeFeatures(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   return value
@@ -25,7 +32,7 @@ export function FeatureShowcaseSection({ data }: Props) {
   const subline = (data.subline as string) || '';
   const badge = (data.badge as string) || '';
   const text = (data.text as string) || '';
-  const image = (data.image as string) || '';
+  const image = pickString(data.image, data.imageUrl, data.imageSrc, data.backgroundImage, data.bgImage, data.media);
   const features = normalizeFeatures(data.features);
   const ctaPrimary = (data.ctaPrimary && typeof data.ctaPrimary === 'object' ? data.ctaPrimary : {}) as { label?: string; href?: string };
   const ctaLabel = (data.ctaLabel as string) || ctaPrimary.label || '';
