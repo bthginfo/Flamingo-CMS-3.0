@@ -69,7 +69,7 @@ function Modern({ headline, subline, members, ref, inView }: TProps) {
         {subline && <p className="text-[color:var(--token-body)] mt-3 text-lg" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
         {members.map((m, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.08 }}
             className="group" data-edit-collection="members" data-edit-index={i}>
