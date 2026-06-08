@@ -1,5 +1,42 @@
 import { resolveTenant, getActiveSnapshot } from '@/lib/snapshot';
 import { getTenantNav, getTenantFooter, getTenantBrand, getTenantSeoGlobal, getTenantSeoPage, getTenantStyle, getTenantI18n } from '@/lib/tenant-data';
+import ReactDOM from 'react-dom';
+
+// Default Next.js `deviceSizes` — must mirror what next/image generates so the
+// preload entry matches a srcset candidate and the browser reuses it instead
+// of fetching a duplicate variant.
+const NEXT_DEVICE_SIZES = [640, 750, 828, 1080, 1200, 1920, 2048, 3840];
+
+/**
+ * Inject a `<link rel="preload" as="image">` for the LCP hero image into the
+ * HTML head at render time. next/image's `priority` only flags the `<img>`
+ * with fetchpriority=high once the JS bundle has executed — by then the
+ * resource discovery is already late (we measured ~1300ms LCP load delay).
+ *
+ * Works universally for any tenant page because every hero template reads
+ * `data.bgImage` / `data.bgImageMobile` from the section payload.
+ */
+function preloadHeroImage(section: { type: string; data: Record<string, unknown> } | undefined): void {
+  if (!section || section.type !== 'hero') return;
+  const bg = section.data?.bgImage as string | undefined;
+  const bgMobile = section.data?.bgImageMobile as string | undefined;
+  if (bg) preloadOptimizedImage(bg, bgMobile ? '(min-width: 768px) 100vw' : '100vw');
+  if (bgMobile) preloadOptimizedImage(bgMobile, '(max-width: 767px) 100vw');
+}
+
+function preloadOptimizedImage(rawUrl: string, sizes: string): void {
+  if (!rawUrl || rawUrl.startsWith('data:')) return;
+  const srcSet = NEXT_DEVICE_SIZES
+    .map(w => `/_next/image?url=${encodeURIComponent(rawUrl)}&w=${w}&q=75 ${w}w`)
+    .join(', ');
+  const href = `/_next/image?url=${encodeURIComponent(rawUrl)}&w=${NEXT_DEVICE_SIZES[NEXT_DEVICE_SIZES.length - 1]}&q=75`;
+  ReactDOM.preload(href, {
+    as: 'image',
+    fetchPriority: 'high',
+    imageSrcSet: srcSet,
+    imageSizes: sizes,
+  });
+}
 
 // ISR: revalidate every 60s, on-demand revalidation via publish webhook
 export const revalidate = 60;
@@ -234,6 +271,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
   Object.assign(designOverrides, getDesignCssVars(design));
   const visibleSections = page.sections.filter(s => s.visible);
   const firstSectionIsHero = visibleSections[0]?.type === 'hero';
+  preloadHeroImage(visibleSections[0]);
 
   // Custom font loading
   const customFonts = [brand.headingFont, brand.bodyFont].filter(Boolean) as string[];
