@@ -44,7 +44,7 @@ export function ContactSection({ data }: Props) {
         {introText && <div className="section-subline rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-8 lg:gap-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
         {/* Info cards */}
         <div className="lg:col-span-2 space-y-4">
           {infoCards.map((card, i) => (
