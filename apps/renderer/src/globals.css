@@ -578,13 +578,10 @@ html {
   border-radius: var(--style-button-radius, 0.5rem);
 }
 
-/* Card overrides — only on block-level containers, not inline text with token-card-* classes */
-[data-style] div[class*="card"],
-[data-style] article[class*="card"],
-[data-style] section[class*="card"],
-[data-style] div[class*="Card"],
-[data-style] article[class*="Card"],
-[data-style] section[class*="Card"] {
+/* Card overrides — target actual card containers (have both "card" and "rounded" in class) */
+[data-style] [class*="card"][class*="rounded"],
+[data-style] [class*="Card"][class*="rounded"],
+[data-style] .card-hover {
   border-radius: var(--style-card-radius, 1rem);
   box-shadow: var(--style-card-shadow, 0 4px 20px rgba(0,0,0,0.06));
   border: var(--style-card-border, 1px solid rgba(0,0,0,0.06));
