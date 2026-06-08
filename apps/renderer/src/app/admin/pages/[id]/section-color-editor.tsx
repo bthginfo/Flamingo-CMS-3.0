@@ -78,7 +78,9 @@ export type ColorFieldKey =
   | 'linkColor' | 'linkHoverColor'
   | 'inputBg' | 'inputBorder' | 'inputText' | 'labelColor'
   | 'priceColor' | 'priceStrikeColor'
-  | 'pageBg' | 'shadowColor';
+  | 'pageBg' | 'shadowColor'
+  | 'successColor' | 'successBg'
+  | 'dangerColor' | 'dangerBg';
 
 // Mapping of every legacy key the editor used to expose to its modern
 // equivalent. Used by migrateLegacyOverrides() to clean up stored
@@ -226,6 +228,10 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   priceStrikeColor:    { cssVar: '--token-price-strikethrough',  label: 'Preis-Streich',          description: 'Durchgestrichener Vergleichspreis', group: 'special' },
   pageBg:              { cssVar: '--token-page-bg',              label: 'Seiten-Hintergrund',     description: 'Hintergrund auf Seitenebene (z.B. Hero, Marquee)', group: 'special' },
   shadowColor:         { cssVar: '--token-shadow',               label: 'Schattenfarbe',          description: 'Box-Shadow-Farbe (z.B. Property-Showcase)', group: 'special' },
+  successColor:        { cssVar: '--token-success',              label: 'Erfolg-Farbe',           description: 'Erfolgsmeldungen, Checkmarks (z.B. Checkout, Thank-You)', group: 'special' },
+  successBg:           { cssVar: '--token-success-bg',           label: 'Erfolg-Hintergrund',     description: 'Hintergrund für Erfolgs-Hinweise', group: 'special' },
+  dangerColor:         { cssVar: '--token-danger',               label: 'Warnung-Farbe',          description: 'Fehler/Sale/Lösch-Aktionen', group: 'special' },
+  dangerBg:            { cssVar: '--token-danger-bg',            label: 'Warnung-Hintergrund',    description: 'Hintergrund für Sale-Badges / Warnhinweise', group: 'special' },
 };
 
 /* ─── SINGLE SOURCE OF TRUTH ─── */

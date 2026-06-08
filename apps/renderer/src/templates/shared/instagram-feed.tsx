@@ -150,7 +150,7 @@ export function InstagramFeedSection({ data }: Props) {
             return (
               <div
                 key={`skeleton-${idx}`}
-                className="rounded-xl bg-zinc-100 animate-pulse"
+                className="rounded-xl bg-[color:var(--token-section-bg-alt,var(--token-card-bg))] animate-pulse"
                 style={{ aspectRatio: '1 / 1' }}
               />
             );
@@ -161,7 +161,7 @@ export function InstagramFeedSection({ data }: Props) {
               href={p.permalink}
               target="_blank"
               rel="noreferrer noopener"
-              className="group relative overflow-hidden rounded-xl bg-zinc-100"
+              className="group relative overflow-hidden rounded-xl bg-[color:var(--token-section-bg-alt,var(--token-card-bg))]"
               style={{ aspectRatio: '1 / 1' }}
               title={trimCaption(p.caption, 120)}
             >

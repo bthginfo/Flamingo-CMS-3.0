@@ -184,6 +184,7 @@ const FIELD_ORDER = [
   'borderColor', 'dividerColor',
   'cardRadius', 'buttonRadius',
   'cardShadow', 'headingWeight', 'headingTracking',
+  'successColor', 'successBg', 'dangerColor', 'dangerBg',
 ];
 const orderIdx = (f) => { const i = FIELD_ORDER.indexOf(f); return i < 0 ? 999 : i; };
 

@@ -46,7 +46,7 @@ export function ProductShowcaseSection({ data }: Props) {
               href={item.href || '#'}
               className="group block rounded-[var(--token-card-radius)] overflow-hidden bg-[var(--token-card-bg)] border-[var(--token-card-border)] shadow-[var(--token-card-shadow,0_4px_20px_rgba(0,0,0,0.06))] hover:shadow-xl transition-all duration-300"
             >
-              <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+              <div className="relative aspect-[4/3] overflow-hidden bg-[color:var(--token-section-bg-alt,var(--token-card-bg))]">
                 {item.image ? (
                   <img data-edit-image="image" src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (

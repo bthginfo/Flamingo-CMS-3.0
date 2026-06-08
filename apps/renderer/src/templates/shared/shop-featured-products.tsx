@@ -56,7 +56,7 @@ export function ShopFeaturedProductsSection({ data }: Props) {
         {products.map(product => (
           <Link key={product.id} href={`${shopBase}/${product.slug}`} className="group">
             <div className="rounded-2xl border border-zinc-100 overflow-hidden hover:shadow-md transition-shadow">
-              <div className="aspect-square bg-zinc-50 overflow-hidden">
+              <div className="aspect-square bg-[color:var(--token-section-bg-alt,var(--token-card-bg))] overflow-hidden">
                 {product.images?.[0] ? (
                   <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 ) : (
@@ -67,7 +67,7 @@ export function ShopFeaturedProductsSection({ data }: Props) {
                 <h3 className="font-medium text-sm truncate" data-edit-path="title">{product.title}</h3>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="font-bold">{formatPrice(product.priceCents)}</span>
-                  {product.comparePriceCents && <span className="text-xs text-zinc-400 line-through">{formatPrice(product.comparePriceCents)}</span>}
+                  {product.comparePriceCents && <span className="text-xs text-[color:var(--token-muted)] line-through">{formatPrice(product.comparePriceCents)}</span>}
                 </div>
               </div>
             </div>

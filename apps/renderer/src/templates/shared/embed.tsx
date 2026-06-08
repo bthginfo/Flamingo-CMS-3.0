@@ -113,7 +113,7 @@ export function EmbedSection({ data }: Props) {
           />
         </motion.div>
       ) : (
-        <p className="text-center text-sm text-zinc-400">Kein Embed konfiguriert. Bitte im Editor einen Anbieter auswählen oder Embed-Code einfügen.</p>
+        <p className="text-center text-sm text-[color:var(--token-muted)]">Kein Embed konfiguriert. Bitte im Editor einen Anbieter auswählen oder Embed-Code einfügen.</p>
       )}
     </div>
   );

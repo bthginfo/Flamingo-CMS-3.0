@@ -257,7 +257,7 @@ export function ShopCheckoutSection({ data }: Props) {
                             {method.estimatedDays && <p className="text-xs text-[color:var(--token-card-body, var(--token-body))]">{method.estimatedDays}</p>}
                           </div>
                         </div>
-                        <span className="text-sm font-medium">{isFree ? <span className="text-green-600">Kostenlos</span> : formatPrice(method.priceCents)}</span>
+                        <span className="text-sm font-medium">{isFree ? <span className="text-[color:var(--token-success,#16a34a)]">Kostenlos</span> : formatPrice(method.priceCents)}</span>
                       </label>
                     );
                   })}
@@ -336,8 +336,8 @@ export function ShopCheckoutSection({ data }: Props) {
           <div className="border-t pt-3 space-y-2 text-sm">
             <div className="flex justify-between"><span>Zwischensumme</span><span>{formatPrice(totalCents)}</span></div>
             {shippingCents > 0 && <div className="flex justify-between"><span>Versand</span><span>{formatPrice(shippingCents)}</span></div>}
-            {shippingCents === 0 && selectedShipping && <div className="flex justify-between text-green-600"><span>Versand</span><span>Kostenlos</span></div>}
-            {discountCents > 0 && <div className="flex justify-between text-green-600"><span>Rabatt (<span data-edit-path="label">{coupon?.label}</span>)</span><span>-{formatPrice(discountCents)}</span></div>}
+            {shippingCents === 0 && selectedShipping && <div className="flex justify-between text-[color:var(--token-success,#16a34a)]"><span>Versand</span><span>Kostenlos</span></div>}
+            {discountCents > 0 && <div className="flex justify-between text-[color:var(--token-success,#16a34a)]"><span>Rabatt (<span data-edit-path="label">{coupon?.label}</span>)</span><span>-{formatPrice(discountCents)}</span></div>}
             <div className="flex justify-between font-bold text-base pt-1 border-t">
               <span>Gesamt</span>
               <span>{formatPrice(grandTotal)}</span>
@@ -347,12 +347,12 @@ export function ShopCheckoutSection({ data }: Props) {
           {/* Coupon code */}
           <div className="mt-4 pt-4 border-t">
             {coupon ? (
-              <div className="flex items-center justify-between bg-green-50 rounded-lg px-3 py-2">
+              <div className="flex items-center justify-between bg-[color:var(--token-success-bg,#f0fdf4)] rounded-lg px-3 py-2">
                 <div className="flex items-center gap-2">
-                  <Tag size={14} className="text-green-600" />
-                  <span className="text-sm font-medium text-green-700">{coupon.code} (<span data-edit-path="label">{coupon.label}</span>)</span>
+                  <Tag size={14} className="text-[color:var(--token-success,#16a34a)]" />
+                  <span className="text-sm font-medium text-[color:var(--token-success,#15803d)]">{coupon.code} (<span data-edit-path="label">{coupon.label}</span>)</span>
                 </div>
-                <button onClick={removeCoupon} className="text-green-600 hover:text-green-800"><X size={14} /></button>
+                <button onClick={removeCoupon} className="text-[color:var(--token-success,#16a34a)] hover:text-[color:var(--token-success,#166534)]"><X size={14} /></button>
               </div>
             ) : (
               <div className="flex gap-2">

@@ -102,7 +102,7 @@ export function ShopProductDetailSection({ data }: Props) {
               </>
             )}
             {discount > 0 && (
-              <span className="absolute top-4 left-4 bg-red-500 text-[color:var(--token-on-dark-heading)] text-xs font-bold px-3 py-1 rounded-full">-{discount}%</span>
+              <span className="absolute top-4 left-4 bg-[color:var(--token-danger-bg,#ef4444)] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-3 py-1 rounded-full">-{discount}%</span>
             )}
           </div>
           {/* Thumbnails */}
@@ -149,7 +149,7 @@ export function ShopProductDetailSection({ data }: Props) {
               <ul className="space-y-2">
                 {highlights.map((h, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm" data-edit-collection="highlights" data-edit-index={i}>
-                    <Sparkles size={14} className="text-amber-500 shrink-0" />
+                    <Sparkles size={14} className="text-[color:var(--token-rating-star,#f59e0b)] shrink-0" />
                     <span className="text-[color:var(--token-card-muted, var(--token-muted))]">{h}</span>
                   </li>
                 ))}
