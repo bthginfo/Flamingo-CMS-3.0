@@ -19,6 +19,12 @@ function formatPrice(cents: number) {
   return (cents / 100).toFixed(2).replace('.', ',') + ' €';
 }
 
+function getPreviewTenantId() {
+  return typeof window !== 'undefined'
+    ? (window as unknown as { __FLAMINGO_TENANT_ID__?: string }).__FLAMINGO_TENANT_ID__
+    : undefined;
+}
+
 export function ShopFeaturedProductsSection({ data }: Props) {
   const headline = (data.headline as string) || 'Empfohlene Produkte';
   const mode = (data.mode as string) || 'latest';
@@ -33,7 +39,8 @@ export function ShopFeaturedProductsSection({ data }: Props) {
   useEffect(() => {
     if (previewProducts.length > 0) return;
     let url = '/api/shop/products?limit=' + count;
-    if (data.tenantId) url += '&tenantId=' + data.tenantId;
+    const tenantId = (data.tenantId as string | undefined) || getPreviewTenantId();
+    if (tenantId) url += '&tenantId=' + encodeURIComponent(tenantId);
     if (mode === 'category' && categorySlug) {
       url += '&category=' + encodeURIComponent(categorySlug);
     }

@@ -2,7 +2,7 @@
 import { getDb } from '@/lib/db';
 import { pages, pageSections, collectionItems, tenants, mediaAssets, seoGlobal, seoPage } from '@flamingo/db';
 import { eq, count, and } from 'drizzle-orm';
-import { FileText, Layers, FolderOpen, Rocket, Eye, Globe, ImageIcon, Search, AlertTriangle, CheckCircle2, Gift, Send } from 'lucide-react';
+import { Camera, FileText, Home, Layers, FolderOpen, Rocket, Eye, Globe, ImageIcon, Search, AlertTriangle, CheckCircle2, Gift, Send, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { publishAction } from './actions/publish';
@@ -104,19 +104,19 @@ export default async function DashboardPage() {
           <h2 className="font-semibold text-zinc-900 mb-4">Schnellzugriff</h2>
           <div className="space-y-2">
             {[
-              { label: 'Startseite bearbeiten', href: '/admin/pages', icon: 'ðŸ ' },
-              { label: 'Leistung hinzufÃ¼gen', href: '/admin/collections', icon: 'âš¡' },
-              { label: 'Referenz hinzufÃ¼gen', href: '/admin/collections', icon: 'ðŸ“¸' },
-              { label: 'SEO prÃ¼fen', href: '/admin/seo', icon: 'ðŸ”' },
+              { label: 'Startseite bearbeiten', href: '/admin/pages', icon: Home },
+              { label: 'Leistung hinzufügen', href: '/admin/collections', icon: Zap },
+              { label: 'Referenz hinzufügen', href: '/admin/collections', icon: Camera },
+              { label: 'SEO prüfen', href: '/admin/seo', icon: Search },
             ].map((q) => (
               <Link
                 key={q.label}
                 href={q.href}
                 className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-zinc-50 transition-colors text-sm"
               >
-                <span>{q.icon}</span>
+                <q.icon size={16} className="text-admin-accent" />
                 <span>{q.label}</span>
-                <span className="ml-auto text-zinc-300">â†’</span>
+                <span className="ml-auto text-zinc-300">→</span>
               </Link>
             ))}
           </div>
@@ -130,7 +130,7 @@ export default async function DashboardPage() {
               {seoGlobalComplete ? (
                 <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium"><CheckCircle2 size={14} /> Gepflegt</span>
               ) : (
-                <Link href="/admin/seo" className="inline-flex items-center gap-1.5 text-amber-600 font-medium hover:underline"><AlertTriangle size={14} /> UnvollstÃ¤ndig</Link>
+                <Link href="/admin/seo" className="inline-flex items-center gap-1.5 text-amber-600 font-medium hover:underline"><AlertTriangle size={14} /> Unvollständig</Link>
               )}
             </div>
             <div className="flex items-center justify-between text-sm">
@@ -158,7 +158,7 @@ export default async function DashboardPage() {
               {(publishedPages?.value ?? 0) > 0 ? (
                 <span className="inline-flex items-center gap-1.5 text-emerald-600 font-medium"><span className="w-2 h-2 rounded-full bg-emerald-500" /> Online</span>
               ) : (
-                <span className="text-zinc-400">Nicht verÃ¶ffentlicht</span>
+                <span className="text-zinc-400">Nicht veröffentlicht</span>
               )}
             </div>
           </div>

@@ -9,6 +9,12 @@ type Category = { id: string; name: string; slug: string; description?: string |
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
+function getPreviewTenantId() {
+  return typeof window !== 'undefined'
+    ? (window as unknown as { __FLAMINGO_TENANT_ID__?: string }).__FLAMINGO_TENANT_ID__
+    : undefined;
+}
+
 export function ShopCategoryOverviewSection({ data }: Props) {
   const headline = (data.headline as string) || 'Unsere Kategorien';
   const subline = (data.subline as string) || '';
@@ -22,7 +28,8 @@ export function ShopCategoryOverviewSection({ data }: Props) {
 
   useEffect(() => {
     if (previewCategories.length > 0) return;
-    const params = data.tenantId ? `?tenantId=${data.tenantId}` : '';
+    const tenantId = (data.tenantId as string | undefined) || getPreviewTenantId();
+    const params = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : '';
     fetch(`/api/shop/products${params}`)
       .then(r => r.json())
       .then(d => setCategories(d.categories || []))
