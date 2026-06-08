@@ -270,6 +270,8 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   const sectionStyle = withBookingStyleAliases(section.type, normalizeSectionStyle(overrideStyle));
   const sectionOverrideCss = sectionStyle
     ? `
+[data-section-id="${section.id}"][data-style] { --_card-h:${cardHeadingColorVar}; --_card-b:${cardBodyColorVar}; --_card-m:${cardMutedColorVar}; }
+[data-section-id="${section.id}"][data-style] [data-edit-collection] { --token-heading:var(--_card-h); --token-on-dark-heading:var(--_card-h); --token-body:var(--_card-b); --token-on-dark-body:var(--_card-b); --token-card-body:var(--_card-b); --token-muted:var(--_card-m); --token-on-dark-muted:var(--_card-m); --token-card-muted:var(--_card-m); }
 [data-section-id="${section.id}"][data-style] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: ${headingColorVar} !important; }
 [data-section-id="${section.id}"][data-style] :is(p,li):not([class*="text-white"]):not([class*="text-black"]) { color: ${bodyColorVar} !important; }
 [data-section-id="${section.id}"][data-style] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: ${mutedColorVar} !important; }
