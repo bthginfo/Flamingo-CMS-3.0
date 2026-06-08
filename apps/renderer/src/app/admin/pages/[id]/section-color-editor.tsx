@@ -77,7 +77,8 @@ export type ColorFieldKey =
   | 'btnSecondaryBg' | 'btnSecondaryText' | 'btnSecondaryBorder'
   | 'linkColor' | 'linkHoverColor'
   | 'inputBg' | 'inputBorder' | 'inputText' | 'labelColor'
-  | 'priceColor' | 'priceStrikeColor';
+  | 'priceColor' | 'priceStrikeColor'
+  | 'pageBg' | 'shadowColor';
 
 // Mapping of every legacy key the editor used to expose to its modern
 // equivalent. Used by migrateLegacyOverrides() to clean up stored
@@ -223,6 +224,8 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   labelColor:          { cssVar: '--token-label',                label: 'Label-Farbe',            description: 'Beschriftungen zu Formularfeldern', group: 'special' },
   priceColor:          { cssVar: '--token-price',                label: 'Preis-Farbe',            description: 'Preisangaben (Shop)', group: 'special' },
   priceStrikeColor:    { cssVar: '--token-price-strikethrough',  label: 'Preis-Streich',          description: 'Durchgestrichener Vergleichspreis', group: 'special' },
+  pageBg:              { cssVar: '--token-page-bg',              label: 'Seiten-Hintergrund',     description: 'Hintergrund auf Seitenebene (z.B. Hero, Marquee)', group: 'special' },
+  shadowColor:         { cssVar: '--token-shadow',               label: 'Schattenfarbe',          description: 'Box-Shadow-Farbe (z.B. Property-Showcase)', group: 'special' },
 };
 
 /* ─── SINGLE SOURCE OF TRUTH ─── */
