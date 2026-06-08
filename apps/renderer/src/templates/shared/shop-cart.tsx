@@ -39,8 +39,8 @@ export function ShopCartSection({ data }: Props) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Items */}
         <div className="lg:col-span-2 space-y-4">
-          {items.map(item => (
-            <div key={`${item.productId}-${item.variantId || ''}`} className="flex gap-4 p-4 bg-[var(--token-card-bg)] rounded-xl border border-[color:var(--token-card-border)]">
+          {items.map((item, index) => (
+            <div key={`${item.productId}-${item.variantId || ''}`} className="flex gap-4 p-4 bg-[var(--token-card-bg)] rounded-xl border border-[color:var(--token-card-border)]" data-edit-collection="items" data-edit-index={index}>
               <div className="w-20 h-20 rounded-lg bg-[var(--token-section-bg-alt)] shrink-0 overflow-hidden">
                 {item.image && <img data-edit-image="image" src={item.image} alt="" className="w-full h-full object-cover" />}
               </div>

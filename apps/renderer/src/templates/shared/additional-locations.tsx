@@ -56,6 +56,8 @@ export function AdditionalLocationsSection({ data }: Props) {
             return (
               <article
                 key={`$<span data-edit-path="name">{location.name || 'standort'}</span>-${index}`}
+                data-edit-collection="locations"
+                data-edit-index={index}
                 className="group overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[0_24px_80px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_32px_100px_rgba(15,23,42,0.14)]"
               >
                 {location.mapEmbedUrl && (

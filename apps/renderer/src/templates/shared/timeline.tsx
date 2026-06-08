@@ -33,7 +33,7 @@ export function TimelineSection({ data }: Props) {
         {entries.map((entry, i) => {
           const isLeft = i % 2 === 0;
           return (
-            <motion.div key={i} initial={{ opacity: 0, x: isLeft ? -20 : 20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.12 }} className={`relative mb-10 md:flex ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} items-start`}>
+            <motion.div key={i} initial={{ opacity: 0, x: isLeft ? -20 : 20 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.12 }} className={`relative mb-10 md:flex ${isLeft ? 'md:flex-row' : 'md:flex-row-reverse'} items-start`} data-edit-collection="entries" data-edit-index={i}>
               {/* Dot */}
               <div className="absolute left-6 md:left-1/2 top-1 w-3 h-3 rounded-full bg-[var(--token-accent)] border-2 border-[color:var(--token-section-bg,#fff)] shadow -translate-x-1/2 z-10" />
 

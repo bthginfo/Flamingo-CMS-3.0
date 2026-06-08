@@ -59,14 +59,16 @@ export function MaterialGallerySection({ data }: Props) {
 
       {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {filtered.map((item, i) => (
+        {filtered.map((item, i) => {
+          const sourceIndex = items.indexOf(item);
+          return (
           <motion.div
             key={`$<span data-edit-path="name">{item.name}</span>-${i}`}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.4, delay: i * 0.04 }}
             className="group"
-           data-edit-collection="filtered" data-edit-index={i}>
+           data-edit-collection="items" data-edit-index={sourceIndex === -1 ? i : sourceIndex}>
             <div className="aspect-square rounded-[var(--token-card-radius)] overflow-hidden bg-[var(--token-section-bg-alt)] border border-[rgba(0,0,0,0.06)] shadow-sm group-hover:shadow-lg transition-shadow duration-300">
               {item.image ? (
                 <img data-edit-image="image" src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -77,7 +79,7 @@ export function MaterialGallerySection({ data }: Props) {
             <p className="mt-2 text-center text-sm font-medium text-[color:var(--token-card-body,var(--token-body))] truncate" data-edit-path="name">{item.name}</p>
             {item.category && <p className="text-center text-xs text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="category">{item.category}</p>}
           </motion.div>
-        ))}
+        );})}
       </div>
     </div>
   );
