@@ -54,8 +54,8 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
             <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-xl"><Image data-edit-image="storyImage" src={storyImage} alt={storyHeadline || ''} fill className="object-cover" sizes="50vw" /></div></div>
           )}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'w-full max-w-3xl mx-auto'}>
-            {storyHeadline && <h3 className="font-display mb-4 text-2xl font-bold text-[var(--token-heading)] lg:text-3xl">{storyHeadline}</h3>}
-            {storyText && <div className="rt-content whitespace-pre-line text-lg leading-relaxed text-[var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
+            {storyHeadline && <h3 className="font-display mb-4 text-2xl font-bold text-[color:var(--token-heading)] lg:text-3xl">{storyHeadline}</h3>}
+            {storyText && <div className="rt-content whitespace-pre-line text-lg leading-relaxed text-[color:var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
           </div>
         </motion.div>
       )}
@@ -63,21 +63,21 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 md:mb-24">
           {stats.map((s, i) => (
             <div key={i} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 text-center" data-edit-collection="stats" data-edit-index={i}>
-              <div className="font-display mb-1 text-3xl font-bold text-[var(--token-accent)] lg:text-4xl" data-edit-path="value">{s.value}</div>
-              <div className="text-sm text-[var(--token-body)]" data-edit-path="label">{s.label}</div>
+              <div className="font-display mb-1 text-3xl font-bold text-[color:var(--token-accent)] lg:text-4xl" data-edit-path="value">{s.value}</div>
+              <div className="text-sm text-[color:var(--token-body)]" data-edit-path="label">{s.label}</div>
             </div>
           ))}
         </div>
       )}
       {values.length > 0 && (
         <div className="mb-12 md:mb-24">
-          <h3 className="font-display mb-12 text-center text-2xl font-bold text-[var(--token-heading)]">{valuesHeadline}</h3>
+          <h3 className="font-display mb-12 text-center text-2xl font-bold text-[color:var(--token-heading)]">{valuesHeadline}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {values.map((v, i) => (
               <div key={i} className="group rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-8 shadow-sm transition-all hover:shadow-lg" data-edit-collection="values" data-edit-index={i}>
-                {v.icon && <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] transition-transform group-hover:scale-110"><DynamicIcon editPath="icon" name={v.icon} size={28} className="text-[var(--token-icon)]" /></div>}
-                <h4 className="mb-2 text-lg font-semibold text-[var(--token-heading)]" data-edit-path="title">{v.title}</h4>
-                <div className="rt-content text-sm leading-relaxed text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
+                {v.icon && <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] transition-transform group-hover:scale-110"><DynamicIcon editPath="icon" name={v.icon} size={28} className="text-[color:var(--token-icon)]" /></div>}
+                <h4 className="mb-2 text-lg font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{v.title}</h4>
+                <div className="rt-content text-sm leading-relaxed text-[color:var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
               </div>
             ))}
           </div>
@@ -85,16 +85,16 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
       )}
       {members.length > 0 && (
         <div>
-          <h3 className="font-display mb-12 text-center text-2xl font-bold text-[var(--token-heading)]">{membersHeadline}</h3>
+          <h3 className="font-display mb-12 text-center text-2xl font-bold text-[color:var(--token-heading)]">{membersHeadline}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {members.map((m, i) => (
               <div key={i} className="text-center group" data-edit-collection="members" data-edit-index={i}>
                 <div className="relative w-48 h-48 mx-auto mb-5 rounded-3xl overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow">
                   {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover transition-transform group-hover:scale-105" sizes="200px" /> : <div className="flex h-full w-full items-center justify-center bg-[color-mix(in_srgb,var(--token-accent)_5%,transparent)]"><DynamicIcon name="users" size={48} className="text-[color-mix(in_srgb,var(--token-accent)_30%,transparent)]" /></div>}
                 </div>
-                <h4 className="text-lg font-semibold text-[var(--token-heading)]" data-edit-path="name">{m.name}</h4>
-                <p className="mb-2 text-sm font-medium text-[var(--token-accent)]" data-edit-path="role">{m.role}</p>
-                {m.bio && <div className="rt-content mx-auto max-w-xs text-sm text-[var(--token-body)]" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
+                <h4 className="text-lg font-semibold text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h4>
+                <p className="mb-2 text-sm font-medium text-[color:var(--token-accent)]" data-edit-path="role">{m.role}</p>
+                {m.bio && <div className="rt-content mx-auto max-w-xs text-sm text-[color:var(--token-body)]" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
               </div>
             ))}
           </div>
@@ -109,35 +109,35 @@ function TeamModern({ headline, subline, badgeText, storyHeadline, storyText, st
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12 md:mb-20">
-        {badgeText && <div className="mb-4 flex items-center gap-3 text-sm uppercase tracking-wide text-[var(--token-muted)]"><span className="h-px w-8 bg-[var(--token-card-border)]" /><span data-edit-path="badgeText">{badgeText}</span></div>}
-        {headline && <h2 className="text-4xl font-light tracking-tight text-[var(--token-heading)] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="rt-content mt-4 max-w-2xl text-lg text-[var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {badgeText && <div className="mb-4 flex items-center gap-3 text-sm uppercase tracking-wide text-[color:var(--token-muted)]"><span className="h-px w-8 bg-[var(--token-card-border)]" /><span data-edit-path="badgeText">{badgeText}</span></div>}
+        {headline && <h2 className="text-4xl font-light tracking-tight text-[color:var(--token-heading)] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
+        {subline && <div className="rt-content mt-4 max-w-2xl text-lg text-[color:var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       {(storyHeadline || storyText) && (
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center mb-12 md:mb-24">
           {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[3/2] rounded-lg overflow-hidden"><Image data-edit-image="storyImage" src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
-            {storyHeadline && <h3 className="mb-4 text-2xl font-light text-[var(--token-heading)]">{storyHeadline}</h3>}
-            {storyText && <div className="rt-content whitespace-pre-line leading-loose text-[var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
+            {storyHeadline && <h3 className="mb-4 text-2xl font-light text-[color:var(--token-heading)]">{storyHeadline}</h3>}
+            {storyText && <div className="rt-content whitespace-pre-line leading-loose text-[color:var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
           </div>
         </div>
       )}
       {stats.length > 0 && (
         <div className="flex flex-wrap gap-8 md:gap-12 mb-24 justify-center">
-          {stats.map((s, i) => <div key={i} className="text-center" data-edit-collection="stats" data-edit-index={i}><div className="text-4xl font-light text-[var(--token-accent)]" data-edit-path="value">{s.value}</div><div className="mt-1 text-xs uppercase tracking-wider text-[var(--token-muted)]" data-edit-path="label">{s.label}</div></div>)}
+          {stats.map((s, i) => <div key={i} className="text-center" data-edit-collection="stats" data-edit-index={i}><div className="text-4xl font-light text-[color:var(--token-accent)]" data-edit-path="value">{s.value}</div><div className="mt-1 text-xs uppercase tracking-wider text-[color:var(--token-muted)]" data-edit-path="label">{s.label}</div></div>)}
         </div>
       )}
       {members.length > 0 && (
         <div>
-          <h3 className="mb-10 text-xl font-light text-[var(--token-heading)]">{membersHeadline}</h3>
+          <h3 className="mb-10 text-xl font-light text-[color:var(--token-heading)]">{membersHeadline}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {members.map((m, i) => (
               <div key={i} className="group" data-edit-collection="members" data-edit-index={i}>
                 <div className="relative aspect-[3/4] rounded-lg overflow-hidden mb-4">
                   {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover grayscale transition-all duration-500 group-hover:grayscale-0" sizes="300px" /> : <div className="h-full w-full bg-[var(--token-card-bg)]" />}
                 </div>
-                <h4 className="font-medium text-[var(--token-heading)]" data-edit-path="name">{m.name}</h4>
-                <p className="text-sm text-[var(--token-muted)]" data-edit-path="role">{m.role}</p>
+                <h4 className="font-medium text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h4>
+                <p className="text-sm text-[color:var(--token-muted)]" data-edit-path="role">{m.role}</p>
               </div>
             ))}
           </div>
@@ -152,32 +152,32 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-12">
-        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</span>}
-        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
-        {subline && <div className="rt-content mt-3 font-medium text-[var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</span>}
+        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[color:var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
+        {subline && <div className="rt-content mt-3 font-medium text-[color:var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       {(storyHeadline || storyText) && (
         <div className="flex flex-col lg:flex-row gap-8 items-start mb-10 md:mb-16">
           {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] overflow-hidden border-3 border-[var(--token-card-border)] shadow-[6px_6px_0_var(--token-body)]"><Image data-edit-image="storyImage" src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
-            {storyHeadline && <h3 className="mb-3 text-xl font-bold uppercase text-[var(--token-heading)]">{storyHeadline}</h3>}
-            {storyText && <div className="rt-content whitespace-pre-line leading-relaxed text-[var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
+            {storyHeadline && <h3 className="mb-3 text-xl font-bold uppercase text-[color:var(--token-heading)]">{storyHeadline}</h3>}
+            {storyText && <div className="rt-content whitespace-pre-line leading-relaxed text-[color:var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}
           </div>
         </div>
       )}
       {stats.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 md:mb-16">
           {stats.map((s, i) => (
-            <div key={i} className="bg-[var(--token-card-bg)] p-5 text-center text-[var(--token-body)]" data-edit-collection="stats" data-edit-index={i}>
-              <div className="text-2xl font-black text-[var(--token-accent)]" data-edit-path="value">{s.value}</div>
-              <div className="mt-1 text-xs uppercase tracking-wider text-[var(--token-muted)]" data-edit-path="label">{s.label}</div>
+            <div key={i} className="bg-[var(--token-card-bg)] p-5 text-center text-[color:var(--token-body)]" data-edit-collection="stats" data-edit-index={i}>
+              <div className="text-2xl font-black text-[color:var(--token-accent)]" data-edit-path="value">{s.value}</div>
+              <div className="mt-1 text-xs uppercase tracking-wider text-[color:var(--token-muted)]" data-edit-path="label">{s.label}</div>
             </div>
           ))}
         </div>
       )}
       {members.length > 0 && (
         <div>
-          <h3 className="mb-8 text-xl font-bold uppercase text-[var(--token-heading)]">{membersHeadline}</h3>
+          <h3 className="mb-8 text-xl font-bold uppercase text-[color:var(--token-heading)]">{membersHeadline}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {members.map((m, i) => (
               <div key={i} className="flex items-start gap-4 border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-4 shadow-[3px_3px_0_var(--token-accent)]" data-edit-collection="members" data-edit-index={i}>
@@ -185,9 +185,9 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
                   {m.image ? <Image data-edit-image="image" src={m.image} alt={m.name} fill className="object-cover" sizes="80px" /> : <div className="h-full w-full bg-[var(--token-muted)]" />}
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold uppercase text-[var(--token-heading)]" data-edit-path="name">{m.name}</h4>
-                  <p className="text-xs font-bold uppercase text-[var(--token-accent)]" data-edit-path="role">{m.role}</p>
-                  {m.bio && <div className="rt-content mt-1 text-xs text-[var(--token-body)]" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
+                  <h4 className="text-sm font-bold uppercase text-[color:var(--token-heading)]" data-edit-path="name">{m.name}</h4>
+                  <p className="text-xs font-bold uppercase text-[color:var(--token-accent)]" data-edit-path="role">{m.role}</p>
+                  {m.bio && <div className="rt-content mt-1 text-xs text-[color:var(--token-body)]" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
                 </div>
               </div>
             ))}

@@ -30,8 +30,8 @@ export function ProductShowcaseSection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[color:var(--token-body)]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-3 text-[color:var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${colClass} gap-6`}>
@@ -61,9 +61,9 @@ export function ProductShowcaseSection({ data }: Props) {
                 )}
               </div>
               <div className="p-5">
-                <h3 className="font-display font-semibold text-lg text-[var(--token-card-body, var(--token-body))] group-hover:text-[var(--token-icon)] transition-colors" data-edit-path="title">{item.title}</h3>
-                {item.description && <p className="mt-1.5 text-sm text-[var(--token-card-body, var(--token-body))] line-clamp-2" data-edit-path="description">{plain(item.description)}</p>}
-                {item.price && <p className="mt-3 text-lg font-bold text-[var(--token-icon)]" data-edit-path="price">{item.price}</p>}
+                <h3 className="font-display font-semibold text-lg text-[color:var(--token-card-body, var(--token-body))] group-hover:text-[color:var(--token-icon)] transition-colors" data-edit-path="title">{item.title}</h3>
+                {item.description && <p className="mt-1.5 text-sm text-[color:var(--token-card-body, var(--token-body))] line-clamp-2" data-edit-path="description">{plain(item.description)}</p>}
+                {item.price && <p className="mt-3 text-lg font-bold text-[color:var(--token-icon)]" data-edit-path="price">{item.price}</p>}
               </div>
             </a>
           </motion.div>

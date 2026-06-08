@@ -55,12 +55,12 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-[var(--token-badge-bg)] backdrop-blur-sm text-[var(--token-badge-text)] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider" data-edit-path="category">
+            <span className="inline-block bg-[var(--token-badge-bg)] backdrop-blur-sm text-[color:var(--token-badge-text)] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider" data-edit-path="category">
               {category}
             </span>
           )}
           {date && (
-            <span className="text-[var(--token-on-dark-muted)] text-sm" data-edit-path="date">{date}</span>
+            <span className="text-[color:var(--token-on-dark-muted)] text-sm" data-edit-path="date">{date}</span>
           )}
         </motion.div>
 
@@ -69,7 +69,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--token-on-dark-heading)] tracking-tight leading-tight break-words" data-edit-path="headline"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading)] tracking-tight leading-tight break-words" data-edit-path="headline"
         >
           {headline}
         </motion.h1>
@@ -80,7 +80,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-4 text-lg md:text-xl text-[var(--token-on-dark-body)] max-w-2xl leading-relaxed rt-content"
+            className="mt-4 text-lg md:text-xl text-[color:var(--token-on-dark-body)] max-w-2xl leading-relaxed rt-content"
             dangerouslySetInnerHTML={{ __html: subline }}
           />
         )}
@@ -100,12 +100,12 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-[var(--token-badge-bg)] text-[var(--token-badge-text)] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider" data-edit-path="category">
+            <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider" data-edit-path="category">
               {category}
             </span>
           )}
           {date && (
-            <span className="text-[var(--token-muted)] text-sm" data-edit-path="date">{date}</span>
+            <span className="text-[color:var(--token-muted)] text-sm" data-edit-path="date">{date}</span>
           )}
         </motion.div>
 
@@ -113,7 +113,7 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight break-words text-[var(--token-heading)]" data-edit-path="headline"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight break-words text-[color:var(--token-heading)]" data-edit-path="headline"
         >
           {headline}
         </motion.h1>
@@ -123,7 +123,7 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-4 text-lg md:text-xl text-[var(--token-body)] max-w-2xl leading-relaxed rt-content"
+            className="mt-4 text-lg md:text-xl text-[color:var(--token-body)] max-w-2xl leading-relaxed rt-content"
             dangerouslySetInnerHTML={{ __html: subline }}
           />
         )}

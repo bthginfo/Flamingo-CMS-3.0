@@ -31,15 +31,15 @@ function Classic({ header, introText, cards }: Props) {
         {cards.map((card, index) => (
           <article key={`${card.title}-${index}`} className="group rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:shadow-xl" data-edit-collection="cards" data-edit-index={index}>
             <div className="flex items-start gap-4">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--token-icon)_13%,transparent)] text-[var(--token-icon)]">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--token-icon)_13%,transparent)] text-[color:var(--token-icon)]">
                 <DynamicIcon editPath="icon" name={card.icon || 'stethoscope'} size={20} />
               </span>
               <div className="min-w-0">
-                <h3 className="text-base font-bold text-[var(--token-heading)]" data-edit-path="title">{card.title || ''}</h3>
-                {card.text && <div className="mt-2 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: card.text }} />}
+                <h3 className="text-base font-bold text-[color:var(--token-heading)]" data-edit-path="title">{card.title || ''}</h3>
+                {card.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: card.text }} />}
               </div>
             </div>
-            <div className="mt-5 flex flex-wrap gap-2">{asList<string>(card.items).map((item) => <span key={item} className="rounded-full bg-[color-mix(in_srgb,var(--token-icon)_10%,transparent)] px-3 py-1 text-xs font-medium text-[var(--token-heading)]">{item}</span>)}</div>
+            <div className="mt-5 flex flex-wrap gap-2">{asList<string>(card.items).map((item) => <span key={item} className="rounded-full bg-[color-mix(in_srgb,var(--token-icon)_10%,transparent)] px-3 py-1 text-xs font-medium text-[color:var(--token-heading)]">{item}</span>)}</div>
           </article>
         ))}
       </div>

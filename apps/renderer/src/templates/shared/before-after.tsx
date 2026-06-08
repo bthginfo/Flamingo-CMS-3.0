@@ -29,8 +29,8 @@ export function BeforeAfterSection({ data }: Props) {
     <div ref={ref}>
       {(headline || description) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
-          {description && <p className="mt-3 text-[var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="description">{plain(description)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[color:var(--token-body)]" data-edit-path="headline">{headline}</h2>}
+          {description && <p className="mt-3 text-[color:var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="description">{plain(description)}</p>}
         </div>
       )}
 
@@ -65,7 +65,7 @@ export function BeforeAfterSection({ data }: Props) {
         <div className="absolute top-0 bottom-0" style={{ left: `${sliderPos}%` }}>
           <div className="absolute inset-y-0 -translate-x-1/2 w-1 bg-[var(--token-card-bg)] shadow-lg" />
           <div className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[var(--token-card-bg)] shadow-xl flex items-center justify-center border-2 border-[var(--token-icon)]">
-            <svg width="16" height="16" viewBox="0 0 16 16" className="text-[var(--token-icon)]">
+            <svg width="16" height="16" viewBox="0 0 16 16" className="text-[color:var(--token-icon)]">
               <path d="M4 8L1 5.5V10.5L4 8ZM12 8L15 5.5V10.5L12 8Z" fill="currentColor" />
             </svg>
           </div>

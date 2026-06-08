@@ -37,7 +37,7 @@ function BookingClassic({ headline, subline, badgeText, introText, onlineCta, ph
         {phoneCta.label && <a data-edit-link="phoneCta" href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)] px-5 py-3 font-semibold text-[color:var(--token-heading)]"><Phone size={17} /><span data-edit-path="label">{phoneCta.label}</span></a>}
         {whatsappCta.label && <a data-edit-link="whatsappCta" href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)] px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{whatsappCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs text-[var(--token-eyebrow)]" data-edit-path="note">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs text-[color:var(--token-eyebrow)]" data-edit-path="note">{note}</span>)}</div>
     </motion.div>
   );
 }

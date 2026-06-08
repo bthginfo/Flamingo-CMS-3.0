@@ -57,7 +57,7 @@ function Classic(p: Props) {
         <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
             <motion.div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="flex gap-4 rounded-xl border border-black/10 bg-[var(--token-card-bg)] p-5 shadow-sm" data-edit-collection="values" data-edit-index={i}>
-              <div className="shrink-0 text-[var(--token-eyebrow))]"><DynamicIcon editPath="icon" name={v.icon || 'map-pin'} size={20} /></div>
+              <div className="shrink-0 text-[color:var(--token-eyebrow))]"><DynamicIcon editPath="icon" name={v.icon || 'map-pin'} size={20} /></div>
               <div><h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>{v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}</div>
             </motion.div>
           ))}
@@ -68,7 +68,7 @@ function Classic(p: Props) {
           {p.milestones.map((m, i) => (
             <motion.div key={`${m.year}-${i}`} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="relative mb-8 last:mb-0" data-edit-collection="milestones" data-edit-index={i}>
               <div className="absolute -left-[2.55rem] top-1 h-4 w-4 rounded-full border-2 border-[var(--token-eyebrow))] bg-[var(--token-card-bg)]" />
-              {m.year && <p className="text-xs font-bold uppercase tracking-widest text-[var(--token-eyebrow))]">{m.year}</p>}
+              {m.year && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-eyebrow))]">{m.year}</p>}
               <h3 className="mt-1 font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{m.title || ''}</h3>
               {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </motion.div>
@@ -151,7 +151,7 @@ function Bold(p: Props) {
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
             <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_var(--token-eyebrow))]" data-edit-collection="values" data-edit-index={i}>
-              <DynamicIcon editPath="icon" name={v.icon || 'map-pin'} size={20} className="text-[var(--token-eyebrow))]" />
+              <DynamicIcon editPath="icon" name={v.icon || 'map-pin'} size={20} className="text-[color:var(--token-eyebrow))]" />
               <h3 className="mt-2 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>
               {v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}
             </div>
@@ -162,7 +162,7 @@ function Bold(p: Props) {
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {p.milestones.map((m, i) => (
             <div key={`${m.year}-${i}`} className="border-2 border-[#111827] p-5" data-edit-collection="milestones" data-edit-index={i}>
-              {m.year && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-eyebrow))]">{m.year}</p>}
+              {m.year && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow))]">{m.year}</p>}
               <h3 className="mt-1 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{m.title || ''}</h3>
               {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}
             </div>

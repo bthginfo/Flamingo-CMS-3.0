@@ -47,14 +47,14 @@ function FaqItemClassic({ question, answer, defaultOpen }: { question: string; a
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className={cn('overflow-hidden rounded-2xl border transition-all duration-300', open ? 'border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-lg' : 'border-[var(--token-card-border)] bg-[var(--token-card-bg)] hover:shadow-sm')}>
-      <button onClick={() => setOpen(!open)} className="font-display flex w-full items-center justify-between gap-4 px-7 py-6 text-left text-[16px] font-semibold text-[var(--token-heading)]">
+      <button onClick={() => setOpen(!open)} className="font-display flex w-full items-center justify-between gap-4 px-7 py-6 text-left text-[16px] font-semibold text-[color:var(--token-heading)]">
         <span data-edit-path="question">{question}</span>
-        <ChevronDown size={18} className={cn('shrink-0 text-[var(--token-muted)] transition-transform', open && 'rotate-180')} />
+        <ChevronDown size={18} className={cn('shrink-0 text-[color:var(--token-muted)] transition-transform', open && 'rotate-180')} />
       </button>
       <AnimatePresence>
         {open && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
-            <div className="px-7 pb-6 leading-relaxed text-[var(--token-body)]" data-edit-path="answer">{plain(answer)}</div>
+            <div className="px-7 pb-6 leading-relaxed text-[color:var(--token-body)]" data-edit-path="answer">{plain(answer)}</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -70,8 +70,8 @@ function FaqModern({ headline, badgeText, items, expandFirst }: FProps) {
   return (
     <div ref={ref} className="max-w-3xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-10 md:mb-16">
-        {badgeText && <div className="mb-4 flex items-center gap-3 text-sm uppercase tracking-wide text-[var(--token-muted)]"><span className="h-px w-8 bg-[var(--token-card-border)]" /><span data-edit-path="badgeText">{badgeText}</span></div>}
-        {headline && <h2 className="text-4xl font-light tracking-tight text-[var(--token-heading)] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
+        {badgeText && <div className="mb-4 flex items-center gap-3 text-sm uppercase tracking-wide text-[color:var(--token-muted)]"><span className="h-px w-8 bg-[var(--token-card-border)]" /><span data-edit-path="badgeText">{badgeText}</span></div>}
+        {headline && <h2 className="text-4xl font-light tracking-tight text-[color:var(--token-heading)] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
       </motion.div>
       <div className="divide-y divide-[var(--token-card-border)]">
         {items.map((item, i) => (
@@ -88,14 +88,14 @@ function FaqItemModern({ question, answer, defaultOpen }: { question: string; an
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="py-6">
-      <button onClick={() => setOpen(!open)} className="flex w-full items-center justify-between gap-4 text-left font-medium text-[var(--token-heading)] transition-colors hover:text-[var(--token-accent)]">
+      <button onClick={() => setOpen(!open)} className="flex w-full items-center justify-between gap-4 text-left font-medium text-[color:var(--token-heading)] transition-colors hover:text-[color:var(--token-accent)]">
         <span data-edit-path="question">{question}</span>
-        <Plus size={16} className={cn('shrink-0 text-[var(--token-muted)] transition-transform', open && 'rotate-45')} />
+        <Plus size={16} className={cn('shrink-0 text-[color:var(--token-muted)] transition-transform', open && 'rotate-45')} />
       </button>
       <AnimatePresence>
         {open && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
-            <p className="mt-4 text-[15px] leading-relaxed text-[var(--token-body)]" data-edit-path="answer">{plain(answer)}</p>
+            <p className="mt-4 text-[15px] leading-relaxed text-[color:var(--token-body)]" data-edit-path="answer">{plain(answer)}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -111,8 +111,8 @@ function FaqBold({ headline, badgeText, items, expandFirst }: FProps) {
   return (
     <div ref={ref} className="max-w-4xl mx-auto">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-10">
-        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</span>}
-        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
+        {badgeText && <span className="mb-4 inline-block bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</span>}
+        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[color:var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
       </motion.div>
       <div className="space-y-3">
         {items.map((item, i) => (
@@ -129,15 +129,15 @@ function FaqItemBold({ question, answer, defaultOpen, num }: { question: string;
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className={cn('border-3 border-[var(--token-card-border)] transition-all', open ? 'shadow-[4px_4px_0_var(--token-accent)]' : 'shadow-[4px_4px_0_var(--token-body)]')}>
-      <button onClick={() => setOpen(!open)} className="flex w-full items-center gap-4 px-6 py-5 text-left text-sm font-bold uppercase tracking-wide text-[var(--token-heading)]">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-[var(--token-body)] text-xs font-black text-[var(--token-btn-text)]">{num}</span>
+      <button onClick={() => setOpen(!open)} className="flex w-full items-center gap-4 px-6 py-5 text-left text-sm font-bold uppercase tracking-wide text-[color:var(--token-heading)]">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-[var(--token-body)] text-xs font-black text-[color:var(--token-btn-text)]">{num}</span>
         <span className="flex-1" data-edit-path="question">{question}</span>
         <Minus size={16} className={cn('shrink-0 transition-transform', !open && 'rotate-90')} />
       </button>
       <AnimatePresence>
         {open && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
-            <div className="border-t-2 border-[var(--token-card-border)] px-6 pb-5 pt-4 leading-relaxed text-[var(--token-body)]" data-edit-path="answer">{plain(answer)}</div>
+            <div className="border-t-2 border-[var(--token-card-border)] px-6 pb-5 pt-4 leading-relaxed text-[color:var(--token-body)]" data-edit-path="answer">{plain(answer)}</div>
           </motion.div>
         )}
       </AnimatePresence>

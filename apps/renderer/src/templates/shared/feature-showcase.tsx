@@ -92,7 +92,7 @@ export function FeatureShowcaseSection({ data }: Props) {
             {features.map((feat, i) => (
               <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.3, delay: 0.3 + i * 0.06 }} className="flex items-center gap-2.5" data-edit-collection="features" data-edit-index={i}>
                 <div className="w-5 h-5 rounded-full bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] flex items-center justify-center flex-shrink-0">
-                  <svg className="w-3 h-3 text-[var(--token-accent)]" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  <svg className="w-3 h-3 text-[color:var(--token-accent)]" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
                 </div>
                 <span className="text-sm text-[color:var(--token-card-body, var(--token-body))]">{feat}</span>
               </motion.div>

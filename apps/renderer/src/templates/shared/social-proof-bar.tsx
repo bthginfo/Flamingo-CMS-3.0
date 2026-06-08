@@ -18,10 +18,10 @@ export function SocialProofBarSection({ data }: Props) {
   if (!items.length) return null;
 
   const bg = bgStyle === 'dark'
-    ? 'bg-[var(--token-section-bg)] text-[var(--token-heading)]'
+    ? 'bg-[var(--token-section-bg)] text-[color:var(--token-heading)]'
     : bgStyle === 'primary'
-      ? 'bg-[var(--token-accent)] text-[var(--token-badge-text)]'
-      : 'bg-[var(--token-card-bg)] text-[var(--token-body)]';
+      ? 'bg-[var(--token-accent)] text-[color:var(--token-badge-text)]'
+      : 'bg-[var(--token-card-bg)] text-[color:var(--token-body)]';
 
   return (
     <div ref={ref} className={`${bg} rounded-xl border border-[var(--token-card-border)] px-4 py-6`}>
@@ -34,7 +34,7 @@ export function SocialProofBarSection({ data }: Props) {
               <div className="flex gap-0.5 mb-1">{Array.from({ length: 5 }).map((_, si) => <Star key={si} size={14} className="fill-[var(--token-rating-star,#facc15)] text-yellow-400"  data-edit-collection="length" data-edit-index={si}/>)}</div>
             ) : null}
             <span className="text-2xl md:text-3xl font-bold leading-tight" data-edit-path="value">{item.value}</span>
-            <span className="text-xs text-[var(--token-card-body, var(--token-body))] md:text-sm" data-edit-path="label">{item.label}</span>
+            <span className="text-xs text-[color:var(--token-card-body, var(--token-body))] md:text-sm" data-edit-path="label">{item.label}</span>
           </motion.div>
         ))}
       </motion.div>

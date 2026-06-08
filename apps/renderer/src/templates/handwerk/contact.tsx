@@ -55,12 +55,12 @@ export function ContactSection({ data }: Props) {
               transition={{ duration: 0.4, delay: i * 0.1 }}
               className="flex items-center gap-4 p-5 rounded-2xl bg-[var(--token-card-bg)] border border-[var(--token-card-border)] shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer"
              data-edit-collection="infoCards" data-edit-index={i}>
-              <div className={cn('w-12 h-12 rounded-xl bg-[color-mix(in_srgb,var(--token-icon)_12%,transparent)] flex items-center justify-center text-[var(--token-icon)] transition-transform group-hover:scale-110')}>
+              <div className={cn('w-12 h-12 rounded-xl bg-[color-mix(in_srgb,var(--token-icon)_12%,transparent)] flex items-center justify-center text-[color:var(--token-icon)] transition-transform group-hover:scale-110')}>
                 <DynamicIcon editPath="icon" name={card.icon} size={20} />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-xs text-[var(--token-muted)] uppercase tracking-wider font-medium" data-edit-path="label">{card.label}</div>
-                <div className="text-sm font-semibold text-[var(--token-heading)] break-words" data-edit-path="value">{card.value}</div>
+                <div className="text-xs text-[color:var(--token-muted)] uppercase tracking-wider font-medium" data-edit-path="label">{card.label}</div>
+                <div className="text-sm font-semibold text-[color:var(--token-heading)] break-words" data-edit-path="value">{card.value}</div>
               </div>
             </motion.div>
           ))}

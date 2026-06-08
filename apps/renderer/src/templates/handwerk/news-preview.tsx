@@ -44,7 +44,7 @@ export function NewsPreviewSection({ data }: Props) {
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
           {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        <Link href={linkHref} className="hidden items-center gap-1.5 text-sm font-medium text-[var(--token-accent)] hover:underline sm:flex">
+        <Link href={linkHref} className="hidden items-center gap-1.5 text-sm font-medium text-[color:var(--token-accent)] hover:underline sm:flex">
           {linkLabel} {linkIcon && <DynamicIcon name={linkIcon} size={14} />}
         </Link>
       </motion.div>
@@ -64,19 +64,19 @@ export function NewsPreviewSection({ data }: Props) {
                 </div>
               )}
               {item.date && (
-                <div className="mb-2 flex items-center gap-1.5 text-xs text-[var(--token-muted)]">
+                <div className="mb-2 flex items-center gap-1.5 text-xs text-[color:var(--token-muted)]">
                   <Calendar size={12} />
                   {new Date(item.date).toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
               )}
-              <h3 className="line-clamp-2 text-lg font-semibold text-[var(--token-body)] transition-colors group-hover:text-[var(--token-accent)]" data-edit-path="title">{item.title}</h3>
-              {item.excerpt && <p className="mt-1.5 line-clamp-2 text-sm text-[var(--token-body)]">{item.excerpt}</p>}
+              <h3 className="line-clamp-2 text-lg font-semibold text-[color:var(--token-body)] transition-colors group-hover:text-[color:var(--token-accent)]" data-edit-path="title">{item.title}</h3>
+              {item.excerpt && <p className="mt-1.5 line-clamp-2 text-sm text-[color:var(--token-body)]">{item.excerpt}</p>}
             </Link>
           </motion.article>
         ))}
       </div>
 
-      <Link href={linkHref} className="mt-6 flex items-center justify-center gap-1.5 text-sm font-medium text-[var(--token-accent)] sm:hidden">
+      <Link href={linkHref} className="mt-6 flex items-center justify-center gap-1.5 text-sm font-medium text-[color:var(--token-accent)] sm:hidden">
         {linkLabel} {linkIcon && <DynamicIcon name={linkIcon} size={14} />}
       </Link>
     </div>

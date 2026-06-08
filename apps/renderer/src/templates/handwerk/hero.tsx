@@ -231,7 +231,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
         <div className="max-w-5xl">
           {badgeText && (
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
-              className="inline-block bg-[var(--token-badge-bg)] text-[var(--token-badge-text,var(--token-on-dark-heading))] font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8" data-edit-path="badgeText">
+              className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text,var(--token-on-dark-heading))] font-bold text-xs uppercase tracking-widest px-4 py-2 mb-8" data-edit-path="badgeText">
               {badgeText}
             </motion.div>
           )}
@@ -246,7 +246,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta?.label && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto bg-[var(--token-btn-bg,var(--token-badge-bg))] text-[var(--token-btn-text,var(--token-badge-text,var(--token-on-dark-heading)))] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto bg-[var(--token-btn-bg,var(--token-badge-bg))] text-[color:var(--token-btn-text,var(--token-badge-text,var(--token-on-dark-heading)))] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
                 <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={18} />}
               </a>
             )}

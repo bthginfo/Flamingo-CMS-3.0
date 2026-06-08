@@ -39,7 +39,7 @@ export function ValuationCtaSection({ data }: Props) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           className="text-center"
         >
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--token-badge-border,var(--token-card-border))] bg-[var(--token-badge-bg)] px-4 py-2 text-sm font-medium text-[var(--token-badge-text)]">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--token-badge-border,var(--token-card-border))] bg-[var(--token-badge-bg)] px-4 py-2 text-sm font-medium text-[color:var(--token-badge-text)]">
             <Home size={16} />
             Immobilienbewertung
           </div>
@@ -59,7 +59,7 @@ export function ValuationCtaSection({ data }: Props) {
 
           <a
             href={ctaHref}
-            className="mt-10 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-10 py-4 font-semibold text-[var(--token-btn-text)] shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl"
+            className="mt-10 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-10 py-4 font-semibold text-[color:var(--token-btn-text)] shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl"
           >
             <span data-edit-path="ctaLabel">{ctaLabel}</span>
             <ArrowRight size={18} />

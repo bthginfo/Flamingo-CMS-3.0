@@ -50,7 +50,7 @@ export function PropertyShowcaseSection({ data }: Props) {
                   <Image data-edit-image="image" src={property.image} alt={property.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 33vw" />
                 )}
                 {property.badge && (
-                  <span className="absolute left-4 top-4 rounded-full border border-[color:var(--token-badge-border,var(--token-card-border))] bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[var(--token-badge-text)] shadow-sm backdrop-blur" data-edit-path="badge">
+                  <span className="absolute left-4 top-4 rounded-full border border-[color:var(--token-badge-border,var(--token-card-border))] bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-[color:var(--token-badge-text)] shadow-sm backdrop-blur" data-edit-path="badge">
                     {property.badge}
                   </span>
                 )}

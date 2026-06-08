@@ -45,7 +45,7 @@ export function ReferencesSoldSection({ data }: Props) {
               <Image data-edit-image="image" src={prop.image} alt={prop.title} fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
               {/* Sold overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute right-4 top-4 rounded-full border border-white/20 bg-[var(--token-badge-bg)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--token-badge-text)] shadow-sm backdrop-blur">
+              <div className="absolute right-4 top-4 rounded-full border border-white/20 bg-[var(--token-badge-bg)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[color:var(--token-badge-text)] shadow-sm backdrop-blur">
                 Verkauft
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-4">

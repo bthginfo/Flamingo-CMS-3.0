@@ -53,7 +53,7 @@ export function PopupSection({ data }: SectionProps) {
         onClick={close}
         className="absolute inset-0 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_62%,transparent)] backdrop-blur-[2px]"
       />
-      <div className="relative w-full max-w-xl overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 text-[var(--token-body)] shadow-[0_30px_120px_rgba(0,0,0,0.35)] md:p-8">
+      <div className="relative w-full max-w-xl overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 text-[color:var(--token-body)] shadow-[0_30px_120px_rgba(0,0,0,0.35)] md:p-8">
         <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-[color-mix(in_srgb,var(--token-accent)_20%,transparent)] blur-3xl" />
         <button
           type="button"
@@ -65,21 +65,21 @@ export function PopupSection({ data }: SectionProps) {
         </button>
 
         <div className="relative pr-10">
-          {subtitle && <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[var(--token-eyebrow)]" data-edit-path="subtitle">{subtitle}</p>}
-          <h2 className="max-w-lg text-3xl font-black leading-tight text-[var(--token-heading)] md:text-4xl" data-edit-path="title">{title}</h2>
-          {text && <div className="rt-content mt-5 text-base leading-8 text-[var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
+          {subtitle && <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--token-eyebrow)]" data-edit-path="subtitle">{subtitle}</p>}
+          <h2 className="max-w-lg text-3xl font-black leading-tight text-[color:var(--token-heading)] md:text-4xl" data-edit-path="title">{title}</h2>
+          {text && <div className="rt-content mt-5 text-base leading-8 text-[color:var(--token-body)]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
         </div>
 
         {(primaryCta.label || secondaryCta.label) && (
           <div className="relative mt-7 flex flex-col gap-3 sm:flex-row">
             {primaryCta.label && (
-              <a data-edit-link="primaryCta" href={primaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center gap-2 rounded-[var(--token-button-radius)] bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[var(--token-btn-text)] shadow-lg transition hover:brightness-110">
+              <a data-edit-link="primaryCta" href={primaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center gap-2 rounded-[var(--token-button-radius)] bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[color:var(--token-btn-text)] shadow-lg transition hover:brightness-110">
                 <span data-edit-path="label">{primaryCta.label}</span>
                 <ArrowRight size={16} />
               </a>
             )}
             {secondaryCta.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center rounded-[var(--token-button-radius)] border border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-card-bg)_70%,transparent)] px-5 py-3 text-sm font-bold text-[var(--token-heading)] transition hover:bg-[var(--token-card-bg)]" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center rounded-[var(--token-button-radius)] border border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-card-bg)_70%,transparent)] px-5 py-3 text-sm font-bold text-[color:var(--token-heading)] transition hover:bg-[var(--token-card-bg)]" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

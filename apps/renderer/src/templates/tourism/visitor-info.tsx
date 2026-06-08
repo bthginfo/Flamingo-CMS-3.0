@@ -25,19 +25,19 @@ function Classic({ header, introText, blocks }: Props) {
     <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
         <SectionHeader {...header} />
-        {introText && <div className="text-[var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="text-[color:var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {blocks.map((block, index) => (
           <motion.article key={`$<span data-edit-path="title">{block.title}</span>-${index}`} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="rounded-xl bg-[var(--token-card-bg)] p-5 shadow-lg" data-edit-collection="blocks" data-edit-index={index}>
             <div className="flex gap-4">
-              <DynamicIcon editPath="icon" name={block.icon || 'map-pin'} size={20} className="text-[var(--token-icon)]" />
+              <DynamicIcon editPath="icon" name={block.icon || 'map-pin'} size={20} className="text-[color:var(--token-icon)]" />
               <div>
-                <h3 className="font-semibold text-[var(--token-heading)]" data-edit-path="title">{block.title || ''}</h3>
-                {block.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: block.text }} />}
+                <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{block.title || ''}</h3>
+                {block.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: block.text }} />}
               </div>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2">{asList<string>(block.items).map((item) => <span key={item} className="rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs text-[var(--token-badge-text)]">{item}</span>)}</div>
+            <div className="mt-4 flex flex-wrap gap-2">{asList<string>(block.items).map((item) => <span key={item} className="rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs text-[color:var(--token-badge-text)]">{item}</span>)}</div>
           </motion.article>
         ))}
       </div>
@@ -50,19 +50,19 @@ function Modern({ header, introText, blocks }: Props) {
     <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
         <SectionHeader {...header} />
-        {introText && <div className="font-light text-[var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="font-light text-[color:var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {blocks.map((block, index) => (
           <article key={`$<span data-edit-path="title">{block.title}</span>-${index}`} className="border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5" data-edit-collection="blocks" data-edit-index={index}>
             <div className="flex gap-4">
-              <DynamicIcon editPath="icon" name={block.icon || 'map-pin'} size={20} className="text-[var(--token-icon)]" />
+              <DynamicIcon editPath="icon" name={block.icon || 'map-pin'} size={20} className="text-[color:var(--token-icon)]" />
               <div>
-                <h3 className="font-light text-[var(--token-heading)]" data-edit-path="title">{block.title || ''}</h3>
-                {block.text && <div className="mt-1 text-sm font-light leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: block.text }} />}
+                <h3 className="font-light text-[color:var(--token-heading)]" data-edit-path="title">{block.title || ''}</h3>
+                {block.text && <div className="mt-1 text-sm font-light leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: block.text }} />}
               </div>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2">{asList<string>(block.items).map((item) => <span key={item} className="border border-[var(--token-card-border)] px-3 py-1 text-xs text-[var(--token-muted)]">{item}</span>)}</div>
+            <div className="mt-4 flex flex-wrap gap-2">{asList<string>(block.items).map((item) => <span key={item} className="border border-[var(--token-card-border)] px-3 py-1 text-xs text-[color:var(--token-muted)]">{item}</span>)}</div>
           </article>
         ))}
       </div>
@@ -75,23 +75,23 @@ function Bold({ header, introText, blocks }: Props) {
     <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
         <div className="mb-10 max-w-3xl">
-          {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[var(--token-badge-text)]" data-edit-path="badgeText">{header.badgeText}</p>}
-          <h2 className="mt-3 text-3xl font-black uppercase text-[var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
-          {header.subline && <div className="mt-4 text-[var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
+          {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{header.badgeText}</p>}
+          <h2 className="mt-3 text-3xl font-black uppercase text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
+          {header.subline && <div className="mt-4 text-[color:var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
         </div>
-        {introText && <div className="text-[var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
+        {introText && <div className="text-[color:var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {blocks.map((block, index) => (
           <article key={`$<span data-edit-path="title">{block.title}</span>-${index}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="blocks" data-edit-index={index}>
             <div className="flex gap-4">
-              <DynamicIcon editPath="icon" name={block.icon || 'map-pin'} size={20} className="text-[var(--token-icon)]" />
+              <DynamicIcon editPath="icon" name={block.icon || 'map-pin'} size={20} className="text-[color:var(--token-icon)]" />
               <div>
-                <h3 className="font-black uppercase text-[var(--token-heading)]" data-edit-path="title">{block.title || ''}</h3>
-                {block.text && <div className="mt-1 text-sm leading-6 text-[var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: block.text }} />}
+                <h3 className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{block.title || ''}</h3>
+                {block.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: block.text }} />}
               </div>
             </div>
-            <div className="mt-4 flex flex-wrap gap-2">{asList<string>(block.items).map((item) => <span key={item} className="border border-[var(--token-accent)] px-3 py-1 text-xs font-bold uppercase text-[var(--token-accent)]">{item}</span>)}</div>
+            <div className="mt-4 flex flex-wrap gap-2">{asList<string>(block.items).map((item) => <span key={item} className="border border-[var(--token-accent)] px-3 py-1 text-xs font-bold uppercase text-[color:var(--token-accent)]">{item}</span>)}</div>
           </article>
         ))}
       </div>

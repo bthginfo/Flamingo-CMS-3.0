@@ -57,7 +57,7 @@ export function ConsultingHeroSection({ data }: Props) {
           )}
           <div className="flex flex-wrap justify-center gap-4 mt-10">
             {primaryCta && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-7 py-3.5 font-semibold text-[var(--token-btn-text)] shadow-lg transition-all hover:brightness-110">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-7 py-3.5 font-semibold text-[color:var(--token-btn-text)] shadow-lg transition-all hover:brightness-110">
                 <DynamicIcon name="phone" size={18} />
                 <span data-edit-path="label">{primaryCta.label}</span>
               </a>

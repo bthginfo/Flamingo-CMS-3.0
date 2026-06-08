@@ -72,22 +72,22 @@ export function PortfolioSection({ data }: Props) {
                 )}
               </div>
               <div className="p-6 lg:p-8">
-                <h3 className="font-display text-xl font-extrabold leading-tight text-[var(--token-heading)]" data-edit-path="title">{project.title}</h3>
+                <h3 className="font-display text-xl font-extrabold leading-tight text-[color:var(--token-heading)]" data-edit-path="title">{project.title}</h3>
                 {project.description && (
-                  <div className="rt-content mt-3 text-sm leading-relaxed text-[var(--token-body)]" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: project.description }} />
+                  <div className="rt-content mt-3 text-sm leading-relaxed text-[color:var(--token-body)]" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: project.description }} />
                 )}
                 {project.stats && project.stats.length > 0 && (
                   <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_58%,var(--token-card-bg,#fff))] p-4">
                     {project.stats.map((stat, j) => (
                       <div key={j} className="min-w-0 rounded-xl bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_82%,transparent)] px-4 py-3" data-edit-collection="stats" data-edit-index={j}>
-                        <div className="text-lg font-extrabold leading-none text-[var(--token-heading)]" data-edit-path="value">{stat.value}</div>
-                        <div className="mt-1 text-xs font-medium leading-tight text-[var(--token-muted)]" data-edit-path="label">{stat.label}</div>
+                        <div className="text-lg font-extrabold leading-none text-[color:var(--token-heading)]" data-edit-path="value">{stat.value}</div>
+                        <div className="mt-1 text-xs font-medium leading-tight text-[color:var(--token-muted)]" data-edit-path="label">{stat.label}</div>
                       </div>
                     ))}
                   </div>
                 )}
                 {project.href && (
-                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[var(--token-icon)] transition group-hover:translate-x-1">
+                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[color:var(--token-icon)] transition group-hover:translate-x-1">
                     Projekt ansehen {project.icon && <DynamicIcon editPath="icon" name={project.icon} size={14} />}
                   </span>
                 )}
@@ -99,7 +99,7 @@ export function PortfolioSection({ data }: Props) {
       </div>
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }} className="text-center mt-12">
-          <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg)] text-[var(--token-btn-text)] font-semibold rounded-full transition-all shadow-md hover:shadow-lg">
+          <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-semibold rounded-full transition-all shadow-md hover:shadow-lg">
             {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={16} />}
           </Link>
         </motion.div>

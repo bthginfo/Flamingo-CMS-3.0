@@ -32,7 +32,7 @@ function ExpertiseClassic({ headline, subline, badgeText, items }: Props) {
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
           <motion.article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] p-6 shadow-md" data-edit-collection="items" data-edit-index={i}>
-            {item.metaLabel && <span className="inline-block rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase text-[var(--token-eyebrow)]">{item.metaLabel}</span>}
+            {item.metaLabel && <span className="inline-block rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase text-[color:var(--token-eyebrow)]">{item.metaLabel}</span>}
             <div className="mt-4 flex gap-4">
               <DynamicIcon editPath="icon" name={item.icon || 'sparkles'} size={20} className="text-[color:var(--token-eyebrow)]" />
               <div>

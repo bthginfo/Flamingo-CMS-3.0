@@ -39,15 +39,15 @@ export function BeforeAfterSliderSection({ data }: Props) {
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
-            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[var(--token-heading)]" data-edit-path="headline">{headline}</h2>}
-            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--token-subheading)]" data-edit-path="subline">{plain(subline)}</p>}
+            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>}
+            {subline && <p className="mt-3 max-w-xl mx-auto text-[color:var(--token-subheading)]" data-edit-path="subline">{plain(subline)}</p>}
           </motion.div>
         )}
 
         <SliderWidget slide={currentSlide} handleColor={handleColor} aspectRatio={aspectRatio} />
 
         {currentSlide.caption && (
-          <p className="text-center text-sm text-[var(--token-muted)] mt-4" data-edit-path="caption">{currentSlide.caption}</p>
+          <p className="text-center text-sm text-[color:var(--token-muted)] mt-4" data-edit-path="caption">{currentSlide.caption}</p>
         )}
 
         {slides.length > 1 && (

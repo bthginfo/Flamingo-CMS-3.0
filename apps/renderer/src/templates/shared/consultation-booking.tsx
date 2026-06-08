@@ -28,8 +28,8 @@ export function ConsultationBookingSection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-10">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[color:var(--token-body)]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-3 text-[color:var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 
@@ -50,13 +50,13 @@ export function ConsultationBookingSection({ data }: Props) {
               }`}
              data-edit-collection="services" data-edit-index={i}>
               {service.icon && (
-                <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--token-icon)] text-[color:var(--token-btn-text,#fff)]' : 'bg-[color-mix(in_srgb,var(--token-icon)_10%,var(--token-card-bg,#fff))] text-[var(--token-icon)]'} transition-colors`}>
+                <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selected === i ? 'bg-[var(--token-icon)] text-[color:var(--token-btn-text,#fff)]' : 'bg-[color-mix(in_srgb,var(--token-icon)_10%,var(--token-card-bg,#fff))] text-[color:var(--token-icon)]'} transition-colors`}>
                   <DynamicIcon editPath="icon" name={service.icon} size={20} />
                 </div>
               )}
               <div>
-                <h3 className="font-semibold text-[var(--token-card-body, var(--token-body))]" data-edit-path="title">{service.title}</h3>
-                {service.description && <p className="text-sm text-[var(--token-card-body, var(--token-body))] mt-1" data-edit-path="description">{plain(service.description)}</p>}
+                <h3 className="font-semibold text-[color:var(--token-card-body, var(--token-body))]" data-edit-path="title">{service.title}</h3>
+                {service.description && <p className="text-sm text-[color:var(--token-card-body, var(--token-body))] mt-1" data-edit-path="description">{plain(service.description)}</p>}
               </div>
             </motion.button>
           ))}
@@ -74,7 +74,7 @@ export function ConsultationBookingSection({ data }: Props) {
               <img data-edit-image="image" src={image} alt={headline} className="w-full aspect-[4/3] object-cover" />
             )}
             <div className="p-6 text-center">
-              <p className="text-[var(--token-card-body, var(--token-body))] text-sm mb-4">
+              <p className="text-[color:var(--token-card-body, var(--token-body))] text-sm mb-4">
                 {selectedService?.title ? (
                   <>
                     Beratung:{' '}

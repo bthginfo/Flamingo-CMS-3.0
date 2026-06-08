@@ -61,10 +61,10 @@ export function BentoGridSection({ data }: Props) {
             )}
 
             <div className="relative z-10 flex h-full flex-col gap-8">
-              {item.icon && <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon)_12%,var(--token-card-bg,#fff))] text-[var(--token-icon)]"><DynamicIcon editPath="icon" name={item.icon} size={24} /></div>}
+              {item.icon && <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon)_12%,var(--token-card-bg,#fff))] text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={item.icon} size={24} /></div>}
               <div className="mt-auto">
-                <h3 className="text-xl font-bold leading-tight text-[var(--token-card-heading, var(--token-heading))] mb-2" data-edit-path="title">{item.title}</h3>
-                {item.description && <p className="text-sm text-[var(--token-card-body, var(--token-body))] leading-relaxed" data-edit-path="description">{plain(item.description)}</p>}
+                <h3 className="text-xl font-bold leading-tight text-[color:var(--token-card-heading, var(--token-heading))] mb-2" data-edit-path="title">{item.title}</h3>
+                {item.description && <p className="text-sm text-[color:var(--token-card-body, var(--token-body))] leading-relaxed" data-edit-path="description">{plain(item.description)}</p>}
               </div>
             </div>
           </motion.div>

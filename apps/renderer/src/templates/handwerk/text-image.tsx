@@ -40,15 +40,15 @@ export function TextImageSection({ data, variant }: Props) {
         <div className={!image ? 'md:col-span-2 max-w-3xl mx-auto' : ''}>
           {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
           {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
-          {text && <div className="text-[var(--token-body)] text-lg leading-relaxed mt-4 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
+          {text && <div className="text-[color:var(--token-body)] text-lg leading-relaxed mt-4 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <ul className="mt-6 space-y-3">
               {items.map((item, i) => (
                 <li key={i} className="flex items-start gap-3" data-edit-collection="items" data-edit-index={i}>
                   <span className="w-2 h-2 mt-2 rounded-full bg-[var(--token-icon)] shrink-0" />
                   <div>
-                    <span className="font-medium text-[var(--token-body)]" data-edit-path="title">{item.title}</span>
-                    {item.text && <span className="text-[var(--token-body)]"> - <span data-edit-path="text">{plain(item.text)}</span></span>}
+                    <span className="font-medium text-[color:var(--token-body)]" data-edit-path="title">{item.title}</span>
+                    {item.text && <span className="text-[color:var(--token-body)]"> - <span data-edit-path="text">{plain(item.text)}</span></span>}
                   </div>
                 </li>
               ))}
@@ -57,12 +57,12 @@ export function TextImageSection({ data, variant }: Props) {
           {(primaryCta.label || secondaryCta.label) && (
             <div className="mt-8 flex flex-wrap gap-3">
               {primaryCta.label && (
-                <Link data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[var(--token-btn-text)] shadow-md transition-colors">
+                <Link data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-btn-text)] shadow-md transition-colors">
                   {primaryCta.label} {primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={16} />}
                 </Link>
               )}
               {secondaryCta.label && (
-                <Link data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] px-6 py-3 font-semibold text-[var(--token-body)] hover:border-[var(--token-icon)] hover:text-[var(--token-icon)] transition-colors">
+                <Link data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] px-6 py-3 font-semibold text-[color:var(--token-body)] hover:border-[var(--token-icon)] hover:text-[color:var(--token-icon)] transition-colors">
                   {secondaryCta.label} {secondaryCta.icon && <DynamicIcon editPath="secondaryCta.icon" name={secondaryCta.icon} size={16} />}
                 </Link>
               )}

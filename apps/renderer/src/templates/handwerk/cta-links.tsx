@@ -40,15 +40,15 @@ export function CtaLinksSection({ data }: Props) {
               className="group flex items-center gap-4 p-6 rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm hover:shadow-lg hover:border-[color-mix(in_srgb,var(--token-icon)_28%,transparent)] transition-all duration-300 hover:-translate-y-1"
             >
               {link.icon && (
-                <div className="w-12 h-12 rounded-xl bg-[color-mix(in_srgb,var(--token-icon)_12%,transparent)] flex items-center justify-center text-[var(--token-icon)] shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-[color-mix(in_srgb,var(--token-icon)_12%,transparent)] flex items-center justify-center text-[color:var(--token-icon)] shrink-0">
                   <DynamicIcon editPath="icon" name={link.icon} size={22} />
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-[var(--token-heading)] group-hover:text-[var(--token-accent)] transition-colors" data-edit-path="label">{link.label}</div>
-                {link.description && <div className="text-sm text-[var(--token-body)] mt-0.5 truncate rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: link.description }} />}
+                <div className="font-semibold text-[color:var(--token-heading)] group-hover:text-[color:var(--token-accent)] transition-colors" data-edit-path="label">{link.label}</div>
+                {link.description && <div className="text-sm text-[color:var(--token-body)] mt-0.5 truncate rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: link.description }} />}
               </div>
-              {link.icon && <DynamicIcon editPath="icon" name={link.icon} size={18} className="text-[var(--token-muted)] group-hover:text-[var(--token-accent)] group-hover:translate-x-1 transition-all shrink-0" />}
+              {link.icon && <DynamicIcon editPath="icon" name={link.icon} size={18} className="text-[color:var(--token-muted)] group-hover:text-[color:var(--token-accent)] group-hover:translate-x-1 transition-all shrink-0" />}
             </Link>
           </motion.div>
         ))}

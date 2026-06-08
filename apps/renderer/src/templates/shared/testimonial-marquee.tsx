@@ -12,7 +12,7 @@ function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5">
       {Array.from({ length: 5 }, (_, i) => (
-        <svg key={i} className={`w-3.5 h-3.5 ${i < rating ? 'text-[var(--token-accent)]' : 'text-[var(--token-muted)]'}`} fill="currentColor" viewBox="0 0 20 20">
+        <svg key={i} className={`w-3.5 h-3.5 ${i < rating ? 'text-[color:var(--token-accent)]' : 'text-[color:var(--token-muted)]'}`} fill="currentColor" viewBox="0 0 20 20">
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
       ))}
@@ -30,12 +30,12 @@ function MarqueeRow({ items, reverse, speed = 30 }: { items: MarqueeItem[]; reve
       >
         {doubled.map((item, i) => (
           <div key={i} className="flex-shrink-0 w-[320px] md:w-[380px] rounded-xl bg-[var(--token-card-bg)] border border-[var(--token-card-border)] shadow-sm p-5 hover:shadow-md transition-shadow duration-300" data-edit-collection="doubled" data-edit-index={i}>
-            <p className="text-sm text-[var(--token-card-body, var(--token-body))] leading-relaxed mb-4 line-clamp-4">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>
+            <p className="text-sm text-[color:var(--token-card-body, var(--token-body))] leading-relaxed mb-4 line-clamp-4">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>
             <div className="flex items-center gap-3">
               {item.image && <img data-edit-image="image" src={item.image} alt={item.name} className="w-9 h-9 rounded-full object-cover" />}
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-[var(--token-card-heading, var(--token-heading))] truncate" data-edit-path="name">{item.name}</div>
-                {item.role && <div className="text-xs text-[var(--token-card-muted, var(--token-muted))] truncate" data-edit-path="role">{item.role}</div>}
+                <div className="text-sm font-semibold text-[color:var(--token-card-heading, var(--token-heading))] truncate" data-edit-path="name">{item.name}</div>
+                {item.role && <div className="text-xs text-[color:var(--token-card-muted, var(--token-muted))] truncate" data-edit-path="role">{item.role}</div>}
               </div>
               {item.rating && <div className="ml-auto"><StarRating rating={item.rating} /></div>}
             </div>

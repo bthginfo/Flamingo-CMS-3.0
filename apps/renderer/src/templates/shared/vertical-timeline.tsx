@@ -37,8 +37,8 @@ export function VerticalTimelineSection({ data }: Props) {
             transition={{ duration: 0.5 }}
             className="text-center mb-14"
           >
-            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[var(--token-heading)]" data-edit-path="headline">{headline}</h2>}
-            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--token-subheading)]" data-edit-path="subline">{plain(subline)}</p>}
+            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>}
+            {subline && <p className="mt-3 max-w-xl mx-auto text-[color:var(--token-subheading)]" data-edit-path="subline">{plain(subline)}</p>}
           </motion.div>
         )}
 
@@ -88,14 +88,14 @@ function TimelineStep({ step, index, total, accentColor }: { step: Step; index: 
           <span className="text-xs font-bold uppercase tracking-wider" style={{ color: accentColor }}>
             Schritt {number}/{String(total).padStart(2, '0')}
           </span>
-        {step.timeLabel && <span className="text-xs text-[var(--token-muted)]">{step.timeLabel}</span>}
+        {step.timeLabel && <span className="text-xs text-[color:var(--token-muted)]">{step.timeLabel}</span>}
         </div>
         <h3 className="text-xl md:text-2xl font-bold mt-1" data-edit-path="title">{step.title}</h3>
-        {step.text && <p className="mt-2 text-[var(--token-card-body, var(--token-body))] leading-relaxed" data-edit-path="text">{plain(step.text)}</p>}
+        {step.text && <p className="mt-2 text-[color:var(--token-card-body, var(--token-body))] leading-relaxed" data-edit-path="text">{plain(step.text)}</p>}
         {step.checkmarks && step.checkmarks.length > 0 && (
           <ul className="mt-3 space-y-1.5">
             {step.checkmarks.map((item, j) => (
-              <li key={j} className="flex items-center gap-2 text-sm text-[var(--token-card-body, var(--token-body))]" data-edit-collection="checkmarks" data-edit-index={j}>
+              <li key={j} className="flex items-center gap-2 text-sm text-[color:var(--token-card-body, var(--token-body))]" data-edit-collection="checkmarks" data-edit-index={j}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
                   <circle cx="8" cy="8" r="8" fill={accentColor} opacity={0.12} />
                   <path d="M5 8l2 2 4-4" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

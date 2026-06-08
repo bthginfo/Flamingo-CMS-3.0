@@ -27,12 +27,12 @@ export function BeforeAfterStoryProSection({ data }: Props) {
         <div className="mt-8 grid gap-3">
           {[['Ausgangslage', problem], ['Lösung', solution], ['Ergebnis', result]].filter(([, text]) => text).map(([label, text], index) => (
             <motion.div key={label} initial={{ opacity: 0, x: -18 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5">
-              <div className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--token-eyebrow)]" data-edit-path="label">{label}</div>
-              <p className="mt-2 text-sm leading-7 text-[var(--token-card-body, var(--token-body))]" data-edit-path="text">{plain(text)}</p>
+              <div className="text-xs font-bold uppercase tracking-[0.18em] text-[color:var(--token-eyebrow)]" data-edit-path="label">{label}</div>
+              <p className="mt-2 text-sm leading-7 text-[color:var(--token-card-body, var(--token-body))]" data-edit-path="text">{plain(text)}</p>
             </motion.div>
           ))}
         </div>
-        {cta.label && <a data-edit-link="cta" href={cta.href || '#'} className="mt-7 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[var(--token-btn-text)]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>}
+        {cta.label && <a data-edit-link="cta" href={cta.href || '#'} className="mt-7 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 text-sm font-bold text-[color:var(--token-btn-text)]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>}
       </div>
 
       <div className="space-y-4">
@@ -44,9 +44,9 @@ export function BeforeAfterStoryProSection({ data }: Props) {
           <div className="grid gap-3 rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 sm:grid-cols-3">
             {points.map((point, index) => (
               <div key={index} data-edit-collection="points" data-edit-index={index}>
-                <CheckCircle2 className="mb-2 text-[var(--token-accent)]" size={18} />
-                {point.value && <div className="text-2xl font-black text-[var(--token-card-heading, var(--token-heading))]" data-edit-path="value">{point.value}</div>}
-                <div className="text-sm text-[var(--token-muted)]" data-edit-path="label">{point.label}</div>
+                <CheckCircle2 className="mb-2 text-[color:var(--token-accent)]" size={18} />
+                {point.value && <div className="text-2xl font-black text-[color:var(--token-card-heading, var(--token-heading))]" data-edit-path="value">{point.value}</div>}
+                <div className="text-sm text-[color:var(--token-muted)]" data-edit-path="label">{point.label}</div>
               </div>
             ))}
           </div>

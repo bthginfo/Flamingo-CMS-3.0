@@ -47,7 +47,7 @@ export function RealestateHeroSection({ data }: Props) {
           )}
           <div className="flex flex-wrap gap-4 mt-10">
             {primaryCta && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-8 py-4 font-semibold text-[var(--token-btn-text)] shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl" data-edit-path="label">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-8 py-4 font-semibold text-[color:var(--token-btn-text)] shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl" data-edit-path="label">
                 {primaryCta.label}
               </a>
             )}

@@ -37,7 +37,7 @@ function BeforeAfterClassic({ headline, subline, badgeText, items }: Props) {
               {item.afterImage && <div className="relative aspect-square"><Image data-edit-image="afterImage" src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             </div>
             <div className="p-5">
-              {item.category && <span className="inline-block rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase text-[var(--token-eyebrow)]" data-edit-path="category">{item.category}</span>}
+              {item.category && <span className="inline-block rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase text-[color:var(--token-eyebrow)]" data-edit-path="category">{item.category}</span>}
               <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.caption && <p className="mt-2 text-xs text-[color:var(--token-muted)]" data-edit-path="caption">{item.caption}</p>}

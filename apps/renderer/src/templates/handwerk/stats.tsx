@@ -56,14 +56,14 @@ export function StatsSection({ data }: Props) {
             className="text-center p-6 rounded-2xl bg-[var(--token-card-bg)] border border-[var(--token-card-border)] shadow-sm"
            data-edit-collection="stats" data-edit-index={i}>
             {stat.icon && (
-              <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-[color-mix(in_srgb,var(--token-icon)_14%,transparent)] flex items-center justify-center text-[var(--token-icon)]">
+              <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-[color-mix(in_srgb,var(--token-icon)_14%,transparent)] flex items-center justify-center text-[color:var(--token-icon)]">
                 <DynamicIcon editPath="icon" name={stat.icon} size={20} />
               </div>
             )}
-            <div className="text-3xl md:text-4xl font-bold text-[var(--token-stat-value)]">
+            <div className="text-3xl md:text-4xl font-bold text-[color:var(--token-stat-value)]">
               <AnimatedNumber value={stat.value} suffix={stat.suffix} prefix={stat.prefix} />
             </div>
-            <div className="text-sm text-[var(--token-body)] mt-1" data-edit-path="label">{stat.label}</div>
+            <div className="text-sm text-[color:var(--token-body)] mt-1" data-edit-path="label">{stat.label}</div>
           </motion.div>
         ))}
       </div>

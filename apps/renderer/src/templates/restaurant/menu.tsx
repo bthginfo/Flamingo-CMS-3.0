@@ -100,7 +100,7 @@ function MenuBold(props: MenuViewProps) {
 function MenuHeader({ headline, subline, badgeText, introText, align, inverted }: MenuViewProps & { align: 'left' | 'center'; inverted?: boolean }) {
   return (
     <div className={`${align === 'center' ? 'text-center mx-auto' : ''} max-w-3xl p-6 sm:p-10`}>
-      {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[var(--token-eyebrow)]' : 'text-[color:var(--token-muted)]'}`} data-edit-path="badgeText">{badgeText}</p>}
+      {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[color:var(--token-eyebrow)]' : 'text-[color:var(--token-muted)]'}`} data-edit-path="badgeText">{badgeText}</p>}
       <h2 className={`mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] ${inverted ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="headline">{headline}</h2>
       {subline && <div className={`mt-4 text-base sm:text-lg ${inverted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)]' : 'text-[color:var(--token-muted)]'} rt-content`} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       {introText && <div className={`mt-5 leading-7 ${inverted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_65%,transparent)]' : 'text-[color:var(--token-muted)]'} rt-content`} data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
@@ -127,7 +127,7 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
             <div>
               <div className="flex items-start justify-between gap-4">
                 <h4 className={`font-semibold ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="name">{item.name || ''}</h4>
-                {item.price && <p className={`shrink-0 font-bold ${layout === 'bold' ? 'text-[var(--token-eyebrow)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="price">{item.price}</p>}
+                {item.price && <p className={`shrink-0 font-bold ${layout === 'bold' ? 'text-[color:var(--token-eyebrow)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="price">{item.price}</p>}
               </div>
               {item.description && <div className={`mt-1 text-sm leading-6 ${layout === 'bold' ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]' : 'text-[color:var(--token-muted)]'}`} data-edit-rich="description" dangerouslySetInnerHTML={{ __html: item.description }} />}
               <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
