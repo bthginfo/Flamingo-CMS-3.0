@@ -3,7 +3,7 @@
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { validateSectionData } from '@/lib/validate-section';
-import { pages, pageSections, tenants, globalSettings, tenantAddons, collections, collectionItems } from '@flamingo/db';
+import { pages, pageSections, tenants, globalSettings, tenantAddons, collections, collectionItems, products } from '@flamingo/db';
 import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -115,7 +115,11 @@ export async function getPageWithSectionsAction(pageId: string) {
     key: c.key, label: c.label,
     items: allItems.filter(i => i.collectionId === c.id).map(i => ({ id: i.id, title: i.title, slug: i.slug, data: i.data })),
   }));
-  return { page, sections: sectionsResult, industry: tenant?.industry ?? 'tradesman', styleVariant: 'classic', brand: (brandResult[0]?.brand as Record<string, string>) || {}, hasShop: !!shopAddonResult[0]?.active, hasBooking: !!bookingAddonResult[0]?.active, i18n, collections: previewCollections, tenantId: session.tenantId };
+  // Load shop products for live preview (avoid client-side fetch in admin iframe)
+  const previewProducts = shopAddonResult[0]?.active
+    ? await db.select({ id: products.id, title: products.title, slug: products.slug, priceCents: products.priceCents, comparePriceCents: products.comparePriceCents, images: products.images }).from(products).where(and(eq(products.tenantId, session.tenantId), eq(products.active, true))).limit(20)
+    : [];
+  return { page, sections: sectionsResult, industry: tenant?.industry ?? 'tradesman', styleVariant: 'classic', brand: (brandResult[0]?.brand as Record<string, string>) || {}, hasShop: !!shopAddonResult[0]?.active, hasBooking: !!bookingAddonResult[0]?.active, i18n, collections: previewCollections, tenantId: session.tenantId, previewProducts };
 }
 
 export async function addSectionAction(pageId: string, type: string) {
