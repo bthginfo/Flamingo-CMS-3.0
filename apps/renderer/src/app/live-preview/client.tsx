@@ -19,6 +19,7 @@ interface InitialData {
   socialLinks?: Record<string, string>;
   fontsUrl?: string | null;
   sections?: SnapshotSection[];
+  collections?: SnapshotCollection[];
 }
 
 export function LivePreviewClient({ initialData }: { initialData: InitialData }) {
@@ -32,7 +33,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
   const [contact, setContact] = useState(initialData.contact || {});
   const [footer, setFooter] = useState(initialData.footer || null);
   const [socialLinks, setSocialLinks] = useState(initialData.socialLinks || {});
-  const [collections, setCollections] = useState<SnapshotCollection[]>([]);
+  const [collections, setCollections] = useState<SnapshotCollection[]>(initialData.collections || []);
   const [fontsUrl, setFontsUrl] = useState(initialData.fontsUrl || null);
   const [locale, setLocale] = useState<string | undefined>(undefined);
   // editMode is owned by the parent admin shell (PreviewPanel toolbar) and

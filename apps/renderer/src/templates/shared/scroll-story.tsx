@@ -30,7 +30,7 @@ export function ScrollStorySection({ data }: Props) {
   });
 
   if (!steps.length) return null;
-  const scrollHeight = steps.length > 1 ? `${Math.max(steps.length * 78, 180)}vh` : undefined;
+  const scrollHeight = steps.length > 1 ? `${Math.max(steps.length * 64, 150)}vh` : undefined;
 
   return (
     <div ref={ref} className="relative" style={{ minHeight: scrollHeight }}>
@@ -95,7 +95,7 @@ export function ScrollStorySection({ data }: Props) {
           </div>
         </div>
 
-        <div className="space-y-6 lg:py-[18vh]">
+        <div className="space-y-6 lg:py-[10vh]">
           {steps.map((step, i) => (
             <motion.article
               key={`${step.title}-${i}`}

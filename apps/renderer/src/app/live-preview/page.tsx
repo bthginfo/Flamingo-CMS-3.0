@@ -79,6 +79,7 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
         socialLinks,
         fontsUrl: googleFontsUrl,
         sections: initialSections,
+        collections: snapshot?.collections || [],
       }}
     />
     </>
