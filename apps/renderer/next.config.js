@@ -5,9 +5,19 @@ const nextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: path.join(__dirname, '../..'),
   experimental: {
-    // Prevent Next.js from tree-shaking lucide-react's `icons` record
-    // so DynamicIcon can resolve any icon name at runtime
-    optimizePackageImports: [],
+    // NOTE: lucide-react is intentionally EXCLUDED here. The icon-map.tsx
+    // imports the full `icons` record at runtime; Next's optimizePackageImports
+    // would rewrite that to per-icon imports and break dynamic icon lookup.
+    optimizePackageImports: [
+      'framer-motion',
+      '@radix-ui/react-accordion',
+      '@radix-ui/react-slot',
+      'embla-carousel-react',
+      'embla-carousel-autoplay',
+      'sonner',
+      'class-variance-authority',
+      'tailwind-merge',
+    ],
   },
   // Absolute asset prefix so assets load correctly when HTML is served
   // through the marketing site's /demo/* rewrite proxy.
