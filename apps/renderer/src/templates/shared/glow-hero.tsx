@@ -55,9 +55,9 @@ export function GlowHeroSection({ data }: Props) {
           </div>
         </div>
         {facts.length > 0 && (
-          <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-border)] md:grid-cols-3">
+          <div className="mt-14 grid gap-3 md:grid-cols-3">
             {facts.map((fact, index) => (
-              <div key={index} className="bg-[var(--token-card-bg)] p-5 backdrop-blur" data-edit-collection="facts" data-edit-index={index}>
+              <div key={index} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 backdrop-blur" data-edit-collection="facts" data-edit-index={index}>
                 {fact.value && <div className="text-3xl font-black text-[var(--token-stat-value)]" data-edit-path="value">{fact.value}</div>}
                 {fact.label && <div className="mt-1 text-sm text-[var(--token-body)]" data-edit-path="label">{fact.label}</div>}
               </div>
