@@ -82,8 +82,8 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
       {useBgImage ? (
         <>
           <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
-            <Image data-edit-image="bgImage" src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
-            {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="100vw" />}
+            <Image data-edit-image="bgImage" src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority={!bgImageMobile} fetchPriority={bgImageMobile ? 'low' : 'high'} sizes="100vw" />
+            {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority fetchPriority="high" sizes="100vw" />}
           </ImageEffectWrapper>
           {overlayOpacity === 0 ? null : overlayColor && overlayOpacity > 0 ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : <div className="absolute inset-0 bg-gradient-to-r from-[color-mix(in_srgb,var(--token-section-bg-alt)_90%,transparent)] via-[color-mix(in_srgb,var(--token-section-bg-alt)_70%,transparent)] to-[color-mix(in_srgb,var(--token-section-bg-alt)_50%,transparent)]" />}
         </>
@@ -196,8 +196,8 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
         <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
           {(bgMode === 'image' && bgImage) ? (
             <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="relative aspect-[4/5] rounded-[0.5rem] overflow-hidden">
-              <Image data-edit-image="bgImage" src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="50vw" />
-              {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="50vw" />}
+              <Image data-edit-image="bgImage" src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority={!bgImageMobile} fetchPriority={bgImageMobile ? 'low' : 'high'} sizes="(min-width: 1024px) 50vw, 100vw" />
+              {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority fetchPriority="high" sizes="100vw" />}
               {overlayColor && overlayOpacity ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : null}
             </ImageEffectWrapper>
           ) : (bgMode === 'color' && bgColor) ? (
@@ -219,8 +219,8 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
       {useBgImage && (
         <>
           <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
-            <Image data-edit-image="bgImage" src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority sizes="100vw" />
-            {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority sizes="100vw" />}
+            <Image data-edit-image="bgImage" src={bgImage} alt="" fill className={`object-cover${bgImageMobile ? ' hidden md:block' : ''}`} style={{ objectPosition: bgPosition }} priority={!bgImageMobile} fetchPriority={bgImageMobile ? 'low' : 'high'} sizes="100vw" />
+            {bgImageMobile && <Image data-edit-image="bgImageMobile" src={bgImageMobile} alt="" fill className="object-cover md:hidden" style={{ objectPosition: bgPositionMobile || bgPosition }} priority fetchPriority="high" sizes="100vw" />}
           </ImageEffectWrapper>
           <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_80%,transparent)]" />
           {overlayColor && overlayOpacity ? <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} /> : null}
