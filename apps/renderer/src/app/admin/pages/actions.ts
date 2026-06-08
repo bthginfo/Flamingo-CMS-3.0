@@ -115,7 +115,7 @@ export async function getPageWithSectionsAction(pageId: string) {
     key: c.key, label: c.label,
     items: allItems.filter(i => i.collectionId === c.id).map(i => ({ id: i.id, title: i.title, slug: i.slug, data: i.data })),
   }));
-  return { page, sections: sectionsResult, industry: tenant?.industry ?? 'tradesman', styleVariant: 'classic', brand: (brandResult[0]?.brand as Record<string, string>) || {}, hasShop: !!shopAddonResult[0]?.active, hasBooking: !!bookingAddonResult[0]?.active, i18n, collections: previewCollections };
+  return { page, sections: sectionsResult, industry: tenant?.industry ?? 'tradesman', styleVariant: 'classic', brand: (brandResult[0]?.brand as Record<string, string>) || {}, hasShop: !!shopAddonResult[0]?.active, hasBooking: !!bookingAddonResult[0]?.active, i18n, collections: previewCollections, tenantId: session.tenantId };
 }
 
 export async function addSectionAction(pageId: string, type: string) {
