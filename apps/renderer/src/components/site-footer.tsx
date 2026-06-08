@@ -114,16 +114,16 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
 
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-xs opacity-80">
+          <span className="text-xs">
             © {new Date().getFullYear()} {brand.companyName}. Alle Rechte vorbehalten.
           </span>
           <div className="flex items-center gap-6 flex-wrap justify-center">
             {footer.legalLinks.map((link, i) => (
-              <Link key={i} href={prefixInternalHref(link.href, linkPrefix) as string} className="text-xs opacity-80 hover:opacity-100 transition-colors duration-200">
+              <Link key={i} href={prefixInternalHref(link.href, linkPrefix) as string} className="text-xs hover:underline transition-colors duration-200">
                 {link.label}
               </Link>
             ))}
-            <span className="text-xs opacity-80 flex items-center gap-1">
+            <span className="text-xs flex items-center gap-1">
               Made with <Heart size={10} className="text-brand-accent fill-brand-accent" /> by <a href="https://www.flamingomedia.online" target="_blank" rel="noopener noreferrer" className="text-brand-accent font-medium hover:underline">Flamingo Media</a>
             </span>
           </div>
