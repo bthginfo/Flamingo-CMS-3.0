@@ -5,9 +5,11 @@ import { ExternalLink, FileText } from 'lucide-react';
 import { IconPickerField } from '@/components/icon-picker-field';
 import { getPagesAction } from '@/app/admin/pages/actions';
 import { getCollectionLinksAction } from '@/app/admin/collections/actions';
+import { getProductLinksAction } from '@/app/admin/shop/actions';
 
 type ButtonValue = { label: string; href: string; icon?: string };
 type CollectionGroup = { key: string; label: string; items: { title: string; slug: string }[] };
+type ProductLink = { id: string; title: string; slug: string };
 type SectionAnchor = { id: string; type: string; anchorId: string | null };
 
 const PageSectionsContext = createContext<SectionAnchor[]>([]);
@@ -18,16 +20,18 @@ export function PageSectionsProvider({ sections, children }: { sections: Section
 function useInternalLinks(mode: string) {
   const [pages, setPages] = useState<{ id: string; title: string; slug: string }[]>([]);
   const [cols, setCols] = useState<CollectionGroup[]>([]);
+  const [products, setProducts] = useState<ProductLink[]>([]);
   useEffect(() => {
     if (mode === 'internal') {
       getPagesAction().then((p) => setPages(p.map(pg => ({ id: pg.id, title: pg.title, slug: pg.slug }))));
       getCollectionLinksAction().then(setCols);
+      getProductLinksAction().then(setProducts);
     }
   }, [mode]);
-  return { pages, cols };
+  return { pages, cols, products };
 }
 
-function InternalSelect({ value, onChange, pages, cols }: { value: string; onChange: (v: string) => void; pages: { id: string; title: string; slug: string }[]; cols: CollectionGroup[] }) {
+function InternalSelect({ value, onChange, pages, cols, products }: { value: string; onChange: (v: string) => void; pages: { id: string; title: string; slug: string }[]; cols: CollectionGroup[]; products: ProductLink[] }) {
   const sections = useContext(PageSectionsContext);
   const anchors = sections.filter(s => s.anchorId).map(s => ({ anchor: s.anchorId!, type: s.type }));
 
@@ -42,6 +46,11 @@ function InternalSelect({ value, onChange, pages, cols }: { value: string; onCha
           {c.items.map(item => <option key={item.slug} value={`/c/${c.key}/${item.slug}`}>{item.title}</option>)}
         </optgroup>
       ))}
+      {products.length > 0 && (
+        <optgroup label="Shop-Produkte">
+          {products.map(product => <option key={product.id} value={`/shop/${product.slug}`}>{product.title}</option>)}
+        </optgroup>
+      )}
       {anchors.length > 0 && (
         <optgroup label="Sektionen (Anker)">
           {anchors.map(a => <option key={a.anchor} value={`#${a.anchor}`}>{a.type} (#{a.anchor})</option>)}
@@ -57,7 +66,7 @@ function InternalSelect({ value, onChange, pages, cols }: { value: string; onCha
 export function ButtonField({ label: fieldLabel, value, onChange }: { label: string; value: ButtonValue; onChange: (v: ButtonValue) => void }) {
   const isInternal = value.href.startsWith('/') || value.href.startsWith('#') || value.href === '';
   const [mode, setMode] = useState<'external' | 'internal'>(value.href && !isInternal ? 'external' : 'internal');
-  const { pages, cols } = useInternalLinks(mode);
+  const { pages, cols, products } = useInternalLinks(mode);
 
   return (
     <div className="text-sm border rounded p-3 bg-gray-50/50 space-y-2">
@@ -100,7 +109,7 @@ export function ButtonField({ label: fieldLabel, value, onChange }: { label: str
               placeholder="https://..."
             />
           ) : (
-            <InternalSelect value={value.href} onChange={(v) => onChange({ ...value, href: v })} pages={pages} cols={cols} />
+            <InternalSelect value={value.href} onChange={(v) => onChange({ ...value, href: v })} pages={pages} cols={cols} products={products} />
           )}
         </label>
       </div>
@@ -116,7 +125,7 @@ export function ButtonField({ label: fieldLabel, value, onChange }: { label: str
 export function DetailLinkField({ label: fieldLabel, value, onChange }: { label: string; value: string; onChange: (href: string) => void }) {
   const isInternal = value.startsWith('/') || value.startsWith('#') || value === '';
   const [mode, setMode] = useState<'external' | 'internal'>(value && !isInternal ? 'external' : 'internal');
-  const { pages, cols } = useInternalLinks(mode);
+  const { pages, cols, products } = useInternalLinks(mode);
 
   return (
     <div className="text-sm">
@@ -147,7 +156,7 @@ export function DetailLinkField({ label: fieldLabel, value, onChange }: { label:
           placeholder="https://..."
         />
       ) : (
-        <InternalSelect value={value} onChange={onChange} pages={pages} cols={cols} />
+        <InternalSelect value={value} onChange={onChange} pages={pages} cols={cols} products={products} />
       )}
     </div>
   );

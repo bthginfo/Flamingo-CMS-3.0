@@ -205,6 +205,17 @@ export async function getProducts() {
     .orderBy(products.sortOrder);
 }
 
+/** Returns active products for internal link dropdowns. */
+export async function getProductLinksAction() {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  return db
+    .select({ id: products.id, title: products.title, slug: products.slug })
+    .from(products)
+    .where(and(eq(products.tenantId, tenantId), eq(products.status, 'active')))
+    .orderBy(products.sortOrder);
+}
+
 export async function getProduct(id: string) {
   const tenantId = await requireTenant();
   const db = getDb();

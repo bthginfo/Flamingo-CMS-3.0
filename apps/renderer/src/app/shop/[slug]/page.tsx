@@ -31,10 +31,28 @@ async function getProduct(slug: string, tenantId: string) {
   return product ?? null;
 }
 
+async function resolveTenantForProduct(slug: string, queryTenantId: string | null) {
+  const explicitTenantId = resolveExplicitTenant(queryTenantId);
+  if (explicitTenantId) return explicitTenantId;
+
+  const hostTenantId = await resolveTenant();
+  if (hostTenantId) return hostTenantId;
+
+  // Shared host fallback: resolve tenant from a unique active product slug.
+  const db = getDb();
+  const matches = await db
+    .select({ tenantId: products.tenantId })
+    .from(products)
+    .where(and(eq(products.slug, slug), eq(products.status, 'active')))
+    .limit(2);
+  if (matches.length !== 1) return null;
+  return matches[0]?.tenantId ?? null;
+}
+
 export async function generateMetadata({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: SearchParams }): Promise<Metadata> {
   const { slug } = await params;
   const query = await searchParams;
-  const tenantId = resolveExplicitTenant(query?.tenantId || null) || await resolveTenant();
+  const tenantId = await resolveTenantForProduct(slug, query?.tenantId || null);
   if (!tenantId) return {};
   const product = await getProduct(slug, tenantId);
   if (!product) return {};
@@ -53,7 +71,7 @@ export async function generateMetadata({ params, searchParams }: { params: Promi
 export default async function ShopProductPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: SearchParams }) {
   const { slug } = await params;
   const query = await searchParams;
-  const tenantId = resolveExplicitTenant(query?.tenantId || null) || await resolveTenant();
+  const tenantId = await resolveTenantForProduct(slug, query?.tenantId || null);
   if (!tenantId) notFound();
 
   const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle] = await Promise.all([
