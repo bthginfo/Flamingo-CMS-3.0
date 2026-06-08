@@ -31,7 +31,7 @@ type Page = {
   type: string;
 };
 
-export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {}, hasShop = false, hasBooking = false, i18n, collections }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; hasBooking?: boolean; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string }; collections?: { key: string; label: string; items: { id: string; title: string; slug: string; data: unknown }[] }[] }) {
+export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {}, hasShop = false, hasBooking = false, i18n, collections, tenantId }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; hasBooking?: boolean; tenantId?: string; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string }; collections?: { key: string; label: string; items: { id: string; title: string; slug: string; data: unknown }[] }[] }) {
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
   const [activeLocale, setActiveLocale] = useState(i18n?.defaultLocale || 'de');
@@ -56,7 +56,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const sendPreviewData = useCallback(() => {
     if (!preview.isOpen) return;
     const liveSections = buildLiveSections(sectionsRef.current, pendingChanges.current);
-    preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale, collections });
+    preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId } } : s), industry, styleVariant, locale: activeLocale, collections });
   }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, activeLocale]);
 
   useEffect(() => { sendPreviewData(); }, [sections, sendPreviewData]);
@@ -316,7 +316,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
           // brand-new section is added back-to-back with field edits.
           if (preview.isOpen) {
             const liveSections = buildLiveSections(next, pendingChanges.current);
-            preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale, collections });
+            preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId } } : s), industry, styleVariant, locale: activeLocale, collections });
           }
           return next;
         });
@@ -355,7 +355,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       // featured products, …) keep rendering when an unrelated field is
       // edited. Earlier this field was omitted and the iframe sometimes
       // reset to an "empty" state until a full refresh.
-      preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale, collections });
+      preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId } } : s), industry, styleVariant, locale: activeLocale, collections });
     }
   }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, i18n, activeLocale, collections]);
 
@@ -418,7 +418,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       // "colors only appear after iframe reload".
       if (preview.isOpen) {
         const liveSections = buildLiveSections(next, pendingChanges.current);
-        preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale, collections });
+        preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId } } : s), industry, styleVariant, locale: activeLocale, collections });
       }
       return next;
     });
