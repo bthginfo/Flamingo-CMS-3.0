@@ -399,7 +399,7 @@ export const SECTION_COLOR_CONTRACTS_GENERIC: Partial<Record<string, ColorFieldK
   downloadGuides: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
   dresscode: ['cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'eyebrow', 'badgeBg', 'badgeText', 'badgeBorder', 'borderColor'],
   drinkMenu: ['sectionBgAlt', 'headingColor', 'mutedColor'],
-  editorialFeatureRail: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'cardBodyColor', 'mutedColor', 'accentColor', 'onDarkHeading', 'btnBg', 'btnText', 'borderColor'],
+  editorialFeatureRail: ['sectionBg', 'cardBg', 'headingColor', 'cardHeadingColor', 'bodyColor', 'cardBodyColor', 'mutedColor', 'accentColor', 'onDarkHeading', 'btnBg', 'btnText', 'borderColor'],
   embed: ['headingColor', 'subheadingColor', 'mutedColor', 'iconColor'],
   emergencyInfo: ['sectionBg', 'sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
   equipmentHighlights: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'iconColor', 'btnBg', 'btnText', 'badgeText', 'borderColor'],
