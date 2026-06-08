@@ -73,30 +73,30 @@ export function AdditionalLocationsSection({ data }: Props) {
 
                 <div className="p-6">
                   <div className="mb-5 flex items-start gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--token-card-badge-bg, var(--token-badge-bg))] text-[color:var(--token-icon)]">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--token-card-badge-bg,var(--token-badge-bg))] text-[color:var(--token-icon)]">
                       <MapPin size={22} />
                     </div>
                     <div>
-                      {location.name && <h3 className="text-xl font-black leading-tight text-[color:var(--token-card-heading, var(--token-heading))]" data-edit-path="name">{location.name}</h3>}
+                      {location.name && <h3 className="text-xl font-black leading-tight text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="name">{location.name}</h3>}
                       {location.address && <p className="mt-2 text-sm leading-6 text-[color:var(--token-muted)]" data-edit-path="address">{location.address}</p>}
                     </div>
                   </div>
 
                   <div className="space-y-3 text-sm">
                     {location.openingHours && (
-                      <div className="flex gap-3 text-[color:var(--token-card-body, var(--token-body))]">
+                      <div className="flex gap-3 text-[color:var(--token-card-body,var(--token-body))]">
                         <Clock size={17} className="mt-0.5 shrink-0 text-[color:var(--token-icon)]" />
                         <span className="whitespace-pre-line leading-6">{location.openingHours}</span>
                       </div>
                     )}
                     {location.phone && (
-                      <a href={`tel:$<span data-edit-path="phone">{location.phone}</span>`} className="flex gap-3 text-[color:var(--token-card-body, var(--token-body))] transition hover:text-[color:var(--token-accent)]">
+                      <a href={`tel:$<span data-edit-path="phone">{location.phone}</span>`} className="flex gap-3 text-[color:var(--token-card-body,var(--token-body))] transition hover:text-[color:var(--token-accent)]">
                         <Phone size={17} className="mt-0.5 shrink-0 text-[color:var(--token-icon)]" />
                         <span data-edit-path="phone">{location.phone}</span>
                       </a>
                     )}
                     {email && (
-                      <a href={`mailto:$<span data-edit-path="email">{email}</span>`} className="flex gap-3 break-all text-[color:var(--token-card-body, var(--token-body))] transition hover:text-[color:var(--token-accent)]">
+                      <a href={`mailto:$<span data-edit-path="email">{email}</span>`} className="flex gap-3 break-all text-[color:var(--token-card-body,var(--token-body))] transition hover:text-[color:var(--token-accent)]">
                         <Mail size={17} className="mt-0.5 shrink-0 text-[color:var(--token-icon)]" />
                         <span data-edit-path="email">{email}</span>
                       </a>

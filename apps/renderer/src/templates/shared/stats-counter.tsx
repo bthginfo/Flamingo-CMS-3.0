@@ -67,7 +67,7 @@ export function StatsCounterSection({ data }: Props) {
                 <AnimatedNumber value={stat.value} prefix={stat.prefix} suffix={stat.suffix} inView={inView} />
               </div>
               <div className="mx-auto mt-4 h-px w-10 bg-[var(--token-divider,var(--token-card-border))]" />
-              <div className="mt-4 text-sm font-medium leading-snug text-[color:var(--token-card-body, var(--token-body))] md:text-base" data-edit-path="label">{stat.label}</div>
+              <div className="mt-4 text-sm font-medium leading-snug text-[color:var(--token-card-body,var(--token-body))] md:text-base" data-edit-path="label">{stat.label}</div>
             </motion.div>
           ))}
         </div>

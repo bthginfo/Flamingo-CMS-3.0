@@ -48,13 +48,13 @@ export function ShopCategoryOverviewSection({ data }: Props) {
                   <img data-edit-image="image" src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <FolderOpen size={40} className="text-[color:var(--token-card-body, var(--token-body))]" />
+                    <FolderOpen size={40} className="text-[color:var(--token-card-body,var(--token-body))]" />
                   </div>
                 )}
               </div>
               <div className="p-5 text-center">
-                <h3 className="font-semibold text-lg group-hover:text-[color:var(--token-card-muted, var(--token-muted))] transition" data-edit-path="name">{cat.name}</h3>
-                {cat.description && <p className="text-sm text-[color:var(--token-card-muted, var(--token-muted))] mt-1 line-clamp-2" data-edit-path="description">{plain(cat.description)}</p>}
+                <h3 className="font-semibold text-lg group-hover:text-[color:var(--token-card-muted,var(--token-muted))] transition" data-edit-path="name">{cat.name}</h3>
+                {cat.description && <p className="text-sm text-[color:var(--token-card-muted,var(--token-muted))] mt-1 line-clamp-2" data-edit-path="description">{plain(cat.description)}</p>}
               </div>
             </div>
           </Link>

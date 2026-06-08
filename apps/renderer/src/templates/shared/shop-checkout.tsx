@@ -165,7 +165,7 @@ export function ShopCheckoutSection({ data }: Props) {
   if (items.length === 0) {
     return (
       <section className="py-16 text-center">
-        <p className="text-[color:var(--token-card-muted, var(--token-muted))]">Dein Warenkorb ist leer.</p>
+        <p className="text-[color:var(--token-card-muted,var(--token-muted))]">Dein Warenkorb ist leer.</p>
       </section>
     );
   }
@@ -178,10 +178,10 @@ export function ShopCheckoutSection({ data }: Props) {
       <div className="flex items-center gap-2 mb-8">
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center gap-2" data-edit-collection="STEPS" data-edit-index={i}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= step ? 'bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-card-body, var(--token-body))]'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= step ? 'bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-card-body,var(--token-body))]'}`}>
               {i < step ? <Check size={14} /> : i + 1}
             </div>
-            <span className={`text-sm hidden sm:block ${i <= step ? 'font-medium' : 'text-[color:var(--token-card-body, var(--token-body))]'}`}>{s}</span>
+            <span className={`text-sm hidden sm:block ${i <= step ? 'font-medium' : 'text-[color:var(--token-card-body,var(--token-body))]'}`}>{s}</span>
             {i < STEPS.length - 1 && <div className="w-8 h-px bg-zinc-200" />}
           </div>
         ))}
@@ -254,7 +254,7 @@ export function ShopCheckoutSection({ data }: Props) {
                           <input type="radio" name="shipping" value={method.id} checked={form.shippingMethod === method.id} onChange={e => set('shippingMethod', e.target.value)} className="accent-[var(--token-icon)]" />
                           <div>
                             <p className="text-sm font-medium" data-edit-path="name">{method.name}</p>
-                            {method.estimatedDays && <p className="text-xs text-[color:var(--token-card-body, var(--token-body))]">{method.estimatedDays}</p>}
+                            {method.estimatedDays && <p className="text-xs text-[color:var(--token-card-body,var(--token-body))]">{method.estimatedDays}</p>}
                           </div>
                         </div>
                         <span className="text-sm font-medium">{isFree ? <span className="text-[color:var(--token-success,#16a34a)]">Kostenlos</span> : formatPrice(method.priceCents)}</span>
@@ -283,7 +283,7 @@ export function ShopCheckoutSection({ data }: Props) {
                       <p className="text-sm font-medium">
                         {method === 'prepayment' ? 'Vorkasse / Überweisung' : method === 'stripe' ? 'Kreditkarte (Stripe)' : method === 'paypal' ? 'PayPal' : method === 'sumup' ? 'Kartenzahlung (SumUp)' : method === 'pickup' ? 'Abholung & Barzahlung' : method}
                       </p>
-                      <p className="text-xs text-[color:var(--token-card-body, var(--token-body))]">
+                      <p className="text-xs text-[color:var(--token-card-body,var(--token-body))]">
                         {method === 'prepayment' ? 'Bankdaten werden nach Bestellung angezeigt' : method === 'stripe' ? 'Sichere Zahlung via Stripe' : method === 'paypal' ? 'Weiterleitung zu PayPal' : method === 'sumup' ? 'Kartenzahlung über SumUp' : method === 'pickup' ? 'Bezahlung bei Abholung' : ''}
                       </p>
                     </div>

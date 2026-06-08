@@ -40,7 +40,7 @@ export function LogoMarqueeSection({ data }: Props) {
                 {item.image ? (
                   <img data-edit-image="image" src={item.image} alt={item.name} className="h-8 md:h-10 w-auto object-contain" />
                 ) : (
-                  <span className="text-lg font-bold text-[color:var(--token-card-body, var(--token-body))] whitespace-nowrap" data-edit-path="name">{item.name}</span>
+                  <span className="text-lg font-bold text-[color:var(--token-card-body,var(--token-body))] whitespace-nowrap" data-edit-path="name">{item.name}</span>
                 )}
               </div>
             ))}

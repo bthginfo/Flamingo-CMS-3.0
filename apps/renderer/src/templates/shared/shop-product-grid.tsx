@@ -95,7 +95,7 @@ export function ShopProductGridSection({ data }: Props) {
       <div className="flex flex-col sm:flex-row gap-3 mb-8">
         {showSearch && (
           <div className="relative flex-1">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--token-card-body, var(--token-body))]" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[color:var(--token-card-body,var(--token-body))]" />
             <input
               type="text"
               value={search}
@@ -106,7 +106,7 @@ export function ShopProductGridSection({ data }: Props) {
           </div>
         )}
         <div className="flex items-center gap-2">
-          <SlidersHorizontal size={14} className="text-[color:var(--token-card-body, var(--token-body))]" />
+          <SlidersHorizontal size={14} className="text-[color:var(--token-card-body,var(--token-body))]" />
           <select value={sortBy} onChange={e => setSortBy(e.target.value as typeof sortBy)} className="text-sm border border-[color:var(--token-card-border)] rounded-lg px-3 py-2.5 bg-[var(--token-section-bg-alt)]">
             <option value="default">Standard</option>
             <option value="price-asc">Preis aufsteigend</option>
@@ -128,7 +128,7 @@ export function ShopProductGridSection({ data }: Props) {
             onChange={e => setPriceFilter([Math.min(Number(e.target.value), priceFilter[1]), priceFilter[1]])}
             className="w-24 sm:w-32 accent-[var(--token-icon)]"
           />
-          <span className="text-[color:var(--token-card-body, var(--token-body))]">–</span>
+          <span className="text-[color:var(--token-card-body,var(--token-body))]">–</span>
           <input
             type="range"
             min={priceRange[0]} max={priceRange[1]} step={100}
@@ -159,9 +159,9 @@ export function ShopProductGridSection({ data }: Props) {
 
       {/* Product grid */}
       {loading ? (
-        <div className="text-center py-16 text-[color:var(--token-card-body, var(--token-body))]">Produkte werden geladen…</div>
+        <div className="text-center py-16 text-[color:var(--token-card-body,var(--token-body))]">Produkte werden geladen…</div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-[color:var(--token-card-body, var(--token-body))]">
+        <div className="text-center py-16 text-[color:var(--token-card-body,var(--token-body))]">
           <ShoppingBag size={40} className="mx-auto mb-3 opacity-50" />
           <p>Keine Produkte gefunden.</p>
         </div>
@@ -175,7 +175,7 @@ export function ShopProductGridSection({ data }: Props) {
                     <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <ShoppingBag size={40} className="text-[color:var(--token-card-body, var(--token-body))]" />
+                      <ShoppingBag size={40} className="text-[color:var(--token-card-body,var(--token-body))]" />
                     </div>
                   )}
                   {product.stock === 0 && (
@@ -186,7 +186,7 @@ export function ShopProductGridSection({ data }: Props) {
                   )}
                 </div>
                 <div className="p-5">
-                  {product.categoryName && <p className="text-xs text-[color:var(--token-card-body, var(--token-body))] uppercase tracking-wide mb-1">{product.categoryName}</p>}
+                  {product.categoryName && <p className="text-xs text-[color:var(--token-card-body,var(--token-body))] uppercase tracking-wide mb-1">{product.categoryName}</p>}
                   <h3 className="font-semibold group-hover:text-[color:var(--token-muted)] transition" data-edit-path="title">{product.title}</h3>
                   {product.shortDescription && <p className="text-sm text-[color:var(--token-muted)] mt-1.5 line-clamp-2">{product.shortDescription}</p>}
                   <div className="flex items-center gap-2 mt-3">

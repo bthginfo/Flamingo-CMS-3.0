@@ -61,8 +61,8 @@ export function ProductShowcaseSection({ data }: Props) {
                 )}
               </div>
               <div className="p-5">
-                <h3 className="font-display font-semibold text-lg text-[color:var(--token-card-body, var(--token-body))] group-hover:text-[color:var(--token-icon)] transition-colors" data-edit-path="title">{item.title}</h3>
-                {item.description && <p className="mt-1.5 text-sm text-[color:var(--token-card-body, var(--token-body))] line-clamp-2" data-edit-path="description">{plain(item.description)}</p>}
+                <h3 className="font-display font-semibold text-lg text-[color:var(--token-card-body,var(--token-body))] group-hover:text-[color:var(--token-icon)] transition-colors" data-edit-path="title">{item.title}</h3>
+                {item.description && <p className="mt-1.5 text-sm text-[color:var(--token-card-body,var(--token-body))] line-clamp-2" data-edit-path="description">{plain(item.description)}</p>}
                 {item.price && <p className="mt-3 text-lg font-bold text-[color:var(--token-icon)]" data-edit-path="price">{item.price}</p>}
               </div>
             </a>

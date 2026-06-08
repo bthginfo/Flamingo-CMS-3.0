@@ -40,8 +40,8 @@ export function TimelineSection({ data }: Props) {
               {/* Content */}
               <div className={`ml-14 md:ml-0 md:w-1/2 ${isLeft ? 'md:pr-10 md:text-right' : 'md:pl-10 md:text-left'}`}>
                 <span className="inline-block text-xs font-bold text-[color:var(--token-accent)] bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] rounded-full px-3 py-0.5 mb-2">{entry.year}</span>
-                <h3 className="font-semibold text-[color:var(--token-card-heading, var(--token-heading))] text-base mb-1" data-edit-path="title">{entry.title}</h3>
-                <p className="text-sm text-[color:var(--token-card-body, var(--token-body))] leading-relaxed" data-edit-path="text">{plain(entry.text)}</p>
+                <h3 className="font-semibold text-[color:var(--token-card-heading,var(--token-heading))] text-base mb-1" data-edit-path="title">{entry.title}</h3>
+                <p className="text-sm text-[color:var(--token-card-body,var(--token-body))] leading-relaxed" data-edit-path="text">{plain(entry.text)}</p>
               </div>
             </motion.div>
           );

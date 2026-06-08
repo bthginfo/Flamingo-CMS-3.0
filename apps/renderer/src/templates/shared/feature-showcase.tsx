@@ -84,7 +84,7 @@ export function FeatureShowcaseSection({ data }: Props) {
           </motion.p>
         )}
         {text && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.2 }} className="mt-5 text-[color:var(--token-card-body, var(--token-body))] leading-relaxed prose prose-sm" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.2 }} className="mt-5 text-[color:var(--token-card-body,var(--token-body))] leading-relaxed prose prose-sm" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />
         )}
 
         {features.length > 0 && (
@@ -94,7 +94,7 @@ export function FeatureShowcaseSection({ data }: Props) {
                 <div className="w-5 h-5 rounded-full bg-[color-mix(in_srgb,var(--token-accent)_10%,transparent)] flex items-center justify-center flex-shrink-0">
                   <svg className="w-3 h-3 text-[color:var(--token-accent)]" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
                 </div>
-                <span className="text-sm text-[color:var(--token-card-body, var(--token-body))]">{feat}</span>
+                <span className="text-sm text-[color:var(--token-card-body,var(--token-body))]">{feat}</span>
               </motion.div>
             ))}
           </div>

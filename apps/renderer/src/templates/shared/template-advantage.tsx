@@ -30,7 +30,7 @@ export function TemplateAdvantageSection({ data }: Props) {
             {bullets.length > 0 && (
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {bullets.map((item, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm font-semibold text-[color:var(--token-card-body, var(--token-body))]" data-edit-collection="bullets" data-edit-index={index}>
+                  <div key={index} className="flex items-center gap-2 text-sm font-semibold text-[color:var(--token-card-body,var(--token-body))]" data-edit-collection="bullets" data-edit-index={index}>
                     <CheckCircle2 size={18} className="text-[color:var(--token-icon)]" />
                     {item}
                   </div>
@@ -54,10 +54,10 @@ export function TemplateAdvantageSection({ data }: Props) {
               <div className="relative aspect-[16/11] overflow-hidden bg-[color:color-mix(in_srgb,var(--token-card-border)_35%,var(--token-card-bg,#fff))]">
                 {card.image && <img data-edit-image="image" src={card.image} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />}
                 {card.image && <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10" />}
-                {card.label && <span className="absolute left-4 top-4 rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-bold text-[color:var(--token-card-badge-text, var(--token-badge-text))] shadow-sm" data-edit-path="label">{card.label}</span>}
+                {card.label && <span className="absolute left-4 top-4 rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-bold text-[color:var(--token-card-badge-text,var(--token-badge-text))] shadow-sm" data-edit-path="label">{card.label}</span>}
               </div>
               <div className="p-6">
-                {card.title && <h3 className="text-2xl font-black leading-tight text-[color:var(--token-card-heading, var(--token-heading))]" data-edit-path="title">{card.title}</h3>}
+                {card.title && <h3 className="text-2xl font-black leading-tight text-[color:var(--token-card-heading,var(--token-heading))]" data-edit-path="title">{card.title}</h3>}
                 {card.text && <p className="mt-3 text-sm leading-6 text-[color:var(--token-muted)]" data-edit-path="text">{plain(card.text)}</p>}
               </div>
             </motion.a>

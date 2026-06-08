@@ -41,7 +41,7 @@ export function PremiumComparisonSection({ data }: Props) {
           ))}
           {rows.map((row, ri) => (
             <Fragment key={ri} data-edit-collection="rows" data-edit-index={ri}>
-              <div key={`${ri}-feature`} className="border-b border-[var(--token-card-border)] p-5 font-medium text-[color:var(--token-card-heading, var(--token-heading))]">{row.feature}</div>
+              <div key={`${ri}-feature`} className="border-b border-[var(--token-card-border)] p-5 font-medium text-[color:var(--token-card-heading,var(--token-heading))]">{row.feature}</div>
               {columns.map((_, ci) => {
                 const value = normalizeValue(row.values[ci]);
                 return (

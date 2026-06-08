@@ -40,7 +40,7 @@ const FORM_MUTED_CLASS = 'text-[color:var(--token-muted,rgba(9,9,11,.55))]';
 const BOOKING_NOTICE_CLASS = 'rounded-2xl p-5 text-sm';
 const BOOKING_NOTICE_STYLE = {
   background: 'var(--token-badge-bg, color-mix(in srgb, var(--token-accent, #f43f5e) 12%, #ffffff))',
-  color: 'var(--token-badge-text, var(--token-body, #09090b))',
+  color: 'var(--token-badge-text,var(--token-body,#09090b))',
 };
 const BOOKING_ERROR_STYLE = { color: 'var(--token-accent, #f43f5e)' };
 
@@ -248,7 +248,7 @@ export function BookingWidgetSection({ data }: SectionProps) {
     <section
       id="booking-form"
       className="relative overflow-hidden rounded-[var(--token-card-radius)] px-5 py-10 shadow-2xl sm:px-8 md:px-12"
-      style={{ background: 'var(--token-section-bg, #09090b)', color: 'var(--token-card-body, var(--token-body, #ffffff))' }}
+      style={{ background: 'var(--token-section-bg, #09090b)', color: 'var(--token-card-body,var(--token-body,#ffffff))' }}
     >
       <div
         className="absolute inset-0"
@@ -256,19 +256,19 @@ export function BookingWidgetSection({ data }: SectionProps) {
       />
       <div className="relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div className="space-y-5">
-          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--token-card-badge-bg, var(--token-badge-bg, rgba(255,255,255,.1)))', color: 'var(--token-card-badge-text, var(--token-badge-text, rgba(255,255,255,.8)))' }}>
+          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--token-card-badge-bg,var(--token-badge-bg,rgba(255,255,255,.1)))', color: 'var(--token-card-badge-text,var(--token-badge-text,rgba(255,255,255,.8)))' }}>
             <CalendarCheck size={15} /> <span data-edit-path="badge">{badge}</span>
           </p>
-          <h2 className="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--token-card-heading, var(--token-heading, var(--token-card-body, var(--token-body, #ffffff))))' }} data-edit-path="headline">{headline}</h2>
-          <p className="max-w-xl text-base leading-7" style={{ color: 'var(--token-card-body, var(--token-body, rgba(255,255,255,.72)))' }} data-edit-path="subline">{plain(subline)}</p>
-          <div className="rounded-2xl border p-4 text-sm" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.12))', background: 'color-mix(in srgb, var(--token-card-bg, #ffffff) 8%, transparent)', color: 'var(--token-card-muted, var(--token-muted, rgba(255,255,255,.7)))' }}>
+          <h2 className="text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--token-card-heading,var(--token-heading,var(--token-card-body,var(--token-body,#ffffff))))' }} data-edit-path="headline">{headline}</h2>
+          <p className="max-w-xl text-base leading-7" style={{ color: 'var(--token-card-body,var(--token-body,rgba(255,255,255,.72)))' }} data-edit-path="subline">{plain(subline)}</p>
+          <div className="rounded-2xl border p-4 text-sm" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.12))', background: 'color-mix(in srgb, var(--token-card-bg, #ffffff) 8%, transparent)', color: 'var(--token-card-muted,var(--token-muted,rgba(255,255,255,.7)))' }}>
             {timeModel === 'full_day' && 'Diese Buchung blockiert einen ganzen Tag.'}
             {timeModel === 'date_range' && 'Diese Buchung prüft einen Datumsbereich, z.B. für Zimmer, Locations oder mehrtägige Leistungen.'}
             {timeModel === 'time_slot' && `Diese Buchung nutzt Zeitslots${config?.intervalMinutes ? ` im ${config.intervalMinutes}-Minuten-Raster` : ''}.`}
           </div>
         </div>
 
-        <div className="rounded-[var(--token-card-radius)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.1))', background: 'var(--token-card-bg, #ffffff)', color: 'var(--token-card-body, var(--token-body, #09090b))' }}>
+        <div className="rounded-[var(--token-card-radius)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.1))', background: 'var(--token-card-bg, #ffffff)', color: 'var(--token-card-body,var(--token-body,#09090b))' }}>
           {config && !config.enabled ? (
             <div className={BOOKING_NOTICE_CLASS} style={BOOKING_NOTICE_STYLE}>Booking ist für diese Website noch nicht aktiviert.</div>
           ) : status === 'success' ? (
@@ -380,16 +380,16 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
   }
 
   return (
-    <section id="booking" className="relative overflow-hidden rounded-[var(--token-card-radius)] px-5 py-10 shadow-2xl sm:px-8 md:px-12" style={{ background: 'var(--token-section-bg, #09090b)', color: 'var(--token-card-body, var(--token-body, #ffffff))' }}>
+    <section id="booking" className="relative overflow-hidden rounded-[var(--token-card-radius)] px-5 py-10 shadow-2xl sm:px-8 md:px-12" style={{ background: 'var(--token-section-bg, #09090b)', color: 'var(--token-card-body,var(--token-body,#ffffff))' }}>
       <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 16% 0%, color-mix(in srgb, var(--token-accent, #f43f5e) 28%, transparent), transparent 30%)' }} />
       <div className="relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--token-card-badge-bg, var(--token-badge-bg, rgba(255,255,255,.1)))', color: 'var(--token-card-badge-text, var(--token-badge-text, rgba(255,255,255,.8)))' }}><Clock3 size={15} /> <span data-edit-path="badge">{badge}</span></p>
-          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--token-card-heading, var(--token-heading, #ffffff))' }} data-edit-path="headline">{headline}</h2>
-          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--token-card-body, var(--token-body, rgba(255,255,255,.72)))' }} data-edit-path="subline">{plain(subline)}</p>
+          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--token-card-badge-bg,var(--token-badge-bg,rgba(255,255,255,.1)))', color: 'var(--token-card-badge-text,var(--token-badge-text,rgba(255,255,255,.8)))' }}><Clock3 size={15} /> <span data-edit-path="badge">{badge}</span></p>
+          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--token-card-heading,var(--token-heading,#ffffff))' }} data-edit-path="headline">{headline}</h2>
+          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--token-card-body,var(--token-body,rgba(255,255,255,.72)))' }} data-edit-path="subline">{plain(subline)}</p>
           <div className="mt-6 grid gap-3 text-sm sm:grid-cols-3">
             {['Datum wählen', 'Slots prüfen', config?.mode === 'instant' ? 'Direkt buchen' : 'Anfrage senden'].map((item, index) => (
-              <div key={item} className="rounded-2xl border p-3" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--token-card-bg, #ffffff) 8%, transparent)', color: 'var(--token-card-body, var(--token-body, rgba(255,255,255,.72)))' }} data-edit-collection="senden" data-edit-index={index}>
+              <div key={item} className="rounded-2xl border p-3" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--token-card-bg, #ffffff) 8%, transparent)', color: 'var(--token-card-body,var(--token-body,rgba(255,255,255,.72)))' }} data-edit-collection="senden" data-edit-index={index}>
                 <span className="mb-2 grid h-7 w-7 place-items-center rounded-full text-xs font-black" style={{ background: 'var(--token-accent, #f43f5e)', color: 'var(--token-btn-text)' }}>{index + 1}</span>
                 {item}
               </div>
@@ -397,7 +397,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
           </div>
         </div>
 
-        <form onSubmit={submit} className="rounded-[var(--token-card-radius)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.1))', background: 'var(--token-card-bg, #ffffff)', color: 'var(--token-card-body, var(--token-body, #09090b))' }}>
+        <form onSubmit={submit} className="rounded-[var(--token-card-radius)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.1))', background: 'var(--token-card-bg, #ffffff)', color: 'var(--token-card-body,var(--token-body,#09090b))' }}>
           {config && !config.enabled ? <div className={BOOKING_NOTICE_CLASS} style={BOOKING_NOTICE_STYLE}>Booking ist für diese Website noch nicht aktiviert.</div> : null}
           {status === 'success' ? (
             <div className="flex min-h-80 flex-col items-center justify-center gap-3 text-center">
@@ -422,7 +422,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
                 <p className={`mb-2 text-xs font-bold uppercase tracking-[0.14em] ${FORM_MUTED_CLASS}`}>Verfügbare Uhrzeiten</p>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {loading ? <p className="col-span-full rounded-xl p-4 text-sm" style={BOOKING_NOTICE_STYLE}>Slots werden geladen...</p> : slots.length ? slots.map((slot) => (
-                    <button key={slot.value} type="button" onClick={() => setSelectedSlot(slot.value)} className="rounded-xl border px-3 py-3 text-sm font-bold transition hover:brightness-95" style={selectedSlot === slot.value ? { borderColor: 'var(--token-btn-bg)', background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' } : { borderColor: 'var(--token-card-border, rgba(9,9,11,.16))', background: 'var(--token-card-bg, #ffffff)', color: 'var(--token-card-body, var(--token-body, #09090b))' }} data-edit-path="label">
+                    <button key={slot.value} type="button" onClick={() => setSelectedSlot(slot.value)} className="rounded-xl border px-3 py-3 text-sm font-bold transition hover:brightness-95" style={selectedSlot === slot.value ? { borderColor: 'var(--token-btn-bg)', background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' } : { borderColor: 'var(--token-card-border, rgba(9,9,11,.16))', background: 'var(--token-card-bg, #ffffff)', color: 'var(--token-card-body,var(--token-body,#09090b))' }} data-edit-path="label">
                       {slot.label}
                     </button>
                   )) : <p className="col-span-full rounded-xl p-4 text-sm" style={BOOKING_NOTICE_STYLE}>Für diese Auswahl sind keine freien Uhrzeiten verfügbar.</p>}
@@ -432,7 +432,7 @@ export function BookingSlotPickerSection({ data }: SectionProps) {
                     <p className={`mb-2 text-xs font-bold uppercase tracking-[0.14em] ${FORM_MUTED_CLASS}`}>Nächste freie Zeiten</p>
                     <div className="grid gap-2 sm:grid-cols-2">
                       {suggestions.flatMap(suggestion => suggestion.slots.map(slot => (
-                        <button key={`${suggestion.date}-${slot.value}`} type="button" onClick={() => { setSelectedDate(suggestion.date); setSelectedSlot(slot.value); }} className="rounded-lg border px-3 py-2 text-left text-xs font-semibold transition hover:brightness-95" style={{ borderColor: 'var(--token-card-border, rgba(9,9,11,.16))', background: 'var(--token-card-bg, #ffffff)', color: 'var(--token-card-body, var(--token-body, #09090b))' }}>
+                        <button key={`${suggestion.date}-${slot.value}`} type="button" onClick={() => { setSelectedDate(suggestion.date); setSelectedSlot(slot.value); }} className="rounded-lg border px-3 py-2 text-left text-xs font-semibold transition hover:brightness-95" style={{ borderColor: 'var(--token-card-border, rgba(9,9,11,.16))', background: 'var(--token-card-bg, #ffffff)', color: 'var(--token-card-body,var(--token-body,#09090b))' }}>
                           {formatInputDate(suggestion.date)} · <span data-edit-path="label">{slot.label}</span>
                         </button>
                       )))}
@@ -506,21 +506,21 @@ export function BookingDateRangeSection({ data }: SectionProps) {
   }
 
   return (
-    <section id="booking" className="relative overflow-hidden rounded-[var(--token-card-radius)] px-5 py-10 shadow-2xl sm:px-8 md:px-12" style={{ background: 'var(--token-section-bg, #09090b)', color: 'var(--token-card-body, var(--token-body, #ffffff))' }}>
+    <section id="booking" className="relative overflow-hidden rounded-[var(--token-card-radius)] px-5 py-10 shadow-2xl sm:px-8 md:px-12" style={{ background: 'var(--token-section-bg, #09090b)', color: 'var(--token-card-body,var(--token-body,#ffffff))' }}>
       <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--token-accent, #f43f5e) 22%, transparent), transparent 45%)' }} />
       <div className="relative grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-start">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--token-card-badge-bg, var(--token-badge-bg, rgba(255,255,255,.1)))', color: 'var(--token-card-badge-text, var(--token-badge-text, rgba(255,255,255,.8)))' }}><CalendarCheck size={15} /> <span data-edit-path="badge">{badge}</span></p>
-          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--token-card-heading, var(--token-heading, #ffffff))' }} data-edit-path="headline">{headline}</h2>
-          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--token-card-body, var(--token-body, rgba(255,255,255,.72)))' }} data-edit-path="subline">{plain(subline)}</p>
+          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--token-card-badge-bg,var(--token-badge-bg,rgba(255,255,255,.1)))', color: 'var(--token-card-badge-text,var(--token-badge-text,rgba(255,255,255,.8)))' }}><CalendarCheck size={15} /> <span data-edit-path="badge">{badge}</span></p>
+          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--token-card-heading,var(--token-heading,#ffffff))' }} data-edit-path="headline">{headline}</h2>
+          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--token-card-body,var(--token-body,rgba(255,255,255,.72)))' }} data-edit-path="subline">{plain(subline)}</p>
           <div className="mt-6 rounded-2xl border p-4" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--token-card-bg, #ffffff) 8%, transparent)' }}>
-            <p className="text-xs font-bold uppercase tracking-[0.16em]" style={{ color: 'var(--token-card-muted, var(--token-muted, rgba(255,255,255,.56)))' }}>Ausgewählter Zeitraum</p>
-            <p className="mt-2 text-2xl font-black" style={{ color: 'var(--token-card-heading, var(--token-heading, #ffffff))' }}>{formatInputDate(startDate)} - {formatInputDate(endDate)}</p>
-            <p className="mt-1 text-sm" style={{ color: 'var(--token-card-body, var(--token-body, rgba(255,255,255,.72)))' }}>Verfügbarkeit wird beim Absenden serverseitig geprüft.</p>
+            <p className="text-xs font-bold uppercase tracking-[0.16em]" style={{ color: 'var(--token-card-muted,var(--token-muted,rgba(255,255,255,.56)))' }}>Ausgewählter Zeitraum</p>
+            <p className="mt-2 text-2xl font-black" style={{ color: 'var(--token-card-heading,var(--token-heading,#ffffff))' }}>{formatInputDate(startDate)} - {formatInputDate(endDate)}</p>
+            <p className="mt-1 text-sm" style={{ color: 'var(--token-card-body,var(--token-body,rgba(255,255,255,.72)))' }}>Verfügbarkeit wird beim Absenden serverseitig geprüft.</p>
           </div>
         </div>
 
-        <form onSubmit={submit} className="grid gap-4 rounded-[var(--token-card-radius)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.1))', background: 'var(--token-card-bg, #ffffff)', color: 'var(--token-card-body, var(--token-body, #09090b))' }}>
+        <form onSubmit={submit} className="grid gap-4 rounded-[var(--token-card-radius)] border p-4 shadow-xl sm:p-6" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.1))', background: 'var(--token-card-bg, #ffffff)', color: 'var(--token-card-body,var(--token-body,#09090b))' }}>
           {status === 'success' ? (
             <div className="flex min-h-80 flex-col items-center justify-center gap-3 text-center">
               <CheckCircle style={{ color: 'var(--token-accent, #10b981)' }} size={44} />
@@ -625,25 +625,25 @@ export function AvailabilityCalendarSection({ data }: SectionProps) {
     <BookingShell data={data} icon={<Clock3 size={18} />} defaultBadge="Verfügbarkeit" defaultHeadline="Freie Zeiten auf einen Blick">
       <div className="mx-auto w-full max-w-sm rounded-2xl border p-3 shadow-xl" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--token-card-bg, #ffffff) 10%, transparent)' }}>
         <div className="mb-4 flex items-center justify-between gap-3">
-          <button type="button" onClick={() => setMonthOffset((value) => value - 1)} className="grid h-9 w-9 place-items-center rounded-full border transition hover:brightness-110" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.18))', color: 'var(--token-card-heading, var(--token-heading, #ffffff))' }} aria-label="Vorheriger Monat">
+          <button type="button" onClick={() => setMonthOffset((value) => value - 1)} className="grid h-9 w-9 place-items-center rounded-full border transition hover:brightness-110" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.18))', color: 'var(--token-card-heading,var(--token-heading,#ffffff))' }} aria-label="Vorheriger Monat">
             <ChevronLeft size={18} />
           </button>
           <div className="text-center">
-            <p className="text-sm font-black capitalize" style={{ color: 'var(--token-card-heading, var(--token-heading, #ffffff))' }}>{visibleMonthLabel}</p>
-            <p className="text-xs" style={{ color: 'var(--token-card-body, var(--token-body, rgba(255,255,255,.68)))' }}>
+            <p className="text-sm font-black capitalize" style={{ color: 'var(--token-card-heading,var(--token-heading,#ffffff))' }}>{visibleMonthLabel}</p>
+            <p className="text-xs" style={{ color: 'var(--token-card-body,var(--token-body,rgba(255,255,255,.68)))' }}>
               {selectedCount == null ? 'Datum auswählen' : selectedCount > 0 ? `${selectedCount} freie Slots am ausgewählten Tag` : 'An diesem Tag aktuell nichts frei'}
             </p>
           </div>
-          <button type="button" onClick={() => setMonthOffset((value) => value + 1)} className="grid h-9 w-9 place-items-center rounded-full border transition hover:brightness-110" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.18))', color: 'var(--token-card-heading, var(--token-heading, #ffffff))' }} aria-label="Nächster Monat">
+          <button type="button" onClick={() => setMonthOffset((value) => value + 1)} className="grid h-9 w-9 place-items-center rounded-full border transition hover:brightness-110" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.18))', color: 'var(--token-card-heading,var(--token-heading,#ffffff))' }} aria-label="Nächster Monat">
             <ChevronRight size={18} />
           </button>
         </div>
         <div className="grid grid-cols-7 gap-1">
           {['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].map((label) => (
-            <div key={label} className="py-1 text-center text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--token-card-muted, var(--token-muted, rgba(255,255,255,.52)))' }} data-edit-path="label">{label}</div>
+            <div key={label} className="py-1 text-center text-[10px] font-bold uppercase tracking-[0.14em]" style={{ color: 'var(--token-card-muted,var(--token-muted,rgba(255,255,255,.52)))' }} data-edit-path="label">{label}</div>
           ))}
           {days.map((day) => (
-          <button key={day.date} type="button" onClick={() => setSelectedDate(day.date)} className="relative grid aspect-square place-items-center rounded-lg border text-sm font-bold transition hover:brightness-110" style={{ borderColor: selectedDate === day.date ? 'var(--token-btn-bg)' : 'var(--token-card-border, rgba(255,255,255,.14))', background: selectedDate === day.date ? 'var(--token-btn-bg)' : day.inMonth ? 'transparent' : 'rgba(255,255,255,.03)', color: selectedDate === day.date ? 'var(--token-btn-text)' : 'var(--token-card-heading, var(--token-heading, #ffffff))', opacity: day.inMonth ? 1 : 0.42 }} aria-label={`${day.label}, ${day.day}. ${counts[day.date] ?? 0} freie Slots`}>
+          <button key={day.date} type="button" onClick={() => setSelectedDate(day.date)} className="relative grid aspect-square place-items-center rounded-lg border text-sm font-bold transition hover:brightness-110" style={{ borderColor: selectedDate === day.date ? 'var(--token-btn-bg)' : 'var(--token-card-border, rgba(255,255,255,.14))', background: selectedDate === day.date ? 'var(--token-btn-bg)' : day.inMonth ? 'transparent' : 'rgba(255,255,255,.03)', color: selectedDate === day.date ? 'var(--token-btn-text)' : 'var(--token-card-heading,var(--token-heading,#ffffff))', opacity: day.inMonth ? 1 : 0.42 }} aria-label={`${day.label}, ${day.day}. ${counts[day.date] ?? 0} freie Slots`}>
             {day.day}
             {day.isToday ? <span className="absolute left-1 top-1 h-1.5 w-1.5 rounded-full" style={{ background: selectedDate === day.date ? 'var(--token-btn-text)' : 'var(--token-accent, #f43f5e)' }} /> : null}
             {(counts[day.date] || 0) > 0 ? <span className="absolute bottom-1 h-1.5 w-1.5 rounded-full" style={{ background: selectedDate === day.date ? 'var(--token-btn-text)' : 'var(--token-accent, #f43f5e)' }} /> : null}
@@ -662,7 +662,7 @@ export function ResourceBookingShowcaseSection({ data }: SectionProps) {
         {['Ressource wählen', 'Zeitraum prüfen', 'Anfrage senden'].map((label, index) => (
           <div key={label} className="flex items-center gap-3 rounded-2xl border p-4" style={{ borderColor: 'var(--token-card-border, rgba(255,255,255,.14))', background: 'color-mix(in srgb, var(--token-card-bg, #ffffff) 10%, transparent)' }} data-edit-collection="senden" data-edit-index={index}>
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-black" style={{ background: 'var(--token-accent, #f43f5e)', color: 'var(--token-btn-text)' }}>{index + 1}</span>
-            <p className="font-semibold" style={{ color: 'var(--token-card-heading, var(--token-heading, #ffffff))' }} data-edit-path="label">{label}</p>
+            <p className="font-semibold" style={{ color: 'var(--token-card-heading,var(--token-heading,#ffffff))' }} data-edit-path="label">{label}</p>
           </div>
         ))}
       </div>
@@ -674,16 +674,16 @@ export function BookingCtaProSection({ data }: SectionProps) {
   return (
     <section
       className="relative overflow-hidden rounded-[var(--token-card-radius)] px-5 py-8 shadow-2xl sm:px-8"
-      style={{ background: 'var(--token-section-bg, #09090b)', color: 'var(--token-card-body, var(--token-body, #ffffff))' }}
+      style={{ background: 'var(--token-section-bg, #09090b)', color: 'var(--token-card-body,var(--token-body,#ffffff))' }}
     >
       <div className="absolute inset-0" style={{ background: 'linear-gradient(120deg, color-mix(in srgb, var(--token-accent, #f43f5e) 26%, transparent), transparent 48%)' }} />
       <div className="relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
         <div className="max-w-2xl">
-          <p className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--token-card-badge-bg, var(--token-badge-bg, rgba(255,255,255,.1)))', color: 'var(--token-card-badge-text, var(--token-badge-text, rgba(255,255,255,.8)))' }}>
+          <p className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--token-card-badge-bg,var(--token-badge-bg,rgba(255,255,255,.1)))', color: 'var(--token-card-badge-text,var(--token-badge-text,rgba(255,255,255,.8)))' }}>
             <Sparkles size={14} /> <span data-edit-path="badge">{(data.badge as string) || 'Booking'}</span>
           </p>
-          <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl" style={{ color: 'var(--token-card-heading, var(--token-heading, #ffffff))' }} data-edit-path="headline">{(data.headline as string) || 'Jetzt Wunschtermin sichern'}</h2>
-          <p className="mt-2 text-sm leading-6" style={{ color: 'var(--token-card-body, var(--token-body, rgba(255,255,255,.74)))' }} data-edit-path="subline">{(data.subline as string) || 'Direkt buchen oder erst unverbindlich anfragen. Das System passt sich dem freigeschalteten Booking-Modus an.'}</p>
+          <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl" style={{ color: 'var(--token-card-heading,var(--token-heading,#ffffff))' }} data-edit-path="headline">{(data.headline as string) || 'Jetzt Wunschtermin sichern'}</h2>
+          <p className="mt-2 text-sm leading-6" style={{ color: 'var(--token-card-body,var(--token-body,rgba(255,255,255,.74)))' }} data-edit-path="subline">{(data.subline as string) || 'Direkt buchen oder erst unverbindlich anfragen. Das System passt sich dem freigeschalteten Booking-Modus an.'}</p>
         </div>
         <a href="#booking" className="inline-flex shrink-0 items-center justify-center rounded-[var(--token-button-radius)] px-6 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' }} data-edit-path="submitLabel">
           {(data.submitLabel as string) || 'Zum Booking'}
@@ -695,13 +695,13 @@ export function BookingCtaProSection({ data }: SectionProps) {
 
 function BookingShell({ data, icon, defaultBadge, defaultHeadline, children }: { data: SectionProps['data']; icon: ReactNode; defaultBadge: string; defaultHeadline: string; children: ReactNode }) {
   return (
-    <section id="booking" className="relative overflow-hidden rounded-[var(--token-card-radius)] px-5 py-10 shadow-2xl sm:px-8 md:px-12" style={{ background: 'var(--token-section-bg, #09090b)', color: 'var(--token-card-body, var(--token-body, #ffffff))' }}>
+    <section id="booking" className="relative overflow-hidden rounded-[var(--token-card-radius)] px-5 py-10 shadow-2xl sm:px-8 md:px-12" style={{ background: 'var(--token-section-bg, #09090b)', color: 'var(--token-card-body,var(--token-body,#ffffff))' }}>
       <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--token-accent, #f43f5e) 28%, transparent), transparent 28%)' }} />
       <div className="relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
-          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--token-card-badge-bg, var(--token-badge-bg, rgba(255,255,255,.1)))', color: 'var(--token-card-badge-text, var(--token-badge-text, rgba(255,255,255,.8)))' }}>{icon}<span data-edit-path="badge">{(data.badge as string) || defaultBadge}</span></p>
-          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--token-card-heading, var(--token-heading, #ffffff))' }} data-edit-path="headline">{(data.headline as string) || defaultHeadline}</h2>
-          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--token-card-body, var(--token-body, rgba(255,255,255,.72)))' }} data-edit-path="subline">{(data.subline as string) || 'Ein flexibler Booking-Einstieg für Termine, Tage, Räume, Ressourcen oder Anfragen.'}</p>
+          <p className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]" style={{ background: 'var(--token-card-badge-bg,var(--token-badge-bg,rgba(255,255,255,.1)))', color: 'var(--token-card-badge-text,var(--token-badge-text,rgba(255,255,255,.8)))' }}>{icon}<span data-edit-path="badge">{(data.badge as string) || defaultBadge}</span></p>
+          <h2 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl md:text-5xl" style={{ color: 'var(--token-card-heading,var(--token-heading,#ffffff))' }} data-edit-path="headline">{(data.headline as string) || defaultHeadline}</h2>
+          <p className="mt-4 max-w-xl text-base leading-7" style={{ color: 'var(--token-card-body,var(--token-body,rgba(255,255,255,.72)))' }} data-edit-path="subline">{(data.subline as string) || 'Ein flexibler Booking-Einstieg für Termine, Tage, Räume, Ressourcen oder Anfragen.'}</p>
           <a href={(data.ctaHref as string) || '#booking-form'} className="mt-6 inline-flex items-center justify-center rounded-[var(--token-button-radius)] px-5 py-3 font-bold transition hover:brightness-95" style={{ background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' }} data-edit-path="submitLabel">{(data.submitLabel as string) || 'Anfrage starten'}</a>
         </div>
         {children}

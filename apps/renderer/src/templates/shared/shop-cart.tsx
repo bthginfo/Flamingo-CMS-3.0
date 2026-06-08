@@ -46,11 +46,11 @@ export function ShopCartSection({ data }: Props) {
               </div>
               <div className="flex-1 min-w-0">
                 <Link href={`${shopBase}/${item.slug}`} className="font-medium text-sm hover:underline">{item.title}</Link>
-                {item.variantName && <p className="text-xs text-[color:var(--token-card-body, var(--token-body))]">{item.variantName}</p>}
+                {item.variantName && <p className="text-xs text-[color:var(--token-card-body,var(--token-body))]">{item.variantName}</p>}
                 <p className="font-semibold mt-1">{formatPrice(item.priceCents)}</p>
               </div>
               <div className="flex flex-col items-end gap-2">
-                <button onClick={() => removeItem(item.productId, item.variantId)} className="p-1 text-[color:var(--token-card-body, var(--token-body))] hover:text-[color:var(--token-danger,#ef4444)]">
+                <button onClick={() => removeItem(item.productId, item.variantId)} className="p-1 text-[color:var(--token-card-body,var(--token-body))] hover:text-[color:var(--token-danger,#ef4444)]">
                   <Trash2 size={16} />
                 </button>
                 <div className="flex items-center border rounded-lg">
@@ -71,7 +71,7 @@ export function ShopCartSection({ data }: Props) {
               <span>Zwischensumme</span>
               <span>{formatPrice(totalCents)}</span>
             </div>
-            <div className="flex justify-between text-[color:var(--token-card-body, var(--token-body))]">
+            <div className="flex justify-between text-[color:var(--token-card-body,var(--token-body))]">
               <span>Versand</span>
               <span>wird im Checkout berechnet</span>
             </div>
@@ -82,15 +82,15 @@ export function ShopCartSection({ data }: Props) {
           </div>
           {shopBase.startsWith('/demo/') ? (
             <div className="mt-4 text-center">
-              <span className="block w-full py-3 bg-zinc-200 text-[color:var(--token-card-muted, var(--token-muted))] font-medium rounded-xl cursor-not-allowed">Zur Kasse</span>
-              <p className="text-xs text-[color:var(--token-card-body, var(--token-body))] mt-2">Checkout ist in der Demo nicht verfügbar</p>
+              <span className="block w-full py-3 bg-zinc-200 text-[color:var(--token-card-muted,var(--token-muted))] font-medium rounded-xl cursor-not-allowed">Zur Kasse</span>
+              <p className="text-xs text-[color:var(--token-card-body,var(--token-body))] mt-2">Checkout ist in der Demo nicht verfügbar</p>
             </div>
           ) : (
             <Link href={`${shopBase.replace(/\/shop$/, '')}/checkout`} className="block w-full text-center py-3 mt-4 bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)] font-medium rounded-xl hover:bg-[var(--token-section-bg-alt)] transition">
               {checkoutLabel}
             </Link>
           )}
-          <Link href={shopBase} className="block w-full text-center py-2 mt-2 text-sm text-[color:var(--token-card-muted, var(--token-muted))] hover:text-[color:var(--token-card-muted, var(--token-muted))]">
+          <Link href={shopBase} className="block w-full text-center py-2 mt-2 text-sm text-[color:var(--token-card-muted,var(--token-muted))] hover:text-[color:var(--token-card-muted,var(--token-muted))]">
             {continueLabel}
           </Link>
         </div>
