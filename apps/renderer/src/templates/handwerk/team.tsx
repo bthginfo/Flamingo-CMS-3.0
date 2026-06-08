@@ -49,7 +49,7 @@ function TeamClassic({ headline, subline, badgeText, storyHeadline, storyText, s
         {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
       {(storyHeadline || storyText) && (
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} className="flex flex-col lg:flex-row gap-12 lg:gap-8 lg:gap-16 items-center mb-12 md:mb-24">
+        <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.1 }} className="flex flex-col lg:flex-row gap-10 md:gap-12 lg:gap-16 items-center mb-12 md:mb-24">
           {storyImage && (
             <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-xl"><Image data-edit-image="storyImage" src={storyImage} alt={storyHeadline || ''} fill className="object-cover" sizes="50vw" /></div></div>
           )}
