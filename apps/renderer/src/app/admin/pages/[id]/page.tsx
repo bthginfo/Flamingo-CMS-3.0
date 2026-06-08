@@ -8,5 +8,5 @@ export default async function PageEditPage({ params }: { params: Promise<{ id: s
   const { id } = await params;
   const result = await getPageWithSectionsAction(id);
   if (!result) notFound();
-  return <PageEditor page={result.page} sections={result.sections} industry={result.industry} styleVariant={result.styleVariant} brand={result.brand} hasShop={result.hasShop} hasBooking={result.hasBooking} i18n={result.i18n} collections={result.collections} tenantId={result.tenantId} />;
+  return <PageEditor page={result.page} sections={result.sections} industry={result.industry} styleVariant={result.styleVariant} brand={result.brand} hasShop={result.hasShop} hasBooking={result.hasBooking} i18n={result.i18n} collections={result.collections} tenantId={result.tenantId} previewProducts={result.previewProducts} />;
 }
