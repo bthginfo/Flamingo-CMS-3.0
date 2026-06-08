@@ -51,14 +51,13 @@ export async function GET(req: NextRequest) {
 
   // 2 + 3) Host / slug resolution for public requests
   if (!viewerTenantId) viewerTenantId = await resolveTenant(slug);
-  if (!viewerTenantId) return NextResponse.json({ connected: false, posts: [] });
 
   try {
     const db = getDb();
 
     // Determine which tenant we actually pull posts from.
     // Default: the viewer tenant itself. Demos may borrow another demo's feed.
-    let sourceTenantId: string = viewerTenantId;
+    let sourceTenantId: string | null = viewerTenantId;
     let usedFallback = false;
 
     // Explicit override has highest priority (validated as demo).
@@ -71,21 +70,31 @@ export async function GET(req: NextRequest) {
     }
 
     // Look up the connection for the chosen source tenant.
-    let [conn] = await db
-      .select({ username: instagramConnections.igUsername })
-      .from(instagramConnections)
-      .where(eq(instagramConnections.tenantId, sourceTenantId))
-      .limit(1);
-
-    // Auto-fallback: if the viewer is a demo tenant with no connection and
-    // DEMO_IG_FALLBACK_SLUG is configured, borrow that demo's feed.
-    if (!conn && !usedFallback && process.env.DEMO_IG_FALLBACK_SLUG) {
-      const [viewer] = await db
-        .select({ isDemo: tenants.isDemo })
-        .from(tenants)
-        .where(eq(tenants.id, viewerTenantId))
+    let conn: { username: string } | undefined;
+    if (sourceTenantId) {
+      [conn] = await db
+        .select({ username: instagramConnections.igUsername })
+        .from(instagramConnections)
+        .where(eq(instagramConnections.tenantId, sourceTenantId))
         .limit(1);
-      if (viewer?.isDemo) {
+    }
+
+    // Auto-fallback: if no connection found AND DEMO_IG_FALLBACK_SLUG is set,
+    // borrow that demo tenant's feed. Triggers either when:
+    //   • the viewer is a demo tenant with no own connection, OR
+    //   • there is no viewer tenant at all (showcase / section-preview pages
+    //     that render sections out-of-context for marketing purposes).
+    if (!conn && !usedFallback && process.env.DEMO_IG_FALLBACK_SLUG) {
+      let allowFallback = !viewerTenantId; // no-tenant context (preview/showcase)
+      if (viewerTenantId) {
+        const [viewer] = await db
+          .select({ isDemo: tenants.isDemo })
+          .from(tenants)
+          .where(eq(tenants.id, viewerTenantId))
+          .limit(1);
+        allowFallback = !!viewer?.isDemo;
+      }
+      if (allowFallback) {
         const fallbackId = await resolveDemoTenantBySlug(process.env.DEMO_IG_FALLBACK_SLUG);
         if (fallbackId && fallbackId !== viewerTenantId) {
           sourceTenantId = fallbackId;
@@ -97,6 +106,10 @@ export async function GET(req: NextRequest) {
             .limit(1);
         }
       }
+    }
+
+    if (!sourceTenantId) {
+      return NextResponse.json({ connected: false, posts: [] });
     }
 
     if (!conn) {
