@@ -77,6 +77,10 @@ export function InstagramFeedSection({ data }: Props) {
       const slug = segs[0] === 'demo' && segs[1] ? `demo-${segs[1]}` : segs[0];
       if (slug) qs += `&slug=${encodeURIComponent(slug)}`;
     }
+    // Optional per-section override: borrow another demo tenant's feed.
+    // The API enforces isDemo=true on the override slug.
+    const sourceSlug = (data.sourceTenantSlug as string | undefined)?.trim();
+    if (sourceSlug) qs += `&fromSlug=${encodeURIComponent(sourceSlug)}`;
     fetch(`/api/instagram/feed?${qs}`)
       .then(r => r.json())
       .then((d: { connected: boolean; username?: string; posts?: IgPost[] }) => {
