@@ -109,7 +109,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
               style={{
                 background: 'var(--token-badge-bg, color-mix(in srgb, var(--token-on-dark-heading) 14%, transparent))',
                 borderColor: 'var(--token-badge-border, color-mix(in srgb, var(--token-on-dark-heading) 24%, transparent))',
-                color: 'var(--token-badge-text, var(--token-on-dark-heading))',
+                color: 'var(--token-badge-text,var(--token-on-dark-heading))',
               }}>
               <DynamicIcon name={badgeIcon} size={15} className="text-[color:var(--token-icon,var(--token-badge-text))]" />
               <span className="font-medium" data-edit-path="badgeText">{badgeText}</span>
