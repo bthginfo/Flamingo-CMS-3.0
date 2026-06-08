@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom';
 import { notFound } from 'next/navigation';
 import { resolveDemoTenant, resolveDemoTenantBySlug, getActiveSnapshot } from '@/lib/snapshot';
 import type { SnapshotSection, SnapshotCollection, SnapshotCollectionItem } from '@/lib/snapshot';
@@ -5,6 +6,44 @@ import { getTenantStyle, getTenantNav, getTenantFooter, getTenantBrand } from '@
 import { DemoPageShell } from '../../demo-page-shell';
 import { getDemoSite } from '../../pages';
 import { getDemoSiteData, type IndustryKey } from '../../demo-data';
+
+// Default Next.js `deviceSizes` (next.config has no override). Must stay in
+// sync with next/image so the browser picks our preloaded variant instead of
+// fetching a different one.
+const NEXT_DEVICE_SIZES = [640, 750, 828, 1080, 1200, 1920, 2048, 3840];
+
+/**
+ * Preload the LCP hero image at HTML-parse time so the browser starts the
+ * fetch BEFORE React/JS executes. Without this, next/image's `priority` only
+ * adds `fetchpriority="high"` to the `<img>` tag — discovered far too late.
+ *
+ * Works universally across all industry templates because every hero uses the
+ * same `data.bgImage` (and optional `data.bgImageMobile`) convention.
+ */
+function preloadHeroImages(sections: SnapshotSection[]): void {
+  const first = sections.find(s => isHeroSection(s.type));
+  if (!first) return;
+  const bg = (first.data?.bgImage as string | undefined) || undefined;
+  const bgMobile = (first.data?.bgImageMobile as string | undefined) || undefined;
+  if (bg) preloadOptimizedImage(bg, bgMobile ? '(min-width: 768px) 100vw' : '100vw');
+  if (bgMobile) preloadOptimizedImage(bgMobile, '(max-width: 767px) 100vw');
+}
+
+function preloadOptimizedImage(rawUrl: string, sizes: string): void {
+  if (!rawUrl || rawUrl.startsWith('data:')) return;
+  // Match next/image's URL shape exactly so the browser deduplicates.
+  const srcSet = NEXT_DEVICE_SIZES
+    .map(w => `/_next/image?url=${encodeURIComponent(rawUrl)}&w=${w}&q=75 ${w}w`)
+    .join(', ');
+  // Use the largest variant as the canonical href fallback.
+  const href = `/_next/image?url=${encodeURIComponent(rawUrl)}&w=${NEXT_DEVICE_SIZES[NEXT_DEVICE_SIZES.length - 1]}&q=75`;
+  ReactDOM.preload(href, {
+    as: 'image',
+    fetchPriority: 'high',
+    imageSrcSet: srcSet,
+    imageSizes: sizes,
+  });
+}
 
 // Map URL keys to DB industry enum values
 const INDUSTRY_MAP: Record<string, string> = {
@@ -112,9 +151,11 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
     if (!page) return notFound();
     const siteData = getDemoSiteData(industry as IndustryKey);
     const demoPrefix = `/demo/${industry}`;
+    const staticSections = prefixSections(page.sections.filter(s => s.visible) as SnapshotSection[], demoPrefix);
+    preloadHeroImages(staticSections);
     return (
       <DemoPageShell
-        sections={prefixSections(page.sections.filter(s => s.visible) as SnapshotSection[], demoPrefix)}
+        sections={staticSections}
         industry={staticSite.industry}
         industryKey={industry}
         defaultStyle={staticSite.defaultStyle}
@@ -207,10 +248,12 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
 
   const firstIsHero = isHeroSection(page.sections[0]?.type);
   const sectionsNeedingTenantId = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
+  const finalSections = injectCollections(prefixSections(page.sections.filter(s => s.visible).map(s => (s.type.startsWith('shop') || sectionsNeedingTenantId.has(s.type)) ? { ...s, data: { ...s.data, tenantId, ...(s.type.startsWith('shop') ? { basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}) } : {}) } } : s), demoPrefix), snapshot.collections, demoPrefix);
+  preloadHeroImages(finalSections);
 
   return (
     <DemoPageShell
-      sections={injectCollections(prefixSections(page.sections.filter(s => s.visible).map(s => (s.type.startsWith('shop') || sectionsNeedingTenantId.has(s.type)) ? { ...s, data: { ...s.data, tenantId, ...(s.type.startsWith('shop') ? { basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}) } : {}) } } : s), demoPrefix), snapshot.collections, demoPrefix)}
+      sections={finalSections}
       industry={tenantStyle.industry}
       industryKey={industry}
       defaultStyle={tenantStyle.activeStyle}
