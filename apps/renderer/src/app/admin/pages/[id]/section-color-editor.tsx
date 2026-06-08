@@ -208,9 +208,9 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   headingWeight:    { cssVar: '--token-heading-weight',   label: 'Headline-Gewicht',       description: 'font-weight der Headlines (z.B. 400, 600, 800)', type: 'size', group: 'special' },
   headingTracking:  { cssVar: '--token-heading-tracking', label: 'Headline-Laufweite',     description: 'letter-spacing der Headlines (z.B. -0.02em)', type: 'size', group: 'special' },
   // Phase A – Karten-spezifische Overrides (fallen auf section-level zurück)
-  cardHeadingColor:    { cssVar: '--token-card-heading',     label: 'Karten-Headline',        description: 'Überschriftenfarbe innerhalb von Karten – überschreibt Headline-Farbe', group: 'special' },
-  cardBodyColor:       { cssVar: '--token-card-body',        label: 'Karten-Fliesstext',      description: 'Fliesstext innerhalb von Karten – überschreibt Fliesstext-Farbe', group: 'special' },
-  cardMutedColor:      { cssVar: '--token-card-muted',       label: 'Karten-Dezenttext',      description: 'Dezente Texte innerhalb von Karten (Meta, Datum, Labels)', group: 'special' },
+  cardHeadingColor:    { cssVar: '--token-card-heading',     label: 'Detail-Headline',        description: 'Überschriftenfarbe innerhalb von Karten/Detail-Elementen – getrennt von Main-Headline', group: 'core' },
+  cardBodyColor:       { cssVar: '--token-card-body',        label: 'Detail-Fliesstext',      description: 'Fliesstext innerhalb von Karten/Detail-Elementen – getrennt vom Main-Fliesstext', group: 'core' },
+  cardMutedColor:      { cssVar: '--token-card-muted',       label: 'Detail-Dezenttext',      description: 'Dezente Texte innerhalb von Karten/Detail-Elementen (Meta, Datum, Labels)', group: 'core' },
   cardBadgeBg:         { cssVar: '--token-card-badge-bg',    label: 'Karten-Badge BG',        description: 'Badge-Hintergrund auf Karten (z.B. Tags)', group: 'special' },
   cardBadgeText:       { cssVar: '--token-card-badge-text',  label: 'Karten-Badge Text',      description: 'Badge-Text auf Karten', group: 'special' },
   cardIconColor:       { cssVar: '--token-card-icon',        label: 'Karten-Icon',            description: 'Icon-Farbe innerhalb von Karten', group: 'special' },
