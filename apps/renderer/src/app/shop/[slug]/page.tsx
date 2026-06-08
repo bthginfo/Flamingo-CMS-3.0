@@ -11,15 +11,15 @@ import { getDb } from '@/lib/db';
 import { products } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import type { Metadata } from 'next';
-import { isValidUuid } from '@/lib/uuid';
 
 export const revalidate = 60;
 
 type SearchParams = Promise<{ tenantId?: string }>;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function resolveExplicitTenant(queryTenantId: string | null) {
   const fixedTenantId = process.env.FIXED_TENANT_ID;
-  if (!queryTenantId || !isValidUuid(queryTenantId)) return null;
+  if (!queryTenantId || !UUID_RE.test(queryTenantId)) return null;
   if (fixedTenantId) return queryTenantId === fixedTenantId ? queryTenantId : null;
   return queryTenantId;
 }
