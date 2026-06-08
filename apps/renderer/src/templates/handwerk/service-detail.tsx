@@ -38,7 +38,7 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
       <div className="space-y-24">
         {items.map((item, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.15 }}
-            className={`flex flex-col ${i % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-12 lg:gap-8 lg:gap-16 items-center`} data-edit-collection="items" data-edit-index={i}>
+            className={`flex flex-col ${i % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-10 md:gap-12 lg:gap-16 items-center`} data-edit-collection="items" data-edit-index={i}>
             <div className="w-full lg:w-1/2">
               {item.mediaType === 'image' && item.image ? (
                 <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-xl">
