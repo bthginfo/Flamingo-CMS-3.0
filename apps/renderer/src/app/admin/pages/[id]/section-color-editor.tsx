@@ -60,7 +60,7 @@ export function composeColorWithAlpha(hex: string, alpha: number | undefined): s
  */
 export type ColorFieldKey =
   | 'sectionBg' | 'sectionBgAlt' | 'cardBg'
-  | 'headingColor' | 'subheadingColor' | 'bodyColor' | 'mutedColor'
+  | 'headingColor' | 'subheadingColor' | 'bodyColor' | 'mutedColor' | 'cardHeadingColor' | 'cardBodyColor'
   | 'iconColor' | 'accentColor'
   | 'eyebrow' | 'statValue' | 'quoteMark' | 'ratingStar' | 'check'
   | 'onDarkHeading' | 'onDarkBody' | 'onDarkMuted'
@@ -173,6 +173,8 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   subheadingColor:  { cssVar: '--token-subheading',       label: 'Subheadline',            description: 'Farbe der Unterueberschrift', group: 'core' },
   bodyColor:        { cssVar: '--token-body',             label: 'Fliesstext-Farbe',       description: 'Farbe des Fliesstexts (gilt fuer helle und dunkle Backgrounds)', group: 'core' },
   mutedColor:       { cssVar: '--token-muted',            label: 'Dezenter Text',          description: 'Dezente Texte / Labels (gilt fuer helle und dunkle Backgrounds)', group: 'core' },
+  cardHeadingColor: { cssVar: '--token-card-heading',     label: 'Karten-Headline',        description: 'Ueberschriften innerhalb von Karten (falls abweichend von Section-Headline)', group: 'core' },
+  cardBodyColor:    { cssVar: '--token-card-body',        label: 'Karten-Fliesstext',      description: 'Fliesstext innerhalb von Karten (falls abweichend von Section-Fliesstext)', group: 'core' },
   iconColor:        { cssVar: '--token-icon',             label: 'Icons',                  description: 'Farbe der Icons', group: 'core' },
   accentColor:      { cssVar: '--token-accent',           label: 'Akzentfarbe',            description: 'Akzente, Linien, Hervorhebungen', group: 'core' },
   eyebrow:          { cssVar: '--token-eyebrow',          label: 'Eyebrow / Kicker',       description: 'Kleine Label-Texte über der Überschrift', group: 'special' },
