@@ -29,6 +29,8 @@ export function SpotlightCardsSection({ data }: Props) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.45, delay: i * 0.06 }}
+              data-edit-collection="cards"
+              data-edit-index={i}
               onMouseMove={(event) => {
                 const rect = event.currentTarget.getBoundingClientRect();
                 event.currentTarget.style.setProperty('--x', `${event.clientX - rect.left}px`);
