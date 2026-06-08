@@ -52,22 +52,22 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
               <div className="font-display font-bold text-2xl">{brand.companyName}</div>
             )}
             {brand.tagline && (
-              <p className="text-sm leading-relaxed max-w-xs opacity-70">{brand.tagline}</p>
+              <p className="text-sm leading-relaxed max-w-xs opacity-90">{brand.tagline}</p>
             )}
             {/* Contact info */}
             <div className="flex flex-col gap-2.5 pt-2">
               {contact?.address && (
-                <span className="text-sm opacity-70 flex items-center gap-2.5">
+                <span className="text-sm opacity-90 flex items-center gap-2.5">
                   <MapPin size={14} className="text-brand-accent shrink-0" />{contact.address}
                 </span>
               )}
               {contact?.phone && (
-                <a href={`tel:${contact.phone}`} className="text-sm opacity-70 flex items-center gap-2.5 hover:opacity-100 transition-colors">
+                <a href={`tel:${contact.phone}`} className="text-sm opacity-90 flex items-center gap-2.5 hover:opacity-100 transition-colors">
                   <Phone size={14} className="text-brand-accent shrink-0" />{contact.phone}
                 </a>
               )}
               {contact?.email && (
-                <a href={`mailto:${contact.email}`} className="text-sm opacity-70 flex items-center gap-2.5 hover:opacity-100 transition-colors">
+                <a href={`mailto:${contact.email}`} className="text-sm opacity-90 flex items-center gap-2.5 hover:opacity-100 transition-colors">
                   <Mail size={14} className="text-brand-accent shrink-0" />{contact.email}
                 </a>
               )}
@@ -78,7 +78,7 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
                 {socials.map(([platform, url]) => {
                   const Icon = SOCIAL_ICONS[platform];
                   return Icon ? (
-                    <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${lightFooter ? 'bg-black/[0.08] text-gray-700 hover:bg-brand-accent hover:text-white' : 'bg-white/[0.06] text-white/70 hover:bg-brand-accent hover:text-gray-900'}`}>
+                    <a key={platform} href={url} target="_blank" rel="noopener noreferrer" aria-label={platform.charAt(0).toUpperCase() + platform.slice(1)} className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${lightFooter ? 'bg-black/[0.08] text-gray-700 hover:bg-brand-accent hover:text-white' : 'bg-white/[0.06] text-white/90 hover:bg-brand-accent hover:text-gray-900'}`}>
                       <Icon size={16} />
                     </a>
                   ) : null;
@@ -93,16 +93,16 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
               .filter((col) => !(contact && col.title?.toLowerCase() === 'kontakt'))
               .map((col, i) => (
               <div key={i}>
-                <h4 className="font-display font-semibold text-sm uppercase tracking-wider text-white/70 mb-5">{col.title}</h4>
+                <h3 className="font-display font-semibold text-sm uppercase tracking-wider text-white mb-5">{col.title}</h3>
                 <ul className="space-y-3">
                   {(col.items || []).map((item, j) => (
                     <li key={j}>
                       {item.href ? (
-                        <Link href={prefixInternalHref(item.href, linkPrefix) as string} className="text-sm opacity-70 hover:opacity-100 hover:translate-x-0.5 inline-block transition-all duration-200">
+                        <Link href={prefixInternalHref(item.href, linkPrefix) as string} className="text-sm opacity-90 hover:opacity-100 hover:translate-x-0.5 inline-block transition-all duration-200">
                           {item.text}
                         </Link>
                       ) : (
-                        <span className="text-sm opacity-70">{item.text}</span>
+                        <span className="text-sm opacity-90">{item.text}</span>
                       )}
                     </li>
                   ))}
@@ -114,16 +114,16 @@ export function SiteFooter({ footer, brand, contact, socialLinks, linkPrefix = '
 
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-xs opacity-50">
+          <span className="text-xs opacity-80">
             © {new Date().getFullYear()} {brand.companyName}. Alle Rechte vorbehalten.
           </span>
           <div className="flex items-center gap-6 flex-wrap justify-center">
             {footer.legalLinks.map((link, i) => (
-              <Link key={i} href={prefixInternalHref(link.href, linkPrefix) as string} className="text-xs opacity-50 hover:opacity-100 transition-colors duration-200">
+              <Link key={i} href={prefixInternalHref(link.href, linkPrefix) as string} className="text-xs opacity-80 hover:opacity-100 transition-colors duration-200">
                 {link.label}
               </Link>
             ))}
-            <span className="text-xs opacity-40 flex items-center gap-1">
+            <span className="text-xs opacity-80 flex items-center gap-1">
               Made with <Heart size={10} className="text-brand-accent fill-brand-accent" /> by <a href="https://www.flamingomedia.online" target="_blank" rel="noopener noreferrer" className="text-brand-accent font-medium hover:underline">Flamingo Media</a>
             </span>
           </div>
