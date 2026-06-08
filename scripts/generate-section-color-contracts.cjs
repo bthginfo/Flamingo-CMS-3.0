@@ -142,7 +142,7 @@ function loadTemplateRegistry() {
 // 3. Extract --token-* references from a template + local imports
 //    (3 levels deep). Stops at any import outside src/templates.
 // ──────────────────────────────────────────────────────────────────────
-const TOKEN_REF_RE = /var\(\s*(--token-[a-z0-9-]+)/gi;
+const TOKEN_REF_RE = /var\(\s*(--(?:token|style|brand)-[a-z0-9-]+)/gi;
 
 function extractTokenVars(filePath, depth = 0, seen = new Set()) {
   if (seen.has(filePath) || depth > 3) return new Set();
@@ -152,7 +152,7 @@ function extractTokenVars(filePath, depth = 0, seen = new Set()) {
   const vars = new Set();
   let m;
   const re = new RegExp(TOKEN_REF_RE.source, 'gi');
-  while ((m = re.exec(src)) !== null) vars.add(m[1]);
+  while ((m = re.exec(src)) !== null) { const canonical = LEGACY_ALIASES.get(m[1]) || m[1]; vars.add(canonical); }
   // Follow relative imports inside src/templates only
   const importRe = /import[\s\S]*?from\s+['"](\.[^'"]+)['"]/g;
   while ((m = importRe.exec(src)) !== null) {
@@ -181,6 +181,38 @@ const FIELD_ORDER = [
   'cardShadow', 'headingWeight', 'headingTracking',
 ];
 const orderIdx = (f) => { const i = FIELD_ORDER.indexOf(f); return i < 0 ? 999 : i; };
+
+
+// Legacy CSS var aliases → canonical --token-* name
+const LEGACY_ALIASES = new Map([
+  ['--style-section-bg', '--token-section-bg'],
+  ['--style-card-bg', '--token-card-bg'],
+  ['--style-heading-color', '--token-heading'],
+  ['--style-heading', '--token-heading'],
+  ['--style-subheading-color', '--token-subheading'],
+  ['--style-subheading', '--token-subheading'],
+  ['--style-body-color', '--token-body'],
+  ['--style-body', '--token-body'],
+  ['--style-text-muted', '--token-muted'],
+  ['--style-muted', '--token-muted'],
+  ['--style-icon-color', '--token-icon'],
+  ['--style-accent-color', '--token-accent'],
+  ['--style-eyebrow', '--token-eyebrow'],
+  ['--style-stat-value', '--token-stat-value'],
+  ['--style-quote', '--token-quote'],
+  ['--style-rating-star', '--token-rating-star'],
+  ['--style-check', '--token-check'],
+  ['--brand-btn-bg', '--token-btn-bg'],
+  ['--style-button-bg', '--token-btn-bg'],
+  ['--brand-btn-text', '--token-btn-text'],
+  ['--style-button-text', '--token-btn-text'],
+  ['--style-badge-bg', '--token-badge-bg'],
+  ['--style-badge-text', '--token-badge-text'],
+  ['--style-card-border', '--token-card-border'],
+  ['--style-border', '--token-card-border'],
+  ['--style-divider', '--token-divider'],
+  ['--brand-primary', '--token-accent'],
+]);
 
 function build() {
   const cssVarToField = loadFieldDefs();
