@@ -2665,7 +2665,7 @@ function ProductShowcaseEditor({ data, onChange }: EditorProps) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label={fieldLabel('badge')} value={item.badge} onChange={(v) => update(i, 'badge', v)} placeholder="Neu / Sale" />
-            <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/produkt" />
+            <DetailLinkField label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} />
           </div>
           <Field label="Beschreibung" value={item.description} onChange={(v) => update(i, 'description', v)} />
         </div>
@@ -2696,7 +2696,7 @@ function CategoryMosaicEditor({ data, onChange }: EditorProps) {
           <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
-            <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/kategorie" />
+            <DetailLinkField label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} />
             <SelectField label="Größe" value={item.size} options={['large', 'small']} onChange={(v) => update(i, 'size', v)} />
           </div>
         </div>
@@ -2857,7 +2857,7 @@ function InspirationGridEditor({ data, onChange }: EditorProps) {
           <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
-            <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/inspiration" />
+            <DetailLinkField label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} />
           </div>
         </div>
       ))}
@@ -3105,7 +3105,7 @@ function SpotlightCardsEditor({ data, onChange }: EditorProps) {
           <Field label={fieldLabel('text')} value={card.text} onChange={(v) => updateCard(i, 'text', v)} multiline />
           <IconPickerField label={fieldLabel('icon')} value={card.icon} onChange={(v) => updateCard(i, 'icon', v)} />
           <ImageUploadField label="Bild optional" value={card.image} onChange={(v) => updateCard(i, 'image', v)} />
-          <Field label="Link optional" value={card.href} onChange={(v) => updateCard(i, 'href', v)} />
+          <DetailLinkField label="Link optional" value={card.href} onChange={(v) => updateCard(i, 'href', v)} />
         </div>
       ))}
       <button type="button" onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Karte hinzufügen</button>

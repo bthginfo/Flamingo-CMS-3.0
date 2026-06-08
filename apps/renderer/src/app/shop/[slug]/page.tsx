@@ -11,8 +11,18 @@ import { getDb } from '@/lib/db';
 import { products } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import type { Metadata } from 'next';
+import { isValidUuid } from '@/lib/uuid';
 
 export const revalidate = 60;
+
+type SearchParams = Promise<{ tenantId?: string }>;
+
+function resolveExplicitTenant(queryTenantId: string | null) {
+  const fixedTenantId = process.env.FIXED_TENANT_ID;
+  if (!queryTenantId || !isValidUuid(queryTenantId)) return null;
+  if (fixedTenantId) return queryTenantId === fixedTenantId ? queryTenantId : null;
+  return queryTenantId;
+}
 
 async function getProduct(slug: string, tenantId: string) {
   const db = getDb();
@@ -21,9 +31,10 @@ async function getProduct(slug: string, tenantId: string) {
   return product ?? null;
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: SearchParams }): Promise<Metadata> {
   const { slug } = await params;
-  const tenantId = await resolveTenant();
+  const query = await searchParams;
+  const tenantId = resolveExplicitTenant(query?.tenantId || null) || await resolveTenant();
   if (!tenantId) return {};
   const product = await getProduct(slug, tenantId);
   if (!product) return {};
@@ -39,9 +50,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-export default async function ShopProductPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ShopProductPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: SearchParams }) {
   const { slug } = await params;
-  const tenantId = await resolveTenant();
+  const query = await searchParams;
+  const tenantId = resolveExplicitTenant(query?.tenantId || null) || await resolveTenant();
   if (!tenantId) notFound();
 
   const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle] = await Promise.all([

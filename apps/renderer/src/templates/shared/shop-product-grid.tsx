@@ -31,6 +31,12 @@ function getPreviewTenantId() {
     : undefined;
 }
 
+function buildProductHref(basePath: string, slug: string, tenantId?: string) {
+  const path = `${basePath}/${slug}`;
+  if (!tenantId) return path;
+  return `${path}?tenantId=${encodeURIComponent(tenantId)}`;
+}
+
 export function ShopProductGridSection({ data }: Props) {
   const headline = (data.headline as string) || 'Unsere Produkte';
   const showSearch = data.showSearch !== false;
@@ -175,7 +181,7 @@ export function ShopProductGridSection({ data }: Props) {
       ) : (
         <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns >= 3 ? 'lg:grid-cols-3' : ''} ${columns >= 4 ? 'xl:grid-cols-4' : ''} gap-6 md:gap-8`}>
           {filtered.map(product => (
-            <Link key={product.id} href={`${shopBase}/${product.slug}`} className="group">
+            <Link key={product.id} href={buildProductHref(shopBase, product.slug, data.tenantId as string | undefined)} className="group">
               <div className="rounded-2xl border border-[color:var(--token-card-border)] overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-[var(--token-card-bg)]">
                 <div className="aspect-[4/5] bg-[var(--token-section-bg-alt)] relative overflow-hidden">
                   {product.images?.[0] ? (
