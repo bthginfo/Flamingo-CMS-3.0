@@ -1,5 +1,5 @@
 /**
- * SIMPLE CODEGEN — single source of truth for editor field lists.
+ * SIMPLE CODEGEN � single source of truth for editor field lists.
  *
  * For every (industry, sectionType) pair registered in templates/index.ts:
  *   1. Resolve the EXACT template component file
@@ -28,11 +28,11 @@ const TEMPLATES_INDEX = path.join(TEMPLATES_DIR, 'index.ts');
 const EDITOR_FILE = path.join(ROOT, 'apps/renderer/src/app/admin/pages/[id]/section-color-editor.tsx');
 const OUTPUT_FILE = path.join(ROOT, 'apps/renderer/src/lib/section-color-contracts-generated.ts');
 
-// ──────────────────────────────────────────────────────────────────────
+// ----------------------------------------------------------------------
 // 1. Parse FIELD_DEFS from the editor so we get a precise
-//    cssVar → ColorFieldKey mapping. No drift possible — the editor
+//    cssVar ? ColorFieldKey mapping. No drift possible � the editor
 //    file is the registry.
-// ──────────────────────────────────────────────────────────────────────
+// ----------------------------------------------------------------------
 function loadFieldDefs() {
   const src = fs.readFileSync(EDITOR_FILE, 'utf8');
   const m = src.match(/const FIELD_DEFS:[^=]*=\s*{([\s\S]*?)\n};/);
@@ -47,9 +47,9 @@ function loadFieldDefs() {
   return cssVarToField;
 }
 
-// ──────────────────────────────────────────────────────────────────────
-// 2. Resolve every Component → file from templates/index.ts.
-// ──────────────────────────────────────────────────────────────────────
+// ----------------------------------------------------------------------
+// 2. Resolve every Component ? file from templates/index.ts.
+// ----------------------------------------------------------------------
 function resolveImport(rel, fromDir) {
   const abs = path.resolve(fromDir, rel);
   for (const ext of ['.tsx', '.ts', '/index.tsx', '/index.ts']) {
@@ -60,7 +60,7 @@ function resolveImport(rel, fromDir) {
 }
 
 function parseImportNames(raw) {
-  // Each entry may be `Foo` or `Foo as Bar` — we want the alias if present
+  // Each entry may be `Foo` or `Foo as Bar` � we want the alias if present
   // because that's the name used in the INDUSTRY_TEMPLATES object.
   return raw.split(',').map((s) => {
     const t = s.trim();
@@ -106,7 +106,7 @@ function loadTemplateRegistry() {
     }
   }
 
-  // sectionType → Set<{ industry, componentName }>, parsed from the
+  // sectionType ? Set<{ industry, componentName }>, parsed from the
   // INDUSTRY_TEMPLATES literal (an industry-keyed object of {type:Component}).
   const industryTypeComponent = []; // { industry, type, componentName }
 
@@ -138,10 +138,10 @@ function loadTemplateRegistry() {
   return { componentToFile, industryTypeComponent };
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// ----------------------------------------------------------------------
 // 3. Extract --token-* references from a template + local imports
 //    (3 levels deep). Stops at any import outside src/templates.
-// ──────────────────────────────────────────────────────────────────────
+// ----------------------------------------------------------------------
 const TOKEN_REF_RE = /var\(\s*(--(?:token|style|brand)-[a-z0-9-]+)/gi;
 
 function extractTokenVars(filePath, depth = 0, seen = new Set()) {
@@ -164,18 +164,23 @@ function extractTokenVars(filePath, depth = 0, seen = new Set()) {
   return vars;
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// ----------------------------------------------------------------------
 // 4. Build the contracts.
-// ──────────────────────────────────────────────────────────────────────
+// ----------------------------------------------------------------------
 const FIELD_ORDER = [
   'sectionBg', 'sectionBgAlt', 'cardBg',
-  'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
-  'iconColor', 'accentColor',
+  'headingColor', 'cardHeadingColor', 'subheadingColor', 'bodyColor', 'cardBodyColor', 'mutedColor', 'cardMutedColor',
+  'iconColor', 'cardIconColor', 'accentColor',
+  'linkColor', 'linkHoverColor',
   'onDarkHeading', 'onDarkBody', 'onDarkMuted',
   'imageOverlay',
   'eyebrow', 'statValue', 'quoteMark', 'ratingStar', 'check',
+  'priceColor', 'priceStrikeColor',
   'btnBg', 'btnText',
+  'btnSecondaryBg', 'btnSecondaryText', 'btnSecondaryBorder',
   'badgeBg', 'badgeText', 'badgeBorder',
+  'cardBadgeBg', 'cardBadgeText',
+  'inputBg', 'inputBorder', 'inputText', 'labelColor',
   'borderColor', 'dividerColor',
   'cardRadius', 'buttonRadius',
   'cardShadow', 'headingWeight', 'headingTracking',
@@ -183,7 +188,7 @@ const FIELD_ORDER = [
 const orderIdx = (f) => { const i = FIELD_ORDER.indexOf(f); return i < 0 ? 999 : i; };
 
 
-// Legacy CSS var aliases → canonical --token-* name
+// Legacy CSS var aliases ? canonical --token-* name
 const LEGACY_ALIASES = new Map([
   ['--style-section-bg', '--token-section-bg'],
   ['--style-card-bg', '--token-card-bg'],
@@ -218,8 +223,8 @@ function build() {
   const cssVarToField = loadFieldDefs();
   const { componentToFile, industryTypeComponent } = loadTemplateRegistry();
 
-  const perIndustry = {};   // 'heroSalon' → ColorFieldKey[]
-  const perType = {};       // 'hero' → ColorFieldKey[] (union)
+  const perIndustry = {};   // 'heroSalon' ? ColorFieldKey[]
+  const perType = {};       // 'hero' ? ColorFieldKey[] (union)
   const stats = { entries: 0, resolved: 0, missing: [] };
 
   for (const { industry, type, componentName } of industryTypeComponent) {
@@ -251,12 +256,12 @@ function build() {
   return { perIndustry, perType: perTypeArr, stats };
 }
 
-// ──────────────────────────────────────────────────────────────────────
+// ----------------------------------------------------------------------
 // 5. Emit.
-// ──────────────────────────────────────────────────────────────────────
+// ----------------------------------------------------------------------
 function render(perIndustry, perType) {
   const lines = [];
-  lines.push(`// AUTO-GENERATED by scripts/generate-section-color-contracts.cjs — DO NOT EDIT BY HAND.`);
+  lines.push(`// AUTO-GENERATED by scripts/generate-section-color-contracts.cjs � DO NOT EDIT BY HAND.`);
   lines.push(`// Regenerate after ANY template change with:`);
   lines.push(`//   node scripts/generate-section-color-contracts.cjs`);
   lines.push(`//`);
@@ -281,7 +286,7 @@ function render(perIndustry, perType) {
   };
   emit(
     'SECTION_COLOR_CONTRACTS_GENERATED',
-    'Per-industry contracts (keyed as `${type}${IndustryPascal}` — e.g. heroSalon).',
+    'Per-industry contracts (keyed as `${type}${IndustryPascal}` � e.g. heroSalon).',
     perIndustry,
   );
   emit(

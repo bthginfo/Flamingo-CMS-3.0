@@ -114,7 +114,7 @@ export function ShopProductDetailSection({ data }: Props) {
                 </button>
               ))}
               {images.length > 4 && (
-                <div className="w-20 h-20 rounded-xl border-2 border-[color:var(--token-card-border)] flex items-center justify-center text-sm text-[color:var(--token-body)] font-medium">
+                <div className="w-20 h-20 rounded-xl border-2 border-[color:var(--token-card-border)] flex items-center justify-center text-sm text-[color:var(--token-card-body, var(--token-body))] font-medium">
                   +{images.length - 4}
                 </div>
               )}
@@ -126,20 +126,20 @@ export function ShopProductDetailSection({ data }: Props) {
         <div className="flex flex-col">
           {/* Category badge */}
           {product.categoryName && (
-            <span className="inline-block text-xs font-medium text-[color:var(--token-muted)] bg-[var(--token-section-bg-alt)] px-3 py-1 rounded-full w-fit mb-3">{product.categoryName}</span>
+            <span className="inline-block text-xs font-medium text-[color:var(--token-card-muted, var(--token-muted))] bg-[var(--token-section-bg-alt)] px-3 py-1 rounded-full w-fit mb-3">{product.categoryName}</span>
           )}
 
           <h1 className="text-2xl md:text-3xl font-bold mb-2" data-edit-path="title">{product.title}</h1>
 
           {product.shortDescription && (
-            <p className="text-[color:var(--token-muted)] mb-4">{product.shortDescription}</p>
+            <p className="text-[color:var(--token-card-muted, var(--token-muted))] mb-4">{product.shortDescription}</p>
           )}
 
           {/* Price */}
           <div className="flex items-baseline gap-3 mb-6">
-            <span className="text-3xl font-bold">{formatPrice(currentPrice)}</span>
+            <span className="text-3xl font-bold text-[color:var(--token-price,inherit)]">{formatPrice(currentPrice)}</span>
             {product.comparePriceCents && (
-              <span className="text-lg text-[color:var(--token-body)] line-through">{formatPrice(product.comparePriceCents)}</span>
+              <span className="text-lg text-[color:var(--token-price-strikethrough,var(--token-card-body,var(--token-body)))] line-through">{formatPrice(product.comparePriceCents)}</span>
             )}
           </div>
 
@@ -150,7 +150,7 @@ export function ShopProductDetailSection({ data }: Props) {
                 {highlights.map((h, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm" data-edit-collection="highlights" data-edit-index={i}>
                     <Sparkles size={14} className="text-amber-500 shrink-0" />
-                    <span className="text-[color:var(--token-muted)]">{h}</span>
+                    <span className="text-[color:var(--token-card-muted, var(--token-muted))]">{h}</span>
                   </li>
                 ))}
               </ul>
@@ -160,7 +160,7 @@ export function ShopProductDetailSection({ data }: Props) {
           {/* Variant options */}
           {product.variantOptions?.map(opt => (
             <div key={opt.name} className="mb-5">
-              <label className="text-sm font-medium text-[color:var(--token-muted)] mb-2 block" data-edit-path="name">{opt.name}</label>
+              <label className="text-sm font-medium text-[color:var(--token-card-muted, var(--token-muted))] mb-2 block" data-edit-path="name">{opt.name}</label>
               <div className="flex flex-wrap gap-2">
                 {opt.values.map(val => {
                   const matchVariant = variants.find(v => v.name.includes(val));
@@ -202,10 +202,10 @@ export function ShopProductDetailSection({ data }: Props) {
 
           {/* Trust badges */}
           <div className="flex items-center gap-6 mt-6 pt-6 border-t border-[color:var(--token-card-border)]">
-            <div className="flex items-center gap-2 text-xs text-[color:var(--token-muted)]">
+            <div className="flex items-center gap-2 text-xs text-[color:var(--token-card-muted, var(--token-muted))]">
               <Truck size={14} /> Schneller Versand
             </div>
-            <div className="flex items-center gap-2 text-xs text-[color:var(--token-muted)]">
+            <div className="flex items-center gap-2 text-xs text-[color:var(--token-card-muted, var(--token-muted))]">
               <ShieldCheck size={14} /> Sicherer Kauf
             </div>
           </div>
@@ -216,7 +216,7 @@ export function ShopProductDetailSection({ data }: Props) {
       {product.description && (
         <div className="mt-12 pt-8 border-t border-[color:var(--token-card-border)]">
           <h2 className="text-lg font-semibold mb-4">Beschreibung</h2>
-          <div className="text-sm text-[color:var(--token-muted)] whitespace-pre-line leading-relaxed" data-edit-path="description">{plain(product.description)}</div>
+          <div className="text-sm text-[color:var(--token-card-muted, var(--token-muted))] whitespace-pre-line leading-relaxed" data-edit-path="description">{plain(product.description)}</div>
         </div>
       )}
     </section>

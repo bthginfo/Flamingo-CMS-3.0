@@ -41,8 +41,8 @@ export function SpotlightCardsSection({ data }: Props) {
               <div className="relative z-10 flex h-full flex-col justify-between gap-8">
                 {card.icon && <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon)_12%,var(--token-card-bg,#fff))] text-[var(--token-icon)]"><DynamicIcon editPath="icon" name={card.icon} size={24} /></span>}
                 <div>
-                <h3 className="text-xl font-bold text-[var(--token-heading)]" data-edit-path="title">{card.title}</h3>
-                {card.text && <p className="mt-3 text-sm leading-6 text-[var(--token-body)]" data-edit-path="text">{plain(card.text)}</p>}
+                <h3 className="text-xl font-bold text-[var(--token-card-heading, var(--token-heading))]" data-edit-path="title">{card.title}</h3>
+                {card.text && <p className="mt-3 text-sm leading-6 text-[var(--token-card-body, var(--token-body))]" data-edit-path="text">{plain(card.text)}</p>}
                 </div>
               </div>
             </motion.article>

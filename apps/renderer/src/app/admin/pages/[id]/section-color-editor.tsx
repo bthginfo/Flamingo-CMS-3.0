@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Palette, ChevronDown } from 'lucide-react';
@@ -60,7 +60,7 @@ export function composeColorWithAlpha(hex: string, alpha: number | undefined): s
  */
 export type ColorFieldKey =
   | 'sectionBg' | 'sectionBgAlt' | 'cardBg'
-  | 'headingColor' | 'subheadingColor' | 'bodyColor' | 'mutedColor' | 'cardHeadingColor' | 'cardBodyColor'
+  | 'headingColor' | 'subheadingColor' | 'bodyColor' | 'mutedColor'
   | 'iconColor' | 'accentColor'
   | 'eyebrow' | 'statValue' | 'quoteMark' | 'ratingStar' | 'check'
   | 'onDarkHeading' | 'onDarkBody' | 'onDarkMuted'
@@ -69,7 +69,15 @@ export type ColorFieldKey =
   | 'badgeBg' | 'badgeText' | 'badgeBorder'
   | 'borderColor' | 'dividerColor'
   | 'cardRadius' | 'buttonRadius'
-  | 'cardShadow' | 'headingWeight' | 'headingTracking';
+  | 'cardShadow' | 'headingWeight' | 'headingTracking'
+  // Phase A: Card-level overrides (fallback to section-level token)
+  | 'cardHeadingColor' | 'cardBodyColor' | 'cardMutedColor'
+  | 'cardBadgeBg' | 'cardBadgeText' | 'cardIconColor'
+  // Phase B: Specialized roles
+  | 'btnSecondaryBg' | 'btnSecondaryText' | 'btnSecondaryBorder'
+  | 'linkColor' | 'linkHoverColor'
+  | 'inputBg' | 'inputBorder' | 'inputText' | 'labelColor'
+  | 'priceColor' | 'priceStrikeColor';
 
 // Mapping of every legacy key the editor used to expose to its modern
 // equivalent. Used by migrateLegacyOverrides() to clean up stored
@@ -92,8 +100,8 @@ export const LEGACY_FIELD_ALIASES: Record<string, ColorFieldKey | null> = {
   cardShadow:      'cardShadow',
   headingWeight:   'headingWeight',
   headingTracking: 'headingTracking',
-  btnSecondaryBg:  null,
-  btnSecondaryText:null,
+  btnSecondaryBg:  'btnSecondaryBg',
+  btnSecondaryText:'btnSecondaryText',
 };
 
 // Legacy CSS-var name → modern CSS-var name (used at load time only).
@@ -173,8 +181,6 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   subheadingColor:  { cssVar: '--token-subheading',       label: 'Subheadline',            description: 'Farbe der Unterueberschrift', group: 'core' },
   bodyColor:        { cssVar: '--token-body',             label: 'Fliesstext-Farbe',       description: 'Farbe des Fliesstexts (gilt fuer helle und dunkle Backgrounds)', group: 'core' },
   mutedColor:       { cssVar: '--token-muted',            label: 'Dezenter Text',          description: 'Dezente Texte / Labels (gilt fuer helle und dunkle Backgrounds)', group: 'core' },
-  cardHeadingColor: { cssVar: '--token-card-heading',     label: 'Karten-Headline',        description: 'Ueberschriften innerhalb von Karten (falls abweichend von Section-Headline)', group: 'core' },
-  cardBodyColor:    { cssVar: '--token-card-body',        label: 'Karten-Fliesstext',      description: 'Fliesstext innerhalb von Karten (falls abweichend von Section-Fliesstext)', group: 'core' },
   iconColor:        { cssVar: '--token-icon',             label: 'Icons',                  description: 'Farbe der Icons', group: 'core' },
   accentColor:      { cssVar: '--token-accent',           label: 'Akzentfarbe',            description: 'Akzente, Linien, Hervorhebungen', group: 'core' },
   eyebrow:          { cssVar: '--token-eyebrow',          label: 'Eyebrow / Kicker',       description: 'Kleine Label-Texte über der Überschrift', group: 'special' },
@@ -198,6 +204,25 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   cardShadow:       { cssVar: '--token-card-shadow',      label: 'Karten-Schatten',        description: 'box-shadow auf Karten (CSS-Wert, z.B. "0 8px 24px rgba(0,0,0,0.12)")', type: 'size', group: 'special' },
   headingWeight:    { cssVar: '--token-heading-weight',   label: 'Headline-Gewicht',       description: 'font-weight der Headlines (z.B. 400, 600, 800)', type: 'size', group: 'special' },
   headingTracking:  { cssVar: '--token-heading-tracking', label: 'Headline-Laufweite',     description: 'letter-spacing der Headlines (z.B. -0.02em)', type: 'size', group: 'special' },
+  // Phase A – Karten-spezifische Overrides (fallen auf section-level zurück)
+  cardHeadingColor:    { cssVar: '--token-card-heading',     label: 'Karten-Headline',        description: 'Überschriftenfarbe innerhalb von Karten – überschreibt Headline-Farbe', group: 'special' },
+  cardBodyColor:       { cssVar: '--token-card-body',        label: 'Karten-Fliesstext',      description: 'Fliesstext innerhalb von Karten – überschreibt Fliesstext-Farbe', group: 'special' },
+  cardMutedColor:      { cssVar: '--token-card-muted',       label: 'Karten-Dezenttext',      description: 'Dezente Texte innerhalb von Karten (Meta, Datum, Labels)', group: 'special' },
+  cardBadgeBg:         { cssVar: '--token-card-badge-bg',    label: 'Karten-Badge BG',        description: 'Badge-Hintergrund auf Karten (z.B. Tags)', group: 'special' },
+  cardBadgeText:       { cssVar: '--token-card-badge-text',  label: 'Karten-Badge Text',      description: 'Badge-Text auf Karten', group: 'special' },
+  cardIconColor:       { cssVar: '--token-card-icon',        label: 'Karten-Icon',            description: 'Icon-Farbe innerhalb von Karten', group: 'special' },
+  // Phase B – Spezialrollen
+  btnSecondaryBg:      { cssVar: '--token-btn-secondary-bg',     label: 'Sekundär-Button BG',     description: 'Hintergrund von Sekundär-/Outline-Buttons', group: 'special' },
+  btnSecondaryText:    { cssVar: '--token-btn-secondary-text',   label: 'Sekundär-Button Text',   description: 'Textfarbe Sekundär-/Outline-Button', group: 'special' },
+  btnSecondaryBorder:  { cssVar: '--token-btn-secondary-border', label: 'Sekundär-Button Border', description: 'Randfarbe Sekundär-/Outline-Button', group: 'special' },
+  linkColor:           { cssVar: '--token-link',                 label: 'Link-Farbe',             description: 'Inline-Links (rich text, Legal-Pages)', group: 'special' },
+  linkHoverColor:      { cssVar: '--token-link-hover',           label: 'Link-Hover',             description: 'Inline-Link Hover-Farbe', group: 'special' },
+  inputBg:             { cssVar: '--token-input-bg',             label: 'Input-Hintergrund',      description: 'Hintergrund von Formularfeldern', group: 'special' },
+  inputBorder:         { cssVar: '--token-input-border',         label: 'Input-Border',           description: 'Randfarbe Formularfelder', group: 'special' },
+  inputText:           { cssVar: '--token-input-text',           label: 'Input-Textfarbe',        description: 'Textfarbe in Formularfeldern', group: 'special' },
+  labelColor:          { cssVar: '--token-label',                label: 'Label-Farbe',            description: 'Beschriftungen zu Formularfeldern', group: 'special' },
+  priceColor:          { cssVar: '--token-price',                label: 'Preis-Farbe',            description: 'Preisangaben (Shop)', group: 'special' },
+  priceStrikeColor:    { cssVar: '--token-price-strikethrough',  label: 'Preis-Streich',          description: 'Durchgestrichener Vergleichspreis', group: 'special' },
 };
 
 /* ─── SINGLE SOURCE OF TRUTH ─── */

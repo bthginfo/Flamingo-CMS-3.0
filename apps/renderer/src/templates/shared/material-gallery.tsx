@@ -33,8 +33,8 @@ export function MaterialGallerySection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-8">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[var(--token-body)]" data-edit-path="headline">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[var(--token-card-body, var(--token-body))]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-3 text-[var(--token-card-body, var(--token-body))] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 
@@ -48,7 +48,7 @@ export function MaterialGallerySection({ data }: Props) {
               className={`px-4 py-2 text-sm font-medium rounded-full border transition-all ${
                 activeFilter === cat
                   ? 'bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] border-transparent shadow-md'
-                  : 'bg-[var(--token-card-bg)] text-[var(--token-body)] border-[color:var(--token-card-border)] hover:border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)]'
+                  : 'bg-[var(--token-card-bg)] text-[var(--token-card-body, var(--token-body))] border-[color:var(--token-card-border)] hover:border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)]'
               }`}
             >
               {cat}
@@ -74,8 +74,8 @@ export function MaterialGallerySection({ data }: Props) {
                 <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />
               )}
             </div>
-            <p className="mt-2 text-center text-sm font-medium text-[var(--token-body)] truncate" data-edit-path="name">{item.name}</p>
-            {item.category && <p className="text-center text-xs text-[var(--token-body)]" data-edit-path="category">{item.category}</p>}
+            <p className="mt-2 text-center text-sm font-medium text-[var(--token-card-body, var(--token-body))] truncate" data-edit-path="name">{item.name}</p>
+            {item.category && <p className="text-center text-xs text-[var(--token-card-body, var(--token-body))]" data-edit-path="category">{item.category}</p>}
           </motion.div>
         ))}
       </div>

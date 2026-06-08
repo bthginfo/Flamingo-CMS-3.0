@@ -89,7 +89,7 @@ export function CollectionListSection({ data }: Props) {
       )}
 
       {sorted.length === 0 ? (
-        <p className="text-center text-[color:var(--token-body)] py-12">Noch keine Einträge vorhanden.</p>
+        <p className="text-center text-[color:var(--token-card-body, var(--token-body))] py-12">Noch keine Einträge vorhanden.</p>
       ) : (
         <div className={`grid grid-cols-1 ${gridCols} gap-6`}>
           {sorted.map((item, i) => (
@@ -116,13 +116,13 @@ export function CollectionListSection({ data }: Props) {
                   {item.title}
                 </h3>
                 {showDate && item.date && (
-                  <div className="flex items-center gap-1.5 text-xs text-[color:var(--token-body)] mt-2">
+                  <div className="flex items-center gap-1.5 text-xs text-[color:var(--token-card-body, var(--token-body))] mt-2">
                     <Calendar size={12} />
                     <time>{new Date(item.date).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}</time>
                   </div>
                 )}
                 {showExcerpt && item.excerpt && (
-                  <p className="text-sm text-[color:var(--token-muted)] mt-2 line-clamp-3">{item.excerpt}</p>
+                  <p className="text-sm text-[color:var(--token-card-muted, var(--token-muted))] mt-2 line-clamp-3">{item.excerpt}</p>
                 )}
               </div>
             </motion.a>

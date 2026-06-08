@@ -55,8 +55,8 @@ export function ConsultationBookingSection({ data }: Props) {
                 </div>
               )}
               <div>
-                <h3 className="font-semibold text-[var(--token-body)]" data-edit-path="title">{service.title}</h3>
-                {service.description && <p className="text-sm text-[var(--token-body)] mt-1" data-edit-path="description">{plain(service.description)}</p>}
+                <h3 className="font-semibold text-[var(--token-card-body, var(--token-body))]" data-edit-path="title">{service.title}</h3>
+                {service.description && <p className="text-sm text-[var(--token-card-body, var(--token-body))] mt-1" data-edit-path="description">{plain(service.description)}</p>}
               </div>
             </motion.button>
           ))}
@@ -74,7 +74,7 @@ export function ConsultationBookingSection({ data }: Props) {
               <img data-edit-image="image" src={image} alt={headline} className="w-full aspect-[4/3] object-cover" />
             )}
             <div className="p-6 text-center">
-              <p className="text-[var(--token-body)] text-sm mb-4">
+              <p className="text-[var(--token-card-body, var(--token-body))] text-sm mb-4">
                 {selectedService?.title ? (
                   <>
                     Beratung:{' '}

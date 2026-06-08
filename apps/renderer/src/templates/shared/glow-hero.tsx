@@ -59,7 +59,7 @@ export function GlowHeroSection({ data }: Props) {
             {facts.map((fact, index) => (
               <div key={index} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 backdrop-blur" data-edit-collection="facts" data-edit-index={index}>
                 {fact.value && <div className="text-3xl font-black text-[var(--token-stat-value)]" data-edit-path="value">{fact.value}</div>}
-                {fact.label && <div className="mt-1 text-sm text-[var(--token-body)]" data-edit-path="label">{fact.label}</div>}
+                {fact.label && <div className="mt-1 text-sm text-[var(--token-card-body, var(--token-body))]" data-edit-path="label">{fact.label}</div>}
               </div>
             ))}
           </div>

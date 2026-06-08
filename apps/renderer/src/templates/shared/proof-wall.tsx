@@ -31,7 +31,7 @@ export function ProofWallSection({ data }: Props) {
             <motion.div key={index} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm" data-edit-collection="proofs" data-edit-index={index}>
               <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon)_14%,transparent)] text-[var(--token-icon)]"><Award size={19} /></div>
               {proof.value && <div className="text-3xl font-black text-[var(--token-stat-value)]" data-edit-path="value">{proof.value}</div>}
-              <div className="mt-1 font-semibold text-[var(--token-heading)]" data-edit-path="label">{plain(proof.label)}</div>
+              <div className="mt-1 font-semibold text-[var(--token-card-heading, var(--token-heading))]" data-edit-path="label">{plain(proof.label)}</div>
               {proof.note && <div className="mt-2 text-sm leading-6 text-[var(--token-muted)]" data-edit-path="note">{plain(proof.note)}</div>}
             </motion.div>
           ))}
@@ -42,10 +42,10 @@ export function ProofWallSection({ data }: Props) {
             {reviews.map((review, index) => (
               <article key={index} className="rounded-2xl border border-[var(--token-card-border)] bg-transparent p-5" data-edit-collection="reviews" data-edit-index={index}>
                 <Quote className="mb-4 text-[var(--token-quote)]" size={24} />
-                {review.quote && <p className="text-sm leading-7 text-[var(--token-body)]" data-edit-path="quote">{plain(review.quote)}</p>}
+                {review.quote && <p className="text-sm leading-7 text-[var(--token-card-body, var(--token-body))]" data-edit-path="quote">{plain(review.quote)}</p>}
                 <div className="mt-5 flex items-center justify-between gap-3">
                   <div>
-                    <div className="font-bold text-[var(--token-heading)]" data-edit-path="name">{review.name || review.author || ''}</div>
+                    <div className="font-bold text-[var(--token-card-heading, var(--token-heading))]" data-edit-path="name">{review.name || review.author || ''}</div>
                     {(review.context || review.meta) && <div className="text-xs text-[var(--token-muted)]">{review.context || review.meta}</div>}
                   </div>
                   <div className="flex text-[var(--token-rating-star)]">{Array.from({ length: review.rating || 5 }).slice(0, 5).map((_, i) => <Star key={i} size={14} fill="currentColor"  data-edit-collection="rating" data-edit-index={i}/>)}</div>

@@ -165,7 +165,7 @@ export function ShopCheckoutSection({ data }: Props) {
   if (items.length === 0) {
     return (
       <section className="py-16 text-center">
-        <p className="text-[color:var(--token-muted)]">Dein Warenkorb ist leer.</p>
+        <p className="text-[color:var(--token-card-muted, var(--token-muted))]">Dein Warenkorb ist leer.</p>
       </section>
     );
   }
@@ -178,10 +178,10 @@ export function ShopCheckoutSection({ data }: Props) {
       <div className="flex items-center gap-2 mb-8">
         {STEPS.map((s, i) => (
           <div key={s} className="flex items-center gap-2" data-edit-collection="STEPS" data-edit-index={i}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= step ? 'bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-body)]'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= step ? 'bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)]' : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-card-body, var(--token-body))]'}`}>
               {i < step ? <Check size={14} /> : i + 1}
             </div>
-            <span className={`text-sm hidden sm:block ${i <= step ? 'font-medium' : 'text-[color:var(--token-body)]'}`}>{s}</span>
+            <span className={`text-sm hidden sm:block ${i <= step ? 'font-medium' : 'text-[color:var(--token-card-body, var(--token-body))]'}`}>{s}</span>
             {i < STEPS.length - 1 && <div className="w-8 h-px bg-zinc-200" />}
           </div>
         ))}
@@ -194,19 +194,19 @@ export function ShopCheckoutSection({ data }: Props) {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-muted)] mb-1">Name *</label>
+                  <label className="block text-xs font-medium text-[color:var(--token-label,var(--token-card-muted,var(--token-muted)))] mb-1">Name *</label>
                   <input value={form.name} onChange={e => set('name', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" placeholder="Max Mustermann" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-muted)] mb-1">E-Mail *</label>
+                  <label className="block text-xs font-medium text-[color:var(--token-label,var(--token-card-muted,var(--token-muted)))] mb-1">E-Mail *</label>
                   <input type="email" value={form.email} onChange={e => set('email', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" placeholder="max@example.de" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-muted)] mb-1">Telefon</label>
+                  <label className="block text-xs font-medium text-[color:var(--token-label,var(--token-card-muted,var(--token-muted)))] mb-1">Telefon</label>
                   <input value={form.phone} onChange={e => set('phone', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" placeholder="+49 ..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-muted)] mb-1">Firma</label>
+                  <label className="block text-xs font-medium text-[color:var(--token-label,var(--token-card-muted,var(--token-muted)))] mb-1">Firma</label>
                   <input value={form.company} onChange={e => set('company', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" />
                 </div>
               </div>
@@ -221,19 +221,19 @@ export function ShopCheckoutSection({ data }: Props) {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-xs font-medium text-[color:var(--token-muted)] mb-1">Straße & Hausnr. *</label>
+                  <label className="block text-xs font-medium text-[color:var(--token-label,var(--token-card-muted,var(--token-muted)))] mb-1">Straße & Hausnr. *</label>
                   <input value={form.street} onChange={e => set('street', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-muted)] mb-1">PLZ *</label>
+                  <label className="block text-xs font-medium text-[color:var(--token-label,var(--token-card-muted,var(--token-muted)))] mb-1">PLZ *</label>
                   <input value={form.zip} onChange={e => set('zip', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-muted)] mb-1">Stadt *</label>
+                  <label className="block text-xs font-medium text-[color:var(--token-label,var(--token-card-muted,var(--token-muted)))] mb-1">Stadt *</label>
                   <input value={form.city} onChange={e => set('city', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[color:var(--token-muted)] mb-1">Land</label>
+                  <label className="block text-xs font-medium text-[color:var(--token-label,var(--token-card-muted,var(--token-muted)))] mb-1">Land</label>
                   <select value={form.country} onChange={e => set('country', e.target.value)} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm bg-[var(--token-card-bg)]">
                     <option value="DE">Deutschland</option>
                     <option value="AT">Österreich</option>
@@ -245,7 +245,7 @@ export function ShopCheckoutSection({ data }: Props) {
               {/* Shipping method selection */}
               {shippingMethods.length > 0 && (
                 <div className="space-y-2">
-                  <label className="block text-xs font-medium text-[color:var(--token-muted)] mb-1">Versandart</label>
+                  <label className="block text-xs font-medium text-[color:var(--token-label,var(--token-card-muted,var(--token-muted)))] mb-1">Versandart</label>
                   {shippingMethods.map(method => {
                     const isFree = method.freeAboveCents && totalCents >= method.freeAboveCents;
                     return (
@@ -254,7 +254,7 @@ export function ShopCheckoutSection({ data }: Props) {
                           <input type="radio" name="shipping" value={method.id} checked={form.shippingMethod === method.id} onChange={e => set('shippingMethod', e.target.value)} className="accent-[var(--token-icon)]" />
                           <div>
                             <p className="text-sm font-medium" data-edit-path="name">{method.name}</p>
-                            {method.estimatedDays && <p className="text-xs text-[color:var(--token-body)]">{method.estimatedDays}</p>}
+                            {method.estimatedDays && <p className="text-xs text-[color:var(--token-card-body, var(--token-body))]">{method.estimatedDays}</p>}
                           </div>
                         </div>
                         <span className="text-sm font-medium">{isFree ? <span className="text-green-600">Kostenlos</span> : formatPrice(method.priceCents)}</span>
@@ -283,7 +283,7 @@ export function ShopCheckoutSection({ data }: Props) {
                       <p className="text-sm font-medium">
                         {method === 'prepayment' ? 'Vorkasse / Überweisung' : method === 'stripe' ? 'Kreditkarte (Stripe)' : method === 'paypal' ? 'PayPal' : method === 'sumup' ? 'Kartenzahlung (SumUp)' : method === 'pickup' ? 'Abholung & Barzahlung' : method}
                       </p>
-                      <p className="text-xs text-[color:var(--token-body)]">
+                      <p className="text-xs text-[color:var(--token-card-body, var(--token-body))]">
                         {method === 'prepayment' ? 'Bankdaten werden nach Bestellung angezeigt' : method === 'stripe' ? 'Sichere Zahlung via Stripe' : method === 'paypal' ? 'Weiterleitung zu PayPal' : method === 'sumup' ? 'Kartenzahlung über SumUp' : method === 'pickup' ? 'Bezahlung bei Abholung' : ''}
                       </p>
                     </div>
@@ -291,7 +291,7 @@ export function ShopCheckoutSection({ data }: Props) {
                 ))}
               </div>
               <div>
-                <label className="block text-xs font-medium text-[color:var(--token-muted)] mb-1">Bemerkungen (optional)</label>
+                <label className="block text-xs font-medium text-[color:var(--token-label,var(--token-card-muted,var(--token-muted)))] mb-1">Bemerkungen (optional)</label>
                 <textarea value={form.customerNotes} onChange={e => set('customerNotes', e.target.value)} rows={2} className="w-full px-4 py-3 rounded-xl border border-[color:var(--token-card-border)] text-sm resize-y" />
               </div>
               <div className="flex gap-3">

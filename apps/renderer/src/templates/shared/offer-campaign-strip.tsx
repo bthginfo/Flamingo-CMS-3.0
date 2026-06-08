@@ -37,7 +37,7 @@ export function OfferCampaignStripSection({ data }: Props) {
             {subline && <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--token-body)]" data-edit-path="subline">{plain(subline)}</p>}
             <div className="mt-6 grid gap-2 sm:grid-cols-2">
               {benefits.map((benefit, index) => (
-                <motion.div key={index} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.04 }} className="flex items-center gap-2 text-sm text-[var(--token-body)]" data-edit-collection="benefits" data-edit-index={index}>
+                <motion.div key={index} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.04 }} className="flex items-center gap-2 text-sm text-[var(--token-card-body, var(--token-body))]" data-edit-collection="benefits" data-edit-index={index}>
                   <Check size={16} className="text-[var(--token-accent)]" />
                   {benefit}
                 </motion.div>
