@@ -531,18 +531,22 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
     );
   }
 
+  // Auto-open if there are any overrides or if we haven't explicitly closed it
+  const shouldDefaultOpen = activeCount > 0 || (open === false ? false : true);
+
   return (
-    <details className="mt-4" open={open} onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
-      <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1">
-        <Palette size={12} /> Farben anpassen
-        {activeCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-[10px] font-medium">{activeCount}</span>}
+    <details className="mt-4 rounded-lg border border-blue-100 bg-blue-50/30 p-3" open={shouldDefaultOpen} onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
+      <summary className="text-xs font-semibold text-gray-700 cursor-pointer flex items-center gap-2 hover:text-gray-900 transition-colors">
+        <Palette size={14} className="text-blue-600" /> 
+        <span>Farben anpassen</span>
+        {activeCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-blue-200 text-blue-800 rounded-full text-[10px] font-bold">{activeCount} Farben</span>}
       </summary>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-3 border-t border-blue-100">
         {coreFields.map(renderColorField)}
       </div>
       {specialFields.length > 0 && (
         <details className="mt-3 pt-3 border-t border-zinc-100">
-          <summary className="text-xs text-zinc-500 cursor-pointer flex items-center gap-1 mb-2">
+          <summary className="text-xs font-medium text-zinc-600 cursor-pointer flex items-center gap-1 mb-2 hover:text-zinc-900 transition-colors">
             <ChevronDown size={12} /> Spezial-Felder ({specialFields.length})
           </summary>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
@@ -552,7 +556,7 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
       )}
       {advancedFields.length > 0 && (
         <details className="mt-3 pt-3 border-t border-zinc-100">
-          <summary className="text-xs text-zinc-500 cursor-pointer flex items-center gap-1 mb-2">
+          <summary className="text-xs font-medium text-zinc-600 cursor-pointer flex items-center gap-1 mb-2 hover:text-zinc-900 transition-colors">
             <ChevronDown size={12} /> Erweitert – Legacy / Marken-Variablen ({advancedFields.length})
           </summary>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
@@ -562,7 +566,7 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
       )}
       {designFields.length > 0 && (
         <div className="mt-3 pt-3 border-t border-zinc-100">
-          <button type="button" className="text-xs text-zinc-500 flex items-center gap-1 mb-2" onClick={() => setShowAdvanced(!showAdvanced)}>
+          <button type="button" className="text-xs font-medium text-zinc-600 flex items-center gap-1 mb-2 hover:text-zinc-900 transition-colors" onClick={() => setShowAdvanced(!showAdvanced)}>
             <ChevronDown size={12} className={`transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
             Design-Tokens (Radius, Schatten)
           </button>
@@ -574,8 +578,8 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
         </div>
       )}
       {activeCount > 0 && (
-        <button type="button" className="mt-3 text-xs text-red-500 hover:text-red-700" onClick={() => onChange(null)}>
-          Alle Farb-Overrides entfernen
+        <button type="button" className="mt-3 text-xs font-medium text-red-500 hover:text-red-700" onClick={() => onChange(null)}>
+          ✕ Alle Farb-Overrides entfernen
         </button>
       )}
       {/* Hidden probe element to read computed CSS vars without needing the preview iframe */}
