@@ -3272,13 +3272,26 @@ function SpotlightCardsEditor({ data, onChange }: EditorProps) {
   const [badge, setBadge] = useState((data.badge as string) || '');
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
-  const [cards, setCards] = useState<{ title: string; text: string; icon: string; image: string; href: string }[]>(
-    ((data.cards as any[]) || []).map((card) => ({ title: card.title || '', text: card.text || '', icon: card.icon || '', image: card.image || '', href: card.href || '' }))
+  const [cards, setCards] = useState<{ title: string; text: string; icon: string; image: string; href: string; imageOverlayColor: string; imageOverlayOpacity: number }[]>(
+    ((data.cards as any[]) || []).map((card) => {
+      const rawOpacity = typeof card.imageOverlayOpacity === 'number'
+        ? card.imageOverlayOpacity
+        : Number(card.imageOverlayOpacity ?? 0);
+      return {
+        title: card.title || '',
+        text: card.text || '',
+        icon: card.icon || '',
+        image: card.image || '',
+        href: card.href || '',
+        imageOverlayColor: card.imageOverlayColor || '#000000',
+        imageOverlayOpacity: Number.isFinite(rawOpacity) ? Math.max(0, Math.min(1, rawOpacity)) : 0,
+      };
+    })
   );
   useReport({ badge, headline, subline, cards }, onChange);
-  function addCard() { setCards([...cards, { title: '', text: '', icon: '', image: '', href: '' }]); }
+  function addCard() { setCards([...cards, { title: '', text: '', icon: '', image: '', href: '', imageOverlayColor: '#000000', imageOverlayOpacity: 0 }]); }
   function removeCard(i: number) { setCards(cards.filter((_, idx) => idx !== i)); }
-  function updateCard(i: number, field: string, value: string) {
+  function updateCard(i: number, field: string, value: string | number) {
     setCards(cards.map((card, idx) => idx === i ? { ...card, [field]: value } : card));
   }
   return (
@@ -3293,6 +3306,51 @@ function SpotlightCardsEditor({ data, onChange }: EditorProps) {
           <Field label={fieldLabel('text')} value={card.text} onChange={(v) => updateCard(i, 'text', v)} multiline />
           <IconPickerField label={fieldLabel('icon')} value={card.icon} onChange={(v) => updateCard(i, 'icon', v)} />
           <ImageUploadField label="Bild optional" value={card.image} onChange={(v) => updateCard(i, 'image', v)} />
+          {card.image && (
+            <div className="rounded-md border border-zinc-200 bg-zinc-50 p-3">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="text-[11px] font-medium text-zinc-600">Bild-Overlay</span>
+                {card.imageOverlayOpacity > 0 ? (
+                  <button
+                    type="button"
+                    className="text-[10px] text-red-500 hover:text-red-600"
+                    onClick={() => updateCard(i, 'imageOverlayOpacity', 0)}
+                  >
+                    Entfernen
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="text-[10px] text-blue-600 hover:text-blue-700"
+                    onClick={() => updateCard(i, 'imageOverlayOpacity', 0.35)}
+                  >
+                    Hinzufuegen
+                  </button>
+                )}
+              </div>
+              {card.imageOverlayOpacity > 0 && (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <ColorField
+                    label="Overlay-Farbe"
+                    value={card.imageOverlayColor || '#000000'}
+                    onChange={(v) => updateCard(i, 'imageOverlayColor', v)}
+                  />
+                  <label className="block">
+                    <span className="text-[11px] text-zinc-500">Deckkraft ({Math.round(card.imageOverlayOpacity * 100)}%)</span>
+                    <input
+                      type="range"
+                      min="0.05"
+                      max="1"
+                      step="0.05"
+                      className="mt-1 w-full"
+                      value={Math.max(0.05, Math.min(1, card.imageOverlayOpacity || 0.35))}
+                      onChange={(e) => updateCard(i, 'imageOverlayOpacity', Number(e.target.value))}
+                    />
+                  </label>
+                </div>
+              )}
+            </div>
+          )}
           <DetailLinkField label="Link optional" value={card.href} onChange={(v) => updateCard(i, 'href', v)} />
         </div>
       ))}

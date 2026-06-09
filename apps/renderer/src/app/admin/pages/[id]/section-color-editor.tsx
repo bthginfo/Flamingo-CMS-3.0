@@ -301,6 +301,16 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
 // reverse-maps them to ColorFieldKey via FIELD_DEFS. Regenerate with:
 //   node scripts/generate-section-color-contracts.cjs
 export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
+  const ensureCoreStylingFields = (fields: ColorFieldKey[]): ColorFieldKey[] => {
+    const next = new Set(fields);
+    next.add('sectionBg');
+    next.add('eyebrow');
+    next.add('badgeBg');
+    next.add('badgeText');
+    next.add('badgeBorder');
+    return Array.from(next);
+  };
+
   const ensureSectionBackgroundField = (fields: ColorFieldKey[]): ColorFieldKey[] => {
     const next = new Set(fields);
     next.add('sectionBg');
@@ -319,24 +329,42 @@ export function getFieldsForSection(sectionType: string, industry?: string): Col
     return Array.from(next);
   };
 
+  const ensureAllKnownFields = (fields: ColorFieldKey[]): ColorFieldKey[] => {
+    const next = new Set<ColorFieldKey>(fields);
+    for (const key of Object.keys(FIELD_DEFS) as ColorFieldKey[]) next.add(key);
+    return Array.from(next);
+  };
+
   const industryKey = industry
     ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
     : null;
   const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
   if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
     return ensureSecondaryButtonFields(
-      ensureSectionBackgroundField((industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
+      ensureCoreStylingFields(
+        ensureAllKnownFields(
+          ensureSectionBackgroundField((industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
+        )
+      )
     );
   }
   const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
   if (Array.isArray(generic) && generic.length > 0) {
     return ensureSecondaryButtonFields(
-      ensureSectionBackgroundField((generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
+      ensureCoreStylingFields(
+        ensureAllKnownFields(
+          ensureSectionBackgroundField((generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
+        )
+      )
     );
   }
   // No codegen entry → minimal safe set. Re-run the generator to fix.
   return ensureSecondaryButtonFields(
-    ensureSectionBackgroundField(['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText'])
+    ensureCoreStylingFields(
+      ensureAllKnownFields(
+        ensureSectionBackgroundField(['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText'])
+      )
+    )
   );
 }
 

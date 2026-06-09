@@ -79,24 +79,47 @@ function parseOverlayColor(input: string): { r: number; g: number; b: number; a:
 
 function buildImageOverlayCss(section: SnapshotSection): string {
   const rules: string[] = [];
-  for (const [key, value] of Object.entries(section.data)) {
-    if (typeof value !== 'string' || !value.trim()) continue;
-    if (!/image|background|photo|avatar|poster|logo/i.test(key)) continue;
 
-    const opacityRaw = section.data[`${key}OverlayOpacity`];
+  const pushRule = (imageKey: string, selectorScope: string, colorRaw: unknown, opacityRaw: unknown) => {
     const opacity = typeof opacityRaw === 'number'
       ? opacityRaw
       : (typeof opacityRaw === 'string' && opacityRaw.trim() ? Number(opacityRaw) : 0);
-    if (!Number.isFinite(opacity) || opacity <= 0) continue;
+    if (!Number.isFinite(opacity) || opacity <= 0) return;
 
-    const colorRaw = section.data[`${key}OverlayColor`];
     const parsed = parseOverlayColor(typeof colorRaw === 'string' && colorRaw.trim() ? colorRaw : '#000000');
     const alpha = Math.max(0, Math.min(1, parsed.a * Math.max(0, Math.min(1, opacity))));
-    const escapedKey = escapeCssAttr(key);
+    const escapedKey = escapeCssAttr(imageKey);
     rules.push(
-      `[data-section-id="${escapeCssAttr(section.id)}"] [data-edit-image="${escapedKey}"] { box-shadow: inset 0 0 0 9999px rgba(${parsed.r}, ${parsed.g}, ${parsed.b}, ${alpha}); }`
+      `[data-section-id="${escapeCssAttr(section.id)}"] ${selectorScope}[data-edit-image="${escapedKey}"] { box-shadow: inset 0 0 0 9999px rgba(${parsed.r}, ${parsed.g}, ${parsed.b}, ${alpha}); }`
     );
-  }
+  };
+
+  const visitNode = (node: unknown, selectorScope: string) => {
+    if (!node || typeof node !== 'object') return;
+    if (Array.isArray(node)) return;
+
+    const record = node as Record<string, unknown>;
+
+    for (const [key, value] of Object.entries(record)) {
+      if (typeof value === 'string' && value.trim() && /image|background|photo|avatar|poster|logo/i.test(key)) {
+        pushRule(key, selectorScope, record[`${key}OverlayColor`], record[`${key}OverlayOpacity`]);
+      }
+
+      if (Array.isArray(value)) {
+        value.forEach((item, index) => {
+          const nestedScope = `${selectorScope}[data-edit-collection="${escapeCssAttr(key)}"][data-edit-index="${index}"] `;
+          visitNode(item, nestedScope);
+        });
+        continue;
+      }
+
+      if (value && typeof value === 'object') {
+        visitNode(value, selectorScope);
+      }
+    }
+  };
+
+  visitNode(section.data, '');
 
   return rules.join('\n');
 }

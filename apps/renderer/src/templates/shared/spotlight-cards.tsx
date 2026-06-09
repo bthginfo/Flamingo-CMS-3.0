@@ -4,8 +4,37 @@ import { motion } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
 
-type Card = { title: string; text?: string; icon?: string; image?: string; href?: string };
+type Card = { title: string; text?: string; icon?: string; image?: string; href?: string; imageOverlayColor?: string; imageOverlayOpacity?: number };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
+
+function toOverlayColor(color: string | undefined, opacityValue: unknown): string | null {
+  const opacity = typeof opacityValue === 'number' ? opacityValue : Number(opacityValue ?? 0);
+  if (!Number.isFinite(opacity) || opacity <= 0) return null;
+  const normalizedOpacity = Math.max(0, Math.min(1, opacity));
+  const value = (color || '#000000').trim();
+
+  const rgba = value.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([0-9.]+))?\)$/i);
+  if (rgba) {
+    const r = Math.max(0, Math.min(255, Number(rgba[1]) || 0));
+    const g = Math.max(0, Math.min(255, Number(rgba[2]) || 0));
+    const b = Math.max(0, Math.min(255, Number(rgba[3]) || 0));
+    const a = Math.max(0, Math.min(1, Number(rgba[4] ?? 1)));
+    return `rgba(${r}, ${g}, ${b}, ${(a * normalizedOpacity).toFixed(3)})`;
+  }
+
+  const hex = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hex) {
+    const full = hex[1].length === 3
+      ? hex[1].split('').map((char) => `${char}${char}`).join('')
+      : hex[1];
+    const r = parseInt(full.slice(0, 2), 16);
+    const g = parseInt(full.slice(2, 4), 16);
+    const b = parseInt(full.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${normalizedOpacity.toFixed(3)})`;
+  }
+
+  return `rgba(0, 0, 0, ${normalizedOpacity.toFixed(3)})`;
+}
 
 export function SpotlightCardsSection({ data }: Props) {
   const badge = (data.badge as string) || '';
@@ -23,6 +52,7 @@ export function SpotlightCardsSection({ data }: Props) {
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {cards.map((card, i) => {
+          const overlayColor = toOverlayColor(card.imageOverlayColor, card.imageOverlayOpacity);
           const body = (
             <motion.article
               initial={{ opacity: 0, y: 24 }}
@@ -40,6 +70,7 @@ export function SpotlightCardsSection({ data }: Props) {
             >
               <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100" style={{ background: 'radial-gradient(720px circle at var(--x,50%) var(--y,30%), rgb(var(--token-accent-rgb,0 0 0) / 0.12), transparent 42%)' }} />
               {card.image && <img data-edit-image="image" src={card.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-12 transition duration-500 group-hover:opacity-20" />}
+              {card.image && overlayColor && <div className="pointer-events-none absolute inset-0" style={{ backgroundColor: overlayColor }} />}
               <div className="relative z-10 flex h-full flex-col justify-between gap-8">
                 {card.icon && <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon)_12%,var(--token-card-bg,#fff))] text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={card.icon} size={24} /></span>}
                 <div>

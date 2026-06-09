@@ -38,7 +38,19 @@ export function TextImageSection({ data, variant }: Props) {
           </motion.div>
         )}
         <div className={!image ? 'md:col-span-2 max-w-3xl mx-auto' : ''}>
-          {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
+          {badge && (
+            <span
+              className="section-badge"
+              data-edit-path="badge"
+              style={{
+                backgroundColor: 'var(--token-badge-bg, var(--style-badge-bg, rgba(26, 82, 118, 0.05)))',
+                borderColor: 'var(--token-badge-border, var(--style-badge-border, rgba(26, 82, 118, 0.1)))',
+                color: 'var(--token-badge-text, var(--style-badge-text, var(--token-eyebrow, var(--style-accent-color, inherit))))',
+              }}
+            >
+              {badge}
+            </span>
+          )}
           {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
           {text && <div className="text-[color:var(--token-body)] text-lg leading-relaxed mt-4 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
