@@ -26,24 +26,47 @@ export type MediaAsset = {
   createdAt: Date;
 };
 
+function isAbsoluteUrl(value: string | null | undefined) {
+  return typeof value === 'string' && /^https?:\/\//i.test(value.trim());
+}
+
+function normalizeMediaUrl(blobUrl: string, pathname: string, filename: string) {
+  const blobCandidate = (blobUrl || '').trim();
+  const pathnameCandidate = (pathname || '').trim();
+
+  if (isAbsoluteUrl(blobCandidate)) return blobCandidate;
+  if (isAbsoluteUrl(pathnameCandidate)) return pathnameCandidate;
+
+  // Legacy rows can contain only a filename/path fragment in blobUrl. Those
+  // assets are not resolvable from the browser and would otherwise trigger a
+  // wave of 404 requests inside the media modal.
+  return '';
+}
+
 export async function getMediaAssets(): Promise<MediaAsset[]> {
   const tenantId = await requireTenant();
   const db = getDb();
   const rows = await db.select().from(mediaAssets)
     .where(eq(mediaAssets.tenantId, tenantId))
     .orderBy(desc(mediaAssets.createdAt));
-  return rows.map(r => ({
-    id: r.id,
-    blobUrl: r.blobUrl,
-    filename: r.filename,
-    mimeType: r.mimeType,
-    size: r.size,
-    width: r.width,
-    height: r.height,
-    alt: r.alt,
-    folder: r.folder ?? null,
-    createdAt: r.createdAt,
-  }));
+  return rows
+    .map(r => {
+      const normalizedUrl = normalizeMediaUrl(r.blobUrl, r.pathname, r.filename);
+      if (!normalizedUrl) return null;
+      return {
+        id: r.id,
+        blobUrl: normalizedUrl,
+        filename: r.filename,
+        mimeType: r.mimeType,
+        size: r.size,
+        width: r.width,
+        height: r.height,
+        alt: r.alt,
+        folder: r.folder ?? null,
+        createdAt: r.createdAt,
+      };
+    })
+    .filter((asset): asset is MediaAsset => Boolean(asset));
 }
 
 export async function saveMediaRecord(data: {
@@ -59,8 +82,12 @@ export async function saveMediaRecord(data: {
 }) {
   const tenantId = await requireTenant();
   const db = getDb();
+  const normalizedBlobUrl = normalizeMediaUrl(data.blobUrl, data.pathname, data.filename);
+  if (!normalizedBlobUrl) {
+    throw new Error('Invalid media URL');
+  }
   const [existing] = await db.select({ id: mediaAssets.id }).from(mediaAssets)
-    .where(and(eq(mediaAssets.tenantId, tenantId), eq(mediaAssets.blobUrl, data.blobUrl)))
+    .where(and(eq(mediaAssets.tenantId, tenantId), eq(mediaAssets.blobUrl, normalizedBlobUrl)))
     .limit(1);
 
   const patch = {
@@ -79,7 +106,7 @@ export async function saveMediaRecord(data: {
     ? await db.update(mediaAssets).set(patch).where(eq(mediaAssets.id, existing.id)).returning()
     : await db.insert(mediaAssets).values({
       tenantId,
-      blobUrl: data.blobUrl,
+      blobUrl: normalizedBlobUrl,
       ...patch,
     }).returning();
 
