@@ -22,6 +22,7 @@ export type MediaAsset = {
   width: number | null;
   height: number | null;
   alt: string | null;
+  folder: string | null;
   createdAt: Date;
 };
 
@@ -40,6 +41,7 @@ export async function getMediaAssets(): Promise<MediaAsset[]> {
     width: r.width,
     height: r.height,
     alt: r.alt,
+    folder: r.folder ?? null,
     createdAt: r.createdAt,
   }));
 }
@@ -53,6 +55,7 @@ export async function saveMediaRecord(data: {
   width?: number;
   height?: number;
   blurDataUrl?: string;
+  folder?: string | null;
 }) {
   const tenantId = await requireTenant();
   const db = getDb();
@@ -65,6 +68,7 @@ export async function saveMediaRecord(data: {
     size: data.size,
     width: data.width || null,
     height: data.height || null,
+    folder: data.folder ?? null,
     metadata: data.blurDataUrl ? { blurDataUrl: data.blurDataUrl } : null,
   }).returning();
   revalidatePath('/admin/media');
@@ -113,6 +117,20 @@ export async function updateMediaDimensions(id: string, dimensions: { width: num
   if (!asset || asset.tenantId !== tenantId) throw new Error('Not found');
 
   await db.update(mediaAssets).set({ width: dimensions.width, height: dimensions.height, updatedAt: new Date() }).where(eq(mediaAssets.id, id));
+  revalidatePath('/admin/media');
+  return { success: true };
+}
+
+export async function updateMediaFolder(id: string, folder: string | null) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  const [asset] = await db.select().from(mediaAssets)
+    .where(eq(mediaAssets.id, id))
+    .limit(1);
+  if (!asset || asset.tenantId !== tenantId) throw new Error('Not found');
+
+  const cleaned = folder?.trim() || null;
+  await db.update(mediaAssets).set({ folder: cleaned, updatedAt: new Date() }).where(eq(mediaAssets.id, id));
   revalidatePath('/admin/media');
   return { success: true };
 }

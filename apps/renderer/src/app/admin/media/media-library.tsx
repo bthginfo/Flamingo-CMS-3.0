@@ -3,9 +3,9 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { upload } from '@vercel/blob/client';
 import { resizeImage } from '@/components/image-upload-field';
-import { saveMediaRecord, deleteMediaAsset, updateMediaAlt, updateMediaDimensions, type MediaAsset } from '../media-actions';
+import { saveMediaRecord, deleteMediaAsset, updateMediaAlt, updateMediaDimensions, updateMediaFolder, type MediaAsset } from '../media-actions';
 import { toast } from 'sonner';
-import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2, Pencil, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2, Pencil, AlertTriangle, CheckCircle2, FolderPlus, Folder, FolderOpen } from 'lucide-react';
 import Image from 'next/image';
 
 const ALLOWED_IMAGE_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
@@ -62,6 +62,12 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const [altModalAsset, setAltModalAsset] = useState<MediaAsset | null>(null);
   const [altValue, setAltValue] = useState('');
   const [selectedAltDraft, setSelectedAltDraft] = useState('');
+  // Folder state
+  const [activeFolder, setActiveFolder] = useState<string | null>(null); // null = "Alle"
+  const [showNewFolder, setShowNewFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+  const folders = Array.from(new Set(assets.map(a => a.folder).filter(Boolean) as string[])).sort();
+  const visibleAssets = activeFolder === null ? assets : assets.filter(a => a.folder === activeFolder);
   const missingAlt = assets.filter(asset => !asset.alt?.trim()).length;
   const largeFiles = assets.filter(asset => asset.size > 600 * 1024).length;
   const unknownDimensions = assets.filter(asset => !asset.width || !asset.height).length;
@@ -128,9 +134,10 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
           size: optimized.size,
           width: dimensions?.width,
           height: dimensions?.height,
+          folder: activeFolder,
         });
 
-        setAssets(prev => [{ ...record, alt: null, createdAt: new Date(), width: dimensions?.width || null, height: dimensions?.height || null }, ...prev]);
+        setAssets(prev => [{ ...record, alt: null, folder: activeFolder ?? null, createdAt: new Date(), width: dimensions?.width || null, height: dimensions?.height || null }, ...prev]);
       }
       toast.success(`${fileArray.length} Bild${fileArray.length > 1 ? 'er' : ''} hochgeladen`);
     } catch (err) {
@@ -155,6 +162,30 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const copyUrl = (url: string) => {
     navigator.clipboard.writeText(url);
     toast.success('URL kopiert');
+  };
+
+  const moveToFolder = async (asset: MediaAsset, folder: string | null) => {
+    try {
+      await updateMediaFolder(asset.id, folder);
+      setAssets(prev => prev.map(a => a.id === asset.id ? { ...a, folder: folder ?? null } : a));
+      setSelected(prev => prev?.id === asset.id ? { ...prev, folder: folder ?? null } : prev);
+      toast.success(folder ? `In Ordner "${folder}" verschoben` : 'Aus Ordner entfernt');
+    } catch {
+      toast.error('Ordner konnte nicht gespeichert werden');
+    }
+  };
+
+  const createFolder = () => {
+    const name = newFolderName.trim();
+    if (!name) return;
+    if (folders.includes(name)) {
+      setActiveFolder(name);
+    } else {
+      // Folder becomes real once the first image is assigned to it
+      setActiveFolder(name);
+    }
+    setNewFolderName('');
+    setShowNewFolder(false);
   };
 
   const setAssetAlt = (asset: MediaAsset, alt: string) => {
@@ -201,6 +232,48 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
         <p className="text-sm text-blue-800"><strong>Tipp:</strong> Hinterlegen Sie für jedes Bild einen Alt-Text (Bildbeschreibung). Dieser wird automatisch für SEO und Barrierefreiheit verwendet, wenn das Bild auf Ihrer Website eingesetzt wird. Klicken Sie auf das <Pencil size={12} className="inline" />-Icon oder wählen Sie ein Bild aus, um den Alt-Text zu bearbeiten.</p>
       </div>
 
+      {/* Folder navigation */}
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          onClick={() => setActiveFolder(null)}
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${activeFolder === null ? 'bg-admin-accent text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}
+        >
+          Alle <span className="text-[11px] opacity-75">({assets.length})</span>
+        </button>
+        {folders.map(f => (
+          <button
+            key={f}
+            onClick={() => setActiveFolder(f)}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${activeFolder === f ? 'bg-admin-accent text-white' : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'}`}
+          >
+            {activeFolder === f ? <FolderOpen size={13} /> : <Folder size={13} />}
+            {f}
+            <span className="text-[11px] opacity-75">({assets.filter(a => a.folder === f).length})</span>
+          </button>
+        ))}
+        {showNewFolder ? (
+          <div className="flex items-center gap-1">
+            <input
+              autoFocus
+              className="admin-input py-1 px-2 text-sm w-36"
+              placeholder="Ordner-Name"
+              value={newFolderName}
+              onChange={e => setNewFolderName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') createFolder(); if (e.key === 'Escape') setShowNewFolder(false); }}
+            />
+            <button onClick={createFolder} className="admin-btn-primary py-1 px-2 text-xs">OK</button>
+            <button onClick={() => setShowNewFolder(false)} className="admin-btn-secondary py-1 px-2 text-xs">✕</button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowNewFolder(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-zinc-100 text-zinc-500 hover:bg-zinc-200 transition-colors border border-dashed border-zinc-300"
+          >
+            <FolderPlus size={13} /> Neuer Ordner
+          </button>
+        )}
+      </div>
+
       {/* Upload zone */}
       <div
         className={`admin-card border-2 border-dashed transition-colors p-8 text-center cursor-pointer ${dragOver ? 'border-admin-accent bg-admin-accent/5' : 'border-admin-border hover:border-admin-accent/50'}`}
@@ -232,7 +305,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
       </div>
 
       {/* Grid */}
-      {assets.length === 0 ? (
+      {visibleAssets.length === 0 && assets.length === 0 ? (
         <div className="admin-card p-16 text-center">
           <div className="mx-auto mb-4 w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center">
             <ImageIcon className="text-amber-500" size={28} />
@@ -246,9 +319,15 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
             + Bilder hochladen
           </button>
         </div>
+      ) : visibleAssets.length === 0 ? (
+        <div className="admin-card p-10 text-center">
+          <Folder size={28} className="mx-auto mb-3 text-zinc-300" />
+          <p className="text-sm text-zinc-500">Ordner <strong>{activeFolder}</strong> ist leer.</p>
+          <p className="text-xs text-zinc-400 mt-1">Lade Bilder hoch oder verschiebe bestehende Bilder in diesen Ordner.</p>
+        </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {assets.map(asset => (
+          {visibleAssets.map(asset => (
             (() => {
               const warnings = getMediaWarnings(asset);
               return (
@@ -388,6 +467,22 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
                   >
                     <Pencil size={14} />
                   </button>
+                </div>
+              </div>
+              <div>
+                <label className="admin-label">Ordner</label>
+                <div className="flex gap-2">
+                  <select
+                    className="admin-input flex-1"
+                    value={selected.folder ?? ''}
+                    onChange={e => moveToFolder(selected, e.target.value || null)}
+                  >
+                    <option value="">— Kein Ordner —</option>
+                    {folders.map(f => <option key={f} value={f}>{f}</option>)}
+                    {selected.folder && !folders.includes(selected.folder) && (
+                      <option value={selected.folder}>{selected.folder}</option>
+                    )}
+                  </select>
                 </div>
               </div>
             </div>

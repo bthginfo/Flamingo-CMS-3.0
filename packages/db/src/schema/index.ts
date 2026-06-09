@@ -304,12 +304,14 @@ export const mediaAssets = pgTable('media_assets', {
   height: integer('height'),
   alt: text('alt'),
   caption: text('caption'),
+  folder: varchar('folder', { length: 200 }),
   metadata: jsonb('metadata').$type<Record<string, unknown>>(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   index('media_assets_tenant_idx').on(t.tenantId),
   index('media_assets_mime_idx').on(t.tenantId, t.mimeType),
+  index('media_assets_folder_idx').on(t.tenantId, t.folder),
 ]);
 
 // ─── 18. collections ─────────────────────────────────────────────────

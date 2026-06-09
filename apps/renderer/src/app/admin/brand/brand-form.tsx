@@ -140,13 +140,6 @@ export function BrandForm({ initial }: { initial: BrandData }) {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
-      <div className="rounded-2xl border border-pink-200 bg-pink-50/80 p-5 text-sm text-zinc-700">
-        <div className="font-semibold text-zinc-950">Globales Design und Section-Overrides</div>
-        <p className="mt-1 leading-6">
-          Diese Einstellungen gelten als Design-Basis für die gesamte Website. In jeder einzelnen Section kannst du Farben trotzdem individuell überschreiben, zum Beispiel Hintergrund, Text, Karten, Buttons oder Akzente.
-        </p>
-      </div>
-
       <div className="admin-card p-6 space-y-5">
         <h2 className="font-semibold text-lg">Firmeninfo</h2>
         <div>
