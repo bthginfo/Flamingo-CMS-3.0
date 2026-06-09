@@ -419,6 +419,36 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
     return [...parentPath, candidates[0] || `${fieldName}Position`];
   }
 
+  function imageOverlayPaths(path: Array<string | number>) {
+    const fieldName = String(path[path.length - 1] || '');
+    const parentPath = path.slice(0, -1);
+    const colorCandidates = [`${fieldName}OverlayColor`];
+    const opacityCandidates = [`${fieldName}OverlayOpacity`];
+
+    for (const candidate of colorCandidates) {
+      if (valueAtPath([...parentPath, candidate]) !== undefined) {
+        return {
+          colorPath: [...parentPath, candidate],
+          opacityPath: [...parentPath, opacityCandidates[0]],
+        };
+      }
+    }
+
+    for (const candidate of opacityCandidates) {
+      if (valueAtPath([...parentPath, candidate]) !== undefined) {
+        return {
+          colorPath: [...parentPath, colorCandidates[0]],
+          opacityPath: [...parentPath, candidate],
+        };
+      }
+    }
+
+    return {
+      colorPath: [...parentPath, colorCandidates[0]],
+      opacityPath: [...parentPath, opacityCandidates[0]],
+    };
+  }
+
   function createEmptyLike(sample: unknown): unknown {
     if (typeof sample === 'string') return '';
     if (typeof sample === 'number') return 0;
@@ -461,15 +491,72 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       if (/image|background|photo|avatar|poster|logo/i.test(fieldName)) {
         const positionPath = imagePositionPath(path);
         const positionValue = valueAtPath(positionPath);
+        const { colorPath, opacityPath } = imageOverlayPaths(path);
+        const overlayColorValue = valueAtPath(colorPath);
+        const overlayOpacityValue = valueAtPath(opacityPath);
+        const overlayOpacity = typeof overlayOpacityValue === 'number'
+          ? overlayOpacityValue
+          : (typeof overlayOpacityValue === 'string' && overlayOpacityValue.trim() !== '' ? Number(overlayOpacityValue) : 0);
+        const hasOverlay = Number.isFinite(overlayOpacity) && overlayOpacity > 0;
         return (
-          <ImageUploadField
-            key={renderKey}
-            label={label}
-            value={value}
-            onChange={(v) => updateAtPath(path, v)}
-            position={typeof positionValue === 'string' ? positionValue : 'center'}
-            onPositionChange={(v) => updateAtPath(positionPath, v)}
-          />
+          <div key={renderKey} className="space-y-2">
+            <ImageUploadField
+              label={label}
+              value={value}
+              onChange={(v) => updateAtPath(path, v)}
+              position={typeof positionValue === 'string' ? positionValue : 'center'}
+              onPositionChange={(v) => updateAtPath(positionPath, v)}
+            />
+            <div className="rounded-md border border-zinc-200 bg-zinc-50 p-3">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="text-[11px] font-medium text-zinc-600">Bild-Overlay</span>
+                {hasOverlay ? (
+                  <button
+                    type="button"
+                    className="text-[10px] text-red-500 hover:text-red-600"
+                    onClick={() => updateAtPath(opacityPath, 0)}
+                  >
+                    Entfernen
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="text-[10px] text-blue-600 hover:text-blue-700"
+                    onClick={() => {
+                      updateAtPath(colorPath, typeof overlayColorValue === 'string' && overlayColorValue.trim() ? overlayColorValue : '#000000');
+                      updateAtPath(opacityPath, 0.35);
+                    }}
+                  >
+                    Hinzufuegen
+                  </button>
+                )}
+              </div>
+              {hasOverlay ? (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <ColorField
+                    label="Overlay-Farbe"
+                    value={typeof overlayColorValue === 'string' ? overlayColorValue : '#000000'}
+                    onChange={(v) => updateAtPath(colorPath, v)}
+                    allowEmpty={false}
+                  />
+                  <label className="block">
+                    <span className="text-[11px] text-zinc-500">Deckkraft ({Math.round(Math.max(0, Math.min(1, overlayOpacity)) * 100)}%)</span>
+                    <input
+                      type="range"
+                      min="0.05"
+                      max="1"
+                      step="0.05"
+                      className="mt-1 w-full"
+                      value={Math.max(0.05, Math.min(1, overlayOpacity || 0.35))}
+                      onChange={(e) => updateAtPath(opacityPath, Number(e.target.value))}
+                    />
+                  </label>
+                </div>
+              ) : (
+                <p className="text-[11px] text-zinc-500">Optionaler Farb-Overlay fuer bessere Lesbarkeit auf Bildern.</p>
+              )}
+            </div>
+          </div>
         );
       }
       if (/href|link|url/i.test(fieldName)) {

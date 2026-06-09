@@ -45,6 +45,62 @@ const MEDIA_OVERLAY_SECTION_TYPES = new Set([
   'immersiveCtaBanner',
 ]);
 
+function escapeCssAttr(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+function parseOverlayColor(input: string): { r: number; g: number; b: number; a: number } {
+  const value = input.trim();
+  const rgbMatch = value.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([0-9.]+))?\)$/i);
+  if (rgbMatch) {
+    return {
+      r: Math.max(0, Math.min(255, Number(rgbMatch[1]) || 0)),
+      g: Math.max(0, Math.min(255, Number(rgbMatch[2]) || 0)),
+      b: Math.max(0, Math.min(255, Number(rgbMatch[3]) || 0)),
+      a: Math.max(0, Math.min(1, Number(rgbMatch[4] ?? 1))),
+    };
+  }
+
+  const hexMatch = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hexMatch) {
+    const hex = hexMatch[1].length === 3
+      ? hexMatch[1].split('').map(char => char + char).join('')
+      : hexMatch[1];
+    return {
+      r: parseInt(hex.slice(0, 2), 16),
+      g: parseInt(hex.slice(2, 4), 16),
+      b: parseInt(hex.slice(4, 6), 16),
+      a: 1,
+    };
+  }
+
+  return { r: 0, g: 0, b: 0, a: 1 };
+}
+
+function buildImageOverlayCss(section: SnapshotSection): string {
+  const rules: string[] = [];
+  for (const [key, value] of Object.entries(section.data)) {
+    if (typeof value !== 'string' || !value.trim()) continue;
+    if (!/image|background|photo|avatar|poster|logo/i.test(key)) continue;
+
+    const opacityRaw = section.data[`${key}OverlayOpacity`];
+    const opacity = typeof opacityRaw === 'number'
+      ? opacityRaw
+      : (typeof opacityRaw === 'string' && opacityRaw.trim() ? Number(opacityRaw) : 0);
+    if (!Number.isFinite(opacity) || opacity <= 0) continue;
+
+    const colorRaw = section.data[`${key}OverlayColor`];
+    const parsed = parseOverlayColor(typeof colorRaw === 'string' && colorRaw.trim() ? colorRaw : '#000000');
+    const alpha = Math.max(0, Math.min(1, parsed.a * Math.max(0, Math.min(1, opacity))));
+    const escapedKey = escapeCssAttr(key);
+    rules.push(
+      `[data-section-id="${escapeCssAttr(section.id)}"] [data-edit-image="${escapedKey}"] { box-shadow: inset 0 0 0 9999px rgba(${parsed.r}, ${parsed.g}, ${parsed.b}, ${alpha}); }`
+    );
+  }
+
+  return rules.join('\n');
+}
+
 function withBookingStyleAliases(sectionType: string, style?: React.CSSProperties): React.CSSProperties | undefined {
   if (!style || !BOOKING_SECTION_TYPES.has(sectionType)) return style;
   const source = style as Record<string, string>;
@@ -268,7 +324,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     ? Object.fromEntries(Object.entries(section.styleOverrides).filter(([, v]) => v)) as React.CSSProperties
     : undefined;
   const sectionStyle = withBookingStyleAliases(section.type, normalizeSectionStyle(overrideStyle));
-  const sectionOverrideCss = sectionStyle
+  const sectionColorCss = sectionStyle
     ? `
 [data-section-id="${section.id}"][data-style] { --_card-h:${cardHeadingColorVar}; --_card-b:${cardBodyColorVar}; --_card-m:${cardMutedColorVar}; }
 [data-section-id="${section.id}"][data-style] [data-edit-collection] { --token-heading:var(--_card-h); --token-on-dark-heading:var(--_card-h); --token-body:var(--_card-b); --token-on-dark-body:var(--_card-b); --token-card-body:var(--_card-b); --token-muted:var(--_card-m); --token-on-dark-muted:var(--_card-m); --token-card-muted:var(--_card-m); }
@@ -282,6 +338,8 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
 [data-section-id="${section.id}"][data-style] [class*="brand-btn"] { color: var(--brand-btn-text, inherit) !important; background-color: var(--brand-btn-bg, transparent) !important; }
 `
     : '';
+  const sectionOverlayCss = buildImageOverlayCss(section);
+  const sectionOverrideCss = `${sectionColorCss}${sectionOverlayCss ? `\n${sectionOverlayCss}` : ''}`.trim();
 
   if (isFullBleed) {
     return (

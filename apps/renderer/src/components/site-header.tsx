@@ -85,6 +85,9 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   });
 
   const ctaData: NavCta = cta || { label: 'Termin vereinbaren', href: '/kontakt' };
+  const navLinkColorDesktop = brand.navLinkColor || ((scrolled || (!isHeroDark)) ? '#4b5563' : '#ffffff');
+  const navLinkColorMobile = brand.navLinkColor || '#1f2937';
+  const navLinkHoverColor = brand.linkHoverColor || brand.accentColor || 'var(--brand-accent)';
 
   return (
     <>
@@ -163,10 +166,10 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                   key={i}
                   href={prefixInternalHref(item.href, linkPrefix) as string}
                   className={cn(
-                    'text-[13px] font-medium tracking-wide uppercase transition-colors duration-300 hover:text-brand-accent',
-                    (scrolled || (!isHeroDark)) ? 'text-gray-600' : 'text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]',
+                    'text-[13px] font-medium tracking-wide uppercase transition-colors duration-300 hover:text-[var(--nav-link-hover)]',
+                    (!scrolled && isHeroDark && !brand.navLinkColor) ? 'drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]' : '',
                   )}
-                  style={(scrolled || (!isHeroDark)) ? (brand.navLinkColor ? { color: brand.navLinkColor } : undefined) : { color: '#fff' }}
+                  style={{ color: navLinkColorDesktop, ['--nav-link-hover' as string]: navLinkHoverColor }}
                 >
                   {item.label}
                 </Link>
@@ -225,7 +228,8 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                     <Link
                       href={prefixInternalHref(item.href, linkPrefix) as string}
                       onClick={() => setMobileOpen(false)}
-                      className="block text-2xl font-semibold text-gray-800 py-3 hover:text-brand-primary transition-colors"
+                      className="block text-2xl font-semibold py-3 hover:text-[var(--nav-link-hover)] transition-colors"
+                      style={{ color: navLinkColorMobile, ['--nav-link-hover' as string]: navLinkHoverColor }}
                     >
                       {item.label}
                     </Link>
