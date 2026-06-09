@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getMediaAssets, type MediaAsset } from '@/app/admin/media-actions';
+import { getMediaAssets, deleteMediaAsset, type MediaAsset } from '@/app/admin/media-actions';
 import { Check, X, FolderOpen } from 'lucide-react';
 
 /**
@@ -14,6 +14,7 @@ export function MediaBulkPicker({ onSelect, onClose }: { onSelect: (images: { sr
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [folderFilter, setFolderFilter] = useState<string>('__all');
   const [search, setSearch] = useState('');
+  const [failedIds, setFailedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     getMediaAssets().then(a => { setAssets(a); setLoading(false); }).catch(() => setLoading(false));
@@ -34,6 +35,22 @@ export function MediaBulkPicker({ onSelect, onClose }: { onSelect: (images: { sr
     }));
     onSelect(images);
     onClose();
+  }
+
+  async function handleImageError(asset: MediaAsset) {
+    if (failedIds.has(asset.id)) return;
+    setFailedIds(prev => new Set(prev).add(asset.id));
+    setAssets(prev => prev.filter(a => a.id !== asset.id));
+    setSelected(prev => {
+      const next = new Set(prev);
+      next.delete(asset.id);
+      return next;
+    });
+    try {
+      await deleteMediaAsset(asset.id);
+    } catch {
+      // Ignore cleanup errors; UI has already removed broken entry.
+    }
   }
 
   const folders = Array.from(new Set(
@@ -124,7 +141,7 @@ export function MediaBulkPicker({ onSelect, onClose }: { onSelect: (images: { sr
                     onClick={() => toggle(asset.id)}
                     className={`relative aspect-square rounded-lg overflow-hidden border-2 transition ${isSelected ? 'border-blue-500 ring-2 ring-blue-500/30' : 'border-zinc-200 hover:border-zinc-400'}`}
                   >
-                    <img src={asset.blobUrl} alt={asset.filename} className="w-full h-full object-cover" />
+                    <img src={asset.blobUrl} alt={asset.filename} className="w-full h-full object-cover" onError={() => { void handleImageError(asset); }} />
                     {isSelected && (
                       <div className="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
                         <Check size={12} className="text-white" />

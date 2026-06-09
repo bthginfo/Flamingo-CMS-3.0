@@ -4,6 +4,8 @@ import { validatePat } from '@/lib/pat-auth';
 import { getDb } from '@/lib/db';
 import { mediaAssets } from '@flamingo/db';
 import { NextRequest } from 'next/server';
+import { createHash } from 'crypto';
+import { and, eq } from 'drizzle-orm';
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'];
@@ -11,6 +13,23 @@ const EXT_TO_MIME: Record<string, string> = {
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png',
   '.gif': 'image/gif', '.webp': 'image/webp', '.avif': 'image/avif',
 };
+const MIME_TO_EXT: Record<string, string> = {
+  'image/jpeg': '.jpg',
+  'image/png': '.png',
+  'image/gif': '.gif',
+  'image/webp': '.webp',
+  'image/avif': '.avif',
+};
+
+function sha256Hex(buffer: ArrayBuffer): string {
+  return createHash('sha256').update(Buffer.from(buffer)).digest('hex');
+}
+
+function resolveExtension(filename: string, mime: string): string {
+  const ext = filename.match(/\.[a-z0-9]+$/i)?.[0]?.toLowerCase();
+  if (ext && EXT_TO_MIME[ext] === mime) return ext;
+  return MIME_TO_EXT[mime] || '.bin';
+}
 
 /** Infer MIME type from file.type, filename extension, or fallback. */
 function resolveMime(declaredType: string | undefined, filename: string): string | null {
@@ -45,22 +64,33 @@ export async function POST(req: NextRequest) {
       if (!mime) return NextResponse.json({ error: `File type not allowed. Got "${file.type}" for "${file.name}". Allowed: ${ALLOWED_TYPES.join(', ')}` }, { status: 400 });
       if (file.size > MAX_SIZE) return NextResponse.json({ error: 'File too large. Max 10MB.' }, { status: 400 });
 
-      const blob = await put(`${auth.tenantId}/${file.name}`, file, {
+      const fileBytes = await file.arrayBuffer();
+      const hash = sha256Hex(fileBytes);
+      const extension = resolveExtension(file.name, mime);
+      const pathname = `${auth.tenantId}/media/${hash}${extension}`;
+
+      const blob = await put(pathname, file, {
         access: 'public',
         token: process.env.BLOB_READ_WRITE_TOKEN,
         contentType: mime,
-        addRandomSuffix: true,
+        addRandomSuffix: false,
+        allowOverwrite: true,
       });
 
       const db = getDb();
-      await db.insert(mediaAssets).values({
-        tenantId: auth.tenantId,
-        filename: file.name,
-        blobUrl: blob.url,
-        pathname: blob.pathname,
-        mimeType: mime,
-        size: file.size,
-      });
+      const [existing] = await db.select({ id: mediaAssets.id }).from(mediaAssets)
+        .where(and(eq(mediaAssets.tenantId, auth.tenantId), eq(mediaAssets.blobUrl, blob.url)))
+        .limit(1);
+      if (!existing) {
+        await db.insert(mediaAssets).values({
+          tenantId: auth.tenantId,
+          filename: file.name,
+          blobUrl: blob.url,
+          pathname: blob.pathname,
+          mimeType: mime,
+          size: file.size,
+        });
+      }
 
       return NextResponse.json({ url: blob.url, filename: file.name, size: file.size });
     }
@@ -75,22 +105,32 @@ export async function POST(req: NextRequest) {
     if (body.byteLength > MAX_SIZE) return NextResponse.json({ error: 'File too large. Max 10MB.' }, { status: 400 });
     if (body.byteLength === 0) return NextResponse.json({ error: 'Empty file body' }, { status: 400 });
 
-    const blob = await put(`${auth.tenantId}/${filename}`, body, {
+    const hash = sha256Hex(body);
+    const extension = resolveExtension(filename, mime);
+    const pathname = `${auth.tenantId}/media/${hash}${extension}`;
+
+    const blob = await put(pathname, body, {
       access: 'public',
       token: process.env.BLOB_READ_WRITE_TOKEN,
       contentType: mime,
-      addRandomSuffix: true,
+      addRandomSuffix: false,
+      allowOverwrite: true,
     });
 
     const db = getDb();
-    await db.insert(mediaAssets).values({
-      tenantId: auth.tenantId,
-      filename,
-      blobUrl: blob.url,
-      pathname: blob.pathname,
-      mimeType: mime,
-      size: body.byteLength,
-    });
+    const [existing] = await db.select({ id: mediaAssets.id }).from(mediaAssets)
+      .where(and(eq(mediaAssets.tenantId, auth.tenantId), eq(mediaAssets.blobUrl, blob.url)))
+      .limit(1);
+    if (!existing) {
+      await db.insert(mediaAssets).values({
+        tenantId: auth.tenantId,
+        filename,
+        blobUrl: blob.url,
+        pathname: blob.pathname,
+        mimeType: mime,
+        size: body.byteLength,
+      });
+    }
 
     return NextResponse.json({ url: blob.url, filename, size: body.byteLength });
   } catch (err: unknown) {

@@ -263,13 +263,14 @@ function GalleryEditor({ data, onChange }: EditorProps) {
   async function handleBulkUpload(files: FileList, category: string) {
     setBulkUploading(category);
     const { upload } = await import('@vercel/blob/client');
-    const { resizeImage } = await import('@/components/image-upload-field');
+    const { resizeImage, buildDeterministicUploadPath } = await import('@/components/image-upload-field');
     const newImgs: { src: string; alt: string; caption: string; category: string }[] = [];
     for (const file of Array.from(files)) {
       if (!file.type.startsWith('image/')) continue;
       try {
         const optimized = await resizeImage(file, 1920, 0.85);
-        const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, { access: 'public', handleUploadUrl: '/api/upload' });
+        const uploadPath = await buildDeterministicUploadPath(optimized, '.webp');
+        const blob = await upload(uploadPath, optimized, { access: 'public', handleUploadUrl: '/api/upload' });
         newImgs.push({ src: blob.url, alt: file.name.replace(/\.[^.]+$/, ''), caption: '', category });
         await saveMediaRecord({ blobUrl: blob.url, pathname: blob.pathname, filename: optimized.name, mimeType: optimized.type || 'image/webp', size: optimized.size }).catch(e => console.error("saveMediaRecord failed:", e));
       } catch (e) { console.error('Bulk upload failed for', file.name, e); }

@@ -9,6 +9,24 @@ import NextImage from 'next/image';
 
 const ALLOWED_IMAGE_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
 
+function normalizeExtension(ext: string): string {
+  if (!ext) return '';
+  return ext.startsWith('.') ? ext.toLowerCase() : `.${ext.toLowerCase()}`;
+}
+
+function extensionFromName(name: string): string {
+  const ext = name.match(/\.[^.]+$/)?.[0] ?? '';
+  return normalizeExtension(ext);
+}
+
+export async function buildDeterministicUploadPath(file: File, extensionOverride?: string): Promise<string> {
+  const bytes = await file.arrayBuffer();
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  const hash = Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, '0')).join('');
+  const ext = normalizeExtension(extensionOverride ?? extensionFromName(file.name));
+  return `media/${hash}${ext}`;
+}
+
 function isSvgFile(file: File) {
   return file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg');
 }
@@ -165,7 +183,8 @@ export function ImageUploadField({
         generateBlurDataUrl(file),
       ]);
       const uploadName = file.name.replace(/\.[^.]+$/, '.webp');
-      const blob = await upload(uploadName, optimized, {
+      const uploadPath = await buildDeterministicUploadPath(optimized, '.webp');
+      const blob = await upload(uploadPath, optimized, {
         access: 'public',
         handleUploadUrl: '/api/upload',
       });

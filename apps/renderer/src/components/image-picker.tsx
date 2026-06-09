@@ -6,6 +6,7 @@ import { saveMediaRecord, getMediaAssets, type MediaAsset } from '@/app/admin/me
 import { toast } from 'sonner';
 import { ImageIcon, Upload, X, Loader2, FolderOpen } from 'lucide-react';
 import Image from 'next/image';
+import { buildDeterministicUploadPath } from '@/components/image-upload-field';
 
 type Props = {
   value: string;
@@ -30,7 +31,8 @@ export function ImagePicker({ value, onChange, label, className }: Props) {
     }
     setUploading(true);
     try {
-      const blob = await upload(file.name, file, {
+      const uploadPath = await buildDeterministicUploadPath(file);
+      const blob = await upload(uploadPath, file, {
         access: 'public',
         handleUploadUrl: '/api/upload',
       });

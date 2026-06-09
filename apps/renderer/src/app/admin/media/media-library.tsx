@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { upload } from '@vercel/blob/client';
-import { resizeImage } from '@/components/image-upload-field';
+import { resizeImage, buildDeterministicUploadPath } from '@/components/image-upload-field';
 import { saveMediaRecord, deleteMediaAsset, deleteMediaFolder, updateMediaAlt, updateMediaDimensions, updateMediaFolder, type MediaAsset } from '../media-actions';
 import { toast } from 'sonner';
 import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2, Pencil, AlertTriangle, CheckCircle2, FolderPlus, Folder, FolderOpen, FolderInput } from 'lucide-react';
@@ -132,7 +132,8 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
         const optimized = await resizeImage(file, 1920, 0.85);
         const dimensions = await getImageDimensions(optimized);
         const uploadName = file.name.replace(/\.[^.]+$/, '.webp');
-        const blob = await upload(uploadName, optimized, {
+        const uploadPath = await buildDeterministicUploadPath(optimized, '.webp');
+        const blob = await upload(uploadPath, optimized, {
           access: 'public',
           handleUploadUrl: '/api/upload',
         });
