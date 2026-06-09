@@ -13,13 +13,24 @@ function resolveExplicitTenant(queryTenantId: string | null) {
   return queryTenantId;
 }
 
+function resolveTenantFromReferer(request: NextRequest) {
+  const referer = request.headers.get('referer');
+  if (!referer) return null;
+  try {
+    const refererUrl = new URL(referer);
+    return resolveExplicitTenant(refererUrl.searchParams.get('tenant'));
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
   const queryTenantId = req.nextUrl.searchParams.get('tenantId');
-  const tenantId = resolveExplicitTenant(queryTenantId) || await resolveTenant();
+  const tenantId = resolveExplicitTenant(queryTenantId) || resolveTenantFromReferer(req) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
 
   const db = getDb();
