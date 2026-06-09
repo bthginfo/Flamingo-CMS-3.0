@@ -11,7 +11,7 @@ type LogoItem = { name: string; image?: string };
 export function LogoMarqueeSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
-  const items = (data.items as LogoItem[]) || [];
+  const items = ((data.items as LogoItem[]) || (data.logos as LogoItem[]) || []);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-50px' });
 

@@ -2534,9 +2534,9 @@ function LogoMarqueeEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [items, setItems] = useState<{ name: string; image: string }[]>(
-    ((data.items as any[]) || []).map(item => ({ name: (item.name as string) || '', image: (item.image as string) || '' }))
+    (((data.items as any[]) || (data.logos as any[]) || [])).map(item => ({ name: (item.name as string) || '', image: (item.image as string) || '' }))
   );
-  useReport({ headline, subline, items }, onChange);
+  useReport({ headline, subline, items, logos: items }, onChange);
 
   return (
     <div className="space-y-3">
