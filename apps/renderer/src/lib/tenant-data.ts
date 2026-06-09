@@ -3,7 +3,8 @@ import { navigation, footer, globalSettings, seoGlobal, seoPage, seoItem, tenant
 import { eq, and } from 'drizzle-orm';
 
 export type NavItem = { label: string; href: string; type?: string };
-export type NavCta = { label: string; href: string; scriptProvider?: string; scriptConfig?: Record<string, string>; buttonColor?: string; buttonTextColor?: string };
+export type TopBarConfig = { enabled?: boolean; text?: string; linkLabel?: string; linkHref?: string; bgColor?: string; textColor?: string };
+export type NavCta = { label: string; href: string; scriptProvider?: string; scriptConfig?: Record<string, string>; buttonColor?: string; buttonTextColor?: string; topBar?: TopBarConfig };
 export type FooterColumn = { title: string; items: { text: string; href?: string }[] };
 export type FooterData = { columns: FooterColumn[]; legalLinks: { label: string; href: string }[]; cta?: { label: string; href: string } | null };
 export type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; pageBg?: string; sectionBg?: string; sectionBgAlt?: string; cardBg?: string; logoUrl?: string; logoDisplay?: 'logo' | 'logoAndName' | 'name'; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; borderColor?: string; dividerColor?: string; iconColor?: string; btnRadius?: string; cardRadius?: string; localSeo?: LocalSeoData };
@@ -33,7 +34,7 @@ export async function getTenantI18n(tenantId: string): Promise<{ enabled: boolea
   };
 }
 
-export async function getTenantNav(tenantId: string, locale?: string): Promise<{ items: NavItem[]; cta: NavCta | null }> {
+export async function getTenantNav(tenantId: string, locale?: string): Promise<{ items: NavItem[]; cta: NavCta | null; topBar: TopBarConfig }> {
   const db = getDb();
   const [nav] = await db.select().from(navigation).where(eq(navigation.tenantId, tenantId)).limit(1);
   let items = nav?.items as any;
@@ -48,9 +49,20 @@ export async function getTenantNav(tenantId: string, locale?: string): Promise<{
   } else if (cta?._localized) {
     cta = cta._default ?? null;
   }
+  const topBarRaw = (cta as Record<string, unknown> | null)?.topBar;
+  const topBarObj = (typeof topBarRaw === 'object' && topBarRaw !== null) ? (topBarRaw as Record<string, unknown>) : {};
+  const topBar: TopBarConfig = {
+    enabled: typeof topBarObj.enabled === 'boolean' ? (topBarObj.enabled as boolean) : true,
+    text: typeof topBarObj.text === 'string' ? (topBarObj.text as string) : '',
+    linkLabel: typeof topBarObj.linkLabel === 'string' ? (topBarObj.linkLabel as string) : '',
+    linkHref: typeof topBarObj.linkHref === 'string' ? (topBarObj.linkHref as string) : '',
+    bgColor: typeof topBarObj.bgColor === 'string' ? (topBarObj.bgColor as string) : '',
+    textColor: typeof topBarObj.textColor === 'string' ? (topBarObj.textColor as string) : '',
+  };
   return {
     items: (items as NavItem[]) || [],
     cta: cta?.label ? cta : null,
+    topBar,
   };
 }
 

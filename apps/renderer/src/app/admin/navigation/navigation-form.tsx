@@ -8,8 +8,32 @@ import { Plus, Trash2, GripVertical } from 'lucide-react';
 import { NAV_SCRIPT_PROVIDERS } from '@/lib/embed-providers';
 
 type NavItem = { label: string; href: string; type?: string };
-type NavCtaState = { label: string; href: string; scriptProvider?: string; scriptConfig?: Record<string, string>; buttonColor?: string; buttonTextColor?: string };
+type NavTopBarState = { enabled: boolean; text: string; linkLabel: string; linkHref: string; bgColor: string; textColor: string };
+type NavCtaState = { label: string; href: string; scriptProvider?: string; scriptConfig?: Record<string, string>; buttonColor?: string; buttonTextColor?: string; topBar: NavTopBarState };
 type I18nConfig = { enabled: boolean; locales: string[]; defaultLocale: string };
+
+const DEFAULT_TOP_BAR: NavTopBarState = { enabled: true, text: '', linkLabel: '', linkHref: '', bgColor: '', textColor: '' };
+
+function withDefaultCtaState(value: unknown): NavCtaState {
+  const input = (value && typeof value === 'object') ? (value as Record<string, unknown>) : {};
+  const topBarInput = (input.topBar && typeof input.topBar === 'object') ? (input.topBar as Record<string, unknown>) : {};
+  return {
+    label: typeof input.label === 'string' ? input.label : '',
+    href: typeof input.href === 'string' ? input.href : '',
+    scriptProvider: typeof input.scriptProvider === 'string' ? input.scriptProvider : undefined,
+    scriptConfig: (input.scriptConfig && typeof input.scriptConfig === 'object') ? (input.scriptConfig as Record<string, string>) : undefined,
+    buttonColor: typeof input.buttonColor === 'string' ? input.buttonColor : undefined,
+    buttonTextColor: typeof input.buttonTextColor === 'string' ? input.buttonTextColor : undefined,
+    topBar: {
+      enabled: typeof topBarInput.enabled === 'boolean' ? topBarInput.enabled : DEFAULT_TOP_BAR.enabled,
+      text: typeof topBarInput.text === 'string' ? topBarInput.text : DEFAULT_TOP_BAR.text,
+      linkLabel: typeof topBarInput.linkLabel === 'string' ? topBarInput.linkLabel : DEFAULT_TOP_BAR.linkLabel,
+      linkHref: typeof topBarInput.linkHref === 'string' ? topBarInput.linkHref : DEFAULT_TOP_BAR.linkHref,
+      bgColor: typeof topBarInput.bgColor === 'string' ? topBarInput.bgColor : DEFAULT_TOP_BAR.bgColor,
+      textColor: typeof topBarInput.textColor === 'string' ? topBarInput.textColor : DEFAULT_TOP_BAR.textColor,
+    },
+  };
+}
 
 export function NavigationForm({ initial, initialCta, i18n }: { initial: any; initialCta?: any; i18n?: I18nConfig }) {
   const isLocalized = initial?._localized;
@@ -27,9 +51,9 @@ export function NavigationForm({ initial, initialCta, i18n }: { initial: any; in
   function getCtaForLocale(locale: string): NavCtaState {
     if (initialCta?._localized) {
       const c = initialCta[locale] || initialCta._default;
-      return c || { label: '', href: '' };
+      return withDefaultCtaState(c);
     }
-    return initialCta || { label: 'Termin vereinbaren', href: '/kontakt' };
+    return withDefaultCtaState(initialCta || { label: 'Termin vereinbaren', href: '/kontakt' });
   }
 
   const [localeData, setLocaleData] = useState<Record<string, { items: NavItem[]; cta: NavCtaState }>>(() => {
@@ -42,11 +66,11 @@ export function NavigationForm({ initial, initialCta, i18n }: { initial: any; in
       return data;
     }
     const items = Array.isArray(initial) ? initial : [];
-    return { [defaultLocale]: { items: items.length > 0 ? items : [{ label: '', href: '/', type: 'link' }], cta: initialCta || { label: 'Termin vereinbaren', href: '/kontakt' } } };
+    return { [defaultLocale]: { items: items.length > 0 ? items : [{ label: '', href: '/', type: 'link' }], cta: withDefaultCtaState(initialCta || { label: 'Termin vereinbaren', href: '/kontakt' }) } };
   });
 
   const items = Array.isArray(localeData[activeLocale]?.items) ? localeData[activeLocale].items : [];
-  const cta = localeData[activeLocale]?.cta || { label: '', href: '' };
+  const cta = localeData[activeLocale]?.cta || withDefaultCtaState({});
 
   const setItems = (newItems: NavItem[] | ((prev: NavItem[]) => NavItem[])) => {
     setLocaleData(prev => {
@@ -70,12 +94,12 @@ export function NavigationForm({ initial, initialCta, i18n }: { initial: any; in
         for (const loc of locales) {
           const d = localeData[loc];
           if (d) {
-            await saveNavigationSettings(d.items.filter(i => i.label.trim()), d.cta.label.trim() ? d.cta : null, loc);
+            await saveNavigationSettings(d.items.filter(i => i.label.trim()), d.cta, loc);
           }
         }
       } else {
         const d = localeData[defaultLocale];
-        await saveNavigationSettings(d.items.filter(i => i.label.trim()), d.cta.label.trim() ? d.cta : null);
+        await saveNavigationSettings(d.items.filter(i => i.label.trim()), d.cta);
       }
       toast.success('Navigation gespeichert');
       markSaved();
@@ -136,6 +160,69 @@ export function NavigationForm({ initial, initialCta, i18n }: { initial: any; in
         <button type="button" onClick={() => setItems([...items, { label: '', href: '/', type: 'link' }])} className="admin-btn-secondary">
           <Plus size={16} /> Link hinzufügen
         </button>
+      </div>
+
+      <div className="border-t pt-5 mt-5 space-y-3">
+        <h3 className="font-semibold text-sm">Header-Banner (global)</h3>
+        <p className="text-xs text-zinc-400">Steuert den oberen Info-Balken auf allen Seiten: Ein/Aus, Inhalt, Link und Farben.</p>
+
+        <label className="flex items-center gap-2 text-sm text-zinc-700">
+          <input
+            type="checkbox"
+            checked={!!cta.topBar.enabled}
+            onChange={e => setCta({ ...cta, topBar: { ...cta.topBar, enabled: e.target.checked } })}
+          />
+          Banner automatisch auf allen Seiten anzeigen
+        </label>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="md:col-span-2">
+            <label className="text-xs text-zinc-500 mb-1 block">Banner-Text</label>
+            <input className="admin-input" value={cta.topBar.text || ''} onChange={e => setCta({ ...cta, topBar: { ...cta.topBar, text: e.target.value } })} placeholder="z.B. Kostenloses Erstgespräch: +49 123 456789" />
+          </div>
+          <div>
+            <label className="text-xs text-zinc-500 mb-1 block">Link-Label (optional)</label>
+            <input className="admin-input" value={cta.topBar.linkLabel || ''} onChange={e => setCta({ ...cta, topBar: { ...cta.topBar, linkLabel: e.target.value } })} placeholder="z.B. Jetzt anrufen" />
+          </div>
+          <div>
+            <label className="text-xs text-zinc-500 mb-1 block">Link-Ziel (optional)</label>
+            <input className="admin-input" value={cta.topBar.linkHref || ''} onChange={e => setCta({ ...cta, topBar: { ...cta.topBar, linkHref: e.target.value } })} placeholder="/kontakt oder tel:+49..." />
+          </div>
+          <div>
+            <label className="text-xs text-zinc-500 mb-1 block">Banner-Hintergrund (optional)</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="color"
+                value={cta.topBar.bgColor || '#111827'}
+                onChange={e => setCta({ ...cta, topBar: { ...cta.topBar, bgColor: e.target.value } })}
+                className="w-8 h-8 rounded border cursor-pointer"
+              />
+              <input
+                className="admin-input flex-1"
+                value={cta.topBar.bgColor || ''}
+                onChange={e => setCta({ ...cta, topBar: { ...cta.topBar, bgColor: e.target.value } })}
+                placeholder="Leer = Top-Banner-Farbe aus Design"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="text-xs text-zinc-500 mb-1 block">Textfarbe (optional)</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="color"
+                value={cta.topBar.textColor || '#ffffff'}
+                onChange={e => setCta({ ...cta, topBar: { ...cta.topBar, textColor: e.target.value } })}
+                className="w-8 h-8 rounded border cursor-pointer"
+              />
+              <input
+                className="admin-input flex-1"
+                value={cta.topBar.textColor || ''}
+                onChange={e => setCta({ ...cta, topBar: { ...cta.topBar, textColor: e.target.value } })}
+                placeholder="Leer = Weiß"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="border-t pt-5 mt-5 space-y-3">

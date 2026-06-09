@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { useHeaderContrast } from '@/hooks/use-header-contrast';
 import { LanguageSwitcher } from './language-switcher';
 import { getNavScriptProvider } from '@/lib/embed-providers';
-import type { NavItem, NavCta, BrandData, ContactData } from '@/lib/tenant-data';
+import type { NavItem, NavCta, BrandData, ContactData, TopBarConfig } from '@/lib/tenant-data';
 import { prefixInternalHref } from '@/lib/link-prefix';
 
 function NavCtaButton({ cta, scrolled, isHeroDark, linkPrefix, className }: { cta: NavCta; scrolled: boolean; isHeroDark: boolean; linkPrefix: string; className?: string }) {
@@ -63,7 +63,7 @@ function NavCtaButton({ cta, scrolled, isHeroDark, linkPrefix, className }: { ct
   );
 }
 
-export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/', i18n, showTopBar = true, forceDarkNav = false, linkPrefix = '' }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string; i18n?: { locales: string[]; currentLocale: string; defaultLocale: string; style?: string }; showTopBar?: boolean; forceDarkNav?: boolean; linkPrefix?: string }) {
+export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/', i18n, showTopBar = true, forceDarkNav = false, linkPrefix = '', topBar }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string; i18n?: { locales: string[]; currentLocale: string; defaultLocale: string; style?: string }; showTopBar?: boolean; forceDarkNav?: boolean; linkPrefix?: string; topBar?: TopBarConfig }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -85,6 +85,20 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   });
 
   const ctaData: NavCta = cta || { label: 'Termin vereinbaren', href: '/kontakt' };
+  const topBarConfig: TopBarConfig = {
+    enabled: topBar?.enabled ?? true,
+    text: topBar?.text || '',
+    linkLabel: topBar?.linkLabel || '',
+    linkHref: topBar?.linkHref || '',
+    bgColor: topBar?.bgColor || '',
+    textColor: topBar?.textColor || '',
+  };
+  const topBarEnabled = showTopBar && topBarConfig.enabled !== false;
+  const topBarText = (topBarConfig.text || '').trim();
+  const topBarTextColor = (topBarConfig.textColor || '').trim() || '#ffffff';
+  const topBarBgColor = (topBarConfig.bgColor || '').trim() || 'var(--brand-topbar, var(--brand-dark))';
+  const topBarLinkLabel = (topBarConfig.linkLabel || '').trim();
+  const topBarLinkHref = (topBarConfig.linkHref || '').trim();
   const navLinkColorDesktop = brand.navLinkColor || ((scrolled || (!isHeroDark)) ? '#4b5563' : '#ffffff');
   const navLinkColorMobile = brand.navLinkColor || '#1f2937';
   const navLinkHoverColor = brand.linkHoverColor || brand.accentColor || 'var(--brand-accent)';
@@ -92,27 +106,56 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   return (
     <>
       {/* Top bar */}
-      {showTopBar && <motion.div
+      {topBarEnabled && <motion.div
         animate={{ y: scrolled || mobileOpen ? -40 : 0, opacity: scrolled || mobileOpen ? 0 : 1 }}
         transition={{ duration: 0.3 }}
         className="fixed top-0 left-0 right-0 z-[60] text-white/80 text-xs py-2.5"
-        style={{ backgroundColor: 'var(--brand-topbar, var(--brand-dark))' }}
+        style={{ backgroundColor: topBarBgColor, color: topBarTextColor }}
       >
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-5">
-            {contact.phone && (
-              <a href={`tel:${contact.phone}`} className="flex items-center gap-1.5 hover:text-white transition-colors">
-                <Phone size={12} className="text-brand-accent" />{contact.phone}
-              </a>
-            )}
-            {contact.email && (
-              <a href={`mailto:${contact.email}`} className="flex items-center gap-1.5 hover:text-white transition-colors truncate max-w-[180px] sm:max-w-none">
-                <Mail size={12} className="text-brand-accent shrink-0" /><span className="truncate">{contact.email}</span>
-              </a>
-            )}
+        {topBarText ? (
+          <div className="max-w-7xl mx-auto px-6 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-5 min-w-0">
+              {contact.phone && (
+                <a href={`tel:${contact.phone}`} className="flex items-center gap-1.5 hover:opacity-100 opacity-90 transition-opacity">
+                  <Phone size={12} className="text-brand-accent" />{contact.phone}
+                </a>
+              )}
+              {contact.email && (
+                <a href={`mailto:${contact.email}`} className="hidden sm:flex items-center gap-1.5 hover:opacity-100 opacity-90 transition-opacity truncate max-w-[240px]">
+                  <Mail size={12} className="text-brand-accent shrink-0" /><span className="truncate">{contact.email}</span>
+                </a>
+              )}
+            </div>
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="font-medium truncate">{topBarText}</span>
+              {topBarLinkLabel && topBarLinkHref && (
+                <Link
+                  href={prefixInternalHref(topBarLinkHref, linkPrefix) as string}
+                  {...(topBarLinkHref.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  className="underline underline-offset-4 opacity-90 hover:opacity-100 whitespace-nowrap"
+                >
+                  {topBarLinkLabel}
+                </Link>
+              )}
+            </div>
           </div>
-          <span className="hidden sm:inline font-medium text-white/60">{brand.tagline}</span>
-        </div>
+        ) : (
+          <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div className="flex items-center gap-5">
+              {contact.phone && (
+                <a href={`tel:${contact.phone}`} className="flex items-center gap-1.5 hover:opacity-100 opacity-90 transition-opacity">
+                  <Phone size={12} className="text-brand-accent" />{contact.phone}
+                </a>
+              )}
+              {contact.email && (
+                <a href={`mailto:${contact.email}`} className="flex items-center gap-1.5 hover:opacity-100 opacity-90 transition-opacity truncate max-w-[180px] sm:max-w-none">
+                  <Mail size={12} className="text-brand-accent shrink-0" /><span className="truncate">{contact.email}</span>
+                </a>
+              )}
+            </div>
+            <span className="hidden sm:inline font-medium opacity-80">{brand.tagline}</span>
+          </div>
+        )}
       </motion.div>}
 
       {/* Main nav */}
@@ -121,7 +164,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
           'fixed left-0 right-0 z-50 transition-all duration-500',
-          scrolled || !showTopBar ? 'top-0' : 'top-10',
+          scrolled || !topBarEnabled ? 'top-0' : 'top-10',
         )}
       >
         <div className={cn(
@@ -268,7 +311,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
         </AnimatePresence>
       </motion.header>
 
-      {showTopBar && <div className="h-10" />}
+      {topBarEnabled && <div className="h-10" />}
     </>
   );
 }

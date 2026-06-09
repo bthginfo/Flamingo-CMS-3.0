@@ -138,7 +138,7 @@ export default async function ShopProductPage({ params, searchParams }: { params
       {jsonLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       )}
-      <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={false} cta={navData.cta} linkPrefix={linkPrefix} />
+      <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={false} cta={navData.cta} topBar={navData.topBar} linkPrefix={linkPrefix} />
       <main className="max-w-6xl mx-auto px-6">
         <ShopProductDetailSection data={{ _slug: slug, tenantId, basePath: `${linkPrefix}/shop` || '/shop' }} />
       </main>

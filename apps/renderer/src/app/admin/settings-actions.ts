@@ -121,7 +121,7 @@ export async function getNavigationSettings() {
   };
 }
 
-export async function saveNavigationSettings(items: { label: string; href: string; type?: string }[], cta?: { label: string; href: string; scriptProvider?: string; scriptConfig?: Record<string, string>; buttonColor?: string; buttonTextColor?: string } | null, locale?: string) {
+export async function saveNavigationSettings(items: { label: string; href: string; type?: string }[], cta?: { label: string; href: string; scriptProvider?: string; scriptConfig?: Record<string, string>; buttonColor?: string; buttonTextColor?: string; topBar?: { enabled?: boolean; text?: string; linkLabel?: string; linkHref?: string; bgColor?: string; textColor?: string } } | null, locale?: string) {
   const tenantId = await requireTenant();
   const db = getDb();
   const [existing] = await db.select().from(navigation).where(eq(navigation.tenantId, tenantId)).limit(1);

@@ -73,6 +73,7 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
         cssVars,
         navItems: navData.items,
         navCta: navData.cta,
+        navTopBar: navData.topBar,
         brand,
         contact,
         footer: footerData || undefined,

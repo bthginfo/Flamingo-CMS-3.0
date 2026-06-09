@@ -4,7 +4,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import LinkExt from '@tiptap/extension-link';
 import Underline from '@tiptap/extension-underline';
-import { Bold, Italic, Underline as UnderlineIcon, Link as LinkIcon } from 'lucide-react';
+import { Bold, Italic, Underline as UnderlineIcon, Link as LinkIcon, List } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
 function MiniBar({ editor }: { editor: ReturnType<typeof useEditor> }) {
@@ -25,6 +25,7 @@ function MiniBar({ editor }: { editor: ReturnType<typeof useEditor> }) {
       <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={btn(editor.isActive('bold'))} title="Fett"><Bold size={14} /></button>
       <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={btn(editor.isActive('italic'))} title="Kursiv"><Italic size={14} /></button>
       <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={btn(editor.isActive('underline'))} title="Unterstrichen"><UnderlineIcon size={14} /></button>
+      <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={btn(editor.isActive('bulletList'))} title="Aufzählungsliste"><List size={14} /></button>
       <div className="w-px h-4 bg-zinc-200 mx-1" />
       <button type="button" onClick={setLink} className={btn(editor.isActive('link'))} title="Link"><LinkIcon size={14} /></button>
     </div>
@@ -37,7 +38,7 @@ export function MiniRichTextField({ label, value, onChange }: { label: string; v
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({ heading: false, bulletList: false, orderedList: false, codeBlock: false, blockquote: false }),
+      StarterKit.configure({ heading: false, orderedList: false, codeBlock: false, blockquote: false }),
       Underline,
       LinkExt.configure({ openOnClick: false, HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' } }),
     ],

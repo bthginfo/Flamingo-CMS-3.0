@@ -167,7 +167,7 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
       {fontFaceRules.length > 0 && <style dangerouslySetInnerHTML={{ __html: fontFaceRules.join('\n') }} />}
       {bodyFontName && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
       {importantOverrides.length > 0 && <style dangerouslySetInnerHTML={{ __html: importantOverrides.join('\n') }} />}
-      <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} linkPrefix={linkPrefix} i18n={i18n.enabled ? { locales: i18n.locales, currentLocale: activeLocale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} />
+      <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} topBar={navData.topBar} linkPrefix={linkPrefix} i18n={i18n.enabled ? { locales: i18n.locales, currentLocale: activeLocale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} />
       <main>
         <CollectionDetail item={item} collection={col} collections={snapshot.collections} backHrefPrefix={linkPrefix} linkPrefix={linkPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={activeLocale} defaultLocale={defaultLocale} />
       </main>

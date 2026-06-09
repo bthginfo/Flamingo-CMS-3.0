@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
 import { getDb } from '@/lib/db';
 import { mediaAssets } from '@flamingo/db';
+import { and, eq } from 'drizzle-orm';
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
@@ -40,6 +41,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           if (!tenantId) return;
           const filename = (blob.pathname.split('/').pop() || 'upload').slice(0, 255);
           const db = getDb();
+          const [existing] = await db.select({ id: mediaAssets.id }).from(mediaAssets)
+            .where(and(eq(mediaAssets.tenantId, tenantId), eq(mediaAssets.blobUrl, blob.url)))
+            .limit(1);
+          if (existing) return;
           await db.insert(mediaAssets).values({
             tenantId,
             blobUrl: blob.url,

@@ -74,7 +74,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
         Entwurfs-Vorschau — Nicht veröffentlicht
       </div>
       <div className="pt-6">
-        <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} />
+        <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} topBar={navData.topBar} />
         <main>
           {visibleSections.map((section) => (
             <SectionRenderer key={section.id} section={section} collections={snapshot.collections} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} />

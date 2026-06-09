@@ -13,6 +13,7 @@ interface InitialData {
   cssVars?: Record<string, string>;
   navItems?: Array<{ label: string; href: string }>;
   navCta?: { label: string; href: string } | null;
+  navTopBar?: { enabled?: boolean; text?: string; linkLabel?: string; linkHref?: string; bgColor?: string; textColor?: string } | null;
   brand?: Record<string, unknown>;
   contact?: Record<string, unknown>;
   footer?: Record<string, unknown>;
@@ -29,6 +30,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
   const [cssVars, setCssVars] = useState<Record<string, string>>(initialData.cssVars || {});
   const [navItems, setNavItems] = useState(initialData.navItems || []);
   const [navCta, setNavCta] = useState(initialData.navCta || undefined);
+  const [navTopBar, setNavTopBar] = useState(initialData.navTopBar || undefined);
   const [brand, setBrand] = useState(initialData.brand || {});
   const [contact, setContact] = useState(initialData.contact || {});
   const [footer, setFooter] = useState(initialData.footer || null);
@@ -54,6 +56,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       if (p.cssVars) setCssVars(prev => ({ ...prev, ...p.cssVars }));
       if (p.navItems) setNavItems(p.navItems);
       if (p.navCta !== undefined) setNavCta(p.navCta || undefined);
+      if (p.navTopBar !== undefined) setNavTopBar(p.navTopBar || undefined);
       if (p.brand) setBrand(p.brand);
       if (p.contact) setContact(p.contact);
       if (p.footer) setFooter(p.footer);
@@ -243,7 +246,7 @@ export function LivePreviewClient({ initialData }: { initialData: InitialData })
       </div>
       <div className="pt-4">
         {navItems.length > 0 && (
-          <SiteHeader navItems={navItems} brand={brand as never} contact={contact as never} darkBg={firstSectionIsHero} cta={navCta} />
+          <SiteHeader navItems={navItems} brand={brand as never} contact={contact as never} darkBg={firstSectionIsHero} cta={navCta} topBar={navTopBar} />
         )}
         <main ref={mainRef}>
           {visibleSections.length === 0 && (

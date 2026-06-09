@@ -3,7 +3,7 @@
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { mediaAssets } from '@flamingo/db';
-import { eq, desc } from 'drizzle-orm';
+import { eq, and, desc } from 'drizzle-orm';
 import { del } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
 
@@ -59,9 +59,11 @@ export async function saveMediaRecord(data: {
 }) {
   const tenantId = await requireTenant();
   const db = getDb();
-  const [row] = await db.insert(mediaAssets).values({
-    tenantId,
-    blobUrl: data.blobUrl,
+  const [existing] = await db.select({ id: mediaAssets.id }).from(mediaAssets)
+    .where(and(eq(mediaAssets.tenantId, tenantId), eq(mediaAssets.blobUrl, data.blobUrl)))
+    .limit(1);
+
+  const patch = {
     pathname: data.pathname,
     filename: data.filename,
     mimeType: data.mimeType,
@@ -70,7 +72,17 @@ export async function saveMediaRecord(data: {
     height: data.height || null,
     folder: data.folder ?? null,
     metadata: data.blurDataUrl ? { blurDataUrl: data.blurDataUrl } : null,
-  }).returning();
+    updatedAt: new Date(),
+  };
+
+  const [row] = existing
+    ? await db.update(mediaAssets).set(patch).where(eq(mediaAssets.id, existing.id)).returning()
+    : await db.insert(mediaAssets).values({
+      tenantId,
+      blobUrl: data.blobUrl,
+      ...patch,
+    }).returning();
+
   revalidatePath('/admin/media');
   return row;
 }
