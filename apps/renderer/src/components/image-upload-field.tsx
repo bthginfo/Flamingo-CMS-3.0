@@ -5,6 +5,7 @@ import { upload } from '@vercel/blob/client';
 import { ImageIcon, Upload, X, Link as LinkIcon, FolderOpen } from 'lucide-react';
 import { saveMediaRecord, getMediaAssets, type MediaAsset } from '@/app/admin/media-actions';
 import { toast } from 'sonner';
+import NextImage from 'next/image';
 
 const ALLOWED_IMAGE_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
 
@@ -349,7 +350,13 @@ export function ImageUploadField({
                           className="relative aspect-square rounded-lg overflow-hidden border-2 border-zinc-200 hover:border-blue-500 transition"
                           title={asset.folder ? `${asset.filename} (${asset.folder})` : asset.filename}
                         >
-                          <img src={asset.blobUrl} alt={asset.filename} className="w-full h-full object-cover" />
+                          <NextImage
+                            src={asset.blobUrl}
+                            alt={asset.filename}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 640px) 25vw, (max-width: 1024px) 20vw, 16vw"
+                          />
                         </button>
                       ))}
                     </div>
