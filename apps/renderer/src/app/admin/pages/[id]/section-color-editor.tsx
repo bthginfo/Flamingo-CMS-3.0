@@ -324,11 +324,9 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
   // Only count overrides that are actually used by this section (filter out legacy/copied values)
   const relevantCSSVars = new Set(rawFields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean));
   const activeCount = Object.entries(overrides).filter(([k, v]) => relevantCSSVars.has(k as string) && v).length;
-  
-  // Only auto-open if there are active color overrides
-  const shouldDefaultOpen = activeCount > 0;
-  
-  const [open, setOpen] = useState(shouldDefaultOpen);
+
+  // Keep color editor collapsed by default; open only on user interaction.
+  const [open, setOpen] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [computedVars, setComputedVars] = useState<Record<string, string>>({});
   // Collapse the "auf Dunkel" duplicates — a single Headline/Body/Muted picker
