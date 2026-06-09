@@ -4,7 +4,7 @@ import { useState, useTransition, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { usePreview } from '@/components/admin/preview-context';
-import { updatePageAction, addSectionAction, deleteSectionAction, updateSectionAction, updateSectionMetaAction, reorderSectionsAction } from '../actions';
+import { updatePageAction, addSectionAction, cloneSectionFromPageAction, deleteSectionAction, getSectionCopySourcesAction, updateSectionAction, updateSectionMetaAction, reorderSectionsAction } from '../actions';
 import { publishAction } from '../../actions/publish';
 import { PageSectionsProvider } from '@/components/button-field';
 import { toast } from 'sonner';
@@ -40,6 +40,8 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [copySources, setCopySources] = useState<{ pageId: string; pageTitle: string; pageSlug: string; sections: { id: string; type: string; titleInternal: string | null }[] }[]>([]);
+  const [copySourcesLoading, setCopySourcesLoading] = useState(false);
   const preview = usePreview();
   const [pending, startTransition] = useTransition();
   const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
@@ -325,6 +327,35 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     });
   }
 
+  function handleOpenAddMenu() {
+    if (copySources.length > 0 || copySourcesLoading) return;
+    setCopySourcesLoading(true);
+    startTransition(async () => {
+      try {
+        const pages = await getSectionCopySourcesAction(page.id);
+        setCopySources(pages || []);
+      } finally {
+        setCopySourcesLoading(false);
+      }
+    });
+  }
+
+  function handleCopySection(sourceSectionId: string) {
+    startTransition(async () => {
+      const section = await cloneSectionFromPageAction(page.id, sourceSectionId);
+      if (!section) {
+        toast.error('Sektion konnte nicht kopiert werden');
+        return;
+      }
+      setSections(prev => [...prev, section as Section]);
+      toast.success('Sektion kopiert');
+      if (preview.isOpen) {
+        const liveSections = buildLiveSections([...sectionsRef.current, section as Section], pendingChanges.current);
+        preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
+      }
+    });
+  }
+
   function handleDeleteSection(sectionId: string) {
     if (!confirm('Sektion wirklich löschen?')) return;
     setSections(prev => prev.filter(s => s.id !== sectionId));
@@ -483,6 +514,10 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         styleVariant={styleVariant}
         onReorder={handleReorder}
         onAddSection={handleAddSection}
+        onOpenAddMenu={handleOpenAddMenu}
+        onCopySection={handleCopySection}
+        copySources={copySources}
+        copySourcesLoading={copySourcesLoading}
         renderSection={(section) => (
           <div data-section-card-id={section.id} className="transition-shadow rounded-lg">
           <SectionEditorCard

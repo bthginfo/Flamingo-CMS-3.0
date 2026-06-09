@@ -98,6 +98,8 @@ export function ImageUploadField({
   const [uploading, setUploading] = useState(false);
   const [mode, setMode] = useState<'upload' | 'url' | 'library'>(value && !value.startsWith('blob:') ? 'url' : 'upload');
   const [libraryAssets, setLibraryAssets] = useState<MediaAsset[]>([]);
+  const [libraryFolderFilter, setLibraryFolderFilter] = useState<string>('__all');
+  const [librarySearch, setLibrarySearch] = useState('');
   const [loadingLib, setLoadingLib] = useState(false);
   const [internalPosition, setInternalPosition] = useState(position || 'center');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -115,6 +117,8 @@ export function ImageUploadField({
 
   async function openLibrary() {
     setMode('library');
+    setLibraryFolderFilter('__all');
+    setLibrarySearch('');
     if (libraryAssets.length === 0) {
       setLoadingLib(true);
       try {
@@ -124,6 +128,28 @@ export function ImageUploadField({
       finally { setLoadingLib(false); }
     }
   }
+
+  const libraryFolders = Array.from(new Set(
+    libraryAssets
+      .map((a) => (a.folder || '').trim())
+      .filter((f) => f.length > 0)
+  )).sort((a, b) => a.localeCompare(b, 'de'));
+
+  const folderFilteredLibraryAssets = libraryFolderFilter === '__all'
+    ? libraryAssets
+    : libraryFolderFilter === '__none'
+      ? libraryAssets.filter((a) => !(a.folder || '').trim())
+      : libraryAssets.filter((a) => (a.folder || '').trim() === libraryFolderFilter);
+
+  const searchQuery = librarySearch.trim().toLowerCase();
+  const filteredLibraryAssets = !searchQuery
+    ? folderFilteredLibraryAssets
+    : folderFilteredLibraryAssets.filter((a) => {
+      const filename = (a.filename || '').toLowerCase();
+      const alt = (a.alt || '').toLowerCase();
+      const url = (a.blobUrl || '').toLowerCase();
+      return filename.includes(searchQuery) || alt.includes(searchQuery) || url.includes(searchQuery);
+    });
 
   async function handleUpload(file: File) {
     if (isSvgFile(file)) {
@@ -275,17 +301,59 @@ export function ImageUploadField({
               ) : libraryAssets.length === 0 ? (
                 <p className="text-sm text-gray-400 text-center py-12">Keine Bilder vorhanden</p>
               ) : (
-                <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2">
-                  {libraryAssets.map((asset) => (
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={librarySearch}
+                    onChange={(e) => setLibrarySearch(e.target.value)}
+                    placeholder="Bilder suchen (Dateiname, Alt-Text, URL)"
+                    className="admin-input w-full text-sm"
+                  />
+                  <div className="flex flex-wrap items-center gap-2 border-b border-zinc-100 pb-3">
                     <button
-                      key={asset.id}
                       type="button"
-                      onClick={() => { onChange(asset.blobUrl); setMode('upload'); }}
-                      className="relative aspect-square rounded-lg overflow-hidden border-2 border-zinc-200 hover:border-blue-500 transition"
+                      onClick={() => setLibraryFolderFilter('__all')}
+                      className={`px-2 py-1 text-xs rounded-full border ${libraryFolderFilter === '__all' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-300'}`}
                     >
-                      <img src={asset.blobUrl} alt={asset.filename} className="w-full h-full object-cover" />
+                      Alle ({libraryAssets.length})
                     </button>
-                  ))}
+                    <button
+                      type="button"
+                      onClick={() => setLibraryFolderFilter('__none')}
+                      className={`px-2 py-1 text-xs rounded-full border ${libraryFolderFilter === '__none' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-300'}`}
+                    >
+                      Ohne Ordner
+                    </button>
+                    {libraryFolders.map((folder) => (
+                      <button
+                        key={folder}
+                        type="button"
+                        onClick={() => setLibraryFolderFilter(folder)}
+                        className={`px-2 py-1 text-xs rounded-full border ${libraryFolderFilter === folder ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-300'}`}
+                        title={folder}
+                      >
+                        {folder}
+                      </button>
+                    ))}
+                  </div>
+
+                  {filteredLibraryAssets.length === 0 ? (
+                    <p className="text-sm text-gray-400 text-center py-10">Keine Bilder für den aktuellen Filter gefunden</p>
+                  ) : (
+                    <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2">
+                      {filteredLibraryAssets.map((asset) => (
+                        <button
+                          key={asset.id}
+                          type="button"
+                          onClick={() => { onChange(asset.blobUrl); setMode('upload'); }}
+                          className="relative aspect-square rounded-lg overflow-hidden border-2 border-zinc-200 hover:border-blue-500 transition"
+                          title={asset.folder ? `${asset.filename} (${asset.folder})` : asset.filename}
+                        >
+                          <img src={asset.blobUrl} alt={asset.filename} className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

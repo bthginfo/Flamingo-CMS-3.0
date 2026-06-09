@@ -18,6 +18,10 @@ type Props = {
   addLabel?: string;
   onReorder: (sections: EditableSection[]) => void;
   onAddSection: (type: string) => void;
+  onOpenAddMenu?: () => void;
+  onCopySection?: (sourceSectionId: string) => void;
+  copySources?: { pageId: string; pageTitle: string; pageSlug: string; sections: { id: string; type: string; titleInternal: string | null }[] }[];
+  copySourcesLoading?: boolean;
   renderSection: (section: EditableSection) => ReactNode;
 };
 
@@ -30,6 +34,10 @@ export function SectionStackEditor({
   addLabel = 'Sektion hinzufügen',
   onReorder,
   onAddSection,
+  onOpenAddMenu,
+  onCopySection,
+  copySources,
+  copySourcesLoading,
   renderSection,
 }: Props) {
   const [showAddMenu, setShowAddMenu] = useState(false);
@@ -53,6 +61,11 @@ export function SectionStackEditor({
     onAddSection(type);
   }
 
+  function handleCopySection(sourceSectionId: string) {
+    setShowAddMenu(false);
+    onCopySection?.(sourceSectionId);
+  }
+
   return (
     <>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -68,13 +81,16 @@ export function SectionStackEditor({
       )}
 
       <div className="mt-4 pb-24">
-        <button onClick={() => setShowAddMenu(true)} className="admin-btn-primary w-full flex items-center justify-center gap-2">
+        <button onClick={() => { setShowAddMenu(true); onOpenAddMenu?.(); }} className="admin-btn-primary w-full flex items-center justify-center gap-2">
           <Plus size={18} /> {addLabel}
         </button>
         {showAddMenu && (
           <SectionPickerModal
             sectionTypes={sectionTypes}
             onSelect={handleAddSection}
+            onCopySection={onCopySection ? handleCopySection : undefined}
+            copySources={copySources}
+            copySourcesLoading={copySourcesLoading}
             onClose={() => setShowAddMenu(false)}
             industry={industry}
             styleVariant={styleVariant}

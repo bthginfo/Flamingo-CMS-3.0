@@ -18,6 +18,8 @@ export function ImagePicker({ value, onChange, label, className }: Props) {
   const [uploading, setUploading] = useState(false);
   const [showLibrary, setShowLibrary] = useState(false);
   const [libraryAssets, setLibraryAssets] = useState<MediaAsset[]>([]);
+  const [libraryFolderFilter, setLibraryFolderFilter] = useState<string>('__all');
+  const [librarySearch, setLibrarySearch] = useState('');
   const [loadingLib, setLoadingLib] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -50,6 +52,8 @@ export function ImagePicker({ value, onChange, label, className }: Props) {
 
   const openLibrary = async () => {
     setLoadingLib(true);
+    setLibraryFolderFilter('__all');
+    setLibrarySearch('');
     setShowLibrary(true);
     try {
       const assets = await getMediaAssets();
@@ -60,6 +64,28 @@ export function ImagePicker({ value, onChange, label, className }: Props) {
       setLoadingLib(false);
     }
   };
+
+  const libraryFolders = Array.from(new Set(
+    libraryAssets
+      .map((a) => (a.folder || '').trim())
+      .filter((f) => f.length > 0)
+  )).sort((a, b) => a.localeCompare(b, 'de'));
+
+  const folderFilteredLibraryAssets = libraryFolderFilter === '__all'
+    ? libraryAssets
+    : libraryFolderFilter === '__none'
+      ? libraryAssets.filter((a) => !(a.folder || '').trim())
+      : libraryAssets.filter((a) => (a.folder || '').trim() === libraryFolderFilter);
+
+  const searchQuery = librarySearch.trim().toLowerCase();
+  const filteredLibraryAssets = !searchQuery
+    ? folderFilteredLibraryAssets
+    : folderFilteredLibraryAssets.filter((a) => {
+      const filename = (a.filename || '').toLowerCase();
+      const alt = (a.alt || '').toLowerCase();
+      const url = (a.blobUrl || '').toLowerCase();
+      return filename.includes(searchQuery) || alt.includes(searchQuery) || url.includes(searchQuery);
+    });
 
   return (
     <div className={className}>
@@ -132,17 +158,59 @@ export function ImagePicker({ value, onChange, label, className }: Props) {
               ) : libraryAssets.length === 0 ? (
                 <p className="text-center text-zinc-400 py-12">Keine Bilder in der Mediathek</p>
               ) : (
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                  {libraryAssets.map(asset => (
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={librarySearch}
+                    onChange={(e) => setLibrarySearch(e.target.value)}
+                    placeholder="Bilder suchen (Dateiname, Alt-Text, URL)"
+                    className="admin-input w-full text-sm"
+                  />
+                  <div className="flex flex-wrap items-center gap-2 border-b border-zinc-100 pb-3">
                     <button
-                      key={asset.id}
                       type="button"
-                      onClick={() => { onChange(asset.blobUrl); setShowLibrary(false); }}
-                      className="relative aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-admin-accent transition-colors"
+                      onClick={() => setLibraryFolderFilter('__all')}
+                      className={`px-2 py-1 text-xs rounded-full border ${libraryFolderFilter === '__all' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-300'}`}
                     >
-                      <Image src={asset.blobUrl} alt={asset.alt || ''} fill className="object-cover" sizes="200px" />
+                      Alle ({libraryAssets.length})
                     </button>
-                  ))}
+                    <button
+                      type="button"
+                      onClick={() => setLibraryFolderFilter('__none')}
+                      className={`px-2 py-1 text-xs rounded-full border ${libraryFolderFilter === '__none' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-300'}`}
+                    >
+                      Ohne Ordner
+                    </button>
+                    {libraryFolders.map((folder) => (
+                      <button
+                        key={folder}
+                        type="button"
+                        onClick={() => setLibraryFolderFilter(folder)}
+                        className={`px-2 py-1 text-xs rounded-full border ${libraryFolderFilter === folder ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-300'}`}
+                        title={folder}
+                      >
+                        {folder}
+                      </button>
+                    ))}
+                  </div>
+
+                  {filteredLibraryAssets.length === 0 ? (
+                    <p className="text-center text-zinc-400 py-10">Keine Bilder für den aktuellen Filter gefunden</p>
+                  ) : (
+                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                      {filteredLibraryAssets.map(asset => (
+                        <button
+                          key={asset.id}
+                          type="button"
+                          onClick={() => { onChange(asset.blobUrl); setShowLibrary(false); }}
+                          className="relative aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-admin-accent transition-colors"
+                          title={asset.folder ? `${asset.filename} (${asset.folder})` : asset.filename}
+                        >
+                          <Image src={asset.blobUrl} alt={asset.alt || ''} fill className="object-cover" sizes="200px" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

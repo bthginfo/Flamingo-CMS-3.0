@@ -67,7 +67,7 @@ export function ScrollStorySection({ data }: Props) {
             ))}
           </div>
 
-          <div className="mt-8 hidden overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm lg:block">
+          <div data-card className="mt-8 hidden overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm lg:block">
             {activeStep.image && (
               <motion.img
                 key={activeStep.image}

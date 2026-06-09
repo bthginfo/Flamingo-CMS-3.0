@@ -202,6 +202,83 @@ export async function reorderSectionsAction(pageId: string, sectionIds: string[]
   revalidatePath(`/admin/pages/${pageId}`);
 }
 
+export async function getSectionCopySourcesAction(currentPageId: string) {
+  const session = await requireSession();
+  const db = getDb();
+
+  const allPages = await db
+    .select({ id: pages.id, title: pages.title, slug: pages.slug, sortOrder: pages.sortOrder })
+    .from(pages)
+    .where(eq(pages.tenantId, session.tenantId))
+    .orderBy(asc(pages.sortOrder), asc(pages.title));
+
+  const sourcePages = allPages.filter((p) => p.id !== currentPageId);
+  if (sourcePages.length === 0) return [] as { pageId: string; pageTitle: string; pageSlug: string; sections: { id: string; type: string; titleInternal: string | null }[] }[];
+  const allSections = await db
+    .select({ id: pageSections.id, pageId: pageSections.pageId, type: pageSections.type, titleInternal: pageSections.titleInternal, sortOrder: pageSections.sortOrder, locked: pageSections.locked })
+    .from(pageSections)
+    .where(eq(pageSections.tenantId, session.tenantId))
+    .orderBy(asc(pageSections.sortOrder));
+
+  return sourcePages
+    .map((p) => ({
+      pageId: p.id,
+      pageTitle: p.title,
+      pageSlug: p.slug,
+      sections: allSections
+        .filter((s) => s.pageId === p.id && !s.locked)
+        .map((s) => ({ id: s.id, type: s.type, titleInternal: s.titleInternal })),
+    }))
+    .filter((p) => p.sections.length > 0);
+}
+
+export async function cloneSectionFromPageAction(targetPageId: string, sourceSectionId: string) {
+  const session = await requireSession();
+  const db = getDb();
+
+  const [targetPage] = await db
+    .select({ id: pages.id })
+    .from(pages)
+    .where(and(eq(pages.id, targetPageId), eq(pages.tenantId, session.tenantId)))
+    .limit(1);
+  if (!targetPage) return null;
+
+  const [source] = await db
+    .select()
+    .from(pageSections)
+    .where(and(eq(pageSections.id, sourceSectionId), eq(pageSections.tenantId, session.tenantId)))
+    .limit(1);
+  if (!source || source.locked) return null;
+
+  const [existing] = await db
+    .select({ sortOrder: pageSections.sortOrder })
+    .from(pageSections)
+    .where(and(eq(pageSections.pageId, targetPageId), eq(pageSections.tenantId, session.tenantId)))
+    .orderBy(desc(pageSections.sortOrder))
+    .limit(1);
+  const nextOrder = (existing?.sortOrder ?? -1) + 1;
+
+  const [section] = await db.insert(pageSections).values({
+    tenantId: session.tenantId,
+    pageId: targetPageId,
+    type: source.type,
+    variant: source.variant,
+    titleInternal: source.titleInternal,
+    visible: source.visible,
+    locked: false,
+    container: source.container,
+    spacingTop: source.spacingTop,
+    spacingBottom: source.spacingBottom,
+    anchorId: null,
+    styleOverrides: source.styleOverrides,
+    data: source.data,
+    sortOrder: nextOrder,
+  }).returning();
+
+  revalidatePath(`/admin/pages/${targetPageId}`);
+  return section;
+}
+
 // ─── Shop Page Management ─────────────────────────────────────────────
 
 const SHOP_PAGE_DEFS = [

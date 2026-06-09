@@ -41,9 +41,17 @@ const CATEGORY_ORDER = [
   'Shop',
 ];
 
-export function SectionPickerModal({ sectionTypes, onSelect, onClose, industry, styleVariant }: { sectionTypes: SectionTypeDefinition[]; onSelect: (type: string) => void; onClose: () => void; industry?: string; styleVariant?: string }) {
+type CopySourcePage = {
+  pageId: string;
+  pageTitle: string;
+  pageSlug: string;
+  sections: { id: string; type: string; titleInternal: string | null }[];
+};
+
+export function SectionPickerModal({ sectionTypes, onSelect, onClose, industry, styleVariant, onCopySection, copySources, copySourcesLoading }: { sectionTypes: SectionTypeDefinition[]; onSelect: (type: string) => void; onClose: () => void; industry?: string; styleVariant?: string; onCopySection?: (sourceSectionId: string) => void; copySources?: CopySourcePage[]; copySourcesLoading?: boolean }) {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [copyMode, setCopyMode] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { inputRef.current?.focus(); }, []);
@@ -79,6 +87,26 @@ export function SectionPickerModal({ sectionTypes, onSelect, onClose, industry, 
 
   const categories = grouped.map(([cat]) => cat);
 
+  const filteredCopySources = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    const pages = copySources || [];
+    if (!q) return pages;
+    return pages
+      .map((p) => ({
+        ...p,
+        sections: p.sections.filter((s) => {
+          const title = (s.titleInternal || '').toLowerCase();
+          return (
+            title.includes(q) ||
+            s.type.toLowerCase().includes(q) ||
+            p.pageTitle.toLowerCase().includes(q) ||
+            p.pageSlug.toLowerCase().includes(q)
+          );
+        }),
+      }))
+      .filter((p) => p.sections.length > 0);
+  }, [copySources, search]);
+
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center" onClick={onClose}>
       <div className="bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl w-full h-full sm:h-auto sm:max-w-5xl sm:max-h-[80vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
@@ -98,8 +126,25 @@ export function SectionPickerModal({ sectionTypes, onSelect, onClose, industry, 
           </button>
         </div>
 
+        {onCopySection && (
+          <div className="flex items-center justify-between gap-3 px-5 py-2.5 border-b bg-zinc-50">
+            <span className="text-xs text-zinc-500">Modus</span>
+            <label className="inline-flex items-center gap-2 text-xs text-zinc-700 cursor-pointer select-none">
+              <span>Sektion kopieren</span>
+              <button
+                type="button"
+                onClick={() => setCopyMode((v) => !v)}
+                className={`relative h-6 w-11 rounded-full transition-colors ${copyMode ? 'bg-blue-600' : 'bg-zinc-300'}`}
+                aria-label="Kopiermodus umschalten"
+              >
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${copyMode ? 'translate-x-5' : 'translate-x-0.5'}`} />
+              </button>
+            </label>
+          </div>
+        )}
+
         {/* Category tabs on mobile */}
-        <div className="flex gap-1.5 px-5 py-2.5 border-b overflow-x-auto sm:hidden">
+        {!copyMode && <div className="flex gap-1.5 px-5 py-2.5 border-b overflow-x-auto sm:hidden">
           <button
             onClick={() => setActiveCategory(null)}
             className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${!activeCategory ? 'bg-blue-100 text-blue-700' : 'text-gray-500 hover:bg-gray-100'}`}
@@ -120,10 +165,10 @@ export function SectionPickerModal({ sectionTypes, onSelect, onClose, industry, 
               </button>
             );
           })}
-        </div>
+        </div>}
 
         <div className="flex min-h-0 flex-1">
-          <aside className="hidden w-64 shrink-0 border-r bg-zinc-50/70 p-3 sm:block">
+          {!copyMode && <aside className="hidden w-64 shrink-0 border-r bg-zinc-50/70 p-3 sm:block">
             <button
               onClick={() => setActiveCategory(null)}
               className={`mb-1 flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors ${!activeCategory ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-white'}`}
@@ -147,14 +192,14 @@ export function SectionPickerModal({ sectionTypes, onSelect, onClose, industry, 
                 </button>
               );
             })}
-          </aside>
+          </aside>}
 
           {/* Section list */}
           <div className="flex-1 overflow-y-auto px-5 py-3">
-            {filtered.length === 0 && (
+            {!copyMode && filtered.length === 0 && (
               <div className="text-center py-12 text-gray-400 text-sm">Keine Sektionen gefunden.</div>
             )}
-            {filtered.map(([cat, items]) => {
+            {!copyMode && filtered.map(([cat, items]) => {
               const meta = getCategoryMeta(cat);
               const Icon = meta.icon;
               return (
@@ -193,6 +238,38 @@ export function SectionPickerModal({ sectionTypes, onSelect, onClose, industry, 
                 </div>
               );
             })}
+
+            {copyMode && (
+              <div className="space-y-4">
+                {copySourcesLoading ? (
+                  <div className="text-center py-12 text-gray-400 text-sm">Lade vorhandene Sektionen…</div>
+                ) : (filteredCopySources.length === 0 ? (
+                  <div className="text-center py-12 text-gray-400 text-sm">Keine passenden Sektionen zum Kopieren gefunden.</div>
+                ) : (
+                  filteredCopySources.map((page) => (
+                    <div key={page.pageId} className="rounded-lg border border-zinc-200 overflow-hidden">
+                      <div className="px-3 py-2 bg-zinc-50 border-b border-zinc-200">
+                        <div className="text-sm font-semibold text-zinc-800">{page.pageTitle}</div>
+                        <div className="text-[11px] text-zinc-500">/{page.pageSlug || ''}</div>
+                      </div>
+                      <div className="p-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+                        {page.sections.map((section) => (
+                          <button
+                            key={section.id}
+                            type="button"
+                            onClick={() => onCopySection?.(section.id)}
+                            className="text-left rounded-lg border border-zinc-200 hover:border-blue-300 hover:bg-blue-50/40 transition p-3"
+                          >
+                            <div className="text-sm font-medium text-zinc-900">{section.titleInternal || section.type}</div>
+                            <div className="text-[11px] text-zinc-500 mt-0.5">Typ: {section.type}</div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
