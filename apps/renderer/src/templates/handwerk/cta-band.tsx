@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { plain } from '@/lib/strip-html';
 
@@ -12,6 +11,7 @@ export function CtaBandSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
+  const badgeIcon = (data.badgeIcon as string) || 'sparkles';
   const cta = data.ctaPrimary as { label: string; href: string; icon?: string } | undefined;
   // Colors come from styleOverrides (card surface, typography, accent, button).
   const colors = {
@@ -20,13 +20,13 @@ export function CtaBandSection({ data, styleVariant }: Props) {
     accentColor: undefined as string | undefined,
   };
 
-  if (styleVariant === 'modern') return <CtaModern headline={headline} subline={plain(subline)} badgeText={badgeText} cta={cta} colors={colors} />;
-  if (styleVariant === 'bold') return <CtaBold headline={headline} subline={plain(subline)} badgeText={badgeText} cta={cta} colors={colors} />;
-  return <CtaClassic headline={headline} subline={plain(subline)} badgeText={badgeText} cta={cta} colors={colors} />;
+  if (styleVariant === 'modern') return <CtaModern headline={headline} subline={plain(subline)} badgeText={badgeText} badgeIcon={badgeIcon} cta={cta} colors={colors} />;
+  if (styleVariant === 'bold') return <CtaBold headline={headline} subline={plain(subline)} badgeText={badgeText} badgeIcon={badgeIcon} cta={cta} colors={colors} />;
+  return <CtaClassic headline={headline} subline={plain(subline)} badgeText={badgeText} badgeIcon={badgeIcon} cta={cta} colors={colors} />;
 }
 
 type ColorOverrides = { bgColor?: string; textColor?: string; accentColor?: string };
-type CProps = { headline: string; subline: string; badgeText: string; cta?: { label: string; href: string; icon?: string }; colors?: ColorOverrides };
+type CProps = { headline: string; subline: string; badgeText: string; badgeIcon: string; cta?: { label: string; href: string; icon?: string }; colors?: ColorOverrides };
 const CTA_CARD_BG = 'var(--token-card-bg, var(--style-card-bg, #fff9f1))';
 const CTA_CARD_BORDER = 'var(--token-card-border, var(--style-border-color, rgba(15,23,42,0.08)))';
 const CTA_CARD_HEADING = 'var(--token-heading, var(--style-heading-color, #0f172a))';
@@ -39,7 +39,7 @@ const CTA_BUTTON_BG = 'var(--token-btn-bg, var(--brand-btn-bg, #4a1625))';
 const CTA_BUTTON_TEXT = 'var(--token-btn-text, var(--brand-btn-text, #ffffff))';
 
 /* ─── CLASSIC: Gradient bg, centered, pill cta, floating orbs ─── */
-function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
+function CtaClassic({ headline, subline, badgeText, badgeIcon, cta, colors }: CProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
@@ -64,7 +64,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
       <div className="relative z-10 px-6 py-12 text-center sm:py-16 md:py-24 lg:py-32" style={{ color: CTA_CARD_HEADING }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 }}
           className="mb-8 inline-flex items-center gap-2 rounded-full border px-5 py-2 text-sm backdrop-blur-sm" style={{ background: CTA_CARD_BADGE_BG, borderColor: CTA_CARD_BADGE_BORDER, color: CTA_CARD_BADGE_TEXT }}>
-          <Sparkles size={14} className="text-[color:var(--token-icon)]" /><span data-edit-path="badgeText">{badgeText || 'Jetzt Termin sichern'}</span>
+          <DynamicIcon editPath="badgeIcon" name={badgeIcon} size={14} className="text-[color:var(--token-icon)]" /><span data-edit-path="badgeText">{badgeText || 'Jetzt Termin sichern'}</span>
         </motion.div>
         <motion.h2 initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.3 }}
           className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-5 tracking-tight !leading-[1.1] text-white" style={{ color: colors?.textColor ?? CTA_CARD_HEADING }} data-edit-path="headline">{headline}</motion.h2>
@@ -82,7 +82,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
 }
 
 /* ─── MODERN: Pure text, large font, underline link, white bg ─── */
-function CtaModern({ headline, subline, cta, colors }: CProps) {
+function CtaModern({ headline, subline, badgeText, badgeIcon, cta, colors }: CProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -96,6 +96,12 @@ function CtaModern({ headline, subline, cta, colors }: CProps) {
   return (
     <motion.div ref={ref} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ duration: 0.8 }}
       className="rounded-4xl px-6 py-16 text-center md:py-24 lg:py-32" style={wrapStyle}>
+      {badgeText && (
+        <div className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-wider" style={{ background: CTA_CARD_BADGE_BG, borderColor: CTA_CARD_BADGE_BORDER, color: CTA_CARD_BADGE_TEXT }}>
+          <DynamicIcon editPath="badgeIcon" name={badgeIcon} size={13} className="text-[color:var(--token-icon)]" />
+          <span data-edit-path="badgeText">{badgeText}</span>
+        </div>
+      )}
       <h2 className="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight !leading-[1.1] max-w-4xl mx-auto text-white" style={{ color: colors?.textColor ?? CTA_CARD_HEADING }} data-edit-path="headline">
         {headline}
       </h2>
@@ -110,7 +116,7 @@ function CtaModern({ headline, subline, cta, colors }: CProps) {
 }
 
 /* ─── BOLD: Full-width accent block, text left, angular ─── */
-function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
+function CtaBold({ headline, subline, badgeText, badgeIcon, cta, colors }: CProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -125,7 +131,12 @@ function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
     <motion.div ref={ref} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }}
       className="flex flex-col items-start justify-between gap-8 rounded-4xl p-10 lg:flex-row lg:items-center lg:p-16" style={{ ...wrapStyle, color: CTA_CARD_HEADING }}>
       <div>
-        {badgeText && <span className="mb-4 inline-block rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-widest" style={{ background: CTA_CARD_BADGE_BG, borderColor: CTA_CARD_BADGE_BORDER, color: CTA_CARD_BADGE_TEXT }} data-edit-path="badgeText">{badgeText}</span>}
+        {badgeText && (
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-widest" style={{ background: CTA_CARD_BADGE_BG, borderColor: CTA_CARD_BADGE_BORDER, color: CTA_CARD_BADGE_TEXT }}>
+            <DynamicIcon editPath="badgeIcon" name={badgeIcon} size={13} className="text-[color:var(--token-icon)]" />
+            <span data-edit-path="badgeText">{badgeText}</span>
+          </span>
+        )}
         <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tight text-white" style={{ color: CTA_CARD_HEADING }} data-edit-path="headline">{headline}</h2>
         {subline && <div className="rt-content mt-3 max-w-xl font-medium" style={{ color: CTA_CARD_BODY }} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>

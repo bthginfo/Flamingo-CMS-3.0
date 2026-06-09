@@ -834,6 +834,7 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
     badgeText: (data.badgeText as string) || '',
+    badgeIcon: (data.badgeIcon as string) || 'sparkles',
     ctaPrimary: (data.ctaPrimary as { label: string; href: string }) || { label: '', href: '' },
   });
   useReport(d as unknown as Record<string, unknown>, onChange);
@@ -841,6 +842,7 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
   return (
     <div className="space-y-3">
       <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
+      <IconPickerField label="Badge-Icon" value={d.badgeIcon} onChange={(v) => setD({ ...d, badgeIcon: v })} />
       <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
