@@ -4,7 +4,7 @@ import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { validateSectionData } from '@/lib/validate-section';
 import { pages, pageSections, tenants, globalSettings, tenantAddons, collections, collectionItems, products } from '@flamingo/db';
-import { eq, and, asc, desc } from 'drizzle-orm';
+import { eq, and, asc, desc, not } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { BOOKING_SECTION_TYPES } from '@/lib/booking-core';
@@ -117,7 +117,7 @@ export async function getPageWithSectionsAction(pageId: string) {
   }));
   // Load shop products for live preview (avoid client-side fetch in admin iframe)
   const previewProducts = shopAddonResult[0]?.active
-    ? await db.select().from(products).where(and(eq(products.tenantId, session.tenantId), eq(products.status, 'active'))).limit(100)
+    ? await db.select().from(products).where(and(eq(products.tenantId, session.tenantId), not(eq(products.status, 'archived')))).orderBy(asc(products.sortOrder)).limit(200)
     : [];
   return { page, sections: sectionsResult, industry: tenant?.industry ?? 'tradesman', styleVariant: 'classic', brand: (brandResult[0]?.brand as Record<string, string>) || {}, hasShop: !!shopAddonResult[0]?.active, hasBooking: !!bookingAddonResult[0]?.active, i18n, collections: previewCollections, tenantId: session.tenantId, previewProducts };
 }
