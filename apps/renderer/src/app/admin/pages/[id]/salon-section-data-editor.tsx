@@ -63,13 +63,17 @@ function BeforeAfterEditor({ data, onChange }: EditorProps) {
 
 function GalleryEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({ ...basicData(data) });
-  const [categories, setCategories] = useState<string[]>(() => [...new Set(arr(data.images).map(i => str(i.category)).filter(Boolean))]);
+  const [categories, setCategories] = useState<string[]>(() => {
+    const fromData = ((data.categories as string[]) || []).map((c) => c.trim()).filter(Boolean);
+    const fromImages = arr(data.images).map(i => str(i.category)).filter(Boolean);
+    return [...new Set([...fromData, ...fromImages])];
+  });
   const [newCat, setNewCat] = useState('');
   const [images, setImages] = useState(arr(data.images).map(galleryFromData));
   const [openCats, setOpenCats] = useState<Record<string, boolean>>({});
   const [bulkUploading, setBulkUploading] = useState<string | null>(null);
   const bulkRefs = useRef<Record<string, HTMLInputElement | null>>({});
-  useReport({ ...d, images }, onChange);
+  useReport({ ...d, categories, images }, onChange);
 
   function addCategory() { const name = newCat.trim(); if (!name || categories.includes(name)) return; setCategories([...categories, name]); setOpenCats({ ...openCats, [name]: true }); setNewCat(''); }
   function removeCategory(cat: string) { setCategories(categories.filter(c => c !== cat)); setImages(images.filter(img => img.category !== cat)); }

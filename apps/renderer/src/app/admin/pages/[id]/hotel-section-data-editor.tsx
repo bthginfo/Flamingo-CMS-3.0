@@ -238,15 +238,16 @@ function EventSpacesEditor({ data, onChange }: EditorProps) {
 function GalleryEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({ headline: (data.headline as string) || '', subline: (data.subline as string) || '', badgeText: (data.badgeText as string) || '', ctaPrimary: (data.ctaPrimary as ButtonValue) || { label: '', href: '' } });
   const [categories, setCategories] = useState<string[]>(() => {
-    const imgs = ((data.images as Record<string, unknown>[]) || []).map(galleryFromData);
-    return [...new Set(imgs.map(i => i.category).filter(Boolean))];
+    const fromData = ((data.categories as string[]) || []).map((c) => c.trim()).filter(Boolean);
+    const fromImages = ((data.images as Record<string, unknown>[]) || []).map(galleryFromData).map((i) => i.category).filter(Boolean);
+    return [...new Set([...fromData, ...fromImages])];
   });
   const [newCat, setNewCat] = useState('');
   const [images, setImages] = useState(() => ((data.images as Record<string, unknown>[]) || []).map(galleryFromData));
   const [openCats, setOpenCats] = useState<Record<string, boolean>>({});
   const [bulkUploading, setBulkUploading] = useState<string | null>(null);
   const bulkRefs = useRef<Record<string, HTMLInputElement | null>>({});
-  useReport({ ...d, images } as unknown as Record<string, unknown>, onChange);
+  useReport({ ...d, categories, images } as unknown as Record<string, unknown>, onChange);
 
   function addCategory() {
     const name = newCat.trim();
