@@ -306,11 +306,17 @@ export function getFieldsForSection(sectionType: string, industry?: string): Col
     : null;
   const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
   if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
-    return (industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt');
+    const fields = (industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt');
+    // Always ensure sectionBg is available for background control
+    if (!fields.includes('sectionBg')) fields.unshift('sectionBg');
+    return fields;
   }
   const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
   if (Array.isArray(generic) && generic.length > 0) {
-    return (generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt');
+    const fields = (generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt');
+    // Always ensure sectionBg is available for background control
+    if (!fields.includes('sectionBg')) fields.unshift('sectionBg');
+    return fields;
   }
   // No codegen entry → minimal safe set. Re-run the generator to fix.
   return ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor'];
