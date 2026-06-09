@@ -15,7 +15,10 @@ export function ServicesGridSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
-  const cards = (data.manualCards as CardData[]) || (data.services as CardData[]) || [];
+  const cards = ((data.manualCards as CardData[]) || (data.services as CardData[]) || []).map((card) => ({
+    ...card,
+    text: plain(card?.text || ''),
+  }));
   const ctaLabel = (data.ctaLabel as string) || '';
   const ctaHref = (data.ctaHref as string) || '';
   const ctaIcon = (data.ctaIcon as string) || '';

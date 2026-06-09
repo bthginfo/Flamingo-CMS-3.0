@@ -1323,26 +1323,36 @@ function ServiceDetailEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
-  const [items, setItems] = useState<{ title: string; text: string; icon: string; image: string; mediaType: string; features: string; ctaLabel: string; ctaHref: string }[]>(
+  const [items, setItems] = useState<{ title: string; text: string; icon: string; image: string; mediaType: string; features: string[]; ctaLabel: string; ctaHref: string; ctaIcon: string }[]>(
     ((data.items as Record<string, unknown>[]) || []).map(it => ({
       title: (it.title as string) || '',
       text: (it.text as string) || '',
       icon: (it.icon as string) || '',
       image: (it.image as string) || '',
       mediaType: (it.mediaType as string) || 'icon',
-      features: ((it.features as string[]) || []).join('\n'),
+      features: Array.isArray(it.features) ? (it.features as string[]).map((feature) => String(feature ?? '').trim()).filter(Boolean) : [],
       ctaLabel: (it.ctaLabel as string) || '',
       ctaHref: (it.ctaHref as string) || '',
+      ctaIcon: (it.ctaIcon as string) || '',
     }))
   );
   useReport({
     headline, subline, badgeText,
-    items: items.map(it => ({ ...it, features: it.features.split('\n').map(f => f.trim()).filter(Boolean) })),
+    items: items.map(it => ({ ...it, features: it.features.map((feature) => feature.trim()).filter(Boolean) })),
   }, onChange);
 
-  function addItem() { setItems([...items, { title: '', text: '', icon: '', image: '', mediaType: 'icon', features: '', ctaLabel: '', ctaHref: '' }]); }
+  function addItem() { setItems([...items, { title: '', text: '', icon: '', image: '', mediaType: 'icon', features: [], ctaLabel: '', ctaHref: '', ctaIcon: '' }]); }
   function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
+  function addFeature(itemIndex: number) {
+    setItems(items.map((it, idx) => idx === itemIndex ? { ...it, features: [...it.features, ''] } : it));
+  }
+  function updateFeature(itemIndex: number, featureIndex: number, value: string) {
+    setItems(items.map((it, idx) => idx === itemIndex ? { ...it, features: it.features.map((feature, fi) => fi === featureIndex ? value : feature) } : it));
+  }
+  function removeFeature(itemIndex: number, featureIndex: number) {
+    setItems(items.map((it, idx) => idx === itemIndex ? { ...it, features: it.features.filter((_, fi) => fi !== featureIndex) } : it));
+  }
 
   return (
     <div className="space-y-3">
@@ -1364,8 +1374,38 @@ function ServiceDetailEditor({ data, onChange }: EditorProps) {
               <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
             )}
           </div>
-          <Field label="Features (eine pro Zeile)" value={item.features} onChange={(v) => update(i, 'features', v)} multiline />
-          <ButtonField label="CTA" value={{ label: item.ctaLabel, href: item.ctaHref }} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, ctaLabel: v.label, ctaHref: v.href } : it))} />
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <label className="text-xs font-medium text-zinc-600">Features</label>
+              <button type="button" onClick={() => addFeature(i)} className="text-xs text-blue-600 hover:underline">+ Feature</button>
+            </div>
+            {item.features.length === 0 ? (
+              <p className="text-xs text-zinc-400">Noch keine Features hinzugefuegt.</p>
+            ) : (
+              item.features.map((feature, featureIndex) => (
+                <div key={featureIndex} className="flex items-center gap-2">
+                  <input
+                    className="admin-input w-full"
+                    value={feature}
+                    onChange={(e) => updateFeature(i, featureIndex, e.target.value)}
+                    placeholder={`Feature ${featureIndex + 1}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeFeature(i, featureIndex)}
+                    className="shrink-0 text-xs text-red-500 hover:text-red-600"
+                  >
+                    Entfernen
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+          <ButtonField
+            label="CTA"
+            value={{ label: item.ctaLabel, href: item.ctaHref, icon: item.ctaIcon }}
+            onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, ctaLabel: v.label, ctaHref: v.href, ctaIcon: v.icon || '' } : it))}
+          />
         </div>
       ))}
       <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Leistung hinzufügen</button>

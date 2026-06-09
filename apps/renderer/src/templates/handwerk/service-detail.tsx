@@ -8,7 +8,14 @@ import { CheckCircle } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
-type ServiceItem = { title: string; text: string; image?: string; icon?: string; mediaType?: 'icon' | 'image'; features?: string[]; ctaLabel?: string; ctaHref?: string };
+type ServiceItem = { title: string; text: string; image?: string; icon?: string; mediaType?: 'icon' | 'image'; features?: string[]; ctaLabel?: string; ctaHref?: string; ctaIcon?: string };
+
+function normalizeFeatures(features: unknown): string[] {
+  if (!Array.isArray(features)) return [];
+  return features
+    .map((entry) => plain(String(entry ?? '')).trim())
+    .filter(Boolean);
+}
 
 export function ServiceDetailSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || '';
@@ -37,6 +44,9 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
       </motion.div>
       <div className="space-y-24">
         {items.map((item, i) => (
+          (() => {
+            const features = normalizeFeatures(item.features);
+            return (
           <motion.div key={i} initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.15 }}
             className={`flex flex-col ${i % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-10 md:gap-12 lg:gap-16 items-center`} data-edit-collection="items" data-edit-index={i}>
             <div className="w-full lg:w-1/2">
@@ -53,18 +63,20 @@ function ServiceClassic({ headline, subline, badgeText, items }: SProps) {
             <div className="w-full lg:w-1/2">
               <h3 className="font-display font-bold text-2xl lg:text-3xl mb-4 text-[color:var(--token-body)]" data-edit-path="title">{item.title}</h3>
               <p className="text-[color:var(--token-body)] leading-relaxed mb-6 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />
-              {item.features && item.features.length > 0 && (
+              {features.length > 0 && (
                 <ul className="space-y-2 mb-6">
-                  {item.features.map((f, fi) => <li key={fi} className="flex items-center gap-2 text-sm text-[color:var(--token-muted)]" data-edit-collection="features" data-edit-index={fi}><CheckCircle size={16} className="text-[color:var(--token-icon)] shrink-0" />{f}</li>)}
+                  {features.map((f, fi) => <li key={fi} className="flex items-center gap-2 text-sm text-[color:var(--token-muted)]" data-edit-collection="features" data-edit-index={fi}><CheckCircle size={16} className="text-[color:var(--token-icon)] shrink-0" />{f}</li>)}
                 </ul>
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 text-[color:var(--token-icon)] font-medium hover:gap-3 transition-all">
-                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon editPath="icon" name={item.icon} size={16} />}
+                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{(item.ctaIcon || item.icon) && <DynamicIcon editPath="ctaIcon" name={item.ctaIcon || item.icon || ''} size={16} />}
                 </a>
               )}
             </div>
           </motion.div>
+            );
+          })()
         ))}
       </div>
     </div>
@@ -85,6 +97,9 @@ function ServiceModern({ headline, subline, badgeText, items }: SProps) {
       </motion.div>
       <div className="space-y-20">
         {items.map((item, i) => (
+          (() => {
+            const features = normalizeFeatures(item.features);
+            return (
           <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: i * 0.1 }} data-edit-collection="items" data-edit-index={i}>
             {item.mediaType === 'image' && item.image && (
               <div className="relative aspect-[21/9] rounded-lg overflow-hidden mb-8">
@@ -94,18 +109,20 @@ function ServiceModern({ headline, subline, badgeText, items }: SProps) {
             <div className="max-w-2xl">
               <h3 className="text-2xl font-medium text-[color:var(--token-body)] mb-3" data-edit-path="title">{item.title}</h3>
               <p className="text-[color:var(--token-body)] leading-loose rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />
-              {item.features && item.features.length > 0 && (
+              {features.length > 0 && (
                 <div className="flex flex-wrap gap-3 mt-4">
-                  {item.features.map((f, fi) => <span key={fi} className="text-xs text-[color:var(--token-muted)] border border-[var(--token-card-border)] rounded px-3 py-1" data-edit-collection="features" data-edit-index={fi}>{f}</span>)}
+                  {features.map((f, fi) => <span key={fi} className="text-xs text-[color:var(--token-muted)] border border-[var(--token-card-border)] rounded px-3 py-1" data-edit-collection="features" data-edit-index={fi}>{f}</span>)}
                 </div>
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 text-[color:var(--token-body)] font-medium mt-6 border-b border-[var(--token-body)] pb-0.5 hover:border-[var(--token-icon)] hover:text-[color:var(--token-icon)] transition-colors">
-                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon editPath="icon" name={item.icon} size={14} />}
+                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{(item.ctaIcon || item.icon) && <DynamicIcon editPath="ctaIcon" name={item.ctaIcon || item.icon || ''} size={14} />}
                 </a>
               )}
             </div>
           </motion.div>
+            );
+          })()
         ))}
       </div>
     </div>
@@ -126,6 +143,9 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
       </motion.div>
       <div className="space-y-6">
         {items.map((item, i) => (
+          (() => {
+            const features = normalizeFeatures(item.features);
+            return (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }}
             className="flex flex-col lg:flex-row gap-6 p-6 border-3 border-[var(--token-card-border)] shadow-[4px_4px_0_var(--token-body)] bg-[var(--token-card-bg)]" data-edit-collection="items" data-edit-index={i}>
             {item.mediaType === 'image' && item.image && (
@@ -139,18 +159,20 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
                 <h3 className="font-bold uppercase tracking-wide text-lg text-[color:var(--token-body)]" data-edit-path="title">{item.title}</h3>
               </div>
               <p className="text-[color:var(--token-body)] leading-relaxed rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />
-              {item.features && item.features.length > 0 && (
+              {features.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-4">
-                  {item.features.map((f, fi) => <span key={fi} className="text-xs font-bold uppercase bg-[color-mix(in_srgb,var(--token-card-bg)_70%,var(--token-icon)_30%)] text-[color:var(--token-body)] px-2 py-1" data-edit-collection="features" data-edit-index={fi}>{f}</span>)}
+                  {features.map((f, fi) => <span key={fi} className="text-xs font-bold uppercase bg-[color-mix(in_srgb,var(--token-card-bg)_70%,var(--token-icon)_30%)] text-[color:var(--token-body)] px-2 py-1" data-edit-collection="features" data-edit-index={fi}>{f}</span>)}
                 </div>
               )}
               {item.ctaLabel && item.ctaHref && (
                 <a href={item.ctaHref} className="inline-flex items-center gap-2 mt-4 font-bold uppercase text-sm text-[color:var(--token-body)] hover:text-[color:var(--token-icon)] transition-colors">
-                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon editPath="icon" name={item.icon} size={14} />}
+                  <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{(item.ctaIcon || item.icon) && <DynamicIcon editPath="ctaIcon" name={item.ctaIcon || item.icon || ''} size={14} />}
                 </a>
               )}
             </div>
           </motion.div>
+            );
+          })()
         ))}
       </div>
     </div>
