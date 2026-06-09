@@ -1,6 +1,8 @@
 import { getSectionTypesForIndustry } from '../app/admin/pages/[id]/section-types';
 import { SECTION_EDITOR_FIELD_DEFAULTS } from './section-editor-field-defaults';
 import { SECTION_PREVIEW_DATA } from './section-preview-data';
+import type { ColorFieldKey } from '../app/admin/pages/[id]/section-color-editor';
+import { SECTION_COLOR_CONTRACTS_GENERATED, SECTION_COLOR_CONTRACTS_GENERIC } from './section-color-contracts-generated';
 
 export type SectionFieldType =
   | 'text'
@@ -376,6 +378,30 @@ export function getAllSectionContracts(): SectionContract[] {
   });
 
   return derived.sort((a, b) => a.category.localeCompare(b.category) || a.label.localeCompare(b.label, 'de'));
+}
+
+export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
+  const industryKey = industry
+    ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
+    : null;
+  const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
+  const baseFields: ColorFieldKey[] = ['sectionBg'];
+
+  const mergeFields = (fields: ColorFieldKey[] | undefined): ColorFieldKey[] => {
+    const combined = [...baseFields, ...(fields || [])];
+    return combined.filter((field, index) => combined.indexOf(field) === index);
+  };
+
+  if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
+    return mergeFields((industrySpecific as ColorFieldKey[]).filter((field) => field !== 'sectionBgAlt'));
+  }
+
+  const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
+  if (Array.isArray(generic) && generic.length > 0) {
+    return mergeFields((generic as ColorFieldKey[]).filter((field) => field !== 'sectionBgAlt'));
+  }
+
+  return ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor'];
 }
 
 function categoryFor(type: string, category?: string): SectionContract['category'] {

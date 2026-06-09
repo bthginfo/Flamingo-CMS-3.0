@@ -49,6 +49,67 @@ export function composeColorWithAlpha(hex: string, alpha: number | undefined): s
   return `rgba(${r}, ${g}, ${b}, ${Number(a.toFixed(3))})`;
 }
 
+const FIELD_RENDER_ORDER: ColorFieldKey[] = [
+  'sectionBg',
+  'sectionBgAlt',
+  'cardBg',
+  'headingColor',
+  'subheadingColor',
+  'bodyColor',
+  'mutedColor',
+  'iconColor',
+  'accentColor',
+  'btnBg',
+  'btnText',
+  'badgeBg',
+  'badgeText',
+  'badgeBorder',
+  'borderColor',
+  'dividerColor',
+  'cardHeadingColor',
+  'cardBodyColor',
+  'cardMutedColor',
+  'cardBadgeBg',
+  'cardBadgeText',
+  'cardIconColor',
+  'imageOverlay',
+  'onDarkHeading',
+  'onDarkBody',
+  'onDarkMuted',
+  'eyebrow',
+  'statValue',
+  'quoteMark',
+  'ratingStar',
+  'check',
+  'btnSecondaryBg',
+  'btnSecondaryText',
+  'btnSecondaryBorder',
+  'linkColor',
+  'linkHoverColor',
+  'inputBg',
+  'inputBorder',
+  'inputText',
+  'labelColor',
+  'priceColor',
+  'priceStrikeColor',
+  'pageBg',
+  'shadowColor',
+  'successColor',
+  'successBg',
+  'dangerColor',
+  'dangerBg',
+  'cardRadius',
+  'buttonRadius',
+  'cardShadow',
+  'headingWeight',
+  'headingTracking',
+];
+
+function sortColorFields(fields: ColorFieldKey[]): ColorFieldKey[] {
+  const rank = new Map(FIELD_RENDER_ORDER.map((field, index) => [field, index]));
+  return [...fields].sort((left, right) => (rank.get(left) ?? 999) - (rank.get(right) ?? 999));
+}
+
 /* ─── All available color fields with categories ───
  *
  * Legacy field keys (textPrimary, textSecondary, brandPrimary, brandAccent,
@@ -270,7 +331,7 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
   const allFields = rawFields.filter((f) => !HIDDEN_FIELDS.has(f));
   
   // Split into color fields and design token fields
-  const colorFields = allFields.filter(f => FIELD_DEFS[f]?.type !== 'size');
+  const colorFields = sortColorFields(allFields.filter(f => FIELD_DEFS[f]?.type !== 'size'));
   const designFields = allFields.filter(f => FIELD_DEFS[f]?.type === 'size');
   // Split color fields by visibility group so the editor isn't overwhelming:
   //  - core:     always visible (the obvious 6–12 knobs)

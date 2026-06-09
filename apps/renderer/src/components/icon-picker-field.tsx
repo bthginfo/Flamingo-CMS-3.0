@@ -9,7 +9,9 @@ import { resolveIcon, canonicalIconName } from './ui/icon-map';
 // Get all icon names (filter out non-icon exports)
 const ALL_ICONS = Object.keys(icons).filter(
   k => k !== 'default' && k !== 'createLucideIcon' && k !== 'icons' &&
-    typeof (icons as Record<string, unknown>)[k] === 'object' && k[0] === k[0].toUpperCase()
+    typeof (icons as Record<string, unknown>)[k] === 'function' &&
+    k[0] === k[0].toUpperCase() &&
+    resolveIcon(k) !== null
 );
 
 function renderIcon(name: string, size = 18) {
