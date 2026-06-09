@@ -68,6 +68,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const [newFolderName, setNewFolderName] = useState('');
   const [pinnedFolders, setPinnedFolders] = useState<string[]>([]); // keeps empty folders visible
   const [movingAssetId, setMovingAssetId] = useState<string | null>(null); // card with open folder-picker
+  const [deletingFolder, setDeletingFolder] = useState(false);
   const folders = Array.from(new Set([...pinnedFolders, ...(assets.map(a => a.folder).filter(Boolean) as string[])])).sort();
   const visibleAssets = activeFolder === null ? assets : assets.filter(a => a.folder === activeFolder);
   const activeFolderCount = activeFolder ? assets.filter(a => a.folder === activeFolder).length : 0;
@@ -195,19 +196,26 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   };
 
   const handleDeleteFolder = async () => {
-    if (!activeFolder) return;
+    if (!activeFolder || deletingFolder) return;
     const count = assets.filter(a => a.folder === activeFolder).length;
     if (!confirm(`Ordner "${activeFolder}" mit ${count} Bild${count === 1 ? '' : 'ern'} wirklich komplett löschen?`)) return;
+    const folderToDelete = activeFolder;
+    setDeletingFolder(true);
+    const toastId = 'media-delete-folder';
+    toast.loading(`Ordner "${folderToDelete}" wird gelöscht...`, { id: toastId });
     try {
-      await deleteMediaFolder(activeFolder);
-      setAssets(prev => prev.filter(a => a.folder !== activeFolder));
-      setPinnedFolders(prev => prev.filter(f => f !== activeFolder));
-      setSelected(prev => prev && prev.folder === activeFolder ? null : prev);
-      setAltModalAsset(prev => prev && prev.folder === activeFolder ? null : prev);
+      const result = await deleteMediaFolder(folderToDelete);
+      setAssets(prev => prev.filter(a => a.folder !== folderToDelete));
+      setPinnedFolders(prev => prev.filter(f => f !== folderToDelete));
+      setSelected(prev => prev && prev.folder === folderToDelete ? null : prev);
+      setAltModalAsset(prev => prev && prev.folder === folderToDelete ? null : prev);
       setActiveFolder(null);
-      toast.success(`Ordner "${activeFolder}" gelöscht`);
-    } catch {
-      toast.error('Ordner konnte nicht gelöscht werden');
+      toast.success(`Ordner "${folderToDelete}" gelöscht (${result.deleted} Dateien)`, { id: toastId });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unbekannter Fehler';
+      toast.error(`Ordner konnte nicht gelöscht werden: ${message}`, { id: toastId });
+    } finally {
+      setDeletingFolder(false);
     }
   };
 
@@ -298,10 +306,12 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
         {activeFolder && (
           <button
             onClick={handleDeleteFolder}
+            disabled={deletingFolder}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-red-50 text-red-700 hover:bg-red-100 transition-colors border border-red-200"
             title={`Ordner ${activeFolder} mit ${activeFolderCount} Bildern löschen`}
           >
-            <Trash2 size={13} /> Ordner löschen ({activeFolderCount})
+            {deletingFolder ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+            {deletingFolder ? 'Löscht...' : `Ordner löschen (${activeFolderCount})`}
           </button>
         )}
       </div>

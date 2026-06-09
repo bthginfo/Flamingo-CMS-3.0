@@ -184,15 +184,15 @@ export async function deleteMediaFolder(folder: string) {
     .from(mediaAssets)
     .where(and(eq(mediaAssets.tenantId, tenantId), eq(mediaAssets.folder, cleaned)));
 
-  for (const asset of assets) {
-    try {
-      if (isAbsoluteUrl(asset.blobUrl)) {
-        await del(asset.blobUrl);
-      }
-    } catch {
-      // Ignore individual blob delete errors; DB record still gets removed.
-    }
-  }
+  const blobUrls = assets
+    .map(asset => asset.blobUrl)
+    .filter(isAbsoluteUrl);
+
+  await Promise.allSettled(
+    blobUrls.map(async (blobUrl) => {
+      await del(blobUrl);
+    }),
+  );
 
   await db.delete(mediaAssets)
     .where(and(eq(mediaAssets.tenantId, tenantId), eq(mediaAssets.folder, cleaned)));
