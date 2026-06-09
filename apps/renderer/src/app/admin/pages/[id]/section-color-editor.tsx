@@ -323,8 +323,10 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
   const [computedVars, setComputedVars] = useState<Record<string, string>>({});
   const probeRef = useRef<HTMLDivElement>(null);
   const overrides = migrateLegacyOverrides<ColorOverrides>(value);
-  const activeCount = Object.values(overrides).filter(Boolean).length;
   const rawFields = sectionType ? getFieldsForSection(sectionType, industry) : Object.keys(FIELD_DEFS) as ColorFieldKey[];
+  // Only count overrides that are actually used by this section (filter out legacy/copied values)
+  const relevantCSSVars = new Set(rawFields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean));
+  const activeCount = Object.entries(overrides).filter(([k, v]) => relevantCSSVars.has(k as string) && v).length;
   // Collapse the "auf Dunkel" duplicates — a single Headline/Body/Muted picker
   // writes both --token-* and --token-on-dark-* via FIELD_FANOUT below.
   const HIDDEN_FIELDS = new Set<ColorFieldKey>(['onDarkHeading', 'onDarkBody', 'onDarkMuted']);
@@ -531,8 +533,8 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
     );
   }
 
-  // Auto-open if there are any overrides or if we haven't explicitly closed it
-  const shouldDefaultOpen = activeCount > 0 || (open === false ? false : true);
+  // Only auto-open if there are active color overrides
+  const shouldDefaultOpen = activeCount > 0;
 
   return (
     <details className="mt-4 rounded-lg border border-blue-100 bg-blue-50/30 p-3" open={shouldDefaultOpen} onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
