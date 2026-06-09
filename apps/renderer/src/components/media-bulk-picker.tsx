@@ -12,6 +12,8 @@ export function MediaBulkPicker({ onSelect, onClose }: { onSelect: (images: { sr
   const [assets, setAssets] = useState<MediaAsset[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [folderFilter, setFolderFilter] = useState<string>('__all');
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     getMediaAssets().then(a => { setAssets(a); setLoading(false); }).catch(() => setLoading(false));
@@ -34,6 +36,28 @@ export function MediaBulkPicker({ onSelect, onClose }: { onSelect: (images: { sr
     onClose();
   }
 
+  const folders = Array.from(new Set(
+    assets
+      .map((a) => (a.folder || '').trim())
+      .filter((f) => f.length > 0)
+  )).sort((a, b) => a.localeCompare(b, 'de'));
+
+  const folderFilteredAssets = folderFilter === '__all'
+    ? assets
+    : folderFilter === '__none'
+      ? assets.filter((a) => !(a.folder || '').trim())
+      : assets.filter((a) => (a.folder || '').trim() === folderFilter);
+
+  const searchQuery = search.trim().toLowerCase();
+  const filteredAssets = !searchQuery
+    ? folderFilteredAssets
+    : folderFilteredAssets.filter((a) => {
+      const filename = (a.filename || '').toLowerCase();
+      const alt = (a.alt || '').toLowerCase();
+      const url = (a.blobUrl || '').toLowerCase();
+      return filename.includes(searchQuery) || alt.includes(searchQuery) || url.includes(searchQuery);
+    });
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50" onClick={onClose}>
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col" onClick={e => e.stopPropagation()}>
@@ -50,8 +74,48 @@ export function MediaBulkPicker({ onSelect, onClose }: { onSelect: (images: { sr
           ) : assets.length === 0 ? (
             <p className="text-sm text-zinc-400 text-center py-8">Keine Bilder in der Mediathek.</p>
           ) : (
-            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2">
-              {assets.map(asset => {
+            <div className="space-y-3">
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Bilder suchen (Dateiname, Alt-Text, URL)"
+                className="admin-input w-full text-sm"
+              />
+
+              <div className="flex flex-wrap items-center gap-2 border-b border-zinc-100 pb-3">
+                <button
+                  type="button"
+                  onClick={() => setFolderFilter('__all')}
+                  className={`px-2 py-1 text-xs rounded-full border ${folderFilter === '__all' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-300'}`}
+                >
+                  Alle ({assets.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFolderFilter('__none')}
+                  className={`px-2 py-1 text-xs rounded-full border ${folderFilter === '__none' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-300'}`}
+                >
+                  Ohne Ordner
+                </button>
+                {folders.map((folder) => (
+                  <button
+                    key={folder}
+                    type="button"
+                    onClick={() => setFolderFilter(folder)}
+                    className={`px-2 py-1 text-xs rounded-full border ${folderFilter === folder ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-zinc-200 text-zinc-600 hover:border-zinc-300'}`}
+                    title={folder}
+                  >
+                    {folder}
+                  </button>
+                ))}
+              </div>
+
+              {filteredAssets.length === 0 ? (
+                <p className="text-sm text-zinc-400 text-center py-10">Keine Bilder für den aktuellen Filter gefunden.</p>
+              ) : (
+              <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2">
+              {filteredAssets.map(asset => {
                 const isSelected = selected.has(asset.id);
                 return (
                   <button
@@ -69,6 +133,8 @@ export function MediaBulkPicker({ onSelect, onClose }: { onSelect: (images: { sr
                   </button>
                 );
               })}
+              </div>
+              )}
             </div>
           )}
         </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { upload } from '@vercel/blob/client';
 import { resizeImage } from '@/components/image-upload-field';
-import { saveMediaRecord, deleteMediaAsset, updateMediaAlt, updateMediaDimensions, updateMediaFolder, type MediaAsset } from '../media-actions';
+import { saveMediaRecord, deleteMediaAsset, deleteMediaFolder, updateMediaAlt, updateMediaDimensions, updateMediaFolder, type MediaAsset } from '../media-actions';
 import { toast } from 'sonner';
 import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2, Pencil, AlertTriangle, CheckCircle2, FolderPlus, Folder, FolderOpen, FolderInput } from 'lucide-react';
 import Image from 'next/image';
@@ -70,6 +70,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const [movingAssetId, setMovingAssetId] = useState<string | null>(null); // card with open folder-picker
   const folders = Array.from(new Set([...pinnedFolders, ...(assets.map(a => a.folder).filter(Boolean) as string[])])).sort();
   const visibleAssets = activeFolder === null ? assets : assets.filter(a => a.folder === activeFolder);
+  const activeFolderCount = activeFolder ? assets.filter(a => a.folder === activeFolder).length : 0;
   const missingAlt = assets.filter(asset => !asset.alt?.trim()).length;
   const largeFiles = assets.filter(asset => asset.size > 600 * 1024).length;
   const unknownDimensions = assets.filter(asset => !asset.width || !asset.height).length;
@@ -193,6 +194,23 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
     setShowNewFolder(false);
   };
 
+  const handleDeleteFolder = async () => {
+    if (!activeFolder) return;
+    const count = assets.filter(a => a.folder === activeFolder).length;
+    if (!confirm(`Ordner "${activeFolder}" mit ${count} Bild${count === 1 ? '' : 'ern'} wirklich komplett löschen?`)) return;
+    try {
+      await deleteMediaFolder(activeFolder);
+      setAssets(prev => prev.filter(a => a.folder !== activeFolder));
+      setPinnedFolders(prev => prev.filter(f => f !== activeFolder));
+      setSelected(prev => prev && prev.folder === activeFolder ? null : prev);
+      setAltModalAsset(prev => prev && prev.folder === activeFolder ? null : prev);
+      setActiveFolder(null);
+      toast.success(`Ordner "${activeFolder}" gelöscht`);
+    } catch {
+      toast.error('Ordner konnte nicht gelöscht werden');
+    }
+  };
+
   const setAssetAlt = (asset: MediaAsset, alt: string) => {
     setAssets(prev => prev.map(item => item.id === asset.id ? { ...item, alt } : item));
     setSelected(prev => prev?.id === asset.id ? { ...prev, alt } : prev);
@@ -275,6 +293,15 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-zinc-100 text-zinc-500 hover:bg-zinc-200 transition-colors border border-dashed border-zinc-300"
           >
             <FolderPlus size={13} /> Neuer Ordner
+          </button>
+        )}
+        {activeFolder && (
+          <button
+            onClick={handleDeleteFolder}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-red-50 text-red-700 hover:bg-red-100 transition-colors border border-red-200"
+            title={`Ordner ${activeFolder} mit ${activeFolderCount} Bildern löschen`}
+          >
+            <Trash2 size={13} /> Ordner löschen ({activeFolderCount})
           </button>
         )}
       </div>

@@ -173,3 +173,30 @@ export async function updateMediaFolder(id: string, folder: string | null) {
   revalidatePath('/admin/media');
   return { success: true };
 }
+
+export async function deleteMediaFolder(folder: string) {
+  const tenantId = await requireTenant();
+  const db = getDb();
+  const cleaned = folder.trim();
+  if (!cleaned) throw new Error('Folder name is required');
+
+  const assets = await db.select({ id: mediaAssets.id, blobUrl: mediaAssets.blobUrl })
+    .from(mediaAssets)
+    .where(and(eq(mediaAssets.tenantId, tenantId), eq(mediaAssets.folder, cleaned)));
+
+  for (const asset of assets) {
+    try {
+      if (isAbsoluteUrl(asset.blobUrl)) {
+        await del(asset.blobUrl);
+      }
+    } catch {
+      // Ignore individual blob delete errors; DB record still gets removed.
+    }
+  }
+
+  await db.delete(mediaAssets)
+    .where(and(eq(mediaAssets.tenantId, tenantId), eq(mediaAssets.folder, cleaned)));
+
+  revalidatePath('/admin/media');
+  return { success: true, deleted: assets.length };
+}
