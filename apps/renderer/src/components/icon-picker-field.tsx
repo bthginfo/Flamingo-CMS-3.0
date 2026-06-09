@@ -1,18 +1,17 @@
 'use client';
 
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react';
-import { createPortal } from 'react-dom';
 import { Search, X } from 'lucide-react';
 import * as icons from 'lucide-react';
 import { resolveIcon, canonicalIconName } from './ui/icon-map';
 
-// Get all icon names (filter out non-icon exports)
-const ALL_ICONS = Object.keys(icons).filter(
-  k => k !== 'default' && k !== 'createLucideIcon' && k !== 'icons' &&
-    typeof (icons as Record<string, unknown>)[k] === 'function' &&
-    k[0] === k[0].toUpperCase() &&
-    resolveIcon(k) !== null
-);
+// Build the icon list from lucide exports. Do not require function exports
+// because newer bundling can represent component exports differently.
+const ALL_ICONS = Object.keys(icons).filter((k) => {
+  if (k === 'default' || k === 'createLucideIcon' || k === 'icons') return false;
+  if (!k || k[0] !== k[0].toUpperCase()) return false;
+  return resolveIcon(k) !== null;
+});
 
 function renderIcon(name: string, size = 18) {
   const Icon = resolveIcon(name);
@@ -108,7 +107,7 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
         )}
       </button>
 
-      {open && mounted && createPortal(
+      {open && mounted && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
@@ -154,7 +153,7 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
 
             {/* Footer with count */}
             <div className="px-5 py-3 border-t border-gray-100 text-xs text-gray-400 flex items-center justify-between">
-              <span>{filtered.length} Icons{search ? ` für „${search}"` : ''}</span>
+              <span>{filtered.length} Icons{search ? ` für "${search}"` : ''}</span>
               {value && (
                 <span className="flex items-center gap-1.5 text-gray-600">
                   Aktuell: {renderIcon(value, 14)} <strong>{value}</strong>
@@ -162,8 +161,7 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
               )}
             </div>
           </div>
-        </div>,
-        document.body
+        </div>
       )}
     </div>
   );
