@@ -301,19 +301,31 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
 // reverse-maps them to ColorFieldKey via FIELD_DEFS. Regenerate with:
 //   node scripts/generate-section-color-contracts.cjs
 export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
+  const ensureSecondaryButtonFields = (fields: ColorFieldKey[]): ColorFieldKey[] => {
+    const next = new Set(fields);
+    // If a section already uses primary button tokens, expose secondary button
+    // controls as well so editors can style optional secondary CTAs consistently.
+    if (next.has('btnBg') || next.has('btnText')) {
+      next.add('btnSecondaryBg');
+      next.add('btnSecondaryText');
+      next.add('btnSecondaryBorder');
+    }
+    return Array.from(next);
+  };
+
   const industryKey = industry
     ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
     : null;
   const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
   if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
-    return (industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt');
+    return ensureSecondaryButtonFields((industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'));
   }
   const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
   if (Array.isArray(generic) && generic.length > 0) {
-    return (generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt');
+    return ensureSecondaryButtonFields((generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'));
   }
   // No codegen entry → minimal safe set. Re-run the generator to fix.
-  return ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor'];
+  return ensureSecondaryButtonFields(['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText']);
 }
 
 

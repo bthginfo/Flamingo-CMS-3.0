@@ -683,7 +683,10 @@ html {
 @layer base {
   .rt-content p + p { margin-top: 0.5em; }
   .rt-content a { text-decoration: underline; text-underline-offset: 2px; }
+  .rt-content b,
   .rt-content strong { font-weight: 700; }
+  .rt-content i,
+  .rt-content em { font-style: italic; }
   .rt-content strong { color: currentColor; }
 }
 

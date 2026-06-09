@@ -2,7 +2,7 @@
 
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { plain } from '@/lib/strip-html';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 type Cta = { label?: string; href?: string };
 type Fact = { value?: string; label?: string };
@@ -14,6 +14,7 @@ export function GlowHeroSection({ data }: Props) {
   const eyebrow = (data.eyebrow as string) || '';
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
+  const sublineHtml = sanitizeHtml(subline);
   const image = (data.image as string) || (data.bgImage as string) || '';
   const imagePosition = (data.imagePosition as string) || (data.bgPosition as string) || 'center';
   const glowColor = (data.glowColor as string) || 'rgba(242,65,113,0.45)';
@@ -48,7 +49,13 @@ export function GlowHeroSection({ data }: Props) {
         <div className="max-w-5xl">
           {eyebrow && <div className="mb-5 text-xs font-bold uppercase tracking-[0.24em] text-[color:var(--token-eyebrow)]" data-edit-path="eyebrow">{eyebrow}</div>}
           <h1 className="text-5xl font-black leading-none text-[color:var(--token-heading)] md:text-7xl lg:text-8xl" data-edit-path="headline">{headline}</h1>
-          {subline && <p className="mt-7 max-w-2xl text-lg leading-8 text-[color:var(--token-subheading)] md:text-xl" data-edit-path="subline">{plain(subline)}</p>}
+          {sublineHtml && (
+            <div
+              className="mt-7 max-w-2xl text-lg leading-8 text-[color:var(--token-subheading)] md:text-xl rt-content"
+              data-edit-rich="subline"
+              dangerouslySetInnerHTML={{ __html: sublineHtml }}
+            />
+          )}
           <div className="mt-9 flex flex-wrap gap-3">
             {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[color:var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
             {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 text-sm font-bold text-[color:var(--token-body)] backdrop-blur" data-edit-path="label">{secondaryCta.label}</a>}

@@ -1716,6 +1716,107 @@ function CollectionHeroEditor({ data, onChange }: EditorProps) {
   );
 }
 
+// ─── Glow Hero Editor ─────────────────────────────────────────────
+function GlowHeroEditor({ data, onChange }: EditorProps) {
+  const controlledKeys = new Set([
+    'eyebrow', 'headline', 'subline',
+    'image', 'bgImage', 'backgroundImage',
+    'imagePosition', 'bgPosition',
+    'glowColor', 'primaryCta', 'secondaryCta', 'facts',
+  ]);
+
+  const passthrough = Object.fromEntries(
+    Object.entries(data).filter(([key]) => !controlledKeys.has(key))
+  );
+
+  const [d, setD] = useState(() => ({
+    eyebrow: (data.eyebrow as string) || '',
+    headline: (data.headline as string) || '',
+    subline: (data.subline as string) || '',
+    image: (data.image as string) || (data.bgImage as string) || (data.backgroundImage as string) || '',
+    imagePosition: (data.imagePosition as string) || (data.bgPosition as string) || 'center',
+    glowColor: (data.glowColor as string) || 'rgba(242,65,113,0.45)',
+    primaryCta: {
+      label: ((data.primaryCta as { label?: string; href?: string; icon?: string } | undefined)?.label || ''),
+      href: ((data.primaryCta as { label?: string; href?: string; icon?: string } | undefined)?.href || ''),
+      icon: ((data.primaryCta as { label?: string; href?: string; icon?: string } | undefined)?.icon || ''),
+    },
+    secondaryCta: {
+      label: ((data.secondaryCta as { label?: string; href?: string; icon?: string } | undefined)?.label || ''),
+      href: ((data.secondaryCta as { label?: string; href?: string; icon?: string } | undefined)?.href || ''),
+      icon: ((data.secondaryCta as { label?: string; href?: string; icon?: string } | undefined)?.icon || ''),
+    },
+    facts: Array.isArray(data.facts)
+      ? (data.facts as Array<{ value?: string; label?: string }>).map((fact) => ({ value: fact?.value || '', label: fact?.label || '' }))
+      : [],
+  }));
+
+  useReport({
+    ...passthrough,
+    eyebrow: d.eyebrow,
+    headline: d.headline,
+    subline: d.subline,
+    image: d.image,
+    bgImage: d.image,
+    imagePosition: d.imagePosition,
+    bgPosition: d.imagePosition,
+    glowColor: d.glowColor,
+    primaryCta: d.primaryCta,
+    secondaryCta: d.secondaryCta,
+    facts: d.facts.filter((fact) => (fact.value || '').trim() || (fact.label || '').trim()),
+  } as unknown as Record<string, unknown>, onChange);
+
+  function updateFact(index: number, key: 'value' | 'label', value: string) {
+    setD((prev) => ({
+      ...prev,
+      facts: prev.facts.map((fact, i) => (i === index ? { ...fact, [key]: value } : fact)),
+    }));
+  }
+
+  function addFact() {
+    setD((prev) => ({ ...prev, facts: [...prev.facts, { value: '', label: '' }] }));
+  }
+
+  function removeFact(index: number) {
+    setD((prev) => ({ ...prev, facts: prev.facts.filter((_, i) => i !== index) }));
+  }
+
+  return (
+    <div className="space-y-3">
+      <Field label={fieldLabel('eyebrow')} value={d.eyebrow} onChange={(v) => setD({ ...d, eyebrow: v })} />
+      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
+      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
+
+      <ImageUploadField
+        label={fieldLabel('image')}
+        value={d.image}
+        onChange={(v) => setD({ ...d, image: v })}
+        position={d.imagePosition}
+        onPositionChange={(v) => setD({ ...d, imagePosition: v })}
+      />
+
+      <ColorField label="Glow-Farbe" value={d.glowColor} onChange={(v) => setD({ ...d, glowColor: v })} allowEmpty />
+
+      <ButtonField label="Primärer Button" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: { ...v, icon: v.icon || '' } })} />
+      <ButtonField label="Sekundärer Button" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: { ...v, icon: v.icon || '' } })} />
+
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium text-zinc-600">Fakten</label>
+          <button type="button" onClick={addFact} className="text-xs text-blue-600 hover:underline">+ Fakt</button>
+        </div>
+        {d.facts.map((fact, i) => (
+          <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-2 items-start">
+            <Field label="Wert" value={fact.value || ''} onChange={(v) => updateFact(i, 'value', v)} />
+            <Field label="Label" value={fact.label || ''} onChange={(v) => updateFact(i, 'label', v)} />
+            <button type="button" onClick={() => removeFact(i)} className="text-xs text-red-500 hover:text-red-600 mt-6">Entfernen</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── TextImage Editor ────────────────────────────────────────────
 function TextImageEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({
@@ -3682,7 +3783,7 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   popup: PopupEditor,
   templateAdvantage: SchemaSectionEditor,
   principlesGrid: SchemaSectionEditor,
-  glowHero: SchemaSectionEditor,
+  glowHero: GlowHeroEditor,
   floristHero: SchemaSectionEditor,
   bouquetShowcase: ProductShowcaseEditor,
   occasionMosaic: CategoryMosaicEditor,
