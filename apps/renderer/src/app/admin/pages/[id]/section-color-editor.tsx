@@ -318,15 +318,19 @@ export function getFieldsForSection(sectionType: string, industry?: string): Col
 
 
 export function SectionColorEditor({ value, onChange, sectionType, industry, resolvedVars, iframeRef, sectionId }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string; industry?: string; resolvedVars?: Record<string, string>; iframeRef?: React.RefObject<HTMLIFrameElement | null>; sectionId?: string }) {
-  const [open, setOpen] = useState(false);
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [computedVars, setComputedVars] = useState<Record<string, string>>({});
   const probeRef = useRef<HTMLDivElement>(null);
   const overrides = migrateLegacyOverrides<ColorOverrides>(value);
   const rawFields = sectionType ? getFieldsForSection(sectionType, industry) : Object.keys(FIELD_DEFS) as ColorFieldKey[];
   // Only count overrides that are actually used by this section (filter out legacy/copied values)
   const relevantCSSVars = new Set(rawFields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean));
   const activeCount = Object.entries(overrides).filter(([k, v]) => relevantCSSVars.has(k as string) && v).length;
+  
+  // Only auto-open if there are active color overrides
+  const shouldDefaultOpen = activeCount > 0;
+  
+  const [open, setOpen] = useState(shouldDefaultOpen);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [computedVars, setComputedVars] = useState<Record<string, string>>({});
   // Collapse the "auf Dunkel" duplicates — a single Headline/Body/Muted picker
   // writes both --token-* and --token-on-dark-* via FIELD_FANOUT below.
   const HIDDEN_FIELDS = new Set<ColorFieldKey>(['onDarkHeading', 'onDarkBody', 'onDarkMuted']);
@@ -533,11 +537,8 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
     );
   }
 
-  // Only auto-open if there are active color overrides
-  const shouldDefaultOpen = activeCount > 0;
-
   return (
-    <details className="mt-4 rounded-lg border border-blue-100 bg-blue-50/30 p-3" open={shouldDefaultOpen} onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
+    <details className="mt-4 rounded-lg border border-blue-100 bg-blue-50/30 p-3" open={open} onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
       <summary className="text-xs font-semibold text-gray-700 cursor-pointer flex items-center gap-2 hover:text-gray-900 transition-colors">
         <Palette size={14} className="text-blue-600" /> 
         <span>Farben anpassen</span>
