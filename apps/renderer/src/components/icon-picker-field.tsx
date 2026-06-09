@@ -26,7 +26,12 @@ function renderIcon(name: string, size = 18) {
 export function IconPickerField({ label, value, onChange }: { label: string; value: string; onChange: (icon: string) => void }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (open && inputRef.current) {
@@ -81,16 +86,29 @@ export function IconPickerField({ label, value, onChange }: { label: string; val
           <>
             {renderIcon(value, 16)}
             <span className="text-xs truncate flex-1">{value}</span>
-            <button type="button" onClick={(e) => { e.stopPropagation(); onChange(''); }} className="text-gray-400 hover:text-red-500">
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={(e) => { e.stopPropagation(); onChange(''); }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onChange('');
+                }
+              }}
+              className="text-gray-400 hover:text-red-500"
+              aria-label="Icon entfernen"
+            >
               <X size={12} />
-            </button>
+            </span>
           </>
         ) : (
           <span className="text-xs text-gray-400">Icon auswählen...</span>
         )}
       </button>
 
-      {open && createPortal(
+      {open && mounted && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
