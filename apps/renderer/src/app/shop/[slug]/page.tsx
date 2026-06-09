@@ -8,9 +8,10 @@ import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { ShopProductDetailSection } from '@/templates/shared/shop-product-detail';
 import { getDb } from '@/lib/db';
-import { products } from '@flamingo/db';
+import { products, tenantDomains, tenants } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 
 export const revalidate = 60;
 
@@ -49,6 +50,30 @@ async function resolveTenantForProduct(slug: string, queryTenantId: string | nul
   return matches[0]?.tenantId ?? null;
 }
 
+async function resolveLinkPrefixForTenant(tenantId: string) {
+  if (process.env.FIXED_TENANT_ID) return '';
+
+  const host = ((await headers()).get('host') || '').toLowerCase();
+  if (!host) return '';
+
+  const db = getDb();
+  const [domainMatch] = await db
+    .select({ tenantId: tenantDomains.tenantId })
+    .from(tenantDomains)
+    .where(eq(tenantDomains.domain, host))
+    .limit(1);
+
+  if (domainMatch?.tenantId === tenantId) return '';
+
+  const [tenant] = await db
+    .select({ slug: tenants.slug })
+    .from(tenants)
+    .where(eq(tenants.id, tenantId))
+    .limit(1);
+
+  return tenant?.slug ? `/${tenant.slug}` : '';
+}
+
 export async function generateMetadata({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: SearchParams }): Promise<Metadata> {
   const { slug } = await params;
   const query = await searchParams;
@@ -73,6 +98,7 @@ export default async function ShopProductPage({ params, searchParams }: { params
   const query = await searchParams;
   const tenantId = await resolveTenantForProduct(slug, query?.tenantId || null);
   if (!tenantId) notFound();
+  const linkPrefix = await resolveLinkPrefixForTenant(tenantId);
 
   const [navData, footerData, { brand, contact, socialLinks, design }, tenantStyle] = await Promise.all([
     getTenantNav(tenantId),
@@ -112,11 +138,11 @@ export default async function ShopProductPage({ params, searchParams }: { params
       {jsonLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       )}
-      <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={false} cta={navData.cta} />
+      <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={false} cta={navData.cta} linkPrefix={linkPrefix} />
       <main className="max-w-6xl mx-auto px-6">
-        <ShopProductDetailSection data={{ _slug: slug, tenantId }} />
+        <ShopProductDetailSection data={{ _slug: slug, tenantId, basePath: `${linkPrefix}/shop` || '/shop' }} />
       </main>
-      <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} />
+      <SiteFooter footer={footerData} brand={brand} contact={contact} socialLinks={socialLinks} linkPrefix={linkPrefix} />
     </div>
   );
 }

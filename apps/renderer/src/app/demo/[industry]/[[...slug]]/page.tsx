@@ -90,6 +90,129 @@ function prefixSections(sections: SnapshotSection[], prefix: string): SnapshotSe
   }));
 }
 
+function readText(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function normalizeDemoShopSections(
+  sections: SnapshotSection[],
+  targetSlug: string,
+  contact: Record<string, unknown> | null | undefined,
+): SnapshotSection[] {
+  const isSubpage = targetSlug !== '' && targetSlug !== 'home' && targetSlug !== 'startseite';
+  const ctaRedOverrides: Record<string, string> = {
+    '--token-section-bg': '#4A1625',
+    '--token-section-bg-alt': '#6B2436',
+    '--token-card-bg': '#5B1D2E',
+    '--token-card-border': '#8A4354',
+    '--token-heading': '#FFFFFF',
+    '--token-body': 'rgba(255,255,255,0.88)',
+    '--token-muted': 'rgba(255,255,255,0.68)',
+    '--token-btn-bg': '#4A1625',
+    '--token-btn-text': '#FFFFFF',
+  };
+
+  return sections.map((section) => {
+    let nextData = section.data;
+    let nextStyleOverrides = section.styleOverrides;
+
+    if (section.type === 'socialProofBar') {
+      const items = (section.data.items as Array<Record<string, unknown>> | undefined) ?? [];
+      if (items.length > 0 && items.some(item => !readText(item.value) && readText(item.text))) {
+        nextData = {
+          ...nextData,
+          items: items.map((item) => {
+            const value = readText(item.value) || readText(item.text);
+            const label = readText(item.label);
+            return {
+              ...item,
+              value,
+              label,
+            };
+          }),
+        };
+      }
+    }
+
+    if (section.type === 'portfolio') {
+      const projects = Array.isArray(section.data.projects) ? (section.data.projects as Array<Record<string, unknown>>) : [];
+      const items = Array.isArray(section.data.items) ? (section.data.items as Array<Record<string, unknown>>) : [];
+      if (projects.length === 0 && items.length > 0) {
+        nextData = {
+          ...nextData,
+          projects: items.map((item) => {
+            const meta = Array.isArray(item.meta) ? (item.meta as Array<Record<string, unknown>>) : [];
+            return {
+              title: readText(item.title),
+              category: readText(item.category),
+              description: readText(item.description) || readText(item.text),
+              image: readText(item.image),
+              href: readText(item.href),
+              icon: readText(item.icon),
+              stats: meta
+                .map((entry) => ({
+                  label: readText(entry.label),
+                  value: readText(entry.value),
+                }))
+                .filter((entry) => entry.label || entry.value),
+            };
+          }).filter((project) => project.title),
+        };
+      }
+    }
+
+    if (section.type === 'featureShowcase') {
+      const hasImage = readText(section.data.image)
+        || readText(section.data.imageUrl)
+        || readText(section.data.imageSrc)
+        || readText(section.data.backgroundImage)
+        || readText(section.data.bgImage)
+        || readText(section.data.media);
+      if (!hasImage) {
+        nextData = {
+          ...nextData,
+          image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1600&q=82',
+        };
+      }
+    }
+
+    if (section.type === 'contact') {
+      const infoCards = Array.isArray(section.data.infoCards) ? (section.data.infoCards as Array<Record<string, unknown>>) : [];
+      const hasContent = infoCards.some((card) => readText(card.value));
+      if (!hasContent) {
+        const fallbackCards = [
+          { icon: 'phone', label: 'Telefon', value: readText(contact?.phone) },
+          { icon: 'mail', label: 'E-Mail', value: readText(contact?.email) },
+          { icon: 'map-pin', label: 'Standort', value: readText(contact?.address) },
+        ].filter((card) => card.value);
+
+        if (fallbackCards.length > 0) {
+          nextData = {
+            ...nextData,
+            infoCards: fallbackCards,
+          };
+        }
+      }
+    }
+
+    if (isSubpage && section.type === 'ctaBand') {
+      nextStyleOverrides = {
+        ...((section.styleOverrides as Record<string, unknown> | null) || {}),
+        ...ctaRedOverrides,
+      };
+    }
+
+    if (nextData === section.data && nextStyleOverrides === section.styleOverrides) {
+      return section;
+    }
+    return {
+      ...section,
+      data: nextData,
+      styleOverrides: nextStyleOverrides,
+    };
+  });
+}
+
 /** Extract best image from a collection item */
 function extractItemImage(item: SnapshotCollectionItem): string | undefined {
   if (item.data.image) return item.data.image as string;
@@ -151,7 +274,11 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
     if (!page) return notFound();
     const siteData = getDemoSiteData(industry as IndustryKey);
     const demoPrefix = `/demo/${industry}`;
-    const staticSections = prefixSections(page.sections.filter(s => s.visible) as SnapshotSection[], demoPrefix);
+    const visibleSections = page.sections.filter(s => s.visible) as SnapshotSection[];
+    const normalizedSections = industry === 'shop'
+      ? normalizeDemoShopSections(visibleSections, targetSlug, siteData.contact as Record<string, unknown> | undefined)
+      : visibleSections;
+    const staticSections = prefixSections(normalizedSections, demoPrefix);
     preloadHeroImages(staticSections);
     return (
       <DemoPageShell
@@ -248,7 +375,11 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
 
   const firstIsHero = isHeroSection(page.sections[0]?.type);
   const sectionsNeedingTenantId = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
-  const finalSections = injectCollections(prefixSections(page.sections.filter(s => s.visible).map(s => (s.type.startsWith('shop') || sectionsNeedingTenantId.has(s.type)) ? { ...s, data: { ...s.data, tenantId, ...(s.type.startsWith('shop') ? { basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}) } : {}) } } : s), demoPrefix), snapshot.collections, demoPrefix);
+  const visibleSections = page.sections.filter(s => s.visible).map(s => (s.type.startsWith('shop') || sectionsNeedingTenantId.has(s.type)) ? { ...s, data: { ...s.data, tenantId, ...(s.type.startsWith('shop') ? { basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}) } : {}) } } : s);
+  const normalizedSections = industry === 'shop'
+    ? normalizeDemoShopSections(visibleSections, targetSlug, brandData.contact)
+    : visibleSections;
+  const finalSections = injectCollections(prefixSections(normalizedSections, demoPrefix), snapshot.collections, demoPrefix);
   preloadHeroImages(finalSections);
 
   return (
