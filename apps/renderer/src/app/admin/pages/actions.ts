@@ -117,7 +117,7 @@ export async function getPageWithSectionsAction(pageId: string) {
   }));
   // Load shop products for live preview (avoid client-side fetch in admin iframe)
   const previewProducts = shopAddonResult[0]?.active
-    ? await db.select().from(products).where(and(eq(products.tenantId, session.tenantId), eq(products.status, 'active'))).limit(20)
+    ? await db.select().from(products).where(and(eq(products.tenantId, session.tenantId), eq(products.status, 'active'))).limit(100)
     : [];
   return { page, sections: sectionsResult, industry: tenant?.industry ?? 'tradesman', styleVariant: 'classic', brand: (brandResult[0]?.brand as Record<string, string>) || {}, hasShop: !!shopAddonResult[0]?.active, hasBooking: !!bookingAddonResult[0]?.active, i18n, collections: previewCollections, tenantId: session.tenantId, previewProducts };
 }

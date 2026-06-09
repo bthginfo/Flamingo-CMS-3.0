@@ -33,11 +33,39 @@ export function ShopFeaturedProductsSection({ data }: Props) {
   const count = (data.count as number) || 4;
   const columns = (data.columns as number) || 4;
   const shopBase = (data.basePath as string) || '/shop';
-  const previewProducts = (data.products as Product[] | undefined) || [];
-  const [products, setProducts] = useState<Product[]>(previewProducts.slice(0, count));
+  const previewProducts = Array.isArray(data.products) ? (data.products as Product[]) : [];
+
+  const getProductsFromPreview = () => {
+    let items = previewProducts;
+    if (mode === 'manual' && productIds.length > 0) {
+      const wanted = new Set(productIds);
+      items = items.filter((p) => wanted.has(p.id));
+    }
+    if (mode === 'category' && categorySlug) {
+      items = items.filter((p) => {
+        const productCategorySlug = (p as Product & { categorySlug?: string }).categorySlug;
+        return productCategorySlug === categorySlug;
+      });
+    }
+    return items.slice(0, count);
+  };
+
+  const [products, setProducts] = useState<Product[]>(getProductsFromPreview());
+  const previewProductKey = previewProducts.map((p) => p.id).join(',');
 
   useEffect(() => {
-    if (previewProducts.length > 0) return;
+    const localProducts = getProductsFromPreview();
+    const needsFetch = mode === 'manual'
+      ? localProducts.length < Math.min(count, productIds.length || count)
+      : mode === 'category'
+        ? localProducts.length < count
+        : localProducts.length === 0;
+
+    if (!needsFetch) {
+      setProducts(localProducts);
+      return;
+    }
+
     let url = '/api/shop/products?limit=' + count;
     const tenantId = (data.tenantId as string | undefined) || getPreviewTenantId();
     if (tenantId) url += '&tenantId=' + encodeURIComponent(tenantId);
@@ -50,7 +78,7 @@ export function ShopFeaturedProductsSection({ data }: Props) {
     fetch(url)
       .then(r => r.json())
       .then(d => setProducts((d.products || []).slice(0, count)));
-  }, [mode, categorySlug, count, productIds.join(','), data.tenantId, previewProducts.length]);
+  }, [mode, categorySlug, count, productIds.join(','), data.tenantId, previewProductKey]);
 
   if (products.length === 0) return null;
 
