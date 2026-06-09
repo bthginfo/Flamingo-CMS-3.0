@@ -5,7 +5,7 @@ import { upload } from '@vercel/blob/client';
 import { resizeImage } from '@/components/image-upload-field';
 import { saveMediaRecord, deleteMediaAsset, updateMediaAlt, updateMediaDimensions, updateMediaFolder, type MediaAsset } from '../media-actions';
 import { toast } from 'sonner';
-import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2, Pencil, AlertTriangle, CheckCircle2, FolderPlus, Folder, FolderOpen } from 'lucide-react';
+import { Upload, Trash2, Copy, Image as ImageIcon, X, Loader2, Pencil, AlertTriangle, CheckCircle2, FolderPlus, Folder, FolderOpen, FolderInput } from 'lucide-react';
 import Image from 'next/image';
 
 const ALLOWED_IMAGE_ACCEPT = 'image/png,image/jpeg,image/webp,image/gif,image/avif';
@@ -66,7 +66,9 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const [activeFolder, setActiveFolder] = useState<string | null>(null); // null = "Alle"
   const [showNewFolder, setShowNewFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
-  const folders = Array.from(new Set(assets.map(a => a.folder).filter(Boolean) as string[])).sort();
+  const [pinnedFolders, setPinnedFolders] = useState<string[]>([]); // keeps empty folders visible
+  const [movingAssetId, setMovingAssetId] = useState<string | null>(null); // card with open folder-picker
+  const folders = Array.from(new Set([...pinnedFolders, ...(assets.map(a => a.folder).filter(Boolean) as string[])])).sort();
   const visibleAssets = activeFolder === null ? assets : assets.filter(a => a.folder === activeFolder);
   const missingAlt = assets.filter(asset => !asset.alt?.trim()).length;
   const largeFiles = assets.filter(asset => asset.size > 600 * 1024).length;
@@ -102,6 +104,13 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
 
     return () => { cancelled = true; };
   }, [assets, rememberDimensions]);
+
+  useEffect(() => {
+    if (!movingAssetId) return;
+    const close = () => setMovingAssetId(null);
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, [movingAssetId]);
 
   const handleUpload = useCallback(async (files: FileList | File[]) => {
     const MAX_SIZE = 1 * 1024 * 1024; // 1 MB
@@ -145,7 +154,7 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
     } finally {
       setUploading(false);
     }
-  }, []);
+  }, [activeFolder]);
 
   const handleDelete = async (asset: MediaAsset) => {
     if (!confirm(`"${asset.filename}" wirklich löschen?`)) return;
@@ -178,12 +187,8 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
   const createFolder = () => {
     const name = newFolderName.trim();
     if (!name) return;
-    if (folders.includes(name)) {
-      setActiveFolder(name);
-    } else {
-      // Folder becomes real once the first image is assigned to it
-      setActiveFolder(name);
-    }
+    setPinnedFolders(prev => prev.includes(name) ? prev : [...prev, name]);
+    setActiveFolder(name);
     setNewFolderName('');
     setShowNewFolder(false);
   };
@@ -380,6 +385,38 @@ export function MediaLibrary({ initialAssets }: { initialAssets: MediaAsset[] })
               >
                 <Pencil size={14} />
               </button>
+              <button
+                onClick={e => { e.stopPropagation(); setMovingAssetId(movingAssetId === asset.id ? null : asset.id); }}
+                className="absolute top-2 right-20 w-7 h-7 rounded-lg bg-violet-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-violet-700"
+                title="In Ordner verschieben"
+              >
+                <FolderInput size={14} />
+              </button>
+              {movingAssetId === asset.id && (
+                <div className="absolute top-10 right-2 z-30 bg-white rounded-xl shadow-xl border border-zinc-100 p-2 min-w-[160px]" onClick={e => e.stopPropagation()}>
+                  <p className="text-[10px] font-semibold text-zinc-400 px-2 pb-1">Ordner wählen</p>
+                  <button
+                    onClick={() => { moveToFolder(asset, null); setMovingAssetId(null); }}
+                    className={`w-full text-left text-xs px-2 py-1.5 rounded-lg hover:bg-zinc-50 ${
+                      !asset.folder ? 'font-semibold text-violet-600' : 'text-zinc-600'
+                    }`}
+                  >— Kein Ordner —</button>
+                  {folders.map(f => (
+                    <button
+                      key={f}
+                      onClick={() => { moveToFolder(asset, f); setMovingAssetId(null); }}
+                      className={`w-full text-left text-xs px-2 py-1.5 rounded-lg hover:bg-zinc-50 flex items-center gap-1.5 ${
+                        asset.folder === f ? 'font-semibold text-violet-600' : 'text-zinc-600'
+                      }`}
+                    >
+                      <Folder size={10} /> {f}
+                    </button>
+                  ))}
+                  {folders.length === 0 && (
+                    <p className="text-[10px] text-zinc-400 px-2 py-1">Noch keine Ordner angelegt.</p>
+                  )}
+                </div>
+              )}
             </div>
               );
             })()
