@@ -66,6 +66,7 @@ export function CollectionListSection({ data }: Props) {
   const collectionBasePath = (data.collectionBasePath as string) || '';
 
   const [sortBy, setSortBy] = useState<SortOption>(defaultSort);
+  const [brokenImages, setBrokenImages] = useState<Set<string>>(new Set());
   const sorted = useMemo(() => sortItems(items, sortBy), [items, sortBy]);
 
   const gridCols = columns === 2 ? 'md:grid-cols-2' : columns === 4 ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3';
@@ -110,12 +111,13 @@ export function CollectionListSection({ data }: Props) {
               transition={{ delay: i * 0.05, duration: 0.4 }}
               className="group block rounded-xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] overflow-hidden shadow-sm hover:shadow-md transition-shadow"
              data-edit-collection="sorted" data-edit-index={i}>
-              {showImage && item.image && (
+              {showImage && item.image && !brokenImages.has(item.image) && (
                 <div className="aspect-[16/10] overflow-hidden">
                   <img data-edit-image="image"
                     src={item.image}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    onError={() => setBrokenImages(prev => new Set(prev).add(item.image!))}
                   />
                 </div>
               )}

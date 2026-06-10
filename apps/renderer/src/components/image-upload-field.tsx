@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { upload } from '@vercel/blob/client';
 import { ImageIcon, Upload, X, Link as LinkIcon, FolderOpen } from 'lucide-react';
-import { saveMediaRecord, getMediaAssets, type MediaAsset } from '@/app/admin/media-actions';
+import { saveMediaRecord, getMediaAssets, deleteMediaAsset, type MediaAsset } from '@/app/admin/media-actions';
 import { toast } from 'sonner';
 import NextImage from 'next/image';
 
@@ -121,6 +121,7 @@ export function ImageUploadField({
   const [librarySearch, setLibrarySearch] = useState('');
   const [loadingLib, setLoadingLib] = useState(false);
   const [internalPosition, setInternalPosition] = useState(position || 'center');
+  const [failedLibIds, setFailedLibIds] = useState<Set<string>>(new Set());
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Sync external position prop
@@ -132,6 +133,13 @@ export function ImageUploadField({
     onChange('');
     if (inputRef.current) inputRef.current.value = '';
     setMode('url');
+  }
+
+  async function handleLibraryImageError(asset: MediaAsset) {
+    if (failedLibIds.has(asset.id)) return;
+    setFailedLibIds(prev => new Set(prev).add(asset.id));
+    setLibraryAssets(prev => prev.filter(a => a.id !== asset.id));
+    try { await deleteMediaAsset(asset.id); } catch { /* ignore */ }
   }
 
   async function openLibrary() {
@@ -375,6 +383,7 @@ export function ImageUploadField({
                             fill
                             className="object-cover"
                             sizes="(max-width: 640px) 25vw, (max-width: 1024px) 20vw, 16vw"
+                            onError={() => { void handleLibraryImageError(asset); }}
                           />
                         </button>
                       ))}

@@ -21,6 +21,7 @@ export function ImagePicker({ value, onChange, label, className }: Props) {
   const [libraryAssets, setLibraryAssets] = useState<MediaAsset[]>([]);
   const [libraryFolderFilter, setLibraryFolderFilter] = useState<string>('__all');
   const [librarySearch, setLibrarySearch] = useState('');
+  const [failedLibIds, setFailedLibIds] = useState<Set<string>>(new Set());
   const [loadingLib, setLoadingLib] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -51,6 +52,13 @@ export function ImagePicker({ value, onChange, label, className }: Props) {
       setUploading(false);
     }
   };
+
+  async function handleLibraryImageError(asset: MediaAsset) {
+    if (failedLibIds.has(asset.id)) return;
+    setFailedLibIds(prev => new Set(prev).add(asset.id));
+    setLibraryAssets(prev => prev.filter(a => a.id !== asset.id));
+    try { await (await import('@/app/admin/media-actions')).deleteMediaAsset(asset.id); } catch { /* ignore */ }
+  }
 
   const openLibrary = async () => {
     setLoadingLib(true);
@@ -208,7 +216,7 @@ export function ImagePicker({ value, onChange, label, className }: Props) {
                           className="relative aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-admin-accent transition-colors"
                           title={asset.folder ? `${asset.filename} (${asset.folder})` : asset.filename}
                         >
-                          <Image src={asset.blobUrl} alt={asset.alt || ''} fill className="object-cover" sizes="200px" />
+                          <Image src={asset.blobUrl} alt={asset.alt || ''} fill className="object-cover" sizes="200px" onError={() => { void handleLibraryImageError(asset); }} />
                         </button>
                       ))}
                     </div>
