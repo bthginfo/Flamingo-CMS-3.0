@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { usePreview } from '@/components/admin/preview-context';
 import { updateItemAction } from '../../actions';
+import { getSectionCopySourceAction, getSectionCopySourcesAction } from '@/app/admin/pages/actions';
 import { publishAction } from '@/app/admin/actions/publish';
 import { PageSectionsProvider } from '@/components/button-field';
 import { getSectionTypesForIndustry } from '../../../pages/[id]/section-types';
@@ -13,7 +14,7 @@ import type { ItemSeoPanelHandle } from './item-seo-panel';
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { toast } from 'sonner';
-import { createEmptyEditableSection, type EditableSection } from '@/app/admin/editor/editable-section';
+import { createEmptyEditableSection, normalizeEditableSection, type EditableSection } from '@/app/admin/editor/editable-section';
 import { collectionItemSectionsToEditableSections, editableSectionsToCollectionItemSections } from '@/app/admin/editor/section-mappers';
 import { EditorActionBar } from '@/app/admin/editor/editor-action-bar';
 import { EditorLocaleTabs } from '@/app/admin/editor/editor-locale-tabs';
@@ -49,6 +50,8 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   const [saved, setSaved] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [hasDirty, setHasDirty] = useState(false);
+  const [copySources, setCopySources] = useState<{ pageId: string; pageTitle: string; pageSlug: string; sections: { id: string; type: string; titleInternal: string | null }[] }[]>([]);
+  const [copySourcesLoading, setCopySourcesLoading] = useState(false);
   const pendingChanges = useRef<Map<string, Record<string, unknown>>>(new Map());
   const seoRef = useRef<ItemSeoPanelHandle>(null);
   const sectionsRef = useRef(sections);
@@ -86,6 +89,44 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
     setSections(prev => [...prev, newSection]);
     markDirty();
     toast.success('Sektion hinzugefügt');
+  }
+
+  async function handleOpenAddMenu() {
+    if (copySourcesLoading || copySources.length > 0) return;
+    setCopySourcesLoading(true);
+    try {
+      const sources = await getSectionCopySourcesAction('');
+      setCopySources(sources);
+    } catch {
+      toast.error('Sektion-Vorlagen konnten nicht geladen werden');
+    } finally {
+      setCopySourcesLoading(false);
+    }
+  }
+
+  async function handleCopySection(sourceSectionId: string) {
+    try {
+      const source = await getSectionCopySourceAction(sourceSectionId);
+      if (!source) {
+        toast.error('Sektion konnte nicht kopiert werden');
+        return;
+      }
+
+      const nextIndex = sectionsRef.current.length;
+      const section = normalizeEditableSection({
+        ...source,
+        id: generateId(),
+        anchorId: null,
+        locked: false,
+        sortOrder: nextIndex,
+      });
+
+      setSections(prev => [...prev, section]);
+      markDirty();
+      toast.success('Sektion kopiert');
+    } catch {
+      toast.error('Sektion konnte nicht kopiert werden');
+    }
   }
 
   function handleDeleteSection(sectionId: string) {
@@ -217,6 +258,10 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
           styleVariant={styleVariant}
           onReorder={handleReorder}
           onAddSection={handleAddSection}
+          onOpenAddMenu={handleOpenAddMenu}
+          onCopySection={handleCopySection}
+          copySources={copySources}
+          copySourcesLoading={copySourcesLoading}
           renderSection={(section) => (
               <SectionEditorCard
                 key={section.id}

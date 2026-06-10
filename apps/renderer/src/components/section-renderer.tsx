@@ -7,12 +7,20 @@ import { sanitizeHtml } from '@/lib/sanitize-html';
 /** Extract the best image from a collection item — checks data.image first, then looks into hero section data */
 function extractItemImage(item: SnapshotCollectionItem): string | undefined {
   if (item.data.image) return item.data.image as string;
-  // Items store sections in data.sections — find the hero and grab its background image
+  // Items store sections in data.sections — find the most image-heavy section and grab its image field.
   const sections = item.data.sections as Array<{ type: string; data: Record<string, unknown> }> | undefined;
   if (sections) {
-    const hero = sections.find(s => s.type === 'hero' || s.type === 'collectionHero');
-    if (hero?.data) {
-      return (hero.data.backgroundImage as string) || (hero.data.bgImage as string) || (hero.data.image as string) || undefined;
+    const imageSection = sections.find((section) => (
+      section.type === 'hero' ||
+      section.type === 'collectionHero' ||
+      section.type === 'cinematicHero' ||
+      section.type === 'glowHero' ||
+      section.type === 'floristHero' ||
+      section.type === 'fitnessHero' ||
+      section.type === 'locationHero'
+    ));
+    if (imageSection?.data) {
+      return (imageSection.data.backgroundImage as string) || (imageSection.data.bgImage as string) || (imageSection.data.image as string) || undefined;
     }
   }
   return undefined;

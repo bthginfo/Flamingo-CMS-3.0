@@ -232,6 +232,20 @@ export async function getSectionCopySourcesAction(currentPageId: string) {
     .filter((p) => p.sections.length > 0);
 }
 
+export async function getSectionCopySourceAction(sourceSectionId: string) {
+  const session = await requireSession();
+  const db = getDb();
+
+  const [section] = await db
+    .select()
+    .from(pageSections)
+    .where(and(eq(pageSections.id, sourceSectionId), eq(pageSections.tenantId, session.tenantId)))
+    .limit(1);
+
+  if (!section || section.locked) return null;
+  return section;
+}
+
 export async function cloneSectionFromPageAction(targetPageId: string, sourceSectionId: string) {
   const session = await requireSession();
   const db = getDb();
