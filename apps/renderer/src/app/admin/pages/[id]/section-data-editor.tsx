@@ -2620,16 +2620,24 @@ function CollectionKeySelect({ value, onChange }: { value: string; onChange: (v:
 
 // ─── CollectionList Editor ───────────────────────────────────────
 function CollectionListEditor({ data, onChange }: EditorProps) {
+  const initialSortBy = (() => {
+    const value = data.sortBy;
+    if (value === 'date-desc' || value === 'date-asc' || value === 'alpha-asc' || value === 'alpha-desc' || value === 'priority') {
+      return value;
+    }
+    return 'date-desc';
+  })();
+
   const [d, setD] = useState({
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
     collectionKey: (data.collectionKey as string) || 'news',
-    sortBy: (data.sortBy as string) || 'date-desc',
+    sortBy: initialSortBy,
     columns: (data.columns as number) || 3,
-    showImage: data.showImage !== false,
-    showDate: data.showDate !== false,
-    showExcerpt: data.showExcerpt !== false,
-    showSortControls: data.showSortControls !== false,
+    showImage: typeof data.showImage === 'boolean' ? data.showImage : true,
+    showDate: typeof data.showDate === 'boolean' ? data.showDate : true,
+    showExcerpt: typeof data.showExcerpt === 'boolean' ? data.showExcerpt : true,
+    showSortControls: typeof data.showSortControls === 'boolean' ? data.showSortControls : true,
   });
   useReport(d, onChange);
 

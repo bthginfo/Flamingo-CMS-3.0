@@ -10,7 +10,7 @@ type CollectionItem = {
   slug: string;
   image?: string;
   excerpt?: string;
-  date?: string;
+  date?: string | Date | number;
   priority?: number;
 };
 
@@ -18,13 +18,21 @@ type SortOption = 'date-desc' | 'date-asc' | 'alpha-asc' | 'alpha-desc' | 'prior
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
+function toTimestamp(value: CollectionItem['date']): number {
+  if (!value) return 0;
+  if (value instanceof Date) return Number.isFinite(value.getTime()) ? value.getTime() : 0;
+  if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
 function sortItems(items: CollectionItem[], sortBy: SortOption): CollectionItem[] {
   return [...items].sort((a, b) => {
     switch (sortBy) {
       case 'date-desc':
-        return (b.date ?? '').localeCompare(a.date ?? '');
+        return toTimestamp(b.date) - toTimestamp(a.date);
       case 'date-asc':
-        return (a.date ?? '').localeCompare(b.date ?? '');
+        return toTimestamp(a.date) - toTimestamp(b.date);
       case 'alpha-asc':
         return a.title.localeCompare(b.title, 'de');
       case 'alpha-desc':

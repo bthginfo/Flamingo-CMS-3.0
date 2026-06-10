@@ -304,10 +304,10 @@ export const SECTION_EDITOR_FIELD_DEFAULTS: Record<string, Record<string, unknow
     "subline": ""
   },
   "collectionList": {
-    "showDate": false,
-    "showExcerpt": false,
-    "showImage": "",
-    "sortBy": ""
+    "showDate": true,
+    "showExcerpt": true,
+    "showImage": true,
+    "sortBy": "date-desc"
   },
   "verticalTimeline": {
     "bgColor": "",
