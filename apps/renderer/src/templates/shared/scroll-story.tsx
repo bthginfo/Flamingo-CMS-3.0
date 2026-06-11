@@ -31,9 +31,15 @@ export function ScrollStorySection({ data }: Props) {
 
   if (!steps.length) return null;
   const scrollHeight = steps.length > 1 ? `${Math.max(steps.length * 64, 150)}vh` : undefined;
+  const imageSteps = steps.filter((step) => Boolean(step.image));
 
   return (
     <div ref={ref} className="relative" style={{ minHeight: scrollHeight }}>
+      <div aria-hidden="true" className="pointer-events-none absolute size-px overflow-hidden opacity-0">
+        {imageSteps.map((step, index) => (
+          <img key={`${step.image}-${index}`} src={step.image} alt="" loading="eager" decoding="async" />
+        ))}
+      </div>
       <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
         <div className="lg:sticky lg:top-24 lg:flex lg:h-[calc(100vh-7rem)] lg:flex-col lg:justify-center">
           {headline && (
@@ -68,16 +74,24 @@ export function ScrollStorySection({ data }: Props) {
           </div>
 
           <div data-card className="mt-8 hidden overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm lg:block">
-            {activeStep.image && (
-              <motion.img
-                key={activeStep.image}
-                src={activeStep.image}
-                alt=""
-                initial={{ opacity: 0, scale: 1.03 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.35 }}
-                className="h-56 w-full object-cover"
-              />
+            {imageSteps.length > 0 && (
+              <div className="relative h-56 overflow-hidden bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_82%,var(--token-section-bg-alt,#f8fafc))]">
+                {imageSteps.map((step, index) => {
+                  const sourceIndex = steps.findIndex((item) => item === step);
+                  return (
+                    <img
+                      key={`${step.image}-${index}`}
+                      src={step.image}
+                      alt=""
+                      loading="eager"
+                      decoding="async"
+                      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 [backface-visibility:hidden] [transform:translateZ(0)] ${
+                        sourceIndex === activeIndex ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    />
+                  );
+                })}
+              </div>
             )}
             <motion.div
               key={`${activeIndex}-${activeStep.title}`}
@@ -109,7 +123,16 @@ export function ScrollStorySection({ data }: Props) {
               data-edit-collection="steps"
               data-edit-index={i}
             >
-              {step.image && <img data-edit-image="image" src={step.image} alt="" className="h-64 w-full object-cover" />}
+              {step.image && (
+                <img
+                  data-edit-image="image"
+                  src={step.image}
+                  alt=""
+                  loading={i < 2 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  className="h-64 w-full object-cover [backface-visibility:hidden] [transform:translateZ(0)]"
+                />
+              )}
               <div className="p-6 md:p-8">
                 <div className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-[var(--token-icon)]" data-edit-path="kicker">
                   {step.kicker || String(i + 1).padStart(2, '0')}
