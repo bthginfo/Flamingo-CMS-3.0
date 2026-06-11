@@ -701,6 +701,36 @@ html {
   display: none;
 }
 
+/* Subtle global section reveal.
+   Heroes opt out in SectionRenderer so the first impression stays instant. */
+.section-reveal {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  filter: blur(2px);
+  transition:
+    opacity 640ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 640ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 640ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
+
+.section-reveal[data-revealed="true"],
+.section-reveal[data-reveal-disabled="true"] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+    will-change: auto;
+  }
+}
+
 /* View Transitions API (cross-document, Chrome 126+ / Safari 18+).
    Falls back silently. Subtle 180ms fade on navigation between public pages. */
 @view-transition { navigation: auto; }

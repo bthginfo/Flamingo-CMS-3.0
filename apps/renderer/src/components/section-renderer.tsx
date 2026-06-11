@@ -3,6 +3,7 @@ import { getIndustryTemplates } from '@/templates';
 import { SectionErrorBoundary } from './section-error-boundary';
 import { prefixInternalLinks } from '@/lib/link-prefix';
 import { sanitizeHtml } from '@/lib/sanitize-html';
+import { SectionReveal } from './section-reveal';
 
 /** Extract the best image from a collection item — checks data.image first, then looks into hero section data */
 function extractItemImage(item: SnapshotCollectionItem): string | undefined {
@@ -51,6 +52,16 @@ const MEDIA_OVERLAY_SECTION_TYPES = new Set([
   'fitnessHero',
   'locationHero',
   'immersiveCtaBanner',
+]);
+const SKIP_REVEAL_SECTION_TYPES = new Set([
+  'hero',
+  'collectionHero',
+  'cinematicHero',
+  'glowHero',
+  'floristHero',
+  'fitnessHero',
+  'locationHero',
+  'popup',
 ]);
 
 function escapeCssAttr(value: string): string {
@@ -374,12 +385,12 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
 
   if (isFullBleed) {
     return (
-      <section id={section.anchorId ?? undefined} data-section-id={section.id} className="bg-[var(--style-section-bg,transparent)]" {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
+      <SectionReveal disabled={SKIP_REVEAL_SECTION_TYPES.has(section.type)} id={section.anchorId ?? undefined} data-section-id={section.id} className="bg-[var(--style-section-bg,transparent)]" {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
         {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={effectiveStyleVariant} />
         </SectionErrorBoundary>
-      </section>
+      </SectionReveal>
     );
   }
 
@@ -388,13 +399,13 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   const containerClass = CONTAINER[section.container] ?? CONTAINER.default;
 
   return (
-    <section id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass} bg-[var(--style-section-bg,transparent)]`} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
+    <SectionReveal disabled={SKIP_REVEAL_SECTION_TYPES.has(section.type)} id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass} bg-[var(--style-section-bg,transparent)]`} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
       {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
       <div className={containerClass}>
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={effectiveStyleVariant} />
         </SectionErrorBoundary>
       </div>
-    </section>
+    </SectionReveal>
   );
 }
