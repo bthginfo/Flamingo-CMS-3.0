@@ -7,9 +7,9 @@ import { asList, type SectionProps } from './types';
 type Treatment = { title?: string; text?: string; image?: string; resultLabel?: string; durationLabel?: string; priceLabel?: string; steps?: string[]; careTips?: string[]; cta?: { label?: string; href?: string } };
 
 export function TreatmentDetailSection({ data, styleVariant }: SectionProps) {
-  const headline = (data.headline as string) || 'Behandlungen im Detail';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Behandlungen im Detail';
   const subline = (data.subline as string) || '';
-  const badgeText = (data.badgeText as string) || 'Details';
+  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Details';
   const treatments = asList<Treatment>(data.treatments);
 
   const props = { headline, subline, badgeText, treatments };

@@ -9,7 +9,7 @@ import { plain } from '@/lib/strip-html';
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function CafeHeroSection({ data }: Props) {
-  const headline = (data.headline as string) || 'Kaffee, Kuchen & gute Vibes';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Kaffee, Kuchen & gute Vibes';
   const subline = (data.subline as string) || '';
   const bgImage = (data.bgImage as string) || '';
   const overlayOpacity = (data.overlayOpacity as number) ?? 0.5;

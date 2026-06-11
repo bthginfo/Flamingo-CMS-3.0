@@ -8,9 +8,9 @@ import { plain } from '@/lib/strip-html';
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function WeddingRsvpSection({ data, styleVariant }: Props) {
-  const badge = (data.badge as string) || 'RSVP';
-  const headline = (data.headline as string) || 'Zusage';
-  const subline = (data.subline as string) || 'Bitte gebt uns bis zum Stichtag Bescheid.';
+  const badge = typeof data.badge === 'string' ? data.badge : 'RSVP';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Zusage';
+  const subline = typeof data.subline === 'string' ? data.subline : 'Bitte gebt uns bis zum Stichtag Bescheid.';
   const deadline = (data.deadline as string) || '';
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');

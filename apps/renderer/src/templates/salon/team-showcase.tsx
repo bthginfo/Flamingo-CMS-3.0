@@ -7,9 +7,9 @@ import { asList, type SectionProps } from './types';
 type Member = { name?: string; role?: string; bio?: string; image?: string; specialties?: string[]; bookingCta?: { label?: string; href?: string } };
 
 export function TeamShowcaseSection({ data, styleVariant }: SectionProps) {
-  const headline = (data.headline as string) || 'Team';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Team';
   const subline = (data.subline as string) || '';
-  const badgeText = (data.badgeText as string) || 'Menschen';
+  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Menschen';
   const members = asList<Member>(data.members);
 
   const props = { headline, subline, badgeText, members };

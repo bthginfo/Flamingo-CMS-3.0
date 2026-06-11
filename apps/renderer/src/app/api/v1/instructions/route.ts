@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
     sectionStyleContracts: getSectionStyleContracts(allowedSectionTypes),
     aiContentPlaybook: getAiContentPlaybook(auth.tenant.industry, { hasShop, hasBooking }),
     endpoints: {
-      brand: { method: 'PUT', path: '/api/v1/content/brand', description: 'Set brand data (companyName, tagline, primaryColor, logo, etc.)' },
+      brand: { method: 'PUT', path: '/api/v1/content/brand', description: 'Set brand data (companyName, tagline, primaryColor, logoUrl, faviconUrl, etc.)' },
       contact: { method: 'PUT', path: '/api/v1/content/contact', description: 'Set contact info (email, phone, address, whatsapp, whatsappEnabled, whatsappColor)' },
       navigation: { method: 'PUT', path: '/api/v1/content/navigation', description: 'Set nav items + CTA' },
       footer: { method: 'PUT', path: '/api/v1/content/footer', description: 'Set footer columns + legal links + CTA' },
@@ -121,6 +121,7 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
 1. BRAND (PUT /api/v1/content/brand):
    - companyName, tagline, primaryColor, secondaryColor?, accentColor
    - logoUrl: URL zum Firmenlogo (wird im Header + Footer gezeigt)
+   - faviconUrl?: separates Browser-Icon; leer lassen, wenn das Logo als Fallback genutzt werden soll
    - logoDisplay: 'logo' | 'logoAndName' | 'name' (default: 'name' wenn kein Logo)
    - headingFont: Google-Font-Name für Überschriften (z.B. "Playfair Display", "Montserrat")
    - bodyFont: Google-Font-Name für Fließtext (z.B. "Inter", "Open Sans")

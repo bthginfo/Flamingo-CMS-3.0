@@ -9,7 +9,7 @@ type FaqItem = { question: string; answer: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function CafeFaqSection({ data }: Props) {
-  const headline = (data.headline as string) || 'FAQ';
+  const headline = typeof data.headline === 'string' ? data.headline : 'FAQ';
   const items = (data.items as FaqItem[]) || [];
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });

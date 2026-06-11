@@ -9,7 +9,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null };
 export function HeaderBannerSection({ data }: Props) {
   const [dismissed, setDismissed] = useState(false);
   const items = (data.items as { text: string; link?: string }[]) || [];
-  const style = (data.style as string) || 'neutral';
+  const style = typeof data.style === 'string' ? data.style : 'neutral';
 
   if (dismissed || items.length === 0) return null;
 

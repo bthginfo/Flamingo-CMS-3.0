@@ -9,8 +9,8 @@ import { plain } from '@/lib/strip-html';
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function WeddingFaqSection({ data, styleVariant }: Props) {
-  const badge = (data.badge as string) || 'FAQ';
-  const headline = (data.headline as string) || 'Häufige Fragen';
+  const badge = typeof data.badge === 'string' ? data.badge : 'FAQ';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Häufige Fragen';
   const items = (data.items as Array<{ question: string; answer: string }>) || [];
   const isBold = styleVariant === 'bold';
   const isModern = styleVariant === 'modern';
@@ -103,8 +103,8 @@ function FaqItem({ question, answer, index, variant }: { question: string; answe
 }
 
 export function WeddingGallerySection({ data, styleVariant }: Props) {
-  const badge = (data.badge as string) || 'Galerie';
-  const headline = (data.headline as string) || 'Momente';
+  const badge = typeof data.badge === 'string' ? data.badge : 'Galerie';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Momente';
   const images = (data.images as Array<{ src: string; alt?: string }>) || [];
   const isBold = styleVariant === 'bold';
   const isModern = styleVariant === 'modern';

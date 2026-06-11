@@ -16,8 +16,8 @@ export function TeamSection({ data, styleVariant }: Props) {
   const storyHeadline = (data.storyHeadline as string) || '';
   const storyText = (data.storyText as string) || '';
   const storyImage = (data.storyImage as string) || '';
-  const valuesHeadline = (data.valuesHeadline as string) || 'Unsere Werte';
-  const membersHeadline = (data.membersHeadline as string) || 'Unser Team';
+  const valuesHeadline = typeof data.valuesHeadline === 'string' ? data.valuesHeadline : 'Unsere Werte';
+  const membersHeadline = typeof data.membersHeadline === 'string' ? data.membersHeadline : 'Unser Team';
   const members = (data.members as TeamMember[]) || [];
   const values = (data.values as ValueItem[]) || [];
   const stats = (data.stats as { value: string; label: string }[]) || [];

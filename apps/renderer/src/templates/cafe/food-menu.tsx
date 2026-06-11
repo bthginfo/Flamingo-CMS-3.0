@@ -10,7 +10,7 @@ type FoodItem = { name: string; description?: string; price: string; image?: str
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function FoodMenuSection({ data }: Props) {
-  const headline = (data.headline as string) || 'Speisen & Snacks';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Speisen & Snacks';
   const subline = (data.subline as string) || '';
   const items = (data.items as FoodItem[]) || [];
 

@@ -5,18 +5,36 @@ import { motion, useInView } from 'framer-motion';
 import { MapPin, Clock } from 'lucide-react';
 import { plain } from '@/lib/strip-html';
 
-type HoursItem = { day: string; hours: string };
+type HoursItem = { day?: string; hours?: string; time?: string; note?: string; closed?: boolean };
+type NormalizedHoursItem = { day: string; value: string };
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
+function textOrFallback(value: unknown, fallback = '') {
+  return typeof value === 'string' ? value : fallback;
+}
+
+function normalizeHours(value: unknown): NormalizedHoursItem[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => {
+      const entry = item && typeof item === 'object' ? item as HoursItem : {};
+      return {
+        day: textOrFallback(entry.day),
+        value: entry.closed ? 'geschlossen' : textOrFallback(entry.hours || entry.time || entry.note),
+      };
+    })
+    .filter((item) => item.day || item.value);
+}
+
 export function LocationVibeSection({ data }: Props) {
-  const headline = (data.headline as string) || 'Komm vorbei';
-  const address = (data.address as string) || '';
-  const description = (data.description as string) || '';
-  const hours = (data.hours as HoursItem[]) || [];
-  const mapImage = (data.mapImage as string) || '';
-  const mapEmbed = (data.mapEmbed as string) || '';
-  const vibeText = (data.vibeText as string) || '';
+  const headline = textOrFallback(data.headline, 'Komm vorbei');
+  const address = textOrFallback(data.address);
+  const description = textOrFallback(data.description);
+  const hours = normalizeHours(data.hours ?? data.openingHours);
+  const mapImage = textOrFallback(data.mapImage);
+  const mapEmbed = textOrFallback(data.mapEmbed);
+  const vibeText = textOrFallback(data.vibeText);
 
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
@@ -47,7 +65,7 @@ export function LocationVibeSection({ data }: Props) {
                   {hours.map((h, i) => (
                     <li key={i} className="flex justify-between text-sm" data-edit-collection="hours" data-edit-index={i}>
                       <span className="text-[color:var(--token-muted)]">{h.day}</span>
-                      <span className="font-medium text-[color:var(--token-heading)]">{h.hours}</span>
+                      <span className="font-medium text-[color:var(--token-heading)]">{h.value}</span>
                     </li>
                   ))}
                 </ul>

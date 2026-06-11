@@ -7,9 +7,9 @@ import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 type ServiceCategory = { title?: string; text?: string; image?: string; category?: string; services?: string[]; cta?: { label?: string; href?: string } };
 
 export function ServiceMenuSection({ data, styleVariant }: SectionProps) {
-  const headline = (data.headline as string) || 'Leistungen';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Leistungen';
   const subline = (data.subline as string) || '';
-  const badgeText = (data.badgeText as string) || 'Services';
+  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Services';
   const categories = asList<ServiceCategory>(data.categories);
   const ctaPrimary = asButton(data.ctaPrimary);
 

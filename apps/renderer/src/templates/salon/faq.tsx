@@ -6,9 +6,9 @@ import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 type FaqItem = { question?: string; answer?: string };
 
 export function SalonFaqSection({ data, styleVariant }: SectionProps) {
-  const headline = (data.headline as string) || 'Haeufige Fragen';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Haeufige Fragen';
   const subline = (data.subline as string) || '';
-  const badgeText = (data.badgeText as string) || 'FAQ';
+  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'FAQ';
   const items = asList<FaqItem>(data.items);
   const ctaPrimary = asButton(data.ctaPrimary);
 

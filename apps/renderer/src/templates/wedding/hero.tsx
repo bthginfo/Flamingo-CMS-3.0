@@ -25,13 +25,13 @@ function useCountdown(targetDate: string) {
 
 export function WeddingHeroSection({ data, styleVariant }: Props) {
   const names = (data.coupleName as string) || (data.names as string) || (data.headline as string) || 'Anna & Max';
-  const date = (data.date as string) || '2026-09-12';
+  const date = typeof data.date === 'string' ? data.date : '2026-09-12';
   const venue = (data.venue as string) || '';
   const subline = (data.tagline as string) || (data.subline as string) || 'Wir heiraten!';
   const bgImage = (data.bgImage as string) || '';
   const bgImageMobile = (data.bgImageMobile as string) || '';
-  const bgPosition = (data.bgPosition as string) || 'center';
-  const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
+  const bgPosition = typeof data.bgPosition === 'string' ? data.bgPosition : 'center';
+  const bgPositionMobile = typeof data.bgPositionMobile === 'string' ? data.bgPositionMobile : 'center';
   const showCountdown = data.showCountdown !== false;
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';

@@ -17,7 +17,7 @@ const CAT_ICONS: Record<string, React.FC<{ size?: number; className?: string }>>
 };
 
 export function CafeEventCalendarSection({ data }: Props) {
-  const headline = (data.headline as string) || 'Events';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Events';
   const subline = (data.subline as string) || '';
   const events = (data.events as CafeEvent[]) || [];
 

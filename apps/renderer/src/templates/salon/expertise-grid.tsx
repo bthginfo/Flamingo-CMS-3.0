@@ -7,9 +7,9 @@ import { asList, type SectionProps } from './types';
 type Expertise = { icon?: string; title?: string; text?: string; metaLabel?: string };
 
 export function ExpertiseGridSection({ data, styleVariant }: SectionProps) {
-  const headline = (data.headline as string) || 'Expertise';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Expertise';
   const subline = (data.subline as string) || '';
-  const badgeText = (data.badgeText as string) || 'Skills';
+  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Skills';
   const items = asList<Expertise>(data.items);
 
   const props = { headline, subline, badgeText, items };

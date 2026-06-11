@@ -6,8 +6,8 @@ import { UtensilsCrossed, Leaf, Wine } from 'lucide-react';
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function WeddingMenuSection({ data, styleVariant }: Props) {
-  const badge = (data.badge as string) || 'Menü';
-  const headline = (data.headline as string) || 'Unser Hochzeitsmenü';
+  const badge = typeof data.badge === 'string' ? data.badge : 'Menü';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Unser Hochzeitsmenü';
   const courses = (data.courses as Array<{ title: string; items: Array<{ name: string; description?: string; tags?: string[] }> }>) || [];
   const note = (data.note as string) || '';
   const p = { badge, headline, courses, note };

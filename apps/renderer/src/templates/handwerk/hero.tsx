@@ -12,23 +12,23 @@ import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effe
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function HeroSection({ data, styleVariant }: Props) {
-  const headline = (data.headline as string) || 'Willkommen';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Willkommen';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
-  const badgeIcon = (data.badgeIcon as string) || 'Shield';
+  const badgeIcon = typeof data.badgeIcon === 'string' ? data.badgeIcon : 'Shield';
   const badgeStarsIcon = (data.badgeStarsIcon as string) || '';
   const trustItems = (data.trustItems as string[]) || [];
   const trustStripColor = (data.trustStripColor as string) || '';
   const bgImage = (data.bgImage as string) || '';
   const bgImageMobile = (data.bgImageMobile as string) || '';
   const bgColor = (data.bgColor as string) || '';
-  const bgMode = (data.bgMode as string) || 'image';
+  const bgMode = typeof data.bgMode === 'string' ? data.bgMode : 'image';
   const primaryCta = data.primaryCta as { label: string; href: string; icon?: string } | undefined;
   const secondaryCta = data.secondaryCta as { label: string; href: string; icon?: string } | undefined;
   const overlayColor = (data.overlayColor as string) || '';
   const overlayOpacity = (data.overlayOpacity as number) ?? -1;
-  const bgPosition = (data.bgPosition as string) || 'center';
-  const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
+  const bgPosition = typeof data.bgPosition === 'string' ? data.bgPosition : 'center';
+  const bgPositionMobile = typeof data.bgPositionMobile === 'string' ? data.bgPositionMobile : 'center';
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 

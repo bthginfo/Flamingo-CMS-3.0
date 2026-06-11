@@ -7,8 +7,8 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 type Milestone = { date?: string; year?: string; title?: string; text?: string; image?: string };
 
 export function WeddingCoupleStorySection({ data, styleVariant }: Props) {
-  const badge = (data.badge as string) || 'Unsere Geschichte';
-  const headline = (data.headline as string) || 'Wie alles begann';
+  const badge = typeof data.badge === 'string' ? data.badge : 'Unsere Geschichte';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Wie alles begann';
   const story = (data.story as string) || (data.subline as string) || '';
   const image = (data.image as string) || '';
   const milestones = (data.milestones as Milestone[]) || [];

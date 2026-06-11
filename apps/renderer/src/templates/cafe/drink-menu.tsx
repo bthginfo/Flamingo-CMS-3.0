@@ -10,7 +10,7 @@ type DrinkCategory = { title: string; items: DrinkItem[] };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function DrinkMenuSection({ data }: Props) {
-  const headline = (data.headline as string) || 'Unsere Karte';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Unsere Karte';
   const subline = (data.subline as string) || '';
   const categories = (data.categories as DrinkCategory[]) || [];
 

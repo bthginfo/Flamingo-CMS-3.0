@@ -10,7 +10,7 @@ import { plain } from '@/lib/strip-html';
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function CafeContactSection({ data }: Props) {
-  const headline = (data.headline as string) || 'Schreib uns';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Schreib uns';
   const subline = (data.subline as string) || '';
   const introText = (data.introText as string) || '';
   const badgeText = (data.badgeText as string) || '';
@@ -18,7 +18,7 @@ export function CafeContactSection({ data }: Props) {
   const email = (data.email as string) || '';
   const address = (data.address as string) || '';
   const formEnabled = data.formEnabled !== false;
-  const submitLabel = (data.submitLabel as string) || 'Nachricht senden';
+  const submitLabel = typeof data.submitLabel === 'string' ? data.submitLabel : 'Nachricht senden';
   const formFields = data.formFields as FormFieldDef[] | undefined;
   const infoCards = data.infoCards as { icon: string; label: string; value: string }[] | undefined;
 

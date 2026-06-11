@@ -12,13 +12,13 @@ type NewsItem = { title: string; slug?: string; href?: string; image?: string; e
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
 export function NewsPreviewSection({ data }: Props) {
-  const headline = (data.headline as string) || 'Aktuelles';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Aktuelles';
   const subline = (data.subline as string) || '';
   const items = (data.items as NewsItem[]) || [];
-  const collectionKey = (data.collectionKey as string) || 'news';
+  const collectionKey = typeof data.collectionKey === 'string' ? data.collectionKey : 'news';
   const collectionBasePath = (data.collectionBasePath as string) || '';
   const linkPrefix = (data.linkPrefix as string) || '';
-  const linkLabel = (data.linkLabel as string) || 'Alle Beiträge';
+  const linkLabel = typeof data.linkLabel === 'string' ? data.linkLabel : 'Alle Beiträge';
   const linkIcon = (data.linkIcon as string) || '';
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });

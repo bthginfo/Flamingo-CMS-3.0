@@ -9,14 +9,14 @@ import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-cont
 type InfoCard = { icon?: string; label?: string; value?: string };
 
 export function LocationContactSection({ data, styleVariant }: SectionProps) {
-  const headline = (data.headline as string) || 'Kontakt';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Kontakt';
   const subline = (data.subline as string) || '';
-  const badgeText = (data.badgeText as string) || 'Salon';
+  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Salon';
   const introText = (data.introText as string) || '';
   const image = (data.image as string) || '';
   const mapEmbedUrl = (data.mapEmbedUrl as string) || '';
   const formEnabled = (data.formEnabled as boolean) ?? true;
-  const submitLabel = (data.submitLabel as string) || 'Anfrage senden';
+  const submitLabel = typeof data.submitLabel === 'string' ? data.submitLabel : 'Anfrage senden';
   const formFields = data.formFields as FormFieldDef[] | undefined;
   const infoCards = asList<InfoCard>(data.infoCards);
   const primaryCta = asButton(data.primaryCta);

@@ -9,8 +9,8 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
   const venues = (data.venues as Array<Record<string, string>>) || [];
   const firstVenue = venues[0] || {};
-  const badge = (data.badge as string) || 'Location';
-  const headline = (data.headline as string) || 'Die Location';
+  const badge = typeof data.badge === 'string' ? data.badge : 'Location';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Die Location';
   const subline = (data.subline as string) || '';
   const description = (data.description as string) || firstVenue.description || '';
   const image = (data.image as string) || firstVenue.image || '';
@@ -102,8 +102,8 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
 }
 
 export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
-  const badge = (data.badge as string) || 'Anreise';
-  const headline = (data.headline as string) || 'Anreise & Unterkunft';
+  const badge = typeof data.badge === 'string' ? data.badge : 'Anreise';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Anreise & Unterkunft';
   const subline = (data.subline as string) || '';
   const rawDirections = (data.directions || data.sections) as Array<Record<string, string>> | undefined;
   const directions = (rawDirections || []).map(d => ({ icon: d.icon, title: d.title, text: d.text || d.content || '' }));

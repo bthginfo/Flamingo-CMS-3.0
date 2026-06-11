@@ -9,7 +9,7 @@ import { usePreview } from '@/components/admin/preview-context';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { ImageUploadField } from '@/components/image-upload-field';
 
-type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; pageBg?: string; sectionBg?: string; sectionBgAlt?: string; cardBg?: string; logoUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; borderColor?: string; dividerColor?: string; iconColor?: string; btnRadius?: string; cardRadius?: string };
+type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; pageBg?: string; sectionBg?: string; sectionBgAlt?: string; cardBg?: string; logoUrl?: string; faviconUrl?: string; logoDisplay?: string; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; borderColor?: string; dividerColor?: string; iconColor?: string; btnRadius?: string; cardRadius?: string };
 
 const GOOGLE_FONTS = [
   { value: '', label: 'Standard (Outfit / Inter)' },
@@ -47,6 +47,7 @@ export function BrandForm({ initial }: { initial: BrandData }) {
     sectionBgAlt: initial.sectionBgAlt || '',
     cardBg: initial.cardBg || '',
     logoUrl: initial.logoUrl || '',
+    faviconUrl: initial.faviconUrl || '',
     logoDisplay: initial.logoDisplay || 'logoAndName',
     headingFont: initial.headingFont || '',
     bodyFont: initial.bodyFont || '',
@@ -155,6 +156,14 @@ export function BrandForm({ initial }: { initial: BrandData }) {
           value={form.logoUrl}
           onChange={(url) => setForm(f => ({ ...f, logoUrl: url }))}
         />
+        <div className="space-y-1.5">
+          <ImageUploadField
+            label="Favicon (optional)"
+            value={form.faviconUrl}
+            onChange={(url) => setForm(f => ({ ...f, faviconUrl: url }))}
+          />
+          <p className="text-xs text-zinc-400">Wenn kein eigenes Favicon gesetzt ist, nutzt die Website automatisch das Logo.</p>
+        </div>
         <div>
           <label className="admin-label">Logo-Anzeige in Navigation & Footer</label>
           <select className="admin-input" value={form.logoDisplay} onChange={e => setForm(f => ({ ...f, logoDisplay: e.target.value }))}>

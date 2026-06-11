@@ -11,7 +11,7 @@ export function CtaBandSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
-  const badgeIcon = (data.badgeIcon as string) || 'sparkles';
+  const badgeIcon = typeof data.badgeIcon === 'string' ? data.badgeIcon : 'sparkles';
   const cta = data.ctaPrimary as { label: string; href: string; icon?: string } | undefined;
   // Colors come from styleOverrides (card surface, typography, accent, button).
   const colors = {

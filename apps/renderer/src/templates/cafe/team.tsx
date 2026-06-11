@@ -9,7 +9,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 type TeamMember = { name: string; role: string; image?: string; bio?: string };
 
 export function CafeTeamSection({ data, styleVariant }: Props) {
-  const headline = (data.headline as string) || 'Unser Team';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Unser Team';
   const subline = (data.subline as string) || '';
   const members = (data.members as TeamMember[]) || [];
   const ref = useRef(null);

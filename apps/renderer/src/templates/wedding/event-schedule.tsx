@@ -8,8 +8,8 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 const ICONS: Record<string, React.ElementType> = { clock: Clock, mappin: MapPin, music: Music, utensils: Utensils, heart: Heart, camera: Camera };
 
 export function WeddingEventScheduleSection({ data, styleVariant }: Props) {
-  const badge = (data.badge as string) || 'Tagesablauf';
-  const headline = (data.headline as string) || 'Der schönste Tag';
+  const badge = typeof data.badge === 'string' ? data.badge : 'Tagesablauf';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Der schönste Tag';
   const events = (data.events as Array<{ time: string; title: string; description?: string; icon?: string; location?: string }>) || [];
 
   if (styleVariant === 'modern') return <ScheduleModern badge={badge} headline={headline} events={events} />;

@@ -10,7 +10,7 @@ type Testimonial = { text: string; name: string; source?: string; stars?: number
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function CafeTestimonialsSection({ data }: Props) {
-  const headline = (data.headline as string) || 'Was unsere Gäste sagen';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Was unsere Gäste sagen';
   // Support both 'testimonials' array and 'items' array (AI sometimes uses 'items' with quote/rating/context)
   const rawTestimonials = (data.testimonials as Testimonial[]) || [];
   const rawItems = (data.items as { name?: string; quote?: string; text?: string; rating?: number; stars?: number; context?: string; source?: string; image?: string }[]) || [];

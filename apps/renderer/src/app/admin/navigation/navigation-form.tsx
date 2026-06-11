@@ -8,6 +8,7 @@ import { Plus, Trash2, GripVertical } from 'lucide-react';
 import { NAV_SCRIPT_PROVIDERS } from '@/lib/embed-providers';
 
 type NavItem = { label: string; href: string; type?: string };
+type PageLinkOption = { title: string; href: string };
 type NavTopBarState = { enabled: boolean; text: string; linkLabel: string; linkHref: string; bgColor: string; textColor: string };
 type NavCtaState = { label: string; href: string; scriptProvider?: string; scriptConfig?: Record<string, string>; buttonColor?: string; buttonTextColor?: string; topBar: NavTopBarState };
 type I18nConfig = { enabled: boolean; locales: string[]; defaultLocale: string };
@@ -35,7 +36,7 @@ function withDefaultCtaState(value: unknown): NavCtaState {
   };
 }
 
-export function NavigationForm({ initial, initialCta, i18n }: { initial: any; initialCta?: any; i18n?: I18nConfig }) {
+export function NavigationForm({ initial, initialCta, i18n, pages = [] }: { initial: any; initialCta?: any; i18n?: I18nConfig; pages?: PageLinkOption[] }) {
   const isLocalized = initial?._localized;
   const locales = i18n?.locales || [];
   const defaultLocale = i18n?.defaultLocale || 'de';
@@ -120,6 +121,11 @@ export function NavigationForm({ initial, initialCta, i18n }: { initial: any; in
 
   const isWidgetMode = !!cta.scriptProvider;
   const selectedScriptProvider = cta.scriptProvider ? NAV_SCRIPT_PROVIDERS.find(p => p.id === cta.scriptProvider) : null;
+  const pageOptions = [
+    { title: 'Startseite', href: '/' },
+    ...pages.filter((page, index, all) => page.href !== '/' && all.findIndex((other) => other.href === page.href) === index),
+  ];
+  const isKnownPageHref = (href: string) => pageOptions.some((page) => page.href === href);
 
   return (
     <div className="admin-card p-6 space-y-5">
@@ -148,7 +154,23 @@ export function NavigationForm({ initial, initialCta, i18n }: { initial: any; in
             </div>
             <GripVertical size={14} className="text-zinc-300" />
             <input className="admin-input w-44" value={item.label} onChange={e => { const u = [...items]; u[i] = { ...u[i], label: e.target.value }; setItems(u); }} placeholder="Label" />
-            <input className="admin-input flex-1" value={item.href} onChange={e => { const u = [...items]; u[i] = { ...u[i], href: e.target.value }; setItems(u); }} placeholder="/seite" />
+            <select
+              className="admin-input flex-1"
+              value={isKnownPageHref(item.href) ? item.href : '__custom__'}
+              onChange={e => {
+                const u = [...items];
+                const selected = e.target.value;
+                u[i] = { ...u[i], href: selected === '__custom__' ? item.href : selected };
+                setItems(u);
+              }}
+            >
+              <option value="">Seite auswählen</option>
+              {pageOptions.map((page) => (
+                <option key={page.href} value={page.href}>{page.title} ({page.href})</option>
+              ))}
+              <option value="__custom__">Eigener Link / extern</option>
+            </select>
+            <input className="admin-input flex-1" value={item.href} onChange={e => { const u = [...items]; u[i] = { ...u[i], href: e.target.value }; setItems(u); }} placeholder="/kontakt oder https://..." />
             <button type="button" onClick={() => setItems(items.filter((_, j) => j !== i))} className="admin-btn-ghost text-red-500 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <Trash2 size={16} />
             </button>

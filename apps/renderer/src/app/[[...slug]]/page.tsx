@@ -189,13 +189,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
     languageAlternates['x-default'] = `${base}${slugForUrl ? `/${slugForUrl}` : ''}` || base;
   }
 
+  const faviconUrl = brand.faviconUrl || brand.logoUrl;
+
   return {
     title,
     description,
-    ...(brand.logoUrl && {
+    ...(faviconUrl && {
       icons: {
-        icon: brand.logoUrl,
-        apple: brand.logoUrl,
+        icon: faviconUrl,
+        apple: faviconUrl,
       },
     }),
     openGraph: {

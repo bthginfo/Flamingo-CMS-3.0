@@ -22,7 +22,7 @@ export function TextImageSection({ data, variant }: Props) {
   const text = (data.text as string) || '';
   const image = pickString(data.image, data.imageUrl, data.imageSrc, data.backgroundImage, data.bgImage, data.media);
   const imageAlt = (data.imageAlt as string) || headline;
-  const layout = (data.layout as string) || 'image-right';
+  const layout = typeof data.layout === 'string' ? data.layout : 'image-right';
   const items = (data.items as Array<{ icon?: string; title: string; text: string }>) || [];
   const primaryCta = (data.primaryCta as ButtonValue) || {};
   const secondaryCta = (data.secondaryCta as ButtonValue) || {};

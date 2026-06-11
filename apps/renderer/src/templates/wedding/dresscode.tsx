@@ -6,8 +6,8 @@ import { Shirt } from 'lucide-react';
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function WeddingDresscodeSection({ data, styleVariant }: Props) {
-  const badge = (data.badge as string) || 'Dresscode';
-  const headline = (data.headline as string) || 'Was ziehe ich an?';
+  const badge = typeof data.badge === 'string' ? data.badge : 'Dresscode';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Was ziehe ich an?';
   const text = (data.text as string) || '';
   const colors = (data.colors as string[]) || [];
   const hints = (data.hints as string[]) || [];

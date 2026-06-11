@@ -7,9 +7,9 @@ import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 type Day = { label?: string; hours?: string; note?: string; closed?: boolean };
 
 export function SalonOpeningHoursSection({ data, styleVariant }: SectionProps) {
-  const headline = (data.headline as string) || 'Oeffnungszeiten';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Oeffnungszeiten';
   const subline = (data.subline as string) || '';
-  const badgeText = (data.badgeText as string) || 'Zeiten';
+  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Zeiten';
   const days = asList<Day>(data.days);
   const bookingNote = (data.bookingNote as string) || '';
   const ctaPrimary = asButton(data.ctaPrimary);

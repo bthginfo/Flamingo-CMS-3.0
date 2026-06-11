@@ -5,9 +5,9 @@ import { CalendarDays, Phone } from 'lucide-react';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 
 export function BookingCtaSection({ data, styleVariant }: SectionProps) {
-  const headline = (data.headline as string) || 'Termin buchen';
+  const headline = typeof data.headline === 'string' ? data.headline : 'Termin buchen';
   const subline = (data.subline as string) || '';
-  const badgeText = (data.badgeText as string) || 'Buchung';
+  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Buchung';
   const introText = (data.introText as string) || '';
   const onlineCta = asButton(data.onlineCta);
   const phoneCta = asButton(data.phoneCta);
