@@ -701,6 +701,21 @@ html {
   display: none;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .spotlight-card:hover {
+    transform: translateY(-0.25rem);
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  }
+
+  .spotlight-card:hover .spotlight-card-glow {
+    opacity: 1;
+  }
+
+  .spotlight-card:hover .spotlight-card-image {
+    opacity: 0.25;
+  }
+}
+
 /* Subtle global section reveal.
    Heroes opt out in SectionRenderer so the first impression stays instant. */
 .section-reveal {
