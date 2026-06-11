@@ -1,8 +1,24 @@
 import { notFound } from 'next/navigation';
 import { getIndustryTemplates } from '@/templates';
 import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
+import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
 import { getStyleCssVars } from '@/lib/styles';
 import { SectionRenderer } from '@/components/section-renderer';
+
+const HERO_PREVIEW_TYPE_BY_INDUSTRY: Record<string, string> = {
+  tradesman: 'heroHandwerk',
+  restaurant: 'heroRestaurant',
+  hotel: 'heroHotel',
+  tourism: 'heroTourism',
+  salon: 'heroSalon',
+  medical: 'heroMedical',
+  wedding: 'heroWedding',
+  consulting: 'heroConsulting',
+  realestate: 'heroRealestate',
+  cafe: 'heroCafe',
+  tattoo: 'heroTattoo',
+  ecommerce: 'heroEcommerce',
+};
 
 export default async function SectionPreviewPage({ searchParams }: { searchParams: Promise<{ type?: string; industry?: string; style?: string }> }) {
   const params = await searchParams;
@@ -20,7 +36,13 @@ export default async function SectionPreviewPage({ searchParams }: { searchParam
     );
   }
 
-  const data = SECTION_PREVIEW_DATA[type] || {};
+  const previewType = type === 'hero' ? HERO_PREVIEW_TYPE_BY_INDUSTRY[industry] || type : type;
+  const data = {
+    ...(SECTION_EDITOR_FIELD_DEFAULTS[type] || {}),
+    ...(SECTION_EDITOR_FIELD_DEFAULTS[previewType] || {}),
+    ...(SECTION_PREVIEW_DATA[type] || {}),
+    ...(SECTION_PREVIEW_DATA[previewType] || {}),
+  };
   const styleCssVars = getStyleCssVars(industry, style);
   const previewSection = {
     id: `preview-${type}`,
