@@ -45,7 +45,7 @@ export function GlowHeroSection({ data }: Props) {
       />
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.055)_1px,transparent_1px)] bg-[size:72px_72px] opacity-35" />
 
-      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-6 py-16 md:py-24">
+      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-start px-6 pb-12 pt-[max(7rem,calc(env(safe-area-inset-top)+6.5rem))] md:justify-center md:py-24">
         <div className="max-w-5xl">
           {eyebrow && <div className="mb-5 text-xs font-bold uppercase tracking-[0.24em] text-[color:var(--token-eyebrow)]" data-edit-path="eyebrow">{eyebrow}</div>}
           <h1 className="text-5xl font-black leading-none text-[color:var(--token-heading)] md:text-7xl lg:text-8xl" data-edit-path="headline">{headline}</h1>

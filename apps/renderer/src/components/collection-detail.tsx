@@ -44,14 +44,22 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
           {heroSections.map((section) => (
             <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} linkPrefix={linkPrefix} locale={locale} defaultLocale={defaultLocale} />
           ))}
-          {/* Back button — overlaps hero bottom edge */}
-          <div className="absolute bottom-0 left-0 z-30 translate-y-1/2 ml-6 md:ml-10">
+          {/* Back button - overlaps hero bottom edge on desktop only. */}
+          <div className="absolute bottom-0 left-0 z-30 ml-10 hidden translate-y-1/2 md:block">
             <Link href={`${backHrefPrefix}/${collection.key}`} className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-md ring-1 ring-black/5 hover:bg-brand-primary hover:text-white transition-colors">
               <ArrowLeft size={14} />
               {collection.label}
             </Link>
           </div>
         </div>
+        <Link
+          href={`${backHrefPrefix}/${collection.key}`}
+          className="fixed left-4 z-40 inline-flex items-center gap-2 rounded-full bg-[var(--token-card-bg,#fff)] px-4 py-3 text-sm font-semibold text-[color:var(--token-card-heading,var(--token-heading,#111827))] shadow-xl ring-1 ring-[color:var(--token-card-border,rgba(0,0,0,0.08))] backdrop-blur transition-colors hover:bg-[var(--token-btn-bg)] hover:text-[color:var(--token-btn-text,#fff)] md:hidden"
+          style={{ bottom: 'calc(env(safe-area-inset-bottom) + 1rem)' }}
+        >
+          <ArrowLeft size={15} />
+          <span>Zurück</span>
+        </Link>
         {/* Remaining sections (CTA bands, etc.) */}
         {otherSections.map((section) => (
           <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} linkPrefix={linkPrefix} locale={locale} defaultLocale={defaultLocale} />

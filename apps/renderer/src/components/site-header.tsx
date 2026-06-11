@@ -63,6 +63,31 @@ function NavCtaButton({ cta, scrolled, isHeroDark, linkPrefix, className }: { ct
   );
 }
 
+function parseColorChannels(color?: string | null): [number, number, number] | null {
+  if (!color) return null;
+  const value = color.trim();
+  if (/^#[0-9a-f]{3}$/i.test(value)) {
+    const [, r, g, b] = value;
+    return [parseInt(r + r, 16), parseInt(g + g, 16), parseInt(b + b, 16)];
+  }
+  if (/^#[0-9a-f]{6}$/i.test(value)) {
+    return [parseInt(value.slice(1, 3), 16), parseInt(value.slice(3, 5), 16), parseInt(value.slice(5, 7), 16)];
+  }
+  const rgb = value.match(/rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})/i);
+  if (rgb) return [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])];
+  return null;
+}
+
+function isDarkColor(color?: string | null) {
+  const channels = parseColorChannels(color);
+  if (!channels) return false;
+  const [r, g, b] = channels.map((channel) => {
+    const normalized = channel / 255;
+    return normalized <= 0.03928 ? normalized / 12.92 : Math.pow((normalized + 0.055) / 1.055, 2.4);
+  });
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 0.45;
+}
+
 export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeHref = '/', i18n, showTopBar = true, forceDarkNav = false, linkPrefix = '', topBar }: { navItems: NavItem[]; brand: BrandData; contact: ContactData; darkBg?: boolean; cta?: NavCta | null; homeHref?: string; i18n?: { locales: string[]; currentLocale: string; defaultLocale: string; style?: string }; showTopBar?: boolean; forceDarkNav?: boolean; linkPrefix?: string; topBar?: TopBarConfig }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -100,8 +125,14 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   const topBarLinkLabel = (topBarConfig.linkLabel || '').trim();
   const topBarLinkHref = (topBarConfig.linkHref || '').trim();
   const navLinkColorDesktop = brand.navLinkColor || ((scrolled || (!isHeroDark)) ? '#4b5563' : '#ffffff');
-  const navLinkColorMobile = brand.navLinkColor || '#1f2937';
   const navLinkHoverColor = brand.linkHoverColor || brand.accentColor || 'var(--brand-accent)';
+  const mobileNavBg = (brand.navBgColor || '').trim() || '#ffffff';
+  const mobileNavIsDark = isDarkColor(mobileNavBg);
+  const navLinkColorMobile = brand.navLinkColor || (mobileNavIsDark ? '#ffffff' : '#1f2937');
+  const mobileMutedColor = mobileNavIsDark ? 'rgba(255,255,255,0.72)' : '#6b7280';
+  const mobileBorderColor = mobileNavIsDark ? 'rgba(255,255,255,0.12)' : 'rgba(17,24,39,0.08)';
+  const mobileHoverBg = mobileNavIsDark ? 'rgba(255,255,255,0.08)' : 'rgba(17,24,39,0.06)';
+  const mobileBrandColor = brand.navBrandColor || (mobileNavIsDark ? navLinkColorMobile : brand.primaryColor);
 
   return (
     <>
@@ -244,10 +275,11 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-[70] bg-white flex flex-col md:hidden"
+              className="fixed inset-0 z-[70] flex flex-col md:hidden"
+              style={{ backgroundColor: mobileNavBg, color: navLinkColorMobile }}
             >
-              <div className="flex items-center justify-between h-[72px] px-6">
-                <Link href={prefixInternalHref(homeHref, linkPrefix) as string} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight" style={{ color: brand.navBrandColor || brand.primaryColor }}>
+              <div className="flex items-center justify-between h-[72px] px-6 border-b" style={{ borderColor: mobileBorderColor }}>
+                <Link href={prefixInternalHref(homeHref, linkPrefix) as string} className="flex items-center gap-2 font-display font-bold text-xl tracking-tight" style={{ color: mobileBrandColor }}>
                   {(brand.logoDisplay !== 'name' && brand.logoUrl) && (
                     <Image src={brand.logoUrl} alt={brand.companyName || 'Logo'} width={140} height={40} className="h-9 w-auto object-contain" />
                   )}
@@ -255,7 +287,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                     <span>{brand.companyName || 'Firmenname'}</span>
                   )}
                 </Link>
-                <button onClick={() => setMobileOpen(false)} className="p-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                <button onClick={() => setMobileOpen(false)} className="p-2 rounded-lg transition-colors" style={{ color: navLinkColorMobile }} onMouseEnter={(event) => { event.currentTarget.style.backgroundColor = mobileHoverBg; }} onMouseLeave={(event) => { event.currentTarget.style.backgroundColor = 'transparent'; }}>
                   <X size={24} />
                 </button>
               </div>
@@ -294,14 +326,14 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                 </motion.div>
               </nav>
 
-              <div className="px-8 pb-8 flex flex-col gap-2 text-sm text-gray-500">
+              <div className="px-8 pb-8 flex flex-col gap-2 text-sm" style={{ color: mobileMutedColor }}>
                 {contact.phone && (
-                  <a href={`tel:${contact.phone}`} className="flex items-center gap-2 hover:text-brand-primary">
+                  <a href={`tel:${contact.phone}`} className="flex items-center gap-2 transition-opacity hover:opacity-80">
                     <Phone size={14} /> {contact.phone}
                   </a>
                 )}
                 {contact.email && (
-                  <a href={`mailto:${contact.email}`} className="flex items-center gap-2 hover:text-brand-primary">
+                  <a href={`mailto:${contact.email}`} className="flex items-center gap-2 transition-opacity hover:opacity-80">
                     <Mail size={14} /> {contact.email}
                   </a>
                 )}
