@@ -66,20 +66,11 @@ export function SpotlightCardsSection({ data }: Props) {
                 event.currentTarget.style.setProperty('--x', `${event.clientX - rect.left}px`);
                 event.currentTarget.style.setProperty('--y', `${event.clientY - rect.top}px`);
               }}
-              className="spotlight-card relative min-h-[180px] overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition duration-300 md:min-h-[220px]"
+              className="group relative min-h-[220px] overflow-hidden rounded-[var(--token-card-radius)] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
             >
-              <div className="spotlight-card-glow pointer-events-none absolute inset-0 hidden opacity-0 transition duration-500 md:block" style={{ background: 'radial-gradient(720px circle at var(--x,50%) var(--y,30%), rgb(var(--token-accent-rgb,0 0 0) / 0.12), transparent 42%)' }} />
-              {card.image && (
-                <img
-                  data-edit-image="image"
-                  src={card.image}
-                  alt=""
-                  loading={i < 3 ? 'eager' : 'lazy'}
-                  decoding="async"
-                  className="spotlight-card-image absolute inset-0 hidden h-full w-full object-cover opacity-15 transition-opacity duration-500 [backface-visibility:hidden] [transform:translateZ(0)] md:block"
-                />
-              )}
-              {card.image && overlayColor && <div className="pointer-events-none absolute inset-0 hidden md:block" style={{ backgroundColor: overlayColor }} />}
+              <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100" style={{ background: 'radial-gradient(720px circle at var(--x,50%) var(--y,30%), rgb(var(--token-accent-rgb,0 0 0) / 0.12), transparent 42%)' }} />
+              {card.image && <img data-edit-image="image" src={card.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-20 transition duration-500 md:opacity-12 md:group-hover:opacity-20" />}
+              {card.image && overlayColor && <div className="pointer-events-none absolute inset-0 hidden opacity-0 transition duration-500 md:block md:group-hover:opacity-100" style={{ backgroundColor: overlayColor }} />}
               <div className="relative z-10 flex h-full flex-col justify-between gap-8">
                 {card.icon && <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--token-icon)_12%,var(--token-card-bg,#fff))] text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={card.icon} size={24} /></span>}
                 <div>
