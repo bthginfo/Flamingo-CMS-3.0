@@ -81,8 +81,8 @@ function ImageCardContent({ item }: { item: HoverItem }) {
         style={{ objectPosition: item.imagePosition || 'center' }}
         sizes="(max-width: 768px) 100vw, 400px"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.62),rgba(0,0,0,0.28)_50%,rgba(0,0,0,0.06))] sm:bg-[linear-gradient(90deg,rgba(0,0,0,0.68),rgba(0,0,0,0.36)_48%,rgba(0,0,0,0.12))]" />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.20),transparent_34%,rgba(0,0,0,0.24))]" />
+      <div className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(0,0,0,0.68),rgba(0,0,0,0.36)_48%,rgba(0,0,0,0.12))] sm:block" />
+      <div className="absolute inset-0 hidden bg-[linear-gradient(180deg,rgba(0,0,0,0.20),transparent_34%,rgba(0,0,0,0.24))] sm:block" />
       <div className="relative z-10 flex min-h-[230px] flex-col justify-start p-6 text-left sm:min-h-[220px]">
         <h4 className="font-display mb-3 text-lg font-semibold text-[color:var(--token-on-dark-heading,#ffffff)] drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]">
           {item.title}
