@@ -4,8 +4,8 @@
  *
  * Runs four gates over every template file and prints a single summary
  * report. NO files are modified, NO exit code is set on warnings —
- * Phase 1 is purely measurement. Gate enforcement (CI-failing) lands in
- * Phase 4 once cleanup is done.
+ * By default this is report-only. With --strict it exits with code 1 when
+ * any gate fails and is safe to use in CI.
  *
  *   Gate A — VOLLSTÄNDIGKEIT
  *     Every TokenKey declared in packages/design-tokens MUST appear at

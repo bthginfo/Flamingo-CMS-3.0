@@ -44,9 +44,17 @@ export const DESIGN_TOKENS = {
   // ─── Surfaces / structure ─────────────────────────────────────────────
   sectionBg:       { cssVar: '--token-section-bg',      kind: 'color', default: '#ffffff',          description: 'Default section background color' },
   sectionBgAlt:    { cssVar: '--token-section-bg-alt',  kind: 'color', default: '#f8fafc',          description: 'Alternating section background (every other section)' },
+  pageBg:          { cssVar: '--token-page-bg',         kind: 'color', default: '#ffffff',          description: 'Page-level background used by full-page heroes and page fades' },
   cardBg:          { cssVar: '--token-card-bg',         kind: 'color', default: '#ffffff',          description: 'Card / tile background color' },
+  cardHeading:     { cssVar: '--token-card-heading',    kind: 'color', default: '#0f172a',          description: 'Heading color inside cards and detail tiles' },
+  cardBody:        { cssVar: '--token-card-body',       kind: 'color', default: '#475569',          description: 'Body copy color inside cards and detail tiles' },
+  cardMuted:       { cssVar: '--token-card-muted',      kind: 'color', default: '#64748b',          description: 'Muted copy color inside cards and detail tiles' },
+  cardBadgeBg:     { cssVar: '--token-card-badge-bg',   kind: 'color', default: 'rgba(220,38,38,0.10)', description: 'Badge background used inside cards' },
+  cardBadgeText:   { cssVar: '--token-card-badge-text', kind: 'color', default: '#dc2626',          description: 'Badge text used inside cards' },
+  cardIcon:        { cssVar: '--token-card-icon',       kind: 'color', default: '#dc2626',          description: 'Icon color used inside cards' },
   cardBorder:      { cssVar: '--token-card-border',     kind: 'color', default: 'rgba(15,23,42,0.08)', description: 'Card / tile border color' },
   divider:         { cssVar: '--token-divider',         kind: 'color', default: 'rgba(15,23,42,0.12)', description: 'Horizontal rule / section divider color' },
+  shadow:          { cssVar: '--token-shadow',          kind: 'color', default: '#0f172a',          description: 'Base color for color-mixed shadows' },
 
   // ─── Accents / actions ────────────────────────────────────────────────
   accent:          { cssVar: '--token-accent',          kind: 'color', default: '#dc2626',          description: 'Primary accent color (links, focused states, hero highlights)' },
@@ -63,9 +71,18 @@ export const DESIGN_TOKENS = {
   // ─── Buttons ──────────────────────────────────────────────────────────
   btnBg:           { cssVar: '--token-btn-bg',          kind: 'color', default: '#0f172a',          description: 'Primary button background' },
   btnText:         { cssVar: '--token-btn-text',        kind: 'color', default: '#ffffff',          description: 'Primary button text' },
+  btnSecondaryBg:  { cssVar: '--token-btn-secondary-bg', kind: 'color', default: '#ffffff',         description: 'Secondary button background' },
+  btnSecondaryText:{ cssVar: '--token-btn-secondary-text', kind: 'color', default: '#0f172a',       description: 'Secondary button text' },
 
   // ─── Stats ────────────────────────────────────────────────────────────
   statValue:       { cssVar: '--token-stat-value',      kind: 'color', default: '#dc2626',          description: 'Large stat number color' },
+  label:           { cssVar: '--token-label',           kind: 'color', default: '#64748b',          description: 'Form label color' },
+  success:         { cssVar: '--token-success',         kind: 'color', default: '#16a34a',          description: 'Success messages and positive status color' },
+  successBg:       { cssVar: '--token-success-bg',      kind: 'color', default: '#f0fdf4',          description: 'Success status background color' },
+  danger:          { cssVar: '--token-danger',          kind: 'color', default: '#ef4444',          description: 'Error, destructive action and warning text color' },
+  dangerBg:        { cssVar: '--token-danger-bg',       kind: 'color', default: '#fee2e2',          description: 'Error, sale badge and warning background color' },
+  price:           { cssVar: '--token-price',           kind: 'color', default: '#0f172a',          description: 'Primary shop price color' },
+  priceStrike:     { cssVar: '--token-price-strikethrough', kind: 'color', default: '#94a3b8',      description: 'Compare-at / struck-through price color' },
 
   // ─── Radii ────────────────────────────────────────────────────────────
   cardRadius:      { cssVar: '--token-card-radius',     kind: 'radius', default: '1rem',            description: 'Card / tile border-radius' },

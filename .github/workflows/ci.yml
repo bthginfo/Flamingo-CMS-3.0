@@ -28,6 +28,7 @@ jobs:
       # without regenerating apps/renderer/src/lib/section-color-contracts-generated.ts
       # (see docs/section-color-system.md).
       - run: pnpm check:section-colors
+      - run: pnpm check:tokens
 
       - run: pnpm --filter @flamingo/admin build
         env:
