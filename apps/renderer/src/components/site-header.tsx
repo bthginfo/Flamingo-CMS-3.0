@@ -126,6 +126,10 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
   const topBarLinkHref = (topBarConfig.linkHref || '').trim();
   const navLinkColorDesktop = brand.navLinkColor || ((scrolled || (!isHeroDark)) ? '#4b5563' : '#ffffff');
   const navLinkHoverColor = brand.linkHoverColor || brand.accentColor || 'var(--brand-accent)';
+  const activeNavBg = brand.navBgColor || 'rgba(255,255,255,0.8)';
+  const navSurfaceIsDark = (scrolled || (!isHeroDark)) ? isDarkColor(activeNavBg) : isHeroDark;
+  const mobileToggleColor = navSurfaceIsDark ? '#ffffff' : '#111827';
+  const mobileToggleHoverBg = navSurfaceIsDark ? 'rgba(255,255,255,0.12)' : 'rgba(17,24,39,0.08)';
   const mobileNavBg = (brand.navBgColor || '').trim() || '#ffffff';
   const mobileNavIsDark = isDarkColor(mobileNavBg);
   const navLinkColorMobile = brand.navLinkColor || (mobileNavIsDark ? '#ffffff' : '#1f2937');
@@ -257,10 +261,10 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label={mobileOpen ? 'Menü schließen' : 'Menü öffnen'}
-              className={cn(
-                'md:hidden p-2 rounded-lg transition-colors',
-                (scrolled || (!isHeroDark)) ? 'text-gray-700 hover:bg-gray-100' : 'text-white hover:bg-white/10',
-              )}
+              className="md:hidden p-2 rounded-lg transition-colors"
+              style={{ color: mobileToggleColor }}
+              onMouseEnter={(event) => { event.currentTarget.style.backgroundColor = mobileToggleHoverBg; }}
+              onMouseLeave={(event) => { event.currentTarget.style.backgroundColor = 'transparent'; }}
             >
               {mobileOpen ? <X size={24} /> : <Menu size={24} />}
             </button>

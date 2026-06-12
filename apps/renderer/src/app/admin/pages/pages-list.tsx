@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FileText, Trash2, Eye, EyeOff, Pencil, ChevronRight, ShoppingBag, AlertTriangle } from 'lucide-react';
+import { FileText, Trash2, Eye, EyeOff, Pencil, ChevronRight, ShoppingBag, AlertTriangle, Copy } from 'lucide-react';
 import { useTransition, useState } from 'react';
 
 type Page = {
@@ -76,9 +76,10 @@ function AddShopPageModal({ shopPages, onAdd, onClose }: { shopPages: ShopPageIn
 
 const SHOP_SLUGS = new Set(['shop', 'warenkorb', 'checkout', 'bestellung-abgeschlossen', 'agb', 'widerrufsbelehrung']);
 
-export function PagesList({ pages, deleteAction, hasShop, shopPages, addShopPageAction }: {
+export function PagesList({ pages, deleteAction, duplicateAction, hasShop, shopPages, addShopPageAction }: {
   pages: Page[];
   deleteAction: (id: string) => Promise<void>;
+  duplicateAction?: (id: string) => Promise<{ success?: boolean; id?: string; error?: string }>;
   hasShop?: boolean;
   shopPages?: ShopPageInfo[];
   addShopPageAction?: (slug: string) => Promise<{ success?: boolean; error?: string }>;
@@ -139,8 +140,29 @@ export function PagesList({ pages, deleteAction, hasShop, shopPages, addShopPage
                   </div>
                 </div>
               </Link>
-              <div className="px-2 sm:px-3 border-l flex items-center">
+              <div className="px-2 sm:px-3 border-l flex items-center gap-1">
+                {duplicateAction && (
+                  <button
+                    type="button"
+                    disabled={pending}
+                    title="Seite duplizieren"
+                    onClick={() => {
+                      startTransition(async () => {
+                        const result = await duplicateAction(page.id);
+                        if (result?.id) {
+                          window.location.href = `/admin/pages/${result.id}`;
+                        } else if (result?.error) {
+                          alert(result.error);
+                        }
+                      });
+                    }}
+                    className="text-zinc-400 hover:text-blue-600 p-2.5 transition-colors"
+                  >
+                    <Copy size={18} />
+                  </button>
+                )}
                 <button
+                  type="button"
                   disabled={pending}
                   onClick={() => {
                     if (SHOP_SLUGS.has(page.slug)) {

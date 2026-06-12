@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Trash2 } from 'lucide-react';
+import { Copy, Trash2 } from 'lucide-react';
 import { useTransition } from 'react';
 
 type Item = {
@@ -13,7 +13,17 @@ type Item = {
   updatedAt: Date;
 };
 
-export function CollectionItemsList({ items, collectionKey, deleteAction }: { items: Item[]; collectionKey: string; deleteAction: (id: string) => Promise<void> }) {
+export function CollectionItemsList({
+  items,
+  collectionKey,
+  deleteAction,
+  duplicateAction,
+}: {
+  items: Item[];
+  collectionKey: string;
+  deleteAction: (id: string) => Promise<void>;
+  duplicateAction?: (id: string) => Promise<{ success?: boolean; id?: string; error?: string }>;
+}) {
   const [pending, startTransition] = useTransition();
 
   if (items.length === 0) {
@@ -63,7 +73,28 @@ export function CollectionItemsList({ items, collectionKey, deleteAction }: { it
                 </td>
                 <td className="px-4 py-3 text-gray-500">{item.priority}</td>
                 <td className="px-4 py-3 text-right">
+                  {duplicateAction && (
+                    <button
+                      type="button"
+                      disabled={pending}
+                      title="Eintrag duplizieren"
+                      onClick={() => {
+                        startTransition(async () => {
+                          const result = await duplicateAction(item.id);
+                          if (result?.id) {
+                            window.location.href = `/admin/collections/${collectionKey}/${result.id}`;
+                          } else if (result?.error) {
+                            alert(result.error);
+                          }
+                        });
+                      }}
+                      className="text-gray-400 hover:text-blue-600 p-1 mr-2"
+                    >
+                      <Copy size={16} />
+                    </button>
+                  )}
                   <button
+                    type="button"
                     disabled={pending}
                     onClick={() => {
                       if (confirm(`"${item.title}" wirklich löschen?`)) {
@@ -94,7 +125,28 @@ export function CollectionItemsList({ items, collectionKey, deleteAction }: { it
                 <span className={`px-2 py-0.5 rounded text-xs font-medium ${item.published ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                   {item.published ? 'Live' : 'Entwurf'}
                 </span>
+                {duplicateAction && (
+                  <button
+                    type="button"
+                    disabled={pending}
+                    title="Eintrag duplizieren"
+                    onClick={() => {
+                      startTransition(async () => {
+                        const result = await duplicateAction(item.id);
+                        if (result?.id) {
+                          window.location.href = `/admin/collections/${collectionKey}/${result.id}`;
+                        } else if (result?.error) {
+                          alert(result.error);
+                        }
+                      });
+                    }}
+                    className="text-gray-400 hover:text-blue-600 p-1"
+                  >
+                    <Copy size={16} />
+                  </button>
+                )}
                 <button
+                  type="button"
                   disabled={pending}
                   onClick={() => {
                     if (confirm(`"${item.title}" wirklich löschen?`)) {

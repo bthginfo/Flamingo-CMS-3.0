@@ -5,6 +5,7 @@ import { getSession } from '@/lib/session';
 import { validateSectionData } from '@/lib/validate-section';
 import { pages, pageSections, tenants, globalSettings, tenantAddons, collections, collectionItems, products } from '@flamingo/db';
 import { eq, and, asc, desc, not } from 'drizzle-orm';
+import { randomUUID } from 'crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { BOOKING_SECTION_TYPES } from '@/lib/booking-core';
@@ -15,6 +16,33 @@ async function requireSession() {
   const session = await getSession();
   if (!session) redirect('/admin/login');
   return session;
+}
+
+function slugify(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+function uniqueSlug(base: string, usedSlugs: Set<string>) {
+  const cleanBase = slugify(base) || 'kopie';
+  let candidate = cleanBase;
+  let index = 2;
+  while (usedSlugs.has(candidate)) {
+    candidate = `${cleanBase}-${index}`;
+    index += 1;
+  }
+  return candidate;
+}
+
+function cloneJson<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value ?? {}));
 }
 
 export async function getPagesAction() {
@@ -80,6 +108,73 @@ export async function deletePageAction(pageId: string) {
   const db = getDb();
   await db.delete(pages).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId)));
   revalidatePath('/admin/pages');
+}
+
+export async function duplicatePageAction(pageId: string) {
+  const session = await requireSession();
+  const db = getDb();
+
+  const [sourcePage] = await db
+    .select()
+    .from(pages)
+    .where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId)))
+    .limit(1);
+  if (!sourcePage) return { error: 'Seite nicht gefunden' };
+
+  const [existingPages, sourceSections, lastPage] = await Promise.all([
+    db.select({ slug: pages.slug }).from(pages).where(eq(pages.tenantId, session.tenantId)),
+    db
+      .select()
+      .from(pageSections)
+      .where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId)))
+      .orderBy(asc(pageSections.sortOrder)),
+    db
+      .select({ sortOrder: pages.sortOrder })
+      .from(pages)
+      .where(eq(pages.tenantId, session.tenantId))
+      .orderBy(desc(pages.sortOrder))
+      .limit(1),
+  ]);
+
+  const slug = uniqueSlug(`${sourcePage.slug || sourcePage.title}-kopie`, new Set(existingPages.map((p) => p.slug)));
+  const [copy] = await db
+    .insert(pages)
+    .values({
+      id: randomUUID(),
+      tenantId: session.tenantId,
+      title: `${sourcePage.title} Kopie`,
+      slug,
+      type: sourcePage.type,
+      status: 'draft',
+      visible: false,
+      sortOrder: (lastPage[0]?.sortOrder ?? sourcePage.sortOrder ?? 0) + 1,
+    })
+    .returning({ id: pages.id });
+
+  if (sourceSections.length > 0) {
+    await db.insert(pageSections).values(
+      sourceSections.map((section) => ({
+        id: randomUUID(),
+        tenantId: session.tenantId,
+        pageId: copy.id,
+        type: section.type,
+        variant: section.variant,
+        titleInternal: section.titleInternal,
+        visible: section.visible,
+        locked: false,
+        container: section.container,
+        spacingTop: section.spacingTop,
+        spacingBottom: section.spacingBottom,
+        anchorId: section.anchorId,
+        styleOverrides: cloneJson(section.styleOverrides),
+        data: cloneJson(section.data),
+        sortOrder: section.sortOrder,
+      }))
+    );
+  }
+
+  revalidatePath('/admin/pages');
+  return { success: true, id: copy.id };
 }
 
 export async function updatePageAction(pageId: string, data: { title?: string; slug?: string; visible?: boolean; status?: 'draft' | 'published' | 'archived' }) {

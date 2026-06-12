@@ -4,6 +4,7 @@ import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { collections, collectionItems, tenants, globalSettings, pages, pageSections, tenantAddons } from '@flamingo/db';
 import { eq, and, asc, desc, or } from 'drizzle-orm';
+import { randomUUID } from 'crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -11,6 +12,40 @@ async function requireSession() {
   const session = await getSession();
   if (!session) redirect('/admin/login');
   return session;
+}
+
+function slugify(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+function uniqueSlug(base: string, usedSlugs: Set<string>) {
+  const cleanBase = slugify(base) || 'kopie';
+  let candidate = cleanBase;
+  let index = 2;
+  while (usedSlugs.has(candidate)) {
+    candidate = `${cleanBase}-${index}`;
+    index += 1;
+  }
+  return candidate;
+}
+
+function cloneItemData(data: Record<string, unknown>) {
+  const copy = JSON.parse(JSON.stringify(data ?? {})) as Record<string, unknown>;
+  if (Array.isArray(copy.sections)) {
+    copy.sections = copy.sections.map((section) => {
+      if (!section || typeof section !== 'object') return section;
+      return { ...(section as Record<string, unknown>), id: randomUUID() };
+    });
+  }
+  return copy;
 }
 
 // ─── Collections ───────────────────────────────────────────────────
@@ -118,6 +153,49 @@ export async function deleteItemAction(itemId: string) {
   const db = getDb();
   await db.delete(collectionItems).where(and(eq(collectionItems.id, itemId), eq(collectionItems.tenantId, session.tenantId)));
   revalidatePath('/admin/collections');
+}
+
+export async function duplicateItemAction(itemId: string) {
+  const session = await requireSession();
+  const db = getDb();
+
+  const [sourceItem] = await db
+    .select()
+    .from(collectionItems)
+    .where(and(eq(collectionItems.id, itemId), eq(collectionItems.tenantId, session.tenantId)))
+    .limit(1);
+  if (!sourceItem) return { error: 'Eintrag nicht gefunden' };
+
+  const [sameCollectionItems, lastItem] = await Promise.all([
+    db
+      .select({ slug: collectionItems.slug })
+      .from(collectionItems)
+      .where(and(eq(collectionItems.tenantId, session.tenantId), eq(collectionItems.collectionId, sourceItem.collectionId))),
+    db
+      .select({ priority: collectionItems.priority })
+      .from(collectionItems)
+      .where(and(eq(collectionItems.tenantId, session.tenantId), eq(collectionItems.collectionId, sourceItem.collectionId)))
+      .orderBy(desc(collectionItems.priority))
+      .limit(1),
+  ]);
+
+  const slug = uniqueSlug(`${sourceItem.slug || sourceItem.title}-kopie`, new Set(sameCollectionItems.map((item) => item.slug)));
+  const [copy] = await db
+    .insert(collectionItems)
+    .values({
+      id: randomUUID(),
+      tenantId: session.tenantId,
+      collectionId: sourceItem.collectionId,
+      title: `${sourceItem.title} Kopie`,
+      slug,
+      data: cloneItemData(sourceItem.data),
+      published: false,
+      priority: (lastItem[0]?.priority ?? sourceItem.priority ?? 0) + 1,
+    })
+    .returning({ id: collectionItems.id });
+
+  revalidatePath('/admin/collections');
+  return { success: true, id: copy.id };
 }
 
 /** Returns all collections with their items for the internal link selector. */

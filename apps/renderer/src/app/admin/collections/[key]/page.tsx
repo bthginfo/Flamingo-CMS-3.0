@@ -1,4 +1,4 @@
-import { getCollectionByKeyAction, getItemsAction, createItemAction, deleteItemAction, getOrCreateOverviewPageAction } from '../actions';
+import { getCollectionByKeyAction, getItemsAction, createItemAction, deleteItemAction, duplicateItemAction, getOrCreateOverviewPageAction } from '../actions';
 import { notFound, redirect } from 'next/navigation';
 import { CollectionItemsList } from './items-list';
 
@@ -36,7 +36,7 @@ export default async function CollectionDetailPage({ params }: { params: Promise
           </form>
         </div>
       </div>
-      <CollectionItemsList items={items} collectionKey={key} deleteAction={deleteItemAction} />
+      <CollectionItemsList items={items} collectionKey={key} deleteAction={deleteItemAction} duplicateAction={duplicateItemAction} />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { getPagesAction, createPageAction, deletePageAction, ensureDefaultPages, getShopPageStatus, addShopPageAction } from './actions';
+import { getPagesAction, createPageAction, deletePageAction, duplicatePageAction, ensureDefaultPages, getShopPageStatus, addShopPageAction } from './actions';
 import { PagesList } from './pages-list';
 import { isShopActive } from '@/app/admin/shop/actions';
 
@@ -16,7 +16,7 @@ export default async function PagesPage() {
           <button type="submit" className="admin-btn-primary whitespace-nowrap">+ Erstellen</button>
         </form>
       </div>
-      <PagesList pages={pagesList} deleteAction={deletePageAction} hasShop={hasShop} shopPages={shopPages} addShopPageAction={addShopPageAction} />
+      <PagesList pages={pagesList} deleteAction={deletePageAction} duplicateAction={duplicatePageAction} hasShop={hasShop} shopPages={shopPages} addShopPageAction={addShopPageAction} />
     </div>
   );
 }
