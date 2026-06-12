@@ -72,7 +72,28 @@ type HoverItem = {
 
 function ImageCardContent({ item }: { item: HoverItem }) {
   return (
-    <div className="relative min-h-[230px] w-full overflow-hidden sm:min-h-[220px]">
+    <div className="relative w-full overflow-hidden">
+      <div className="block sm:hidden">
+        <div className="relative h-52 w-full overflow-hidden">
+          <Image
+            src={item.image || ''}
+            alt={item.title}
+            fill
+            className="object-cover"
+            style={{ objectPosition: item.imagePosition || 'center' }}
+            sizes="100vw"
+          />
+        </div>
+        <div className="bg-[var(--style-card-bg,#ffffff)] p-6 text-left">
+          <h4 className="font-display mb-3 text-lg font-semibold text-[var(--style-heading-color,var(--style-text-primary,#111827))]">
+            {item.title}
+          </h4>
+          <p className="text-sm font-medium leading-relaxed text-[var(--style-body-color,var(--style-text-secondary,#6b7280))]">
+            {item.description}
+          </p>
+        </div>
+      </div>
+      <div className="relative hidden min-h-[220px] w-full overflow-hidden sm:block">
       <Image
         src={item.image || ''}
         alt={item.title}
@@ -90,6 +111,7 @@ function ImageCardContent({ item }: { item: HoverItem }) {
         <p className="max-w-[28rem] text-sm font-medium leading-relaxed text-[color:var(--token-on-dark-body,rgba(255,255,255,0.90))] drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
           {item.description}
         </p>
+      </div>
       </div>
     </div>
   );

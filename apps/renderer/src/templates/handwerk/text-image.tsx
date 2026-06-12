@@ -51,7 +51,7 @@ export function TextImageSection({ data, variant }: Props) {
               {badge}
             </span>
           )}
-          {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+          {headline && <h2 className="section-headline text-left" data-edit-path="headline">{headline}</h2>}
           {text && <div className="text-[color:var(--token-body)] text-lg leading-relaxed mt-4 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <ul className="mt-6 space-y-3">
