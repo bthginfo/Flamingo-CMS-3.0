@@ -318,6 +318,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     }
   }
   if (!Component) {
+    if (process.env.NODE_ENV === 'production') return null;
     return (
       <div className="py-8 text-center text-gray-400 text-sm">
         Unbekannter Sektionstyp: {section.type}

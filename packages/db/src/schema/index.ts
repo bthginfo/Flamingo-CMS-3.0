@@ -1,4 +1,5 @@
 import { pgTable, uuid, varchar, text, boolean, integer, jsonb, timestamp, uniqueIndex, index, pgEnum, numeric } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 
 // ─── Enums ────────────────────────────────────────────────────────────
 export const industryEnum = pgEnum('industry', [
@@ -197,6 +198,7 @@ export const publishedSnapshots = pgTable('published_snapshots', {
 }, (t) => [
   index('published_snapshots_active_idx').on(t.tenantId, t.isActive),
   index('published_snapshots_tenant_idx').on(t.tenantId),
+  uniqueIndex('published_snapshots_one_active_per_tenant_idx').on(t.tenantId).where(sql`${t.isActive} = true`),
 ]);
 
 // ─── 11. publish_history ─────────────────────────────────────────────

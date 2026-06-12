@@ -6,6 +6,7 @@ import { getDesignCssVars } from '@/lib/design-vars';
 import { getSession } from '@/lib/session';
 import { redirect } from 'next/navigation';
 import { LivePreviewClient } from './client';
+import { serializeJsonForHtml } from '@/lib/safe-json';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,7 +64,7 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
           that need to call session-gated APIs from inside the live preview. */}
       <script
         dangerouslySetInnerHTML={{
-          __html: `window.__FLAMINGO_TENANT_ID__=${JSON.stringify(tenantId)};`,
+          __html: `window.__FLAMINGO_TENANT_ID__=${serializeJsonForHtml(tenantId)};`,
         }}
       />
       <LivePreviewClient

@@ -4,11 +4,13 @@ import { getSession } from '@/lib/session';
 import { getDb } from '@/lib/db';
 import { getDraftSnapshot } from '@/lib/snapshot';
 import { pages, publishedSnapshots, publishHistory } from '@flamingo/db';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, lt } from 'drizzle-orm';
 import { revalidateTag, revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { createHash } from 'crypto';
+
+type PublishResult = { success?: true; error?: string; version?: number; unchanged?: true };
 
 async function requireSession() {
   const session = await getSession();
@@ -16,19 +18,19 @@ async function requireSession() {
   return session;
 }
 
+function revalidateTenant(tenantId: string) {
+  revalidateTag(`tenant-${tenantId}`);
+  revalidatePath('/', 'layout');
+}
+
 /**
  * Publish (Draft/Publish B):
- *  1) Promote any draft pages to 'published' so the admin "Status" column
- *     matches what's now live.
- *  2) Serialize the full draft snapshot from pages/page_sections/collections.
- *  3) Checksum it. If equal to the active snapshot's checksum, no-op (still
- *     bust caches in case something downstream diverged).
- *  4) Insert new published_snapshots row (version = max+1, isActive=true),
- *     flip previous active off, append publish_history row.
- *  5) revalidateTag('tenant-<id>') so public reads pick up the new version
- *     without waiting for the 60s SWR window.
+ *  1) Serialize the full draft snapshot from pages/page_sections/collections.
+ *  2) Promote draft pages and activate the new published snapshot atomically.
+ *  3) Append publish_history in the same transaction.
+ *  4) Bust caches after the DB state is consistent.
  */
-export async function publishAction(): Promise<{ success?: true; error?: string; version?: number; unchanged?: true }> {
+export async function publishAction(): Promise<PublishResult> {
   const session = await requireSession();
   const cookieStore = await cookies();
   if (cookieStore.get('flamingo_public_demo')?.value === session.tenantId) {
@@ -38,61 +40,62 @@ export async function publishAction(): Promise<{ success?: true; error?: string;
   const db = getDb();
   const tenantId = session.tenantId;
 
-  await db.update(pages)
-    .set({ status: 'published' })
-    .where(and(eq(pages.tenantId, tenantId), eq(pages.status, 'draft')));
-
   const snapshot = await getDraftSnapshot(tenantId);
   if (!snapshot) return { error: 'Keine Inhalte zum Veröffentlichen gefunden.' };
 
   const checksum = createHash('sha256').update(JSON.stringify(snapshot)).digest('hex');
 
-  const [currentActive] = await db
-    .select({ id: publishedSnapshots.id, version: publishedSnapshots.version, checksum: publishedSnapshots.checksum })
-    .from(publishedSnapshots)
-    .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)))
-    .orderBy(desc(publishedSnapshots.version))
-    .limit(1);
+  const result = await db.transaction(async (tx) => {
+    const [currentActive] = await tx
+      .select({ id: publishedSnapshots.id, version: publishedSnapshots.version, checksum: publishedSnapshots.checksum })
+      .from(publishedSnapshots)
+      .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)))
+      .orderBy(desc(publishedSnapshots.version))
+      .limit(1);
 
-  if (currentActive && currentActive.checksum === checksum) {
-    revalidateTag(`tenant-${tenantId}`);
-    revalidatePath('/', 'layout');
-    return { success: true, unchanged: true, version: currentActive.version };
-  }
+    await tx.update(pages)
+      .set({ status: 'published' })
+      .where(and(eq(pages.tenantId, tenantId), eq(pages.status, 'draft')));
 
-  const [latest] = await db
-    .select({ version: publishedSnapshots.version })
-    .from(publishedSnapshots)
-    .where(eq(publishedSnapshots.tenantId, tenantId))
-    .orderBy(desc(publishedSnapshots.version))
-    .limit(1);
+    if (currentActive && currentActive.checksum === checksum) {
+      return { success: true as const, unchanged: true as const, version: currentActive.version };
+    }
 
-  await db.update(publishedSnapshots)
-    .set({ isActive: false })
-    .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)));
+    const [latest] = await tx
+      .select({ version: publishedSnapshots.version })
+      .from(publishedSnapshots)
+      .where(eq(publishedSnapshots.tenantId, tenantId))
+      .orderBy(desc(publishedSnapshots.version))
+      .limit(1);
 
-  const nextVersion = (latest?.version ?? 0) + 1;
-  const [created] = await db.insert(publishedSnapshots).values({
-    tenantId,
-    version: nextVersion,
-    snapshot: snapshot as unknown as Record<string, unknown>,
-    checksum,
-    createdBy: 'admin',
-    isActive: true,
-  }).returning({ id: publishedSnapshots.id });
+    await tx.update(publishedSnapshots)
+      .set({ isActive: false })
+      .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)));
 
-  if (created?.id) {
-    await db.insert(publishHistory).values({
+    const nextVersion = (latest?.version ?? 0) + 1;
+    const [created] = await tx.insert(publishedSnapshots).values({
+      tenantId,
+      version: nextVersion,
+      snapshot: snapshot as unknown as Record<string, unknown>,
+      checksum,
+      createdBy: 'admin',
+      isActive: true,
+    }).returning({ id: publishedSnapshots.id });
+
+    if (!created?.id) throw new Error('Published Snapshot konnte nicht erstellt werden.');
+
+    await tx.insert(publishHistory).values({
       tenantId,
       snapshotId: created.id,
       previousSnapshotId: currentActive?.id ?? null,
       action: 'publish',
       note: `v${nextVersion}`,
     });
-  }
 
-  revalidateTag(`tenant-${tenantId}`);
-  revalidatePath('/', 'layout');
+    return { success: true as const, version: nextVersion };
+  });
+
+  revalidateTenant(tenantId);
 
   const revalidateSecret = process.env.REVALIDATE_SECRET;
   const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3002';
@@ -107,14 +110,13 @@ export async function publishAction(): Promise<{ success?: true; error?: string;
     }
   }
 
-  return { success: true, version: nextVersion };
+  return result;
 }
 
 /**
- * Rollback to the most recent prior snapshot. Returns null if there's
- * nothing to roll back to.
+ * Roll back to the most recent prior snapshot.
  */
-export async function rollbackPublishAction(): Promise<{ success?: true; error?: string; version?: number }> {
+export async function rollbackPublishAction(): Promise<PublishResult> {
   const session = await requireSession();
   const cookieStore = await cookies();
   if (cookieStore.get('flamingo_public_demo')?.value === session.tenantId) {
@@ -124,30 +126,43 @@ export async function rollbackPublishAction(): Promise<{ success?: true; error?:
   const db = getDb();
   const tenantId = session.tenantId;
 
-  const rows = await db
-    .select({ id: publishedSnapshots.id, version: publishedSnapshots.version, isActive: publishedSnapshots.isActive })
-    .from(publishedSnapshots)
-    .where(eq(publishedSnapshots.tenantId, tenantId))
-    .orderBy(desc(publishedSnapshots.version))
-    .limit(2);
+  const result = await db.transaction(async (tx) => {
+    const [current] = await tx
+      .select({ id: publishedSnapshots.id, version: publishedSnapshots.version })
+      .from(publishedSnapshots)
+      .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)))
+      .orderBy(desc(publishedSnapshots.version))
+      .limit(1);
 
-  if (rows.length < 2) return { error: 'Kein vorheriger Snapshot vorhanden.' };
+    if (!current) return { error: 'Kein aktiver Snapshot vorhanden.' };
 
-  const [current, previous] = rows;
+    const [previous] = await tx
+      .select({ id: publishedSnapshots.id, version: publishedSnapshots.version })
+      .from(publishedSnapshots)
+      .where(and(eq(publishedSnapshots.tenantId, tenantId), lt(publishedSnapshots.version, current.version)))
+      .orderBy(desc(publishedSnapshots.version))
+      .limit(1);
 
-  await db.update(publishedSnapshots).set({ isActive: false }).where(eq(publishedSnapshots.id, current.id));
-  await db.update(publishedSnapshots).set({ isActive: true }).where(eq(publishedSnapshots.id, previous.id));
+    if (!previous) return { error: 'Kein vorheriger Snapshot vorhanden.' };
 
-  await db.insert(publishHistory).values({
-    tenantId,
-    snapshotId: previous.id,
-    previousSnapshotId: current.id,
-    action: 'rollback',
-    note: `v${current.version} → v${previous.version}`,
+    await tx.update(publishedSnapshots)
+      .set({ isActive: false })
+      .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)));
+    await tx.update(publishedSnapshots)
+      .set({ isActive: true })
+      .where(eq(publishedSnapshots.id, previous.id));
+
+    await tx.insert(publishHistory).values({
+      tenantId,
+      snapshotId: previous.id,
+      previousSnapshotId: current.id,
+      action: 'rollback',
+      note: `v${current.version} -> v${previous.version}`,
+    });
+
+    return { success: true as const, version: previous.version };
   });
 
-  revalidateTag(`tenant-${tenantId}`);
-  revalidatePath('/', 'layout');
-  return { success: true, version: previous.version };
+  revalidateTenant(tenantId);
+  return result;
 }
-

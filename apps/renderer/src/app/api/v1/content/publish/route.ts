@@ -21,39 +21,53 @@ export async function POST(req: NextRequest) {
 
     const db = getDb();
 
-    // Set all pages to "published" status
-    await db.update(pages).set({ status: 'published' }).where(eq(pages.tenantId, auth.tenantId));
-
     const snapshot = await getDraftSnapshot(auth.tenantId);
     if (!snapshot) return NextResponse.json({ error: 'No content to publish' }, { status: 400 });
     const checksum = createHash('sha256').update(JSON.stringify(snapshot)).digest('hex');
-    const [latest] = await db
-      .select({ id: publishedSnapshots.id, version: publishedSnapshots.version })
-      .from(publishedSnapshots)
-      .where(eq(publishedSnapshots.tenantId, auth.tenantId))
-      .orderBy(desc(publishedSnapshots.version))
-      .limit(1);
 
-    await db.update(publishedSnapshots)
-      .set({ isActive: false })
-      .where(and(eq(publishedSnapshots.tenantId, auth.tenantId), eq(publishedSnapshots.isActive, true)));
-    const [created] = await db.insert(publishedSnapshots).values({
-      tenantId: auth.tenantId,
-      version: (latest?.version ?? 0) + 1,
-      snapshot: snapshot as unknown as Record<string, unknown>,
-      checksum,
-      createdBy: `pat:${auth.tokenId}`,
-      isActive: true,
-    }).returning({ id: publishedSnapshots.id });
-    if (created?.id) {
-      await db.insert(publishHistory).values({
+    await db.transaction(async (tx) => {
+      await tx.update(pages).set({ status: 'published' }).where(eq(pages.tenantId, auth.tenantId));
+
+      const [currentActive] = await tx
+        .select({ id: publishedSnapshots.id, version: publishedSnapshots.version, checksum: publishedSnapshots.checksum })
+        .from(publishedSnapshots)
+        .where(and(eq(publishedSnapshots.tenantId, auth.tenantId), eq(publishedSnapshots.isActive, true)))
+        .orderBy(desc(publishedSnapshots.version))
+        .limit(1);
+
+      if (currentActive?.checksum === checksum) return;
+
+      const [latest] = await tx
+        .select({ version: publishedSnapshots.version })
+        .from(publishedSnapshots)
+        .where(eq(publishedSnapshots.tenantId, auth.tenantId))
+        .orderBy(desc(publishedSnapshots.version))
+        .limit(1);
+
+      await tx.update(publishedSnapshots)
+        .set({ isActive: false })
+        .where(and(eq(publishedSnapshots.tenantId, auth.tenantId), eq(publishedSnapshots.isActive, true)));
+
+      const nextVersion = (latest?.version ?? 0) + 1;
+      const [created] = await tx.insert(publishedSnapshots).values({
+        tenantId: auth.tenantId,
+        version: nextVersion,
+        snapshot: snapshot as unknown as Record<string, unknown>,
+        checksum,
+        createdBy: `pat:${auth.tokenId}`,
+        isActive: true,
+      }).returning({ id: publishedSnapshots.id });
+
+      if (!created?.id) throw new Error('Published snapshot could not be created');
+
+      await tx.insert(publishHistory).values({
         tenantId: auth.tenantId,
         snapshotId: created.id,
-        previousSnapshotId: latest?.id ?? null,
+        previousSnapshotId: currentActive?.id ?? null,
         action: 'publish',
         note: 'Published via API',
       });
-    }
+    });
 
     // Get all pages to revalidate their paths
     const allPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title }).from(pages).where(eq(pages.tenantId, auth.tenantId));

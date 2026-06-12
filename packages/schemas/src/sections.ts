@@ -22,7 +22,7 @@ export const mediaRefSchema = z.object({
   caption: z.string().optional(),
 });
 
-export const containerEnum = z.enum(['default', 'wide', 'fullBleed']);
+export const containerEnum = z.enum(['default', 'narrow', 'wide', 'xl', 'full', 'fullBleed']);
 export const spacingEnum = z.enum(['none', 's', 'm', 'l']);
 
 // ─── Section meta ───────────────────────────────────────────────────

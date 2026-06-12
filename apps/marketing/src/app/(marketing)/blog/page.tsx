@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { getPublishedBlogPosts } from '@/lib/blog';
 import Link from 'next/link';
+import { serializeJsonForHtml } from '@/lib/safe-json';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,7 +36,7 @@ export default async function BlogPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(jsonLd) }} />
       <section className="relative overflow-hidden bg-[#0b0810] px-6 pb-20 pt-44 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(242,65,113,0.22),transparent_32%),radial-gradient(circle_at_85%_15%,rgba(255,179,71,0.16),transparent_28%)]" />
         <div className="container-x relative">

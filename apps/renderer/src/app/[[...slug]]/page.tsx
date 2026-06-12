@@ -18,8 +18,8 @@ const NEXT_DEVICE_SIZES = [640, 750, 828, 1080, 1200, 1920, 2048, 3840];
  */
 function preloadHeroImage(section: { type: string; data: Record<string, unknown> } | undefined): void {
   if (!section || section.type !== 'hero') return;
-  const bg = section.data?.bgImage as string | undefined;
-  const bgMobile = section.data?.bgImageMobile as string | undefined;
+  const bg = (section.data?.bgImage || section.data?.backgroundImage || section.data?.image) as string | undefined;
+  const bgMobile = (section.data?.bgImageMobile || section.data?.backgroundImageMobile) as string | undefined;
   if (bg) preloadOptimizedImage(bg, bgMobile ? '(min-width: 768px) 100vw' : '100vw');
   if (bgMobile) preloadOptimizedImage(bgMobile, '(max-width: 767px) 100vw');
 }
@@ -53,6 +53,7 @@ import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { WhatsAppFab } from '@/components/whatsapp-fab';
 import { generateCollectionItemMetadata, renderCollectionItemPage } from '@/app/c/[collection]/[slug]/collection-item-page';
+import { serializeJsonForHtml } from '@/lib/safe-json';
 
 // Known locale codes for i18n routing (first slug segment)
 const LOCALE_PATTERN = /^[a-z]{2}$/;
@@ -229,6 +230,7 @@ export default async function CatchAllPage({ params }: { params: Promise<{ slug?
     return await renderPage(params);
   } catch (err) {
     console.error('[CatchAllPage] Render error:', err instanceof Error ? err.message : err);
+    if (process.env.NODE_ENV === 'production') throw err;
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
         <div className="text-center max-w-md">
@@ -399,7 +401,7 @@ async function renderPage(params: Promise<{ slug?: string[] }>) {
       {fontFaceRules.length > 0 && <style dangerouslySetInnerHTML={{ __html: fontFaceRules.join('\n') }} />}
       {bodyFontName && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
       {importantOverrides.length > 0 && <style dangerouslySetInnerHTML={{ __html: importantOverrides.join('\n') }} />}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdList) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(jsonLdList) }} />
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={firstSectionIsHero} cta={navData.cta} topBar={navData.topBar} i18n={i18n ? { locales: i18n.locales, currentLocale: locale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} linkPrefix={linkPrefix} />
       <main>
         {visibleSections.map((section) => (

@@ -12,6 +12,7 @@ import { products, tenantDomains, tenants } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
+import { serializeJsonForHtml } from '@/lib/safe-json';
 
 export const revalidate = 60;
 
@@ -136,7 +137,7 @@ export default async function ShopProductPage({ params, searchParams }: { params
   return (
     <div data-style={tenantStyle.activeStyle} className="overflow-x-clip" style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties}>
       {jsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(jsonLd) }} />
       )}
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} darkBg={false} cta={navData.cta} topBar={navData.topBar} linkPrefix={linkPrefix} />
       <main className="max-w-6xl mx-auto px-6">

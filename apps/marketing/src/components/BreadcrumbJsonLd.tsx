@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import Script from 'next/script';
+import { serializeJsonForHtml } from '@/lib/safe-json';
 
 const LABELS: Record<string, string> = {
   '': 'Startseite',
@@ -38,7 +38,7 @@ export function BreadcrumbJsonLd() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(data) }}
     />
   );
 }

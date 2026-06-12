@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
 import { sanitizeHtml } from '@/lib/sanitize-html';
+import { isValidColorString } from '@/lib/color-validation';
 
 type AuthResult = Awaited<ReturnType<typeof validatePat>>;
 
@@ -65,12 +66,25 @@ export function normalizeSlug(slug: string): string {
 }
 
 /** Validate section array. Returns error string or null if valid. */
+const DISALLOWED_API_SECTION_TYPES = new Set([
+  'customhtml',
+  'embedcode',
+  'freehtml',
+  'html',
+  'htmlblock',
+  'rawhtml',
+  'script',
+]);
+
 export function validateSections(sections: unknown): string | null {
   if (!Array.isArray(sections)) return 'sections must be an array';
   for (let i = 0; i < sections.length; i++) {
     const s = sections[i];
     if (!s || typeof s !== 'object') return `sections[${i}] must be an object`;
     if (!s.type || typeof s.type !== 'string') return `sections[${i}].type is required and must be a string`;
+    if (DISALLOWED_API_SECTION_TYPES.has(s.type.toLowerCase())) {
+      return `sections[${i}].type "${s.type}" is not allowed through the public content API`;
+    }
     if (s.data !== undefined && (typeof s.data !== 'object' || s.data === null || Array.isArray(s.data))) {
       return `sections[${i}].data must be an object`;
     }
@@ -169,7 +183,7 @@ const STYLE_OVERRIDE_KEY_TO_VARS: Record<string, string[]> = {
   eyebrow: ['--style-accent-color', '--token-eyebrow'],
   icon: ['--style-icon-color', '--token-icon'],
   iconColor: ['--style-icon-color', '--token-icon'],
-  accentColor: ['--style-accent-color', '--style-accent', '--token-eyebrow', '--token-stat-value', '--token-quote', '--token-rating-star', '--token-check'],
+  accentColor: ['--style-accent-color', '--style-accent', '--token-accent'],
   statValue: ['--token-stat-value'],
   quote: ['--token-quote'],
   quoteMark: ['--token-quote'],
@@ -189,18 +203,41 @@ const STYLE_OVERRIDE_KEY_TO_VARS: Record<string, string[]> = {
   colorPrimary: ['--brand-primary'],
 };
 
+const ALLOWED_RAW_STYLE_OVERRIDE_VARS = new Set(Object.values(STYLE_OVERRIDE_KEY_TO_VARS).flat());
+
+const SAFE_DIMENSION_RE = /^-?\d+(?:\.\d+)?(?:px|rem|em|%|vh|vw)?$/i;
+const SAFE_BORDER_RE = /^\d+(?:\.\d+)?px\s+(?:solid|dashed|dotted)\s+(.+)$/i;
+const SAFE_CSS_KEYWORD_RE = /^(?:none|normal|inherit|initial|unset)$/i;
+const SAFE_VAR_RE = /^var\(--[a-z0-9-]+\)$/i;
+
+function isSafeStyleOverrideValue(value: string): boolean {
+  const v = value.trim();
+  if (!v || v.length > 180) return false;
+  if (/[;{}<>]/.test(v)) return false;
+  if (/(?:url\s*\(|@import|expression\s*\(|javascript:|data:)/i.test(v)) return false;
+  if (isValidColorString(v)) return true;
+  if (SAFE_DIMENSION_RE.test(v)) return true;
+  if (SAFE_CSS_KEYWORD_RE.test(v)) return true;
+  if (SAFE_VAR_RE.test(v)) return true;
+  const border = SAFE_BORDER_RE.exec(v);
+  if (border) return isValidColorString(border[1].trim()) || SAFE_VAR_RE.test(border[1].trim());
+  return false;
+}
+
 export function normalizeStyleOverrides(styleOverrides: unknown): Record<string, string> | null {
   if (!styleOverrides || typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) return null;
   const normalized: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(styleOverrides)) {
-    const targetKeys = key.startsWith('--') ? [key] : STYLE_OVERRIDE_KEY_TO_VARS[key];
+    const targetKeys = key.startsWith('--')
+      ? (ALLOWED_RAW_STYLE_OVERRIDE_VARS.has(key) ? [key] : undefined)
+      : STYLE_OVERRIDE_KEY_TO_VARS[key];
     if (!targetKeys?.length) continue;
     if (typeof value !== 'string') continue;
     const trimmed = value.trim();
     if (!trimmed) continue;
-    const sanitized = sanitizeHtml(trimmed);
-    for (const targetKey of targetKeys) normalized[targetKey] = sanitized;
+    if (!isSafeStyleOverrideValue(trimmed)) continue;
+    for (const targetKey of targetKeys) normalized[targetKey] = trimmed;
   }
 
   return Object.keys(normalized).length ? normalized : null;

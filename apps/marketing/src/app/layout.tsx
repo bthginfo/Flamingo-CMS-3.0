@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import '@/globals.css';
+import { serializeJsonForHtml } from '@/lib/safe-json';
 
 export const metadata: Metadata = {
   title: {
@@ -83,7 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify([
+            __html: serializeJsonForHtml([
               {
                 '@context': 'https://schema.org',
                 '@type': 'Organization',

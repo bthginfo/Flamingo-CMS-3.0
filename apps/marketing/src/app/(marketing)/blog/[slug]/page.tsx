@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPublishedBlogPost } from '@/lib/blog';
 import { sanitizeHtml } from '@/lib/sanitize-html';
+import { serializeJsonForHtml } from '@/lib/safe-json';
 
 type Params = { slug: string };
 
@@ -58,7 +59,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<Param
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(jsonLd) }} />
       <article className="bg-[#fff8fa]">
         <header className="relative overflow-hidden bg-[#0b0810] px-6 pb-16 pt-40 text-white md:pb-24">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(242,65,113,0.26),transparent_30%),radial-gradient(circle_at_85%_0%,rgba(255,179,71,0.18),transparent_28%)]" />
