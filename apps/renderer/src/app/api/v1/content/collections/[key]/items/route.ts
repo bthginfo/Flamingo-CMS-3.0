@@ -4,7 +4,7 @@ import { getDb } from '@/lib/db';
 import { collections, collectionItems } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import crypto from 'crypto';
-import { normalizeSectionData, normalizeStyleOverrides } from '@/lib/api-utils';
+import { normalizeSectionData, normalizeStyleOverrides, validateSections } from '@/lib/api-utils';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ key: string }> }) {
   try {
@@ -26,6 +26,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
     // Ensure all sections have IDs for DnD support
     const itemData = data || {};
     if (Array.isArray(itemData.sections)) {
+      const sectionErr = validateSections(itemData.sections);
+      if (sectionErr) return NextResponse.json({ error: sectionErr }, { status: 400 });
       itemData.sections = itemData.sections.map((s: Record<string, unknown>) => ({
         ...s,
         id: s.id || crypto.randomUUID(),

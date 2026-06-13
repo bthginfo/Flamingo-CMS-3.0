@@ -94,6 +94,8 @@ export function validateSections(sections: unknown): string | null {
     ) {
       return `sections[${i}].styleOverrides must be an object`;
     }
+    const styleErr = validateStyleOverridesForApi(s.styleOverrides, `sections[${i}].styleOverrides`);
+    if (styleErr) return styleErr;
     // Section-specific validation
     const data = s.data || {};
     const err = validateSectionData(s.type, data, i);
@@ -224,23 +226,92 @@ function isSafeStyleOverrideValue(value: string): boolean {
   return false;
 }
 
-export function normalizeStyleOverrides(styleOverrides: unknown): Record<string, string> | null {
-  if (!styleOverrides || typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) return null;
+export interface StyleOverrideNormalizationIssue {
+  location: string;
+  key: string;
+  value: unknown;
+  reason: 'unknown_key' | 'invalid_type' | 'unsafe_value';
+  message: string;
+}
+
+export interface StyleOverrideNormalizationResult {
+  styleOverrides: Record<string, string> | null;
+  issues: StyleOverrideNormalizationIssue[];
+}
+
+export function normalizeStyleOverridesWithIssues(
+  styleOverrides: unknown,
+  location = 'styleOverrides',
+): StyleOverrideNormalizationResult {
+  const issues: StyleOverrideNormalizationIssue[] = [];
+  if (!styleOverrides || typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) {
+    return { styleOverrides: null, issues };
+  }
+
   const normalized: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(styleOverrides)) {
     const targetKeys = key.startsWith('--')
       ? (ALLOWED_RAW_STYLE_OVERRIDE_VARS.has(key) ? [key] : undefined)
       : STYLE_OVERRIDE_KEY_TO_VARS[key];
-    if (!targetKeys?.length) continue;
-    if (typeof value !== 'string') continue;
+
+    if (!targetKeys?.length) {
+      issues.push({
+        location: `${location}.${key}`,
+        key,
+        value,
+        reason: 'unknown_key',
+        message: `${location}.${key} is not a supported style override key`,
+      });
+      continue;
+    }
+
+    if (value == null || value === '') continue;
+
+    if (typeof value !== 'string') {
+      issues.push({
+        location: `${location}.${key}`,
+        key,
+        value,
+        reason: 'invalid_type',
+        message: `${location}.${key} must be a string`,
+      });
+      continue;
+    }
+
     const trimmed = value.trim();
     if (!trimmed) continue;
-    if (!isSafeStyleOverrideValue(trimmed)) continue;
+
+    if (!isSafeStyleOverrideValue(trimmed)) {
+      issues.push({
+        location: `${location}.${key}`,
+        key,
+        value,
+        reason: 'unsafe_value',
+        message: `${location}.${key} has an invalid or unsafe CSS value (${JSON.stringify(value)})`,
+      });
+      continue;
+    }
+
     for (const targetKey of targetKeys) normalized[targetKey] = trimmed;
   }
 
-  return Object.keys(normalized).length ? normalized : null;
+  return { styleOverrides: Object.keys(normalized).length ? normalized : null, issues };
+}
+
+export function normalizeStyleOverrides(styleOverrides: unknown): Record<string, string> | null {
+  return normalizeStyleOverridesWithIssues(styleOverrides).styleOverrides;
+}
+
+export function validateStyleOverridesForApi(
+  styleOverrides: unknown,
+  location = 'styleOverrides',
+): string | null {
+  if (!styleOverrides || typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) return null;
+  const { issues } = normalizeStyleOverridesWithIssues(styleOverrides, location);
+  if (!issues.length) return null;
+  const first = issues[0];
+  return `${first.message}. Allowed keys are documented in /api/v1/instructions sectionStyleContracts. Use hex, rgb(), rgba(), var(--token) or safe border/dimension values only.`;
 }
 
 function sanitizeValue(value: unknown): unknown {

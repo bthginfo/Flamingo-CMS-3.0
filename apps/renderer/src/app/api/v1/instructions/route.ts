@@ -106,8 +106,8 @@ export async function GET(req: NextRequest) {
       'Every array field (items, services, steps, etc.) MUST have at least 3 entries unless the real business has fewer.',
       'The footer MUST contain columns with items arrays. Each item needs text and optionally href. Never send empty columns or columns without items.',
       'Navigation items MUST link to existing pages using their slug (e.g. href: "/leistungen", NOT href: "/services").',
-      'When using section.styleOverrides, the keys MUST be EXACTLY one of the documented --token-* slot names (see point 12 in instructions). Unknown keys are ignored by the renderer.',
-      'Per-section styleOverrides values are CSS colour strings — hex (#rrggbb), rgb() or rgba() are all valid. Do NOT pass slot enums or label names like "primary" — these are not colours.',
+      'When using section.styleOverrides, the keys MUST be EXACTLY one of the documented keys from sectionStyleContracts. Unknown keys are rejected by API write endpoints so the problem is visible immediately.',
+      'Per-section styleOverrides values are CSS colour strings — hex (#rrggbb), rgb(), rgba(), safe var(--token-*) references or safe border/dimension values are valid. Do NOT pass slot enums or label names like "primary" — these are not colours.',
       'BEFORE calling /publish, ALWAYS call GET /api/v1/content/validate. Fix every "error" issue and every contrast warning. Only publish when readyToPublish=true.',
       ...(hasShop ? ['This tenant has the SHOP addon active. Include shop pages (slug: "shop", "warenkorb") with shopProductGrid and shopCart sections. Add a "Shop" / "Produkte" link in the navigation. Create product categories and products via the shop endpoints.'] : ['This tenant does NOT have the shop addon. Do NOT create shop pages or use shop section types.']),
       ...(hasBooking ? ['This tenant has the BOOKING addon active. You may use bookingWidget, bookingSlotPicker, bookingDateRange, availabilityCalendar, resourceBookingShowcase and bookingCtaPro sections where they make sense. Use bookingSlotPicker for restaurants/cafes/salons/appointments where the visitor chooses a day and sees available times. Use bookingDateRange for hotels, apartments, locations, rooms and multi-day requests. The actual booking logic is configured in Admin > Funktionen > Buchungen.'] : ['This tenant does NOT have the booking addon. Do NOT use bookingWidget, bookingSlotPicker, bookingDateRange, availabilityCalendar, resourceBookingShowcase or bookingCtaPro. Keep simple reservation/contact sections if needed.']),
@@ -250,7 +250,7 @@ G) SICHERER WORKFLOW:
    1) Setze JEDES Mal wenn du eine eigene sectionBg setzt AUCH passende Text-Farben.
    2) Nach allen PUT/POSTs: GET /api/v1/content/validate.
    3) Fixe alle "colorIssues" bevor /publish aufgerufen wird.
-   4) Der Server filtert ungültige Farben (#xyz, "primary", "blue") und gibt 400 zurück — verwende NUR hex (#rrggbb), #rrggbbaa, rgb() oder rgba().
+   4) Der Server lehnt ungültige styleOverrides (#xyz, "primary", "blue", unbekannte Keys) mit 400 und konkretem Pfad ab — korrigiere die Werte statt sie erneut zu senden.
 
 H) AUTO-FIX: Wenn du PUT /content/design mit einem dunklen sectionBg ohne onDark*-Tokens sendest,
    setzt der Server automatisch onDarkHeading/Body/Muted auf weiße Defaults. Das ist eine Rettungsleine,
