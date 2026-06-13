@@ -18,6 +18,18 @@ function isPlaceholderCompanyName(value?: string): boolean {
   return !normalized || normalized === 'firmenname' || normalized === 'firma' || normalized === 'company name';
 }
 
+function normalizeI18nConfig(config?: { locales?: string | null; defaultLocale?: string | null }) {
+  const locales = (config?.locales || '')
+    .split(',')
+    .map(locale => locale.trim())
+    .filter(Boolean);
+  const defaultLocale = config?.defaultLocale?.trim() || locales[0] || 'de';
+  return {
+    locales: Array.from(new Set([defaultLocale, ...locales])),
+    defaultLocale,
+  };
+}
+
 export async function getTenantStyle(tenantId: string): Promise<{ industry: string; activeStyle: string }> {
   const db = getDb();
   const [t] = await db.select({ industry: tenants.industry }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
@@ -27,10 +39,11 @@ export async function getTenantStyle(tenantId: string): Promise<{ industry: stri
 export async function getTenantI18n(tenantId: string): Promise<{ enabled: boolean; locales: string[]; defaultLocale: string }> {
   const db = getDb();
   const [t] = await db.select({ enabled: tenants.i18nEnabled, locales: tenants.i18nLocales, defaultLocale: tenants.i18nDefaultLocale }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  const i18n = normalizeI18nConfig({ locales: t?.locales, defaultLocale: t?.defaultLocale });
   return {
     enabled: t?.enabled ?? false,
-    locales: (t?.locales || 'de').split(','),
-    defaultLocale: t?.defaultLocale || 'de',
+    locales: i18n.locales,
+    defaultLocale: i18n.defaultLocale,
   };
 }
 

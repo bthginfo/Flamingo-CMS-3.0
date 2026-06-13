@@ -4,6 +4,17 @@ import { pages, pageSections, tenants, collections, collectionItems } from '@fla
 import { eq, and, asc } from 'drizzle-orm';
 import { withApiHandler } from '@/lib/api-utils';
 
+function normalizeI18nConfig(config?: { locales?: string | null; defaultLocale?: string | null }) {
+  const locales = (config?.locales || '')
+    .split(',')
+    .map(locale => locale.trim())
+    .filter(Boolean);
+  const defaultLocale = config?.defaultLocale?.trim() || locales[0] || 'de';
+  const uniqueLocales = Array.from(new Set([defaultLocale, ...locales]));
+
+  return { locales: uniqueLocales, defaultLocale };
+}
+
 /**
  * GET /api/v1/content/i18n
  * 
@@ -22,10 +33,15 @@ export const GET = withApiHandler(async (_req, auth) => {
     i18nDefaultLocale: tenants.i18nDefaultLocale,
   }).from(tenants).where(eq(tenants.id, auth.tenantId)).limit(1);
 
+  const normalizedI18n = normalizeI18nConfig({
+    locales: tenant?.i18nLocales,
+    defaultLocale: tenant?.i18nDefaultLocale,
+  });
+
   const i18n = {
     enabled: tenant?.i18nEnabled ?? false,
-    locales: (tenant?.i18nLocales || 'de').split(','),
-    defaultLocale: tenant?.i18nDefaultLocale || 'de',
+    locales: normalizedI18n.locales,
+    defaultLocale: normalizedI18n.defaultLocale,
   };
 
   // Pages + their sections
@@ -105,11 +121,12 @@ export const PUT = withApiHandler(async (req, auth) => {
     defaultLocale: tenants.i18nDefaultLocale,
     locales: tenants.i18nLocales,
   }).from(tenants).where(eq(tenants.id, auth.tenantId)).limit(1);
-  const defaultLocale = tenant?.defaultLocale || 'de';
-  const allowedLocales = new Set(
-    (tenant?.locales || defaultLocale).split(',').map(s => s.trim()).filter(Boolean)
-  );
-  allowedLocales.add(defaultLocale);
+  const normalizedI18n = normalizeI18nConfig({
+    locales: tenant?.locales,
+    defaultLocale: tenant?.defaultLocale,
+  });
+  const defaultLocale = normalizedI18n.defaultLocale;
+  const allowedLocales = new Set(normalizedI18n.locales);
 
   function isValidLocale(loc: unknown): loc is string {
     return typeof loc === 'string' && /^[a-z]{2}(-[A-Z]{2})?$/.test(loc) && allowedLocales.has(loc);

@@ -80,7 +80,7 @@ export function GlowHeroSection({ data }: Props) {
           )}
           <div className="mt-9 flex flex-wrap gap-3">
             {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[color:var(--token-btn-text)]"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
-            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-6 py-3 text-sm font-bold text-[color:var(--token-body)] backdrop-blur" data-edit-path="label">{secondaryCta.label}</a>}
+            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-btn-secondary-border,var(--token-card-border))] bg-[var(--token-btn-secondary-bg,var(--token-card-bg))] px-6 py-3 text-sm font-bold text-[color:var(--token-btn-secondary-text,var(--token-body))] backdrop-blur" data-edit-path="label">{secondaryCta.label}</a>}
           </div>
         </div>
         {facts.length > 0 && (

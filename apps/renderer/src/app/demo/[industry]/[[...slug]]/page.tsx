@@ -213,13 +213,68 @@ function normalizeDemoShopSections(
   });
 }
 
+function getImageUrl(value: unknown): string | undefined {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed || undefined;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const url = getImageUrl(item);
+      if (url) return url;
+    }
+    return undefined;
+  }
+  if (!value || typeof value !== 'object') return undefined;
+
+  const record = value as Record<string, unknown>;
+  for (const key of ['url', 'src', 'href', 'image', 'imageUrl', 'publicUrl']) {
+    const url = getImageUrl(record[key]);
+    if (url) return url;
+  }
+  return undefined;
+}
+
+const COLLECTION_IMAGE_KEYS = [
+  'image',
+  'coverImage',
+  'heroImage',
+  'backgroundImage',
+  'bgImage',
+  'thumbnail',
+  'thumbnailUrl',
+  'poster',
+  'posterImage',
+  'ogImage',
+  'images',
+  'gallery',
+  'media',
+];
+
 /** Extract best image from a collection item */
 function extractItemImage(item: SnapshotCollectionItem): string | undefined {
-  if (item.data.image) return item.data.image as string;
+  for (const key of COLLECTION_IMAGE_KEYS) {
+    const url = getImageUrl(item.data[key]);
+    if (url) return url;
+  }
+
   const sections = item.data.sections as Array<{ type: string; data: Record<string, unknown> }> | undefined;
   if (sections) {
-    const hero = sections.find(s => s.type === 'hero' || s.type === 'collectionHero');
-    if (hero?.data) return (hero.data.backgroundImage as string) || (hero.data.bgImage as string) || (hero.data.image as string) || undefined;
+    const hero = sections.find(s => (
+      s.type === 'hero' ||
+      s.type === 'collectionHero' ||
+      s.type === 'cinematicHero' ||
+      s.type === 'glowHero' ||
+      s.type === 'floristHero' ||
+      s.type === 'fitnessHero' ||
+      s.type === 'locationHero'
+    ));
+    if (hero?.data) {
+      for (const key of COLLECTION_IMAGE_KEYS) {
+        const url = getImageUrl(hero.data[key]);
+        if (url) return url;
+      }
+    }
   }
   return undefined;
 }

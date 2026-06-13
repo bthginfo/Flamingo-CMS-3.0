@@ -43,6 +43,7 @@ export type SectionColorSlot =
   | 'btnText'
   | 'btnSecondaryBg'
   | 'btnSecondaryText'
+  | 'btnSecondaryBorder'
   | 'badgeBg'
   | 'badgeText'
   | 'badgeBorder'
@@ -200,10 +201,11 @@ export const SECTION_COLOR_SLOT_DEFINITIONS: Record<SectionColorSlot, { cssVar: 
   imageTextColor: { cssVar: '--style-image-text-color', label: 'Bild-/Overlay-Text', description: 'Textfarbe direkt auf Bildern, Overlays und dunklen Medienflächen', contrastWith: ['overlayColor'] },
   accentColor: { cssVar: '--style-accent-color', label: 'Akzentfarbe', description: 'Akzente, Links, Highlights, aktive Zustände und kleine Marker' },
   iconColor: { cssVar: '--style-icon-color', label: 'Icons', description: 'Farbe für Icons und Symbolflächen' },
-  btnBg: { cssVar: '--brand-btn-bg', label: 'Button-Hintergrund', description: 'Hintergrund des primären CTA-Buttons', contrastWith: ['btnText'] },
-  btnText: { cssVar: '--brand-btn-text', label: 'Button-Text', description: 'Textfarbe des primären CTA-Buttons', contrastWith: ['btnBg'] },
-  btnSecondaryBg: { cssVar: '--brand-btn-secondary-bg', label: 'Sekundär-Button-Hintergrund', description: 'Hintergrund des sekundären CTA-Buttons', contrastWith: ['btnSecondaryText'] },
-  btnSecondaryText: { cssVar: '--brand-btn-secondary-text', label: 'Sekundär-Button-Text', description: 'Textfarbe des sekundären CTA-Buttons', contrastWith: ['btnSecondaryBg'] },
+  btnBg: { cssVar: '--token-btn-bg', label: 'Button-Hintergrund', description: 'Hintergrund des primären CTA-Buttons', contrastWith: ['btnText'] },
+  btnText: { cssVar: '--token-btn-text', label: 'Button-Text', description: 'Textfarbe des primären CTA-Buttons', contrastWith: ['btnBg'] },
+  btnSecondaryBg: { cssVar: '--token-btn-secondary-bg', label: 'Sekundär-Button-Hintergrund', description: 'Hintergrund des sekundären CTA-Buttons', contrastWith: ['btnSecondaryText'] },
+  btnSecondaryText: { cssVar: '--token-btn-secondary-text', label: 'Sekundär-Button-Text', description: 'Textfarbe des sekundären CTA-Buttons', contrastWith: ['btnSecondaryBg'] },
+  btnSecondaryBorder: { cssVar: '--token-btn-secondary-border', label: 'Sekundär-Button-Rahmen', description: 'Rahmenfarbe des sekundären CTA-Buttons' },
   badgeBg: { cssVar: '--style-badge-bg', label: 'Badge-Hintergrund', description: 'Hintergrund von Badges, Eyebrows und kleinen Labels', contrastWith: ['badgeText'] },
   badgeText: { cssVar: '--style-badge-text', label: 'Badge-Text', description: 'Textfarbe von Badges, Eyebrows und kleinen Labels', contrastWith: ['badgeBg'] },
   badgeBorder: { cssVar: '--style-badge-border', label: 'Badge-Rahmen', description: 'Rahmenfarbe von Badges und Eyebrows' },
@@ -225,10 +227,11 @@ export const SECTION_COLOR_SLOT_ALIASES: Record<SectionColorSlot, string[]> = {
   imageTextColor: ['--style-image-text-color', '--token-on-dark-heading', '--token-on-dark-body', '--token-on-dark-muted'],
   accentColor: ['--style-accent-color', '--style-accent', '--style-brand', '--brand-accent', '--brand-accent-15', '--brand-primary', '--color-primary', '--token-eyebrow', '--token-stat-value', '--token-quote', '--token-rating-star', '--token-check'],
   iconColor: ['--style-icon-color', '--token-icon'],
-  btnBg: ['--brand-btn-bg', '--style-button-bg', '--token-btn-bg'],
-  btnText: ['--brand-btn-text', '--style-button-text', '--token-btn-text'],
-  btnSecondaryBg: ['--brand-btn-secondary-bg'],
-  btnSecondaryText: ['--brand-btn-secondary-text'],
+  btnBg: ['--token-btn-bg', '--brand-btn-bg', '--style-button-bg'],
+  btnText: ['--token-btn-text', '--brand-btn-text', '--style-button-text'],
+  btnSecondaryBg: ['--token-btn-secondary-bg', '--brand-btn-secondary-bg', '--style-button-secondary-bg'],
+  btnSecondaryText: ['--token-btn-secondary-text', '--brand-btn-secondary-text', '--style-button-secondary-text'],
+  btnSecondaryBorder: ['--token-btn-secondary-border', '--brand-btn-secondary-border', '--style-button-secondary-border'],
   badgeBg: ['--style-badge-bg', '--token-badge-bg'],
   badgeText: ['--style-badge-text', '--token-badge-text'],
   badgeBorder: ['--style-badge-border', '--token-badge-border'],
@@ -266,6 +269,7 @@ export const SECTION_COLOR_FIELD_TO_SLOT: Record<string, SectionColorSlot> = {
   btnText: 'btnText',
   btnSecondaryBg: 'btnSecondaryBg',
   btnSecondaryText: 'btnSecondaryText',
+  btnSecondaryBorder: 'btnSecondaryBorder',
   badgeBg: 'badgeBg',
   badgeText: 'badgeText',
   badgeBorder: 'badgeBorder',
@@ -303,7 +307,7 @@ export function areEquivalentSectionColorVars(left: string, right: string): bool
 
 const BASE_TEXT_SLOTS: SectionColorSlot[] = ['sectionBg', 'headingColor', 'bodyColor', 'textPrimary', 'textSecondary'];
 const CARD_SLOTS: SectionColorSlot[] = ['cardBg', 'borderColor'];
-const CTA_SLOTS: SectionColorSlot[] = ['btnBg', 'btnText'];
+const CTA_SLOTS: SectionColorSlot[] = ['btnBg', 'btnText', 'btnSecondaryBg', 'btnSecondaryText', 'btnSecondaryBorder'];
 const BADGE_SLOTS: SectionColorSlot[] = ['badgeBg', 'badgeText'];
 const MEDIA_OVERLAY_SLOTS: SectionColorSlot[] = ['overlayColor', 'imageTextColor'];
 

@@ -5,9 +5,50 @@ import { prefixInternalLinks } from '@/lib/link-prefix';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { SectionReveal } from './section-reveal';
 
-/** Extract the best image from a collection item — checks data.image first, then looks into hero section data */
+/** Extract the best image from a collection item. Supports strings, media objects, arrays, and embedded hero sections. */
+function getImageUrl(value: unknown): string | undefined {
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed || undefined;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const url = getImageUrl(item);
+      if (url) return url;
+    }
+    return undefined;
+  }
+  if (!value || typeof value !== 'object') return undefined;
+
+  const record = value as Record<string, unknown>;
+  for (const key of ['url', 'src', 'href', 'image', 'imageUrl', 'publicUrl']) {
+    const url = getImageUrl(record[key]);
+    if (url) return url;
+  }
+  return undefined;
+}
+
+const COLLECTION_IMAGE_KEYS = [
+  'image',
+  'coverImage',
+  'heroImage',
+  'backgroundImage',
+  'bgImage',
+  'thumbnail',
+  'thumbnailUrl',
+  'poster',
+  'posterImage',
+  'ogImage',
+  'images',
+  'gallery',
+  'media',
+];
+
 function extractItemImage(item: SnapshotCollectionItem): string | undefined {
-  if (item.data.image) return item.data.image as string;
+  for (const key of COLLECTION_IMAGE_KEYS) {
+    const url = getImageUrl(item.data[key]);
+    if (url) return url;
+  }
   // Items store sections in data.sections — find the most image-heavy section and grab its image field.
   const sections = item.data.sections as Array<{ type: string; data: Record<string, unknown> }> | undefined;
   if (sections) {
@@ -21,7 +62,10 @@ function extractItemImage(item: SnapshotCollectionItem): string | undefined {
       section.type === 'locationHero'
     ));
     if (imageSection?.data) {
-      return (imageSection.data.backgroundImage as string) || (imageSection.data.bgImage as string) || (imageSection.data.image as string) || undefined;
+      for (const key of COLLECTION_IMAGE_KEYS) {
+        const url = getImageUrl(imageSection.data[key]);
+        if (url) return url;
+      }
     }
   }
   return undefined;
@@ -196,8 +240,14 @@ const SECTION_STYLE_TOKEN_ALIASES: Record<string, string[]> = {
   '--style-badge-border': ['--token-badge-border'],
   '--brand-btn-bg': ['--token-btn-bg'],
   '--brand-btn-text': ['--token-btn-text'],
+  '--brand-btn-secondary-bg': ['--token-btn-secondary-bg'],
+  '--brand-btn-secondary-text': ['--token-btn-secondary-text'],
+  '--brand-btn-secondary-border': ['--token-btn-secondary-border'],
   '--style-button-bg': ['--token-btn-bg', '--brand-btn-bg'],
   '--style-button-text': ['--token-btn-text', '--brand-btn-text'],
+  '--style-button-secondary-bg': ['--token-btn-secondary-bg', '--brand-btn-secondary-bg'],
+  '--style-button-secondary-text': ['--token-btn-secondary-text', '--brand-btn-secondary-text'],
+  '--style-button-secondary-border': ['--token-btn-secondary-border', '--brand-btn-secondary-border'],
   '--style-image-text-color': ['--token-on-dark-heading', '--token-on-dark-body', '--token-on-dark-muted'],
   '--style-image-overlay': ['--style-overlay-color'],
   '--token-section-bg': ['--style-section-bg', '--style-section-bg-alt', '--token-section-bg-alt'],
@@ -213,6 +263,9 @@ const SECTION_STYLE_TOKEN_ALIASES: Record<string, string[]> = {
   '--token-accent': ['--style-accent-color', '--style-accent'],
   '--token-btn-bg': ['--brand-btn-bg', '--style-button-bg'],
   '--token-btn-text': ['--brand-btn-text', '--style-button-text'],
+  '--token-btn-secondary-bg': ['--brand-btn-secondary-bg', '--style-button-secondary-bg'],
+  '--token-btn-secondary-text': ['--brand-btn-secondary-text', '--style-button-secondary-text'],
+  '--token-btn-secondary-border': ['--brand-btn-secondary-border', '--style-button-secondary-border'],
   '--token-badge-bg': ['--style-badge-bg'],
   '--token-badge-text': ['--style-badge-text'],
   '--token-badge-border': ['--style-badge-border'],

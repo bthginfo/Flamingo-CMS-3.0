@@ -58,6 +58,9 @@ export type SectionTokenSlot =
   // Button (overrides on a per-section basis)
   | 'btnBg'
   | 'btnText'
+  | 'btnSecondaryBg'
+  | 'btnSecondaryText'
+  | 'btnSecondaryBorder'
   // Divider/border
   | 'divider';
 
@@ -81,6 +84,9 @@ export const TOKEN_VAR: Record<SectionTokenSlot, `--token-${string}`> = {
   badgeBorder: '--token-badge-border',
   btnBg:       '--token-btn-bg',
   btnText:     '--token-btn-text',
+  btnSecondaryBg: '--token-btn-secondary-bg',
+  btnSecondaryText: '--token-btn-secondary-text',
+  btnSecondaryBorder: '--token-btn-secondary-border',
   divider:     '--token-divider',
 };
 
@@ -102,6 +108,9 @@ export interface BrandInput {
   badgeBorder?: string;
   btnPrimaryBg?: string;
   btnPrimaryText?: string;
+  btnSecondaryBg?: string;
+  btnSecondaryText?: string;
+  btnSecondaryBorder?: string;
 }
 
 /**
@@ -145,6 +154,9 @@ function deriveDefaults(brand: BrandInput): Record<SectionTokenSlot, string> {
     // Button
     btnBg:       brand.btnPrimaryBg   ?? PRIMARY,
     btnText:     brand.btnPrimaryText ?? '#ffffff',
+    btnSecondaryBg: brand.btnSecondaryBg ?? 'transparent',
+    btnSecondaryText: brand.btnSecondaryText ?? brand.bodyTextColor ?? 'var(--brand-body-text, #27272a)',
+    btnSecondaryBorder: brand.btnSecondaryBorder ?? 'color-mix(in srgb, var(--brand-body-text, #27272a) 22%, transparent)',
     // Divider
     divider:     brand.dividerColor ?? 'var(--style-divider-color, rgba(0,0,0,0.08))',
   };
