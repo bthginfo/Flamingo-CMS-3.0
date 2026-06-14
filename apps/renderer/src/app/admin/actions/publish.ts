@@ -55,7 +55,7 @@ export async function publishAction(): Promise<PublishResult> {
 
     const checksum = createHash('sha256').update(JSON.stringify(snapshot)).digest('hex');
 
-    const result = await db.transaction(async (tx) => {
+    const runPublish = async (tx: typeof db) => {
       const [currentActive] = await tx
         .select({ id: publishedSnapshots.id, version: publishedSnapshots.version, checksum: publishedSnapshots.checksum })
         .from(publishedSnapshots)
@@ -103,7 +103,19 @@ export async function publishAction(): Promise<PublishResult> {
       });
 
       return { success: true as const, version: nextVersion };
-    });
+    };
+
+    let result: PublishResult;
+    try {
+      result = await db.transaction(async (tx) => runPublish(tx as typeof db));
+    } catch (txError) {
+      const txMessage = txError instanceof Error ? txError.message : String(txError);
+      if (!txMessage.includes('No transactions support in neon-http driver')) {
+        throw txError;
+      }
+      console.warn('[publishAction] transaction unavailable, using non-transactional fallback');
+      result = await runPublish(db);
+    }
 
     revalidateTenant(tenantId);
 
@@ -141,7 +153,7 @@ export async function rollbackPublishAction(): Promise<PublishResult> {
   const db = getDb();
   const tenantId = session.tenantId;
 
-  const result = await db.transaction(async (tx) => {
+  const runRollback = async (tx: typeof db) => {
     const [current] = await tx
       .select({ id: publishedSnapshots.id, version: publishedSnapshots.version })
       .from(publishedSnapshots)
@@ -176,7 +188,19 @@ export async function rollbackPublishAction(): Promise<PublishResult> {
     });
 
     return { success: true as const, version: previous.version };
-  });
+  };
+
+  let result: PublishResult;
+  try {
+    result = await db.transaction(async (tx) => runRollback(tx as typeof db));
+  } catch (txError) {
+    const txMessage = txError instanceof Error ? txError.message : String(txError);
+    if (!txMessage.includes('No transactions support in neon-http driver')) {
+      throw txError;
+    }
+    console.warn('[rollbackPublishAction] transaction unavailable, using non-transactional fallback');
+    result = await runRollback(db);
+  }
 
   revalidateTenant(tenantId);
   return result;
