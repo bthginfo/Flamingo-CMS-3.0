@@ -213,14 +213,25 @@ export function validateBrandPayload(brand: Record<string, unknown>): ColorIssue
 
 const DESIGN_COLOR_FIELDS = [
   'sectionBg', 'sectionBgAlt', 'cardBg', 'cardBorder',
+  'headingColor', 'subheadingColor', 'bodyColor', 'mutedColor',
+  'accentColor', 'iconColor', 'borderColor',
   'heading', 'subheading', 'body', 'muted',
   'brand', 'accent', 'icon',
   'btnBg', 'btnText',
   'badgeBg', 'badgeText', 'badgeBorder',
   'dividerColor',
-  'eyebrow', 'statValue', 'quote', 'ratingStar', 'check',
+  'eyebrow', 'statValue', 'quote', 'quoteMark', 'ratingStar', 'check',
+  'imageOverlay',
   'onDarkHeading', 'onDarkBody', 'onDarkMuted',
 ] as const;
+
+function pickDesignValue(design: Record<string, unknown>, keys: string[]): string | undefined {
+  for (const key of keys) {
+    const value = design[key];
+    if (typeof value === 'string' && value.trim()) return value;
+  }
+  return undefined;
+}
 
 export function validateDesignPayload(design: Record<string, unknown>): ColorIssue[] {
   const issues: ColorIssue[] = [];
@@ -232,11 +243,11 @@ export function validateDesignPayload(design: Record<string, unknown>): ColorIss
     }
   }
   // Cross-field contrast
-  const sectionBg = typeof design.sectionBg === 'string' ? design.sectionBg : undefined;
-  const cardBg    = typeof design.cardBg    === 'string' ? design.cardBg    : undefined;
-  const heading   = typeof design.heading   === 'string' ? design.heading   : undefined;
-  const body      = typeof design.body      === 'string' ? design.body      : undefined;
-  const muted     = typeof design.muted     === 'string' ? design.muted     : undefined;
+  const sectionBg = pickDesignValue(design, ['sectionBg']);
+  const cardBg    = pickDesignValue(design, ['cardBg']);
+  const heading   = pickDesignValue(design, ['headingColor', 'heading']);
+  const body      = pickDesignValue(design, ['bodyColor', 'body']);
+  const muted     = pickDesignValue(design, ['mutedColor', 'muted']);
   const btnBg     = typeof design.btnBg     === 'string' ? design.btnBg     : undefined;
   const btnText   = typeof design.btnText   === 'string' ? design.btnText   : undefined;
   const badgeBg   = typeof design.badgeBg   === 'string' ? design.badgeBg   : undefined;
@@ -368,7 +379,7 @@ export function autoFixDesignOnDark(design: Record<string, unknown>): {
 } {
   const applied: string[] = [];
   const out = { ...design };
-  const sectionBg = typeof out.sectionBg === 'string' ? out.sectionBg : undefined;
+  const sectionBg = pickDesignValue(out, ['sectionBg']);
   if (sectionBg && isDarkColor(sectionBg)) {
     if (!out.onDarkHeading) { out.onDarkHeading = '#ffffff';                    applied.push('onDarkHeading=#ffffff'); }
     if (!out.onDarkBody)    { out.onDarkBody    = 'rgba(255,255,255,0.85)';     applied.push('onDarkBody=rgba(255,255,255,0.85)'); }

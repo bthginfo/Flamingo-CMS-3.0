@@ -332,12 +332,6 @@ export function getFieldsForSection(sectionType: string, industry?: string): Col
     return Array.from(next);
   };
 
-  const ensureAllKnownFields = (fields: ColorFieldKey[]): ColorFieldKey[] => {
-    const next = new Set<ColorFieldKey>(fields);
-    for (const key of Object.keys(FIELD_DEFS) as ColorFieldKey[]) next.add(key);
-    return Array.from(next);
-  };
-
   const industryKey = industry
     ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
     : null;
@@ -345,9 +339,7 @@ export function getFieldsForSection(sectionType: string, industry?: string): Col
   if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
     return ensureSecondaryButtonFields(
       ensureCoreStylingFields(
-        ensureAllKnownFields(
-          ensureSectionBackgroundField((industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
-        )
+        ensureSectionBackgroundField((industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
       )
     );
   }
@@ -355,18 +347,14 @@ export function getFieldsForSection(sectionType: string, industry?: string): Col
   if (Array.isArray(generic) && generic.length > 0) {
     return ensureSecondaryButtonFields(
       ensureCoreStylingFields(
-        ensureAllKnownFields(
-          ensureSectionBackgroundField((generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
-        )
+        ensureSectionBackgroundField((generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
       )
     );
   }
   // No codegen entry → minimal safe set. Re-run the generator to fix.
   return ensureSecondaryButtonFields(
     ensureCoreStylingFields(
-      ensureAllKnownFields(
-        ensureSectionBackgroundField(['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText'])
-      )
+      ensureSectionBackgroundField(['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText'])
     )
   );
 }

@@ -155,18 +155,11 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
     fontFaceRules.push(`@font-face { font-family: "${brand.customBodyFontName}"; src: url("${brand.customBodyFontUrl}"); font-display: swap; }`);
   }
 
-  const importantOverrides: string[] = [];
-  if (brand.headingColor) importantOverrides.push(`[data-style] main h1, [data-style] main h2, [data-style] main h3, [data-style] main h4, [data-style] main h5, [data-style] main h6 { color: ${brand.headingColor} !important; }`);
-  if (brand.bodyTextColor) importantOverrides.push(`[data-style] main p, [data-style] main li { color: ${brand.bodyTextColor} !important; }`);
-  if (brand.mutedTextColor) importantOverrides.push(`[data-style] main .text-gray-500, [data-style] main .text-slate-500, [data-style] main .text-gray-600 { color: ${brand.mutedTextColor} !important; }`);
-  if (brand.linkColor) importantOverrides.push(`[data-style] main a:not([class*="btn-"]):not([class*="bg-brand"]):not([class*="text-brand"]):not([class*="text-white"]) { color: ${brand.linkColor} !important; }`);
-
   return (
     <div data-style={tenantStyle.activeStyle} style={{ ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides } as React.CSSProperties} className="overflow-x-hidden">
       {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
       {fontFaceRules.length > 0 && <style dangerouslySetInnerHTML={{ __html: fontFaceRules.join('\n') }} />}
       {bodyFontName && <style dangerouslySetInnerHTML={{ __html: `[data-style] { font-family: var(--custom-body-font) !important; }` }} />}
-      {importantOverrides.length > 0 && <style dangerouslySetInnerHTML={{ __html: importantOverrides.join('\n') }} />}
       <SiteHeader navItems={navData.items} brand={brand} contact={contact} cta={navData.cta} topBar={navData.topBar} linkPrefix={linkPrefix} i18n={i18n.enabled ? { locales: i18n.locales, currentLocale: activeLocale || i18n.defaultLocale, defaultLocale: i18n.defaultLocale } : undefined} />
       <main>
         <CollectionDetail item={item} collection={col} collections={snapshot.collections} backHrefPrefix={linkPrefix} linkPrefix={linkPrefix} styleVariant={tenantStyle.activeStyle} industry={tenantStyle.industry} locale={activeLocale} defaultLocale={defaultLocale} />
