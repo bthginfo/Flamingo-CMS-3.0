@@ -312,8 +312,9 @@ export function getFieldsForSection(sectionType: string, industry?: string): Col
     const next = new Set(fields);
     // Some templates (e.g. tattoo hero) reference secondary CTA token vars only
     // inside inline style objects, which codegen can miss. If a section exposes
-    // primary button tokens, we also expose secondary button controls.
-    if (next.has('btnBg') || next.has('btnText')) {
+    // primary button tokens, or is a hero section, we also expose secondary
+    // button controls.
+    if (next.has('btnBg') || next.has('btnText') || sectionType === 'hero') {
       next.add('btnSecondaryBg');
       next.add('btnSecondaryText');
       next.add('btnSecondaryBorder');
