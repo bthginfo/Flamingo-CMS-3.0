@@ -11,6 +11,7 @@ import { cookies } from 'next/headers';
 import { createHash } from 'crypto';
 
 type PublishResult = { success?: true; error?: string; version?: number; unchanged?: true };
+type QueryRunner = Pick<ReturnType<typeof getDb>, 'select' | 'update' | 'insert'>;
 
 function normalizeSnapshotForJson<T>(value: T): T {
   return JSON.parse(JSON.stringify(value, (_key, input) => {
@@ -55,7 +56,7 @@ export async function publishAction(): Promise<PublishResult> {
 
     const checksum = createHash('sha256').update(JSON.stringify(snapshot)).digest('hex');
 
-    const runPublish = async (tx: typeof db) => {
+    const runPublish = async (tx: QueryRunner) => {
       const [currentActive] = await tx
         .select({ id: publishedSnapshots.id, version: publishedSnapshots.version, checksum: publishedSnapshots.checksum })
         .from(publishedSnapshots)
@@ -107,7 +108,7 @@ export async function publishAction(): Promise<PublishResult> {
 
     let result: PublishResult;
     try {
-      result = await db.transaction(async (tx) => runPublish(tx as typeof db));
+      result = await db.transaction(async (tx) => runPublish(tx));
     } catch (txError) {
       const txMessage = txError instanceof Error ? txError.message : String(txError);
       if (!txMessage.includes('No transactions support in neon-http driver')) {
@@ -153,7 +154,7 @@ export async function rollbackPublishAction(): Promise<PublishResult> {
   const db = getDb();
   const tenantId = session.tenantId;
 
-  const runRollback = async (tx: typeof db) => {
+  const runRollback = async (tx: QueryRunner) => {
     const [current] = await tx
       .select({ id: publishedSnapshots.id, version: publishedSnapshots.version })
       .from(publishedSnapshots)
@@ -192,7 +193,7 @@ export async function rollbackPublishAction(): Promise<PublishResult> {
 
   let result: PublishResult;
   try {
-    result = await db.transaction(async (tx) => runRollback(tx as typeof db));
+    result = await db.transaction(async (tx) => runRollback(tx));
   } catch (txError) {
     const txMessage = txError instanceof Error ? txError.message : String(txError);
     if (!txMessage.includes('No transactions support in neon-http driver')) {
