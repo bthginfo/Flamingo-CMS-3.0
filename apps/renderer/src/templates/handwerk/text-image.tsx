@@ -22,7 +22,7 @@ export function TextImageSection({ data, variant }: Props) {
   const text = (data.text as string) || '';
   const image = pickString(data.image, data.imageUrl, data.imageSrc, data.backgroundImage, data.bgImage, data.media);
   const imageAlt = (data.imageAlt as string) || headline;
-  const layout = typeof data.layout === 'string' ? data.layout : 'image-right';
+  const layout = (data.layout as string) || 'image-right';
   const items = (data.items as Array<{ icon?: string; title: string; text: string }>) || [];
   const primaryCta = (data.primaryCta as ButtonValue) || {};
   const secondaryCta = (data.secondaryCta as ButtonValue) || {};
@@ -43,15 +43,15 @@ export function TextImageSection({ data, variant }: Props) {
               className="section-badge"
               data-edit-path="badge"
               style={{
-                backgroundColor: 'var(--token-badge-bg, rgba(26, 82, 118, 0.05))',
-                borderColor: 'var(--token-badge-border, rgba(26, 82, 118, 0.1))',
-                color: 'var(--token-badge-text, var(--token-eyebrow, inherit))',
+                backgroundColor: 'var(--token-badge-bg, var(--style-badge-bg, rgba(26, 82, 118, 0.05)))',
+                borderColor: 'var(--token-badge-border, var(--style-badge-border, rgba(26, 82, 118, 0.1)))',
+                color: 'var(--token-badge-text, var(--style-badge-text, var(--token-eyebrow, var(--token-accent, var(--style-accent-color, inherit)))))',
               }}
             >
               {badge}
             </span>
           )}
-          {headline && <h2 className="section-headline text-left" data-edit-path="headline">{headline}</h2>}
+          {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
           {text && <div className="text-[color:var(--token-body)] text-lg leading-relaxed mt-4 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <ul className="mt-6 space-y-3">

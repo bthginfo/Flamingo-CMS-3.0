@@ -11,7 +11,7 @@ export function CtaBandSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
-  const badgeIcon = typeof data.badgeIcon === 'string' ? data.badgeIcon : 'sparkles';
+  const badgeIcon = (data.badgeIcon as string) || 'sparkles';
   const cta = data.ctaPrimary as { label: string; href: string; icon?: string } | undefined;
   // Colors come from styleOverrides (card surface, typography, accent, button).
   const colors = {
@@ -27,16 +27,16 @@ export function CtaBandSection({ data, styleVariant }: Props) {
 
 type ColorOverrides = { bgColor?: string; textColor?: string; accentColor?: string };
 type CProps = { headline: string; subline: string; badgeText: string; badgeIcon: string; cta?: { label: string; href: string; icon?: string }; colors?: ColorOverrides };
-const CTA_CARD_BG = 'var(--token-card-bg, #fff9f1)';
-const CTA_CARD_BORDER = 'var(--token-card-border, rgba(15,23,42,0.08))';
-const CTA_CARD_HEADING = 'var(--token-heading, #0f172a)';
-const CTA_CARD_BODY = 'var(--token-body, #493a37)';
-const CTA_CARD_BADGE_BG = 'var(--token-badge-bg, rgba(0,0,0,0.06))';
-const CTA_CARD_BADGE_TEXT = 'var(--token-badge-text, #0f172a)';
-const CTA_CARD_BADGE_BORDER = 'var(--token-badge-border, transparent)';
-const CTA_CARD_ACCENT = 'var(--token-eyebrow, var(--token-accent, #f59e0b))';
-const CTA_BUTTON_BG = 'var(--token-btn-bg, #4a1625)';
-const CTA_BUTTON_TEXT = 'var(--token-btn-text, #ffffff)';
+const CTA_CARD_BG = 'var(--token-card-bg, var(--style-card-bg, #fff9f1))';
+const CTA_CARD_BORDER = 'var(--token-card-border, var(--style-border-color, rgba(15,23,42,0.08)))';
+const CTA_CARD_HEADING = 'var(--token-heading, var(--style-heading-color, #0f172a))';
+const CTA_CARD_BODY = 'var(--token-body, var(--style-body-color, #493a37))';
+const CTA_CARD_BADGE_BG = 'var(--token-badge-bg, var(--style-badge-bg, rgba(0,0,0,0.06)))';
+const CTA_CARD_BADGE_TEXT = 'var(--token-badge-text, var(--style-badge-text, #0f172a))';
+const CTA_CARD_BADGE_BORDER = 'var(--token-badge-border, var(--style-badge-border, transparent))';
+const CTA_CARD_ACCENT = 'var(--token-eyebrow, var(--token-accent, var(--style-accent-color, #f59e0b)))';
+const CTA_BUTTON_BG = 'var(--token-btn-bg, var(--brand-btn-bg, #4a1625))';
+const CTA_BUTTON_TEXT = 'var(--token-btn-text, var(--brand-btn-text, #ffffff))';
 
 /* ─── CLASSIC: Gradient bg, centered, pill cta, floating orbs ─── */
 function CtaClassic({ headline, subline, badgeText, badgeIcon, cta, colors }: CProps) {

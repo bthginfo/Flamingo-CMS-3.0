@@ -41,7 +41,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
       <motion.div initial={{ opacity: 0, y: 40 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.2 }} className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {cards.map((card, index) => {
           const cardBody = (
-            <div className="relative z-20 flex h-full w-full flex-col overflow-hidden rounded-2xl border border-[var(--style-border-color,rgba(0,0,0,0.08))] bg-[var(--style-card-bg,#ffffff)] shadow-sm transition-all duration-300 group-hover:border-[var(--style-border-color,rgba(0,0,0,0.16))] group-hover:shadow-lg">
+            <div className="relative z-20 flex h-full w-full flex-col overflow-hidden rounded-2xl border border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,0.08)))] bg-[var(--token-card-bg,var(--style-card-bg,#ffffff))] shadow-sm transition-all duration-300 group-hover:border-[var(--token-card-border,var(--style-border-color,rgba(0,0,0,0.16)))] group-hover:shadow-lg">
               {card.mediaType === 'image' && card.image ? (
                 <div className="relative w-full overflow-hidden">
                   <div className="block sm:hidden">
@@ -56,11 +56,11 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
                         sizes="100vw"
                       />
                     </div>
-                    <div className="bg-[var(--style-card-bg,#ffffff)] p-6 text-left">
-                      <h4 className="font-display mb-3 text-lg font-semibold text-[var(--style-heading-color,var(--style-text-primary,#111827))]" data-edit-path="title">
+                    <div className="bg-[var(--token-card-bg,var(--style-card-bg,#ffffff))] p-6 text-left">
+                      <h4 className="font-display mb-3 text-lg font-semibold text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">
                         {card.title}
                       </h4>
-                      {card.text && <div className="rt-content text-sm font-medium leading-relaxed text-[var(--style-body-color,var(--style-text-secondary,#6b7280))]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: card.text }} />}
+                      {card.text && <div className="rt-content text-sm font-medium leading-relaxed text-[var(--token-body,var(--style-body-color,var(--style-text-secondary,#6b7280)))]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: card.text }} />}
                     </div>
                   </div>
                   <div className="relative hidden min-h-[220px] w-full overflow-hidden sm:block">
@@ -86,14 +86,14 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
               ) : (
                 <div className="flex flex-1 flex-col items-center justify-center p-6 text-center">
                   {card.icon && (
-                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--style-accent-color,var(--brand-primary))_10%,transparent)] text-[var(--style-icon-color,var(--style-accent-color,var(--brand-primary)))] transition-transform duration-300 group-hover:scale-110">
+                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[color-mix(in_srgb,var(--token-accent,var(--style-accent-color,var(--brand-primary)))_10%,transparent)] text-[var(--token-icon,var(--style-icon-color,var(--token-accent,var(--style-accent-color,var(--brand-primary)))))] transition-transform duration-300 group-hover:scale-110">
                       <DynamicIcon editPath="icon" name={card.icon} size={24} />
                     </div>
                   )}
-                  <h4 className="font-display mb-2 text-lg font-semibold text-[var(--style-heading-color,var(--style-text-primary,#111827))]" data-edit-path="title">
+                  <h4 className="font-display mb-2 text-lg font-semibold text-[var(--token-heading,var(--style-heading-color,var(--style-text-primary,#111827)))]" data-edit-path="title">
                     {card.title}
                   </h4>
-                  {card.text && <div className="rt-content text-sm leading-relaxed text-[var(--style-body-color,var(--style-text-secondary,#6b7280))]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: card.text }} />}
+                  {card.text && <div className="rt-content text-sm leading-relaxed text-[var(--token-body,var(--style-body-color,var(--style-text-secondary,#6b7280)))]" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: card.text }} />}
                 </div>
               )}
             </div>
@@ -107,7 +107,7 @@ function ServicesClassic({ headline, subline, badgeText, cards, ctaLabel, ctaHre
               data-edit-index={index}
             >
               <motion.span
-                className="pointer-events-none absolute inset-0 block h-full w-full rounded-3xl bg-[var(--style-accent-color,var(--brand-primary))]/5 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+                className="pointer-events-none absolute inset-0 block h-full w-full rounded-3xl bg-[var(--token-accent,var(--style-accent-color,var(--brand-primary)))]/5 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
               />
               {card.href ? (
                 <Link href={card.href} className="block h-full" data-edit-link="href">
