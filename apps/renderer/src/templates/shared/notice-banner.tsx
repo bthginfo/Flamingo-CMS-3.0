@@ -29,13 +29,13 @@ export function NoticeBannerSection({ data }: Props) {
         {(primaryCta?.label || secondaryCta?.label) && (
           <div className="flex flex-wrap justify-center gap-4 mt-6">
             {primaryCta?.label && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:-translate-y-0.5" style={{ backgroundColor: textColor, color: bgColor }}>
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:-translate-y-0.5" style={{ background: 'var(--token-btn-bg,' + textColor + ')', color: 'var(--token-btn-text,' + bgColor + ')' }}>
                 <span data-edit-path="label">{primaryCta.label}</span>
                 {primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={16} />}
               </a>
             )}
             {secondaryCta?.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold border-2 transition-all duration-300 hover:-translate-y-0.5" style={{ borderColor: textColor, color: textColor }}>
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold border-2 transition-all duration-300 hover:-translate-y-0.5" style={{ background: 'var(--token-btn-secondary-bg,transparent)', color: 'var(--token-btn-secondary-text,' + textColor + ')', borderColor: 'var(--token-btn-secondary-border,' + textColor + ')' }}>
                 <span data-edit-path="label">{secondaryCta.label}</span>
                 {secondaryCta.icon && <DynamicIcon editPath="secondaryCta.icon" name={secondaryCta.icon} size={16} />}
               </a>
