@@ -12,6 +12,14 @@ import { createHash } from 'crypto';
 
 type PublishResult = { success?: true; error?: string; version?: number; unchanged?: true };
 
+function normalizeSnapshotForJson<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value, (_key, input) => {
+    if (typeof input === 'bigint') return input.toString();
+    if (input instanceof Date) return input.toISOString();
+    return input;
+  })) as T;
+}
+
 async function requireSession() {
   const session = await getSession();
   if (!session) redirect('/admin/login');
@@ -31,86 +39,93 @@ function revalidateTenant(tenantId: string) {
  *  4) Bust caches after the DB state is consistent.
  */
 export async function publishAction(): Promise<PublishResult> {
-  const session = await requireSession();
-  const cookieStore = await cookies();
-  if (cookieStore.get('flamingo_public_demo')?.value === session.tenantId) {
-    return { error: 'Veröffentlichung ist im Demo-Modus deaktiviert.' };
-  }
-
-  const db = getDb();
-  const tenantId = session.tenantId;
-
-  const snapshot = await getDraftSnapshot(tenantId);
-  if (!snapshot) return { error: 'Keine Inhalte zum Veröffentlichen gefunden.' };
-
-  const checksum = createHash('sha256').update(JSON.stringify(snapshot)).digest('hex');
-
-  const result = await db.transaction(async (tx) => {
-    const [currentActive] = await tx
-      .select({ id: publishedSnapshots.id, version: publishedSnapshots.version, checksum: publishedSnapshots.checksum })
-      .from(publishedSnapshots)
-      .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)))
-      .orderBy(desc(publishedSnapshots.version))
-      .limit(1);
-
-    await tx.update(pages)
-      .set({ status: 'published' })
-      .where(and(eq(pages.tenantId, tenantId), eq(pages.status, 'draft')));
-
-    if (currentActive && currentActive.checksum === checksum) {
-      return { success: true as const, unchanged: true as const, version: currentActive.version };
+  try {
+    const session = await requireSession();
+    const cookieStore = await cookies();
+    if (cookieStore.get('flamingo_public_demo')?.value === session.tenantId) {
+      return { error: 'Veröffentlichung ist im Demo-Modus deaktiviert.' };
     }
 
-    const [latest] = await tx
-      .select({ version: publishedSnapshots.version })
-      .from(publishedSnapshots)
-      .where(eq(publishedSnapshots.tenantId, tenantId))
-      .orderBy(desc(publishedSnapshots.version))
-      .limit(1);
+    const db = getDb();
+    const tenantId = session.tenantId;
 
-    await tx.update(publishedSnapshots)
-      .set({ isActive: false })
-      .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)));
+    const rawSnapshot = await getDraftSnapshot(tenantId);
+    if (!rawSnapshot) return { error: 'Keine Inhalte zum Veröffentlichen gefunden.' };
+    const snapshot = normalizeSnapshotForJson(rawSnapshot);
 
-    const nextVersion = (latest?.version ?? 0) + 1;
-    const [created] = await tx.insert(publishedSnapshots).values({
-      tenantId,
-      version: nextVersion,
-      snapshot: snapshot as unknown as Record<string, unknown>,
-      checksum,
-      createdBy: 'admin',
-      isActive: true,
-    }).returning({ id: publishedSnapshots.id });
+    const checksum = createHash('sha256').update(JSON.stringify(snapshot)).digest('hex');
 
-    if (!created?.id) throw new Error('Published Snapshot konnte nicht erstellt werden.');
+    const result = await db.transaction(async (tx) => {
+      const [currentActive] = await tx
+        .select({ id: publishedSnapshots.id, version: publishedSnapshots.version, checksum: publishedSnapshots.checksum })
+        .from(publishedSnapshots)
+        .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)))
+        .orderBy(desc(publishedSnapshots.version))
+        .limit(1);
 
-    await tx.insert(publishHistory).values({
-      tenantId,
-      snapshotId: created.id,
-      previousSnapshotId: currentActive?.id ?? null,
-      action: 'publish',
-      note: `v${nextVersion}`,
+      await tx.update(pages)
+        .set({ status: 'published' })
+        .where(and(eq(pages.tenantId, tenantId), eq(pages.status, 'draft')));
+
+      if (currentActive && currentActive.checksum === checksum) {
+        return { success: true as const, unchanged: true as const, version: currentActive.version };
+      }
+
+      const [latest] = await tx
+        .select({ version: publishedSnapshots.version })
+        .from(publishedSnapshots)
+        .where(eq(publishedSnapshots.tenantId, tenantId))
+        .orderBy(desc(publishedSnapshots.version))
+        .limit(1);
+
+      await tx.update(publishedSnapshots)
+        .set({ isActive: false })
+        .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)));
+
+      const nextVersion = (latest?.version ?? 0) + 1;
+      const [created] = await tx.insert(publishedSnapshots).values({
+        tenantId,
+        version: nextVersion,
+        snapshot: snapshot as unknown as Record<string, unknown>,
+        checksum,
+        createdBy: 'admin',
+        isActive: true,
+      }).returning({ id: publishedSnapshots.id });
+
+      if (!created?.id) throw new Error('Published Snapshot konnte nicht erstellt werden.');
+
+      await tx.insert(publishHistory).values({
+        tenantId,
+        snapshotId: created.id,
+        previousSnapshotId: currentActive?.id ?? null,
+        action: 'publish',
+        note: `v${nextVersion}`,
+      });
+
+      return { success: true as const, version: nextVersion };
     });
 
-    return { success: true as const, version: nextVersion };
-  });
+    revalidateTenant(tenantId);
 
-  revalidateTenant(tenantId);
-
-  const revalidateSecret = process.env.REVALIDATE_SECRET;
-  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3002';
-  if (revalidateSecret) {
-    try {
-      await fetch(`${baseUrl}/api/revalidate`, {
-        method: 'POST',
-        headers: { 'x-revalidate-secret': revalidateSecret },
-      });
-    } catch {
-      // Best-effort
+    const revalidateSecret = process.env.REVALIDATE_SECRET;
+    const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3002';
+    if (revalidateSecret) {
+      try {
+        await fetch(`${baseUrl}/api/revalidate`, {
+          method: 'POST',
+          headers: { 'x-revalidate-secret': revalidateSecret },
+        });
+      } catch {
+        // Best-effort
+      }
     }
-  }
 
-  return result;
+    return result;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unbekannter Publish-Fehler';
+    console.error('[publishAction] failed:', message);
+    return { error: `Veröffentlichen fehlgeschlagen: ${message}` };
+  }
 }
 
 /**
