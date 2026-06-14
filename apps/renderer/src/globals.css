@@ -443,9 +443,9 @@ html {
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 text-base;
     border-radius: var(--style-button-radius, 0.75rem);
-    background: var(--brand-btn-secondary-bg, transparent);
-    color: var(--brand-btn-secondary-text, white);
-    border: 2px solid var(--brand-btn-secondary-border, rgba(255,255,255,0.2));
+    background: var(--token-btn-secondary-bg, var(--brand-btn-secondary-bg, transparent));
+    color: var(--token-btn-secondary-text, var(--brand-btn-secondary-text, white));
+    border: 2px solid var(--token-btn-secondary-border, var(--brand-btn-secondary-border, rgba(255,255,255,0.2)));
   }
 
   .btn-outline {
@@ -699,51 +699,6 @@ html {
 }
 .scrollbar-hidden::-webkit-scrollbar {
   display: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .spotlight-card:hover {
-    transform: translateY(-0.25rem);
-    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-  }
-
-  .spotlight-card:hover .spotlight-card-glow {
-    opacity: 1;
-  }
-
-  .spotlight-card:hover .spotlight-card-image {
-    opacity: 0.25;
-  }
-}
-
-/* Subtle global section reveal.
-   Heroes opt out in SectionRenderer so the first impression stays instant. */
-.section-reveal {
-  opacity: 0;
-  transform: translate3d(0, 14px, 0);
-  filter: blur(2px);
-  transition:
-    opacity 640ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 640ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 640ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: opacity, transform, filter;
-}
-
-.section-reveal[data-revealed="true"],
-.section-reveal[data-reveal-disabled="true"] {
-  opacity: 1;
-  transform: translate3d(0, 0, 0);
-  filter: blur(0);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .section-reveal {
-    opacity: 1;
-    transform: none;
-    filter: none;
-    transition: none;
-    will-change: auto;
-  }
 }
 
 /* View Transitions API (cross-document, Chrome 126+ / Safari 18+).

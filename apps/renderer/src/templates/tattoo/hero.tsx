@@ -65,7 +65,7 @@ function HeroClassic({ headline, subline, bgImage, bgImageMobile, overlayOpacity
               </a>
             )}
             {secondaryCta && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center justify-center px-8 py-4 border border-[color:color-mix(in_srgb,var(--token-card-border)_30%,transparent)] text-[color:var(--token-on-dark-heading)] font-medium uppercase tracking-wider text-sm hover:border-[color:color-mix(in_srgb,var(--token-card-border)_60%,transparent)] transition-colors" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center justify-center px-8 py-4 border border-[color:color-mix(in_srgb,var(--token-card-border)_30%,transparent)] text-[color:var(--token-on-dark-heading)] font-medium uppercase tracking-wider text-sm hover:border-[color:color-mix(in_srgb,var(--token-card-border)_60%,transparent)] transition-colors" style={{ background: 'var(--token-btn-secondary-bg,transparent)', color: 'var(--token-btn-secondary-text,var(--token-on-dark-heading))', borderColor: 'var(--token-btn-secondary-border,color-mix(in_srgb,var(--token-card-border)_30%,transparent))' }} data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}
@@ -92,7 +92,7 @@ function HeroModern({ headline, subline, bgImage, bgImageMobile, overlayOpacity,
         {subline && <p className="mt-4 text-[color:var(--token-body)] max-w-lg" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-8 flex flex-col sm:flex-row gap-3">
           {primaryCta && <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-sm" style={{ background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' }} data-edit-path="label">{primaryCta.label}</a>}
-          {secondaryCta && <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center justify-center px-6 py-3 border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] text-sm rounded-sm" data-edit-path="label">{secondaryCta.label}</a>}
+          {secondaryCta && <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center justify-center px-6 py-3 border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] text-sm rounded-sm" style={{ background: 'var(--token-btn-secondary-bg,transparent)', color: 'var(--token-btn-secondary-text,color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent))', borderColor: 'var(--token-btn-secondary-border,color-mix(in_srgb,var(--token-card-border)_20%,transparent))' }} data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
     </section>
@@ -117,7 +117,7 @@ function HeroBold({ headline, subline, bgImage, bgImageMobile, overlayOpacity, p
         {subline && <p className="mt-6 text-[color:var(--token-body)] text-lg max-w-lg mx-auto" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
           {primaryCta && <a data-edit-link="primaryCta" href={primaryCta.href} className="px-10 py-4 font-black uppercase tracking-wider text-sm transition-colors shadow-[4px_4px_0_rgba(0,0,0,1)]" style={{ background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' }} data-edit-path="label">{primaryCta.label}</a>}
-          {secondaryCta && <a data-edit-link="secondaryCta" href={secondaryCta.href} className="px-10 py-4 border-2 border-[color:var(--token-card-border)] text-[color:var(--token-on-dark-heading)] font-black uppercase tracking-wider text-sm hover:bg-[var(--token-card-bg)] hover:text-[color:var(--token-heading)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.2)]" data-edit-path="label">{secondaryCta.label}</a>}
+          {secondaryCta && <a data-edit-link="secondaryCta" href={secondaryCta.href} className="px-10 py-4 border-2 border-[color:var(--token-card-border)] text-[color:var(--token-on-dark-heading)] font-black uppercase tracking-wider text-sm hover:bg-[var(--token-card-bg)] hover:text-[color:var(--token-heading)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.2)]" style={{ background: 'var(--token-btn-secondary-bg,transparent)', color: 'var(--token-btn-secondary-text,var(--token-on-dark-heading))', borderColor: 'var(--token-btn-secondary-border,var(--token-card-border))' }} data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
     </section>

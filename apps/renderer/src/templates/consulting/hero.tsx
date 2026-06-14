@@ -63,7 +63,7 @@ export function ConsultingHeroSection({ data }: Props) {
               </a>
             )}
             {secondaryCta && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-7 py-3.5 font-semibold backdrop-blur transition-all hover:bg-white/15" style={{ background: 'var(--token-badge-bg)', color: 'var(--token-badge-text,var(--token-on-dark-heading))' }} data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-7 py-3.5 font-semibold backdrop-blur transition-all hover:bg-white/15" style={{ background: 'var(--token-btn-secondary-bg,var(--token-badge-bg))', color: 'var(--token-btn-secondary-text,var(--token-badge-text,var(--token-on-dark-heading)))', borderColor: 'var(--token-btn-secondary-border,rgba(255,255,255,0.3))' }} data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}
