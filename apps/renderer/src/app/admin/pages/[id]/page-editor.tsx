@@ -14,6 +14,7 @@ import { PageSeoPanel } from './page-seo-panel';
 import type { PageSeoPanelHandle } from './page-seo-panel';
 import { getSectionTypesForIndustry } from './section-types';
 import type { EditableSection } from '@/app/admin/editor/editable-section';
+import { remapEditableSectionType } from '@/app/admin/editor/section-mappers';
 import { EditorActionBar } from '@/app/admin/editor/editor-action-bar';
 import { EditorLocaleTabs } from '@/app/admin/editor/editor-locale-tabs';
 import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor/live-preview-data';
@@ -438,6 +439,46 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     });
   }
 
+  function handleChangeSectionType(sectionId: string, nextType: string) {
+    const previousSections = sectionsRef.current;
+    const currentSection = previousSections.find((section) => section.id === sectionId);
+    if (!currentSection || currentSection.type === nextType) return;
+
+    const previousPending = pendingChanges.current.get(sectionId);
+    const nextSection = remapEditableSectionType({ ...currentSection, data: previousPending ?? currentSection.data }, nextType);
+    const nextSections = previousSections.map((section) => section.id === sectionId ? nextSection : section);
+
+    pendingChanges.current.delete(sectionId);
+    setSections(nextSections);
+    if (preview.isOpen) {
+      const liveSections = buildLiveSections(nextSections, pendingChanges.current);
+      preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
+    }
+
+    startTransition(async () => {
+      try {
+        const [metaResult, dataResult] = await Promise.all([
+          updateSectionMetaAction(sectionId, { type: nextType }, page.id),
+          updateSectionAction(sectionId, nextSection.data, page.id),
+        ]);
+
+        if ((metaResult && 'error' in metaResult) || (dataResult && 'error' in dataResult)) {
+          throw new Error('Sektionstyp konnte nicht gespeichert werden');
+        }
+
+        toast.success('Sektionstyp geändert');
+      } catch {
+        if (previousPending) pendingChanges.current.set(sectionId, previousPending);
+        setSections(previousSections);
+        if (preview.isOpen) {
+          const liveSections = buildLiveSections(previousSections, pendingChanges.current);
+          preview.sendLiveData({ sections: liveSections.map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, products: previewProducts } } : s), industry, styleVariant, locale: activeLocale, collections });
+        }
+        toast.error('Sektionstyp konnte nicht geändert werden');
+      }
+    });
+  }
+
   const colorDebounceRef = useRef<Record<string, NodeJS.Timeout>>({});
 
   function handleSaveColorOverrides(sectionId: string, overrides: Record<string, unknown> | null) {
@@ -530,6 +571,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
             onDelete={() => handleDeleteSection(section.id)}
             onToggleVisible={() => handleToggleVisible(section.id)}
             onChangeData={(data) => handleSectionChange(section.id, data)}
+            onChangeType={(type) => handleChangeSectionType(section.id, type)}
             onSaveMeta={(meta) => handleSaveSectionMeta(section.id, meta)}
             onSaveColorOverrides={(overrides) => handleSaveColorOverrides(section.id, overrides)}
             activeLocale={activeLocale}

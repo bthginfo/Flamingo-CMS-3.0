@@ -33,6 +33,8 @@ export function PracticeAreasSection({ data }: Props) {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.08 }}
               className="group relative p-8 rounded-xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] hover:border-[color-mix(in_srgb,var(--token-card-border)_30%,transparent)] hover:shadow-lg transition-all duration-300"
+              data-edit-collection="areas"
+              data-edit-index={i}
             >
               {area.icon && (
                 <div className="w-12 h-12 mb-5 rounded-lg bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] flex items-center justify-center text-[color:var(--token-icon)] group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-on-dark-heading)] transition-colors">
@@ -48,7 +50,7 @@ export function PracticeAreasSection({ data }: Props) {
               )}
             </motion.div>
           );
-          return area.href ? <Link key={i} href={area.href} className="block">{card}</Link> : <div key={i}>{card}</div>;
+          return area.href ? <Link key={i} href={area.href} className="block" data-edit-link="href">{card}</Link> : <div key={i}>{card}</div>;
         })}
       </div>
     </div>

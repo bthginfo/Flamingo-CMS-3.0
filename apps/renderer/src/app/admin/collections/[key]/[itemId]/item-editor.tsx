@@ -15,7 +15,7 @@ import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { toast } from 'sonner';
 import { createEmptyEditableSection, normalizeEditableSection, type EditableSection } from '@/app/admin/editor/editable-section';
-import { collectionItemSectionsToEditableSections, editableSectionsToCollectionItemSections } from '@/app/admin/editor/section-mappers';
+import { collectionItemSectionsToEditableSections, editableSectionsToCollectionItemSections, remapEditableSectionType } from '@/app/admin/editor/section-mappers';
 import { EditorActionBar } from '@/app/admin/editor/editor-action-bar';
 import { EditorLocaleTabs } from '@/app/admin/editor/editor-locale-tabs';
 import { buildLiveSections, mergeLocalizedSectionData } from '@/app/admin/editor/live-preview-data';
@@ -159,6 +159,27 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
     toast.success('Einstellungen übernommen', { id: 'meta-save' });
   }
 
+  function handleChangeSectionType(sectionId: string, nextType: string) {
+    const currentSections = sectionsRef.current;
+    const currentSection = currentSections.find((section) => section.id === sectionId);
+    if (!currentSection || currentSection.type === nextType) return;
+
+    const nextSection = remapEditableSectionType({
+      ...currentSection,
+      data: pendingChanges.current.get(sectionId) ?? currentSection.data,
+    }, nextType);
+    const nextSections = currentSections.map((section) => section.id === sectionId ? nextSection : section);
+
+    pendingChanges.current.set(sectionId, nextSection.data);
+    setSections(nextSections);
+    markDirty();
+    if (preview.isOpen) {
+      const liveSections = buildLiveSections(nextSections, pendingChanges.current);
+      preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale });
+    }
+    toast.success('Sektionstyp geändert');
+  }
+
   const colorDebounceRef = useRef<Record<string, NodeJS.Timeout>>({});
 
   function handleSaveColorOverrides(sectionId: string, overrides: Record<string, unknown> | null) {
@@ -273,6 +294,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
                 onDelete={() => handleDeleteSection(section.id)}
                 onToggleVisible={() => handleToggleVisible(section.id)}
                 onChangeData={(data) => handleSectionChange(section.id, data)}
+                onChangeType={(type) => handleChangeSectionType(section.id, type)}
                 onSaveMeta={(meta) => handleSaveMeta(section.id, meta)}
                 onSaveColorOverrides={(overrides) => handleSaveColorOverrides(section.id, overrides)}
                 activeLocale={activeLocale}

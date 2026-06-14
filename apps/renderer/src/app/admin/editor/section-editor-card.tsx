@@ -21,6 +21,7 @@ type Props = {
   onDelete: () => void;
   onToggleVisible: () => void;
   onChangeData: (data: Record<string, unknown>) => void;
+  onChangeType: (type: string) => void;
   onSaveMeta: (meta: Partial<EditableSection>) => void;
   onSaveColorOverrides: (overrides: Record<string, unknown> | null) => void;
   activeLocale?: string;
@@ -36,6 +37,7 @@ export function SectionEditorCard({
   onDelete,
   onToggleVisible,
   onChangeData,
+  onChangeType,
   onSaveMeta,
   onSaveColorOverrides,
   activeLocale,
@@ -87,7 +89,7 @@ export function SectionEditorCard({
           <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} industry={industry} resolvedVars={resolvedVars} iframeRef={iframeRef} sectionId={section.id} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
-            <SectionMetaEditor section={section} onSave={onSaveMeta} />
+            <SectionMetaEditor section={section} sectionTypes={sectionTypes} onSave={onSaveMeta} onChangeType={onChangeType} />
           </details>
         </div>
       )}
@@ -95,7 +97,7 @@ export function SectionEditorCard({
   );
 }
 
-function SectionMetaEditor({ section, onSave }: { section: EditableSection; onSave: (meta: Partial<EditableSection>) => void }) {
+function SectionMetaEditor({ section, sectionTypes, onSave, onChangeType }: { section: EditableSection; sectionTypes: SectionTypeDefinition[]; onSave: (meta: Partial<EditableSection>) => void; onChangeType: (type: string) => void }) {
   const [meta, setMeta] = useState({
     titleInternal: section.titleInternal || '',
     variant: section.variant || '',
@@ -104,9 +106,25 @@ function SectionMetaEditor({ section, onSave }: { section: EditableSection; onSa
     spacingBottom: section.spacingBottom,
     anchorId: section.anchorId || '',
   });
+  const [nextType, setNextType] = useState(section.type);
 
   return (
     <div className="grid grid-cols-2 gap-3 mt-3 text-sm">
+      {!section.locked && (
+        <label className="block col-span-2">
+          <span className="text-gray-600 text-xs">Sektionstyp</span>
+          <div className="mt-1 flex gap-2">
+            <select className="admin-input flex-1" value={nextType} onChange={(event) => setNextType(event.target.value)}>
+              {sectionTypes.map((type) => (
+                <option key={type.type} value={type.type}>{type.label}</option>
+              ))}
+            </select>
+            <button className="admin-btn-secondary text-xs whitespace-nowrap" disabled={nextType === section.type} onClick={() => onChangeType(nextType)}>
+              Typ wechseln
+            </button>
+          </div>
+        </label>
+      )}
       <label className="block">
         <span className="text-gray-600 text-xs">Interner Titel</span>
         <input className="admin-input mt-1" value={meta.titleInternal} onChange={(event) => setMeta({ ...meta, titleInternal: event.target.value })} />

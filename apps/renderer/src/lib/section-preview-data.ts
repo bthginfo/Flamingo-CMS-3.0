@@ -258,6 +258,7 @@ export const SECTION_PREVIEW_DATA: Record<string, Record<string, unknown>> = {
     bgPositionMobile: 'center',
     overlayColor: 'rgba(12, 12, 15, 0.62)',
     overlayOpacity: 0.62,
+    glowColor: 'rgba(242,65,113,0.18)',
     imageEffect: 'none',
     imageEffectIntensity: 0,
     primaryCta: { label: 'Beratung anfragen', href: '#kontakt', icon: 'send' },

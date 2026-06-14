@@ -16,19 +16,20 @@ export function TattooHeroSection({ data, styleVariant }: Props) {
   const secondaryCta = data.secondaryCta as { label: string; href: string } | undefined;
   const badgeText = (data.badgeText as string) || '';
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
+  const glowColor = (data.glowColor as string) || 'rgba(239, 68, 68, 0.12)';
 
-  if (styleVariant === 'modern') return <HeroModern {...{ headline, subline, bgImage, bgImageMobile, overlayOpacity, primaryCta, secondaryCta, badgeText, imageEffect }} />;
-  if (styleVariant === 'bold') return <HeroBold {...{ headline, subline, bgImage, bgImageMobile, overlayOpacity, primaryCta, secondaryCta, badgeText, imageEffect }} />;
-  return <HeroClassic {...{ headline, subline, bgImage, bgImageMobile, overlayOpacity, primaryCta, secondaryCta, badgeText, imageEffect }} />;
+  if (styleVariant === 'modern') return <HeroModern {...{ headline, subline, bgImage, bgImageMobile, overlayOpacity, primaryCta, secondaryCta, badgeText, imageEffect, glowColor }} />;
+  if (styleVariant === 'bold') return <HeroBold {...{ headline, subline, bgImage, bgImageMobile, overlayOpacity, primaryCta, secondaryCta, badgeText, imageEffect, glowColor }} />;
+  return <HeroClassic {...{ headline, subline, bgImage, bgImageMobile, overlayOpacity, primaryCta, secondaryCta, badgeText, imageEffect, glowColor }} />;
 }
 
 type HeroProps = {
   headline: string; subline: string; bgImage: string; bgImageMobile: string;
   overlayOpacity: number; primaryCta?: { label: string; href: string };
-  secondaryCta?: { label: string; href: string }; badgeText: string; imageEffect: ImageEffect;
+  secondaryCta?: { label: string; href: string }; badgeText: string; imageEffect: ImageEffect; glowColor: string;
 };
 
-function HeroClassic({ headline, subline, bgImage, bgImageMobile, overlayOpacity, primaryCta, secondaryCta, badgeText, imageEffect }: HeroProps) {
+function HeroClassic({ headline, subline, bgImage, bgImageMobile, overlayOpacity, primaryCta, secondaryCta, badgeText, imageEffect, glowColor }: HeroProps) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-section-bg-alt)]">
       {bgImage && (
@@ -38,8 +39,7 @@ function HeroClassic({ headline, subline, bgImage, bgImageMobile, overlayOpacity
         </ImageEffectWrapper>
       )}
       <div className="absolute inset-0 bg-[var(--token-section-bg-alt)]" style={{ opacity: overlayOpacity }} />
-      {/* Neon glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full blur-[180px] bg-red-500/10" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 h-[600px] w-[600px] rounded-full blur-[180px]" style={{ backgroundColor: `var(--token-glow-color, ${glowColor})` }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
         <div className="max-w-3xl">
@@ -55,7 +55,7 @@ function HeroClassic({ headline, subline, bgImage, bgImageMobile, overlayOpacity
           </motion.h1>
           {subline && (
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }}
-              className="mt-6 text-lg text-[color:var(--token-body)] max-w-xl leading-relaxed" dangerouslySetInnerHTML={{ __html: subline }} />
+              className="mt-6 max-w-xl text-lg leading-relaxed text-[color:var(--token-body)]" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />
           )}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.7 }}
             className="mt-10 flex flex-col sm:flex-row gap-4">

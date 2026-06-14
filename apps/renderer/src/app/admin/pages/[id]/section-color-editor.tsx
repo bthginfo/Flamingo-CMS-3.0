@@ -59,6 +59,7 @@ const FIELD_RENDER_ORDER: ColorFieldKey[] = [
   'mutedColor',
   'iconColor',
   'accentColor',
+  'glowColor',
   'btnBg',
   'btnText',
   'badgeBg',
@@ -123,6 +124,7 @@ export type ColorFieldKey =
   | 'sectionBg' | 'sectionBgAlt' | 'cardBg'
   | 'headingColor' | 'subheadingColor' | 'bodyColor' | 'mutedColor'
   | 'iconColor' | 'accentColor'
+  | 'glowColor'
   | 'eyebrow' | 'statValue' | 'quoteMark' | 'ratingStar' | 'check'
   | 'onDarkHeading' | 'onDarkBody' | 'onDarkMuted'
   | 'imageOverlay'
@@ -192,8 +194,8 @@ const LEGACY_CSS_VAR_ALIASES: Record<string, string | null> = {
   '--style-image-text-color':  '--token-on-dark-heading',
   '--brand-primary':           '--token-accent',
   '--brand-accent':            '--token-accent',
-  '--brand-btn-secondary-bg':  '--token-btn-secondary-bg',
-  '--brand-btn-secondary-text':'--token-btn-secondary-text',
+  '--brand-btn-secondary-bg':  null,
+  '--brand-btn-secondary-text':null,
   '--style-card-border-color': '--token-card-border',
   '--style-image-overlay':     '--token-image-overlay',
   '--style-card-shadow':       '--token-card-shadow',
@@ -247,6 +249,7 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   mutedColor:       { cssVar: '--token-muted',            label: 'Dezenter Text',          description: 'Dezente Texte / Labels (gilt fuer helle und dunkle Backgrounds)', group: 'core' },
   iconColor:        { cssVar: '--token-icon',             label: 'Icons',                  description: 'Farbe der Icons', group: 'core' },
   accentColor:      { cssVar: '--token-accent',           label: 'Akzentfarbe',            description: 'Akzente, Linien, Hervorhebungen', group: 'core' },
+  glowColor:        { cssVar: '--token-glow-color',       label: 'Glow / Hintergrundschein', description: 'Farbiger Schein hinter Hero- oder Premium-Inhalten', group: 'special' },
   eyebrow:          { cssVar: '--token-eyebrow',          label: 'Eyebrow / Kicker',       description: 'Kleine Label-Texte über der Überschrift', group: 'special' },
   statValue:        { cssVar: '--token-stat-value',       label: 'Statistik-Wert',         description: 'Große Zahlenwerte (Stats, Metrics)', group: 'special' },
   quoteMark:        { cssVar: '--token-quote',            label: 'Anführungszeichen',      description: 'Anführungszeichen-Glyph in Testimonial-Karten', group: 'special' },
@@ -301,6 +304,22 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
 // reverse-maps them to ColorFieldKey via FIELD_DEFS. Regenerate with:
 //   node scripts/generate-section-color-contracts.cjs
 export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
+  const ensureCoreStylingFields = (fields: ColorFieldKey[]): ColorFieldKey[] => {
+    const next = new Set(fields);
+    next.add('sectionBg');
+    next.add('eyebrow');
+    next.add('badgeBg');
+    next.add('badgeText');
+    next.add('badgeBorder');
+    return Array.from(next);
+  };
+
+  const ensureSectionBackgroundField = (fields: ColorFieldKey[]): ColorFieldKey[] => {
+    const next = new Set(fields);
+    next.add('sectionBg');
+    return Array.from(next);
+  };
+
   const ensureSecondaryButtonFields = (fields: ColorFieldKey[]): ColorFieldKey[] => {
     const next = new Set(fields);
     // If a section already uses primary button tokens, expose secondary button
@@ -313,24 +332,43 @@ export function getFieldsForSection(sectionType: string, industry?: string): Col
     return Array.from(next);
   };
 
-  const normalizeContractFields = (fields: ColorFieldKey[]): ColorFieldKey[] => {
-    const valid = fields.filter((field) => FIELD_DEFS[field]);
-    return ensureSecondaryButtonFields(valid);
+  const ensureAllKnownFields = (fields: ColorFieldKey[]): ColorFieldKey[] => {
+    const next = new Set<ColorFieldKey>(fields);
+    for (const key of Object.keys(FIELD_DEFS) as ColorFieldKey[]) next.add(key);
+    return Array.from(next);
   };
 
   const industryKey = industry
     ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
     : null;
   const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
-  if (Array.isArray(industrySpecific)) {
-    return normalizeContractFields((industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'));
+  if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
+    return ensureSecondaryButtonFields(
+      ensureCoreStylingFields(
+        ensureAllKnownFields(
+          ensureSectionBackgroundField((industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
+        )
+      )
+    );
   }
   const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
-  if (Array.isArray(generic)) {
-    return normalizeContractFields((generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'));
+  if (Array.isArray(generic) && generic.length > 0) {
+    return ensureSecondaryButtonFields(
+      ensureCoreStylingFields(
+        ensureAllKnownFields(
+          ensureSectionBackgroundField((generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
+        )
+      )
+    );
   }
-  // No codegen entry: show no misleading fields. Regenerate contracts instead.
-  return [];
+  // No codegen entry → minimal safe set. Re-run the generator to fix.
+  return ensureSecondaryButtonFields(
+    ensureCoreStylingFields(
+      ensureAllKnownFields(
+        ensureSectionBackgroundField(['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText'])
+      )
+    )
+  );
 }
 
 
@@ -346,7 +384,10 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
   const [open, setOpen] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [computedVars, setComputedVars] = useState<Record<string, string>>({});
-  const allFields = rawFields;
+  // Collapse the "auf Dunkel" duplicates — a single Headline/Body/Muted picker
+  // writes both --token-* and --token-on-dark-* via FIELD_FANOUT below.
+  const HIDDEN_FIELDS = new Set<ColorFieldKey>(['onDarkHeading', 'onDarkBody', 'onDarkMuted']);
+  const allFields = rawFields.filter((f) => !HIDDEN_FIELDS.has(f));
   
   // Split into color fields and design token fields
   const colorFields = sortColorFields(allFields.filter(f => FIELD_DEFS[f]?.type !== 'size'));
@@ -420,8 +461,8 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
       '--token-divider': ['--style-border-color', '--style-card-border'],
       '--token-btn-bg': ['--brand-accent', '--brand-primary'],
       '--token-btn-text': ['--brand-dark'],
-      '--token-btn-secondary-bg': ['--brand-btn-secondary-bg'],
-      '--token-btn-secondary-text': ['--brand-btn-secondary-text'],
+      // --brand-btn-secondary-* intentionally no fallback: no shared template
+      // reads these from another var, so showing a borrowed swatch is misleading.
       '--token-badge-bg': ['--brand-primary'],
       '--token-badge-text': ['--brand-primary'],
       '--token-badge-border': ['--brand-primary'],
@@ -440,14 +481,31 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
   };
 
   const handleChange = (key: string, color: string) => {
+    // Phase 4c: pickers write exactly ONE var — no hidden cross-writes.
+    // EXCEPTION (Phase 6 UX merge): the three text-colour fields also
+    // write their --token-on-dark-* twin so the section always renders
+    // with the chosen colour regardless of which slot the template uses.
+    const FANOUT: Record<string, string[]> = {
+      '--token-heading': ['--token-on-dark-heading'],
+      '--token-body':    ['--token-on-dark-body'],
+      '--token-muted':   ['--token-on-dark-muted'],
+    };
+    const extras = FANOUT[key] || [];
     const next: Record<string, string> = { ...overrides, [key]: color };
+    for (const v of extras) next[v] = color;
     Object.keys(next).forEach(k => { if (!next[k]) delete next[k]; });
     onChange(Object.keys(next).length > 0 ? next : null);
   };
 
   const handleClear = (key: string) => {
+    const FANOUT: Record<string, string[]> = {
+      '--token-heading': ['--token-on-dark-heading'],
+      '--token-body':    ['--token-on-dark-body'],
+      '--token-muted':   ['--token-on-dark-muted'],
+    };
     const next = { ...overrides };
     delete next[key];
+    for (const v of FANOUT[key] || []) delete next[v];
     onChange(Object.keys(next).length > 0 ? next : null);
   };
 
@@ -539,11 +597,6 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
         <span>Farben anpassen</span>
         {activeCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-blue-200 text-blue-800 rounded-full text-[10px] font-bold">{activeCount} Farben</span>}
       </summary>
-      {allFields.length === 0 && (
-        <p className="mt-3 rounded-md border border-amber-100 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-          Für diese Section sind aktuell keine wirksamen Farbfelder registriert. Bitte den Section-Contract regenerieren, wenn die Section sichtbare Farb-Slots besitzt.
-        </p>
-      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-3 border-t border-blue-100">
         {coreFields.map(renderColorField)}
       </div>
