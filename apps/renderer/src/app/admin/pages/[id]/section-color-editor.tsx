@@ -304,16 +304,6 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
 // reverse-maps them to ColorFieldKey via FIELD_DEFS. Regenerate with:
 //   node scripts/generate-section-color-contracts.cjs
 export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
-  const ensureCoreStylingFields = (fields: ColorFieldKey[]): ColorFieldKey[] => {
-    const next = new Set(fields);
-    next.add('sectionBg');
-    next.add('eyebrow');
-    next.add('badgeBg');
-    next.add('badgeText');
-    next.add('badgeBorder');
-    return Array.from(next);
-  };
-
   const ensureSectionBackgroundField = (fields: ColorFieldKey[]): ColorFieldKey[] => {
     const next = new Set(fields);
     next.add('sectionBg');
@@ -338,24 +328,18 @@ export function getFieldsForSection(sectionType: string, industry?: string): Col
   const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
   if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
     return ensureSecondaryButtonFields(
-      ensureCoreStylingFields(
-        ensureSectionBackgroundField((industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
-      )
+      ensureSectionBackgroundField((industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
     );
   }
   const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
   if (Array.isArray(generic) && generic.length > 0) {
     return ensureSecondaryButtonFields(
-      ensureCoreStylingFields(
-        ensureSectionBackgroundField((generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
-      )
+      ensureSectionBackgroundField((generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt'))
     );
   }
   // No codegen entry → minimal safe set. Re-run the generator to fix.
   return ensureSecondaryButtonFields(
-    ensureCoreStylingFields(
-      ensureSectionBackgroundField(['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText'])
-    )
+    ensureSectionBackgroundField(['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText'])
   );
 }
 
