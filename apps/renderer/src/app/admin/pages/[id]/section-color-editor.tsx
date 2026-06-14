@@ -372,10 +372,7 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
   const [open, setOpen] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [computedVars, setComputedVars] = useState<Record<string, string>>({});
-  // Collapse the "auf Dunkel" duplicates — a single Headline/Body/Muted picker
-  // writes both --token-* and --token-on-dark-* via FIELD_FANOUT below.
-  const HIDDEN_FIELDS = new Set<ColorFieldKey>(['onDarkHeading', 'onDarkBody', 'onDarkMuted']);
-  const allFields = rawFields.filter((f) => !HIDDEN_FIELDS.has(f));
+  const allFields = rawFields;
   
   // Split into color fields and design token fields
   const colorFields = sortColorFields(allFields.filter(f => FIELD_DEFS[f]?.type !== 'size'));
@@ -469,31 +466,14 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
   };
 
   const handleChange = (key: string, color: string) => {
-    // Phase 4c: pickers write exactly ONE var — no hidden cross-writes.
-    // EXCEPTION (Phase 6 UX merge): the three text-colour fields also
-    // write their --token-on-dark-* twin so the section always renders
-    // with the chosen colour regardless of which slot the template uses.
-    const FANOUT: Record<string, string[]> = {
-      '--token-heading': ['--token-on-dark-heading'],
-      '--token-body':    ['--token-on-dark-body'],
-      '--token-muted':   ['--token-on-dark-muted'],
-    };
-    const extras = FANOUT[key] || [];
     const next: Record<string, string> = { ...overrides, [key]: color };
-    for (const v of extras) next[v] = color;
     Object.keys(next).forEach(k => { if (!next[k]) delete next[k]; });
     onChange(Object.keys(next).length > 0 ? next : null);
   };
 
   const handleClear = (key: string) => {
-    const FANOUT: Record<string, string[]> = {
-      '--token-heading': ['--token-on-dark-heading'],
-      '--token-body':    ['--token-on-dark-body'],
-      '--token-muted':   ['--token-on-dark-muted'],
-    };
     const next = { ...overrides };
     delete next[key];
-    for (const v of FANOUT[key] || []) delete next[v];
     onChange(Object.keys(next).length > 0 ? next : null);
   };
 
