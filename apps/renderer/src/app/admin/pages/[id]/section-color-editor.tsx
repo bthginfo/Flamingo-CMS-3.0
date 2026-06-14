@@ -308,19 +308,32 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
 // reverse-maps them to ColorFieldKey via FIELD_DEFS. Regenerate with:
 //   node scripts/generate-section-color-contracts.cjs
 export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
+  const ensureSecondaryButtonFields = (fields: ColorFieldKey[]): ColorFieldKey[] => {
+    const next = new Set(fields);
+    // Some templates (e.g. tattoo hero) reference secondary CTA token vars only
+    // inside inline style objects, which codegen can miss. If a section exposes
+    // primary button tokens, we also expose secondary button controls.
+    if (next.has('btnBg') || next.has('btnText')) {
+      next.add('btnSecondaryBg');
+      next.add('btnSecondaryText');
+      next.add('btnSecondaryBorder');
+    }
+    return Array.from(next);
+  };
+
   const industryKey = industry
     ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
     : null;
   const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
   if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
-    return industrySpecific as ColorFieldKey[];
+    return ensureSecondaryButtonFields(industrySpecific as ColorFieldKey[]);
   }
   const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
   if (Array.isArray(generic) && generic.length > 0) {
-    return generic as ColorFieldKey[];
+    return ensureSecondaryButtonFields(generic as ColorFieldKey[]);
   }
   // No codegen entry → minimal safe set. Re-run the generator to fix.
-  return ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText'];
+  return ensureSecondaryButtonFields(['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText']);
 }
 
 
@@ -400,10 +413,10 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
     if (resolvedVars?.[cssVar]) return resolvedVars[cssVar];
     // 3. Fallback chain for vars that derive from others
     const fallbacks: Record<string, string[]> = {
-      '--token-heading': ['--style-text-primary', '--brand-dark'],
-      '--token-subheading': ['--style-text-secondary', '--style-text-primary'],
-      '--token-body': ['--style-text-secondary', '--style-text-primary'],
-      '--token-muted': ['--style-text-secondary'],
+      '--token-heading': ['--brand-heading', '--brand-dark', '--style-text-primary'],
+      '--token-subheading': ['--token-heading', '--brand-body-text', '--style-text-secondary', '--style-text-primary'],
+      '--token-body': ['--brand-body-text', '--style-text-secondary', '--style-text-primary'],
+      '--token-muted': ['--brand-muted-text', '--style-text-secondary'],
       '--token-icon': ['--token-accent', '--brand-primary', '--style-accent-color', '--brand-accent'],
       '--token-accent': ['--brand-accent', '--brand-primary', '--style-accent-color'],
       '--token-card-border': ['--style-card-border'],

@@ -40,6 +40,13 @@ export function getDesignCssVars(design: Record<string, string>): Record<string,
     if (design[key]) vars[cssVar] = design[key];
   }
 
+  // Mirror key semantic vars into token vars so token-first templates resolve
+  // directly even when design payload still uses legacy keys.
+  if (vars['--style-text-primary']) vars['--token-heading'] = vars['--style-text-primary'];
+  if (vars['--style-text-secondary']) vars['--token-body'] = vars['--style-text-secondary'];
+  if (vars['--style-text-muted']) vars['--token-muted'] = vars['--style-text-muted'];
+  if (vars['--style-accent']) vars['--token-accent'] = vars['--style-accent'];
+
   // 2. Auto-compute text colors for custom backgrounds
   for (const [bgKey, { textVar, overrideKey }] of Object.entries(BG_TO_TEXT_VAR)) {
     const bgColor = design[bgKey];
@@ -53,6 +60,7 @@ export function getDesignCssVars(design: Record<string, string>): Record<string,
   // 3. If sectionBg is set but textPrimary is NOT manually set, auto-derive primary text
   if (design.sectionBg && !design.textPrimary) {
     vars['--style-text-primary'] = vars['--style-text-on-section'] || getContrastColor(design.sectionBg);
+    vars['--token-heading'] = vars['--style-text-primary'];
   }
 
   // 4. If sectionBgAlt is set but textSecondary is NOT set, derive secondary text from alt bg
@@ -60,6 +68,7 @@ export function getDesignCssVars(design: Record<string, string>): Record<string,
     const autoText = vars['--style-text-on-section-alt'] || getContrastColor(design.sectionBgAlt);
     // Secondary text is slightly muted version
     vars['--style-text-secondary'] = autoText === '#1a1a1a' ? '#4a5568' : '#cbd5e1';
+    vars['--token-body'] = vars['--style-text-secondary'];
   }
 
   return vars;

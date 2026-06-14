@@ -45,7 +45,7 @@ export function TextImageSection({ data, variant }: Props) {
               style={{
                 backgroundColor: 'var(--token-badge-bg, var(--style-badge-bg, rgba(26, 82, 118, 0.05)))',
                 borderColor: 'var(--token-badge-border, var(--style-badge-border, rgba(26, 82, 118, 0.1)))',
-                color: 'var(--token-badge-text, var(--style-badge-text, var(--token-eyebrow, var(--token-accent, var(--style-accent-color, inherit)))))',
+                color: 'var(--token-badge-text, var(--style-badge-text, var(--token-eyebrow, var(--token-accent, inherit))))',
               }}
             >
               {badge}
