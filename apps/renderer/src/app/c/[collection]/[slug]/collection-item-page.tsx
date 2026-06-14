@@ -134,7 +134,10 @@ export async function renderCollectionItemPage(params: Promise<{ collection: str
   const brandCssVars = getBrandCssVars(brand);
   const designOverrides: Record<string, string> = {};
   if (brand.primaryColor) designOverrides['--style-brand'] = brand.primaryColor;
-  if (brand.accentColor) designOverrides['--style-accent'] = brand.accentColor;
+  if (brand.accentColor) {
+    designOverrides['--token-accent'] = brand.accentColor;
+    designOverrides['--style-accent'] = brand.accentColor;
+  }
   Object.assign(designOverrides, getDesignCssVars(design));
 
   const customFonts = [brand.headingFont, brand.bodyFont].filter(Boolean) as string[];

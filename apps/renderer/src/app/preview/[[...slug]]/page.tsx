@@ -50,7 +50,10 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
     dividerColor: '--style-divider-color',
   };
   if (brand.primaryColor) designOverrides['--style-brand'] = brand.primaryColor;
-  if (brand.accentColor) designOverrides['--style-accent'] = brand.accentColor;
+  if (brand.accentColor) {
+    designOverrides['--token-accent'] = brand.accentColor;
+    designOverrides['--style-accent'] = brand.accentColor;
+  }
   for (const [key, cssVar] of Object.entries(designToCssVar)) {
     if (design[key]) designOverrides[cssVar] = design[key];
   }
