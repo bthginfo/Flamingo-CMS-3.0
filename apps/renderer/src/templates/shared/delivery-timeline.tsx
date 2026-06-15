@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { DynamicIcon } from '@/components/ui/icon-map';
+import { plain } from '@/lib/strip-html';
 
 type Step = {
   number?: string;
@@ -24,14 +25,14 @@ export function DeliveryTimelineSection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-12">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{subline}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[color:var(--token-body)]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-3 text-[color:var(--token-body)] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 
       <div className="relative">
         {/* Connecting line */}
-        <div className="absolute top-12 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[var(--brand-primary,#2563eb)]/20 to-transparent hidden md:block" />
+        <div className="absolute top-12 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] to-transparent hidden md:block" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-4">
           {steps.map((step, i) => (
@@ -41,23 +42,23 @@ export function DeliveryTimelineSection({ data }: Props) {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] }}
               className="text-center relative"
-            >
+             data-edit-collection="steps" data-edit-index={i}>
               {/* Step circle */}
-              <div className="relative mx-auto w-24 h-24 rounded-full bg-[var(--brand-primary,#2563eb)]/5 border-2 border-[var(--brand-primary,#2563eb)]/20 flex flex-col items-center justify-center mb-5">
+              <div className="relative mx-auto w-24 h-24 rounded-full bg-[color-mix(in_srgb,var(--token-card-icon,var(--token-icon))_5%,transparent)] border-2 border-[color-mix(in_srgb,var(--token-card-icon,var(--token-icon))_20%,transparent)] flex flex-col items-center justify-center mb-5">
                 {step.icon ? (
-                  <DynamicIcon name={step.icon} size={28} className="text-[var(--brand-primary,#2563eb)]" />
+                  <DynamicIcon editPath="icon" name={step.icon} size={28} className="text-[color:var(--token-card-icon,var(--token-icon))]" />
                 ) : (
-                  <span className="text-2xl font-bold text-[var(--brand-primary,#2563eb)]">{step.number || i + 1}</span>
+                  <span className="text-2xl font-bold text-[color:var(--token-card-icon,var(--token-icon))]">{step.number || i + 1}</span>
                 )}
               </div>
 
               {/* Arrow between steps (desktop) */}
               {i < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 -right-2 text-[var(--brand-primary,#2563eb)]/30 text-xl">→</div>
+                <div className="hidden lg:block absolute top-12 -right-2 text-[color-mix(in_srgb,var(--token-card-icon,var(--token-icon))_30%,transparent)] text-xl">→</div>
               )}
 
-              <h3 className="font-display font-semibold text-lg text-[var(--style-text-primary,#0f172a)] mb-2">{step.title}</h3>
-              {step.text && <p className="text-sm text-[var(--style-text-secondary,#64748b)] max-w-[200px] mx-auto">{step.text}</p>}
+              <h3 className="font-display font-semibold text-lg text-[color:var(--token-card-body,var(--token-body))] mb-2" data-edit-path="title">{step.title}</h3>
+              {step.text && <p className="text-sm text-[color:var(--token-card-body,var(--token-body))] max-w-[200px] mx-auto" data-edit-path="text">{plain(step.text)}</p>}
             </motion.div>
           ))}
         </div>

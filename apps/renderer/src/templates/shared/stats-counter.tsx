@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -27,7 +28,7 @@ function AnimatedNumber({ value, prefix, suffix, inView }: { value: number | str
   }, [inView, numericValue, isNumeric]);
 
   if (!isNumeric) {
-    return <span>{prefix}{String(value)}{suffix}</span>;
+    return <span>{prefix}<span data-edit-path="value">{String(value)}</span>{suffix}</span>;
   }
 
   return (
@@ -48,27 +49,25 @@ export function StatsCounterSection({ data }: Props) {
   if (!stats.length) return null;
 
   return (
-    <div ref={ref} className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 py-20 px-6 text-white">
-      {/* Decorative gradient orbs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-primary)]/20 rounded-full blur-3xl -translate-y-1/2" />
-      <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-[var(--color-primary)]/10 rounded-full blur-3xl translate-y-1/2" />
-
+    <div ref={ref} className="relative overflow-hidden rounded-3xl border border-[var(--token-card-border)] bg-[var(--token-section-bg)] px-6 py-14 text-[color:var(--token-body)] shadow-sm md:px-10 md:py-16">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,color-mix(in_srgb,var(--token-accent)_10%,transparent),transparent_42%)]" />
       <div className="relative z-10">
         {(headline || badge) && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="text-center mb-16">
-            {badge && <span className="inline-block text-xs font-semibold tracking-widest uppercase text-[var(--color-primary)] bg-white/10 rounded-full px-4 py-1.5 mb-4">{badge}</span>}
-            {headline && <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">{headline}</h2>}
-            {subline && <p className="mt-3 text-lg text-zinc-400 max-w-xl mx-auto">{subline}</p>}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5 }} className="mx-auto mb-12 max-w-3xl text-center">
+            {badge && <span className="inline-block text-xs font-semibold tracking-widest uppercase text-[color:var(--token-badge-text)] bg-[var(--token-badge-bg)] rounded-full px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>}
+            {headline && <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>}
+            {subline && <p className="mt-3 text-lg text-[color:var(--token-body)] max-w-xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
           </motion.div>
         )}
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 max-w-5xl mx-auto">
+        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-4 md:grid-cols-4 md:gap-5">
           {stats.map((stat, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: i * 0.15 }} className="text-center">
-              <div className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-b from-white to-zinc-400 bg-clip-text text-transparent">
+            <motion.div key={i} initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.45, delay: i * 0.08 }} className="min-h-[140px] rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-4 py-7 text-center shadow-[0_18px_50px_color-mix(in_srgb,var(--token-card-heading,var(--token-heading))_6%,transparent)] md:px-5" data-edit-collection="stats" data-edit-index={i}>
+              <div className="text-3xl font-bold leading-none text-[color:var(--token-stat-value,var(--token-accent))] md:text-4xl lg:text-5xl">
                 <AnimatedNumber value={stat.value} prefix={stat.prefix} suffix={stat.suffix} inView={inView} />
               </div>
-              <div className="mt-2 text-sm md:text-base text-zinc-400 font-medium">{stat.label}</div>
+              <div className="mx-auto mt-4 h-px w-10 bg-[var(--token-divider,var(--token-card-border))]" />
+              <div className="mt-4 text-sm font-medium leading-snug text-[color:var(--token-card-body,var(--token-body))] md:text-base" data-edit-path="label">{stat.label}</div>
             </motion.div>
           ))}
         </div>

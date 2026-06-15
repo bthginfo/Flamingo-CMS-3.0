@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import Link from 'next/link';
+import { plain } from '@/lib/strip-html';
 
 type PracticeArea = { title: string; text?: string; icon?: string; href?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -19,9 +20,9 @@ export function PracticeAreasSection({ data }: Props) {
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-12 md:mb-16">
-        {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{subline}</p>}
+        {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {areas.map((area, i) => {
@@ -31,17 +32,17 @@ export function PracticeAreasSection({ data }: Props) {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: i * 0.08 }}
-              className="group relative p-8 rounded-xl border border-slate-200 bg-white hover:border-brand-primary/30 hover:shadow-lg transition-all duration-300"
+              className="group relative p-8 rounded-xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] hover:border-[color-mix(in_srgb,var(--token-card-border)_30%,transparent)] hover:shadow-lg transition-all duration-300"
             >
               {area.icon && (
-                <div className="w-12 h-12 mb-5 rounded-lg bg-brand-primary/10 flex items-center justify-center text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-colors">
-                  <DynamicIcon name={area.icon} size={24} />
+                <div className="w-12 h-12 mb-5 rounded-lg bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] flex items-center justify-center text-[color:var(--token-icon)] group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-on-dark-heading)] transition-colors">
+                  <DynamicIcon editPath="icon" name={area.icon} size={24} />
                 </div>
               )}
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">{area.title}</h3>
-              {area.text && <p className="text-slate-500 text-sm leading-relaxed">{area.text}</p>}
+              <h3 className="text-lg font-semibold text-[color:var(--token-heading)] mb-2" data-edit-path="title">{area.title}</h3>
+              {area.text && <p className="text-[color:var(--token-muted)] text-sm leading-relaxed" data-edit-path="text">{plain(area.text)}</p>}
               {area.href && (
-                <span className="inline-flex items-center gap-1 text-brand-primary text-sm mt-4 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="inline-flex items-center gap-1 text-[color:var(--token-icon)] text-sm mt-4 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                   Mehr erfahren <DynamicIcon name="arrow-right" size={14} />
                 </span>
               )}

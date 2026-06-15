@@ -27,18 +27,18 @@ function Classic({ header, days, acuteCareText, holidayNote, ctaPrimary }: Props
     <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
         <SectionHeader {...header} />
-        {acuteCareText && <p className="text-sm leading-6 text-gray-600">{acuteCareText}</p>}
-        {holidayNote && <p className="mt-3 text-xs text-gray-600">{holidayNote}</p>}
+        {acuteCareText && <p className="text-sm leading-6 text-[color:var(--token-body)]">{acuteCareText}</p>}
+        {holidayNote && <p className="mt-3 text-xs text-[color:var(--token-muted)]">{holidayNote}</p>}
         <div className="mt-6"><CtaButton cta={ctaPrimary} /></div>
       </div>
-      <div className="rounded-xl bg-white shadow-lg">
+      <div className="rounded-xl bg-[var(--token-card-bg)] shadow-lg">
         {days.map((day, index) => (
-          <div key={`${day.label}-${index}`} className="flex items-center justify-between gap-4 border-b border-black/10 px-5 py-4 last:border-b-0">
+          <div key={`$<span data-edit-path="label">{day.label}</span>-${index}`} className="flex items-center justify-between gap-4 border-b border-[var(--token-card-border)] px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
             <div className="flex items-center gap-3">
-              <Clock size={17} className="text-teal-700" />
-              <div><p className="font-semibold text-gray-900">{day.label || ''}</p>{day.note && <p className="text-xs text-gray-600">{day.note}</p>}</div>
+              <Clock size={17} className="text-[color:var(--token-icon)]" />
+              <div><p className="font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{day.label || ''}</p>{day.note && <p className="text-xs text-[color:var(--token-muted)]" data-edit-path="note">{day.note}</p>}</div>
             </div>
-            <p className="text-sm font-medium text-gray-900">{day.closed ? (day.note || '') : day.hours}</p>
+            <p className="text-sm font-medium text-[color:var(--token-heading)]">{day.closed ? (day.note || '') : day.hours}</p>
           </div>
         ))}
       </div>
@@ -51,18 +51,18 @@ function Modern({ header, days, acuteCareText, holidayNote, ctaPrimary }: Props)
     <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
         <SectionHeader {...header} />
-        {acuteCareText && <p className="text-sm font-light leading-6 text-gray-600">{acuteCareText}</p>}
-        {holidayNote && <p className="mt-3 text-xs font-light text-gray-600">{holidayNote}</p>}
-        {ctaPrimary.label && <div className="mt-6"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white">{ctaPrimary.label}<ArrowRight size={16} /></a></div>}
+        {acuteCareText && <p className="text-sm font-light leading-6 text-[color:var(--token-body)]">{acuteCareText}</p>}
+        {holidayNote && <p className="mt-3 text-xs font-light text-[color:var(--token-muted)]">{holidayNote}</p>}
+        {ctaPrimary.label && <div className="mt-6"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
       </div>
-      <div className="border border-black/10 bg-white">
+      <div className="border border-[var(--token-card-border)] bg-[var(--token-card-bg)]">
         {days.map((day, index) => (
-          <div key={`${day.label}-${index}`} className="flex items-center justify-between gap-4 border-b border-black/10 px-5 py-4 last:border-b-0">
+          <div key={`$<span data-edit-path="label">{day.label}</span>-${index}`} className="flex items-center justify-between gap-4 border-b border-[var(--token-card-border)] px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
             <div className="flex items-center gap-3">
-              <Clock size={17} className="text-blue-500" />
-              <div><p className="font-light text-gray-900">{day.label || ''}</p>{day.note && <p className="text-xs font-light text-gray-600">{day.note}</p>}</div>
+              <Clock size={17} className="text-[color:var(--token-icon)]" />
+              <div><p className="font-light text-[color:var(--token-heading)]" data-edit-path="label">{day.label || ''}</p>{day.note && <p className="text-xs font-light text-[color:var(--token-muted)]" data-edit-path="note">{day.note}</p>}</div>
             </div>
-            <p className="text-sm font-light text-gray-900">{day.closed ? (day.note || '') : day.hours}</p>
+            <p className="text-sm font-light text-[color:var(--token-heading)]">{day.closed ? (day.note || '') : day.hours}</p>
           </div>
         ))}
       </div>
@@ -75,22 +75,22 @@ function Bold({ header, days, acuteCareText, holidayNote, ctaPrimary }: Props) {
     <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
       <div>
         <div className="mb-10 max-w-3xl">
-          {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-teal-400">{header.badgeText}</p>}
-          <h2 className="mt-3 text-3xl font-black uppercase text-gray-900 sm:text-3xl md:text-5xl">{header.headline}</h2>
-          {header.subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
+          {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{header.badgeText}</p>}
+          <h2 className="mt-3 text-3xl font-black uppercase text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
+          {header.subline && <div className="mt-4 text-[color:var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
         </div>
-        {acuteCareText && <p className="text-sm leading-6 text-gray-600">{acuteCareText}</p>}
-        {holidayNote && <p className="mt-3 text-xs text-gray-600">{holidayNote}</p>}
-        {ctaPrimary.label && <div className="mt-6"><a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 border-2 border-teal-400 bg-teal-400 px-5 py-3 font-black uppercase text-gray-950 shadow-[4px_4px_0_theme(colors.teal.700)]">{ctaPrimary.label}<ArrowRight size={16} /></a></div>}
+        {acuteCareText && <p className="text-sm leading-6 text-[color:var(--token-body)]">{acuteCareText}</p>}
+        {holidayNote && <p className="mt-3 text-xs text-[color:var(--token-muted)]">{holidayNote}</p>}
+        {ctaPrimary.label && <div className="mt-6"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-btn-text)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a></div>}
       </div>
-      <div className="border-2 border-[#111827] bg-white shadow-[4px_4px_0_#111827]">
+      <div className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]">
         {days.map((day, index) => (
-          <div key={`${day.label}-${index}`} className="flex items-center justify-between gap-4 border-b-2 border-[#111827] px-5 py-4 last:border-b-0">
+          <div key={`$<span data-edit-path="label">{day.label}</span>-${index}`} className="flex items-center justify-between gap-4 border-b-2 border-[var(--token-card-border)] px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={index}>
             <div className="flex items-center gap-3">
-              <Clock size={17} className="text-teal-400" />
-              <div><p className="font-black uppercase text-gray-900">{day.label || ''}</p>{day.note && <p className="text-xs text-gray-600">{day.note}</p>}</div>
+              <Clock size={17} className="text-[color:var(--token-icon)]" />
+              <div><p className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="label">{day.label || ''}</p>{day.note && <p className="text-xs text-[color:var(--token-muted)]" data-edit-path="note">{day.note}</p>}</div>
             </div>
-            <p className="text-sm font-bold text-gray-900">{day.closed ? (day.note || '') : day.hours}</p>
+            <p className="text-sm font-bold text-[color:var(--token-heading)]">{day.closed ? (day.note || '') : day.hours}</p>
           </div>
         ))}
       </div>

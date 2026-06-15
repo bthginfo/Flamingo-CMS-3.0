@@ -42,12 +42,11 @@ export async function validatePat(authHeader: string | null): Promise<PatAuthRes
   if (!row) return null;
   if (row.expiresAt && new Date(row.expiresAt) < new Date()) return null;
 
-  // Update last_used_at (fire and forget)
+  // Update last_used_at (fire and forget, log errors)
   db.update(tenantApiTokens)
     .set({ lastUsedAt: new Date() })
     .where(eq(tenantApiTokens.id, row.tokenId))
-    .then(() => {})
-    .catch(() => {});
+    .catch((err) => console.error('[pat-auth] Failed to update lastUsedAt:', err.message));
 
   return {
     tenantId: row.tenantId,

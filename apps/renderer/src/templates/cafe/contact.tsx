@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -37,10 +38,10 @@ export function CafeContactSection({ data }: Props) {
     <section ref={ref} className="py-20 md:py-28">
       <div className="max-w-5xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
-          {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">{badgeText}</p>}
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
-          {subline && <p className="text-gray-600 mt-3">{subline}</p>}
-          {introText && <div className="text-gray-600 mt-4 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+          {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)] mb-3" data-edit-path="badgeText">{badgeText}</p>}
+          <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="text-[color:var(--token-muted)] mt-3" data-edit-path="subline">{plain(subline)}</p>}
+          {introText && <div className="text-[color:var(--token-muted)] mt-4 rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         </motion.div>
 
         <div className={formEnabled ? 'grid grid-cols-1 lg:grid-cols-5 gap-10' : ''}>
@@ -53,14 +54,14 @@ export function CafeContactSection({ data }: Props) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.1 * i }}
-                  className="flex items-center gap-4 p-5 rounded-2xl bg-stone-50 border border-stone-100"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary">
-                    <DynamicIcon name={item.icon} size={18} />
+                  className="flex items-center gap-4 p-5 rounded-2xl bg-[var(--token-section-bg-alt)] border border-[color:var(--token-card-border)]"
+                 data-edit-collection="contactItems" data-edit-index={i}>
+                  <div className="w-10 h-10 rounded-xl bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] flex items-center justify-center text-[color:var(--token-icon)]">
+                    <DynamicIcon editPath="icon" name={item.icon} size={18} />
                   </div>
                   <div>
-                    <div className="text-xs text-gray-400 uppercase tracking-wider">{item.label}</div>
-                    <div className="text-sm font-medium text-gray-900">{item.value}</div>
+                    <div className="text-xs text-[color:var(--token-body)] uppercase tracking-wider" data-edit-path="label">{item.label}</div>
+                    <div className="text-sm font-medium text-[color:var(--token-heading)]" data-edit-path="value">{item.value}</div>
                   </div>
                 </motion.div>
               ))}
@@ -78,7 +79,7 @@ export function CafeContactSection({ data }: Props) {
               <DynamicContactForm
                 fields={formFields}
                 submitLabel={submitLabel}
-                className="bg-white rounded-2xl border border-stone-100 shadow-sm p-8 space-y-5"
+                className="bg-[var(--token-card-bg)] rounded-2xl border border-[color:var(--token-card-border)] shadow-sm p-8 space-y-5"
               />
             </motion.div>
           )}

@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Slide = {
   imageBefore: string;
@@ -17,9 +18,9 @@ export function BeforeAfterSliderSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const slides = (data.slides as Slide[]) || [];
-  const handleColor = (data.handleColor as string) || 'var(--brand-primary, #18181b)';
-  const bgColor = (data.bgColor as string) || 'var(--style-section-bg, transparent)';
-  const textColor = (data.textColor as string) || 'var(--style-body-color, inherit)';
+  const handleColor = (data.handleColor as string) || 'var(--token-icon)';
+  const bgColor = (data.bgColor as string) || 'var(--token-section-bg)';
+  const textColor = (data.textColor as string) || 'var(--token-body)';
   const aspectRatio = (data.aspectRatio as string) || '16/9';
 
   const [activeSlide, setActiveSlide] = useState(0);
@@ -38,15 +39,15 @@ export function BeforeAfterSliderSection({ data }: Props) {
             transition={{ duration: 0.5 }}
             className="text-center mb-10"
           >
-            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[var(--style-heading-color,var(--style-text-primary,inherit))]">{headline}</h2>}
-            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--style-subheading-color,var(--style-text-secondary,#71717a))]">{subline}</p>}
+            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>}
+            {subline && <p className="mt-3 max-w-xl mx-auto text-[color:var(--token-subheading)]" data-edit-path="subline">{plain(subline)}</p>}
           </motion.div>
         )}
 
         <SliderWidget slide={currentSlide} handleColor={handleColor} aspectRatio={aspectRatio} />
 
         {currentSlide.caption && (
-          <p className="text-center text-sm text-[var(--style-text-muted,#71717a)] mt-4">{currentSlide.caption}</p>
+          <p className="text-center text-sm text-[color:var(--token-muted)] mt-4" data-edit-path="caption">{currentSlide.caption}</p>
         )}
 
         {slides.length > 1 && (
@@ -57,7 +58,7 @@ export function BeforeAfterSliderSection({ data }: Props) {
                 onClick={() => setActiveSlide(i)}
                 className="w-2.5 h-2.5 rounded-full transition-all"
                 style={{ backgroundColor: i === activeSlide ? handleColor : '#d4d4d8' }}
-              />
+               data-edit-collection="slides" data-edit-index={i}/>
             ))}
           </div>
         )}
@@ -132,15 +133,15 @@ function SliderWidget({ slide, handleColor, aspectRatio }: { slide: Slide; handl
       onPointerUp={handlePointerUp}
     >
       {/* After image (full) */}
-      <img src={slide.imageAfter} alt={slide.labelAfter || 'Nachher'} className="absolute inset-0 w-full h-full object-cover" draggable={false} />
+      <img data-edit-image="imageAfter" src={slide.imageAfter} alt={slide.labelAfter || 'Nachher'} className="absolute inset-0 w-full h-full object-cover" draggable={false} />
 
       {/* Before image (clipped) */}
       <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}>
-        <img src={slide.imageBefore} alt={slide.labelBefore || 'Vorher'} className="w-full h-full object-cover" draggable={false} />
+        <img data-edit-image="imageBefore" src={slide.imageBefore} alt={slide.labelBefore || 'Vorher'} className="w-full h-full object-cover" draggable={false} />
       </div>
 
       {/* Handle */}
-      <div className="absolute top-0 bottom-0 w-0.5" style={{ left: `${position}%`, backgroundColor: handleColor }}>
+      <div className="absolute top-0 bottom-0 w-0.5" style={{ left: `$<span data-edit-path="position">{position}</span>%`, backgroundColor: handleColor }}>
         <div
           className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center shadow-lg"
           style={{ backgroundColor: handleColor }}

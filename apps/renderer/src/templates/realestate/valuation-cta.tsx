@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Home, ArrowRight } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -22,8 +23,8 @@ export function ValuationCtaSection({ data }: Props) {
       {/* Background image or gradient */}
       {bgImage ? (
         <>
-          <img src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-slate-900/80" />
+          <img data-edit-image="bgImage" src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_80%,transparent)]" />
         </>
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800" />
@@ -38,19 +39,19 @@ export function ValuationCtaSection({ data }: Props) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           className="text-center"
         >
-          <div className="inline-flex items-center gap-2 bg-amber-500/10 text-amber-400 px-4 py-2 rounded-full text-sm font-medium mb-6">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[color:var(--token-badge-border,var(--token-card-border))] bg-[var(--token-badge-bg)] px-4 py-2 text-sm font-medium text-[color:var(--token-badge-text)]">
             <Home size={16} />
             Immobilienbewertung
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">{headline}</h2>
-          <p className="text-lg text-white/70 mt-5 max-w-2xl mx-auto">{subline}</p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="headline">{headline}</h2>
+          <p className="text-lg text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] mt-5 max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>
 
           {stats.length > 0 && (
             <div className="flex flex-wrap justify-center gap-8 mt-10">
               {stats.map((stat, i) => (
-                <div key={i} className="text-center">
-                  <p className="text-2xl font-bold text-amber-400">{stat.value}</p>
-                  <p className="text-xs text-white/50 mt-1">{stat.label}</p>
+                <div key={i} className="text-center" data-edit-collection="stats" data-edit-index={i}>
+                  <p className="text-2xl font-bold text-[color:var(--token-stat-value,var(--token-accent))]" data-edit-path="value">{stat.value}</p>
+                  <p className="text-xs text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] mt-1" data-edit-path="label">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -58,9 +59,9 @@ export function ValuationCtaSection({ data }: Props) {
 
           <a
             href={ctaHref}
-            className="inline-flex items-center gap-2 mt-10 px-10 py-4 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]"
+            className="mt-10 inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-10 py-4 font-semibold text-[color:var(--token-btn-text)] shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl"
           >
-            {ctaLabel}
+            <span data-edit-path="ctaLabel">{ctaLabel}</span>
             <ArrowRight size={18} />
           </a>
         </motion.div>

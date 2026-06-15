@@ -23,7 +23,7 @@ function AnimatedNumber({ value, suffix = '', prefix = '' }: { value: number | s
   }, [inView, count, numericValue, isNumeric]);
 
   if (!isNumeric) {
-    return <span ref={ref}>{prefix}{String(value)}{suffix}</span>;
+    return <span ref={ref}>{prefix}<span data-edit-path="value">{String(value)}</span>{suffix}</span>;
   }
 
   return <motion.span ref={ref}>{rounded}</motion.span>;
@@ -41,29 +41,29 @@ export function StatsSection({ data }: Props) {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          className="section-headline text-center mb-12"
+          className="section-headline text-center mb-12" data-edit-path="headline"
         >
           {headline}
         </motion.h2>
       )}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: i * 0.1 }}
-            className="text-center p-6 rounded-2xl bg-white border border-gray-100 shadow-sm"
-          >
+            className="text-center p-6 rounded-2xl bg-[var(--token-card-bg)] border border-[var(--token-card-border)] shadow-sm"
+           data-edit-collection="stats" data-edit-index={i}>
             {stat.icon && (
-              <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-brand-primary/10 flex items-center justify-center text-brand-primary">
-                <DynamicIcon name={stat.icon} size={20} />
+              <div className="w-10 h-10 mx-auto mb-3 rounded-lg bg-[color-mix(in_srgb,var(--token-icon)_14%,transparent)] flex items-center justify-center text-[color:var(--token-icon)]">
+                <DynamicIcon editPath="icon" name={stat.icon} size={20} />
               </div>
             )}
-            <div className="text-3xl md:text-4xl font-bold text-gray-900">
+            <div className="text-3xl md:text-4xl font-bold text-[color:var(--token-stat-value)]">
               <AnimatedNumber value={stat.value} suffix={stat.suffix} prefix={stat.prefix} />
             </div>
-            <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
+            <div className="text-sm text-[color:var(--token-body)] mt-1" data-edit-path="label">{stat.label}</div>
           </motion.div>
         ))}
       </div>

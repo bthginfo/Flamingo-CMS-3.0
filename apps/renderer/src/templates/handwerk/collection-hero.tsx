@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effects';
+import { plain } from '@/lib/strip-html';
 
 type Props = {
   data: Record<string, unknown>;
@@ -27,7 +28,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
   if (styleVariant === 'minimal') {
-    return <CollectionHeroMinimal headline={headline} subline={subline} category={category} date={date} />;
+    return <CollectionHeroMinimal headline={headline} subline={plain(subline)} category={category} date={date} />;
   }
 
   return (
@@ -36,12 +37,12 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
       {bgImage ? (
         <>
           <ImageEffectWrapper effect={imageEffect} intensity={imageEffectIntensity} className="absolute inset-0">
-            <Image src={bgImage} alt={headline} fill className="object-cover" style={{ objectPosition: bgPosition }} priority />
+            <Image data-edit-image="bgImage" src={bgImage} alt={headline} fill className="object-cover" style={{ objectPosition: bgPosition }} priority />
           </ImageEffectWrapper>
           <div className="absolute inset-0" style={{ backgroundColor: overlayColor, opacity: overlayOpacity }} />
         </>
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--token-section-bg)] via-[var(--token-card-bg)] to-[var(--token-section-bg)]" />
       )}
 
       {/* Content */}
@@ -54,12 +55,12 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="inline-block bg-[var(--token-badge-bg)] backdrop-blur-sm text-[color:var(--token-badge-text)] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider" data-edit-path="category">
               {category}
             </span>
           )}
           {date && (
-            <span className="text-white/70 text-sm">{date}</span>
+            <span className="text-[color:var(--token-on-dark-muted)] text-sm" data-edit-path="date">{date}</span>
           )}
         </motion.div>
 
@@ -68,7 +69,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight break-words"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold text-[color:var(--token-on-dark-heading)] tracking-tight leading-tight break-words" data-edit-path="headline"
         >
           {headline}
         </motion.h1>
@@ -79,7 +80,7 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-4 text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed rt-content"
+            className="mt-4 text-lg md:text-xl text-[color:var(--token-on-dark-body)] max-w-2xl leading-relaxed rt-content"
             dangerouslySetInnerHTML={{ __html: subline }}
           />
         )}
@@ -99,12 +100,12 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           className="flex items-center gap-3 mb-4"
         >
           {category && (
-            <span className="inline-block bg-brand-primary/10 text-brand-primary text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+            <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-badge-text)] text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider" data-edit-path="category">
               {category}
             </span>
           )}
           {date && (
-            <span className="text-gray-400 text-sm">{date}</span>
+            <span className="text-[color:var(--token-muted)] text-sm" data-edit-path="date">{date}</span>
           )}
         </motion.div>
 
@@ -112,7 +113,7 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight break-words"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight break-words text-[color:var(--token-heading)]" data-edit-path="headline"
         >
           {headline}
         </motion.h1>
@@ -122,12 +123,12 @@ function CollectionHeroMinimal({ headline, subline, category, date }: { headline
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-4 text-lg md:text-xl text-gray-600 max-w-2xl leading-relaxed rt-content"
+            className="mt-4 text-lg md:text-xl text-[color:var(--token-body)] max-w-2xl leading-relaxed rt-content"
             dangerouslySetInnerHTML={{ __html: subline }}
           />
         )}
 
-        <div className="mt-10 border-b border-gray-200" />
+        <div className="mt-10 border-b border-[var(--token-card-border)]" />
       </div>
     </section>
   );

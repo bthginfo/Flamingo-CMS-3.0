@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -20,34 +21,34 @@ export function ArtistGridSection({ data }: Props) {
   const artists = (data.artists as Artist[]) || [];
 
   return (
-    <section className="py-20 px-6 bg-neutral-900">
+    <section className="py-20 px-6 bg-[var(--token-section-bg-alt)]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-14">
-          <h2 className="text-3xl sm:text-5xl font-bold text-white">{headline}</h2>
-          {subline && <p className="mt-3 text-white/50 max-w-xl mx-auto">{subline}</p>}
+          <h2 className="text-3xl sm:text-5xl font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="mt-3 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] max-w-xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {artists.map((artist, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-              className="group">
+              className="group" data-edit-collection="artists" data-edit-index={i}>
               <a href={artist.href || '#'} className="block">
                 <div className="relative aspect-[3/4] rounded-lg overflow-hidden mb-4">
-                  {artist.image && <Image src={artist.image} alt={artist.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 25vw" />}
+                  {artist.image && <Image data-edit-image="image" src={artist.image} alt={artist.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 640px) 100vw, 25vw" />}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                   {artist.instagram && (
-                    <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm rounded-full px-2.5 py-1 text-[10px] text-white/70">
+                    <div className="absolute top-3 right-3 bg-[color-mix(in_srgb,var(--token-section-bg-alt)_50%,transparent)] backdrop-blur-sm rounded-full px-2.5 py-1 text-[10px] text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)]">
                       @{artist.instagram}
                     </div>
                   )}
                 </div>
-                <h3 className="text-white font-bold text-lg group-hover:text-brand-accent transition-colors">{artist.name}</h3>
+                <h3 className="text-[color:var(--token-on-dark-heading)] font-bold text-lg group-hover:text-[color:var(--token-eyebrow)] transition-colors" data-edit-path="name">{artist.name}</h3>
                 <div className="flex flex-wrap gap-1.5 mt-2">
                   {artist.styles.map(s => (
-                    <span key={s} className="text-[10px] uppercase tracking-wider bg-white/10 text-white/60 px-2 py-0.5 rounded-full">{s}</span>
+                    <span key={s} className="text-[10px] uppercase tracking-wider bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] px-2 py-0.5 rounded-full">{s}</span>
                   ))}
                 </div>
-                {artist.bio && <p className="text-white/40 text-sm mt-2 line-clamp-2">{artist.bio}</p>}
+                {artist.bio && <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_40%,transparent)] text-sm mt-2 line-clamp-2">{plain(artist.bio)}</p>}
               </a>
             </motion.div>
           ))}

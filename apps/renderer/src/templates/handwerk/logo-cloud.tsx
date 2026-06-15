@@ -21,8 +21,8 @@ export function LogoCloudSection({ data }: Props) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-10"
         >
-          {headline && <h2 className="text-lg font-semibold text-gray-500 uppercase tracking-wider">{headline}</h2>}
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          {headline && <h2 className="text-lg font-semibold text-[color:var(--token-muted)] uppercase tracking-wider" data-edit-path="headline">{headline}</h2>}
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </motion.div>
       )}
       <motion.div
@@ -34,7 +34,7 @@ export function LogoCloudSection({ data }: Props) {
         {logos.map((logo, i) => {
           const img = (
             <div className="relative h-10 w-28 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300">
-              <Image src={logo.src} alt={logo.alt} fill className="object-contain" />
+              <Image data-edit-image="src" src={logo.src} alt={logo.alt} fill className="object-contain" />
             </div>
           );
           return logo.href ? (

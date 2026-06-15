@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { plain } from '@/lib/strip-html';
 import { motion, useInView } from 'framer-motion';
 import { Star, Quote } from 'lucide-react';
 import { InfiniteMovingCards } from '@/components/ui/infinite-moving-cards';
@@ -30,12 +31,12 @@ function TestimonialsClassic({ headline, badgeText, ratingValue, ratingCount, it
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-14">
-        <div className="section-badge"><span>{badgeText}</span></div>
-        {headline && <h2 className="section-headline">{headline}</h2>}
+        <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
         {(ratingValue || ratingCount) && (
           <div className="flex items-center justify-center gap-2 mt-5">
-            <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={18} className="fill-yellow-400 text-yellow-400" />)}</div>
-            <span className="text-slate-500 text-sm ml-2 font-medium">{ratingValue && `${ratingValue} / 5`}{ratingCount && ` aus ${ratingCount}+ Bewertungen`}</span>
+            <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={18} className="fill-[var(--token-accent)] text-[color:var(--token-accent)]" />)}</div>
+            <span className="ml-2 text-sm font-medium text-[color:var(--token-body)]">{ratingValue && `${ratingValue} / 5`}{ratingCount && ` aus ${ratingCount}+ Bewertungen`}</span>
           </div>
         )}
       </motion.div>
@@ -54,12 +55,12 @@ function TestimonialsModern({ headline, badgeText, ratingValue, ratingCount, ite
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-10 md:mb-16">
-        <div className="flex items-center gap-3 text-sm text-gray-400 mb-4 tracking-wide uppercase">
-          <span className="w-8 h-px bg-gray-300" />{badgeText}
+        <div className="mb-4 flex items-center gap-3 text-sm uppercase tracking-wide text-[color:var(--token-muted)]">
+          <span className="h-px w-8 bg-[var(--token-card-border)]" /><span data-edit-path="badgeText">{badgeText}</span>
         </div>
-        {headline && <h2 className="text-4xl lg:text-3xl md:text-5xl font-light text-gray-900 tracking-tight">{headline}</h2>}
+        {headline && <h2 className="text-4xl font-light tracking-tight text-[color:var(--token-heading)] md:text-5xl lg:text-3xl" data-edit-path="headline">{headline}</h2>}
         {(ratingValue || ratingCount) && (
-          <p className="text-sm text-gray-400 mt-4">{ratingValue && `${ratingValue}/5`}{ratingCount && ` · ${ratingCount}+ Bewertungen`}</p>
+          <p className="mt-4 text-sm text-[color:var(--token-muted)]">{ratingValue && `${ratingValue}/5`}{ratingCount && ` · ${ratingCount}+ Bewertungen`}</p>
         )}
       </motion.div>
       <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
@@ -69,12 +70,12 @@ function TestimonialsModern({ headline, badgeText, ratingValue, ratingCount, ite
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="break-inside-avoid p-8 border border-gray-100 rounded-lg bg-white"
-          >
-            <p className="text-gray-600 leading-relaxed italic">&ldquo;{item.quote}&rdquo;</p>
-            <div className="mt-6 pt-4 border-t border-gray-50">
-              <p className="font-medium text-sm text-gray-900">{item.name}</p>
-              {item.context && <p className="text-xs text-gray-400 mt-0.5">{item.context}</p>}
+            className="break-inside-avoid rounded-lg border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-8"
+           data-edit-collection="items" data-edit-index={i}>
+            <p className="leading-relaxed text-[color:var(--token-body)] italic">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>
+            <div className="mt-6 border-t border-[var(--token-card-border)] pt-4">
+              <p className="text-sm font-medium text-[color:var(--token-heading)]" data-edit-path="name">{item.name}</p>
+              {item.context && <p className="mt-0.5 text-xs text-[color:var(--token-muted)]">{item.context}</p>}
             </div>
           </motion.div>
         ))}
@@ -91,12 +92,12 @@ function TestimonialsBold({ headline, badgeText, ratingValue, ratingCount, items
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="mb-10">
-        <span className="inline-block bg-brand-accent text-brand-dark font-bold text-xs uppercase tracking-widest px-3 py-1.5 mb-4">{badgeText}</span>
-        {headline && <h2 className="text-3xl lg:text-4xl font-black text-gray-900 uppercase tracking-tight">{headline}</h2>}
+        <span className="mb-4 inline-block bg-[var(--token-badge-bg)] px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{badgeText}</span>
+        {headline && <h2 className="text-3xl font-black uppercase tracking-tight text-[color:var(--token-heading)] lg:text-4xl" data-edit-path="headline">{headline}</h2>}
         {(ratingValue || ratingCount) && (
           <div className="flex items-center gap-2 mt-4">
-            <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={16} className="fill-brand-accent text-brand-accent" />)}</div>
-            <span className="font-bold text-sm text-gray-700">{ratingValue}/5</span>
+            <div className="flex gap-0.5">{[1,2,3,4,5].map(n => <Star key={n} size={16} className="fill-[var(--token-accent)] text-[color:var(--token-accent)]" />)}</div>
+            <span className="text-sm font-bold text-[color:var(--token-body)]">{ratingValue}/5</span>
           </div>
         )}
       </motion.div>
@@ -107,13 +108,13 @@ function TestimonialsBold({ headline, badgeText, ratingValue, ratingCount, items
             initial={{ opacity: 0, x: 30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="snap-start shrink-0 w-[320px] p-6 border-3 border-gray-900 bg-white shadow-[4px_4px_0_#0d2137]"
-          >
-            <Quote size={24} className="text-brand-accent mb-3" />
-            <div className="text-gray-800 font-medium leading-relaxed rt-content" dangerouslySetInnerHTML={{ __html: item.quote }} />
-            <div className="mt-4 pt-3 border-t-2 border-gray-900">
-              <p className="font-bold text-sm uppercase tracking-wide">{item.name}</p>
-              {item.context && <p className="text-xs text-gray-500 mt-0.5">{item.context}</p>}
+            className="w-[320px] shrink-0 snap-start border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-body)]"
+           data-edit-collection="items" data-edit-index={i}>
+            <Quote size={24} className="mb-3 text-[color:var(--token-accent)]" />
+            <div className="rt-content font-medium leading-relaxed text-[color:var(--token-body)]" data-edit-rich="quote" dangerouslySetInnerHTML={{ __html: item.quote }} />
+            <div className="mt-4 border-t-2 border-[var(--token-card-border)] pt-3">
+              <p className="text-sm font-bold uppercase tracking-wide text-[color:var(--token-heading)]" data-edit-path="name">{item.name}</p>
+              {item.context && <p className="mt-0.5 text-xs text-[color:var(--token-muted)]">{item.context}</p>}
             </div>
           </motion.div>
         ))}

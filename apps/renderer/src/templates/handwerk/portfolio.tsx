@@ -39,11 +39,11 @@ export function PortfolioSection({ data }: Props) {
       >
         {badgeText && (
           <div className="section-badge">
-            <span>{badgeText}</span>
+            <span data-edit-path="badgeText">{badgeText}</span>
           </div>
         )}
-        {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+        {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -54,41 +54,41 @@ export function PortfolioSection({ data }: Props) {
               initial={{ opacity: 0, y: 40 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="group relative rounded-3xl overflow-hidden bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500"
+              className="group relative overflow-hidden rounded-[28px] border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm shadow-black/5 transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/10"
             >
               <div className="relative aspect-[16/10] overflow-hidden">
-                <Image
+                <Image data-edit-image="image"
                   src={project.image}
                   alt={project.title}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-black/25" />
                 {project.category && (
-                  <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-xs font-medium px-3 py-1.5 rounded-full text-gray-700">
+                  <span className="absolute top-4 left-4 rounded-full border border-white/25 bg-black/35 px-3 py-1.5 text-xs font-semibold text-white shadow-sm backdrop-blur-md" data-edit-path="category">
                     {project.category}
                   </span>
                 )}
               </div>
               <div className="p-6 lg:p-8">
-                <h3 className="font-display font-bold text-xl mb-2 text-gray-900">{project.title}</h3>
+                <h3 className="font-display text-xl font-extrabold leading-tight text-[color:var(--token-heading)]" data-edit-path="title">{project.title}</h3>
                 {project.description && (
-                  <div className="text-gray-500 text-sm leading-relaxed mb-4 rt-content" dangerouslySetInnerHTML={{ __html: project.description }} />
+                  <div className="rt-content mt-3 text-sm leading-relaxed text-[color:var(--token-body)]" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: project.description }} />
                 )}
                 {project.stats && project.stats.length > 0 && (
-                  <div className="flex gap-6 pt-4 border-t border-gray-100">
+                  <div className="mt-5 grid grid-cols-2 gap-3 rounded-2xl border border-[var(--token-card-border)] bg-[color:color-mix(in_srgb,var(--token-section-bg-alt,#f8fafc)_58%,var(--token-card-bg,#fff))] p-4">
                     {project.stats.map((stat, j) => (
-                      <div key={j}>
-                        <div className="text-lg font-bold text-brand-primary">{stat.value}</div>
-                        <div className="text-xs text-gray-400">{stat.label}</div>
+                      <div key={j} className="min-w-0 rounded-xl bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_82%,transparent)] px-4 py-3" data-edit-collection="stats" data-edit-index={j}>
+                        <div className="text-lg font-extrabold leading-none text-[color:var(--token-heading)]" data-edit-path="value">{stat.value}</div>
+                        <div className="mt-1 text-xs font-medium leading-tight text-[color:var(--token-muted)]" data-edit-path="label">{stat.label}</div>
                       </div>
                     ))}
                   </div>
                 )}
                 {project.href && (
-                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-primary mt-4 group-hover:underline">
-                    Projekt ansehen {project.icon && <DynamicIcon name={project.icon} size={14} />}
+                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[color:var(--token-icon)] transition group-hover:translate-x-1">
+                    Projekt ansehen {project.icon && <DynamicIcon editPath="icon" name={project.icon} size={14} />}
                   </span>
                 )}
               </div>
@@ -99,7 +99,7 @@ export function PortfolioSection({ data }: Props) {
       </div>
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }} className="text-center mt-12">
-          <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-brand-primary text-white font-semibold rounded-full hover:bg-brand-dark transition-all shadow-md hover:shadow-lg">
+          <Link href={ctaHref} className="inline-flex items-center gap-2 px-8 py-3.5 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-semibold rounded-full transition-all shadow-md hover:shadow-lg">
             {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={16} />}
           </Link>
         </motion.div>

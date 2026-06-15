@@ -51,12 +51,12 @@ export function ShopFeaturedProductsSection({ data }: Props) {
 
   return (
     <section className="py-12 md:py-16">
-      <h2 className="text-2xl font-bold mb-8 text-center">{headline}</h2>
+      <h2 className="text-2xl font-bold mb-8 text-center" data-edit-path="headline">{headline}</h2>
       <div className={`grid grid-cols-2 ${colsClass} gap-4 md:gap-6`}>
         {products.map(product => (
           <Link key={product.id} href={`${shopBase}/${product.slug}`} className="group">
             <div className="rounded-2xl border border-zinc-100 overflow-hidden hover:shadow-md transition-shadow">
-              <div className="aspect-square bg-zinc-50 overflow-hidden">
+              <div className="aspect-square bg-[color:var(--token-section-bg-alt,var(--token-card-bg))] overflow-hidden">
                 {product.images?.[0] ? (
                   <img src={product.images[0]} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 ) : (
@@ -64,10 +64,10 @@ export function ShopFeaturedProductsSection({ data }: Props) {
                 )}
               </div>
               <div className="p-3">
-                <h3 className="font-medium text-sm truncate">{product.title}</h3>
+                <h3 className="font-medium text-sm truncate" data-edit-path="title">{product.title}</h3>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="font-bold">{formatPrice(product.priceCents)}</span>
-                  {product.comparePriceCents && <span className="text-xs text-zinc-400 line-through">{formatPrice(product.comparePriceCents)}</span>}
+                  {product.comparePriceCents && <span className="text-xs text-[color:var(--token-muted)] line-through">{formatPrice(product.comparePriceCents)}</span>}
                 </div>
               </div>
             </div>

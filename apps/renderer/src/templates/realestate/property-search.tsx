@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Search, LayoutGrid, Building2, Home, Landmark, ArrowRight } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Category = { label: string; href?: string; icon?: string; count?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
@@ -31,8 +32,8 @@ export function PropertySearchSection({ data }: Props) {
     <section ref={ref} className="py-16 md:py-20" style={bgColor ? { backgroundColor: bgColor } : undefined}>
       <div className="max-w-4xl mx-auto px-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{headline}</h2>
-          {subline && <p className="mt-2 text-gray-600">{subline}</p>}
+          <h2 className="text-2xl md:text-3xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
+          {subline && <p className="mt-2 text-[color:var(--token-muted)]" data-edit-path="subline">{plain(subline)}</p>}
         </motion.div>
 
         <motion.div
@@ -47,24 +48,24 @@ export function PropertySearchSection({ data }: Props) {
               <a
                 key={i}
                 href={cat.href || ctaHref}
-                className={`group relative flex flex-col items-center gap-3 rounded-xl border p-6 text-center transition-all hover:shadow-lg hover:border-brand-primary/30 ${i === activeCategory ? 'border-brand-primary/40 bg-brand-primary/5' : 'border-gray-200 bg-white'}`}
+                className={`group relative flex flex-col items-center gap-3 rounded-2xl border p-6 text-center transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/5 ${i === activeCategory ? 'border-[color:color-mix(in_srgb,var(--token-accent,var(--token-icon))_34%,var(--token-card-border))] bg-[color:color-mix(in_srgb,var(--token-accent,var(--token-icon))_8%,var(--token-card-bg,#fff))]' : 'border-[color:var(--token-card-border)] bg-[var(--token-card-bg)]'}`}
                 onMouseEnter={() => setActiveCategory(i)}
               >
-                <div className="rounded-full bg-brand-primary/10 p-3 text-brand-primary group-hover:bg-brand-primary group-hover:text-white transition-colors">
+                <div className="rounded-full bg-[color:color-mix(in_srgb,var(--token-accent,var(--token-icon))_12%,transparent)] p-3 text-[color:var(--token-icon)] transition-colors group-hover:bg-[var(--token-btn-bg)] group-hover:text-[color:var(--token-btn-text)]">
                   <Icon size={24} />
                 </div>
-                <span className="font-semibold text-gray-900">{cat.label}</span>
-                {cat.count && <span className="text-xs text-gray-500">{cat.count}</span>}
-                <ArrowRight size={16} className="absolute top-4 right-4 text-gray-300 group-hover:text-brand-primary transition-colors" />
+                <span className="font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{cat.label}</span>
+                {cat.count && <span className="text-xs text-[color:var(--token-muted)]">{cat.count}</span>}
+                <ArrowRight size={16} className="absolute top-4 right-4 text-[color:var(--token-body)] group-hover:text-[color:var(--token-icon)] transition-colors" />
               </a>
             );
           })}
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} transition={{ delay: 0.4 }} className="mt-8 text-center">
-          <a href={ctaHref} className="inline-flex items-center gap-2 px-6 py-3 bg-brand-primary text-white font-semibold rounded-lg hover:bg-brand-dark transition-colors">
+          <a href={ctaHref} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 font-semibold text-[color:var(--token-btn-text)] shadow-sm shadow-black/5 transition hover:-translate-y-0.5 hover:shadow-lg">
             <Search size={18} />
-            {ctaLabel}
+            <span data-edit-path="ctaLabel">{ctaLabel}</span>
           </a>
         </motion.div>
       </div>

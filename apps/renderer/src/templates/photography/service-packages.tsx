@@ -7,6 +7,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 
 type Package = {
   name: string;
+  title?: string;
   price?: string;
   priceNote?: string;
   description?: string;
@@ -14,13 +15,19 @@ type Package = {
   highlighted?: boolean;
   ctaLabel?: string;
   ctaHref?: string;
+  cta?: { label?: string; href?: string };
 };
 
 export function ServicePackagesSection({ data, styleVariant }: Props) {
   const badge = (data.badge as string) || 'Pakete';
   const headline = (data.headline as string) || 'Leistungen & Pakete';
   const subline = (data.subline as string) || '';
-  const packages = (data.packages as Package[]) || [];
+  const packages = ((data.packages as Package[]) || []).map((pkg) => ({
+    ...pkg,
+    name: pkg.name || pkg.title || '',
+    ctaLabel: pkg.ctaLabel || pkg.cta?.label || '',
+    ctaHref: pkg.ctaHref || pkg.cta?.href || '',
+  }));
   const note = (data.note as string) || '';
   const isBold = styleVariant === 'bold';
   const isModern = styleVariant === 'modern';
@@ -31,22 +38,22 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
     return (
       <section className="py-24 md:py-36 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">{badge}</p>
-          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-16 break-words">{headline}</h2>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body)] mb-4" data-edit-path="badge">{badge}</p>
+          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-16 break-words" data-edit-path="headline">{headline}</h2>
           <div className={`grid gap-8 ${gridCols}`}>
             {packages.map((pkg, i) => (
-              <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={`border-t ${pkg.highlighted ? 'border-gray-900' : 'border-gray-200'} pt-8`}>
-                <h3 className="text-lg font-light text-gray-900">{pkg.name}</h3>
-                {pkg.price && <p className="text-2xl font-extralight text-gray-900 mt-2">{pkg.price}{pkg.priceNote && <span className="text-sm text-gray-400 ml-1">{pkg.priceNote}</span>}</p>}
-                {pkg.description && <div className="text-gray-400 text-sm mt-3" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
+              <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className={`border-t ${pkg.highlighted ? 'border-[color:var(--token-card-border)]' : 'border-[color:var(--token-card-border)]'} pt-8`} data-edit-collection="packages" data-edit-index={i}>
+                <h3 className="text-lg font-light text-[color:var(--token-heading)]" data-edit-path="name">{pkg.name}</h3>
+                {pkg.price && <p className="text-2xl font-extralight text-[color:var(--token-heading)] mt-2"><span data-edit-path="price">{pkg.price}</span>{pkg.priceNote && <span className="text-sm text-[color:var(--token-body)] ml-1">{pkg.priceNote}</span>}</p>}
+                {pkg.description && <div className="text-[color:var(--token-body)] text-sm mt-3" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
                 <ul className="mt-6 space-y-2">
-                  {pkg.features.map((f, j) => <li key={j} className="text-gray-600 text-sm">— {f}</li>)}
+                  {pkg.features.map((f, j) => <li key={j} className="text-[color:var(--token-muted)] text-sm" data-edit-collection="features" data-edit-index={j}>— {f}</li>)}
                 </ul>
-                {pkg.ctaHref && <a href={pkg.ctaHref} className="inline-block mt-6 text-sm text-gray-900 border-b border-gray-900 hover:opacity-70">{pkg.ctaLabel || 'Anfragen'} →</a>}
+                {pkg.ctaHref && <a href={pkg.ctaHref} className="inline-block mt-6 text-sm text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)] hover:opacity-70"><span data-edit-path="ctaLabel">{pkg.ctaLabel || 'Anfragen'}</span> →</a>}
               </motion.div>
             ))}
           </div>
-          {note && <p className="text-gray-400 text-sm mt-12">{note}</p>}
+          {note && <p className="text-[color:var(--token-body)] text-sm mt-12" data-edit-path="note">{note}</p>}
         </div>
       </section>
     );
@@ -54,72 +61,72 @@ export function ServicePackagesSection({ data, styleVariant }: Props) {
 
   if (isBold) {
     return (
-      <section data-theme="dark" className="py-16 md:py-24 px-4 md:px-6 bg-gray-950 text-white">
+      <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)]">
         <div className="max-w-6xl mx-auto">
-          <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words">{headline}</h2>
+          <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
+          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-12 break-words" data-edit-path="headline">{headline}</h2>
           <div className={`grid gap-4 ${gridCols}`}>
             {packages.map((pkg, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`relative p-6 md:p-8 border ${pkg.highlighted ? 'border-brand-accent' : 'border-white/10'}`}>
-                {pkg.highlighted && <span className="absolute -top-3 left-6 bg-brand-accent text-black text-[10px] font-bold px-3 py-1">BELIEBT</span>}
-                <h3 className="text-xl font-bold text-white">{pkg.name}</h3>
-                {pkg.price && <p className="text-3xl font-black text-brand-accent mt-3">{pkg.price}{pkg.priceNote && <span className="text-sm text-white/70 ml-1">{pkg.priceNote}</span>}</p>}
-                {pkg.description && <div className="text-white/80 text-sm mt-3" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`relative p-6 md:p-8 border ${pkg.highlighted ? 'border-[var(--token-card-border)]' : 'border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)]'}`} data-edit-collection="packages" data-edit-index={i}>
+                {pkg.highlighted && <span className="absolute -top-3 left-6 bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold px-3 py-1">BELIEBT</span>}
+                <h3 className="text-xl font-bold text-[color:var(--token-on-dark-heading)]" data-edit-path="name">{pkg.name}</h3>
+                {pkg.price && <p className="text-3xl font-black text-[color:var(--token-eyebrow)] mt-3"><span data-edit-path="price">{pkg.price}</span>{pkg.priceNote && <span className="text-sm text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] ml-1">{pkg.priceNote}</span>}</p>}
+                {pkg.description && <div className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] text-sm mt-3" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
                 <ul className="mt-6 space-y-2">
                   {pkg.features.map((f, j) => (
-                    <li key={j} className="flex items-start gap-2 text-sm">
-                      <Check className="w-4 h-4 mt-0.5 shrink-0 text-brand-accent" />
-                      <span className="text-white/80">{f}</span>
+                    <li key={j} className="flex items-start gap-2 text-sm" data-edit-collection="features" data-edit-index={j}>
+                      <Check className="w-4 h-4 mt-0.5 shrink-0 text-[color:var(--token-eyebrow)]" />
+                      <span className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)]">{f}</span>
                     </li>
                   ))}
                 </ul>
-                {pkg.ctaHref && <a href={pkg.ctaHref} className={`mt-8 inline-flex items-center gap-2 px-6 py-3 text-sm font-bold uppercase tracking-wider w-full justify-center ${pkg.highlighted ? 'bg-brand-accent text-black' : 'border border-white/20 text-white hover:bg-white/5'}`}>{pkg.ctaLabel || 'Anfragen'} <ArrowRight className="w-4 h-4" /></a>}
+                {pkg.ctaHref && <a href={pkg.ctaHref} className={`mt-8 inline-flex items-center gap-2 px-6 py-3 text-sm font-bold uppercase tracking-wider w-full justify-center ${pkg.highlighted ? 'bg-[var(--token-badge-bg)] text-[color:var(--token-heading)]' : 'border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] text-[color:var(--token-on-dark-heading)] hover:bg-[color-mix(in_srgb,var(--token-card-bg)_5%,transparent)]'}`}><span data-edit-path="ctaLabel">{pkg.ctaLabel || 'Anfragen'}</span> <ArrowRight className="w-4 h-4" /></a>}
               </motion.div>
             ))}
           </div>
-          {note && <p className="text-white/40 text-sm mt-10 italic">{note}</p>}
+          {note && <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_40%,transparent)] text-sm mt-10 italic" data-edit-path="note">{note}</p>}
         </div>
       </section>
     );
   }
 
   return (
-    <section className="py-12 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">
+    <section className="py-12 md:py-24 px-4 md:px-6 bg-[color-mix(in_srgb,var(--token-btn-bg)_2%,transparent)]">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
-          <span className="section-badge">{badge}</span>
-          <h2 className="section-headline">{headline}</h2>
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          <span className="section-badge" data-edit-path="badge">{badge}</span>
+          <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         <div className={`grid gap-8 ${gridCols}`}>
           {packages.map((pkg, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className={`relative rounded-2xl p-5 md:p-8 ${pkg.highlighted ? 'bg-brand-primary text-white shadow-xl ring-2 ring-brand-primary/20 md:scale-[1.02]' : 'bg-white shadow-sm border border-gray-100'}`}>
-              {pkg.highlighted && <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-accent text-white text-xs font-bold px-3 py-1 rounded-full">Beliebt</span>}
-              <h3 className={`text-xl font-bold ${pkg.highlighted ? 'text-white' : 'text-gray-900'}`}>{pkg.name}</h3>
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className={`relative rounded-2xl p-5 md:p-8 ${pkg.highlighted ? 'bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] shadow-xl ring-2 ring-brand-primary/20 md:scale-[1.02]' : 'bg-[var(--token-card-bg)] shadow-sm border border-[color:var(--token-card-border)]'}`} data-edit-collection="packages" data-edit-index={i}>
+              {pkg.highlighted && <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--token-badge-bg)] text-[color:var(--token-on-dark-heading)] text-xs font-bold px-3 py-1 rounded-full">Beliebt</span>}
+              <h3 className={`text-xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="name">{pkg.name}</h3>
               {pkg.price && (
                 <div className="mt-3">
-                  <span className={`text-2xl md:text-3xl font-bold ${pkg.highlighted ? 'text-white' : 'text-brand-primary'}`}>{pkg.price}</span>
-                  {pkg.priceNote && <span className={`text-sm ml-1 ${pkg.highlighted ? 'text-white/70' : 'text-gray-500'}`}>{pkg.priceNote}</span>}
+                  <span className={`text-2xl md:text-3xl font-bold ${pkg.highlighted ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-icon)]'}`} data-edit-path="price">{pkg.price}</span>
+                  {pkg.priceNote && <span className={`text-sm ml-1 ${pkg.highlighted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)]' : 'text-[color:var(--token-muted)]'}`}>{pkg.priceNote}</span>}
                 </div>
               )}
-              {pkg.description && <div className={`mt-3 text-sm ${pkg.highlighted ? 'text-white/80' : 'text-gray-600'}`} dangerouslySetInnerHTML={{ __html: pkg.description }} />}
+              {pkg.description && <div className={`mt-3 text-sm ${pkg.highlighted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)]' : 'text-[color:var(--token-muted)]'}`} data-edit-rich="description" dangerouslySetInnerHTML={{ __html: pkg.description }} />}
               <ul className="mt-6 space-y-3">
                 {pkg.features.map((f, j) => (
-                  <li key={j} className="flex items-start gap-2 text-sm">
-                    <Check className={`w-4 h-4 mt-0.5 shrink-0 ${pkg.highlighted ? 'text-brand-accent' : 'text-brand-primary'}`} />
-                    <span className={pkg.highlighted ? 'text-white/90' : 'text-gray-700'}>{f}</span>
+                  <li key={j} className="flex items-start gap-2 text-sm" data-edit-collection="features" data-edit-index={j}>
+                    <Check className={`w-4 h-4 mt-0.5 shrink-0 ${pkg.highlighted ? 'text-[color:var(--token-eyebrow)]' : 'text-[color:var(--token-icon)]'}`} />
+                    <span className={pkg.highlighted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_90%,transparent)]' : 'text-[color:var(--token-muted)]'}>{f}</span>
                   </li>
                 ))}
               </ul>
               {pkg.ctaHref && (
-                <a href={pkg.ctaHref} className={`mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition-colors w-full justify-center ${pkg.highlighted ? 'bg-white text-brand-primary hover:bg-gray-100' : 'bg-brand-primary text-white hover:bg-brand-dark'}`}>
-                  {pkg.ctaLabel || 'Anfragen'} <ArrowRight className="w-4 h-4" />
+                <a href={pkg.ctaHref} className={`mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition-colors w-full justify-center ${pkg.highlighted ? 'bg-[var(--token-card-bg)] text-[color:var(--token-icon)] hover:bg-[var(--token-section-bg-alt)]' : 'bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] hover:bg-[var(--token-section-bg-alt)]'}`}>
+                  <span data-edit-path="ctaLabel">{pkg.ctaLabel || 'Anfragen'}</span> <ArrowRight className="w-4 h-4" />
                 </a>
               )}
             </motion.div>
           ))}
         </div>
-        {note && <p className="text-center text-gray-500 text-sm mt-10 italic">{note}</p>}
+        {note && <p className="text-center text-[color:var(--token-muted)] text-sm mt-10 italic" data-edit-path="note">{note}</p>}
       </div>
     </section>
   );

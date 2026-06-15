@@ -16,10 +16,10 @@ export function AtmosphereGallerySection({ data }: Props) {
   const inView = useInView(ref, { once: true });
 
   return (
-    <section ref={ref} data-theme="dark" className="py-20 md:py-28 bg-stone-900">
+    <section ref={ref} className="py-20 md:py-28 bg-stone-900">
       <div className="max-w-7xl mx-auto px-6">
         {headline && (
-          <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-white text-center mb-12">
+          <motion.h2 initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}} className="text-3xl font-bold text-white text-center mb-12" data-edit-path="headline">
             {headline}
           </motion.h2>
         )}
@@ -32,8 +32,8 @@ export function AtmosphereGallerySection({ data }: Props) {
               animate={inView ? { opacity: 1 } : {}}
               transition={{ delay: i * 0.08 }}
               className="relative break-inside-avoid rounded-lg overflow-hidden group"
-            >
-              <Image
+             data-edit-collection="images" data-edit-index={i}>
+              <Image data-edit-image="src"
                 src={img.src}
                 alt={img.caption || ''}
                 width={600}
@@ -43,7 +43,7 @@ export function AtmosphereGallerySection({ data }: Props) {
               />
               {img.caption && (
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                  <span className="text-white text-sm font-medium">{img.caption}</span>
+                  <span className="text-white text-sm font-medium" data-edit-path="caption">{img.caption}</span>
                 </div>
               )}
             </motion.div>

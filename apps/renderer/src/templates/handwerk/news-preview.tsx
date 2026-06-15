@@ -16,16 +16,20 @@ export function NewsPreviewSection({ data }: Props) {
   const subline = (data.subline as string) || '';
   const items = (data.items as NewsItem[]) || [];
   const collectionKey = (data.collectionKey as string) || 'news';
+  const collectionBasePath = (data.collectionBasePath as string) || '';
+  const linkPrefix = (data.linkPrefix as string) || '';
   const linkLabel = (data.linkLabel as string) || 'Alle Beiträge';
   const linkIcon = (data.linkIcon as string) || '';
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
-  // Derive base path for demo routes (e.g. /demo/tourism)
+  // Derive base path for shared renderer routes (e.g. /spiral-coffee or /demo/tourism)
   const pathname = usePathname();
   const demoMatch = pathname.match(/^(\/demo\/[^/]+)/);
-  const basePath = demoMatch ? demoMatch[1] : '';
-  const linkHref = (data.linkHref as string) || `${basePath}/${collectionKey}`;
+  const tenantMatch = pathname.match(/^\/(?!admin(?:\/|$)|api(?:\/|$)|c(?:\/|$)|shop(?:\/|$)|demo(?:\/|$)|_next(?:\/|$))([^/]+)/);
+  const basePath = linkPrefix || (demoMatch ? demoMatch[1] : tenantMatch ? `/${tenantMatch[1]}` : '');
+  const detailBasePath = collectionBasePath || `${basePath}/c/${collectionKey}`;
+  const linkHref = (data.linkHref as string) || (collectionBasePath ? collectionBasePath.replace(/\/c\//, '/') : `${basePath}/${collectionKey}`);
 
   if (items.length === 0) return null;
 
@@ -37,10 +41,10 @@ export function NewsPreviewSection({ data }: Props) {
         className="flex items-end justify-between mb-10"
       >
         <div>
-          <h2 className="section-headline">{headline}</h2>
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        <Link href={linkHref} className="hidden sm:flex items-center gap-1.5 text-sm font-medium text-brand-primary hover:underline">
+        <Link href={linkHref} className="hidden items-center gap-1.5 text-sm font-medium text-[color:var(--token-accent)] hover:underline sm:flex">
           {linkLabel} {linkIcon && <DynamicIcon name={linkIcon} size={14} />}
         </Link>
       </motion.div>
@@ -52,27 +56,27 @@ export function NewsPreviewSection({ data }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
-          >
-            <Link href={`${basePath}/c/${collectionKey}/${item.slug}`} className="group block">
+           data-edit-collection="items" data-edit-index={i}>
+            <Link href={`${detailBasePath}/${item.slug}`} className="group block">
               {item.image && (
                 <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-4">
-                  <Image src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <Image data-edit-image="image" src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
               )}
               {item.date && (
-                <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-2">
+                <div className="mb-2 flex items-center gap-1.5 text-xs text-[color:var(--token-muted)]">
                   <Calendar size={12} />
                   {new Date(item.date).toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
               )}
-              <h3 className="font-semibold text-lg text-gray-900 group-hover:text-brand-primary transition-colors line-clamp-2">{item.title}</h3>
-              {item.excerpt && <p className="text-sm text-gray-500 mt-1.5 line-clamp-2">{item.excerpt}</p>}
+              <h3 className="line-clamp-2 text-lg font-semibold text-[color:var(--token-body)] transition-colors group-hover:text-[color:var(--token-accent)]" data-edit-path="title">{item.title}</h3>
+              {item.excerpt && <p className="mt-1.5 line-clamp-2 text-sm text-[color:var(--token-body)]">{item.excerpt}</p>}
             </Link>
           </motion.article>
         ))}
       </div>
 
-      <Link href={linkHref} className="sm:hidden flex items-center justify-center gap-1.5 mt-6 text-sm font-medium text-brand-primary">
+      <Link href={linkHref} className="mt-6 flex items-center justify-center gap-1.5 text-sm font-medium text-[color:var(--token-accent)] sm:hidden">
         {linkLabel} {linkIcon && <DynamicIcon name={linkIcon} size={14} />}
       </Link>
     </div>

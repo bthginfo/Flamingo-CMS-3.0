@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validatePat } from '@/lib/pat-auth';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 type AuthResult = Awaited<ReturnType<typeof validatePat>>;
 
@@ -73,6 +74,12 @@ export function validateSections(sections: unknown): string | null {
     if (s.data !== undefined && (typeof s.data !== 'object' || s.data === null || Array.isArray(s.data))) {
       return `sections[${i}].data must be an object`;
     }
+    if (
+      s.styleOverrides !== undefined
+      && (typeof s.styleOverrides !== 'object' || s.styleOverrides === null || Array.isArray(s.styleOverrides))
+    ) {
+      return `sections[${i}].styleOverrides must be an object`;
+    }
     // Section-specific validation
     const data = s.data || {};
     const err = validateSectionData(s.type, data, i);
@@ -127,7 +134,7 @@ function validateSectionData(type: string, data: Record<string, unknown>, idx: n
  * Fixes common AI mistakes like using "services" instead of "manualCards".
  */
 export function normalizeSectionData(type: string, data: Record<string, unknown>): Record<string, unknown> {
-  const d = { ...data };
+  const d = sanitizeValue({ ...data }) as Record<string, unknown>;
   if (type === 'servicesGrid') {
     if (Array.isArray(d.services) && !Array.isArray(d.manualCards)) {
       d.manualCards = d.services;
@@ -136,4 +143,74 @@ export function normalizeSectionData(type: string, data: Record<string, unknown>
     if (!d.source) d.source = 'manual';
   }
   return d;
+}
+
+const STYLE_OVERRIDE_KEY_TO_VARS: Record<string, string[]> = {
+  sectionBg: ['--style-section-bg', '--token-section-bg'],
+  sectionBgAlt: ['--style-section-bg-alt', '--token-section-bg-alt'],
+  cardBg: ['--style-card-bg', '--token-card-bg'],
+  cardBorder: ['--style-card-border-color', '--style-border-color', '--token-card-border'],
+  borderColor: ['--style-border-color', '--token-card-border'],
+  cardBorderColor: ['--style-card-border-color', '--style-border-color', '--token-card-border'],
+  dividerColor: ['--style-divider-color', '--token-divider'],
+  divider: ['--style-divider-color', '--token-divider'],
+  heading: ['--style-heading-color', '--style-text-primary', '--token-heading'],
+  headingColor: ['--style-heading-color', '--style-text-primary', '--token-heading'],
+  heroHeading: ['--style-image-text-color', '--token-on-dark-heading'],
+  subheading: ['--style-subheading-color', '--style-text-secondary', '--token-subheading'],
+  subheadingColor: ['--style-subheading-color', '--style-text-secondary', '--token-subheading'],
+  body: ['--style-body-color', '--style-text-secondary', '--token-body'],
+  bodyColor: ['--style-body-color', '--style-text-secondary', '--token-body'],
+  heroBody: ['--style-image-body-color', '--token-on-dark-body'],
+  muted: ['--style-text-muted', '--token-muted'],
+  mutedColor: ['--style-text-muted', '--token-muted'],
+  textPrimary: ['--style-text-primary', '--token-heading'],
+  textSecondary: ['--style-text-secondary', '--token-body'],
+  eyebrow: ['--style-accent-color', '--token-eyebrow'],
+  icon: ['--style-icon-color', '--token-icon'],
+  iconColor: ['--style-icon-color', '--token-icon'],
+  accentColor: ['--style-accent-color', '--style-accent', '--token-eyebrow', '--token-stat-value', '--token-quote', '--token-rating-star', '--token-check'],
+  statValue: ['--token-stat-value'],
+  quote: ['--token-quote'],
+  quoteMark: ['--token-quote'],
+  ratingStar: ['--token-rating-star'],
+  check: ['--token-check'],
+  badgeBg: ['--style-badge-bg', '--token-badge-bg'],
+  badgeText: ['--style-badge-text', '--token-badge-text'],
+  badgeBorder: ['--style-badge-border', '--token-badge-border'],
+  btnBg: ['--style-button-bg', '--brand-btn-bg', '--token-btn-bg'],
+  btnText: ['--style-button-text', '--brand-btn-text', '--token-btn-text'],
+  onDarkHeading: ['--style-image-text-color', '--token-on-dark-heading'],
+  onDarkBody: ['--style-image-body-color', '--token-on-dark-body'],
+  onDarkMuted: ['--style-image-muted-color', '--token-on-dark-muted'],
+  imageTextColor: ['--style-image-text-color', '--token-on-dark-heading'],
+  brandPrimary: ['--brand-primary'],
+  brandAccent: ['--brand-accent'],
+  colorPrimary: ['--brand-primary'],
+};
+
+export function normalizeStyleOverrides(styleOverrides: unknown): Record<string, string> | null {
+  if (!styleOverrides || typeof styleOverrides !== 'object' || Array.isArray(styleOverrides)) return null;
+  const normalized: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(styleOverrides)) {
+    const targetKeys = key.startsWith('--') ? [key] : STYLE_OVERRIDE_KEY_TO_VARS[key];
+    if (!targetKeys?.length) continue;
+    if (typeof value !== 'string') continue;
+    const trimmed = value.trim();
+    if (!trimmed) continue;
+    const sanitized = sanitizeHtml(trimmed);
+    for (const targetKey of targetKeys) normalized[targetKey] = sanitized;
+  }
+
+  return Object.keys(normalized).length ? normalized : null;
+}
+
+function sanitizeValue(value: unknown): unknown {
+  if (typeof value === 'string') return /<[a-z][\s\S]*>/i.test(value) ? sanitizeHtml(value) : value;
+  if (Array.isArray(value)) return value.map(sanitizeValue);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, sanitizeValue(child)]));
+  }
+  return value;
 }

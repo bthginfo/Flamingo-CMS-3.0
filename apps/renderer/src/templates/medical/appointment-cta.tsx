@@ -24,52 +24,52 @@ type Props = { header: { headline: string; subline: string; badgeText: string };
 
 function Classic({ header, introText, onlineCta, phoneCta, callbackCta, externalCta, notes }: Props) {
   return (
-    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl bg-white p-6 shadow-lg sm:p-10">
+    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="rounded-xl bg-[var(--token-card-bg)] p-6 shadow-lg sm:p-10">
       <SectionHeader {...header} />
-      {introText && <div className="max-w-2xl text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+      {introText && <div className="max-w-2xl text-[color:var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
-        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-teal-700 px-5 py-3 font-semibold text-white"><CalendarDays size={17} />{onlineCta.label}</a>}
-        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-teal-700/30 px-5 py-3 font-semibold text-gray-900"><Phone size={17} />{phoneCta.label}</a>}
-        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex rounded-full border border-black/10 px-5 py-3 font-semibold text-gray-900">{callbackCta.label}</a>}
-        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex rounded-full border border-black/10 px-5 py-3 font-semibold text-gray-900">{externalCta.label}</a>}
+        {onlineCta.label && <a data-edit-link="onlineCta" href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)]"><CalendarDays size={17} /><span data-edit-path="label">{onlineCta.label}</span></a>}
+        {phoneCta.label && <a data-edit-link="phoneCta" href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] px-5 py-3 font-semibold text-[color:var(--token-heading)]"><Phone size={17} /><span data-edit-path="label">{phoneCta.label}</span></a>}
+        {callbackCta.label && <a data-edit-link="callbackCta" href={callbackCta.href || '#'} className="inline-flex rounded-full border border-[var(--token-card-border)] px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{callbackCta.label}</a>}
+        {externalCta.label && <a data-edit-link="externalCta" href={externalCta.href || '#'} className="inline-flex rounded-full border border-[var(--token-card-border)] px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{externalCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="rounded-full bg-teal-50 px-3 py-1 text-xs text-teal-800">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs text-[color:var(--token-badge-text)]" data-edit-path="note">{note}</span>)}</div>
     </motion.div>
   );
 }
 
 function Modern({ header, introText, onlineCta, phoneCta, callbackCta, externalCta, notes }: Props) {
   return (
-    <div className="border border-black/10 bg-white p-6 sm:p-10">
+    <div className="border border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 sm:p-10">
       <SectionHeader {...header} />
-      {introText && <div className="max-w-2xl font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+      {introText && <div className="max-w-2xl font-light text-[color:var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
-        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-blue-600 bg-blue-600 px-5 py-3 font-semibold text-white"><CalendarDays size={17} />{onlineCta.label}</a>}
-        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-black/15 px-5 py-3 font-light text-gray-900"><Phone size={17} />{phoneCta.label}</a>}
-        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex rounded-lg border border-black/15 px-5 py-3 font-light text-gray-900">{callbackCta.label}</a>}
-        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex rounded-lg border border-black/15 px-5 py-3 font-light text-gray-900">{externalCta.label}</a>}
+        {onlineCta.label && <a data-edit-link="onlineCta" href={onlineCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-btn-text)]"><CalendarDays size={17} /><span data-edit-path="label">{onlineCta.label}</span></a>}
+        {phoneCta.label && <a data-edit-link="phoneCta" href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-lg border border-[var(--token-card-border)] px-5 py-3 font-light text-[color:var(--token-heading)]"><Phone size={17} /><span data-edit-path="label">{phoneCta.label}</span></a>}
+        {callbackCta.label && <a data-edit-link="callbackCta" href={callbackCta.href || '#'} className="inline-flex rounded-lg border border-[var(--token-card-border)] px-5 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{callbackCta.label}</a>}
+        {externalCta.label && <a data-edit-link="externalCta" href={externalCta.href || '#'} className="inline-flex rounded-lg border border-[var(--token-card-border)] px-5 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{externalCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="border border-black/10 px-3 py-1 text-xs text-gray-600">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="border border-[var(--token-card-border)] px-3 py-1 text-xs text-[color:var(--token-muted)]" data-edit-path="note">{note}</span>)}</div>
     </div>
   );
 }
 
 function Bold({ header, introText, onlineCta, phoneCta, callbackCta, externalCta, notes }: Props) {
   return (
-    <div className="border-2 border-[#111827] bg-gray-950 p-6 shadow-[4px_4px_0_#111827] sm:p-10">
+    <div className="border-2 border-[var(--token-card-border)] bg-[var(--token-section-bg)] p-6 shadow-[4px_4px_0_var(--token-card-border)] sm:p-10">
       <div className="mb-10 max-w-3xl">
-        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-teal-400">{header.badgeText}</p>}
-        <h2 className="mt-3 text-3xl font-black uppercase text-white sm:text-3xl md:text-5xl">{header.headline}</h2>
-        {header.subline && <div className="mt-4 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: header.subline }} />}
+        {header.badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-badge-text)]" data-edit-path="badgeText">{header.badgeText}</p>}
+        <h2 className="mt-3 text-3xl font-black uppercase text-[color:var(--token-heading)] sm:text-3xl md:text-5xl" data-edit-path="headline">{header.headline}</h2>
+        {header.subline && <div className="mt-4 text-[color:var(--token-body)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: header.subline }} />}
       </div>
-      {introText && <div className="max-w-2xl text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+      {introText && <div className="max-w-2xl text-[color:var(--token-body)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
-        {onlineCta.label && <a href={onlineCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-teal-400 bg-teal-400 px-5 py-3 font-black uppercase text-gray-950 shadow-[4px_4px_0_theme(colors.teal.700)]"><CalendarDays size={17} />{onlineCta.label}</a>}
-        {phoneCta.label && <a href={phoneCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-white/40 px-5 py-3 font-black uppercase text-white shadow-[4px_4px_0_rgba(255,255,255,0.15)]"><Phone size={17} />{phoneCta.label}</a>}
-        {callbackCta.label && <a href={callbackCta.href || '#'} className="inline-flex border-2 border-white/40 px-5 py-3 font-black uppercase text-white">{callbackCta.label}</a>}
-        {externalCta.label && <a href={externalCta.href || '#'} className="inline-flex border-2 border-white/40 px-5 py-3 font-black uppercase text-white">{externalCta.label}</a>}
+        {onlineCta.label && <a data-edit-link="onlineCta" href={onlineCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-btn-bg)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-btn-text)]"><CalendarDays size={17} /><span data-edit-path="label">{onlineCta.label}</span></a>}
+        {phoneCta.label && <a data-edit-link="phoneCta" href={phoneCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[var(--token-card-border)] px-5 py-3 font-black uppercase text-[color:var(--token-heading)]"><Phone size={17} /><span data-edit-path="label">{phoneCta.label}</span></a>}
+        {callbackCta.label && <a data-edit-link="callbackCta" href={callbackCta.href || '#'} className="inline-flex border-2 border-[var(--token-card-border)] px-5 py-3 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="label">{callbackCta.label}</a>}
+        {externalCta.label && <a data-edit-link="externalCta" href={externalCta.href || '#'} className="inline-flex border-2 border-[var(--token-card-border)] px-5 py-3 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="label">{externalCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="border border-white/20 px-3 py-1 text-xs font-bold uppercase text-white/70">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="border border-[var(--token-card-border)] px-3 py-1 text-xs font-bold uppercase text-[color:var(--token-body)]" data-edit-path="note">{note}</span>)}</div>
     </div>
   );
 }

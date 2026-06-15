@@ -3,17 +3,24 @@ import { navigation, footer, globalSettings, seoGlobal, seoPage, seoItem, tenant
 import { eq, and } from 'drizzle-orm';
 
 export type NavItem = { label: string; href: string; type?: string };
-export type NavCta = { label: string; href: string };
+export type NavCta = { label: string; href: string; scriptProvider?: string; scriptConfig?: Record<string, string>; buttonColor?: string; buttonTextColor?: string };
 export type FooterColumn = { title: string; items: { text: string; href?: string }[] };
 export type FooterData = { columns: FooterColumn[]; legalLinks: { label: string; href: string }[]; cta?: { label: string; href: string } | null };
-export type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; logoUrl?: string; logoDisplay?: 'logo' | 'logoAndName' | 'name'; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; dividerColor?: string; btnRadius?: string; cardRadius?: string };
+export type BrandData = { companyName?: string; tagline?: string; primaryColor?: string; secondaryColor?: string; accentColor?: string; pageBg?: string; sectionBg?: string; sectionBgAlt?: string; cardBg?: string; logoUrl?: string; logoDisplay?: 'logo' | 'logoAndName' | 'name'; headingFont?: string; bodyFont?: string; topBarColor?: string; footerColor?: string; customHeadingFontUrl?: string; customHeadingFontName?: string; customBodyFontUrl?: string; customBodyFontName?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; borderColor?: string; dividerColor?: string; iconColor?: string; btnRadius?: string; cardRadius?: string; localSeo?: LocalSeoData };
 export type SocialLinks = Record<string, string>;
 export type ContactData = { phone?: string; email?: string; address?: string; whatsapp?: string; whatsappEnabled?: boolean; whatsappColor?: string };
+export type OpeningHoursRow = { day?: string; hours?: string; note?: string; closed?: boolean; type?: 'regular' | 'special'; date?: string };
+export type LocalSeoData = { businessType?: string; priceRange?: string; serviceArea?: string; googleBusinessUrl?: string; sameAs?: string[] };
+
+function isPlaceholderCompanyName(value?: string): boolean {
+  const normalized = (value || '').trim().toLowerCase();
+  return !normalized || normalized === 'firmenname' || normalized === 'firma' || normalized === 'company name';
+}
 
 export async function getTenantStyle(tenantId: string): Promise<{ industry: string; activeStyle: string }> {
   const db = getDb();
-  const [t] = await db.select({ industry: tenants.industry, activeStyle: tenants.activeStyle }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
-  return { industry: t?.industry ?? 'tradesman', activeStyle: t?.activeStyle ?? 'classic' };
+  const [t] = await db.select({ industry: tenants.industry }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  return { industry: t?.industry ?? 'tradesman', activeStyle: 'classic' };
 }
 
 export async function getTenantI18n(tenantId: string): Promise<{ enabled: boolean; locales: string[]; defaultLocale: string }> {
@@ -72,10 +79,21 @@ export async function getTenantFooter(tenantId: string, locale?: string): Promis
   return { columns: columns as FooterColumn[], legalLinks: legalLinks as { label: string; href: string }[], cta: cta as { label: string; href: string } | null };
 }
 
-export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandData; contact: ContactData; socialLinks: SocialLinks; design: Record<string, string> }> {
+export async function getTenantBrand(tenantId: string): Promise<{ brand: BrandData; contact: ContactData; openingHours: OpeningHoursRow[]; socialLinks: SocialLinks; design: Record<string, string> }> {
   const db = getDb();
   const [s] = await db.select().from(globalSettings).where(eq(globalSettings.tenantId, tenantId)).limit(1);
-  return { brand: (s?.brand as BrandData) || {}, contact: (s?.contact as ContactData) || {}, socialLinks: (s?.socialLinks as SocialLinks) || {}, design: (s?.design as Record<string, string>) || {} };
+  const [tenant] = await db.select({ name: tenants.name }).from(tenants).where(eq(tenants.id, tenantId)).limit(1);
+  const brand = { ...(((s?.brand as BrandData) || {}) as BrandData) };
+  if (tenant?.name && isPlaceholderCompanyName(brand.companyName)) {
+    brand.companyName = tenant.name;
+  }
+  return {
+    brand,
+    contact: (s?.contact as ContactData) || {},
+    openingHours: (s?.openingHours as OpeningHoursRow[]) || [],
+    socialLinks: (s?.socialLinks as SocialLinks) || {},
+    design: (s?.design as Record<string, string>) || {},
+  };
 }
 
 export type SeoGlobalData = {

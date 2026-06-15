@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ArrowRight, Flame, Leaf, Wheat } from 'lucide-react';
 import { asButton, asList, type SectionProps } from './types';
+import { plain } from '@/lib/strip-html';
 
 type MenuItem = {
   name?: string;
@@ -36,12 +37,12 @@ export function MenuSection({ data, styleVariant }: SectionProps) {
   const ctaPrimary = asButton(data.ctaPrimary);
 
   if (styleVariant === 'bold') {
-    return <MenuBold headline={headline} subline={subline} badgeText={badgeText} introText={introText} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
+    return <MenuBold headline={headline} subline={plain(subline)} badgeText={badgeText} introText={plain(introText)} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
   }
   if (styleVariant === 'modern') {
-    return <MenuModern headline={headline} subline={subline} badgeText={badgeText} introText={introText} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
+    return <MenuModern headline={headline} subline={plain(subline)} badgeText={badgeText} introText={plain(introText)} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
   }
-  return <MenuClassic headline={headline} subline={subline} badgeText={badgeText} introText={introText} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
+  return <MenuClassic headline={headline} subline={plain(subline)} badgeText={badgeText} introText={plain(introText)} categories={categories} footnote={footnote} ctaPrimary={ctaPrimary} />;
 }
 
 type MenuViewProps = {
@@ -56,11 +57,11 @@ type MenuViewProps = {
 
 function MenuClassic(props: MenuViewProps) {
   return (
-    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-black/10 bg-white shadow-sm overflow-hidden">
+    <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-xl border border-black/10 bg-[var(--token-card-bg)] shadow-sm overflow-hidden">
       <MenuHeader {...props} align="center" />
       <div className="divide-y divide-black/10">
         {props.categories.map((category, index) => (
-          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="classic" />
+          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="classic"  data-edit-collection="categories" data-edit-index={index}/>
         ))}
       </div>
       <MenuFooter {...props} />
@@ -74,7 +75,7 @@ function MenuModern(props: MenuViewProps) {
       <MenuHeader {...props} align="left" />
       <div className="grid gap-8 lg:grid-cols-2">
         {props.categories.map((category, index) => (
-          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="modern" />
+          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="modern"  data-edit-collection="categories" data-edit-index={index}/>
         ))}
       </div>
       <MenuFooter {...props} />
@@ -84,11 +85,11 @@ function MenuModern(props: MenuViewProps) {
 
 function MenuBold(props: MenuViewProps) {
   return (
-    <div className="bg-[#111827] text-white p-6 sm:p-10 shadow-sm">
+    <div className="bg-[#111827] text-[color:var(--token-on-dark-heading)] p-6 sm:p-10 shadow-sm">
       <MenuHeader {...props} align="left" inverted />
       <div className="grid gap-5">
         {props.categories.map((category, index) => (
-          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="bold" />
+          <MenuCategoryBlock key={`${category.title}-${index}`} category={category} layout="bold"  data-edit-collection="categories" data-edit-index={index}/>
         ))}
       </div>
       <MenuFooter {...props} inverted />
@@ -99,10 +100,10 @@ function MenuBold(props: MenuViewProps) {
 function MenuHeader({ headline, subline, badgeText, introText, align, inverted }: MenuViewProps & { align: 'left' | 'center'; inverted?: boolean }) {
   return (
     <div className={`${align === 'center' ? 'text-center mx-auto' : ''} max-w-3xl p-6 sm:p-10`}>
-      {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[var(--brand-accent)]' : 'text-gray-600'}`}>{badgeText}</p>}
-      <h2 className={`mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] ${inverted ? 'text-white' : 'text-gray-900'}`}>{headline}</h2>
-      {subline && <div className={`mt-4 text-base sm:text-lg ${inverted ? 'text-white/70' : 'text-gray-600'} rt-content`} dangerouslySetInnerHTML={{ __html: subline }} />}
-      {introText && <div className={`mt-5 leading-7 ${inverted ? 'text-white/65' : 'text-gray-600'} rt-content`} dangerouslySetInnerHTML={{ __html: introText }} />}
+      {badgeText && <p className={`text-xs font-bold uppercase tracking-widest ${inverted ? 'text-[color:var(--token-eyebrow)]' : 'text-[color:var(--token-muted)]'}`} data-edit-path="badgeText">{badgeText}</p>}
+      <h2 className={`mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] ${inverted ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="headline">{headline}</h2>
+      {subline && <div className={`mt-4 text-base sm:text-lg ${inverted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)]' : 'text-[color:var(--token-muted)]'} rt-content`} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
+      {introText && <div className={`mt-5 leading-7 ${inverted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_65%,transparent)]' : 'text-[color:var(--token-muted)]'} rt-content`} data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
     </div>
   );
 }
@@ -110,25 +111,25 @@ function MenuHeader({ headline, subline, badgeText, introText, align, inverted }
 function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layout: 'classic' | 'modern' | 'bold' }) {
   const items = asList<MenuItem>(category.items);
   return (
-    <div className={`${layout === 'classic' ? 'p-6 sm:p-10' : layout === 'bold' ? 'border-2 border-white/20 p-5' : 'border border-black/10 p-6'}`}>
+    <div className={`${layout === 'classic' ? 'p-6 sm:p-10' : layout === 'bold' ? 'border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] p-5' : 'border border-black/10 p-6'}`}>
       <div className="mb-6">
-        <h3 className={`text-2xl font-bold ${layout === 'bold' ? 'text-white uppercase' : 'text-gray-900'}`}>{category.title || ''}</h3>
-        {category.description && <div className={`mt-2 text-sm ${layout === 'bold' ? 'text-white/60' : 'text-gray-600'}`} dangerouslySetInnerHTML={{ __html: category.description }} />}
+        <h3 className={`text-2xl font-bold ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading)] uppercase' : 'text-[color:var(--token-heading)]'}`} data-edit-path="title">{category.title || ''}</h3>
+        {category.description && <div className={`mt-2 text-sm ${layout === 'bold' ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]' : 'text-[color:var(--token-muted)]'}`} data-edit-rich="description" dangerouslySetInnerHTML={{ __html: category.description }} />}
       </div>
       <div className="space-y-5">
         {items.map((item, index) => (
-          <article key={`${item.name}-${index}`} className={`grid gap-4 ${item.image ? 'sm:grid-cols-[96px_1fr]' : ''} ${item.highlighted ? 'bg-gray-50 p-4' : ''}`}>
+          <article key={`$<span data-edit-path="name">{item.name}</span>-${index}`} className={`grid gap-4 ${item.image ? 'sm:grid-cols-[96px_1fr]' : ''} ${item.highlighted ? 'bg-[var(--token-section-bg-alt)] p-4' : ''}`} data-edit-collection="items" data-edit-index={index}>
             {item.image && (
               <div className="relative h-24 w-24 overflow-hidden rounded-lg">
-                <Image src={item.image} alt={item.name || ''} fill className="object-cover" sizes="96px" />
+                <Image data-edit-image="image" src={item.image} alt={item.name || ''} fill className="object-cover" sizes="96px" />
               </div>
             )}
             <div>
               <div className="flex items-start justify-between gap-4">
-                <h4 className={`font-semibold ${layout === 'bold' ? 'text-white' : 'text-gray-900'}`}>{item.name || ''}</h4>
-                {item.price && <p className={`shrink-0 font-bold ${layout === 'bold' ? 'text-[var(--brand-accent)]' : 'text-gray-900'}`}>{item.price}</p>}
+                <h4 className={`font-semibold ${layout === 'bold' ? 'text-[color:var(--token-on-dark-heading)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="name">{item.name || ''}</h4>
+                {item.price && <p className={`shrink-0 font-bold ${layout === 'bold' ? 'text-[color:var(--token-eyebrow)]' : 'text-[color:var(--token-heading)]'}`} data-edit-path="price">{item.price}</p>}
               </div>
-              {item.description && <div className={`mt-1 text-sm leading-6 ${layout === 'bold' ? 'text-white/60' : 'text-gray-600'}`} dangerouslySetInnerHTML={{ __html: item.description }} />}
+              {item.description && <div className={`mt-1 text-sm leading-6 ${layout === 'bold' ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]' : 'text-[color:var(--token-muted)]'}`} data-edit-rich="description" dangerouslySetInnerHTML={{ __html: item.description }} />}
               <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
                 {asList<string>(item.tags).map((tag) => <Badge key={tag} icon={item.spicy ? <Flame size={12} /> : item.vegetarian || item.vegan ? <Leaf size={12} /> : null} label={tag} />)}
                 {asList<string>(item.allergens).map((allergen) => <Badge key={allergen} icon={<Wheat size={12} />} label={allergen} />)}
@@ -143,15 +144,15 @@ function MenuCategoryBlock({ category, layout }: { category: MenuCategory; layou
 }
 
 function Badge({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return <span className="inline-flex items-center gap-1 rounded-full border border-current/20 px-2 py-1 opacity-80">{icon}{label}</span>;
+  return <span className="inline-flex items-center gap-1 rounded-full border border-current/20 px-2 py-1 opacity-80">{icon}<span data-edit-path="label">{label}</span></span>;
 }
 
 function MenuFooter({ footnote, ctaPrimary, inverted }: MenuViewProps & { inverted?: boolean }) {
   if (!footnote && !ctaPrimary.label) return null;
   return (
-    <div className={`flex flex-col gap-4 p-6 sm:p-10 sm:flex-row sm:items-center sm:justify-between ${inverted ? 'text-white/70' : 'text-gray-600'}`}>
+    <div className={`flex flex-col gap-4 p-6 sm:p-10 sm:flex-row sm:items-center sm:justify-between ${inverted ? 'text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)]' : 'text-[color:var(--token-muted)]'}`}>
       {footnote && <p className="text-sm">{footnote}</p>}
-      {ctaPrimary.label && <a href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 font-semibold text-gray-900 bg-brand-primary/10 px-5 py-3 rounded-lg">{ctaPrimary.label}<ArrowRight size={16} /></a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex items-center gap-2 font-semibold text-[color:var(--token-heading)] bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-5 py-3 rounded-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
     </div>
   );
 }

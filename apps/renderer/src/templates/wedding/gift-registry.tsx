@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Gift, ExternalLink } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -20,30 +21,30 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
     return (
       <section className="py-24 md:py-36 px-4 md:px-6">
         <div className="max-w-4xl mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-gray-400 mb-4">{badge}</p>
-          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-gray-900 mb-8 break-words">{headline}</h2>
-          {text && <div className="text-gray-500 leading-relaxed mb-16 max-w-2xl rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+          <p className="text-[10px] uppercase tracking-[0.3em] text-[color:var(--token-body)] mb-4" data-edit-path="badge">{badge}</p>
+          <h2 className="text-3xl md:text-5xl font-extralight uppercase tracking-[0.15em] text-[color:var(--token-heading)] mb-8 break-words" data-edit-path="headline">{headline}</h2>
+          {text && <div className="text-[color:var(--token-muted)] leading-relaxed mb-16 max-w-2xl rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <div className="space-y-6 mb-16">
               {items.map((item, i) => (
-                <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-baseline justify-between border-t border-gray-200 pt-4">
+                <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex items-baseline justify-between border-t border-[color:var(--token-card-border)] pt-4" data-edit-collection="items" data-edit-index={i}>
                   <div>
-                    <h3 className="font-light text-gray-900">{item.title}</h3>
-                    {item.description && <p className="text-gray-400 text-sm mt-1">{item.description}</p>}
+                    <h3 className="font-light text-[color:var(--token-heading)]" data-edit-path="title">{item.title}</h3>
+                    {item.description && <p className="text-[color:var(--token-body)] text-sm mt-1" data-edit-path="description">{plain(item.description)}</p>}
                   </div>
-                  {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-900 border-b border-gray-900 hover:opacity-70">Link →</a>}
+                  {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-sm text-[color:var(--token-heading)] border-b border-[color:var(--token-card-border)] hover:opacity-70">Link →</a>}
                 </motion.div>
               ))}
             </div>
           )}
           {bankDetails && (
-            <div className="border-t border-gray-200 pt-8">
-              <p className="text-sm uppercase tracking-[0.2em] text-gray-400 mb-4">Bankverbindung</p>
-              <div className="text-gray-600 text-sm space-y-1">
+            <div className="border-t border-[color:var(--token-card-border)] pt-8">
+              <p className="text-sm uppercase tracking-[0.2em] text-[color:var(--token-body)] mb-4">Bankverbindung</p>
+              <div className="text-[color:var(--token-muted)] text-sm space-y-1">
                 {bankDetails.holder && <p>{bankDetails.holder}</p>}
                 {bankDetails.iban && <p>{bankDetails.iban}</p>}
                 {bankDetails.bic && <p>{bankDetails.bic}</p>}
-                {bankDetails.note && <p className="mt-3 text-gray-400 italic">{bankDetails.note}</p>}
+                {bankDetails.note && <p className="mt-3 text-[color:var(--token-body)] italic" data-edit-path="note">{bankDetails.note}</p>}
               </div>
             </div>
           )}
@@ -56,31 +57,31 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
     return (
       <section className="py-16 md:py-24 px-4 md:px-6">
         <div className="max-w-5xl mx-auto">
-          <span className="inline-block bg-brand-accent text-black text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4">{badge}</span>
-          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words">{headline}</h2>
-          {text && <div className="text-gray-600 text-lg mb-12 max-w-2xl rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+          <span className="inline-block bg-[var(--token-badge-bg)] text-[color:var(--token-heading)] text-[10px] font-bold uppercase tracking-[0.3em] px-4 py-1.5 mb-4" data-edit-path="badge">{badge}</span>
+          <h2 className="text-4xl md:text-6xl font-black uppercase tracking-wide mb-6 break-words" data-edit-path="headline">{headline}</h2>
+          {text && <div className="text-[color:var(--token-muted)] text-lg mb-12 max-w-2xl rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
             <div className="grid sm:grid-cols-2 gap-4 mb-12">
               {items.map((item, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-gray-900 p-6 flex items-start gap-4">
-                  <Gift className="w-5 h-5 text-brand-accent shrink-0 mt-0.5" />
+                <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border)] p-6 flex items-start gap-4" data-edit-collection="items" data-edit-index={i}>
+                  <Gift className="w-5 h-5 text-[color:var(--token-eyebrow)] shrink-0 mt-0.5" />
                   <div className="flex-1">
-                    <h3 className="font-bold text-gray-900">{item.title}</h3>
-                    {item.description && <p className="text-gray-500 text-sm mt-1">{item.description}</p>}
-                    {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand-accent text-sm font-bold mt-2 hover:opacity-70"><ExternalLink className="w-3 h-3" />Ansehen</a>}
+                    <h3 className="font-bold text-[color:var(--token-heading)]" data-edit-path="title">{item.title}</h3>
+                    {item.description && <p className="text-[color:var(--token-muted)] text-sm mt-1" data-edit-path="description">{plain(item.description)}</p>}
+                    {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[color:var(--token-eyebrow)] text-sm font-bold mt-2 hover:opacity-70"><ExternalLink className="w-3 h-3" />Ansehen</a>}
                   </div>
                 </motion.div>
               ))}
             </div>
           )}
           {bankDetails && (
-            <div className="border-2 border-gray-900 p-8">
-              <p className="text-brand-accent font-bold mb-4">Bankverbindung</p>
-              <div className="text-gray-600 text-sm space-y-1">
+            <div className="border-2 border-[color:var(--token-card-border)] p-8">
+              <p className="text-[color:var(--token-eyebrow)] font-bold mb-4">Bankverbindung</p>
+              <div className="text-[color:var(--token-muted)] text-sm space-y-1">
                 {bankDetails.holder && <p>Kontoinhaber: {bankDetails.holder}</p>}
                 {bankDetails.iban && <p>IBAN: {bankDetails.iban}</p>}
                 {bankDetails.bic && <p>BIC: {bankDetails.bic}</p>}
-                {bankDetails.note && <p className="mt-3 text-gray-400 italic">{bankDetails.note}</p>}
+                {bankDetails.note && <p className="mt-3 text-[color:var(--token-body)] italic" data-edit-path="note">{bankDetails.note}</p>}
               </div>
             </div>
           )}
@@ -90,38 +91,38 @@ export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
   }
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-brand-primary/[0.02]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-[color-mix(in_srgb,var(--token-btn-bg)_2%,transparent)]">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
-          <span className="section-badge">{badge}</span>
-          <h2 className="section-headline">{headline}</h2>
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          <span className="section-badge" data-edit-path="badge">{badge}</span>
+          <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
-        {text && <div className="text-gray-600 text-lg text-center mb-12 max-w-2xl mx-auto rt-content" dangerouslySetInnerHTML={{ __html: text }} />}
+        {text && <div className="text-[color:var(--token-muted)] text-lg text-center mb-12 max-w-2xl mx-auto rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
         {items.length > 0 && (
           <div className="grid sm:grid-cols-2 gap-6 mb-12">
             {items.map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-6 bg-white rounded-xl shadow-sm border border-gray-100 flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-brand-primary/10 flex items-center justify-center shrink-0">
-                  <Gift className="w-4 h-4 text-brand-primary" />
+              <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="p-6 bg-[var(--token-card-bg)] rounded-xl shadow-sm border border-[color:var(--token-card-border)] flex items-start gap-4" data-edit-collection="items" data-edit-index={i}>
+                <div className="w-10 h-10 rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] flex items-center justify-center shrink-0">
+                  <Gift className="w-4 h-4 text-[color:var(--token-icon)]" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                  {item.description && <div className="text-gray-600 text-sm mt-1 rt-content" dangerouslySetInnerHTML={{ __html: item.description }} />}
-                  {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand-primary text-sm font-medium mt-2 hover:underline"><ExternalLink className="w-3 h-3" />Ansehen</a>}
+                  <h3 className="font-semibold text-[color:var(--token-heading)]" data-edit-path="title">{item.title}</h3>
+                  {item.description && <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: item.description }} />}
+                  {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[color:var(--token-icon)] text-sm font-medium mt-2 hover:underline"><ExternalLink className="w-3 h-3" />Ansehen</a>}
                 </div>
               </motion.div>
             ))}
           </div>
         )}
         {bankDetails && (
-          <div className="p-8 bg-white rounded-2xl shadow-sm border border-gray-100 text-center">
-            <p className="text-gray-900 font-semibold mb-4">Bankverbindung</p>
-            <div className="text-gray-600 text-sm space-y-1">
+          <div className="p-8 bg-[var(--token-card-bg)] rounded-2xl shadow-sm border border-[color:var(--token-card-border)] text-center">
+            <p className="text-[color:var(--token-heading)] font-semibold mb-4">Bankverbindung</p>
+            <div className="text-[color:var(--token-muted)] text-sm space-y-1">
               {bankDetails.holder && <p>Kontoinhaber: {bankDetails.holder}</p>}
               {bankDetails.iban && <p>IBAN: {bankDetails.iban}</p>}
               {bankDetails.bic && <p>BIC: {bankDetails.bic}</p>}
-              {bankDetails.note && <p className="mt-3 text-gray-500 italic">{bankDetails.note}</p>}
+              {bankDetails.note && <p className="mt-3 text-[color:var(--token-muted)] italic" data-edit-path="note">{bankDetails.note}</p>}
             </div>
           </div>
         )}

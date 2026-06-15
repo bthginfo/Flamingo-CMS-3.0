@@ -2,6 +2,7 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useState, useMemo } from 'react';
+import { plain } from '@/lib/strip-html';
 
 type MaterialItem = {
   image?: string;
@@ -32,8 +33,8 @@ export function MaterialGallerySection({ data }: Props) {
     <div ref={ref}>
       {(headline || subline) && (
         <div className="text-center mb-8">
-          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--style-heading-weight,700)] tracking-[var(--style-heading-tracking,-0.02em)] text-[var(--style-text-primary,#0f172a)]">{headline}</h2>}
-          {subline && <p className="mt-3 text-[var(--style-text-secondary,#64748b)] text-lg max-w-2xl mx-auto">{subline}</p>}
+          {headline && <h2 className="font-display text-3xl md:text-4xl font-[var(--token-heading-weight,700)] tracking-[var(--token-heading-tracking,-0.02em)] text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="headline">{headline}</h2>}
+          {subline && <p className="mt-3 text-[color:var(--token-card-body,var(--token-body))] text-lg max-w-2xl mx-auto" data-edit-path="subline">{plain(subline)}</p>}
         </div>
       )}
 
@@ -46,8 +47,8 @@ export function MaterialGallerySection({ data }: Props) {
               onClick={() => setActiveFilter(cat)}
               className={`px-4 py-2 text-sm font-medium rounded-full border transition-all ${
                 activeFilter === cat
-                  ? 'bg-[var(--brand-primary,#2563eb)] text-white border-transparent shadow-md'
-                  : 'bg-white text-[var(--style-text-secondary,#64748b)] border-gray-200 hover:border-[var(--brand-primary,#2563eb)]/30'
+                  ? 'bg-[var(--token-icon)] text-[color:var(--token-on-dark-heading)] border-transparent shadow-md'
+                  : 'bg-[var(--token-card-bg)] text-[color:var(--token-card-body,var(--token-body))] border-[color:var(--token-card-border)] hover:border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)]'
               }`}
             >
               {cat}
@@ -60,21 +61,21 @@ export function MaterialGallerySection({ data }: Props) {
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {filtered.map((item, i) => (
           <motion.div
-            key={`${item.name}-${i}`}
+            key={`$<span data-edit-path="name">{item.name}</span>-${i}`}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={inView ? { opacity: 1, scale: 1 } : {}}
             transition={{ duration: 0.4, delay: i * 0.04 }}
             className="group"
-          >
-            <div className="aspect-square rounded-[var(--style-card-radius,1rem)] overflow-hidden bg-gray-100 border border-[rgba(0,0,0,0.06)] shadow-sm group-hover:shadow-lg transition-shadow duration-300">
+           data-edit-collection="filtered" data-edit-index={i}>
+            <div className="aspect-square rounded-[var(--token-card-radius)] overflow-hidden bg-[var(--token-section-bg-alt)] border border-[rgba(0,0,0,0.06)] shadow-sm group-hover:shadow-lg transition-shadow duration-300">
               {item.image ? (
-                <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <img data-edit-image="image" src={item.image} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />
               )}
             </div>
-            <p className="mt-2 text-center text-sm font-medium text-[var(--style-text-primary,#0f172a)] truncate">{item.name}</p>
-            {item.category && <p className="text-center text-xs text-[var(--style-text-secondary,#64748b)]">{item.category}</p>}
+            <p className="mt-2 text-center text-sm font-medium text-[color:var(--token-card-body,var(--token-body))] truncate" data-edit-path="name">{item.name}</p>
+            {item.category && <p className="text-center text-xs text-[color:var(--token-card-body,var(--token-body))]" data-edit-path="category">{item.category}</p>}
           </motion.div>
         ))}
       </div>

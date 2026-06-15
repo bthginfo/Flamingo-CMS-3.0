@@ -37,14 +37,14 @@ export function ContactSection({ data }: Props) {
         {badgeText && (
           <div className="section-badge">
             <Mail size={14} />
-            <span>{badgeText}</span>
+            <span data-edit-path="badgeText">{badgeText}</span>
           </div>
         )}
-        <h2 className="section-headline">{headline}</h2>
-        {introText && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+        <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
+        {introText && <div className="section-subline rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-8 lg:gap-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
         {/* Info cards */}
         <div className="lg:col-span-2 space-y-4">
           {infoCards.map((card, i) => (
@@ -53,14 +53,14 @@ export function ContactSection({ data }: Props) {
               initial={{ opacity: 0, x: -20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="flex items-center gap-4 p-5 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer"
-            >
-              <div className={cn('w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary transition-transform group-hover:scale-110')}>
-                <DynamicIcon name={card.icon} size={20} />
+              className="flex items-center gap-4 p-5 rounded-2xl bg-[var(--token-card-bg)] border border-[var(--token-card-border)] shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer"
+             data-edit-collection="infoCards" data-edit-index={i}>
+              <div className={cn('w-12 h-12 rounded-xl bg-[color-mix(in_srgb,var(--token-icon)_12%,transparent)] flex items-center justify-center text-[color:var(--token-icon)] transition-transform group-hover:scale-110')}>
+                <DynamicIcon editPath="icon" name={card.icon} size={20} />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-xs text-slate-400 uppercase tracking-wider font-medium">{card.label}</div>
-                <div className="text-sm font-semibold text-gray-900 break-words">{card.value}</div>
+                <div className="text-xs text-[color:var(--token-muted)] uppercase tracking-wider font-medium" data-edit-path="label">{card.label}</div>
+                <div className="text-sm font-semibold text-[color:var(--token-heading)] break-words" data-edit-path="value">{card.value}</div>
               </div>
             </motion.div>
           ))}
@@ -77,7 +77,7 @@ export function ContactSection({ data }: Props) {
             <DynamicContactForm
               fields={formFields}
               submitLabel={submitLabel}
-              className="bg-white rounded-3xl border border-gray-100 shadow-lg p-8 sm:p-10 space-y-5"
+              className="bg-[var(--token-card-bg)] rounded-3xl border border-[var(--token-card-border)] shadow-lg p-8 sm:p-10 space-y-5"
             />
           </motion.div>
         )}

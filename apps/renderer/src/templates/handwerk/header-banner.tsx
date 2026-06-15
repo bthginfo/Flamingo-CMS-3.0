@@ -2,6 +2,7 @@
 
 import { X } from 'lucide-react';
 import { useState } from 'react';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
@@ -14,17 +15,17 @@ export function HeaderBannerSection({ data }: Props) {
 
   const bgClass = style === 'warning' ? 'bg-amber-500 text-amber-950'
     : style === 'info' ? 'bg-blue-600 text-white'
-    : 'bg-brand-dark text-white/80';
+    : 'bg-[var(--token-section-bg-alt)] text-[color:var(--token-body)]';
 
   return (
     <div className={`relative ${bgClass} text-xs py-2 text-center`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-center gap-6">
         {items.map((item, i) => (
-          <span key={i}>
+          <span key={i} data-edit-collection="items" data-edit-index={i}>
             {item.link ? (
-              <a href={item.link} className="hover:underline font-medium">{item.text}</a>
+              <a href={item.link} className="hover:underline font-medium" data-edit-path="text">{plain(item.text)}</a>
             ) : (
-              <span className="rt-content" dangerouslySetInnerHTML={{ __html: item.text }} />
+              <span className="rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />
             )}
           </span>
         ))}

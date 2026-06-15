@@ -30,9 +30,9 @@ export function RichTextSection({ data }: Props) {
   return (
     <section className="py-20">
       <div className="max-w-3xl mx-auto px-6">
-        {headline && <h1 className="font-display text-4xl font-bold mb-10 text-center">{headline}</h1>}
+        {headline && <h1 className="font-display text-4xl font-bold mb-10 text-center" data-edit-path="headline">{headline}</h1>}
         <div
-          className="prose prose-lg prose-slate max-w-none prose-headings:font-display prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline rt-content"
+          className="prose prose-lg prose-slate max-w-none prose-headings:font-display prose-a:text-[color:var(--token-icon)] prose-a:no-underline hover:prose-a:underline rt-content"
           dangerouslySetInnerHTML={{ __html: clean }}
         />
       </div>

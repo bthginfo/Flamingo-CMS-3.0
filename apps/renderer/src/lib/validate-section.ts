@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { sanitizeHtml } from './sanitize-html';
 
 /**
  * Recursive schema for section data.
@@ -24,5 +25,14 @@ export const sectionDataSchema = z.record(z.string().max(100), JsonValue).refine
 
 /** Validate and return cleaned section data. Throws on invalid input. */
 export function validateSectionData(data: unknown): Record<string, unknown> {
-  return sectionDataSchema.parse(data) as Record<string, unknown>;
+  return sanitizeValue(sectionDataSchema.parse(data)) as Record<string, unknown>;
+}
+
+function sanitizeValue(value: unknown): unknown {
+  if (typeof value === 'string') return /<[a-z][\s\S]*>/i.test(value) ? sanitizeHtml(value) : value;
+  if (Array.isArray(value)) return value.map(sanitizeValue);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, sanitizeValue(child)]));
+  }
+  return value;
 }

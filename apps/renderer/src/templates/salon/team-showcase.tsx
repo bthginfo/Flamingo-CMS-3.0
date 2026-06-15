@@ -25,20 +25,20 @@ function TeamClassic({ headline, subline, badgeText, members }: Props) {
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-gray-600">{badgeText}</motion.p>}
-        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-gray-900">{headline}</motion.h2>
-        {subline && <div className="mt-4 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {badgeText && <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</motion.p>}
+        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mt-3 text-3xl sm:text-3xl md:text-5xl font-[700] text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</motion.h2>
+        {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {members.map((m, i) => (
-          <motion.article key={`${m.name}-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[var(--brand-primary)]/20 bg-white shadow-md">
-            {m.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={m.image} alt={m.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
+          <motion.article key={`$<span data-edit-path="name">{m.name}</span>-${i}`} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className="group overflow-hidden rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md" data-edit-collection="members" data-edit-index={i}>
+            {m.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={m.image} alt={m.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
-              {m.role && <span className="inline-block rounded-full bg-brand-primary/10 px-3 py-1 text-xs font-bold uppercase text-[var(--brand-accent)]">{m.role}</span>}
-              <h3 className="mt-2 text-xl font-bold text-gray-900">{m.name || ''}</h3>
-              {m.bio && <div className="mt-3 text-sm leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: m.bio }} />}
-              {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm text-gray-600">{asList<string>(m.specialties).join(' / ')}</p>}
-              {m.bookingCta?.label && <a href={m.bookingCta.href || '#'} className="mt-5 inline-flex rounded-full bg-[#111827] px-5 py-2 text-sm font-semibold text-white shadow-md">{m.bookingCta.label}</a>}
+              {m.role && <span className="inline-block rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase text-[color:var(--token-eyebrow)]" data-edit-path="role">{m.role}</span>}
+              <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="name">{m.name || ''}</h3>
+              {m.bio && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
+              {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-muted)]">{asList<string>(m.specialties).join(' / ')}</p>}
+              {m.bookingCta?.label && <a href={m.bookingCta.href || '#'} className="mt-5 inline-flex rounded-full bg-[#111827] px-5 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{m.bookingCta.label}</a>}
             </div>
           </motion.article>
         ))}
@@ -51,20 +51,20 @@ function TeamModern({ headline, subline, badgeText, members }: Props) {
   return (
     <div>
       <div className="mb-14 max-w-3xl">
-        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{badgeText}</p>}
-        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
-        {subline && <div className="mt-4 font-light text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {badgeText && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="badgeText">{badgeText}</p>}
+        <h2 className="mt-4 text-3xl font-light sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
+        {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-8 md:grid-cols-3">
         {members.map((m, i) => (
-          <article key={`${m.name}-${i}`} className="group">
-            {m.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={m.image} alt={m.name || ''} fill className="object-cover" sizes="33vw" /></div>}
+          <article key={`$<span data-edit-path="name">{m.name}</span>-${i}`} className="group" data-edit-collection="members" data-edit-index={i}>
+            {m.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={m.image} alt={m.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="mt-4">
-              {m.role && <p className="text-xs font-light uppercase tracking-[0.3em] text-gray-600">{m.role}</p>}
-              <h3 className="mt-2 text-xl font-light text-gray-900">{m.name || ''}</h3>
-              {m.bio && <div className="mt-3 text-sm font-light leading-6 text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: m.bio }} />}
-              {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm font-light text-gray-600">{asList<string>(m.specialties).join(' / ')}</p>}
-              {m.bookingCta?.label && <a href={m.bookingCta.href || '#'} className="mt-4 inline-flex border-b border-brand-accent pb-1 text-sm font-light text-gray-900">{m.bookingCta.label}</a>}
+              {m.role && <p className="text-xs font-light uppercase tracking-[0.3em] text-[color:var(--token-muted)]" data-edit-path="role">{m.role}</p>}
+              <h3 className="mt-2 text-xl font-light text-[color:var(--token-heading)]" data-edit-path="name">{m.name || ''}</h3>
+              {m.bio && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
+              {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm font-light text-[color:var(--token-muted)]">{asList<string>(m.specialties).join(' / ')}</p>}
+              {m.bookingCta?.label && <a href={m.bookingCta.href || '#'} className="mt-4 inline-flex border-b border-[var(--token-card-border)] pb-1 text-sm font-light text-[color:var(--token-heading)]" data-edit-path="label">{m.bookingCta.label}</a>}
             </div>
           </article>
         ))}
@@ -77,20 +77,20 @@ function TeamBold({ headline, subline, badgeText, members }: Props) {
   return (
     <div>
       <div className="mb-10 max-w-3xl">
-        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-brand-accent">{badgeText}</p>}
-        <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-gray-900">{headline}</h2>
-        {subline && <div className="mt-4 font-bold text-gray-600 rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+        {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
+        <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
+        {subline && <div className="mt-4 font-bold text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {members.map((m, i) => (
-          <article key={`${m.name}-${i}`} className="group overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--brand-accent)]">
-            {m.image && <div className="relative aspect-[4/3] overflow-hidden"><Image src={m.image} alt={m.name || ''} fill className="object-cover" sizes="33vw" /></div>}
+          <article key={`$<span data-edit-path="name">{m.name}</span>-${i}`} className="group overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="members" data-edit-index={i}>
+            {m.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={m.image} alt={m.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
-              {m.role && <span className="inline-block bg-brand-accent px-3 py-1 text-xs font-black uppercase text-white">{m.role}</span>}
-              <h3 className="mt-2 text-xl font-black uppercase text-white">{m.name || ''}</h3>
-              {m.bio && <div className="mt-3 text-sm leading-6 text-white/70 rt-content" dangerouslySetInnerHTML={{ __html: m.bio }} />}
-              {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm text-white/60">{asList<string>(m.specialties).join(' / ')}</p>}
-              {m.bookingCta?.label && <a href={m.bookingCta.href || '#'} className="mt-5 inline-flex bg-brand-accent px-5 py-2 text-sm font-black uppercase text-white shadow-[4px_4px_0_rgba(0,0,0,0.8)]">{m.bookingCta.label}</a>}
+              {m.role && <span className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="role">{m.role}</span>}
+              <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="name">{m.name || ''}</h3>
+              {m.bio && <div className="mt-3 text-sm leading-6 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] rt-content" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
+              {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]">{asList<string>(m.specialties).join(' / ')}</p>}
+              {m.bookingCta?.label && <a href={m.bookingCta.href || '#'} className="mt-5 inline-flex bg-[var(--token-badge-bg)] px-5 py-2 text-sm font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{m.bookingCta.label}</a>}
             </div>
           </article>
         ))}

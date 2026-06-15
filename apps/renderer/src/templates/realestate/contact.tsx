@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { DynamicIcon } from '@/components/ui/icon-map';
 import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-contact-form';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -40,20 +41,20 @@ export function RealestateContactSection({ data }: Props) {
       <div className="max-w-7xl mx-auto px-6">
         <div className={formEnabled ? 'grid lg:grid-cols-2 gap-12' : ''}>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}>
-            {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-3">{badgeText}</p>}
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
-            {subline && <p className="text-lg text-gray-600 mt-4">{subline}</p>}
-            {introText && <div className="text-gray-600 mt-4 rt-content" dangerouslySetInnerHTML={{ __html: introText }} />}
+            {badgeText && <p className="text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)] mb-3" data-edit-path="badgeText">{badgeText}</p>}
+            <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
+            {subline && <p className="text-lg text-[color:var(--token-muted)] mt-4" data-edit-path="subline">{plain(subline)}</p>}
+            {introText && <div className="text-[color:var(--token-muted)] mt-4 rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
 
             <div className="mt-8 space-y-4">
               {contactItems.map((item, i) => (
-                <div key={i} className="flex items-center gap-3 text-gray-700">
-                  <div className="w-10 h-10 bg-brand-primary/10 rounded-lg flex items-center justify-center text-brand-primary">
-                    <DynamicIcon name={item.icon} size={18} />
+                <div key={i} className="flex items-center gap-3 text-[color:var(--token-muted)]" data-edit-collection="contactItems" data-edit-index={i}>
+                  <div className="w-10 h-10 bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] rounded-lg flex items-center justify-center text-[color:var(--token-icon)]">
+                    <DynamicIcon editPath="icon" name={item.icon} size={18} />
                   </div>
                   <div>
-                    <div className="text-xs text-gray-400 uppercase tracking-wider">{item.label}</div>
-                    <div className="text-sm font-medium text-gray-900">{item.value}</div>
+                    <div className="text-xs text-[color:var(--token-body)] uppercase tracking-wider" data-edit-path="label">{item.label}</div>
+                    <div className="text-sm font-medium text-[color:var(--token-heading)]" data-edit-path="value">{item.value}</div>
                   </div>
                 </div>
               ))}
@@ -69,7 +70,7 @@ export function RealestateContactSection({ data }: Props) {
               <DynamicContactForm
                 fields={formFields}
                 submitLabel={submitLabel}
-                className="bg-gray-50 rounded-xl p-8 border border-gray-100 space-y-4"
+                className="bg-[var(--token-section-bg-alt)] rounded-xl p-8 border border-[color:var(--token-card-border)] space-y-4"
               />
             </motion.div>
           )}

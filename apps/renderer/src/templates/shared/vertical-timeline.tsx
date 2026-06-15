@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Step = {
   number?: string;
@@ -17,10 +18,10 @@ export function VerticalTimelineSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const steps = (data.steps as Step[]) || [];
-  const accentColor = (data.accentColor as string) || 'var(--brand-primary, #18181b)';
-  const lineColor = (data.lineColor as string) || 'var(--style-divider-color, #e4e4e7)';
-  const bgColor = (data.bgColor as string) || 'var(--style-section-bg, transparent)';
-  const textColor = (data.textColor as string) || 'var(--style-body-color, inherit)';
+  const accentColor = (data.accentColor as string) || 'var(--token-icon)';
+  const lineColor = (data.lineColor as string) || 'var(--token-divider)';
+  const bgColor = (data.bgColor as string) || 'var(--token-section-bg)';
+  const textColor = (data.textColor as string) || 'var(--token-body)';
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start 80%', 'end 60%'] });
@@ -36,8 +37,8 @@ export function VerticalTimelineSection({ data }: Props) {
             transition={{ duration: 0.5 }}
             className="text-center mb-14"
           >
-            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[var(--style-heading-color,var(--style-text-primary,inherit))]">{headline}</h2>}
-            {subline && <p className="mt-3 max-w-xl mx-auto text-[var(--style-subheading-color,var(--style-text-secondary,#71717a))]">{subline}</p>}
+            {headline && <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>}
+            {subline && <p className="mt-3 max-w-xl mx-auto text-[color:var(--token-subheading)]" data-edit-path="subline">{plain(subline)}</p>}
           </motion.div>
         )}
 
@@ -52,7 +53,7 @@ export function VerticalTimelineSection({ data }: Props) {
 
           <div className="space-y-10 md:space-y-14">
             {steps.map((step, i) => (
-              <TimelineStep key={i} step={step} index={i} total={steps.length} accentColor={accentColor} />
+              <TimelineStep key={i} step={step} index={i} total={steps.length} accentColor={accentColor}  data-edit-collection="steps" data-edit-index={i}/>
             ))}
           </div>
         </div>
@@ -77,7 +78,7 @@ function TimelineStep({ step, index, total, accentColor }: { step: Step; index: 
     >
       {/* Dot */}
       <div
-        className="absolute left-4 md:left-6 w-4 h-4 rounded-full border-[3px] bg-white transition-colors duration-500"
+        className="absolute left-4 md:left-6 w-4 h-4 rounded-full border-[3px] bg-[var(--token-card-bg)] transition-colors duration-500"
         style={{ borderColor: isInView ? accentColor : '#d4d4d8' }}
       />
 
@@ -87,14 +88,14 @@ function TimelineStep({ step, index, total, accentColor }: { step: Step; index: 
           <span className="text-xs font-bold uppercase tracking-wider" style={{ color: accentColor }}>
             Schritt {number}/{String(total).padStart(2, '0')}
           </span>
-        {step.timeLabel && <span className="text-xs text-[var(--style-text-muted,#a1a1aa)]">{step.timeLabel}</span>}
+        {step.timeLabel && <span className="text-xs text-[color:var(--token-muted)]">{step.timeLabel}</span>}
         </div>
-        <h3 className="text-xl md:text-2xl font-bold mt-1">{step.title}</h3>
-        {step.text && <p className="mt-2 text-[var(--style-body-color,var(--style-text-secondary,#71717a))] leading-relaxed">{step.text}</p>}
+        <h3 className="text-xl md:text-2xl font-bold mt-1" data-edit-path="title">{step.title}</h3>
+        {step.text && <p className="mt-2 text-[color:var(--token-card-body,var(--token-body))] leading-relaxed" data-edit-path="text">{plain(step.text)}</p>}
         {step.checkmarks && step.checkmarks.length > 0 && (
           <ul className="mt-3 space-y-1.5">
             {step.checkmarks.map((item, j) => (
-              <li key={j} className="flex items-center gap-2 text-sm text-[var(--style-body-color,var(--style-text-secondary,#52525b))]">
+              <li key={j} className="flex items-center gap-2 text-sm text-[color:var(--token-card-body,var(--token-body))]" data-edit-collection="checkmarks" data-edit-index={j}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
                   <circle cx="8" cy="8" r="8" fill={accentColor} opacity={0.12} />
                   <path d="M5 8l2 2 4-4" stroke={accentColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

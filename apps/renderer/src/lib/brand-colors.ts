@@ -24,7 +24,7 @@ function hexToRgb(hex: string): string {
   return `${parseInt(hex.slice(1, 3), 16)} ${parseInt(hex.slice(3, 5), 16)} ${parseInt(hex.slice(5, 7), 16)}`;
 }
 
-export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?: string; accentColor?: string; topBarColor?: string; footerColor?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; dividerColor?: string; btnRadius?: string; cardRadius?: string }): Record<string, string> {
+export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?: string; accentColor?: string; pageBg?: string; sectionBg?: string; sectionBgAlt?: string; cardBg?: string; topBarColor?: string; footerColor?: string; footerLinkColor?: string; footerTextColor?: string; navLinkColor?: string; navBgColor?: string; navBrandColor?: string; navLogoColor?: string; headingColor?: string; bodyTextColor?: string; mutedTextColor?: string; linkColor?: string; linkHoverColor?: string; btnPrimaryBg?: string; btnPrimaryText?: string; btnSecondaryBg?: string; btnSecondaryText?: string; btnSecondaryBorder?: string; btnOutlineBg?: string; btnOutlineText?: string; btnOutlineBorder?: string; badgeBg?: string; badgeText?: string; badgeBorder?: string; cardBorder?: string; borderColor?: string; dividerColor?: string; iconColor?: string; btnRadius?: string; cardRadius?: string }): Record<string, string> {
   const vars: Record<string, string> = {};
   const primary = brand.primaryColor;
   if (!primary || !/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(primary)) return vars;
@@ -40,18 +40,17 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   vars['--color-primary-rgb'] = 'var(--brand-primary-rgb)';
   vars['--brand-dark'] = darken(normalizedPrimary, 0.45);
   vars['--brand-secondary'] = brand.secondaryColor || lighten(normalizedPrimary, 0.3);
-  vars['--brand-accent'] = brand.accentColor || '#f39c12';
+  const accent = brand.accentColor || '#f39c12';
+  vars['--brand-accent'] = accent;
   vars['--brand-topbar'] = brand.topBarColor || vars['--brand-dark'];
   vars['--brand-footer'] = brand.footerColor || vars['--brand-dark'];
 
-  // Override style-level variables so industry style defaults (e.g. salon pink)
-  // get replaced by the tenant's actual brand colors
-  vars['--style-brand'] = normalizedPrimary;
-  vars['--style-accent'] = brand.accentColor || vars['--brand-accent'];
-  vars['--style-badge-bg'] = `${normalizedPrimary}12`;
-  vars['--style-badge-border'] = `${normalizedPrimary}28`;
-  vars['--style-badge-text'] = normalizedPrimary;
-  vars['--style-accent-glow'] = `0 0 30px ${normalizedPrimary}33`;
+  // Phase 4: legacy --style-* emissions are gone. No template references
+  // --style-brand / --style-accent / --style-badge-* / --style-accent-glow
+  // anymore (verified via gate-tokens.cjs). The canonical --token-* vars
+  // below are the single source of truth.
+
+  if (brand.pageBg) vars['--background'] = brand.pageBg;
 
   if (brand.footerLinkColor) vars['--brand-footer-link'] = brand.footerLinkColor;
   if (brand.footerTextColor) vars['--brand-footer-text'] = brand.footerTextColor;
@@ -61,7 +60,6 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   if (brand.navLogoColor) vars['--brand-nav-logo'] = brand.navLogoColor;
   if (brand.headingColor) vars['--brand-heading'] = brand.headingColor;
   if (brand.bodyTextColor) vars['--brand-body-text'] = brand.bodyTextColor;
-  if (brand.mutedTextColor) vars['--style-text-muted'] = brand.mutedTextColor;
   if (brand.linkColor) vars['--brand-link'] = brand.linkColor;
   if (brand.linkHoverColor) vars['--brand-link-hover'] = brand.linkHoverColor;
   if (brand.btnPrimaryBg) vars['--brand-btn-bg'] = brand.btnPrimaryBg;
@@ -73,21 +71,60 @@ export function getBrandCssVars(brand: { primaryColor?: string; secondaryColor?:
   if (brand.btnOutlineText) vars['--brand-btn-outline-text'] = brand.btnOutlineText;
   if (brand.btnOutlineBorder) vars['--brand-btn-outline-border'] = brand.btnOutlineBorder;
 
-  // Badge overrides
-  if (brand.badgeBg) vars['--style-badge-bg'] = brand.badgeBg;
-  if (brand.badgeText) vars['--style-badge-text'] = brand.badgeText;
-  if (brand.badgeBorder) vars['--style-badge-border'] = brand.badgeBorder;
+  // Badge overrides (modern --token-* equivalents are set further down).
 
   // Card & border overrides
-  if (brand.cardBorder) vars['--style-card-border'] = `1px solid ${brand.cardBorder}`;
-  if (brand.dividerColor) {
-    vars['--style-divider'] = `1px solid ${brand.dividerColor}`;
-    vars['--style-border-light'] = brand.dividerColor;
-  }
+  const borderColor = brand.borderColor || brand.cardBorder;
+  if (brand.dividerColor) vars['--brand-divider'] = brand.dividerColor;
 
-  // Radius overrides
-  if (brand.btnRadius) vars['--style-button-radius'] = brand.btnRadius;
-  if (brand.cardRadius) vars['--style-card-radius'] = brand.cardRadius;
+  // Radius overrides handled by --token-card-radius / --token-button-radius below.
+
+  // ---------------------------------------------------------------------------
+  // Section color tokens (Layer 2 defaults) — additive, see
+  // apps/renderer/src/lib/section-color-tokens.ts and
+  // docs/color-architecture-audit.md.
+  //
+  // Each semantic slot gets its OWN var so per-section overrides cannot bleed
+  // across roles (e.g. recolouring "eyebrow" no longer also recolours icons,
+  // stat values, quote marks, rating stars and check marks).
+  //
+  // Defaults reference the Layer 1 brand vars above; the legacy `--style-*`
+  // chain stays in place as a fallback in unmigrated templates.
+  // ---------------------------------------------------------------------------
+  vars['--token-section-bg']    = brand.sectionBg     ?? '#ffffff';
+  vars['--token-section-bg-alt']= brand.sectionBgAlt  ?? brand.sectionBg ?? '#f8fafc';
+  vars['--token-card-bg']       = brand.cardBg        ?? '#ffffff';
+  vars['--token-card-border']   = borderColor         ?? 'rgba(15,23,42,0.08)';
+  vars['--token-heading']       = brand.headingColor  ?? '#0f172a';
+  vars['--token-subheading']    = brand.headingColor  ?? '#1e293b';
+  vars['--token-body']          = brand.bodyTextColor ?? '#475569';
+  vars['--token-muted']         = brand.mutedTextColor ?? '#64748b';
+  // Inverse contrast tokens for content on dark backgrounds.
+  vars['--token-on-dark-heading']= '#ffffff';
+  vars['--token-on-dark-body']   = 'rgba(255,255,255,0.82)';
+  vars['--token-on-dark-muted']  = 'rgba(255,255,255,0.62)';
+  // Accent family.
+  vars['--token-accent']        = accent;
+  vars['--token-accent-rgb']    = accent.startsWith('#') ? hexToRgb(accent) : '220 38 38';
+  vars['--token-eyebrow']       = accent;
+  vars['--token-icon']          = brand.iconColor ?? normalizedPrimary;
+  vars['--token-stat-value']    = accent;
+  vars['--token-quote']         = accent;
+  vars['--token-rating-star']   = accent;
+  vars['--token-check']         = accent;
+  vars['--token-badge-bg']      = brand.badgeBg     ?? `${normalizedPrimary}12`;
+  vars['--token-badge-text']    = brand.badgeText   ?? normalizedPrimary;
+  vars['--token-badge-border']  = brand.badgeBorder ?? `${normalizedPrimary}28`;
+  vars['--token-btn-bg']        = brand.btnPrimaryBg   ?? normalizedPrimary;
+  vars['--token-btn-text']      = brand.btnPrimaryText ?? '#ffffff';
+  vars['--token-divider']       = brand.dividerColor ?? 'rgba(15,23,42,0.12)';
+  if (brand.cardRadius) vars['--token-card-radius'] = brand.cardRadius;
+  if (brand.btnRadius) vars['--token-button-radius'] = brand.btnRadius;
+  // Phase 4: typography utilities + shadow + image overlay.
+  vars['--token-card-shadow']      = '0 4px 20px rgba(0,0,0,0.06)';
+  vars['--token-image-overlay']    = 'rgba(0,0,0,0.6)';
+  vars['--token-heading-weight']   = '700';
+  vars['--token-heading-tracking'] = '-0.02em';
 
   return vars;
 }

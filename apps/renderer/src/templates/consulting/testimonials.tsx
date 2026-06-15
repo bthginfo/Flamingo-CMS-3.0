@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { plain } from '@/lib/strip-html';
 import { motion, useInView } from 'framer-motion';
 import { DynamicIcon } from '@/components/ui/icon-map';
 
@@ -18,9 +19,9 @@ export function ConsultingTestimonialsSection({ data }: Props) {
   return (
     <div ref={ref}>
       <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} className="text-center mb-12">
-        {badgeText && <div className="section-badge"><span>{badgeText}</span></div>}
-        {headline && <h2 className="section-headline">{headline}</h2>}
-        {subline && <p className="section-subline">{subline}</p>}
+        {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
+        {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
+        {subline && <p className="section-subline" data-edit-path="subline">{plain(subline)}</p>}
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item, i) => (
@@ -29,20 +30,20 @@ export function ConsultingTestimonialsSection({ data }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
-            className="bg-white border border-slate-200 rounded-xl p-8 relative"
-          >
-            <DynamicIcon name="quote" size={24} className="text-brand-primary/20 absolute top-6 right-6" />
+            className="bg-[var(--token-card-bg)] border border-[color:var(--token-card-border)] rounded-xl p-8 relative"
+           data-edit-collection="items" data-edit-index={i}>
+            <DynamicIcon name="quote" size={24} className="text-[color:color-mix(in_srgb,var(--token-icon)_20%,transparent)] absolute top-6 right-6" />
             {item.rating && (
               <div className="flex gap-0.5 mb-4">
                 {Array.from({ length: item.rating }).map((_, j) => (
-                  <DynamicIcon key={j} name="star" size={14} className="text-amber-400 fill-amber-400" />
+                  <DynamicIcon key={j} name="star" size={14} className="text-amber-400 fill-amber-400"  data-edit-collection="rating" data-edit-index={j}/>
                 ))}
               </div>
             )}
-            <p className="text-slate-700 leading-relaxed italic mb-6">&ldquo;{item.quote}&rdquo;</p>
-            <div className="border-t border-slate-100 pt-4">
-              <div className="font-semibold text-slate-900 text-sm">{item.name}</div>
-              {item.context && <div className="text-slate-400 text-xs mt-0.5">{item.context}</div>}
+            <p className="text-[color:var(--token-muted)] leading-relaxed italic mb-6">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>
+            <div className="border-t border-[color:var(--token-card-border)] pt-4">
+              <div className="font-semibold text-[color:var(--token-heading)] text-sm" data-edit-path="name">{item.name}</div>
+              {item.context && <div className="text-[color:var(--token-body)] text-xs mt-0.5">{item.context}</div>}
             </div>
           </motion.div>
         ))}

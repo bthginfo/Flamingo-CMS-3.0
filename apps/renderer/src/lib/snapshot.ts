@@ -1,6 +1,6 @@
 import { getDb } from './db';
-import { tenants, tenantDomains, pages, pageSections, collections, collectionItems } from '@flamingo/db';
-import { eq, and, asc, notInArray } from 'drizzle-orm';
+import { tenants, tenantDomains, pages, pageSections, collections, collectionItems, publishedSnapshots } from '@flamingo/db';
+import { eq, and, asc, desc, notInArray } from 'drizzle-orm';
 import { headers } from 'next/headers';
 import { unstable_cache } from 'next/cache';
 
@@ -50,8 +50,8 @@ export type Snapshot = {
   generatedAt: string;
 };
 
-/** Resolve tenant from the request hostname. Falls back to first tenant for dev. */
-export async function resolveTenant(): Promise<string | null> {
+/** Resolve tenant from hostname, or from the first path segment for shared lead/demo URLs. */
+export async function resolveTenant(candidateSlug?: string): Promise<string | null> {
   // Standalone mode: fixed tenant via env var (dedicated Vercel project)
   const fixedTenantId = process.env.FIXED_TENANT_ID;
   if (fixedTenantId) return fixedTenantId;
@@ -60,12 +60,21 @@ export async function resolveTenant(): Promise<string | null> {
     const db = getDb();
     const headersList = await headers();
     const host = headersList.get('host') ?? 'localhost';
+    const isLocalHost = host.startsWith('localhost') || host.startsWith('127.0.0.1') || host.startsWith('[::1]');
 
     // Try domain lookup
     const [domain] = await db.select({ tenantId: tenantDomains.tenantId }).from(tenantDomains).where(eq(tenantDomains.domain, host)).limit(1);
     if (domain) return domain.tenantId;
 
-    // Fallback: first active tenant (dev mode)
+    if (candidateSlug) {
+      const [tenantBySlug] = await db.select({ id: tenants.id }).from(tenants).where(and(eq(tenants.slug, candidateSlug), eq(tenants.status, 'active'))).limit(1);
+      if (tenantBySlug) return tenantBySlug.id;
+      if (!isLocalHost) return null;
+    }
+
+    if (!isLocalHost) return null;
+
+    // Fallback: first active tenant (local dev mode only)
     const [tenant] = await db.select({ id: tenants.id }).from(tenants).where(eq(tenants.status, 'active')).limit(1);
     return tenant?.id ?? null;
   } catch (err) {
@@ -74,14 +83,47 @@ export async function resolveTenant(): Promise<string | null> {
   }
 }
 
-/** Get live data for the tenant (cached for public frontend, invalidated on publish). */
+/**
+ * Public-facing snapshot read.
+ *
+ * Draft/Publish (B): if the tenant has an active row in published_snapshots,
+ * the public renderer reads from there — isolating end-users from in-flight
+ * admin edits. If no active snapshot exists yet (legacy tenants or fresh
+ * tenants who never clicked "Veröffentlichen"), we fall back to the draft
+ * read so existing sites keep working transparently.
+ *
+ * Cache key includes the active snapshot's version so a publish flip
+ * naturally invalidates without needing tag-revalidation to land everywhere.
+ */
 export async function getActiveSnapshot(tenantId: string): Promise<Snapshot | null> {
+  const meta = await getActiveSnapshotMeta(tenantId);
+  const cacheKey = meta ? `snapshot-pub-${tenantId}-v${meta.version}` : `snapshot-draft-${tenantId}`;
   const cached = unstable_cache(
-    async () => getDraftSnapshot(tenantId),
-    [`snapshot-${tenantId}`],
-    { revalidate: 60, tags: [`tenant-${tenantId}`] }
+    async () => {
+      if (meta) return meta.snapshot;
+      return getDraftSnapshot(tenantId);
+    },
+    [cacheKey],
+    { revalidate: 60, tags: [`tenant-${tenantId}`] },
   );
   return cached();
+}
+
+async function getActiveSnapshotMeta(tenantId: string): Promise<{ version: number; snapshot: Snapshot } | null> {
+  try {
+    const db = getDb();
+    const [row] = await db
+      .select({ version: publishedSnapshots.version, snapshot: publishedSnapshots.snapshot })
+      .from(publishedSnapshots)
+      .where(and(eq(publishedSnapshots.tenantId, tenantId), eq(publishedSnapshots.isActive, true)))
+      .orderBy(desc(publishedSnapshots.version))
+      .limit(1);
+    if (!row) return null;
+    return { version: row.version, snapshot: row.snapshot as unknown as Snapshot };
+  } catch (err) {
+    console.warn('[getActiveSnapshotMeta] DB error — falling back to draft:', err);
+    return null;
+  }
 }
 
 /** Build a live snapshot from pages/page_sections/collections tables. */
@@ -138,20 +180,46 @@ export async function getDraftSnapshot(tenantId: string): Promise<Snapshot | nul
 }
 
 /** Resolve demo tenant by industry (isDemo=true). Excludes special slug-mapped tenants. */
-export async function resolveDemoTenant(industry: string): Promise<string | null> {
+export async function resolveDemoTenant(industry: string, urlKey?: string): Promise<string | null> {
   const db = getDb();
-  const [tenant] = await db
-    .select({ id: tenants.id })
-    .from(tenants)
-    .where(and(
-      eq(tenants.industry, industry as typeof tenants.industry.enumValues[number]),
-      eq(tenants.isDemo, true),
-      eq(tenants.status, 'active'),
-      notInArray(tenants.slug, ['demo-showcase', 'demo-shop']),
-    ))
-    .orderBy(asc(tenants.createdAt))
-    .limit(1);
-  return tenant?.id ?? null;
+
+  // Step 1: try industry+isDemo lookup. Wrapped because the industry string may not
+  // match the DB enum (e.g. new URL keys without a corresponding enum value), which
+  // would throw at the DB layer and skip the slug fallback below.
+  try {
+    const [tenant] = await db
+      .select({ id: tenants.id })
+      .from(tenants)
+      .where(and(
+        eq(tenants.industry, industry as typeof tenants.industry.enumValues[number]),
+        eq(tenants.isDemo, true),
+        eq(tenants.status, 'active'),
+        notInArray(tenants.slug, ['demo-showcase', 'demo-shop']),
+      ))
+      .orderBy(asc(tenants.createdAt))
+      .limit(1);
+    if (tenant) return tenant.id;
+  } catch (err) {
+    // Invalid enum or DB error — fall through to slug-based lookup.
+    console.warn('[resolveDemoTenant] industry lookup failed for', industry, err instanceof Error ? err.message : err);
+  }
+
+  // Step 2: slug fallback `demo-{urlKey}` (or `demo-{industry}`), without isDemo requirement.
+  const slugKey = urlKey || industry;
+  try {
+    const [bySlug] = await db
+      .select({ id: tenants.id })
+      .from(tenants)
+      .where(and(
+        eq(tenants.slug, `demo-${slugKey}`),
+        eq(tenants.status, 'active'),
+      ))
+      .limit(1);
+    return bySlug?.id ?? null;
+  } catch (err) {
+    console.warn('[resolveDemoTenant] slug lookup failed for demo-', slugKey, err instanceof Error ? err.message : err);
+    return null;
+  }
 }
 
 export async function resolveDemoTenantBySlug(slug: string): Promise<string | null> {

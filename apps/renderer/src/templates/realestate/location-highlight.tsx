@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { MapPin, Train, GraduationCap, ShoppingBag, TreePine } from 'lucide-react';
+import { plain } from '@/lib/strip-html';
 
 type PoiItem = { label: string; distance: string; icon?: string };
 
@@ -27,24 +28,24 @@ export function LocationHighlightSection({ data }: Props) {
   const inView = useInView(ref, { once: true });
 
   return (
-    <section ref={ref} className="py-20 md:py-28 bg-gray-50">
+    <section ref={ref} className="py-20 md:py-28 bg-[var(--token-section-bg-alt)]">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div initial={{ opacity: 0, x: -30 }} animate={inView ? { opacity: 1, x: 0 } : {}}>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">{headline}</h2>
-            {subline && <p className="text-lg text-gray-600 mt-4">{subline}</p>}
-            {description && <p className="text-gray-500 mt-4 leading-relaxed">{description}</p>}
+            <h2 className="text-3xl md:text-4xl font-bold text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
+            {subline && <p className="text-lg text-[color:var(--token-muted)] mt-4" data-edit-path="subline">{plain(subline)}</p>}
+            {description && <p className="text-[color:var(--token-muted)] mt-4 leading-relaxed" data-edit-path="description">{plain(description)}</p>}
 
             {pois.length > 0 && (
               <div className="grid sm:grid-cols-2 gap-3 mt-8">
                 {pois.map((poi, i) => {
                   const Icon = ICON_MAP[poi.icon || 'default'] || ICON_MAP.default;
                   return (
-                    <div key={i} className="flex items-center gap-3 bg-white p-3 rounded-lg border border-gray-100">
-                      <Icon size={18} className="text-brand-primary shrink-0" />
+                    <div key={i} className="flex items-center gap-3 bg-[var(--token-card-bg)] p-3 rounded-lg border border-[color:var(--token-card-border)]">
+                      <Icon size={18} className="text-[color:var(--token-icon)] shrink-0" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{poi.label}</p>
-                        <p className="text-xs text-gray-500">{poi.distance}</p>
+                        <p className="text-sm font-medium text-[color:var(--token-heading)]" data-edit-path="label">{poi.label}</p>
+                        <p className="text-xs text-[color:var(--token-muted)]">{poi.distance}</p>
                       </div>
                     </div>
                   );
@@ -59,7 +60,7 @@ export function LocationHighlightSection({ data }: Props) {
               animate={inView ? { opacity: 1, x: 0 } : {}}
               className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-lg"
             >
-              <img src={image} alt={headline} className="w-full h-full object-cover" />
+              <img data-edit-image="image" src={image} alt={headline} className="w-full h-full object-cover" />
             </motion.div>
           )}
         </div>

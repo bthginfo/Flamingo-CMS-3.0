@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { plain } from '@/lib/strip-html';
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
@@ -16,10 +17,10 @@ export function FlashDayBannerSection({ data }: Props) {
     <section className="py-12 px-6" style={{ backgroundColor: bgColor }}>
       <div className="max-w-4xl mx-auto text-center">
         <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
-          {date && <p className="text-white/70 text-sm font-mono uppercase tracking-widest mb-2">{date}</p>}
-          <h2 className="text-3xl sm:text-5xl font-black text-white uppercase">{headline}</h2>
-          {description && <p className="mt-3 text-white/80 max-w-xl mx-auto">{description}</p>}
-          <a href={ctaHref} className="inline-flex items-center justify-center mt-6 px-8 py-3 bg-black text-white font-bold uppercase tracking-wider text-sm hover:bg-black/80 transition-colors">
+          {date && <p className="text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_70%,transparent)] text-sm font-mono uppercase tracking-widest mb-2" data-edit-path="date">{date}</p>}
+          <h2 className="text-3xl sm:text-5xl font-black text-[color:var(--token-on-dark-heading)] uppercase" data-edit-path="headline">{headline}</h2>
+          {description && <p className="mt-3 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_80%,transparent)] max-w-xl mx-auto" data-edit-path="description">{plain(description)}</p>}
+          <a href={ctaHref} className="inline-flex items-center justify-center mt-6 px-8 py-3 bg-[var(--token-section-bg-alt)] text-[color:var(--token-on-dark-heading)] font-bold uppercase tracking-wider text-sm hover:bg-[color-mix(in_srgb,var(--token-section-bg-alt)_80%,transparent)] transition-colors" data-edit-path="ctaLabel">
             {ctaLabel}
           </a>
         </motion.div>

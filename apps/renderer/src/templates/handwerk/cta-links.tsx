@@ -23,8 +23,8 @@ export function CtaLinksSection({ data }: Props) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-10"
         >
-          <h2 className="section-headline">{headline}</h2>
-          {subline && <div className="section-subline rt-content" dangerouslySetInnerHTML={{ __html: subline }} />}
+          <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
+          {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </motion.div>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -34,21 +34,21 @@ export function CtaLinksSection({ data }: Props) {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.08 }}
-          >
-            <Link
+           data-edit-collection="links" data-edit-index={i}>
+            <Link data-edit-link="link"
               href={link.href}
-              className="group flex items-center gap-4 p-6 rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-lg hover:border-brand-primary/20 transition-all duration-300 hover:-translate-y-1"
+              className="group flex items-center gap-4 p-6 rounded-2xl border border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-sm hover:shadow-lg hover:border-[color-mix(in_srgb,var(--token-icon)_28%,transparent)] transition-all duration-300 hover:-translate-y-1"
             >
               {link.icon && (
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-primary/10 to-brand-secondary/10 flex items-center justify-center text-brand-primary shrink-0">
-                  <DynamicIcon name={link.icon} size={22} />
+                <div className="w-12 h-12 rounded-xl bg-[color-mix(in_srgb,var(--token-icon)_12%,transparent)] flex items-center justify-center text-[color:var(--token-icon)] shrink-0">
+                  <DynamicIcon editPath="icon" name={link.icon} size={22} />
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-gray-900 group-hover:text-brand-primary transition-colors">{link.label}</div>
-                {link.description && <div className="text-sm text-gray-500 mt-0.5 truncate rt-content" dangerouslySetInnerHTML={{ __html: link.description }} />}
+                <div className="font-semibold text-[color:var(--token-heading)] group-hover:text-[color:var(--token-accent)] transition-colors" data-edit-path="label">{link.label}</div>
+                {link.description && <div className="text-sm text-[color:var(--token-body)] mt-0.5 truncate rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: link.description }} />}
               </div>
-              {link.icon && <DynamicIcon name={link.icon} size={18} className="text-gray-300 group-hover:text-brand-primary group-hover:translate-x-1 transition-all shrink-0" />}
+              {link.icon && <DynamicIcon editPath="icon" name={link.icon} size={18} className="text-[color:var(--token-muted)] group-hover:text-[color:var(--token-accent)] group-hover:translate-x-1 transition-all shrink-0" />}
             </Link>
           </motion.div>
         ))}
