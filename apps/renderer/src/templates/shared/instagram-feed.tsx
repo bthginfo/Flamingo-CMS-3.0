@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { Instagram } from 'lucide-react';
@@ -30,7 +30,7 @@ function previewImage(p: IgPost): string {
 function trimCaption(s: string | null, n: number) {
   if (!s) return '';
   const clean = s.replace(/\s+/g, ' ').trim();
-  return clean.length > n ? `${clean.slice(0, n)}…` : clean;
+  return clean.length > n ? `${clean.slice(0, n)}â€¦` : clean;
 }
 
 export function InstagramFeedSection({ data }: Props) {
@@ -61,16 +61,16 @@ export function InstagramFeedSection({ data }: Props) {
     setMounted(true);
     let cancelled = false;
     // Build the feed URL with the right tenant signal:
-    //   • Live preview (admin) injects window.__FLAMINGO_TENANT_ID__ so we can
+    //   â€¢ Live preview (admin) injects window.__FLAMINGO_TENANT_ID__ so we can
     //     ask for the session-gated tenantId variant.
-    //   • Public shared-renderer pages use the first path segment as slug.
-    //   • Custom-domain tenants need no hint (host header is enough).
+    //   â€¢ Public shared-renderer pages use the first path segment as slug.
+    //   â€¢ Custom-domain tenants need no hint (host header is enough).
     const injectedTenantId = typeof window !== 'undefined' ? (window as unknown as { __FLAMINGO_TENANT_ID__?: string }).__FLAMINGO_TENANT_ID__ : '';
     let qs = `limit=${maxPosts}`;
     if (injectedTenantId) {
       qs += `&tenantId=${encodeURIComponent(injectedTenantId)}`;
     } else if (typeof window !== 'undefined') {
-      // Demo URLs look like /demo/<industry>/... — the tenant slug is
+      // Demo URLs look like /demo/<industry>/... â€” the tenant slug is
       // `demo-<industry>`, not the literal "demo" prefix. For everything else
       // the first path segment IS the tenant slug (shared-renderer style).
       const segs = window.location.pathname.split('/').filter(Boolean);
@@ -117,7 +117,7 @@ export function InstagramFeedSection({ data }: Props) {
           {(badgeText || isPreview) && (
             <span
               className="inline-block text-xs font-semibold tracking-wider uppercase mb-3 section-badge px-3 py-1 rounded-full"
-              style={{ color: 'var(--style-badge-text, var(--style-accent-color, currentColor))', backgroundColor: 'var(--style-badge-bg, rgba(0,0,0,0.04))' }}
+              style={{ color: 'var(--token-badge-text, currentColor)', backgroundColor: 'var(--token-badge-bg, rgba(0,0,0,0.04))' }}
               data-edit-path="badgeText"
             >
               {badgeText || (isPreview ? 'Badge' : '')}
@@ -126,16 +126,16 @@ export function InstagramFeedSection({ data }: Props) {
           {(headline || isPreview) && (
             <h2
               className="text-3xl md:text-4xl font-bold tracking-tight"
-              style={{ color: 'var(--style-heading-color, inherit)' }}
+              style={{ color: 'var(--token-heading, inherit)' }}
               data-edit-path="headline"
             >
-              {headline || (isPreview ? 'Überschrift' : '')}
+              {headline || (isPreview ? 'Ãœberschrift' : '')}
             </h2>
           )}
           {(subline || isPreview) && (
             <p
               className="mt-3 text-base md:text-lg"
-              style={{ color: 'var(--style-body-color, inherit)' }}
+              style={{ color: 'var(--token-body, inherit)' }}
               data-edit-path="subline"
             >
               {subline || (isPreview ? 'Unterzeile' : '')}
@@ -196,8 +196,8 @@ export function InstagramFeedSection({ data }: Props) {
             rel="noreferrer noopener"
             className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-sm transition-transform hover:-translate-y-0.5"
             style={{
-              backgroundColor: 'var(--brand-btn-bg, var(--style-button-bg, #111))',
-              color: 'var(--brand-btn-text, var(--style-button-text, #fff))',
+              backgroundColor: 'var(--token-btn-bg, #111)',
+              color: 'var(--token-btn-text, #fff)',
             }}
           >
             <Instagram className="h-4 w-4" />
