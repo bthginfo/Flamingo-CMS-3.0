@@ -7,9 +7,9 @@ import { asList, type SectionProps } from './types';
 type GalleryImage = { src?: string; alt?: string; caption?: string; category?: string };
 
 export function SalonGallerySection({ data, styleVariant }: SectionProps) {
-  const headline = typeof data.headline === 'string' ? data.headline : 'Galerie';
+  const headline = (data.headline as string) || 'Galerie';
   const subline = (data.subline as string) || '';
-  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Einblicke';
+  const badgeText = (data.badgeText as string) || 'Einblicke';
   const images = asList<GalleryImage>(data.images);
 
   const props = { headline, subline, badgeText, images };

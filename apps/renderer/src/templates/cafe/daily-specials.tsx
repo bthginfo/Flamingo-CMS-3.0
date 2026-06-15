@@ -10,7 +10,7 @@ type Special = { title: string; description: string; price?: string; day?: strin
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function DailySpecialsSection({ data }: Props) {
-  const headline = typeof data.headline === 'string' ? data.headline : 'Wochenkarte';
+  const headline = (data.headline as string) || 'Wochenkarte';
   const subline = (data.subline as string) || '';
   const specials = (data.specials as Special[]) || [];
 

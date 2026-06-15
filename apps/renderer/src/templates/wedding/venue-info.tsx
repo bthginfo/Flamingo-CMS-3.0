@@ -9,8 +9,8 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
   const venues = (data.venues as Array<Record<string, string>>) || [];
   const firstVenue = venues[0] || {};
-  const badge = typeof data.badge === 'string' ? data.badge : 'Location';
-  const headline = typeof data.headline === 'string' ? data.headline : 'Die Location';
+  const badge = (data.badge as string) || 'Location';
+  const headline = (data.headline as string) || 'Die Location';
   const subline = (data.subline as string) || '';
   const description = (data.description as string) || firstVenue.description || '';
   const image = (data.image as string) || firstVenue.image || '';
@@ -102,8 +102,8 @@ export function WeddingVenueInfoSection({ data, styleVariant }: Props) {
 }
 
 export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
-  const badge = typeof data.badge === 'string' ? data.badge : 'Anreise';
-  const headline = typeof data.headline === 'string' ? data.headline : 'Anreise & Unterkunft';
+  const badge = (data.badge as string) || 'Anreise';
+  const headline = (data.headline as string) || 'Anreise & Unterkunft';
   const subline = (data.subline as string) || '';
   const rawDirections = (data.directions || data.sections) as Array<Record<string, string>> | undefined;
   const directions = (rawDirections || []).map(d => ({ icon: d.icon, title: d.title, text: d.text || d.content || '' }));
@@ -124,7 +124,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
               {directions.map((d, i) => {
                 const Icon = dirIcons[(d.icon || 'car').toLowerCase()] || Car;
                 return (
-                  <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex gap-6 border-t border-[color:var(--token-card-border)] pt-6" data-edit-collection="directions" data-edit-index={i}>
+                  <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="flex gap-6 border-t border-[color:var(--token-card-border)] pt-6">
                     <Icon className="w-5 h-5 text-[color:var(--token-body)] shrink-0 mt-1" />
                     <div>
                       <h3 className="text-base font-light text-[color:var(--token-heading)]" data-edit-path="title">{d.title}</h3>
@@ -163,7 +163,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
               {directions.map((d, i) => {
                 const Icon = dirIcons[(d.icon || 'car').toLowerCase()] || Car;
                 return (
-                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border)] p-6" data-edit-collection="directions" data-edit-index={i}>
+                  <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-2 border-[color:var(--token-card-border)] p-6">
                     <Icon className="w-6 h-6 text-[color:var(--token-eyebrow)] mb-3" />
                     <h3 className="font-bold text-[color:var(--token-heading)] mb-2" data-edit-path="title">{d.title}</h3>
                     <div className="text-[color:var(--token-muted)] text-sm rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: d.text }} />
@@ -204,7 +204,7 @@ export function WeddingTravelInfoSection({ data, styleVariant }: Props) {
             {directions.map((d, i) => {
               const Icon = dirIcons[(d.icon || 'car').toLowerCase()] || Car;
               return (
-                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center p-6 rounded-xl bg-[var(--token-card-bg)] shadow-sm" data-edit-collection="directions" data-edit-index={i}>
+                <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center p-6 rounded-xl bg-[var(--token-card-bg)] shadow-sm">
                   <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] flex items-center justify-center">
                     <Icon className="w-5 h-5 text-[color:var(--token-icon)]" />
                   </div>

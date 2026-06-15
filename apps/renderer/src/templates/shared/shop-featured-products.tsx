@@ -19,12 +19,6 @@ function formatPrice(cents: number) {
   return (cents / 100).toFixed(2).replace('.', ',') + ' €';
 }
 
-function getPreviewTenantId() {
-  return typeof window !== 'undefined'
-    ? (window as unknown as { __FLAMINGO_TENANT_ID__?: string }).__FLAMINGO_TENANT_ID__
-    : undefined;
-}
-
 export function ShopFeaturedProductsSection({ data }: Props) {
   const headline = (data.headline as string) || 'Empfohlene Produkte';
   const mode = (data.mode as string) || 'latest';
@@ -33,42 +27,13 @@ export function ShopFeaturedProductsSection({ data }: Props) {
   const count = (data.count as number) || 4;
   const columns = (data.columns as number) || 4;
   const shopBase = (data.basePath as string) || '/shop';
-  const previewProducts = Array.isArray(data.products) ? (data.products as Product[]) : [];
-
-  const getProductsFromPreview = () => {
-    let items = previewProducts;
-    if (mode === 'manual' && productIds.length > 0) {
-      const wanted = new Set(productIds);
-      items = items.filter((p) => wanted.has(p.id));
-    }
-    if (mode === 'category' && categorySlug) {
-      items = items.filter((p) => {
-        const productCategorySlug = (p as Product & { categorySlug?: string }).categorySlug;
-        return productCategorySlug === categorySlug;
-      });
-    }
-    return items.slice(0, count);
-  };
-
-  const [products, setProducts] = useState<Product[]>(getProductsFromPreview());
-  const previewProductKey = previewProducts.map((p) => p.id).join(',');
+  const previewProducts = (data.products as Product[] | undefined) || [];
+  const [products, setProducts] = useState<Product[]>(previewProducts.slice(0, count));
 
   useEffect(() => {
-    const localProducts = getProductsFromPreview();
-    const needsFetch = mode === 'manual'
-      ? localProducts.length < Math.min(count, productIds.length || count)
-      : mode === 'category'
-        ? localProducts.length < count
-        : localProducts.length === 0;
-
-    if (!needsFetch) {
-      setProducts(localProducts);
-      return;
-    }
-
+    if (previewProducts.length > 0) return;
     let url = '/api/shop/products?limit=' + count;
-    const tenantId = (data.tenantId as string | undefined) || getPreviewTenantId();
-    if (tenantId) url += '&tenantId=' + encodeURIComponent(tenantId);
+    if (data.tenantId) url += '&tenantId=' + data.tenantId;
     if (mode === 'category' && categorySlug) {
       url += '&category=' + encodeURIComponent(categorySlug);
     }
@@ -78,7 +43,7 @@ export function ShopFeaturedProductsSection({ data }: Props) {
     fetch(url)
       .then(r => r.json())
       .then(d => setProducts((d.products || []).slice(0, count)));
-  }, [mode, categorySlug, count, productIds.join(','), data.tenantId, previewProductKey]);
+  }, [mode, categorySlug, count, productIds.join(','), data.tenantId, previewProducts.length]);
 
   if (products.length === 0) return null;
 
@@ -86,7 +51,7 @@ export function ShopFeaturedProductsSection({ data }: Props) {
 
   return (
     <section className="py-12 md:py-16">
-      <h2 className="text-2xl font-bold mb-8 text-center text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
+      <h2 className="text-2xl font-bold mb-8 text-center" data-edit-path="headline">{headline}</h2>
       <div className={`grid grid-cols-2 ${colsClass} gap-4 md:gap-6`}>
         {products.map(product => (
           <Link key={product.id} href={`${shopBase}/${product.slug}`} className="group">
@@ -99,9 +64,9 @@ export function ShopFeaturedProductsSection({ data }: Props) {
                 )}
               </div>
               <div className="p-3">
-                <h3 className="font-medium text-sm truncate text-[color:var(--token-body)]" data-edit-path="title">{product.title}</h3>
+                <h3 className="font-medium text-sm truncate" data-edit-path="title">{product.title}</h3>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="font-bold text-[color:var(--token-body)]">{formatPrice(product.priceCents)}</span>
+                  <span className="font-bold">{formatPrice(product.priceCents)}</span>
                   {product.comparePriceCents && <span className="text-xs text-[color:var(--token-muted)] line-through">{formatPrice(product.comparePriceCents)}</span>}
                 </div>
               </div>

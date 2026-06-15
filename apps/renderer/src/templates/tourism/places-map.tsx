@@ -26,7 +26,7 @@ type Props = { header: { headline: string; subline: string; badgeText: string };
 function MapEmbed({ mapEmbedUrl, mapFallbackText, className }: { mapEmbedUrl: string; mapFallbackText: string; className: string }) {
   return (
     <div className={className}>
-      {mapEmbedUrl ? <iframe key={mapEmbedUrl} src={mapEmbedUrl} className="h-full min-h-[420px] w-full" loading="lazy" /> : <div className="flex h-full min-h-[420px] items-center justify-center p-8 text-center text-[color:var(--token-body)]" data-edit-path="mapFallbackText">{mapFallbackText}</div>}
+      {mapEmbedUrl ? <iframe src={mapEmbedUrl} className="h-full min-h-[420px] w-full" loading="lazy" /> : <div className="flex h-full min-h-[420px] items-center justify-center p-8 text-center text-[color:var(--token-body)]">{mapFallbackText}</div>}
     </div>
   );
 }
@@ -39,13 +39,13 @@ function Classic({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: P
         <div className="grid gap-4">
           {places.map((place, index) => (
             <motion.article key={`$<span data-edit-path="title">{place.title}</span>-${index}`} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: index * 0.1 }} className="grid gap-4 border-t border-[var(--token-card-border)] pt-4 sm:grid-cols-[120px_1fr]" data-edit-collection="places" data-edit-index={index}>
-              {place.image && <div className="relative aspect-[4/3] overflow-hidden rounded-xl"><Image key={place.image} data-edit-image="image" src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
+              {place.image && <div className="relative aspect-[4/3] overflow-hidden rounded-xl"><Image data-edit-image="image" src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--token-badge-text)]"><span data-edit-path="category">{place.category || ''}</span>{place.category && place.distanceLabel ? ' / ' : ''}<span data-edit-path="distanceLabel">{place.distanceLabel || ''}</span></p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-[color:var(--token-badge-text)]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-bold text-[color:var(--token-heading)]" data-edit-path="title">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-[color:var(--token-muted)]"><MapPin size={13} /><span data-edit-path="address">{place.address}</span></p>}
                 {place.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: place.text }} />}
-                {place.cta?.label && <a data-edit-link="cta" href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--token-accent)]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
+                {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--token-accent)]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
               </div>
             </motion.article>
           ))}
@@ -65,13 +65,13 @@ function Modern({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Pr
         <div className="grid gap-4">
           {places.map((place, index) => (
             <article key={`${place.title}-${index}`} className="grid gap-4 border-t border-[var(--token-card-border)] pt-4 sm:grid-cols-[120px_1fr]" data-edit-collection="places" data-edit-index={index}>
-              {place.image && <div className="relative aspect-[4/3] overflow-hidden"><Image key={place.image} data-edit-image="image" src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
+              {place.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
-                <p className="text-xs font-light uppercase tracking-widest text-[color:var(--token-badge-text)]"><span data-edit-path="category">{place.category || ''}</span>{place.category && place.distanceLabel ? ' / ' : ''}<span data-edit-path="distanceLabel">{place.distanceLabel || ''}</span></p>
+                <p className="text-xs font-light uppercase tracking-widest text-[color:var(--token-badge-text)]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-light text-[color:var(--token-heading)]" data-edit-path="title">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-[color:var(--token-muted)]"><MapPin size={13} /><span data-edit-path="address">{place.address}</span></p>}
                 {place.text && <div className="mt-2 text-sm font-light leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: place.text }} />}
-                {place.cta?.label && <a data-edit-link="cta" href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--token-accent)]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
+                {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-[color:var(--token-accent)]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
               </div>
             </article>
           ))}
@@ -95,13 +95,13 @@ function Bold({ header, mapEmbedUrl, places, ctaPrimary, mapFallbackText }: Prop
         <div className="grid gap-4">
           {places.map((place, index) => (
             <article key={`$<span data-edit-path="title">{place.title}</span>-${index}`} className="grid gap-4 border-t-2 border-[var(--token-card-border)] pt-4 sm:grid-cols-[120px_1fr]" data-edit-collection="places" data-edit-index={index}>
-              {place.image && <div className="relative aspect-[4/3] overflow-hidden"><Image key={place.image} data-edit-image="image" src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
+              {place.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={place.image} alt={place.title || ''} fill className="object-cover" sizes="160px" /></div>}
               <div>
-                <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-badge-text)]"><span data-edit-path="category">{place.category || ''}</span>{place.category && place.distanceLabel ? ' / ' : ''}<span data-edit-path="distanceLabel">{place.distanceLabel || ''}</span></p>
+                <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-badge-text)]">{[place.category, place.distanceLabel].filter(Boolean).join(' / ')}</p>
                 <h3 className="mt-1 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{place.title || ''}</h3>
                 {place.address && <p className="mt-1 inline-flex items-center gap-1 text-xs text-[color:var(--token-muted)]"><MapPin size={13} /><span data-edit-path="address">{place.address}</span></p>}
                 {place.text && <div className="mt-2 text-sm leading-6 text-[color:var(--token-body)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: place.text }} />}
-                {place.cta?.label && <a data-edit-link="cta" href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-black uppercase text-[color:var(--token-accent)]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
+                {place.cta?.label && <a href={place.cta.href || '#'} className="mt-2 inline-flex items-center gap-1 text-sm font-black uppercase text-[color:var(--token-accent)]"><span data-edit-path="label">{place.cta.label}</span><ArrowRight size={14} /></a>}
               </div>
             </article>
           ))}

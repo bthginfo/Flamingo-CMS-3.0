@@ -28,10 +28,8 @@ function MarqueeRow({ items, reverse, speed = 30 }: { items: MarqueeItem[]; reve
         className={`flex gap-4 ${reverse ? 'animate-marquee-reverse' : 'animate-marquee'} group-hover:[animation-play-state:paused]`}
         style={{ animationDuration: `${speed}s` }}
       >
-        {doubled.map((item, i) => {
-          const sourceIndex = items.indexOf(item);
-          return (
-          <div key={i} className="flex-shrink-0 w-[320px] md:w-[380px] rounded-xl bg-[var(--token-card-bg)] border border-[var(--token-card-border)] shadow-sm p-5 hover:shadow-md transition-shadow duration-300" data-edit-collection="items" data-edit-index={sourceIndex === -1 ? i % Math.max(items.length, 1) : sourceIndex}>
+        {doubled.map((item, i) => (
+          <div key={i} className="flex-shrink-0 w-[320px] md:w-[380px] rounded-xl bg-[var(--token-card-bg)] border border-[var(--token-card-border)] shadow-sm p-5 hover:shadow-md transition-shadow duration-300" data-edit-collection="doubled" data-edit-index={i}>
             <p className="text-sm text-[color:var(--token-card-body,var(--token-body))] leading-relaxed mb-4 line-clamp-4">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>
             <div className="flex items-center gap-3">
               {item.image && <img data-edit-image="image" src={item.image} alt={item.name} className="w-9 h-9 rounded-full object-cover" />}
@@ -42,7 +40,7 @@ function MarqueeRow({ items, reverse, speed = 30 }: { items: MarqueeItem[]; reve
               {item.rating && <div className="ml-auto"><StarRating rating={item.rating} /></div>}
             </div>
           </div>
-        );})}
+        ))}
       </div>
     </div>
   );

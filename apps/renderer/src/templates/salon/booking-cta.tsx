@@ -5,9 +5,9 @@ import { CalendarDays, Phone } from 'lucide-react';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 
 export function BookingCtaSection({ data, styleVariant }: SectionProps) {
-  const headline = typeof data.headline === 'string' ? data.headline : 'Termin buchen';
+  const headline = (data.headline as string) || 'Termin buchen';
   const subline = (data.subline as string) || '';
-  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Buchung';
+  const badgeText = (data.badgeText as string) || 'Buchung';
   const introText = (data.introText as string) || '';
   const onlineCta = asButton(data.onlineCta);
   const phoneCta = asButton(data.phoneCta);
@@ -37,7 +37,7 @@ function BookingClassic({ headline, subline, badgeText, introText, onlineCta, ph
         {phoneCta.label && <a data-edit-link="phoneCta" href={phoneCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)] px-5 py-3 font-semibold text-[color:var(--token-heading)]"><Phone size={17} /><span data-edit-path="label">{phoneCta.label}</span></a>}
         {whatsappCta.label && <a data-edit-link="whatsappCta" href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)] px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{whatsappCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note, index) => <span key={`${note}-${index}`} className="rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs text-[color:var(--token-eyebrow)]" data-edit-collection="notes" data-edit-index={index} data-edit-path="note">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs text-[color:var(--token-eyebrow)]" data-edit-path="note">{note}</span>)}</div>
     </motion.div>
   );
 }
@@ -56,7 +56,7 @@ function BookingModern({ headline, subline, badgeText, introText, onlineCta, pho
         {phoneCta.label && <a data-edit-link="phoneCta" href={phoneCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted)]"><Phone size={16} /><span data-edit-path="label">{phoneCta.label}</span></a>}
         {whatsappCta.label && <a data-edit-link="whatsappCta" href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted)]" data-edit-path="label">{whatsappCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-3">{notes.map((note, index) => <span key={`${note}-${index}`} className="border-b border-[var(--token-card-border)] pb-1 text-xs font-light text-[color:var(--token-muted)]" data-edit-collection="notes" data-edit-index={index} data-edit-path="note">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-3">{notes.map((note) => <span key={note} className="border-b border-[var(--token-card-border)] pb-1 text-xs font-light text-[color:var(--token-muted)]" data-edit-path="note">{note}</span>)}</div>
     </div>
   );
 }
@@ -75,7 +75,7 @@ function BookingBold({ headline, subline, badgeText, introText, onlineCta, phone
         {phoneCta.label && <a data-edit-link="phoneCta" href={phoneCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]"><Phone size={17} /><span data-edit-path="label">{phoneCta.label}</span></a>}
         {whatsappCta.label && <a data-edit-link="whatsappCta" href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-card-border)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{whatsappCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note, index) => <span key={`${note}-${index}`} className="bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-collection="notes" data-edit-index={index} data-edit-path="note">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="note">{note}</span>)}</div>
     </div>
   );
 }

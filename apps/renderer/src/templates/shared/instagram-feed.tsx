@@ -117,7 +117,7 @@ export function InstagramFeedSection({ data }: Props) {
           {(badgeText || isPreview) && (
             <span
               className="inline-block text-xs font-semibold tracking-wider uppercase mb-3 section-badge px-3 py-1 rounded-full"
-              style={{ color: 'var(--token-badge-text, var(--token-eyebrow, currentColor))', backgroundColor: 'var(--token-badge-bg, rgba(0,0,0,0.04))' }}
+              style={{ color: 'var(--style-badge-text, var(--style-accent-color, currentColor))', backgroundColor: 'var(--style-badge-bg, rgba(0,0,0,0.04))' }}
               data-edit-path="badgeText"
             >
               {badgeText || (isPreview ? 'Badge' : '')}
@@ -126,7 +126,7 @@ export function InstagramFeedSection({ data }: Props) {
           {(headline || isPreview) && (
             <h2
               className="text-3xl md:text-4xl font-bold tracking-tight"
-              style={{ color: 'var(--token-heading, inherit)' }}
+              style={{ color: 'var(--style-heading-color, inherit)' }}
               data-edit-path="headline"
             >
               {headline || (isPreview ? 'Überschrift' : '')}
@@ -135,7 +135,7 @@ export function InstagramFeedSection({ data }: Props) {
           {(subline || isPreview) && (
             <p
               className="mt-3 text-base md:text-lg"
-              style={{ color: 'var(--token-body, inherit)' }}
+              style={{ color: 'var(--style-body-color, inherit)' }}
               data-edit-path="subline"
             >
               {subline || (isPreview ? 'Unterzeile' : '')}
@@ -196,8 +196,8 @@ export function InstagramFeedSection({ data }: Props) {
             rel="noreferrer noopener"
             className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-sm transition-transform hover:-translate-y-0.5"
             style={{
-              backgroundColor: 'var(--token-btn-bg, #111)',
-              color: 'var(--token-btn-text, #fff)',
+              backgroundColor: 'var(--brand-btn-bg, var(--style-button-bg, #111))',
+              color: 'var(--brand-btn-text, var(--style-button-text, #fff))',
             }}
           >
             <Instagram className="h-4 w-4" />

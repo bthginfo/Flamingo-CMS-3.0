@@ -75,29 +75,10 @@ export function PortfolioGallerySection({ data, styleVariant }: Props) {
         )}
 
         <div className={isModern ? 'grid grid-cols-2 md:grid-cols-4 gap-1' : isBold ? 'columns-2 md:columns-3 lg:columns-4 gap-2 space-y-2' : 'columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3'}>
-          <AnimatePresence initial={false}>
+          <AnimatePresence mode="popLayout">
             {filtered.map((img, i) => (
-              <motion.div
-                key={img.src}
-                initial={false}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.18 }}
-                className={`${isModern ? 'relative aspect-square' : 'break-inside-avoid'} cursor-pointer group relative ${!isModern ? 'rounded-lg' : ''} overflow-hidden bg-[color:color-mix(in_srgb,var(--token-card-bg,#fff)_82%,var(--token-section-bg-alt,#f8fafc))] [backface-visibility:hidden] [transform:translateZ(0)]`}
-                onClick={() => setLightbox(i)}
-                data-edit-collection="filtered"
-                data-edit-index={i}
-              >
-                <Image
-                  data-edit-image="src"
-                  src={img.src}
-                  alt={img.alt || ''}
-                  priority={i < 6}
-                  sizes={isModern ? '(max-width: 768px) 50vw, 25vw' : '(max-width: 768px) 50vw, 33vw'}
-                  {...(isModern
-                    ? { fill: true, className: 'object-cover transition-transform duration-500 group-hover:scale-105 [backface-visibility:hidden] [transform:translateZ(0)]' }
-                    : { width: 600, height: 800, className: 'w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105 [backface-visibility:hidden] [transform:translateZ(0)]' })}
-                />
+              <motion.div key={img.src} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.3 }} className={`${isModern ? 'relative aspect-square' : 'break-inside-avoid'} cursor-pointer group relative ${!isModern ? 'rounded-lg' : ''} overflow-hidden`} onClick={() => setLightbox(i)} data-edit-collection="filtered" data-edit-index={i}>
+                <Image data-edit-image="src" src={img.src} alt={img.alt || ''} {...(isModern ? { fill: true, className: 'object-cover transition-transform duration-500 group-hover:scale-105' } : { width: 600, height: 800, className: 'w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105' })} />
                 {isBold && <div className="absolute inset-0 border border-[color:color-mix(in_srgb,var(--token-card-border)_10%,transparent)]" />}
                 <div className={`absolute inset-0 ${isBold ? 'bg-[color-mix(in_srgb,var(--token-section-bg-alt)_0%,transparent)] group-hover:bg-[color-mix(in_srgb,var(--token-section-bg-alt)_50%,transparent)]' : 'bg-[color-mix(in_srgb,var(--token-section-bg-alt)_0%,transparent)] group-hover:bg-[color-mix(in_srgb,var(--token-section-bg-alt)_30%,transparent)]'} transition-colors duration-300 flex items-end`}>
                   {(img.alt || img.location) && (

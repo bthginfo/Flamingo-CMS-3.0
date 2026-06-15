@@ -10,7 +10,7 @@ type Props = { data: Record<string, unknown>; variant?: string | null; styleVari
 
 export function TestimonialsSection({ data, styleVariant }: Props) {
   const headline = (data.headline as string) || '';
-  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Kundenstimmen';
+  const badgeText = (data.badgeText as string) || 'Kundenstimmen';
   const ratingValue = (data.ratingValue as string) || '';
   const ratingCount = (data.ratingCount as string) || '';
   const items = (data.items as { quote: string; name: string; context?: string; rating?: number }[]) || [];

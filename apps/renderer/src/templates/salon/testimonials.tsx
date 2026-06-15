@@ -7,9 +7,9 @@ import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 type Testimonial = { quote?: string; name?: string; context?: string; rating?: number; sourceLabel?: string };
 
 export function SalonTestimonialsSection({ data, styleVariant }: SectionProps) {
-  const headline = typeof data.headline === 'string' ? data.headline : 'Bewertungen';
+  const headline = (data.headline as string) || 'Bewertungen';
   const subline = (data.subline as string) || '';
-  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Stimmen';
+  const badgeText = (data.badgeText as string) || 'Stimmen';
   const ratingValue = (data.ratingValue as string) || '';
   const ratingCount = (data.ratingCount as string) || '';
   const items = asList<Testimonial>(data.items);

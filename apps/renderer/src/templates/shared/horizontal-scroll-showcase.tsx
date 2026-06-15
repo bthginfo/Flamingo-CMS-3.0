@@ -73,14 +73,7 @@ function DesktopStickyScroll({ headline, subline, panels, bgColor, textColor, do
         <motion.div className="flex h-full" style={{ x, width: `${panels.length * 100}%` }}>
           {panels.map((panel, i) => (
             <div key={i} className="relative flex-shrink-0 h-full" style={{ width: `${100 / panels.length}%` }} data-edit-collection="panels" data-edit-index={i}>
-              <img
-                data-edit-image="image"
-                src={panel.image}
-                alt={panel.title}
-                loading={i < 2 ? 'eager' : 'lazy'}
-                decoding="async"
-                className="absolute inset-0 w-full h-full object-cover [backface-visibility:hidden] [transform:translateZ(0)]"
-              />
+              <img data-edit-image="image" src={panel.image} alt={panel.title} className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0" style={{ backgroundColor: panel.overlayColor || 'rgba(0,0,0,0.4)' }} />
               <div className="relative z-10 flex flex-col justify-end h-full p-8 md:p-14 max-w-lg">
                 <motion.h3
@@ -142,14 +135,7 @@ function MobileCarousel({ headline, subline, panels, bgColor, textColor, dotColo
         {panels.map((panel, i) => (
           <div key={i} className="flex-shrink-0 w-full snap-center px-4" data-edit-collection="panels" data-edit-index={i}>
             <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
-              <img
-                data-edit-image="image"
-                src={panel.image}
-                alt={panel.title}
-                loading={i < 2 ? 'eager' : 'lazy'}
-                decoding="async"
-                className="absolute inset-0 w-full h-full object-cover [backface-visibility:hidden] [transform:translateZ(0)]"
-              />
+              <img data-edit-image="image" src={panel.image} alt={panel.title} className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0" style={{ backgroundColor: panel.overlayColor || 'rgba(0,0,0,0.4)' }} />
               <div className="relative z-10 flex flex-col justify-end h-full p-6">
                 <h3 className="text-xl font-bold" data-edit-path="title">{panel.title}</h3>

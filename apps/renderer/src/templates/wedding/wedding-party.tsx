@@ -6,8 +6,8 @@ import Image from 'next/image';
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function WeddingPartySection({ data, styleVariant }: Props) {
-  const badge = typeof data.badge === 'string' ? data.badge : 'Unsere Crew';
-  const headline = typeof data.headline === 'string' ? data.headline : 'Trauzeugen & Begleitung';
+  const badge = (data.badge as string) || 'Unsere Crew';
+  const headline = (data.headline as string) || 'Trauzeugen & Begleitung';
   const members = (data.members as Array<{ name: string; role: string; image?: string; text?: string }>) || [];
   const p = { badge, headline, members };
 

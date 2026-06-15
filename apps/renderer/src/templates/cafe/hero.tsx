@@ -9,7 +9,7 @@ import { plain } from '@/lib/strip-html';
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function CafeHeroSection({ data }: Props) {
-  const headline = typeof data.headline === 'string' ? data.headline : 'Kaffee, Kuchen & gute Vibes';
+  const headline = (data.headline as string) || 'Kaffee, Kuchen & gute Vibes';
   const subline = (data.subline as string) || '';
   const bgImage = (data.bgImage as string) || '';
   const overlayOpacity = (data.overlayOpacity as number) ?? 0.5;
@@ -50,12 +50,12 @@ export function CafeHeroSection({ data }: Props) {
           )}
           <div className="flex flex-wrap gap-4 mt-8">
             {primaryCta && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 font-semibold rounded-full transition-all hover:brightness-110" style={{ background: 'var(--token-btn-bg,#b45309)', color: 'var(--token-btn-text,var(--token-on-dark-heading))' }} data-edit-path="label">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-amber-700 hover:bg-amber-800 text-[color:var(--token-on-dark-heading)] font-semibold rounded-full transition-all" data-edit-path="label">
                 {primaryCta.label}
               </a>
             )}
             {secondaryCta && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] hover:bg-[color-mix(in_srgb,var(--token-card-bg)_20%,transparent)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] backdrop-blur-sm transition-all" style={{ background: 'var(--token-btn-secondary-bg,color-mix(in_srgb,var(--token-card-bg)_10%,transparent))', color: 'var(--token-btn-secondary-text,var(--token-on-dark-heading))', borderColor: 'var(--token-btn-secondary-border,color-mix(in_srgb,var(--token-card-border)_20%,transparent))' }} data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] hover:bg-[color-mix(in_srgb,var(--token-card-bg)_20%,transparent)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] backdrop-blur-sm transition-all" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

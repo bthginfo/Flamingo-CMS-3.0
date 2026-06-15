@@ -21,9 +21,9 @@ export function CollectionHeroSection({ data, styleVariant }: Props) {
   const bgImage = (data.bgImage as string) || '';
   const category = (data.category as string) || '';
   const date = (data.date as string) || '';
-  const overlayColor = typeof data.overlayColor === 'string' ? data.overlayColor : '#000000';
+  const overlayColor = (data.overlayColor as string) || '#000000';
   const overlayOpacity = typeof data.overlayOpacity === 'number' ? data.overlayOpacity : 0.5;
-  const bgPosition = typeof data.bgPosition === 'string' ? data.bgPosition : 'center';
+  const bgPosition = (data.bgPosition as string) || 'center';
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 

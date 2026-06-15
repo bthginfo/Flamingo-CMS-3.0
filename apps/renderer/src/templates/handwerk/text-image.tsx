@@ -38,19 +38,7 @@ export function TextImageSection({ data, variant }: Props) {
           </motion.div>
         )}
         <div className={!image ? 'md:col-span-2 max-w-3xl mx-auto' : ''}>
-          {badge && (
-            <span
-              className="section-badge"
-              data-edit-path="badge"
-              style={{
-                backgroundColor: 'var(--token-badge-bg, var(--style-badge-bg, rgba(26, 82, 118, 0.05)))',
-                borderColor: 'var(--token-badge-border, var(--style-badge-border, rgba(26, 82, 118, 0.1)))',
-                color: 'var(--token-badge-text, var(--style-badge-text, var(--token-eyebrow, var(--token-accent, inherit))))',
-              }}
-            >
-              {badge}
-            </span>
-          )}
+          {badge && <span className="section-badge" data-edit-path="badge">{badge}</span>}
           {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
           {text && <div className="text-[color:var(--token-body)] text-lg leading-relaxed mt-4 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: text }} />}
           {items.length > 0 && (
@@ -74,7 +62,7 @@ export function TextImageSection({ data, variant }: Props) {
                 </Link>
               )}
               {secondaryCta.label && (
-                <Link data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border px-6 py-3 font-semibold transition-colors hover:brightness-110" style={{ background: 'var(--token-btn-secondary-bg,transparent)', color: 'var(--token-btn-secondary-text,var(--token-body))', borderColor: 'var(--token-btn-secondary-border,var(--token-card-border))' }}>
+                <Link data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] px-6 py-3 font-semibold text-[color:var(--token-body)] hover:border-[var(--token-icon)] hover:text-[color:var(--token-icon)] transition-colors">
                   {secondaryCta.label} {secondaryCta.icon && <DynamicIcon editPath="secondaryCta.icon" name={secondaryCta.icon} size={16} />}
                 </Link>
               )}

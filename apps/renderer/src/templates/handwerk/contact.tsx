@@ -10,11 +10,11 @@ import { DynamicContactForm, type FormFieldDef } from '@/components/dynamic-cont
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
 export function ContactSection({ data }: Props) {
-  const headline = typeof data.headline === 'string' ? data.headline : 'Kontakt';
+  const headline = (data.headline as string) || 'Kontakt';
   const introText = (data.introText as string) || '';
   const badgeText = (data.badgeText as string) || '';
   const formEnabled = data.formEnabled !== false;
-  const submitLabel = typeof data.submitLabel === 'string' ? data.submitLabel : 'Nachricht senden';
+  const submitLabel = (data.submitLabel as string) || 'Nachricht senden';
   const formFields = data.formFields as FormFieldDef[] | undefined;
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });

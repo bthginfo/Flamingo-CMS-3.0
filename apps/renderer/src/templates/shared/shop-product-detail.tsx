@@ -17,8 +17,6 @@ export function ShopProductDetailSection({ data }: Props) {
   const [fetchedProduct, setFetchedProduct] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(false);
   const shopBase = (data.basePath as string) || '/shop';
-  const tenantId = data.tenantId as string | undefined;
-  const shopBackHref = tenantId ? `${shopBase}?tenantId=${encodeURIComponent(tenantId)}` : shopBase;
 
   const slug = (data._slug as string) || (typeof window !== 'undefined' ? window.location.pathname.split('/').pop() : null);
 
@@ -84,7 +82,7 @@ export function ShopProductDetailSection({ data }: Props) {
   return (
     <section className="py-8 md:py-12">
       {/* Back link */}
-      <Link href={shopBackHref} className="inline-flex items-center gap-2 text-sm text-[color:var(--token-muted)] hover:text-[color:var(--token-heading)] mb-6 transition-colors">
+      <Link href={shopBase} className="inline-flex items-center gap-2 text-sm text-[color:var(--token-muted)] hover:text-[color:var(--token-heading)] mb-6 transition-colors">
         <ArrowLeft size={16} /> Zurück zum Shop
       </Link>
 

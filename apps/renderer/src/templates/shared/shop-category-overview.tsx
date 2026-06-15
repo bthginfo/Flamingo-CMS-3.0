@@ -9,12 +9,6 @@ type Category = { id: string; name: string; slug: string; description?: string |
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
-function getPreviewTenantId() {
-  return typeof window !== 'undefined'
-    ? (window as unknown as { __FLAMINGO_TENANT_ID__?: string }).__FLAMINGO_TENANT_ID__
-    : undefined;
-}
-
 export function ShopCategoryOverviewSection({ data }: Props) {
   const headline = (data.headline as string) || 'Unsere Kategorien';
   const subline = (data.subline as string) || '';
@@ -28,8 +22,7 @@ export function ShopCategoryOverviewSection({ data }: Props) {
 
   useEffect(() => {
     if (previewCategories.length > 0) return;
-    const tenantId = (data.tenantId as string | undefined) || getPreviewTenantId();
-    const params = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : '';
+    const params = data.tenantId ? `?tenantId=${data.tenantId}` : '';
     fetch(`/api/shop/products${params}`)
       .then(r => r.json())
       .then(d => setCategories(d.categories || []))
@@ -47,8 +40,8 @@ export function ShopCategoryOverviewSection({ data }: Props) {
       </div>
 
       <div className={`grid grid-cols-1 sm:grid-cols-2 ${columns >= 3 ? 'lg:grid-cols-3' : ''} ${columns >= 4 ? 'xl:grid-cols-4' : ''} gap-6`}>
-        {categories.map((cat, index) => (
-          <Link key={cat.id} href={`${shopGridPath}?kategorie=${cat.slug}`} className="group" data-edit-collection="categories" data-edit-index={index}>
+        {categories.map(cat => (
+          <Link key={cat.id} href={`${shopGridPath}?kategorie=${cat.slug}`} className="group">
             <div className="bg-[var(--token-card-bg)] rounded-2xl border border-[color:var(--token-card-border)] overflow-hidden hover:shadow-lg transition-shadow">
               <div className="aspect-[4/3] bg-[var(--token-section-bg-alt)] relative overflow-hidden">
                 {cat.image ? (

@@ -12,23 +12,23 @@ import { ImageEffectWrapper, type ImageEffect } from '@/components/ui/image-effe
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function HeroSection({ data, styleVariant }: Props) {
-  const headline = typeof data.headline === 'string' ? data.headline : 'Willkommen';
+  const headline = (data.headline as string) || 'Willkommen';
   const subline = (data.subline as string) || '';
   const badgeText = (data.badgeText as string) || '';
-  const badgeIcon = typeof data.badgeIcon === 'string' ? data.badgeIcon : 'Shield';
+  const badgeIcon = (data.badgeIcon as string) || 'Shield';
   const badgeStarsIcon = (data.badgeStarsIcon as string) || '';
   const trustItems = (data.trustItems as string[]) || [];
   const trustStripColor = (data.trustStripColor as string) || '';
   const bgImage = (data.bgImage as string) || '';
   const bgImageMobile = (data.bgImageMobile as string) || '';
   const bgColor = (data.bgColor as string) || '';
-  const bgMode = typeof data.bgMode === 'string' ? data.bgMode : 'image';
+  const bgMode = (data.bgMode as string) || 'image';
   const primaryCta = data.primaryCta as { label: string; href: string; icon?: string } | undefined;
   const secondaryCta = data.secondaryCta as { label: string; href: string; icon?: string } | undefined;
   const overlayColor = (data.overlayColor as string) || '';
   const overlayOpacity = (data.overlayOpacity as number) ?? -1;
-  const bgPosition = typeof data.bgPosition === 'string' ? data.bgPosition : 'center';
-  const bgPositionMobile = typeof data.bgPositionMobile === 'string' ? data.bgPositionMobile : 'center';
+  const bgPosition = (data.bgPosition as string) || 'center';
+  const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';
   const imageEffectIntensity = (data.imageEffectIntensity as 'subtle' | 'medium' | 'strong') || 'medium';
 
@@ -182,7 +182,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
               </a>
             )}
             {secondaryCta?.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-card-border)] px-7 py-3 text-[color:var(--token-muted)] hover:text-[color:var(--token-muted)] hover:border-[color:var(--token-card-border)] transition-colors text-sm w-full sm:w-auto" style={{ background: 'var(--token-btn-secondary-bg,transparent)', color: 'var(--token-btn-secondary-text,var(--token-muted))', borderColor: 'var(--token-btn-secondary-border,var(--token-card-border))' }}>
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-card-border)] px-7 py-3 text-[color:var(--token-muted)] hover:text-[color:var(--token-muted)] hover:border-[color:var(--token-card-border)] transition-colors text-sm w-full sm:w-auto">
                 <Phone size={14} /><span data-edit-path="label">{secondaryCta.label}</span>
               </a>
             )}
@@ -251,7 +251,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
               </a>
             )}
             {secondaryCta?.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_30%,transparent)] text-[color:var(--token-on-dark-heading)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-card-border)] transition-colors" style={{ background: 'var(--token-btn-secondary-bg,transparent)', color: 'var(--token-btn-secondary-text,var(--token-on-dark-heading))', borderColor: 'var(--token-btn-secondary-border,color-mix(in_srgb,var(--token-card-border)_30%,transparent))' }}>
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_30%,transparent)] text-[color:var(--token-on-dark-heading)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-card-border)] transition-colors">
                 <Phone size={16} /><span data-edit-path="label">{secondaryCta.label}</span>
               </a>
             )}

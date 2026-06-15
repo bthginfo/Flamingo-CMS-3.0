@@ -7,9 +7,9 @@ import { asList, type SectionProps } from './types';
 type Transformation = { title?: string; text?: string; beforeImage?: string; afterImage?: string; category?: string; caption?: string; cta?: { label?: string; href?: string } };
 
 export function BeforeAfterSection({ data, styleVariant }: SectionProps) {
-  const headline = typeof data.headline === 'string' ? data.headline : 'Vorher & Nachher';
+  const headline = (data.headline as string) || 'Vorher & Nachher';
   const subline = (data.subline as string) || '';
-  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Transformation';
+  const badgeText = (data.badgeText as string) || 'Transformation';
   const items = asList<Transformation>(data.items);
 
   const props = { headline, subline, badgeText, items };

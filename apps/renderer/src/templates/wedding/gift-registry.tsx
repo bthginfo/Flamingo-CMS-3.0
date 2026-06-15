@@ -7,8 +7,8 @@ import { plain } from '@/lib/strip-html';
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
 export function WeddingGiftRegistrySection({ data, styleVariant }: Props) {
-  const badge = typeof data.badge === 'string' ? data.badge : 'Geschenke';
-  const headline = typeof data.headline === 'string' ? data.headline : 'Geschenkideen';
+  const badge = (data.badge as string) || 'Geschenke';
+  const headline = (data.headline as string) || 'Geschenkideen';
   const subline = (data.subline as string) || '';
   const text = (data.text as string) || (data.freeText as string) || '';
   const rawItems = (data.items || data.gifts) as Array<Record<string, string>> | undefined;

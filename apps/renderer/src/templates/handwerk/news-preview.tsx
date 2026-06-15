@@ -8,23 +8,23 @@ import { DynamicIcon } from '@/components/ui/icon-map';
 import Image from 'next/image';
 import Link from 'next/link';
 
-type NewsItem = { title: string; slug?: string; href?: string; image?: string; excerpt?: string; date?: string };
+type NewsItem = { title: string; slug: string; image?: string; excerpt?: string; date?: string };
 type Props = { data: Record<string, unknown>; variant?: string | null };
 
 export function NewsPreviewSection({ data }: Props) {
-  const headline = typeof data.headline === 'string' ? data.headline : 'Aktuelles';
+  const headline = (data.headline as string) || 'Aktuelles';
   const subline = (data.subline as string) || '';
   const items = (data.items as NewsItem[]) || [];
-  const collectionKey = typeof data.collectionKey === 'string' ? data.collectionKey : 'news';
+  const collectionKey = (data.collectionKey as string) || 'news';
   const collectionBasePath = (data.collectionBasePath as string) || '';
   const linkPrefix = (data.linkPrefix as string) || '';
-  const linkLabel = typeof data.linkLabel === 'string' ? data.linkLabel : 'Alle Beiträge';
+  const linkLabel = (data.linkLabel as string) || 'Alle Beiträge';
   const linkIcon = (data.linkIcon as string) || '';
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   // Derive base path for shared renderer routes (e.g. /spiral-coffee or /demo/tourism)
-  const pathname = usePathname() || '';
+  const pathname = usePathname();
   const demoMatch = pathname.match(/^(\/demo\/[^/]+)/);
   const tenantMatch = pathname.match(/^\/(?!admin(?:\/|$)|api(?:\/|$)|c(?:\/|$)|shop(?:\/|$)|demo(?:\/|$)|_next(?:\/|$))([^/]+)/);
   const basePath = linkPrefix || (demoMatch ? demoMatch[1] : tenantMatch ? `/${tenantMatch[1]}` : '');
@@ -57,7 +57,7 @@ export function NewsPreviewSection({ data }: Props) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: i * 0.1 }}
            data-edit-collection="items" data-edit-index={i}>
-            <Link href={item.href || (item.slug ? `${detailBasePath}/${item.slug}` : '#')} className="group block">
+            <Link href={`${detailBasePath}/${item.slug}`} className="group block">
               {item.image && (
                 <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-4">
                   <Image data-edit-image="image" src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />

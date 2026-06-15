@@ -33,7 +33,7 @@ function Classic({ header, introText, onlineCta, phoneCta, callbackCta, external
         {callbackCta.label && <a data-edit-link="callbackCta" href={callbackCta.href || '#'} className="inline-flex rounded-full border border-[var(--token-card-border)] px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{callbackCta.label}</a>}
         {externalCta.label && <a data-edit-link="externalCta" href={externalCta.href || '#'} className="inline-flex rounded-full border border-[var(--token-card-border)] px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{externalCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note, index) => <span key={`${note}-${index}`} className="rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs text-[color:var(--token-badge-text)]" data-edit-collection="notes" data-edit-index={index} data-edit-path="note">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="rounded-full bg-[var(--token-badge-bg)] px-3 py-1 text-xs text-[color:var(--token-badge-text)]" data-edit-path="note">{note}</span>)}</div>
     </motion.div>
   );
 }
@@ -49,7 +49,7 @@ function Modern({ header, introText, onlineCta, phoneCta, callbackCta, externalC
         {callbackCta.label && <a data-edit-link="callbackCta" href={callbackCta.href || '#'} className="inline-flex rounded-lg border border-[var(--token-card-border)] px-5 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{callbackCta.label}</a>}
         {externalCta.label && <a data-edit-link="externalCta" href={externalCta.href || '#'} className="inline-flex rounded-lg border border-[var(--token-card-border)] px-5 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{externalCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note, index) => <span key={`${note}-${index}`} className="border border-[var(--token-card-border)] px-3 py-1 text-xs text-[color:var(--token-muted)]" data-edit-collection="notes" data-edit-index={index} data-edit-path="note">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="border border-[var(--token-card-border)] px-3 py-1 text-xs text-[color:var(--token-muted)]" data-edit-path="note">{note}</span>)}</div>
     </div>
   );
 }
@@ -69,7 +69,7 @@ function Bold({ header, introText, onlineCta, phoneCta, callbackCta, externalCta
         {callbackCta.label && <a data-edit-link="callbackCta" href={callbackCta.href || '#'} className="inline-flex border-2 border-[var(--token-card-border)] px-5 py-3 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="label">{callbackCta.label}</a>}
         {externalCta.label && <a data-edit-link="externalCta" href={externalCta.href || '#'} className="inline-flex border-2 border-[var(--token-card-border)] px-5 py-3 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="label">{externalCta.label}</a>}
       </div>
-      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note, index) => <span key={`${note}-${index}`} className="border border-[var(--token-card-border)] px-3 py-1 text-xs font-bold uppercase text-[color:var(--token-body)]" data-edit-collection="notes" data-edit-index={index} data-edit-path="note">{note}</span>)}</div>
+      <div className="mt-6 flex flex-wrap gap-2">{notes.map((note) => <span key={note} className="border border-[var(--token-card-border)] px-3 py-1 text-xs font-bold uppercase text-[color:var(--token-body)]" data-edit-path="note">{note}</span>)}</div>
     </div>
   );
 }

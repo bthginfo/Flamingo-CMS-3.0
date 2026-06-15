@@ -7,9 +7,9 @@ import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 type PackageItem = { title?: string; text?: string; image?: string; priceLabel?: string; validUntilLabel?: string; includes?: string[]; cta?: { label?: string; href?: string } };
 
 export function PackagesSection({ data, styleVariant }: SectionProps) {
-  const headline = typeof data.headline === 'string' ? data.headline : 'Pakete & Specials';
+  const headline = (data.headline as string) || 'Pakete & Specials';
   const subline = (data.subline as string) || '';
-  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Specials';
+  const badgeText = (data.badgeText as string) || 'Specials';
   const packages = asList<PackageItem>(data.packages);
   const ctaPrimary = asButton(data.ctaPrimary);
 

@@ -61,8 +61,7 @@ export function PortfolioSection({ data }: Props) {
                   src={project.image}
                   alt={project.title}
                   fill
-                  priority={i < 2}
-                  className="object-cover transition-transform duration-700 group-hover:scale-105 [backface-visibility:hidden] [transform:translateZ(0)]"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-black/25" />

@@ -7,9 +7,9 @@ type PriceItem = { name?: string; description?: string; durationLabel?: string; 
 type PriceCategory = { title?: string; text?: string; items?: PriceItem[] };
 
 export function PriceListSection({ data, styleVariant }: SectionProps) {
-  const headline = typeof data.headline === 'string' ? data.headline : 'Preise';
+  const headline = (data.headline as string) || 'Preise';
   const subline = (data.subline as string) || '';
-  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Preisliste';
+  const badgeText = (data.badgeText as string) || 'Preisliste';
   const categories = asList<PriceCategory>(data.categories);
   const footnote = (data.footnote as string) || '';
   const ctaPrimary = asButton(data.ctaPrimary);

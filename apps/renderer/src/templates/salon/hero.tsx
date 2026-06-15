@@ -7,21 +7,21 @@ import { DynamicIcon } from '@/components/ui/icon-map';
 import { asButton, asList, type SectionProps, type ButtonValue } from './types';
 
 export function SalonHeroSection({ data, styleVariant }: SectionProps) {
-  const headline = typeof data.headline === 'string' ? data.headline : 'Salon';
+  const headline = (data.headline as string) || 'Salon';
   const subline = (data.subline as string) || '';
-  const badgeText = typeof data.badgeText === 'string' ? data.badgeText : 'Beauty';
-  const badgeIcon = typeof data.badgeIcon === 'string' ? data.badgeIcon : 'Sparkles';
+  const badgeText = (data.badgeText as string) || 'Beauty';
+  const badgeIcon = (data.badgeIcon as string) || 'Sparkles';
   const bgImage = (data.bgImage as string) || '';
   const bgImageMobile = (data.bgImageMobile as string) || '';
   const bgColor = (data.bgColor as string) || '';
-  const bgMode = typeof data.bgMode === 'string' ? data.bgMode : 'image';
+  const bgMode = (data.bgMode as string) || 'image';
   const trustItems = asList<string>(data.trustItems);
   const primaryCta = asButton(data.primaryCta);
   const secondaryCta = asButton(data.secondaryCta);
   const bookingHint = (data.bookingHint as string) || '';
   const ratingText = (data.ratingText as string) || '';
-  const bgPosition = typeof data.bgPosition === 'string' ? data.bgPosition : 'center';
-  const bgPositionMobile = typeof data.bgPositionMobile === 'string' ? data.bgPositionMobile : 'center';
+  const bgPosition = (data.bgPosition as string) || 'center';
+  const bgPositionMobile = (data.bgPositionMobile as string) || 'center';
   const overlayColor = (data.overlayColor as string) || '';
   const overlayOpacity = (data.overlayOpacity as number) ?? -1;
   const imageEffect = (data.imageEffect as ImageEffect) || 'none';

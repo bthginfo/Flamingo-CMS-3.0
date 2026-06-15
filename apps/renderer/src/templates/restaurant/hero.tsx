@@ -122,7 +122,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
             )}
             {secondaryCta.label && (
               <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_8%,transparent)] px-8 py-4 text-[color:var(--token-on-dark-heading)] font-medium hover:border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_62%,transparent)] transition-all text-sm w-full sm:w-auto" style={{ background: 'var(--token-btn-secondary-bg,color-mix(in_srgb,var(--token-on-dark-heading)_8%,transparent))', color: 'var(--token-btn-secondary-text,var(--token-on-dark-heading))', borderColor: 'var(--token-btn-secondary-border,color-mix(in_srgb,var(--token-on-dark-heading)_34%,transparent))' }}>
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_8%,transparent)] px-8 py-4 text-[color:var(--token-on-dark-heading)] font-medium hover:border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_62%,transparent)] transition-all text-sm w-full sm:w-auto">
                 <span data-edit-path="label">{secondaryCta.label}</span>
                 {secondaryCta.icon && <DynamicIcon editPath="secondaryCta.icon" name={secondaryCta.icon} size={14} />}
               </a>
@@ -174,7 +174,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, b
             )}
             {secondaryCta.label && (
               <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'}
-                className="inline-flex items-center gap-2 text-[color:var(--token-muted)] hover:text-[color:var(--token-muted)] transition-colors text-sm" style={{ background: 'var(--token-btn-secondary-bg,transparent)', color: 'var(--token-btn-secondary-text,var(--token-muted))', borderColor: 'var(--token-btn-secondary-border,transparent)' }} data-edit-path="label">
+                className="inline-flex items-center gap-2 text-[color:var(--token-muted)] hover:text-[color:var(--token-muted)] transition-colors text-sm" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}
@@ -262,7 +262,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgI
             )}
             {secondaryCta.label && (
               <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'}
-                className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_34%,transparent)] text-[color:var(--token-on-dark-heading)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-on-dark-heading)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.1)]" style={{ background: 'var(--token-btn-secondary-bg,transparent)', color: 'var(--token-btn-secondary-text,var(--token-on-dark-heading))', borderColor: 'var(--token-btn-secondary-border,color-mix(in_srgb,var(--token-on-dark-heading)_34%,transparent))' }} data-edit-path="label">
+                className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_34%,transparent)] text-[color:var(--token-on-dark-heading)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-on-dark-heading)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.1)]" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

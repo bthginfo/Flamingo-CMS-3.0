@@ -62,14 +62,14 @@ export function CinematicHeroSection({ data }: Props) {
         </motion.div>
       )}
 
-      <motion.div style={{ y: copyY, opacity }} className={`relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-start px-6 pb-12 pt-[max(7rem,calc(env(safe-area-inset-top)+6.5rem))] md:justify-center md:pb-16 md:pt-32 ${align === 'center' ? 'items-center text-center' : 'items-start text-left'}`}>
+      <motion.div style={{ y: copyY, opacity }} className={`relative z-10 mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-center px-6 pb-14 pt-28 md:pb-16 md:pt-32 ${align === 'center' ? 'items-center text-center' : 'items-start text-left'}`}>
         {eyebrow && <div className="mb-5 inline-flex rounded-full border border-[var(--token-badge-border)] bg-[var(--token-badge-bg)] px-4 py-2 text-xs font-semibold uppercase text-[color:var(--token-badge-text)] backdrop-blur" data-edit-path="eyebrow">{eyebrow}</div>}
         {headline && <h1 className="max-w-5xl text-5xl font-black leading-[0.95] md:text-7xl lg:text-8xl" style={{ color: heroText }} data-edit-path="headline">{headline}</h1>}
         {subline && <p className={`mt-6 max-w-2xl text-base leading-8 md:text-xl ${align === 'center' ? 'mx-auto' : ''}`} style={{ color: heroBody }} data-edit-path="subline">{plain(subline)}</p>}
 
         <div className="mt-9 flex flex-wrap items-center gap-3">
           {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[color:var(--token-btn-text)] shadow-xl transition hover:brightness-110"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
-          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] bg-white/10 px-6 py-3 text-sm font-bold backdrop-blur transition hover:bg-white/15" style={{ background: 'var(--token-btn-secondary-bg,var(--token-badge-bg))', color: 'var(--token-btn-secondary-text,var(--token-badge-text,var(--token-on-dark-heading)))', borderColor: 'var(--token-btn-secondary-border,var(--token-card-border))' }}><Play size={15} /><span data-edit-path="label">{secondaryCta.label}</span></a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 rounded-full border border-[var(--token-card-border)] bg-white/10 px-6 py-3 text-sm font-bold backdrop-blur transition hover:bg-white/15" style={{ background: 'var(--token-badge-bg)', color: 'var(--token-badge-text,var(--token-on-dark-heading))' }}><Play size={15} /><span data-edit-path="label">{secondaryCta.label}</span></a>}
         </div>
 
         {facts.length > 0 && (

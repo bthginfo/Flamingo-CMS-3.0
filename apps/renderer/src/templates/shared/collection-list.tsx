@@ -10,7 +10,7 @@ type CollectionItem = {
   slug: string;
   image?: string;
   excerpt?: string;
-  date?: string | Date | number;
+  date?: string;
   priority?: number;
 };
 
@@ -18,21 +18,13 @@ type SortOption = 'date-desc' | 'date-asc' | 'alpha-asc' | 'alpha-desc' | 'prior
 
 type Props = { data: Record<string, unknown>; variant?: string | null; styleVariant?: string };
 
-function toTimestamp(value: CollectionItem['date']): number {
-  if (!value) return 0;
-  if (value instanceof Date) return Number.isFinite(value.getTime()) ? value.getTime() : 0;
-  if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
-  const parsed = Date.parse(value);
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-
 function sortItems(items: CollectionItem[], sortBy: SortOption): CollectionItem[] {
   return [...items].sort((a, b) => {
     switch (sortBy) {
       case 'date-desc':
-        return toTimestamp(b.date) - toTimestamp(a.date);
+        return (b.date ?? '').localeCompare(a.date ?? '');
       case 'date-asc':
-        return toTimestamp(a.date) - toTimestamp(b.date);
+        return (a.date ?? '').localeCompare(b.date ?? '');
       case 'alpha-asc':
         return a.title.localeCompare(b.title, 'de');
       case 'alpha-desc':
@@ -66,7 +58,6 @@ export function CollectionListSection({ data }: Props) {
   const collectionBasePath = (data.collectionBasePath as string) || '';
 
   const [sortBy, setSortBy] = useState<SortOption>(defaultSort);
-  const [brokenImages, setBrokenImages] = useState<Set<string>>(new Set());
   const sorted = useMemo(() => sortItems(items, sortBy), [items, sortBy]);
 
   const gridCols = columns === 2 ? 'md:grid-cols-2' : columns === 4 ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3';
@@ -111,13 +102,12 @@ export function CollectionListSection({ data }: Props) {
               transition={{ delay: i * 0.05, duration: 0.4 }}
               className="group block rounded-xl border border-[color:var(--token-card-border)] bg-[var(--token-card-bg)] overflow-hidden shadow-sm hover:shadow-md transition-shadow"
              data-edit-collection="sorted" data-edit-index={i}>
-              {showImage && item.image && !brokenImages.has(item.image) && (
+              {showImage && item.image && (
                 <div className="aspect-[16/10] overflow-hidden">
                   <img data-edit-image="image"
                     src={item.image}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    onError={() => setBrokenImages(prev => new Set(prev).add(item.image!))}
                   />
                 </div>
               )}
