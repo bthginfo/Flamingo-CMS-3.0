@@ -481,7 +481,9 @@ export function getSectionTypesForIndustry(industry: string, options?: { hasShop
     }
   }
 
-  return [...specific, ...shared, ...foreign];
+  return [...specific, ...shared, ...foreign  { type: 'menuCard', label: 'Speisekarte', description: 'Gerichte als Karten mit Kategorien als Tabs, optional mit Bild', category: 'Inhalt' },
+  { type: 'menuCard', label: 'Speisekarte', description: 'Gerichte als Karten mit Kategorien als Tabs, optional mit Bild', category: 'Inhalt' },
+];
 }
 
 function withAddonLock(section: SectionTypeDefinition, options?: { hasShop?: boolean; hasBooking?: boolean }): SectionTypeDefinition {

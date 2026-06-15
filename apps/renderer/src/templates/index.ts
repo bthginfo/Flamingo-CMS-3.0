@@ -1,4 +1,4 @@
-﻿import type { SectionProps } from './restaurant';
+import type { SectionProps } from './restaurant';
 import { HeroSection } from './handwerk/hero';
 import { UspStripSection } from './handwerk/usp-strip';
 import { ServicesGridSection } from './handwerk/services-grid';
@@ -66,6 +66,7 @@ import { ShopCheckoutSection } from './shared/shop-checkout';
 import { ShopThankYouSection } from './shared/shop-thank-you';
 import { ShopFeaturedProductsSection } from './shared/shop-featured-products';
 import { ShopCategoryOverviewSection } from './shared/shop-category-overview';
+import { MenuCardSection } from './shared/menu-card';
 import { HeaderBannerSection } from './handwerk/header-banner';
 import { CollectionHeroSection } from './handwerk/collection-hero';
 import { TextImageSection } from './handwerk/text-image';
@@ -276,6 +277,7 @@ export const RESTAURANT_TEMPLATES: Record<string, TemplateComponent> = {
   legalContent: LegalContentSection,
   videoEmbed: VideoEmbedSection,
   collectionHero: CollectionHeroSection,
+  menuCard: MenuCardSection,
 };
 
 export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent>> = {
@@ -499,6 +501,7 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     collectionHero: CollectionHeroSection,
     galleryGrid: GalleryGridSection,
     team: CafeTeamSection,
+    menuCard: MenuCardSection,
   },
   tattoo: {
     hero: TattooHeroSection,
@@ -726,6 +729,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   beforeAfter: SharedBeforeAfterSection,
   cinematicHero: CinematicHeroSection,
   spotlightCards: SpotlightCardsSection,
+  menuCard: MenuCardSection,
   scrollStory: ScrollStorySection,
   premiumComparison: PremiumComparisonSection,
   immersiveCtaBanner: ImmersiveCtaBannerSection,

@@ -419,36 +419,6 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
     return [...parentPath, candidates[0] || `${fieldName}Position`];
   }
 
-  function imageOverlayPaths(path: Array<string | number>) {
-    const fieldName = String(path[path.length - 1] || '');
-    const parentPath = path.slice(0, -1);
-    const colorCandidates = [`${fieldName}OverlayColor`];
-    const opacityCandidates = [`${fieldName}OverlayOpacity`];
-
-    for (const candidate of colorCandidates) {
-      if (valueAtPath([...parentPath, candidate]) !== undefined) {
-        return {
-          colorPath: [...parentPath, candidate],
-          opacityPath: [...parentPath, opacityCandidates[0]],
-        };
-      }
-    }
-
-    for (const candidate of opacityCandidates) {
-      if (valueAtPath([...parentPath, candidate]) !== undefined) {
-        return {
-          colorPath: [...parentPath, colorCandidates[0]],
-          opacityPath: [...parentPath, candidate],
-        };
-      }
-    }
-
-    return {
-      colorPath: [...parentPath, colorCandidates[0]],
-      opacityPath: [...parentPath, opacityCandidates[0]],
-    };
-  }
-
   function createEmptyLike(sample: unknown): unknown {
     if (typeof sample === 'string') return '';
     if (typeof sample === 'number') return 0;
@@ -491,72 +461,15 @@ function SchemaSectionEditor({ type, data, onChange }: EditorProps) {
       if (/image|background|photo|avatar|poster|logo/i.test(fieldName)) {
         const positionPath = imagePositionPath(path);
         const positionValue = valueAtPath(positionPath);
-        const { colorPath, opacityPath } = imageOverlayPaths(path);
-        const overlayColorValue = valueAtPath(colorPath);
-        const overlayOpacityValue = valueAtPath(opacityPath);
-        const overlayOpacity = typeof overlayOpacityValue === 'number'
-          ? overlayOpacityValue
-          : (typeof overlayOpacityValue === 'string' && overlayOpacityValue.trim() !== '' ? Number(overlayOpacityValue) : 0);
-        const hasOverlay = Number.isFinite(overlayOpacity) && overlayOpacity > 0;
         return (
-          <div key={renderKey} className="space-y-2">
-            <ImageUploadField
-              label={label}
-              value={value}
-              onChange={(v) => updateAtPath(path, v)}
-              position={typeof positionValue === 'string' ? positionValue : 'center'}
-              onPositionChange={(v) => updateAtPath(positionPath, v)}
-            />
-            <div className="rounded-md border border-zinc-200 bg-zinc-50 p-3">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <span className="text-[11px] font-medium text-zinc-600">Bild-Overlay</span>
-                {hasOverlay ? (
-                  <button
-                    type="button"
-                    className="text-[10px] text-red-500 hover:text-red-600"
-                    onClick={() => updateAtPath(opacityPath, 0)}
-                  >
-                    Entfernen
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="text-[10px] text-blue-600 hover:text-blue-700"
-                    onClick={() => {
-                      updateAtPath(colorPath, typeof overlayColorValue === 'string' && overlayColorValue.trim() ? overlayColorValue : '#000000');
-                      updateAtPath(opacityPath, 0.35);
-                    }}
-                  >
-                    Hinzufuegen
-                  </button>
-                )}
-              </div>
-              {hasOverlay ? (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <ColorField
-                    label="Overlay-Farbe"
-                    value={typeof overlayColorValue === 'string' ? overlayColorValue : '#000000'}
-                    onChange={(v) => updateAtPath(colorPath, v)}
-                    allowEmpty={false}
-                  />
-                  <label className="block">
-                    <span className="text-[11px] text-zinc-500">Deckkraft ({Math.round(Math.max(0, Math.min(1, overlayOpacity)) * 100)}%)</span>
-                    <input
-                      type="range"
-                      min="0.05"
-                      max="1"
-                      step="0.05"
-                      className="mt-1 w-full"
-                      value={Math.max(0.05, Math.min(1, overlayOpacity || 0.35))}
-                      onChange={(e) => updateAtPath(opacityPath, Number(e.target.value))}
-                    />
-                  </label>
-                </div>
-              ) : (
-                <p className="text-[11px] text-zinc-500">Optionaler Farb-Overlay fuer bessere Lesbarkeit auf Bildern.</p>
-              )}
-            </div>
-          </div>
+          <ImageUploadField
+            key={renderKey}
+            label={label}
+            value={value}
+            onChange={(v) => updateAtPath(path, v)}
+            position={typeof positionValue === 'string' ? positionValue : 'center'}
+            onPositionChange={(v) => updateAtPath(positionPath, v)}
+          />
         );
       }
       if (/href|link|url/i.test(fieldName)) {
@@ -834,7 +747,6 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
     badgeText: (data.badgeText as string) || '',
-    badgeIcon: (data.badgeIcon as string) || 'sparkles',
     ctaPrimary: (data.ctaPrimary as { label: string; href: string }) || { label: '', href: '' },
   });
   useReport(d as unknown as Record<string, unknown>, onChange);
@@ -842,7 +754,6 @@ function CtaBandEditor({ data, onChange }: EditorProps) {
   return (
     <div className="space-y-3">
       <Field label="Badge-Text" value={d.badgeText} onChange={(v) => setD({ ...d, badgeText: v })} />
-      <IconPickerField label="Badge-Icon" value={d.badgeIcon} onChange={(v) => setD({ ...d, badgeIcon: v })} />
       <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
       <Field label="Untertitel" value={d.subline} onChange={(v) => setD({ ...d, subline: v })} />
       <ButtonField label="CTA" value={d.ctaPrimary} onChange={(v) => setD({ ...d, ctaPrimary: v })} />
@@ -1119,14 +1030,13 @@ function GalleryGridEditor({ data, onChange }: EditorProps) {
   async function handleBulkUpload(files: FileList) {
     setBulkUploading(true);
     const { upload } = await import('@vercel/blob/client');
-    const { resizeImage, buildDeterministicUploadPath } = await import('@/components/image-upload-field');
+    const { resizeImage } = await import('@/components/image-upload-field');
     const newImages: { src: string; alt: string; caption: string }[] = [];
     for (const file of Array.from(files)) {
       if (!file.type.startsWith('image/')) continue;
       try {
         const optimized = await resizeImage(file, 1920, 0.85);
-        const uploadPath = await buildDeterministicUploadPath(optimized, '.webp');
-        const blob = await upload(uploadPath, optimized, {
+        const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, {
           access: 'public',
           handleUploadUrl: '/api/upload',
         });
@@ -1324,36 +1234,26 @@ function ServiceDetailEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
-  const [items, setItems] = useState<{ title: string; text: string; icon: string; image: string; mediaType: string; features: string[]; ctaLabel: string; ctaHref: string; ctaIcon: string }[]>(
+  const [items, setItems] = useState<{ title: string; text: string; icon: string; image: string; mediaType: string; features: string; ctaLabel: string; ctaHref: string }[]>(
     ((data.items as Record<string, unknown>[]) || []).map(it => ({
       title: (it.title as string) || '',
       text: (it.text as string) || '',
       icon: (it.icon as string) || '',
       image: (it.image as string) || '',
       mediaType: (it.mediaType as string) || 'icon',
-      features: Array.isArray(it.features) ? (it.features as string[]).map((feature) => String(feature ?? '').trim()).filter(Boolean) : [],
+      features: ((it.features as string[]) || []).join('\n'),
       ctaLabel: (it.ctaLabel as string) || '',
       ctaHref: (it.ctaHref as string) || '',
-      ctaIcon: (it.ctaIcon as string) || '',
     }))
   );
   useReport({
     headline, subline, badgeText,
-    items: items.map(it => ({ ...it, features: it.features.map((feature) => feature.trim()).filter(Boolean) })),
+    items: items.map(it => ({ ...it, features: it.features.split('\n').map(f => f.trim()).filter(Boolean) })),
   }, onChange);
 
-  function addItem() { setItems([...items, { title: '', text: '', icon: '', image: '', mediaType: 'icon', features: [], ctaLabel: '', ctaHref: '', ctaIcon: '' }]); }
+  function addItem() { setItems([...items, { title: '', text: '', icon: '', image: '', mediaType: 'icon', features: '', ctaLabel: '', ctaHref: '' }]); }
   function removeItem(i: number) { setItems(items.filter((_, idx) => idx !== i)); }
   function update(i: number, field: string, val: string) { setItems(items.map((it, idx) => idx === i ? { ...it, [field]: val } : it)); }
-  function addFeature(itemIndex: number) {
-    setItems(items.map((it, idx) => idx === itemIndex ? { ...it, features: [...it.features, ''] } : it));
-  }
-  function updateFeature(itemIndex: number, featureIndex: number, value: string) {
-    setItems(items.map((it, idx) => idx === itemIndex ? { ...it, features: it.features.map((feature, fi) => fi === featureIndex ? value : feature) } : it));
-  }
-  function removeFeature(itemIndex: number, featureIndex: number) {
-    setItems(items.map((it, idx) => idx === itemIndex ? { ...it, features: it.features.filter((_, fi) => fi !== featureIndex) } : it));
-  }
 
   return (
     <div className="space-y-3">
@@ -1375,38 +1275,8 @@ function ServiceDetailEditor({ data, onChange }: EditorProps) {
               <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
             )}
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <label className="text-xs font-medium text-zinc-600">Features</label>
-              <button type="button" onClick={() => addFeature(i)} className="text-xs text-blue-600 hover:underline">+ Feature</button>
-            </div>
-            {item.features.length === 0 ? (
-              <p className="text-xs text-zinc-400">Noch keine Features hinzugefuegt.</p>
-            ) : (
-              item.features.map((feature, featureIndex) => (
-                <div key={featureIndex} className="flex items-center gap-2">
-                  <input
-                    className="admin-input w-full"
-                    value={feature}
-                    onChange={(e) => updateFeature(i, featureIndex, e.target.value)}
-                    placeholder={`Feature ${featureIndex + 1}`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeFeature(i, featureIndex)}
-                    className="shrink-0 text-xs text-red-500 hover:text-red-600"
-                  >
-                    Entfernen
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-          <ButtonField
-            label="CTA"
-            value={{ label: item.ctaLabel, href: item.ctaHref, icon: item.ctaIcon }}
-            onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, ctaLabel: v.label, ctaHref: v.href, ctaIcon: v.icon || '' } : it))}
-          />
+          <Field label="Features (eine pro Zeile)" value={item.features} onChange={(v) => update(i, 'features', v)} multiline />
+          <ButtonField label="CTA" value={{ label: item.ctaLabel, href: item.ctaHref }} onChange={(v) => setItems(items.map((it, idx) => idx === i ? { ...it, ctaLabel: v.label, ctaHref: v.href } : it))} />
         </div>
       ))}
       <button onClick={addItem} className="text-sm text-blue-600 hover:underline">+ Leistung hinzufügen</button>
@@ -1846,107 +1716,6 @@ function CollectionHeroEditor({ data, onChange }: EditorProps) {
   );
 }
 
-// ─── Glow Hero Editor ─────────────────────────────────────────────
-function GlowHeroEditor({ data, onChange }: EditorProps) {
-  const controlledKeys = new Set([
-    'eyebrow', 'headline', 'subline',
-    'image', 'bgImage', 'backgroundImage',
-    'imagePosition', 'bgPosition',
-    'glowColor', 'primaryCta', 'secondaryCta', 'facts',
-  ]);
-
-  const passthrough = Object.fromEntries(
-    Object.entries(data).filter(([key]) => !controlledKeys.has(key))
-  );
-
-  const [d, setD] = useState(() => ({
-    eyebrow: (data.eyebrow as string) || '',
-    headline: (data.headline as string) || '',
-    subline: (data.subline as string) || '',
-    image: (data.image as string) || (data.bgImage as string) || (data.backgroundImage as string) || '',
-    imagePosition: (data.imagePosition as string) || (data.bgPosition as string) || 'center',
-    glowColor: (data.glowColor as string) || 'rgba(242,65,113,0.45)',
-    primaryCta: {
-      label: ((data.primaryCta as { label?: string; href?: string; icon?: string } | undefined)?.label || ''),
-      href: ((data.primaryCta as { label?: string; href?: string; icon?: string } | undefined)?.href || ''),
-      icon: ((data.primaryCta as { label?: string; href?: string; icon?: string } | undefined)?.icon || ''),
-    },
-    secondaryCta: {
-      label: ((data.secondaryCta as { label?: string; href?: string; icon?: string } | undefined)?.label || ''),
-      href: ((data.secondaryCta as { label?: string; href?: string; icon?: string } | undefined)?.href || ''),
-      icon: ((data.secondaryCta as { label?: string; href?: string; icon?: string } | undefined)?.icon || ''),
-    },
-    facts: Array.isArray(data.facts)
-      ? (data.facts as Array<{ value?: string; label?: string }>).map((fact) => ({ value: fact?.value || '', label: fact?.label || '' }))
-      : [],
-  }));
-
-  useReport({
-    ...passthrough,
-    eyebrow: d.eyebrow,
-    headline: d.headline,
-    subline: d.subline,
-    image: d.image,
-    bgImage: d.image,
-    imagePosition: d.imagePosition,
-    bgPosition: d.imagePosition,
-    glowColor: d.glowColor,
-    primaryCta: d.primaryCta,
-    secondaryCta: d.secondaryCta,
-    facts: d.facts.filter((fact) => (fact.value || '').trim() || (fact.label || '').trim()),
-  } as unknown as Record<string, unknown>, onChange);
-
-  function updateFact(index: number, key: 'value' | 'label', value: string) {
-    setD((prev) => ({
-      ...prev,
-      facts: prev.facts.map((fact, i) => (i === index ? { ...fact, [key]: value } : fact)),
-    }));
-  }
-
-  function addFact() {
-    setD((prev) => ({ ...prev, facts: [...prev.facts, { value: '', label: '' }] }));
-  }
-
-  function removeFact(index: number) {
-    setD((prev) => ({ ...prev, facts: prev.facts.filter((_, i) => i !== index) }));
-  }
-
-  return (
-    <div className="space-y-3">
-      <Field label={fieldLabel('eyebrow')} value={d.eyebrow} onChange={(v) => setD({ ...d, eyebrow: v })} />
-      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
-
-      <ImageUploadField
-        label={fieldLabel('image')}
-        value={d.image}
-        onChange={(v) => setD({ ...d, image: v })}
-        position={d.imagePosition}
-        onPositionChange={(v) => setD({ ...d, imagePosition: v })}
-      />
-
-      <ColorField label="Glow-Farbe" value={d.glowColor} onChange={(v) => setD({ ...d, glowColor: v })} allowEmpty />
-
-      <ButtonField label="Primärer Button" value={d.primaryCta} onChange={(v) => setD({ ...d, primaryCta: { ...v, icon: v.icon || '' } })} />
-      <ButtonField label="Sekundärer Button" value={d.secondaryCta} onChange={(v) => setD({ ...d, secondaryCta: { ...v, icon: v.icon || '' } })} />
-
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <label className="text-xs font-medium text-zinc-600">Fakten</label>
-          <button type="button" onClick={addFact} className="text-xs text-blue-600 hover:underline">+ Fakt</button>
-        </div>
-        {d.facts.map((fact, i) => (
-          <div key={i} className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-2 items-start">
-            <Field label="Wert" value={fact.value || ''} onChange={(v) => updateFact(i, 'value', v)} />
-            <Field label="Label" value={fact.label || ''} onChange={(v) => updateFact(i, 'label', v)} />
-            <button type="button" onClick={() => removeFact(i)} className="text-xs text-red-500 hover:text-red-600 mt-6">Entfernen</button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 // ─── TextImage Editor ────────────────────────────────────────────
 function TextImageEditor({ data, onChange }: EditorProps) {
   const [d, setD] = useState({
@@ -2029,14 +1798,13 @@ function PortfolioGalleryEditor({ data, onChange }: EditorProps) {
   async function handleBulkUpload(files: FileList, category: string) {
     setBulkUploading(category);
     const { upload } = await import('@vercel/blob/client');
-    const { resizeImage, buildDeterministicUploadPath } = await import('@/components/image-upload-field');
+    const { resizeImage } = await import('@/components/image-upload-field');
     const newImages: { src: string; alt: string; category: string; location: string }[] = [];
     for (const file of Array.from(files)) {
       if (!file.type.startsWith('image/')) continue;
       try {
         const optimized = await resizeImage(file, 1920, 0.85);
-        const uploadPath = await buildDeterministicUploadPath(optimized, '.webp');
-        const blob = await upload(uploadPath, optimized, { access: 'public', handleUploadUrl: '/api/upload' });
+        const blob = await upload(file.name.replace(/\.[^.]+$/, '.webp'), optimized, { access: 'public', handleUploadUrl: '/api/upload' });
         newImages.push({ src: blob.url, alt: file.name.replace(/\.[^.]+$/, ''), category, location: '' });
         await saveMediaRecord({ blobUrl: blob.url, pathname: blob.pathname, filename: optimized.name, mimeType: optimized.type || 'image/webp', size: optimized.size }).catch(e => console.error('saveMediaRecord failed:', e));
       } catch (e) { console.error('Bulk upload failed for', file.name, e); }
@@ -2578,9 +2346,9 @@ function LogoMarqueeEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
   const [items, setItems] = useState<{ name: string; image: string }[]>(
-    (((data.items as any[]) || (data.logos as any[]) || [])).map(item => ({ name: (item.name as string) || '', image: (item.image as string) || '' }))
+    ((data.items as any[]) || []).map(item => ({ name: (item.name as string) || '', image: (item.image as string) || '' }))
   );
-  useReport({ headline, subline, items, logos: items }, onChange);
+  useReport({ headline, subline, items }, onChange);
 
   return (
     <div className="space-y-3">
@@ -2620,24 +2388,16 @@ function CollectionKeySelect({ value, onChange }: { value: string; onChange: (v:
 
 // ─── CollectionList Editor ───────────────────────────────────────
 function CollectionListEditor({ data, onChange }: EditorProps) {
-  const initialSortBy = (() => {
-    const value = data.sortBy;
-    if (value === 'date-desc' || value === 'date-asc' || value === 'alpha-asc' || value === 'alpha-desc' || value === 'priority') {
-      return value;
-    }
-    return 'date-desc';
-  })();
-
   const [d, setD] = useState({
     headline: (data.headline as string) || '',
     subline: (data.subline as string) || '',
     collectionKey: (data.collectionKey as string) || 'news',
-    sortBy: initialSortBy,
+    sortBy: (data.sortBy as string) || 'date-desc',
     columns: (data.columns as number) || 3,
-    showImage: typeof data.showImage === 'boolean' ? data.showImage : true,
-    showDate: typeof data.showDate === 'boolean' ? data.showDate : true,
-    showExcerpt: typeof data.showExcerpt === 'boolean' ? data.showExcerpt : true,
-    showSortControls: typeof data.showSortControls === 'boolean' ? data.showSortControls : true,
+    showImage: data.showImage !== false,
+    showDate: data.showDate !== false,
+    showExcerpt: data.showExcerpt !== false,
+    showSortControls: data.showSortControls !== false,
   });
   useReport(d, onChange);
 
@@ -2905,7 +2665,7 @@ function ProductShowcaseEditor({ data, onChange }: EditorProps) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label={fieldLabel('badge')} value={item.badge} onChange={(v) => update(i, 'badge', v)} placeholder="Neu / Sale" />
-            <DetailLinkField label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} />
+            <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/produkt" />
           </div>
           <Field label="Beschreibung" value={item.description} onChange={(v) => update(i, 'description', v)} />
         </div>
@@ -2936,7 +2696,7 @@ function CategoryMosaicEditor({ data, onChange }: EditorProps) {
           <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
-            <DetailLinkField label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} />
+            <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/kategorie" />
             <SelectField label="Größe" value={item.size} options={['large', 'small']} onChange={(v) => update(i, 'size', v)} />
           </div>
         </div>
@@ -3097,7 +2857,7 @@ function InspirationGridEditor({ data, onChange }: EditorProps) {
           <ImageUploadField label={fieldLabel('image')} value={item.image} onChange={(v) => update(i, 'image', v)} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label={fieldLabel('title')} value={item.title} onChange={(v) => update(i, 'title', v)} />
-            <DetailLinkField label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} />
+            <Field label="Link" value={item.href} onChange={(v) => update(i, 'href', v)} placeholder="/inspiration" />
           </div>
         </div>
       ))}
@@ -3324,26 +3084,13 @@ function SpotlightCardsEditor({ data, onChange }: EditorProps) {
   const [badge, setBadge] = useState((data.badge as string) || '');
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
-  const [cards, setCards] = useState<{ title: string; text: string; icon: string; image: string; href: string; imageOverlayColor: string; imageOverlayOpacity: number }[]>(
-    ((data.cards as any[]) || []).map((card) => {
-      const rawOpacity = typeof card.imageOverlayOpacity === 'number'
-        ? card.imageOverlayOpacity
-        : Number(card.imageOverlayOpacity ?? 0);
-      return {
-        title: card.title || '',
-        text: card.text || '',
-        icon: card.icon || '',
-        image: card.image || '',
-        href: card.href || '',
-        imageOverlayColor: card.imageOverlayColor || '#000000',
-        imageOverlayOpacity: Number.isFinite(rawOpacity) ? Math.max(0, Math.min(1, rawOpacity)) : 0,
-      };
-    })
+  const [cards, setCards] = useState<{ title: string; text: string; icon: string; image: string; href: string }[]>(
+    ((data.cards as any[]) || []).map((card) => ({ title: card.title || '', text: card.text || '', icon: card.icon || '', image: card.image || '', href: card.href || '' }))
   );
   useReport({ badge, headline, subline, cards }, onChange);
-  function addCard() { setCards([...cards, { title: '', text: '', icon: '', image: '', href: '', imageOverlayColor: '#000000', imageOverlayOpacity: 0 }]); }
+  function addCard() { setCards([...cards, { title: '', text: '', icon: '', image: '', href: '' }]); }
   function removeCard(i: number) { setCards(cards.filter((_, idx) => idx !== i)); }
-  function updateCard(i: number, field: string, value: string | number) {
+  function updateCard(i: number, field: string, value: string) {
     setCards(cards.map((card, idx) => idx === i ? { ...card, [field]: value } : card));
   }
   return (
@@ -3358,52 +3105,7 @@ function SpotlightCardsEditor({ data, onChange }: EditorProps) {
           <Field label={fieldLabel('text')} value={card.text} onChange={(v) => updateCard(i, 'text', v)} multiline />
           <IconPickerField label={fieldLabel('icon')} value={card.icon} onChange={(v) => updateCard(i, 'icon', v)} />
           <ImageUploadField label="Bild optional" value={card.image} onChange={(v) => updateCard(i, 'image', v)} />
-          {card.image && (
-            <div className="rounded-md border border-zinc-200 bg-zinc-50 p-3">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <span className="text-[11px] font-medium text-zinc-600">Bild-Overlay</span>
-                {card.imageOverlayOpacity > 0 ? (
-                  <button
-                    type="button"
-                    className="text-[10px] text-red-500 hover:text-red-600"
-                    onClick={() => updateCard(i, 'imageOverlayOpacity', 0)}
-                  >
-                    Entfernen
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="text-[10px] text-blue-600 hover:text-blue-700"
-                    onClick={() => updateCard(i, 'imageOverlayOpacity', 0.35)}
-                  >
-                    Hinzufuegen
-                  </button>
-                )}
-              </div>
-              {card.imageOverlayOpacity > 0 && (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <ColorField
-                    label="Overlay-Farbe"
-                    value={card.imageOverlayColor || '#000000'}
-                    onChange={(v) => updateCard(i, 'imageOverlayColor', v)}
-                  />
-                  <label className="block">
-                    <span className="text-[11px] text-zinc-500">Deckkraft ({Math.round(card.imageOverlayOpacity * 100)}%)</span>
-                    <input
-                      type="range"
-                      min="0.05"
-                      max="1"
-                      step="0.05"
-                      className="mt-1 w-full"
-                      value={Math.max(0.05, Math.min(1, card.imageOverlayOpacity || 0.35))}
-                      onChange={(e) => updateCard(i, 'imageOverlayOpacity', Number(e.target.value))}
-                    />
-                  </label>
-                </div>
-              )}
-            </div>
-          )}
-          <DetailLinkField label="Link optional" value={card.href} onChange={(v) => updateCard(i, 'href', v)} />
+          <Field label="Link optional" value={card.href} onChange={(v) => updateCard(i, 'href', v)} />
         </div>
       ))}
       <button type="button" onClick={addCard} className="text-sm text-blue-600 hover:underline">+ Karte hinzufügen</button>
@@ -3580,26 +3282,46 @@ function EditorialFeatureRailEditor({ data, onChange }: EditorProps) {
 }
 
 function OfferCampaignStripEditor({ data, onChange }: EditorProps) {
-  const [d, setD] = useState({
-    badge: (data.badge as string) || '',
-    headline: (data.headline as string) || '',
-    subline: (data.subline as string) || '',
-    image: (data.image as string) || '',
-    offerLabel: (data.offerLabel as string) || '',
-    deadline: (data.deadline as string) || '',
-    benefitsText: Array.isArray(data.benefits) ? (data.benefits as string[]).join('\n') : '',
-    cta: (data.cta as { label: string; href: string }) || { label: '', href: '' },
-  });
-  useReport({ ...d, benefits: d.benefitsText.split('\n').map(v => v.trim()).filter(Boolean), benefitsText: undefined }, onChange);
+  const [badge, setBadge] = useState((data.badge as string) || '');
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [image, setImage] = useState((data.image as string) || '');
+  const [offerLabel, setOfferLabel] = useState((data.offerLabel as string) || '');
+  const [deadline, setDeadline] = useState((data.deadline as string) || '');
+  const [benefits, setBenefits] = useState<string[]>(
+    Array.isArray(data.benefits) ? (data.benefits as string[]) : []
+  );
+  const [cta, setCta] = useState((data.cta as { label: string; href: string }) || { label: '', href: '' });
+
+  useReport({ badge, headline, subline, image, offerLabel, deadline, benefits, cta }, onChange);
+
+  function addBenefit() { setBenefits([...benefits, '']); }
+  function removeBenefit(i: number) { setBenefits(benefits.filter((_, idx) => idx !== i)); }
+  function updateBenefit(i: number, val: string) { setBenefits(benefits.map((b, idx) => idx === i ? val : b)); }
+
   return (
     <div className="space-y-4">
-      <Field label={fieldLabel('badge')} value={d.badge} onChange={(v) => setD({ ...d, badge: v })} />
-      <Field label={fieldLabel('headline')} value={d.headline} onChange={(v) => setD({ ...d, headline: v })} />
-      <Field label={fieldLabel('subline')} value={d.subline} onChange={(v) => setD({ ...d, subline: v })} multiline />
-      <ImageUploadField label={fieldLabel('image')} value={d.image} onChange={(v) => setD({ ...d, image: v })} />
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3"><Field label="Angebotslabel" value={d.offerLabel} onChange={(v) => setD({ ...d, offerLabel: v })} /><Field label="Deadline" value={d.deadline} onChange={(v) => setD({ ...d, deadline: v })} /></div>
-      <Field label="Benefits (eine Zeile pro Punkt)" value={d.benefitsText} onChange={(v) => setD({ ...d, benefitsText: v })} multiline />
-      <ButtonField label="CTA" value={d.cta} onChange={(v) => setD({ ...d, cta: v })} />
+      <Field label={fieldLabel('badge')} value={badge} onChange={setBadge} />
+      <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline} />
+      <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline />
+      <ImageUploadField label={fieldLabel('image')} value={image} onChange={setImage} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Field label="Angebotslabel" value={offerLabel} onChange={setOfferLabel} />
+        <Field label="Deadline" value={deadline} onChange={setDeadline} />
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-xs font-medium text-gray-600">Benefits</label>
+        {benefits.map((b, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <Field label="" value={b} onChange={(v) => updateBenefit(i, v)} />
+            <button onClick={() => removeBenefit(i)} className="text-red-400 hover:text-red-600 text-sm flex-shrink-0">{'\u00d7'}</button>
+          </div>
+        ))}
+        <button onClick={addBenefit} className="text-sm text-blue-600 hover:underline">+ Benefit hinzuf\u00fcgen</button>
+      </div>
+
+      <ButtonField label="CTA" value={cta} onChange={setCta} />
     </div>
   );
 }
@@ -3818,6 +3540,79 @@ function InstagramFeedEditor({ data, onChange, sectionId }: EditorProps) {
   );
 }
 
+
+/* ─── MenuCard Editor (Speisekarte) ──────────────────────────────────────────── */
+function MenuCardEditor({ data, onChange }: EditorProps) {
+  const [headline, setHeadline] = useState((data.headline as string) || '');
+  const [subline, setSubline] = useState((data.subline as string) || '');
+  const [badgeText, setBadgeText] = useState((data.badgeText as string) || '');
+  const [categories, setCategories] = useState<{ label: string; items: { title: string; description: string; price: string; image: string; badge: string; allergens: string }[] }[]>(
+    (data.categories as any[]) || [{ label: 'Kategorie 1', items: [] }]
+  );
+
+  useReport({ headline, subline, badgeText, categories }, onChange);
+
+  function addCategory() {
+    setCategories([...categories, { label: '', items: [] }]);
+  }
+  function removeCategory(ci: number) {
+    setCategories(categories.filter((_, i) => i !== ci));
+  }
+  function updateCategoryLabel(ci: number, label: string) {
+    setCategories(categories.map((c, i) => i === ci ? { ...c, label } : c));
+  }
+  function addDish(ci: number) {
+    setCategories(categories.map((c, i) => i === ci ? { ...c, items: [...c.items, { title: '', description: '', price: '', image: '', badge: '', allergens: '' }] } : c));
+  }
+  function removeDish(ci: number, di: number) {
+    setCategories(categories.map((c, i) => i === ci ? { ...c, items: c.items.filter((_, j) => j !== di) } : c));
+  }
+  function updateDish(ci: number, di: number, field: string, val: string) {
+    setCategories(categories.map((c, i) => i === ci ? { ...c, items: c.items.map((d, j) => j === di ? { ...d, [field]: val } : d) } : c));
+  }
+
+  return (
+    <div className="space-y-4">
+      <Field label="Badge" value={badgeText} onChange={setBadgeText} />
+      <Field label="Überschrift" value={headline} onChange={setHeadline} />
+      <Field label="Unterzeile" value={subline} onChange={setSubline} multiline />
+
+      <div className="border-t pt-4 mt-4">
+        <h4 className="text-sm font-semibold mb-3">Kategorien (Tabs)</h4>
+        {categories.map((cat, ci) => (
+          <details key={ci} className="border rounded mb-3 overflow-hidden" open={categories.length === 1}>
+            <summary className="flex items-center justify-between px-3 py-2 bg-gray-50 cursor-pointer text-sm font-medium">
+              <span>{cat.label || Kategorie }</span>
+              <button onClick={(e) => { e.preventDefault(); removeCategory(ci); }} className="text-red-400 hover:text-red-600 text-xs ml-2">Entfernen</button>
+            </summary>
+            <div className="p-3 space-y-3">
+              <Field label="Tab-Name" value={cat.label} onChange={(v) => updateCategoryLabel(ci, v)} />
+
+              <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2">Gerichte</h5>
+              {cat.items.map((dish, di) => (
+                <div key={di} className="border rounded p-3 space-y-2 relative bg-white">
+                  <button onClick={() => removeDish(ci, di)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">\u00d7</button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Field label="Name" value={dish.title} onChange={(v) => updateDish(ci, di, 'title', v)} />
+                    <Field label="Preis" value={dish.price} onChange={(v) => updateDish(ci, di, 'price', v)} />
+                  </div>
+                  <Field label="Beschreibung" value={dish.description} onChange={(v) => updateDish(ci, di, 'description', v)} multiline />
+                  <div className="grid grid-cols-2 gap-2">
+                    <Field label="Badge (optional)" value={dish.badge} onChange={(v) => updateDish(ci, di, 'badge', v)} />
+                    <Field label="Allergene (optional)" value={dish.allergens} onChange={(v) => updateDish(ci, di, 'allergens', v)} />
+                  </div>
+                  <ImageUploadField label="Bild (optional)" value={dish.image} onChange={(v) => updateDish(ci, di, 'image', v)} />
+                </div>
+              ))}
+              <button onClick={() => addDish(ci)} className="text-sm text-blue-600 hover:underline">+ Gericht hinzufügen</button>
+            </div>
+          </details>
+        ))}
+        <button onClick={addCategory} className="text-sm text-blue-600 hover:underline mt-2">+ Kategorie hinzufügen</button>
+      </div>
+    </div>
+  );
+}
 const EDITORS: Record<string, React.FC<EditorProps>> = {
   hero: HeroEditor,
   instagramFeed: InstagramFeedEditor,
@@ -3980,7 +3775,7 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   popup: PopupEditor,
   templateAdvantage: SchemaSectionEditor,
   principlesGrid: SchemaSectionEditor,
-  glowHero: GlowHeroEditor,
+  glowHero: SchemaSectionEditor,
   floristHero: SchemaSectionEditor,
   bouquetShowcase: ProductShowcaseEditor,
   occasionMosaic: CategoryMosaicEditor,
@@ -4008,4 +3803,5 @@ const EDITORS: Record<string, React.FC<EditorProps>> = {
   hostTeam: TeamEditor,
   faqGallery: SchemaSectionEditor,
   eventCalendar: SchemaSectionEditor,
+  menuCard: MenuCardEditor,
 };
