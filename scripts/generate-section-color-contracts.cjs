@@ -60,21 +60,18 @@ function resolveImport(rel, fromDir) {
 }
 
 function parseImportNames(raw) {
-  // Preserve both the imported symbol name and the local alias used in
-  // templates/index.ts so aliased barrel imports can later be re-resolved to
-  // the concrete implementation file.
+  // Each entry may be `Foo` or `Foo as Bar` � we want the alias if present
+  // because that's the name used in the INDUSTRY_TEMPLATES object.
   return raw.split(',').map((s) => {
     const t = s.trim();
-    const asMatch = t.match(/^\s*(\w+)\s+as\s+(\w+)\s*$/);
-    if (asMatch) return { imported: asMatch[1], local: asMatch[2] };
-    return { imported: t, local: t };
-  }).filter((entry) => entry.imported && entry.local);
+    const asMatch = t.match(/^\s*\w+\s+as\s+(\w+)\s*$/);
+    return asMatch ? asMatch[1] : t;
+  }).filter(Boolean);
 }
 
 function loadTemplateRegistry() {
   const src = fs.readFileSync(TEMPLATES_INDEX, 'utf8');
   const componentToFile = new Map();
-  const componentToImported = new Map();
 
   // Direct imports from templates/index.ts (top of file)
   const directRe = /import\s+(?:type\s+)?{([^}]+)}\s+from\s+['"](\.[^'"]+)['"]/g;
@@ -83,10 +80,7 @@ function loadTemplateRegistry() {
     const names = parseImportNames(m[1]);
     const resolved = resolveImport(m[2], TEMPLATES_DIR);
     if (!resolved) continue;
-    for (const n of names) {
-      componentToFile.set(n.local, resolved);
-      componentToImported.set(n.local, n.imported);
-    }
+    for (const n of names) componentToFile.set(n, resolved);
   }
 
   // Re-resolve any name that landed in an industry-level index.ts (e.g. ./salon)
@@ -104,12 +98,9 @@ function loadTemplateRegistry() {
       const resolved = resolveImport(sm[2], path.dirname(indexFile));
       if (!resolved) continue;
       for (const n of names) {
-        for (const [localName, existing] of componentToFile.entries()) {
-          const importedName = componentToImported.get(localName) || localName;
-          if (importedName !== n.local && importedName !== n.imported) continue;
-          if (!existing || /[\/\\]index\.tsx?$/.test(existing)) {
-            componentToFile.set(localName, resolved);
-          }
+        const existing = componentToFile.get(n);
+        if (!existing || /[\/\\]index\.tsx?$/.test(existing)) {
+          componentToFile.set(n, resolved);
         }
       }
     }
@@ -118,7 +109,6 @@ function loadTemplateRegistry() {
   // sectionType ? Set<{ industry, componentName }>, parsed from the
   // INDUSTRY_TEMPLATES literal (an industry-keyed object of {type:Component}).
   const industryTypeComponent = []; // { industry, type, componentName }
-  const sharedTypeComponent = []; // { type, componentName }
 
   // Top-level industry blocks live as `industryKey: { type: Component, ... },`
   // We match every `<word>: { ... },` block whose body has the shape `type: Component,`.
@@ -145,17 +135,7 @@ function loadTemplateRegistry() {
     }
   }
 
-  const sharedBlockMatch = src.match(/const SHARED_TEMPLATES:[^=]*=\s*\{([\s\S]*?)\n};/);
-  if (sharedBlockMatch) {
-    const body = sharedBlockMatch[1];
-    const entryRe = /^\s*([a-zA-Z][\w]*)\s*:\s*([A-Z][A-Za-z0-9]+),?\s*$/gm;
-    let em;
-    while ((em = entryRe.exec(body)) !== null) {
-      sharedTypeComponent.push({ type: em[1], componentName: em[2] });
-    }
-  }
-
-  return { componentToFile, industryTypeComponent, sharedTypeComponent };
+  return { componentToFile, industryTypeComponent };
 }
 
 // ----------------------------------------------------------------------
@@ -163,11 +143,6 @@ function loadTemplateRegistry() {
 //    (3 levels deep). Stops at any import outside src/templates.
 // ----------------------------------------------------------------------
 const TOKEN_REF_RE = /var\(\s*(--(?:token|style|brand)-[a-z0-9-]+)/gi;
-const SEMANTIC_CLASS_FIELDS = new Map([
-  ['section-headline', ['headingColor']],
-  ['section-subline', ['subheadingColor']],
-  ['section-badge', ['badgeBg', 'badgeText', 'badgeBorder']],
-]);
 
 function extractTokenVars(filePath, depth = 0, seen = new Set()) {
   if (seen.has(filePath) || depth > 3) return new Set();
@@ -178,12 +153,6 @@ function extractTokenVars(filePath, depth = 0, seen = new Set()) {
   let m;
   const re = new RegExp(TOKEN_REF_RE.source, 'gi');
   while ((m = re.exec(src)) !== null) { const canonical = LEGACY_ALIASES.get(m[1]) || m[1]; vars.add(canonical); }
-
-  for (const [className, mappedFields] of SEMANTIC_CLASS_FIELDS.entries()) {
-    if (!src.includes(className)) continue;
-    for (const field of mappedFields) vars.add(`field:${field}`);
-  }
-
   // Follow relative imports inside src/templates only
   const importRe = /import[\s\S]*?from\s+['"](\.[^'"]+)['"]/g;
   while ((m = importRe.exec(src)) !== null) {
@@ -243,12 +212,6 @@ const LEGACY_ALIASES = new Map([
   ['--style-button-bg', '--token-btn-bg'],
   ['--brand-btn-text', '--token-btn-text'],
   ['--style-button-text', '--token-btn-text'],
-  ['--brand-btn-secondary-bg', '--token-btn-secondary-bg'],
-  ['--style-button-secondary-bg', '--token-btn-secondary-bg'],
-  ['--brand-btn-secondary-text', '--token-btn-secondary-text'],
-  ['--style-button-secondary-text', '--token-btn-secondary-text'],
-  ['--brand-btn-secondary-border', '--token-btn-secondary-border'],
-  ['--style-button-secondary-border', '--token-btn-secondary-border'],
   ['--style-badge-bg', '--token-badge-bg'],
   ['--style-badge-text', '--token-badge-text'],
   ['--style-card-border', '--token-card-border'],
@@ -259,7 +222,7 @@ const LEGACY_ALIASES = new Map([
 
 function build() {
   const cssVarToField = loadFieldDefs();
-  const { componentToFile, industryTypeComponent, sharedTypeComponent } = loadTemplateRegistry();
+  const { componentToFile, industryTypeComponent } = loadTemplateRegistry();
 
   const perIndustry = {};   // 'heroSalon' ? ColorFieldKey[]
   const perType = {};       // 'hero' ? ColorFieldKey[] (union)
@@ -273,11 +236,9 @@ function build() {
 
     const tokens = extractTokenVars(file);
     const fieldSet = new Set();
+    // sectionBg is ALWAYS available — every section can have its background changed
+    fieldSet.add('sectionBg');
     for (const t of tokens) {
-      if (t.startsWith('field:')) {
-        fieldSet.add(t.slice('field:'.length));
-        continue;
-      }
       const field = cssVarToField.get(t);
       if (field) fieldSet.add(field);
     }
@@ -285,29 +246,6 @@ function build() {
 
     const industryKey = type + industry.charAt(0).toUpperCase() + industry.slice(1);
     perIndustry[industryKey] = fields;
-
-    if (!perType[type]) perType[type] = new Set();
-    for (const f of fields) perType[type].add(f);
-  }
-
-  for (const { type, componentName } of sharedTypeComponent) {
-    const file = componentToFile.get(componentName);
-    if (!file) {
-      stats.missing.push(`shared.${type} (${componentName})`);
-      continue;
-    }
-
-    const tokens = extractTokenVars(file);
-    const fieldSet = new Set();
-    for (const t of tokens) {
-      if (t.startsWith('field:')) {
-        fieldSet.add(t.slice('field:'.length));
-        continue;
-      }
-      const field = cssVarToField.get(t);
-      if (field) fieldSet.add(field);
-    }
-    const fields = [...fieldSet].sort((a, b) => orderIdx(a) - orderIdx(b));
 
     if (!perType[type]) perType[type] = new Set();
     for (const f of fields) perType[type].add(f);
