@@ -18,17 +18,16 @@ export async function verifyPassword(plain: string, hash: string): Promise<boole
 function getSecret() {
   const s = process.env.ADMIN_JWT_SECRET || process.env.PREVIEW_SECRET;
   if (!s) {
-    console.warn('[Flamingo Auth] ADMIN_JWT_SECRET is not set. Using insecure fallback. Set ADMIN_JWT_SECRET in production!');
-    return new TextEncoder().encode('flamingo-fallback-secret-PLEASE-SET-ENV');
+    throw new Error('[Flamingo Auth] ADMIN_JWT_SECRET is not set. Refusing to start without a secure secret. Set ADMIN_JWT_SECRET in your environment.');
   }
   return new TextEncoder().encode(s);
 }
 
-export async function createSessionToken(tenantId: string): Promise<string> {
+export async function createSessionToken(tenantId: string, ttl: string | number = '7d'): Promise<string> {
   return new SignJWT({ tenantId })
     .setProtectedHeader({ alg: JWT_ALG })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime(ttl)
     .sign(getSecret());
 }
 

@@ -1,5 +1,14 @@
 import { z } from 'zod';
 
+/**
+ * Legacy section helpers.
+ *
+ * Runtime sections are currently owned by the renderer/admin registries, not by
+ * this package. Do not use this file as the authoritative list of available
+ * section types. Keep these schemas only for backwards-compatible helpers until
+ * the Section Contract layer generates schemas from the real runtime registry.
+ */
+
 // ─── Shared primitives ──────────────────────────────────────────────
 export const ctaSchema = z.object({
   label: z.string().min(1),
@@ -195,13 +204,14 @@ export const headerBannerDataSchema = z.object({
 });
 
 // ─── Section type registry ──────────────────────────────────────────
-export const sectionTypeEnum = z.enum([
-  'hero', 'uspStrip', 'servicesGrid', 'processSteps', 'projectGallery',
-  'trust', 'testimonials', 'faq', 'ctaBand', 'contact', 'map', 'headerBanner',
-]);
+export const sectionTypeEnum = z.string().min(1);
 
 export type SectionType = z.infer<typeof sectionTypeEnum>;
 
+/**
+ * Legacy schemas for the original shared section subset. Runtime/API validation
+ * must not assume this object is complete.
+ */
 export const sectionDataSchemas = {
   hero: heroDataSchema,
   uspStrip: uspStripDataSchema,
@@ -220,7 +230,7 @@ export const sectionDataSchemas = {
 // ─── Section completion rules ───────────────────────────────────────
 export type CompletionStatus = 'complete' | 'partial' | 'empty';
 
-const requiredFieldsBySection: Record<SectionType, string[]> = {
+const requiredFieldsBySection: Partial<Record<SectionType, string[]>> = {
   hero: ['headline', 'subline', 'primaryCta'],
   uspStrip: ['items'],
   servicesGrid: ['source'],
