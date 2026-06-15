@@ -1,4 +1,4 @@
-﻿import type { SectionProps } from './restaurant';
+import type { SectionProps } from './restaurant';
 import { HeroSection } from './handwerk/hero';
 import { UspStripSection } from './handwerk/usp-strip';
 import { ServicesGridSection } from './handwerk/services-grid';
@@ -44,7 +44,21 @@ import { CinematicHeroSection } from './shared/cinematic-hero';
 import { SpotlightCardsSection } from './shared/spotlight-cards';
 import { ScrollStorySection } from './shared/scroll-story';
 import { PremiumComparisonSection } from './shared/premium-comparison';
+import { ImmersiveCtaBannerSection } from './shared/immersive-cta-banner';
+import { ProofWallSection } from './shared/proof-wall';
+import { EditorialFeatureRailSection } from './shared/editorial-feature-rail';
+import { OfferCampaignStripSection } from './shared/offer-campaign-strip';
+import { BeforeAfterStoryProSection } from './shared/before-after-story-pro';
+import { SignatureGridSection } from './shared/signature-grid';
+import { ComparisonCardsProSection } from './shared/comparison-cards-pro';
+import { AdditionalLocationsSection } from './shared/additional-locations';
+import { PopupSection } from './shared/popup';
+import { AvailabilityCalendarSection, BookingCtaProSection, BookingDateRangeSection, BookingSlotPickerSection, BookingWidgetSection, ResourceBookingShowcaseSection } from './shared/booking-widget';
+import { TemplateAdvantageSection } from './shared/template-advantage';
+import { PrinciplesGridSection } from './shared/principles-grid';
+import { GlowHeroSection } from './shared/glow-hero';
 import { CollectionListSection } from './shared/collection-list';
+import { InstagramFeedSection } from './shared/instagram-feed';
 import { ShopProductGridSection } from './shared/shop-product-grid';
 import { ShopProductDetailSection } from './shared/shop-product-detail';
 import { ShopCartSection } from './shared/shop-cart';
@@ -52,6 +66,7 @@ import { ShopCheckoutSection } from './shared/shop-checkout';
 import { ShopThankYouSection } from './shared/shop-thank-you';
 import { ShopFeaturedProductsSection } from './shared/shop-featured-products';
 import { ShopCategoryOverviewSection } from './shared/shop-category-overview';
+import { MenuCardSection } from './shared/menu-card';
 import { HeaderBannerSection } from './handwerk/header-banner';
 import { CollectionHeroSection } from './handwerk/collection-hero';
 import { TextImageSection } from './handwerk/text-image';
@@ -262,6 +277,7 @@ export const RESTAURANT_TEMPLATES: Record<string, TemplateComponent> = {
   legalContent: LegalContentSection,
   videoEmbed: VideoEmbedSection,
   collectionHero: CollectionHeroSection,
+  menuCard: MenuCardSection,
 };
 
 export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent>> = {
@@ -485,6 +501,8 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     collectionHero: CollectionHeroSection,
     galleryGrid: GalleryGridSection,
     team: CafeTeamSection,
+    menuCard: MenuCardSection,
+    cinematicHero: CinematicHeroSection,
   },
   tattoo: {
     hero: TattooHeroSection,
@@ -562,6 +580,78 @@ export const INDUSTRY_TEMPLATES: Record<string, Record<string, TemplateComponent
     legalContent: LegalContentSection,
     collectionHero: CollectionHeroSection,
   },
+  florist: {
+    hero: GlowHeroSection,
+    floristHero: GlowHeroSection,
+    bouquetShowcase: ProductShowcaseSection,
+    occasionMosaic: CategoryMosaicSection,
+    weddingFloristry: BrandShowroomSection,
+    workshopBooking: ConsultationBookingSection,
+    seasonalCampaign: OfferCampaignStripSection,
+    floristMaterials: MaterialGallerySection,
+    deliveryTimeline: DeliveryTimelineSection,
+    inspirationGrid: InspirationGridSection,
+    beforeAfter: SharedBeforeAfterSection,
+    uspStrip: UspStripSection,
+    servicesGrid: ServicesGridSection,
+    processSteps: ProcessStepsSection,
+    testimonials: TestimonialsSection,
+    faq: FaqSection,
+    contact: ContactSection,
+    map: MapSection,
+    additionalLocations: AdditionalLocationsSection,
+    team: TeamSection,
+    stats: StatsSection,
+    galleryGrid: GalleryGridSection,
+    ctaBand: CtaBandSection,
+    textImage: TextImageSection,
+    logoCloud: LogoCloudSection,
+    richText: RichTextSection,
+    legalContent: LegalContentSection,
+    collectionHero: CollectionHeroSection,
+  },
+  fitness: {
+    hero: GlowHeroSection,
+    fitnessHero: GlowHeroSection,
+    programGrid: ServicesGridSection,
+    courseSchedule: TimelineSection,
+    trainerProfiles: TeamSection,
+    membershipPlans: ComparisonCardsProSection,
+    trialSessionCta: ImmersiveCtaBannerSection,
+    transformationStories: BeforeAfterStoryProSection,
+    studioAmenities: BentoGridSection,
+    testimonials: TestimonialsSection,
+    faq: FaqSection,
+    contact: ContactSection,
+    additionalLocations: AdditionalLocationsSection,
+    galleryGrid: GalleryGridSection,
+    ctaBand: CtaBandSection,
+    textImage: TextImageSection,
+    richText: RichTextSection,
+    legalContent: LegalContentSection,
+    collectionHero: CollectionHeroSection,
+  },
+  location: {
+    hero: CinematicHeroSection,
+    locationHero: CinematicHeroSection,
+    spaceShowcase: ProductShowcaseSection,
+    eventTypes: CategoryMosaicSection,
+    availabilityCta: ImmersiveCtaBannerSection,
+    locationPackages: ComparisonCardsProSection,
+    amenitiesGrid: BentoGridSection,
+    floorPlanOverview: TextImageSection,
+    galleryMoodboard: GalleryGridSection,
+    locationAccess: MapSection,
+    hostTeam: TeamSection,
+    testimonials: TestimonialsSection,
+    faq: FaqSection,
+    contact: ContactSection,
+    additionalLocations: AdditionalLocationsSection,
+    ctaBand: CtaBandSection,
+    richText: RichTextSection,
+    legalContent: LegalContentSection,
+    collectionHero: CollectionHeroSection,
+  },
 };
 
 // Shared/generic sections available to ALL templates
@@ -618,7 +708,7 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   featureShowcase: FeatureShowcaseSection,
   logoMarquee: LogoMarqueeSection,
   collectionList: CollectionListSection,
-  shopProductGrid: ShopProductGridSection,
+  instagramFeed: InstagramFeedSection,
   shopProductDetail: ShopProductDetailSection,
   shopCart: ShopCartSection,
   shopCheckout: ShopCheckoutSection,
@@ -640,8 +730,54 @@ const SHARED_TEMPLATES: Record<string, TemplateComponent> = {
   beforeAfter: SharedBeforeAfterSection,
   cinematicHero: CinematicHeroSection,
   spotlightCards: SpotlightCardsSection,
+  menuCard: MenuCardSection,
   scrollStory: ScrollStorySection,
   premiumComparison: PremiumComparisonSection,
+  immersiveCtaBanner: ImmersiveCtaBannerSection,
+  proofWall: ProofWallSection,
+  editorialFeatureRail: EditorialFeatureRailSection,
+  offerCampaignStrip: OfferCampaignStripSection,
+  beforeAfterStoryPro: BeforeAfterStoryProSection,
+  signatureGrid: SignatureGridSection,
+  comparisonCardsPro: ComparisonCardsProSection,
+  additionalLocations: AdditionalLocationsSection,
+  popup: PopupSection,
+  bookingWidget: BookingWidgetSection,
+  bookingSlotPicker: BookingSlotPickerSection,
+  bookingDateRange: BookingDateRangeSection,
+  availabilityCalendar: AvailabilityCalendarSection,
+  resourceBookingShowcase: ResourceBookingShowcaseSection,
+  bookingCtaPro: BookingCtaProSection,
+  templateAdvantage: TemplateAdvantageSection,
+  principlesGrid: PrinciplesGridSection,
+  glowHero: GlowHeroSection,
+  floristHero: GlowHeroSection,
+  bouquetShowcase: ProductShowcaseSection,
+  occasionMosaic: CategoryMosaicSection,
+  weddingFloristry: BrandShowroomSection,
+  workshopBooking: ConsultationBookingSection,
+  seasonalCampaign: OfferCampaignStripSection,
+  floristMaterials: MaterialGallerySection,
+  fitnessHero: GlowHeroSection,
+  programGrid: ServicesGridSection,
+  courseSchedule: TimelineSection,
+  trainerProfiles: TeamSection,
+  membershipPlans: ComparisonCardsProSection,
+  trialSessionCta: ImmersiveCtaBannerSection,
+  transformationStories: BeforeAfterStoryProSection,
+  studioAmenities: BentoGridSection,
+  locationHero: CinematicHeroSection,
+  spaceShowcase: ProductShowcaseSection,
+  eventTypes: CategoryMosaicSection,
+  eventCalendar: EventsCalendarSection,
+  availabilityCta: ImmersiveCtaBannerSection,
+  locationPackages: ComparisonCardsProSection,
+  amenitiesGrid: BentoGridSection,
+  floorPlanOverview: TextImageSection,
+  faqGallery: WeddingGallerySection,
+  galleryMoodboard: GalleryGridSection,
+  locationAccess: MapSection,
+  hostTeam: TeamSection,
 };
 
 // Merge ALL industry templates as ultimate fallback so foreign sections render
