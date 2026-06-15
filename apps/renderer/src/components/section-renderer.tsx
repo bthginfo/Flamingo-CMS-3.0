@@ -3,6 +3,8 @@ import { getIndustryTemplates } from '@/templates';
 import { SectionErrorBoundary } from './section-error-boundary';
 import { prefixInternalLinks } from '@/lib/link-prefix';
 import { sanitizeHtml } from '@/lib/sanitize-html';
+import { migrateOverrides, type ColorSlot } from '@/lib/color';
+import { COLOR_TOKENS } from '@/lib/color/registry';
 
 /** Extract the best image from a collection item — checks data.image first, then looks into hero section data */
 function extractItemImage(item: SnapshotCollectionItem): string | undefined {
@@ -119,6 +121,7 @@ function normalizeSectionStyle(style?: React.CSSProperties): React.CSSProperties
   const normalized: Record<string, unknown> = { ...style };
   const source = style as Record<string, unknown>;
 
+  // Legacy bidirectional alias mapping (backward compat for --style-* templates)
   for (const [sourceVar, targetVars] of Object.entries(SECTION_STYLE_TOKEN_ALIASES)) {
     const value = source[sourceVar];
     if (typeof value !== 'string' || !value.trim()) continue;
@@ -126,6 +129,15 @@ function normalizeSectionStyle(style?: React.CSSProperties): React.CSSProperties
       if (typeof normalized[targetVar] !== 'string' || !(normalized[targetVar] as string).trim()) {
         normalized[targetVar] = value;
       }
+    }
+  }
+
+  // New color system: migrate overrides to canonical --token-* vars
+  const migrated = migrateOverrides(source as Record<string, string>);
+  for (const [slot, value] of Object.entries(migrated) as [ColorSlot, string][]) {
+    const def = COLOR_TOKENS[slot];
+    if (def && value) {
+      normalized[def.cssVar] = value;
     }
   }
 
@@ -271,7 +283,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
 
   if (isFullBleed) {
     return (
-      <section id={section.anchorId ?? undefined} data-section-id={section.id} className="bg-[var(--style-section-bg,transparent)]" {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
+      <section id={section.anchorId ?? undefined} data-section-id={section.id} className="bg-[var(--token-section-bg,var(--style-section-bg,transparent))]" {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
         {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
         <SectionErrorBoundary sectionType={section.type}>
           <Component data={section.data} variant={section.variant} styleVariant={effectiveStyleVariant} />
@@ -285,7 +297,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
   const containerClass = CONTAINER[section.container] ?? CONTAINER.default;
 
   return (
-    <section id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass} bg-[var(--style-section-bg,transparent)]`} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
+    <section id={section.anchorId ?? undefined} data-section-id={section.id} className={`${spacingClass} ${spacingBottomClass} bg-[var(--token-section-bg,var(--style-section-bg,transparent))]`} {...(sectionStyle ? { 'data-style': '' } : {})} style={sectionStyle}>
       {sectionOverrideCss && <style dangerouslySetInnerHTML={{ __html: sectionOverrideCss }} />}
       <div className={containerClass}>
         <SectionErrorBoundary sectionType={section.type}>
