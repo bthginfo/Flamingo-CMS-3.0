@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Palette, ChevronDown } from 'lucide-react';
@@ -69,18 +69,7 @@ export type ColorFieldKey =
   | 'badgeBg' | 'badgeText' | 'badgeBorder'
   | 'borderColor' | 'dividerColor'
   | 'cardRadius' | 'buttonRadius'
-  | 'cardShadow' | 'headingWeight' | 'headingTracking'
-  // Phase A: Card-level overrides (fallback to section-level token)
-  | 'cardHeadingColor' | 'cardBodyColor' | 'cardMutedColor'
-  | 'cardBadgeBg' | 'cardBadgeText' | 'cardIconColor'
-  // Phase B: Specialized roles
-  | 'btnSecondaryBg' | 'btnSecondaryText' | 'btnSecondaryBorder'
-  | 'linkColor' | 'linkHoverColor'
-  | 'inputBg' | 'inputBorder' | 'inputText' | 'labelColor'
-  | 'priceColor' | 'priceStrikeColor'
-  | 'pageBg' | 'shadowColor'
-  | 'successColor' | 'successBg'
-  | 'dangerColor' | 'dangerBg';
+  | 'cardShadow' | 'headingWeight' | 'headingTracking';
 
 // Mapping of every legacy key the editor used to expose to its modern
 // equivalent. Used by migrateLegacyOverrides() to clean up stored
@@ -103,8 +92,8 @@ export const LEGACY_FIELD_ALIASES: Record<string, ColorFieldKey | null> = {
   cardShadow:      'cardShadow',
   headingWeight:   'headingWeight',
   headingTracking: 'headingTracking',
-  btnSecondaryBg:  'btnSecondaryBg',
-  btnSecondaryText:'btnSecondaryText',
+  btnSecondaryBg:  null,
+  btnSecondaryText:null,
 };
 
 // Legacy CSS-var name → modern CSS-var name (used at load time only).
@@ -207,52 +196,31 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   cardShadow:       { cssVar: '--token-card-shadow',      label: 'Karten-Schatten',        description: 'box-shadow auf Karten (CSS-Wert, z.B. "0 8px 24px rgba(0,0,0,0.12)")', type: 'size', group: 'special' },
   headingWeight:    { cssVar: '--token-heading-weight',   label: 'Headline-Gewicht',       description: 'font-weight der Headlines (z.B. 400, 600, 800)', type: 'size', group: 'special' },
   headingTracking:  { cssVar: '--token-heading-tracking', label: 'Headline-Laufweite',     description: 'letter-spacing der Headlines (z.B. -0.02em)', type: 'size', group: 'special' },
-  // Phase A – Karten-spezifische Overrides (fallen auf section-level zurück)
-  cardHeadingColor:    { cssVar: '--token-card-heading',     label: 'Karten-Headline',        description: 'Überschriftenfarbe innerhalb von Karten – überschreibt Headline-Farbe', group: 'special' },
-  cardBodyColor:       { cssVar: '--token-card-body',        label: 'Karten-Fliesstext',      description: 'Fliesstext innerhalb von Karten – überschreibt Fliesstext-Farbe', group: 'special' },
-  cardMutedColor:      { cssVar: '--token-card-muted',       label: 'Karten-Dezenttext',      description: 'Dezente Texte innerhalb von Karten (Meta, Datum, Labels)', group: 'special' },
-  cardBadgeBg:         { cssVar: '--token-card-badge-bg',    label: 'Karten-Badge BG',        description: 'Badge-Hintergrund auf Karten (z.B. Tags)', group: 'special' },
-  cardBadgeText:       { cssVar: '--token-card-badge-text',  label: 'Karten-Badge Text',      description: 'Badge-Text auf Karten', group: 'special' },
-  cardIconColor:       { cssVar: '--token-card-icon',        label: 'Karten-Icon',            description: 'Icon-Farbe innerhalb von Karten', group: 'special' },
-  // Phase B – Spezialrollen
-  btnSecondaryBg:      { cssVar: '--token-btn-secondary-bg',     label: 'Sekundär-Button BG',     description: 'Hintergrund von Sekundär-/Outline-Buttons', group: 'special' },
-  btnSecondaryText:    { cssVar: '--token-btn-secondary-text',   label: 'Sekundär-Button Text',   description: 'Textfarbe Sekundär-/Outline-Button', group: 'special' },
-  btnSecondaryBorder:  { cssVar: '--token-btn-secondary-border', label: 'Sekundär-Button Border', description: 'Randfarbe Sekundär-/Outline-Button', group: 'special' },
-  linkColor:           { cssVar: '--token-link',                 label: 'Link-Farbe',             description: 'Inline-Links (rich text, Legal-Pages)', group: 'special' },
-  linkHoverColor:      { cssVar: '--token-link-hover',           label: 'Link-Hover',             description: 'Inline-Link Hover-Farbe', group: 'special' },
-  inputBg:             { cssVar: '--token-input-bg',             label: 'Input-Hintergrund',      description: 'Hintergrund von Formularfeldern', group: 'special' },
-  inputBorder:         { cssVar: '--token-input-border',         label: 'Input-Border',           description: 'Randfarbe Formularfelder', group: 'special' },
-  inputText:           { cssVar: '--token-input-text',           label: 'Input-Textfarbe',        description: 'Textfarbe in Formularfeldern', group: 'special' },
-  labelColor:          { cssVar: '--token-label',                label: 'Label-Farbe',            description: 'Beschriftungen zu Formularfeldern', group: 'special' },
-  priceColor:          { cssVar: '--token-price',                label: 'Preis-Farbe',            description: 'Preisangaben (Shop)', group: 'special' },
-  priceStrikeColor:    { cssVar: '--token-price-strikethrough',  label: 'Preis-Streich',          description: 'Durchgestrichener Vergleichspreis', group: 'special' },
-  pageBg:              { cssVar: '--token-page-bg',              label: 'Seiten-Hintergrund',     description: 'Hintergrund auf Seitenebene (z.B. Hero, Marquee)', group: 'special' },
-  shadowColor:         { cssVar: '--token-shadow',               label: 'Schattenfarbe',          description: 'Box-Shadow-Farbe (z.B. Property-Showcase)', group: 'special' },
-  successColor:        { cssVar: '--token-success',              label: 'Erfolg-Farbe',           description: 'Erfolgsmeldungen, Checkmarks (z.B. Checkout, Thank-You)', group: 'special' },
-  successBg:           { cssVar: '--token-success-bg',           label: 'Erfolg-Hintergrund',     description: 'Hintergrund für Erfolgs-Hinweise', group: 'special' },
-  dangerColor:         { cssVar: '--token-danger',               label: 'Warnung-Farbe',          description: 'Fehler/Sale/Lösch-Aktionen', group: 'special' },
-  dangerBg:            { cssVar: '--token-danger-bg',            label: 'Warnung-Hintergrund',    description: 'Hintergrund für Sale-Badges / Warnhinweise', group: 'special' },
 };
 
-/* ─── SINGLE SOURCE OF TRUTH ─── */
-// The editor reads ONLY the codegen output. The codegen scans each
-// industry-specific template file for var(--token-*) references and
-// reverse-maps them to ColorFieldKey via FIELD_DEFS. Regenerate with:
-//   node scripts/generate-section-color-contracts.cjs
+/* ─── FIELD SELECTION ─── */
+// Show ALL core + special color fields for every section type. This ensures
+// that every section can be fully styled regardless of whether its template
+// uses CSS vars or data props. The codegen contracts are used only to
+// highlight which fields are "primary" for a given section (shown first).
 export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
+  // All color fields except sectionBgAlt (internal-only)
+  const ALL_EDITABLE: ColorFieldKey[] = (Object.keys(FIELD_DEFS) as ColorFieldKey[]).filter(f => f !== 'sectionBgAlt');
+
+  // Determine which fields are "primary" for this section type (from codegen)
   const industryKey = industry
     ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
     : null;
   const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
-  if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
-    return (industrySpecific as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt');
-  }
   const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
-  if (Array.isArray(generic) && generic.length > 0) {
-    return (generic as ColorFieldKey[]).filter((f) => f !== 'sectionBgAlt');
-  }
-  // No codegen entry → minimal safe set. Re-run the generator to fix.
-  return ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor'];
+  const primary = (Array.isArray(industrySpecific) && industrySpecific.length > 0)
+    ? industrySpecific as ColorFieldKey[]
+    : (Array.isArray(generic) && generic.length > 0 ? generic as ColorFieldKey[] : []);
+
+  // Return primary fields first, then remaining fields (de-duped)
+  const primarySet = new Set(primary);
+  const rest = ALL_EDITABLE.filter(f => !primarySet.has(f));
+  return [...primary.filter(f => f !== 'sectionBgAlt'), ...rest];
 }
 
 
