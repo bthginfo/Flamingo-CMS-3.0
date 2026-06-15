@@ -3315,10 +3315,10 @@ function OfferCampaignStripEditor({ data, onChange }: EditorProps) {
         {benefits.map((b, i) => (
           <div key={i} className="flex items-center gap-2">
             <Field label="" value={b} onChange={(v) => updateBenefit(i, v)} />
-            <button onClick={() => removeBenefit(i)} className="text-red-400 hover:text-red-600 text-sm flex-shrink-0">{'\u00d7'}</button>
+            <button onClick={() => removeBenefit(i)} className="text-red-400 hover:text-red-600 text-sm flex-shrink-0">{"×"}</button>
           </div>
         ))}
-        <button onClick={addBenefit} className="text-sm text-blue-600 hover:underline">+ Benefit hinzuf\u00fcgen</button>
+        <button onClick={addBenefit} className="text-sm text-blue-600 hover:underline">+ Benefit hinzufügen</button>
       </div>
 
       <ButtonField label="CTA" value={cta} onChange={setCta} />
