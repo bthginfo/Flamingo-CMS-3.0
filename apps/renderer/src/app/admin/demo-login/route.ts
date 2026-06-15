@@ -27,7 +27,7 @@ const INDUSTRY_MAP: Record<string, string> = {
   florist: 'florist',
   fitness: 'fitness',
   location: 'location',
-  shop: 'ecommerce',
+  shop: 'restaurant',
   showcase: 'tradesman',
 };
 
@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const token = await createSessionToken(tenantId, '1h');
+  const token = await createSessionToken(tenantId);
   const safeNext = requestedNext?.startsWith('/admin') && !requestedNext.startsWith('/admin/login')
     ? requestedNext
     : '/admin';
