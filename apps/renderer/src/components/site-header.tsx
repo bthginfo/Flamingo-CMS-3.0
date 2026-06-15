@@ -171,7 +171,7 @@ export function SiteHeader({ navItems, brand, contact, darkBg = true, cta, homeH
                   {item.label}
                 </Link>
               ))}
-              {ctaData && {ctaData && <NavCtaButton cta={ctaData} scrolled={scrolled} isHeroDark={isHeroDark} linkPrefix={linkPrefix} />}}
+              {ctaData && <NavCtaButton cta={ctaData} scrolled={scrolled} isHeroDark={isHeroDark} linkPrefix={linkPrefix} />}
               {i18n && i18n.locales.length > 1 && (
                 <LanguageSwitcher locales={i18n.locales} currentLocale={i18n.currentLocale} defaultLocale={i18n.defaultLocale} style={(i18n.style as 'dropdown' | 'inline') || 'dropdown'} />
               )}
