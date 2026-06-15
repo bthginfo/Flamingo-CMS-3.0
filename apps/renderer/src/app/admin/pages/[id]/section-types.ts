@@ -86,6 +86,7 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'principlesGrid', label: 'Principles Grid', description: 'Hochwertige Werte- oder Prinzipien-Section mit konsistentem Headline-Stil', category: 'Premium' },
   { type: 'glowHero', label: 'Glow Hero', description: 'Interaktiver Premium-Hero mit Mouse-Glow, Bild, Fakten und CTAs', category: 'Premium' },
   { type: 'instagramFeed', label: 'Instagram-Feed', description: 'Live-Feed deines Instagram-Business-Accounts (Posts, Reels, Carousels) — direkt im Editor verbinden', category: 'Social Proof' },
+  { type: 'menuCard', label: 'Speisekarte', description: 'Gerichte als Karten mit Kategorien als Tabs, optional mit Bild', category: 'Inhalt' },
 ];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
@@ -481,9 +482,7 @@ export function getSectionTypesForIndustry(industry: string, options?: { hasShop
     }
   }
 
-  return [...specific, ...shared, ...foreign  { type: 'menuCard', label: 'Speisekarte', description: 'Gerichte als Karten mit Kategorien als Tabs, optional mit Bild', category: 'Inhalt' },
-  { type: 'menuCard', label: 'Speisekarte', description: 'Gerichte als Karten mit Kategorien als Tabs, optional mit Bild', category: 'Inhalt' },
-];
+  return [...specific, ...shared, ...foreign];
 }
 
 function withAddonLock(section: SectionTypeDefinition, options?: { hasShop?: boolean; hasBooking?: boolean }): SectionTypeDefinition {
