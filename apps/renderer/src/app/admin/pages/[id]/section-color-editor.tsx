@@ -240,13 +240,6 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
   // Split into color fields and design token fields
   const colorFields = allFields.filter(f => FIELD_DEFS[f]?.type !== 'size');
   const designFields = allFields.filter(f => FIELD_DEFS[f]?.type === 'size');
-  // Split color fields by visibility group so the editor isn't overwhelming:
-  //  - core:     always visible (the obvious 6–12 knobs)
-  //  - special:  collapsed by default (eyebrow / stat / quote / rating / overlay…)
-  //  - advanced: collapsed by default (legacy --style-* / --brand-* duplicates)
-  const coreFields     = colorFields.filter(f => (FIELD_DEFS[f]?.group ?? 'core') === 'core');
-  const specialFields  = colorFields.filter(f =>  FIELD_DEFS[f]?.group === 'special');
-  const advancedFields = colorFields.filter(f =>  FIELD_DEFS[f]?.group === 'advanced');
 
   // All CSS vars we need to read (token-only after Phase 3 cleanup)
   const allVarKeys = allFields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean);
@@ -445,28 +438,8 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
         {activeCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-full text-[10px] font-medium">{activeCount}</span>}
       </summary>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-        {coreFields.map(renderColorField)}
+        {colorFields.map(renderColorField)}
       </div>
-      {specialFields.length > 0 && (
-        <details className="mt-3 pt-3 border-t border-zinc-100">
-          <summary className="text-xs text-zinc-500 cursor-pointer flex items-center gap-1 mb-2">
-            <ChevronDown size={12} /> Spezial-Felder ({specialFields.length})
-          </summary>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-            {specialFields.map(renderColorField)}
-          </div>
-        </details>
-      )}
-      {advancedFields.length > 0 && (
-        <details className="mt-3 pt-3 border-t border-zinc-100">
-          <summary className="text-xs text-zinc-500 cursor-pointer flex items-center gap-1 mb-2">
-            <ChevronDown size={12} /> Erweitert – Legacy / Marken-Variablen ({advancedFields.length})
-          </summary>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-            {advancedFields.map(renderColorField)}
-          </div>
-        </details>
-      )}
       {designFields.length > 0 && (
         <div className="mt-3 pt-3 border-t border-zinc-100">
           <button type="button" className="text-xs text-zinc-500 flex items-center gap-1 mb-2" onClick={() => setShowAdvanced(!showAdvanced)}>
