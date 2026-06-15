@@ -3,11 +3,11 @@ import { pgTable, uuid, varchar, text, boolean, integer, jsonb, timestamp, uniqu
 // ─── Enums ────────────────────────────────────────────────────────────
 export const industryEnum = pgEnum('industry', [
   'tradesman', 'restaurant', 'salon', 'hotel', 'tourism',
-  'consulting', 'medical', 'fitness', 'wedding', 'cafe', 'bar', 'photography', 'realestate', 'tattoo', 'ecommerce', 'retail',
+  'consulting', 'medical', 'fitness', 'wedding', 'cafe', 'bar', 'photography', 'realestate', 'tattoo', 'ecommerce', 'retail', 'florist', 'location',
 ]);
 
 export const tenantStatusEnum = pgEnum('tenant_status', ['active', 'suspended', 'provisioning']);
-export const deploymentModeEnum = pgEnum('deployment_mode', ['shared', 'standalone']);
+export const deploymentModeEnum = pgEnum('deployment_mode', ['shared', 'lead_shared', 'standalone']);
 export const domainTypeEnum = pgEnum('domain_type', ['primary', 'alias', 'preview']);
 export const pageTypeEnum = pgEnum('page_type', ['free', 'collection_overview', 'legal', 'system']);
 export const pageStatusEnum = pgEnum('page_status', ['draft', 'published', 'archived']);
@@ -26,6 +26,14 @@ export const couponTypeEnum = pgEnum('coupon_type', ['percent', 'fixed_amount', 
 export const couponAppliesToEnum = pgEnum('coupon_applies_to', ['all', 'specific_products', 'specific_categories']);
 export const promotionTypeEnum = pgEnum('promotion_type', ['free_shipping_above', 'buy_x_get_discount', 'bundle_discount', 'quantity_discount', 'first_order_discount', 'spend_x_save_y']);
 export const discountTypeEnum = pgEnum('discount_type', ['percent', 'fixed']);
+
+// Booking addon enums
+export const bookingModeEnum = pgEnum('booking_mode', ['request', 'instant']);
+export const bookingTimeModelEnum = pgEnum('booking_time_model', ['time_slot', 'full_day', 'date_range']);
+export const bookingResourceTypeEnum = pgEnum('booking_resource_type', ['table', 'room', 'space', 'room_unit', 'staff', 'equipment', 'generic']);
+export const bookingStatusEnum = pgEnum('booking_status', ['requested', 'confirmed', 'cancelled_by_customer', 'cancelled_by_admin', 'completed', 'no_show']);
+export const bookingActorEnum = pgEnum('booking_actor', ['customer', 'admin', 'system']);
+export const bookingEmailTriggerEnum = pgEnum('booking_email_trigger', ['booking_requested_customer', 'booking_requested_admin', 'booking_confirmed_customer', 'booking_cancelled_customer', 'booking_cancelled_admin']);
 
 // ─── 1. tenants ───────────────────────────────────────────────────────
 export const tenants = pgTable('tenants', {
@@ -460,6 +468,83 @@ export const leads = pgTable('leads', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+// ─── FlamingoMedia CRM Customers ─────────────────────────────────────
+export const crmCustomerStatusEnum = pgEnum('crm_customer_status', ['aktiv', 'pausiert', 'gekündigt']);
+export const crmPaymentStatusEnum = pgEnum('crm_payment_status', ['offen', 'bezahlt', 'überfällig', 'storniert']);
+export const crmBlogPostStatusEnum = pgEnum('crm_blog_post_status', ['draft', 'published', 'archived']);
+
+export const crmCustomers = pgTable('crm_customers', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  company: varchar('company', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }),
+  phone: varchar('phone', { length: 50 }),
+  status: crmCustomerStatusEnum('status').notNull().default('aktiv'),
+  location: varchar('location', { length: 255 }),
+  industry: varchar('industry', { length: 200 }),
+  websiteOld: varchar('website_old', { length: 500 }),
+  flamingoLink: varchar('flamingo_link', { length: 500 }),
+  contact: varchar('contact', { length: 255 }),
+  contactFirstName: varchar('contact_first_name', { length: 100 }),
+  contactLastName: varchar('contact_last_name', { length: 100 }),
+  anrede: varchar('anrede', { length: 10 }),
+  responsible: varchar('responsible', { length: 100 }),
+  tenantId: uuid('tenant_id').references(() => tenants.id, { onDelete: 'set null' }),
+  leadId: uuid('lead_id').references(() => leads.id, { onDelete: 'set null' }),
+  adminPassword: varchar('admin_password', { length: 100 }),
+  packageName: varchar('package_name', { length: 120 }),
+  setupPriceCents: integer('setup_price_cents').notNull().default(0),
+  hostingMonthlyCents: integer('hosting_monthly_cents').notNull().default(0),
+  notes: text('notes'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('crm_customers_company_idx').on(t.company),
+  index('crm_customers_status_idx').on(t.status),
+  index('crm_customers_lead_idx').on(t.leadId),
+]);
+
+export const crmCustomerPayments = pgTable('crm_customer_payments', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  customerId: uuid('customer_id').notNull().references(() => crmCustomers.id, { onDelete: 'cascade' }),
+  type: varchar('type', { length: 50 }).notNull().default('setup'),
+  title: varchar('title', { length: 255 }).notNull(),
+  amountCents: integer('amount_cents').notNull(),
+  status: crmPaymentStatusEnum('status').notNull().default('offen'),
+  dueDate: timestamp('due_date', { withTimezone: true }),
+  paidAt: timestamp('paid_at', { withTimezone: true }),
+  note: text('note'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('crm_customer_payments_customer_idx').on(t.customerId),
+  index('crm_customer_payments_status_idx').on(t.status),
+]);
+
+export const crmBlogPosts = pgTable('crm_blog_posts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug: varchar('slug', { length: 180 }).notNull(),
+  title: varchar('title', { length: 180 }).notNull(),
+  excerpt: text('excerpt').notNull(),
+  content: text('content').notNull(),
+  status: crmBlogPostStatusEnum('status').notNull().default('draft'),
+  category: varchar('category', { length: 120 }),
+  tags: jsonb('tags').$type<string[]>().notNull().default([]),
+  coverImage: varchar('cover_image', { length: 700 }),
+  coverAlt: varchar('cover_alt', { length: 255 }),
+  authorName: varchar('author_name', { length: 120 }).notNull().default('FlamingoMedia'),
+  metaTitle: varchar('meta_title', { length: 180 }),
+  metaDescription: varchar('meta_description', { length: 260 }),
+  ogImage: varchar('og_image', { length: 700 }),
+  canonicalPath: varchar('canonical_path', { length: 255 }),
+  readingMinutes: integer('reading_minutes').notNull().default(1),
+  publishedAt: timestamp('published_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('crm_blog_posts_slug_idx').on(t.slug),
+  index('crm_blog_posts_status_idx').on(t.status),
+  index('crm_blog_posts_published_idx').on(t.publishedAt),
+]);
+
 // ═══════════════════════════════════════════════════════════════════════
 // ─── SHOP ADDON TABLES ───────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════
@@ -771,6 +856,172 @@ export const invoices = pgTable('invoices', {
 ]);
 
 // ─── email_templates ─────────────────────────────────────────────────
+export const bookingSettings = pgTable('booking_settings', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  mode: bookingModeEnum('mode').notNull().default('request'),
+  timeModel: bookingTimeModelEnum('time_model').notNull().default('time_slot'),
+  timezone: varchar('timezone', { length: 80 }).notNull().default('Europe/Berlin'),
+  intervalMinutes: integer('interval_minutes').notNull().default(30),
+  minNoticeHours: integer('min_notice_hours').notNull().default(12),
+  maxAdvanceDays: integer('max_advance_days').notNull().default(90),
+  cancellationAllowed: boolean('cancellation_allowed').notNull().default(true),
+  cancellationDeadlineHours: integer('cancellation_deadline_hours').notNull().default(24),
+  notificationEmail: varchar('notification_email', { length: 255 }),
+  customerEmailEnabled: boolean('customer_email_enabled').notNull().default(true),
+  adminEmailEnabled: boolean('admin_email_enabled').notNull().default(true),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('booking_settings_tenant_idx').on(t.tenantId),
+]);
+
+export const bookingResources = pgTable('booking_resources', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  type: bookingResourceTypeEnum('type').notNull().default('generic'),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description'),
+  capacity: integer('capacity').notNull().default(1),
+  seats: integer('seats'),
+  image: varchar('image', { length: 500 }),
+  active: boolean('active').notNull().default(true),
+  sortOrder: integer('sort_order').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('booking_resources_tenant_idx').on(t.tenantId),
+  index('booking_resources_tenant_active_idx').on(t.tenantId, t.active),
+]);
+
+export const bookingServices = pgTable('booking_services', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description'),
+  durationMinutes: integer('duration_minutes'),
+  bufferBeforeMinutes: integer('buffer_before_minutes').notNull().default(0),
+  bufferAfterMinutes: integer('buffer_after_minutes').notNull().default(0),
+  timeModelOverride: bookingTimeModelEnum('time_model_override'),
+  priceLabel: varchar('price_label', { length: 100 }),
+  requiresResource: boolean('requires_resource').notNull().default(false),
+  minPartySize: integer('min_party_size'),
+  maxPartySize: integer('max_party_size'),
+  allowedResourceTypes: jsonb('allowed_resource_types').$type<string[]>().default([]),
+  intakeQuestions: jsonb('intake_questions').$type<Array<{ id: string; label: string; type?: string; required?: boolean; options?: string[] }>>().default([]),
+  active: boolean('active').notNull().default(true),
+  sortOrder: integer('sort_order').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('booking_services_tenant_idx').on(t.tenantId),
+  index('booking_services_tenant_active_idx').on(t.tenantId, t.active),
+]);
+
+export const bookingAvailabilityRules = pgTable('booking_availability_rules', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  resourceId: uuid('resource_id').references(() => bookingResources.id, { onDelete: 'cascade' }),
+  serviceId: uuid('service_id').references(() => bookingServices.id, { onDelete: 'cascade' }),
+  weekday: integer('weekday').notNull(),
+  startTime: varchar('start_time', { length: 10 }).notNull(),
+  endTime: varchar('end_time', { length: 10 }).notNull(),
+  capacity: integer('capacity'),
+  active: boolean('active').notNull().default(true),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('booking_availability_tenant_idx').on(t.tenantId),
+  index('booking_availability_lookup_idx').on(t.tenantId, t.weekday, t.active),
+]);
+
+export const bookingCalendarBlocks = pgTable('booking_calendar_blocks', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  resourceId: uuid('resource_id').references(() => bookingResources.id, { onDelete: 'cascade' }),
+  serviceId: uuid('service_id').references(() => bookingServices.id, { onDelete: 'cascade' }),
+  type: varchar('type', { length: 20 }).notNull().default('available'),
+  startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
+  endsAt: timestamp('ends_at', { withTimezone: true }).notNull(),
+  capacity: integer('capacity'),
+  note: varchar('note', { length: 255 }),
+  active: boolean('active').notNull().default(true),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('booking_calendar_blocks_tenant_idx').on(t.tenantId),
+  index('booking_calendar_blocks_lookup_idx').on(t.tenantId, t.startsAt, t.endsAt, t.active),
+]);
+
+export const bookingBlackouts = pgTable('booking_blackouts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  resourceId: uuid('resource_id').references(() => bookingResources.id, { onDelete: 'cascade' }),
+  startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
+  endsAt: timestamp('ends_at', { withTimezone: true }).notNull(),
+  reason: varchar('reason', { length: 255 }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('booking_blackouts_tenant_idx').on(t.tenantId),
+  index('booking_blackouts_lookup_idx').on(t.tenantId, t.startsAt, t.endsAt),
+]);
+
+export const bookingCustomers = pgTable('booking_customers', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  email: varchar('email', { length: 320 }),
+  phone: varchar('phone', { length: 80 }),
+  notes: text('notes'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('booking_customers_tenant_idx').on(t.tenantId),
+  index('booking_customers_tenant_email_idx').on(t.tenantId, t.email),
+]);
+
+export const bookingRequests = pgTable('booking_requests', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  customerId: uuid('customer_id').references(() => bookingCustomers.id, { onDelete: 'set null' }),
+  serviceId: uuid('service_id').references(() => bookingServices.id, { onDelete: 'set null' }),
+  resourceId: uuid('resource_id').references(() => bookingResources.id, { onDelete: 'set null' }),
+  mode: bookingModeEnum('mode').notNull().default('request'),
+  timeModel: bookingTimeModelEnum('time_model').notNull().default('time_slot'),
+  status: bookingStatusEnum('status').notNull().default('requested'),
+  customerName: varchar('customer_name', { length: 255 }).notNull(),
+  customerEmail: varchar('customer_email', { length: 320 }),
+  customerPhone: varchar('customer_phone', { length: 80 }),
+  partySize: integer('party_size').notNull().default(1),
+  startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
+  endsAt: timestamp('ends_at', { withTimezone: true }).notNull(),
+  bufferBeforeMinutes: integer('buffer_before_minutes').notNull().default(0),
+  bufferAfterMinutes: integer('buffer_after_minutes').notNull().default(0),
+  message: text('message'),
+  intakeAnswers: jsonb('intake_answers').$type<Record<string, string>>().default({}),
+  cancellationTokenHash: varchar('cancellation_token_hash', { length: 128 }),
+  cancellationReason: text('cancellation_reason'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('booking_requests_tenant_idx').on(t.tenantId),
+  index('booking_requests_calendar_idx').on(t.tenantId, t.startsAt, t.endsAt),
+  index('booking_requests_status_idx').on(t.tenantId, t.status),
+]);
+
+export const bookingStatusHistory = pgTable('booking_status_history', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  bookingId: uuid('booking_id').notNull().references(() => bookingRequests.id, { onDelete: 'cascade' }),
+  fromStatus: bookingStatusEnum('from_status'),
+  toStatus: bookingStatusEnum('to_status').notNull(),
+  actor: bookingActorEnum('actor').notNull().default('system'),
+  note: text('note'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('booking_status_history_booking_idx').on(t.bookingId),
+  index('booking_status_history_tenant_idx').on(t.tenantId),
+]);
+
 export const emailTemplates = pgTable('email_templates', {
   id: uuid('id').primaryKey().defaultRandom(),
   tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
@@ -780,4 +1031,46 @@ export const emailTemplates = pgTable('email_templates', {
   active: boolean('active').notNull().default(true),
 }, (t) => [
   uniqueIndex('email_templates_tenant_trigger_idx').on(t.tenantId, t.trigger),
+]);
+
+// ─── Instagram Integration ─────────────────────────────────────────────────
+// One connection per tenant (unique). Long-lived access token (60 days)
+// stored encrypted; auto-refreshed by cron when within 30 days of expiry.
+export const instagramConnections = pgTable('instagram_connections', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  igUserId: varchar('ig_user_id', { length: 64 }).notNull(),
+  igUsername: varchar('ig_username', { length: 64 }).notNull(),
+  igAccountType: varchar('ig_account_type', { length: 20 }).notNull().default('BUSINESS'),
+  accessTokenEncrypted: text('access_token_encrypted').notNull(),
+  tokenExpiresAt: timestamp('token_expires_at', { withTimezone: true }).notNull(),
+  lastSyncedAt: timestamp('last_synced_at', { withTimezone: true }),
+  lastRefreshedAt: timestamp('last_refreshed_at', { withTimezone: true }).notNull().defaultNow(),
+  syncStatus: varchar('sync_status', { length: 20 }).notNull().default('ok'),
+  syncError: text('sync_error'),
+  scopes: varchar('scopes', { length: 255 }).notNull().default('instagram_business_basic'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('instagram_connections_tenant_idx').on(t.tenantId),
+  index('instagram_connections_ig_user_idx').on(t.igUserId),
+]);
+
+export const instagramPosts = pgTable('instagram_posts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  connectionId: uuid('connection_id').notNull().references(() => instagramConnections.id, { onDelete: 'cascade' }),
+  tenantId: uuid('tenant_id').notNull().references(() => tenants.id, { onDelete: 'cascade' }),
+  igMediaId: varchar('ig_media_id', { length: 64 }).notNull(),
+  mediaType: varchar('media_type', { length: 32 }).notNull(),
+  mediaUrl: text('media_url').notNull(),
+  thumbnailUrl: text('thumbnail_url'),
+  permalink: text('permalink').notNull(),
+  caption: text('caption'),
+  timestamp: timestamp('timestamp', { withTimezone: true }).notNull(),
+  position: integer('position').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  uniqueIndex('instagram_posts_connection_media_idx').on(t.connectionId, t.igMediaId),
+  index('instagram_posts_tenant_idx').on(t.tenantId),
+  index('instagram_posts_position_idx').on(t.tenantId, t.position),
 ]);
