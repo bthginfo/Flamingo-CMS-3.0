@@ -1,208 +1,207 @@
-'use client';
-
-import { useState } from 'react';
 import {
-  HelpCircle, FileText, Layers, ImageIcon, Search, FolderOpen, ChevronDown, ChevronRight,
-  Plus, Pencil, Trash2, Eye, EyeOff, GripVertical, Upload, ArrowUpDown, Globe, Mail,
-  Rocket, BookOpen,
+  BookOpen, ClipboardList, Eye, FileText, FolderOpen, Globe, HelpCircle,
+  ImageIcon, Layers, Mail, Navigation, Palette, Phone, Rocket, Search,
+  ShoppingBag,
 } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { RestartTourButton } from '@/components/admin/onboarding-tour';
+import { isShopActive } from '../shop/actions';
 
-type SectionProps = { title: string; icon: React.ReactNode; children: React.ReactNode; defaultOpen?: boolean; color?: string };
+type HelpSectionProps = {
+  title: string;
+  intro: string;
+  icon: ReactNode;
+  children: ReactNode;
+  defaultOpen?: boolean;
+};
 
-function HelpSection({ title, icon, children, defaultOpen = false, color = 'blue' }: SectionProps) {
-  const [open, setOpen] = useState(defaultOpen);
-  const colorClasses: Record<string, string> = {
-    blue: 'from-blue-500/10 to-blue-600/5 border-blue-200/60',
-    purple: 'from-purple-500/10 to-purple-600/5 border-purple-200/60',
-    green: 'from-green-500/10 to-green-600/5 border-green-200/60',
-    amber: 'from-amber-500/10 to-amber-600/5 border-amber-200/60',
-    rose: 'from-rose-500/10 to-rose-600/5 border-rose-200/60',
-    cyan: 'from-cyan-500/10 to-cyan-600/5 border-cyan-200/60',
-    indigo: 'from-indigo-500/10 to-indigo-600/5 border-indigo-200/60',
-    emerald: 'from-emerald-500/10 to-emerald-600/5 border-emerald-200/60',
-  };
+function HelpSection({ title, intro, icon, children, defaultOpen = false }: HelpSectionProps) {
   return (
-    <div className={`border rounded-2xl overflow-hidden transition-all duration-200 ${open ? `bg-gradient-to-br ${colorClasses[color] || colorClasses.blue} shadow-sm` : 'bg-white border-zinc-200 hover:border-zinc-300'}`}>
-      <button onClick={() => setOpen(!open)} className="flex items-center gap-3 w-full px-5 py-4 text-left transition-colors">
-        <span className="text-admin-accent">{icon}</span>
-        <span className="font-semibold text-zinc-900 flex-1">{title}</span>
-        {open ? <ChevronDown size={18} className="text-zinc-400" /> : <ChevronRight size={18} className="text-zinc-400" />}
-      </button>
-      {open && <div className="px-5 pb-5 text-sm text-zinc-600 leading-relaxed space-y-3 border-t border-zinc-100/50 pt-4">{children}</div>}
+    <details open={defaultOpen} className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+      <summary className="flex cursor-pointer list-none items-start gap-4 px-5 py-5 transition hover:bg-zinc-50 [&::-webkit-details-marker]:hidden">
+        <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-admin-accent/10 text-admin-accent">{icon}</span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold text-zinc-950">{title}</span>
+          <span className="mt-1 block text-sm leading-6 text-zinc-500">{intro}</span>
+        </span>
+        <span className="mt-2 text-zinc-400 transition group-open:rotate-180">⌄</span>
+      </summary>
+      <div className="border-t border-zinc-100 px-5 pb-6 pt-5 text-sm leading-7 text-zinc-650">{children}</div>
+    </details>
+  );
+}
+
+function MiniTitle({ children }: { children: ReactNode }) {
+  return <h3 className="mt-5 font-semibold text-zinc-950 first:mt-0">{children}</h3>;
+}
+
+function Hint({ children }: { children: ReactNode }) {
+  return <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm leading-6 text-blue-900">{children}</div>;
+}
+
+function Cards({ items }: { items: ReactNode[] }) {
+  return (
+    <div className="mt-3 grid gap-3 md:grid-cols-2">
+      {items.map((item, index) => <div key={index} className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3">{item}</div>)}
     </div>
   );
 }
 
-function Step({ n, children }: { n: number; children: React.ReactNode }) {
-  return (
-    <div className="flex gap-3 items-start">
-      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-admin-accent text-white text-xs font-bold flex items-center justify-center mt-0.5">{n}</span>
-      <div>{children}</div>
-    </div>
-  );
-}
+export default async function HelpPage() {
+  const hasShop = await isShopActive();
 
-function Tip({ children }: { children: React.ReactNode }) {
-  return <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 text-blue-800 text-sm">💡 {children}</div>;
-}
-
-export default function HelpPage() {
   return (
-    <div className="space-y-5 max-w-3xl">
-      {/* Hero header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-admin-accent/10 via-blue-50 to-purple-50 border border-blue-100 p-8">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-admin-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+    <div className="max-w-4xl space-y-5">
+      <div className="relative overflow-hidden rounded-3xl border border-pink-100 bg-gradient-to-br from-pink-50 via-white to-amber-50 p-7 md:p-8">
+        <div className="absolute right-0 top-0 h-48 w-48 translate-x-16 -translate-y-20 rounded-full bg-admin-accent/10 blur-3xl" />
         <div className="relative">
-          <div className="flex items-center gap-2 text-admin-accent mb-2">
+          <div className="mb-3 flex items-center gap-2 text-admin-accent">
             <BookOpen size={20} />
-            <span className="text-xs font-bold uppercase tracking-wider">Anleitung</span>
+            <span className="text-xs font-bold uppercase tracking-[0.18em]">Anleitung</span>
           </div>
-          <h1 className="text-3xl font-bold text-zinc-900">Hilfe & Anleitung</h1>
-          <p className="text-zinc-500 mt-2 max-w-lg">Alles was du brauchst, um deine Website zu erstellen und zu verwalten — Schritt für Schritt erklärt.</p>
-          <div className="mt-4">
-            <RestartTourButton />
-          </div>
+          <h1 className="text-3xl font-black text-zinc-950 md:text-4xl">Flamingo CMS verstehen und sicher bedienen</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-zinc-600 md:text-base">
+            Diese Anleitung erklärt die wichtigsten Admin-Bereiche ohne Fachbegriffe. Du erfährst, wo Inhalte gepflegt werden, wie Design und SEO funktionieren und was vor dem Veröffentlichen wichtig ist.
+          </p>
+          <div className="mt-5"><RestartTourButton /></div>
         </div>
       </div>
 
-      {/* SEITEN */}
-      <HelpSection title="Seiten erstellen & bearbeiten" icon={<FileText size={20} />} defaultOpen color="blue">
-        <p>Seiten sind die Grundbausteine deiner Website. Jede Seite hat einen Titel, einen URL-Slug und beliebig viele Sektionen.</p>
-        <h4 className="font-semibold text-zinc-800 mt-2">Neue Seite anlegen</h4>
-        <Step n={1}>Gehe zu <strong>Seiten</strong> in der Seitenleiste.</Step>
-        <Step n={2}>Klicke auf <span className="inline-flex items-center gap-1"><Plus size={14} /> <strong>Neue Seite</strong></span>.</Step>
-        <Step n={3}>Vergib einen <strong>Titel</strong> (z.B. „Über uns") – der URL-Slug wird automatisch generiert.</Step>
-        <Step n={4}>Klicke auf die neue Seite, um Sektionen hinzuzufügen.</Step>
-        <Tip>Die Startseite hat den Slug <code className="bg-zinc-100 px-1.5 py-0.5 rounded text-xs">home</code> oder ist leer. Sie wird als Hauptseite angezeigt.</Tip>
-
-        <h4 className="font-semibold text-zinc-800 mt-4">Seite bearbeiten</h4>
-        <ul className="list-disc pl-5 space-y-1">
-          <li><Pencil size={13} className="inline mb-0.5" /> Titel und Slug können jederzeit geändert werden.</li>
-          <li><Eye size={13} className="inline mb-0.5" /> / <EyeOff size={13} className="inline mb-0.5" /> Sichtbarkeit: Unsichtbare Seiten erscheinen nicht auf der Website.</li>
-          <li><Trash2 size={13} className="inline mb-0.5" /> Seite löschen: Löscht die Seite und alle zugehörigen Sektionen.</li>
-        </ul>
-        <Tip>Änderungen werden erst live, wenn du auf <strong>Veröffentlichen</strong> (grüner Button unten rechts) klickst.</Tip>
+      <HelpSection title="Das Grundprinzip" intro="Seiten bestehen aus Sections. Änderungen werden erst durch Veröffentlichen live." icon={<HelpCircle size={20} />} defaultOpen>
+        <p>Im CMS arbeitest du an einem Entwurf. Besucher sehen Änderungen erst, wenn du sie veröffentlichst. Dadurch kannst du Inhalte vorbereiten, in der Vorschau prüfen und danach sicher live stellen.</p>
+        <Cards items={[
+          <><strong>Seiten:</strong> Startseite, Leistungen, Über uns, Kontakt oder Landingpages.</>,
+          <><strong>Sections:</strong> einzelne Inhaltsblöcke wie Hero, Galerie, FAQ, Kontaktformular, Popup oder CTA.</>,
+          <><strong>Collections:</strong> wiederverwendbare Einträge wie Referenzen, Blogartikel oder Leistungen.</>,
+          <><strong>Live-Website:</strong> der veröffentlichte Stand, den Besucher sehen.</>,
+        ]} />
+        <Hint>Empfohlener Ablauf: Inhalte pflegen, speichern, Vorschau prüfen, veröffentlichen.</Hint>
       </HelpSection>
 
-      {/* SEKTIONEN */}
-      <HelpSection title="Sektionen hinzufügen & anordnen" icon={<Layers size={20} />} color="purple">
-        <p>Sektionen sind die einzelnen Blöcke einer Seite (z.B. Hero-Banner, Text & Bild, FAQ, Galerie usw.).</p>
-        <h4 className="font-semibold text-zinc-800 mt-2">Sektion hinzufügen</h4>
-        <Step n={1}>Öffne eine Seite über <strong>Seiten → [Seitenname]</strong>.</Step>
-        <Step n={2}>Klicke auf <span className="inline-flex items-center gap-1"><Plus size={14} /> <strong>Sektion hinzufügen</strong></span>.</Step>
-        <Step n={3}>Wähle den Sektionstyp aus der Liste (z.B. Hero, Text & Bild, Galerie, FAQ, …).</Step>
-        <Step n={4}>Fülle die Felder aus – je nach Typ gibt es verschiedene Eingabefelder.</Step>
+      <HelpSection title="Seiten" intro="Hier legst du normale Seiten an und bestimmst ihre URL." icon={<FileText size={20} />}>
+        <MiniTitle>Wofür Seiten gedacht sind</MiniTitle>
+        <p>Eine Seite ist sinnvoll, wenn ein Thema eigenständig erklärt und gefunden werden soll. Beispiele sind Leistungen, Preise, Über uns, Kontakt oder eine spezielle Angebotsseite.</p>
+        <Cards items={[
+          <><strong>Titel:</strong> Der Name der Seite im CMS und oft auch die sichtbare Überschrift.</>,
+          <><strong>Slug:</strong> Der URL-Teil, zum Beispiel <code className="rounded bg-white px-1.5 py-0.5 text-xs">/leistungen</code>.</>,
+          <><strong>Sichtbarkeit:</strong> Unsichtbare Seiten bleiben gespeichert, erscheinen aber nicht öffentlich.</>,
+          <><strong>SEO:</strong> Jede wichtige Seite sollte eigenen Titel und Beschreibung bekommen.</>,
+        ]} />
+      </HelpSection>
 
-        <h4 className="font-semibold text-zinc-800 mt-4">Reihenfolge ändern</h4>
-        <p><GripVertical size={13} className="inline mb-0.5" /> Ziehe Sektionen per Drag & Drop in die gewünschte Reihenfolge, oder nutze die <ArrowUpDown size={13} className="inline mb-0.5" /> Pfeil-Buttons.</p>
+      <HelpSection title="Sections" intro="Sections sind die sichtbaren Bausteine einer Seite." icon={<Layers size={20} />}>
+        <p>Öffne eine Seite, füge eine Section hinzu und fülle die Felder aus. Je nach Section gibt es Texte, Bilder, Listen, Buttons, Karten, Öffnungszeiten, Preise oder Popup-Einstellungen.</p>
+        <MiniTitle>Farben pro Section</MiniTitle>
+        <p>Die globalen Farben kommen aus “Marke & Design”. Wenn ein einzelner Bereich anders aussehen soll, kannst du die Farben direkt an dieser Section überschreiben, zum Beispiel Hintergrund, Text, Karten, Buttons oder Akzente.</p>
+        <MiniTitle>Popup-Section</MiniTitle>
+        <p>Ein Popup öffnet sich nach einer eingestellten Verzögerung. “Nur einmal” bedeutet: Nach dem Schließen erscheint es auf diesem Gerät nicht erneut. “Einmal pro Session” bedeutet: Es kann in einer neuen Browser-Sitzung wieder erscheinen.</p>
+      </HelpSection>
 
-        <h4 className="font-semibold text-zinc-800 mt-4">Verfügbare Sektionstypen</h4>
-        <div className="grid grid-cols-2 gap-1.5 text-xs">
-          {[
-            'Hero-Banner', 'Text & Bild', 'Freitext / HTML', 'Galerie',
-            'Leistungen / Services', 'Service-Pakete', 'Leistungs-Detail', 'Team',
-            'Bewertungen / Testimonials', 'FAQ', 'Kontaktformular', 'Google Maps',
-            'Zahlen & Statistiken', 'Call-to-Action (Band)', 'CTA-Links', 'USP-Leiste',
-            'Logo-Cloud (Partner)', 'News-Vorschau', 'News-Grid', 'Portfolio',
-            'Hinweisbanner', 'Header-Banner', 'Video-Embed', 'Rechtliche Inhalte',
-            'Ablauf / Timeline', 'Collection-Hero',
-            '+ Branchenspezifische Sections',
-          ].map(t => <span key={t} className="bg-zinc-100 rounded px-2 py-1">{t}</span>)}
+      <HelpSection title="Inhalte bearbeiten" intro="Texte, Bilder, Buttons und Listen werden direkt in der jeweiligen Section gepflegt." icon={<FileText size={20} />}>
+        <Cards items={[
+          <><strong>Texte:</strong> Schreibe klar, kurz und mit erkennbarem nächsten Schritt.</>,
+          <><strong>Buttons:</strong> Interne Links beginnen mit <code className="rounded bg-white px-1.5 py-0.5 text-xs">/</code>, externe Links mit <code className="rounded bg-white px-1.5 py-0.5 text-xs">https://</code>.</>,
+          <><strong>Listen:</strong> FAQ, Leistungen, Team oder Standorte bestehen aus mehreren Einträgen.</>,
+          <><strong>Vorschau:</strong> Prüfe lange Texte auch mobil, damit nichts gedrückt wirkt.</>,
+        ]} />
+      </HelpSection>
+
+      <HelpSection title="Mediathek" intro="Alle Bilder und Dateien werden zentral hochgeladen und wiederverwendet." icon={<ImageIcon size={20} />}>
+        <p>Lade Bilder in der Mediathek hoch und wähle sie anschließend in Sections aus. Gute Bilder sind klar, hell genug und zeigen das echte Angebot oder die Atmosphäre des Unternehmens.</p>
+        <MiniTitle>Alt-Texte</MiniTitle>
+        <p>Alt-Texte beschreiben kurz, was auf dem Bild zu sehen ist. Sie helfen Suchmaschinen und Menschen, die Screenreader nutzen.</p>
+        <Hint>Beispiel: “Modern eingerichteter Beratungsraum mit Holztisch” ist besser als “Bild 1”.</Hint>
+      </HelpSection>
+
+      <HelpSection title="Kontakt & Zeiten" intro="Hier pflegst du die wichtigsten Kontaktinformationen des Unternehmens." icon={<Phone size={20} />}>
+        <p>Telefon, E-Mail, Adresse, WhatsApp und Öffnungszeiten werden an mehreren Stellen genutzt: Kontaktbereich, Footer, Header-Infos, strukturierte Daten und teilweise auch in Sections.</p>
+        <Cards items={[
+          <><strong>Telefon:</strong> sollte klickbar sein und auf mobilen Geräten direkt anrufen können.</>,
+          <><strong>E-Mail:</strong> wird für Kontaktlinks und Antworten genutzt.</>,
+          <><strong>Adresse:</strong> wichtig für lokale Sichtbarkeit und Vertrauen.</>,
+          <><strong>Öffnungszeiten:</strong> helfen Besuchern, direkt einzuschätzen, wann jemand erreichbar ist.</>,
+        ]} />
+      </HelpSection>
+
+      <HelpSection title="Kontaktformular" intro="Hier steuerst du, welche Felder Besucher ausfüllen können." icon={<ClipboardList size={20} />}>
+        <p>Das Kontaktformular ist die wichtigste Anfrage-Strecke. Es sollte nur Felder enthalten, die wirklich gebraucht werden. Zu viele Pflichtfelder senken oft die Zahl der Anfragen.</p>
+        <MiniTitle>Typische Felder</MiniTitle>
+        <Cards items={[
+          <><strong>Name:</strong> für persönliche Ansprache.</>,
+          <><strong>E-Mail oder Telefon:</strong> damit du antworten kannst.</>,
+          <><strong>Nachricht:</strong> für Anliegen, Terminwunsch oder Projektdetails.</>,
+          <><strong>Datenschutz:</strong> wichtig für rechtssichere Kontaktaufnahme.</>,
+        ]} />
+        <Hint>Wenn Anfragen ungenau sind, ergänze gezielte Felder. Wenn wenige Anfragen kommen, reduziere Pflichtfelder.</Hint>
+      </HelpSection>
+
+      <HelpSection title="Navigation & Footer" intro="Hier bestimmst du, wie Besucher durch die Website geführt werden." icon={<Navigation size={20} />}>
+        <p>Die Navigation sollte nur die wichtigsten Ziele zeigen. Der Footer darf ausführlicher sein und kann zusätzliche Links wie Datenschutz, Impressum, Leistungen, Social Media oder Kontakt enthalten.</p>
+        <MiniTitle>Empfehlung</MiniTitle>
+        <p>Oben kurz und klar, unten vollständig. Besucher sollen schnell verstehen, wo sie Leistungen, Preise, Referenzen und Kontakt finden.</p>
+      </HelpSection>
+
+      <HelpSection title="Marke & Design" intro="Hier steuerst du das globale Erscheinungsbild der Website." icon={<Palette size={20} />}>
+        <MiniTitle>Globale Farben</MiniTitle>
+        <p>Primärfarbe, Sekundärfarbe und Akzentfarbe prägen Buttons, Links, Highlights und aktive Elemente. Zusätzlich kannst du globale Flächen wie Seitenhintergrund, Section-Hintergrund und Karten-Hintergrund festlegen.</p>
+        <MiniTitle>Texte, Buttons, Badges und Karten</MiniTitle>
+        <p>Du kannst Headline-Farben, Fließtext, Linkfarben, Button-Varianten, Badge-Farben, Kartenlinien, allgemeine Linien, Icons und Rundungen zentral einstellen. Einzelne Sections können diese Werte überschreiben.</p>
+        <MiniTitle>Logo und Schriften</MiniTitle>
+        <p>Logo, Logo-Anzeige, Überschriftenschrift und Fließtextschrift bestimmen stark, wie hochwertig die Website wirkt. Zwei gute Schriften reichen in der Regel aus.</p>
+      </HelpSection>
+
+      <HelpSection title="SEO & Sichtbarkeit" intro="SEO-Einstellungen bestimmen, wie Seiten in Google und beim Teilen erscheinen." icon={<Search size={20} />}>
+        <Cards items={[
+          <><strong>Seitentitel:</strong> sollte Thema und Nutzen klar benennen.</>,
+          <><strong>Meta-Beschreibung:</strong> erklärt in ein bis zwei Sätzen, warum die Seite relevant ist.</>,
+          <><strong>Open Graph Bild:</strong> erscheint häufig beim Teilen in WhatsApp, LinkedIn oder anderen Plattformen.</>,
+          <><strong>Noindex:</strong> verhindert, dass eine Seite in Suchmaschinen erscheint. Nur bewusst nutzen.</>,
+        ]} />
+      </HelpSection>
+
+      <HelpSection title="Collections" intro="Collections sind strukturierte Inhalte, die mehrfach genutzt werden können." icon={<FolderOpen size={20} />}>
+        <p>Collections eignen sich für Referenzen, Blogartikel, Leistungen, Projekte, Immobilien, Teamprofile oder Produkte. Ein Collection Item kann eigene Inhalte, SEO-Daten und eigene Sections haben.</p>
+        <Hint>Wenn Inhalte sortiert, gefiltert oder mehrfach ausgegeben werden sollen, ist eine Collection meist besser als eine normale Section.</Hint>
+      </HelpSection>
+
+      <HelpSection title="Social Media, Mail und Tracking" intro="Diese Bereiche verbinden die Website mit externen Kanälen und Tools." icon={<Globe size={20} />}>
+        <Cards items={[
+          <><strong>Social Media:</strong> Links zu Instagram, Facebook, LinkedIn und anderen Profilen.</>,
+          <><strong>Mail-Server:</strong> Einstellungen für den Versand von Formular- oder Shop-Mails.</>,
+          <><strong>Skripte & Tracking:</strong> Tracking-Codes, Pixel oder externe Tools. Nur einfügen, wenn du weißt, wofür sie gebraucht werden.</>,
+          <><strong>Impressum & Datenschutz:</strong> Rechtliche Inhalte sollten immer vollständig und aktuell sein.</>,
+        ]} />
+      </HelpSection>
+
+      {hasShop && (
+        <HelpSection title="Shop" intro="Der Shop-Bereich ist aktiv und verwaltet Produkte, Kategorien, Bestellungen und Einstellungen." icon={<ShoppingBag size={20} />}>
+          <MiniTitle>Produkte und Kategorien</MiniTitle>
+          <p>Produkte enthalten Bilder, Preise, Beschreibung, Varianten und Lager-/Verfügbarkeitsinformationen. Kategorien helfen Besuchern beim Stöbern und Filtern.</p>
+          <MiniTitle>Bestellungen</MiniTitle>
+          <p>Unter Bestellungen siehst du neue Käufe, Status, Kundendaten und Zahlungsinformationen. Bearbeite Status sauber, damit intern klar ist, was offen, bezahlt, versendet oder abgeschlossen ist.</p>
+          <MiniTitle>Versand, Coupons und Einstellungen</MiniTitle>
+          <p>Versandmethoden, Rabattcodes, Rechnungen, Zahlungsanbieter und E-Mail-Einstellungen werden im Shop-Bereich gepflegt. Prüfe diese Einstellungen besonders sorgfältig, bevor der Shop live beworben wird.</p>
+          <Hint>Shop-Seiten wie Shop, Warenkorb, Checkout und Danke-Seite sollten nicht wie normale Inhaltsseiten gelöscht werden. Sie gehören zum Kaufprozess.</Hint>
+        </HelpSection>
+      )}
+
+      <HelpSection title="Vorschau und Veröffentlichen" intro="So prüfst du Änderungen, bevor Besucher sie sehen." icon={<Eye size={20} />}>
+        <p>Die Vorschau zeigt, wie die Website mit deinen aktuellen Änderungen wirkt. Prüfe Startseite, wichtige Unterseiten, Kontaktformular und mobile Darstellung. Mit “Veröffentlichen” wird der aktuelle Stand live gestellt.</p>
+      </HelpSection>
+
+      <HelpSection title="KI API" intro="Für automatisches Befüllen kann die AI API Seiten, Sections und Inhalte anlegen." icon={<Rocket size={20} />}>
+        <p>Die KI API kann verfügbare Section-Typen abrufen, Inhalte schreiben, Seiten anlegen, SEO-Daten setzen und veröffentlichen. API-Schlüssel erlauben Änderungen am jeweiligen Tenant und sollten nicht öffentlich geteilt werden.</p>
+      </HelpSection>
+
+      <div className="rounded-2xl border border-zinc-200 bg-zinc-950 p-6 text-white">
+        <div className="flex items-center gap-3">
+          <Mail size={22} className="text-admin-accent" />
+          <h2 className="font-semibold">Brauchst du Unterstützung?</h2>
         </div>
-        <Tip>Auch Sections aus anderen Branchen stehen dir zur Verfügung — sie erscheinen im Dropdown unter „Andere: [Branche]".</Tip>
-      </HelpSection>
-
-      {/* INHALTE */}
-      <HelpSection title="Inhalte bearbeiten" icon={<Pencil size={20} />} color="green">
-        <p>Jede Sektion hat eigene Felder, die du direkt im Editor ausfüllen kannst:</p>
-        <ul className="list-disc pl-5 space-y-1">
-          <li><strong>Texte:</strong> Überschriften, Beschreibungen und Fließtext. Einige Felder unterstützen Rich-Text (fett, kursiv, Links, Listen).</li>
-          <li><strong>Bilder:</strong> Klicke auf das Bildfeld → Bild aus der Mediathek wählen oder neu hochladen.</li>
-          <li><strong>Listen:</strong> Bei FAQ, Services, Team etc. kannst du Einträge hinzufügen, bearbeiten und löschen.</li>
-          <li><strong>Links / Buttons:</strong> URL und Button-Text eingeben. Interne Links beginnen mit <code className="bg-zinc-100 px-1.5 py-0.5 rounded text-xs">/seiten-slug</code>.</li>
-        </ul>
-        <Tip>Speichere regelmäßig – der grüne <strong>Veröffentlichen</strong>-Button macht alle Änderungen live.</Tip>
-      </HelpSection>
-
-      {/* MEDIATHEK */}
-      <HelpSection title="Mediathek (Bilder & Dateien)" icon={<ImageIcon size={20} />} color="amber">
-        <p>Die Mediathek verwaltet alle hochgeladenen Bilder und Dateien zentral.</p>
-        <h4 className="font-semibold text-zinc-800 mt-2">Bilder hochladen</h4>
-        <Step n={1}>Gehe zu <strong>Mediathek</strong> in der Seitenleiste.</Step>
-        <Step n={2}>Klicke auf <span className="inline-flex items-center gap-1"><Upload size={14} /> <strong>Hochladen</strong></span> oder ziehe Dateien per Drag & Drop.</Step>
-        <Step n={3}>Vergib einen <strong>Alt-Text</strong> (wichtig für SEO & Barrierefreiheit) über das Stift-Icon.</Step>
-
-        <h4 className="font-semibold text-zinc-800 mt-4">Bilder verwenden</h4>
-        <p>Beim Bearbeiten einer Sektion kannst du Bilder direkt aus der Mediathek auswählen. Bereits hochgeladene Bilder stehen sofort zur Verfügung.</p>
-        <Tip>Verwende aussagekräftige Alt-Texte – sie helfen bei der Google-Bildersuche und Barrierefreiheit.</Tip>
-      </HelpSection>
-
-      {/* SEO */}
-      <HelpSection title="SEO & Sichtbarkeit" icon={<Search size={20} />} color="cyan">
-        <p>Unter <strong>SEO & Sichtbarkeit</strong> steuerst du, wie deine Website in Google erscheint.</p>
-        <h4 className="font-semibold text-zinc-800 mt-2">Globale SEO-Einstellungen</h4>
-        <ul className="list-disc pl-5 space-y-1">
-          <li><strong>Title-Template:</strong> z.B. <code className="bg-zinc-100 px-1.5 py-0.5 rounded text-xs">%s | Firmenname</code> – %s wird durch den Seitentitel ersetzt.</li>
-          <li><strong>Standard-Beschreibung:</strong> Fallback, wenn eine Seite keine eigene Meta-Description hat.</li>
-          <li><strong>Canonical Base:</strong> Die Haupt-URL deiner Website (z.B. https://www.meinefirma.de).</li>
-          <li><strong>OG-Image:</strong> Standardbild für Social-Media-Vorschauen.</li>
-        </ul>
-
-        <h4 className="font-semibold text-zinc-800 mt-4">Seiten-SEO</h4>
-        <p>Jede Seite kann eigene Meta-Daten haben: Titel, Beschreibung, OG-Image und noindex-Flag.</p>
-        <Tip>Google zeigt ca. 60 Zeichen vom Titel und 160 Zeichen von der Beschreibung an.</Tip>
-      </HelpSection>
-
-      {/* COLLECTIONS */}
-      <HelpSection title="Collections & Collection Items" icon={<FolderOpen size={20} />} color="indigo">
-        <p>Collections sind wiederverwendbare Datensammlungen – z.B. Referenzen, Portfolio-Projekte oder Produkte.</p>
-        <h4 className="font-semibold text-zinc-800 mt-2">Collection anlegen</h4>
-        <Step n={1}>Gehe zu <strong>Collections</strong> in der Seitenleiste.</Step>
-        <Step n={2}>Klicke auf <span className="inline-flex items-center gap-1"><Plus size={14} /> <strong>Neue Collection</strong></span>.</Step>
-        <Step n={3}>Vergib einen <strong>Namen</strong> und einen <strong>Key</strong> (z.B. „referenzen").</Step>
-
-        <h4 className="font-semibold text-zinc-800 mt-4">Items hinzufügen</h4>
-        <Step n={1}>Öffne die Collection.</Step>
-        <Step n={2}>Klicke auf <span className="inline-flex items-center gap-1"><Plus size={14} /> <strong>Neues Item</strong></span>.</Step>
-        <Step n={3}>Fülle Titel, Slug und die Datenfelder aus (Bild, Beschreibung, etc.).</Step>
-
-        <h4 className="font-semibold text-zinc-800 mt-4">Collection in Sektionen verwenden</h4>
-        <p>Sektionen wie <strong>Galerie</strong> oder <strong>Leistungen</strong> können Daten aus einer Collection beziehen. Wähle dazu im Sektions-Editor die gewünschte Collection aus.</p>
-        <Tip>Collections eignen sich perfekt für Inhalte, die auf mehreren Seiten wiederverwendet werden sollen.</Tip>
-      </HelpSection>
-
-      {/* MARKE & DESIGN */}
-      <HelpSection title="Marke & Design anpassen" icon={<Globe size={20} />} color="rose">
-        <p>Unter <strong>Marke & Design</strong> passt du das Erscheinungsbild deiner Website an:</p>
-        <ul className="list-disc pl-5 space-y-1">
-          <li><strong>Logo:</strong> Lade dein Firmenlogo hoch (wird im Header und Footer angezeigt).</li>
-          <li><strong>Farben:</strong> Primär- und Akzentfarbe bestimmen Buttons, Links und Highlights.</li>
-          <li><strong>Schriften:</strong> Wähle Google-Fonts oder lade eigene Schriften hoch.</li>
-          <li><strong>Design-Stil:</strong> Wechsle zwischen verschiedenen Branchenvorlagen (Modern, Elegant, Classic, …).</li>
-          <li><strong>Erweiterte Farben:</strong> Hintergrund, Text, Karten, Badges und Trennlinien einzeln anpassen.</li>
-        </ul>
-        <Tip>Alle Farb- und Schriftänderungen werden sofort in der Vorschau sichtbar (nach Veröffentlichen).</Tip>
-      </HelpSection>
-
-      {/* VERÖFFENTLICHEN */}
-      <HelpSection title="Veröffentlichen – so geht's live" icon={<Eye size={20} />} color="emerald">
-        <p>Im Flamingo CMS arbeitest du immer an einem <strong>Entwurf</strong>. Deine Änderungen sind erst für Besucher sichtbar, wenn du sie veröffentlichst.</p>
-        <Step n={1}>Nimm alle gewünschten Änderungen vor (Seiten, Sektionen, Design, SEO, …).</Step>
-        <Step n={2}>Klicke auf den grünen <strong>Veröffentlichen</strong>-Button (unten rechts, schwebendes Icon).</Step>
-        <Step n={3}>Deine Website wird aktualisiert – fertig!</Step>
-        <Tip>Du kannst beliebig viele Änderungen sammeln und mit einem Klick veröffentlichen.</Tip>
-      </HelpSection>
-
-      {/* KONTAKT */}
-      <div className="border border-zinc-200 rounded-xl bg-gradient-to-br from-admin-accent/5 to-admin-accent/10 p-6 text-center space-y-3">
-        <Mail size={28} className="mx-auto text-admin-accent" />
-        <h3 className="font-semibold text-zinc-900">Brauchst du Hilfe?</h3>
-        <p className="text-sm text-zinc-600">Wenn du Fragen hast oder Unterstützung brauchst, erreichst du uns jederzeit per E-Mail.</p>
-        <a
-          href="mailto:hello@flamingomedia.online"
-          className="inline-block px-6 py-2.5 bg-admin-accent text-white rounded-lg font-medium hover:opacity-90 transition-opacity text-sm"
-        >
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-white/70">
+          Wenn etwas unklar ist oder du eine größere Änderung planst, melde dich kurz. Wir helfen bei Aufbau, Texten, SEO, Design und beim sicheren Veröffentlichen.
+        </p>
+        <a href="mailto:hello@flamingomedia.online" className="mt-5 inline-flex rounded-full bg-admin-accent px-5 py-3 text-sm font-bold text-white transition hover:brightness-110">
           hello@flamingomedia.online
         </a>
       </div>

@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
-import { withApiHandler, normalizeSlug, validateSections, normalizeSectionData } from '@/lib/api-utils';
+import { withApiHandler, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverrides } from '@/lib/api-utils';
 
 export const POST = withApiHandler(async (req, auth) => {
   const body = await req.json();
@@ -38,6 +38,7 @@ export const POST = withApiHandler(async (req, auth) => {
         spacingTop: s.spacingTop || 'm',
         spacingBottom: s.spacingBottom || 'm',
         anchorId: s.anchorId || null,
+        styleOverrides: normalizeStyleOverrides(s.styleOverrides),
         sortOrder: i,
       }))
     );

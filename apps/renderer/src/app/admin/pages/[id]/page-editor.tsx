@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { usePreview } from '@/components/admin/preview-context';
 import { updatePageAction, addSectionAction, deleteSectionAction, updateSectionAction, updateSectionMetaAction, reorderSectionsAction } from '../actions';
 import { publishAction } from '../../actions/publish';
@@ -31,11 +31,11 @@ type Page = {
   type: string;
 };
 
-export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {}, hasShop = false, i18n }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string } }) {
+export function PageEditor({ page: initialPage, sections: initialSections, industry, styleVariant = 'classic', brand = {}, hasShop = false, hasBooking = false, i18n, collections }: { page: Page; sections: Section[]; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; hasBooking?: boolean; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string }; collections?: { key: string; label: string; items: { id: string; title: string; slug: string; data: unknown }[] }[] }) {
   const [page, setPage] = useState(initialPage);
   const [sections, setSections] = useState(initialSections);
   const [activeLocale, setActiveLocale] = useState(i18n?.defaultLocale || 'de');
-  const sectionTypes = getSectionTypesForIndustry(industry, { hasShop });
+  const sectionTypes = getSectionTypesForIndustry(industry, { hasShop, hasBooking });
   const resolvedVars = { ...getStyleCssVars(industry, styleVariant), ...getBrandCssVars(brand) };
   const [publishing, setPublishing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -48,18 +48,246 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   // Live preview sync
   const sectionsRef = useRef(sections);
   sectionsRef.current = sections;
+  // Forward ref to handleSectionChange so the postMessage listener (declared
+  // before the handler) can invoke the latest closure without TDZ issues.
+  const handleSectionChangeRef = useRef<((sectionId: string, data: Record<string, unknown>) => void) | null>(null);
+  const handleSaveColorOverridesRef = useRef<((sectionId: string, overrides: Record<string, unknown> | null) => void) | null>(null);
 
   const sendPreviewData = useCallback(() => {
     if (!preview.isOpen) return;
     const liveSections = buildLiveSections(sectionsRef.current, pendingChanges.current);
-    preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale });
+    preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale, collections });
   }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, activeLocale]);
 
   useEffect(() => { sendPreviewData(); }, [sections, sendPreviewData]);
 
   useEffect(() => {
     function onMsg(e: MessageEvent) {
+      // Only trust the same-origin iframe (the live-preview tab).
+      if (e.origin !== window.location.origin) return;
       if (e.data?.type === 'flamingo-live-preview-ready') sendPreviewData();
+      // Click-to-focus from live-preview: scroll matching editor card into view
+      // and pulse it briefly so the user sees where their click landed.
+      if (e.data?.type === 'flamingo-section-clicked') {
+        const id = e.data.sectionId;
+        if (typeof id !== 'string') return;
+        const card = document.querySelector<HTMLElement>(`[data-section-card-id="${CSS.escape(id)}"]`);
+        if (!card) return;
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('ring-2', 'ring-pink-400', 'ring-offset-2');
+        setTimeout(() => card.classList.remove('ring-2', 'ring-pink-400', 'ring-offset-2'), 1600);
+      }
+      // In-place text edits from live-preview: a text element with
+      // data-edit-path was blurred. Patch the corresponding field on the
+      // section (supports nested paths like "items.0.title" for items
+      // rendered inside .map()) and push back to preview for instant
+      // feedback.
+      if (e.data?.type === 'flamingo-field-edit') {
+        const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: string };
+        if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof value !== 'string') return;
+        const current = sectionsRef.current.find(s => s.id === sectionId);
+        if (!current) return;
+        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
+        // Path: dot-separated, numeric segments index into arrays.
+        // e.g. "items.0.title" → base.items[0].title = value.
+        const segments = path.split('.').filter(Boolean);
+        if (segments.length === 0) return;
+        // No-op guard: read current value at the same path
+        let probe: unknown = base;
+        for (const seg of segments) {
+          if (probe == null) { probe = undefined; break; }
+          probe = (probe as Record<string, unknown>)[seg];
+        }
+        if (probe === value) return;
+        // Immutably set the nested value, cloning every container along
+        // the path so React sees a new reference at every level.
+        const setNested = (obj: unknown, segs: string[], val: string): Record<string, unknown> | unknown[] => {
+          const [head, ...rest] = segs;
+          const isIndex = /^\d+$/.test(head);
+          if (rest.length === 0) {
+            if (Array.isArray(obj)) {
+              const copy = [...obj];
+              copy[Number(head)] = val;
+              return copy;
+            }
+            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
+          }
+          if (Array.isArray(obj)) {
+            const copy = [...obj];
+            const idx = Number(head);
+            copy[idx] = setNested(copy[idx], rest, val);
+            return copy;
+          }
+          const container = (obj as Record<string, unknown> | null) ?? {};
+          const childExisting = container[head];
+          const childContainer = isIndex
+            ? (Array.isArray(childExisting) ? childExisting : [])
+            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
+          return { ...container, [head]: setNested(childContainer, rest, val) };
+        };
+        const next = setNested(base, segments, value) as Record<string, unknown>;
+        handleSectionChangeRef.current?.(sectionId, next);
+      }
+      // Rich-text edit from live-preview: same shape as field-edit but the
+      // value is innerHTML. Reuse the same setNested helper.
+      if (e.data?.type === 'flamingo-rich-edit') {
+        const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: string };
+        if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof value !== 'string') return;
+        const current = sectionsRef.current.find(s => s.id === sectionId);
+        if (!current) return;
+        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
+        const segments = path.split('.').filter(Boolean);
+        if (segments.length === 0) return;
+        let probe: unknown = base;
+        for (const seg of segments) {
+          if (probe == null) { probe = undefined; break; }
+          probe = (probe as Record<string, unknown>)[seg];
+        }
+        if (probe === value) return;
+        const setNested = (obj: unknown, segs: string[], val: string): Record<string, unknown> | unknown[] => {
+          const [head, ...rest] = segs;
+          const isIndex = /^\d+$/.test(head);
+          if (rest.length === 0) {
+            if (Array.isArray(obj)) {
+              const copy = [...obj];
+              copy[Number(head)] = val;
+              return copy;
+            }
+            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
+          }
+          if (Array.isArray(obj)) {
+            const copy = [...obj];
+            const idx = Number(head);
+            copy[idx] = setNested(copy[idx], rest, val);
+            return copy;
+          }
+          const container = (obj as Record<string, unknown> | null) ?? {};
+          const childExisting = container[head];
+          const childContainer = isIndex
+            ? (Array.isArray(childExisting) ? childExisting : [])
+            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
+          return { ...container, [head]: setNested(childContainer, rest, val) };
+        };
+        const next = setNested(base, segments, value) as Record<string, unknown>;
+        handleSectionChangeRef.current?.(sectionId, next);
+      }
+      // Image-edit from live-preview overlay: set a string at the given
+      // path (same engine as field-edit).
+      if (e.data?.type === 'flamingo-image-edit') {
+        const { sectionId, path, url } = e.data as { sectionId: string; path: string; url: string };
+        if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof url !== 'string') return;
+        const current = sectionsRef.current.find(s => s.id === sectionId);
+        if (!current) return;
+        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
+        const segments = path.split('.').filter(Boolean);
+        if (segments.length === 0) return;
+        const setNested = (obj: unknown, segs: string[], val: unknown): Record<string, unknown> | unknown[] => {
+          const [head, ...rest] = segs;
+          const isIndex = /^\d+$/.test(head);
+          if (rest.length === 0) {
+            if (Array.isArray(obj)) {
+              const copy = [...obj];
+              copy[Number(head)] = val;
+              return copy;
+            }
+            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
+          }
+          if (Array.isArray(obj)) {
+            const copy = [...obj];
+            const idx = Number(head);
+            copy[idx] = setNested(copy[idx], rest, val);
+            return copy;
+          }
+          const container = (obj as Record<string, unknown> | null) ?? {};
+          const childExisting = container[head];
+          const childContainer = isIndex
+            ? (Array.isArray(childExisting) ? childExisting : [])
+            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
+          return { ...container, [head]: setNested(childContainer, rest, val) };
+        };
+        const next = setNested(base, segments, url) as Record<string, unknown>;
+        handleSectionChangeRef.current?.(sectionId, next);
+      }
+      // Icon-edit from live-preview overlay: writes a Lucide icon name string
+      // at the given path. Same set-nested engine as image-edit.
+      if (e.data?.type === 'flamingo-icon-edit') {
+        const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: string };
+        if (typeof sectionId !== 'string' || typeof path !== 'string' || typeof value !== 'string') return;
+        const current = sectionsRef.current.find(s => s.id === sectionId);
+        if (!current) return;
+        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
+        const segments = path.split('.').filter(Boolean);
+        if (segments.length === 0) return;
+        const setNested = (obj: unknown, segs: string[], val: unknown): Record<string, unknown> | unknown[] => {
+          const [head, ...rest] = segs;
+          const isIndex = /^\d+$/.test(head);
+          if (rest.length === 0) {
+            if (Array.isArray(obj)) {
+              const copy = [...obj];
+              copy[Number(head)] = val;
+              return copy;
+            }
+            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
+          }
+          if (Array.isArray(obj)) {
+            const copy = [...obj];
+            const idx = Number(head);
+            copy[idx] = setNested(copy[idx], rest, val);
+            return copy;
+          }
+          const container = (obj as Record<string, unknown> | null) ?? {};
+          const childExisting = container[head];
+          const childContainer = isIndex
+            ? (Array.isArray(childExisting) ? childExisting : [])
+            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
+          return { ...container, [head]: setNested(childContainer, rest, val) };
+        };
+        const next = setNested(base, segments, value) as Record<string, unknown>;
+        handleSectionChangeRef.current?.(sectionId, next);
+      }
+      // Link-edit from live-preview overlay: writes an object {label, href, icon?}.
+      if (e.data?.type === 'flamingo-link-edit') {
+        const { sectionId, path, value } = e.data as { sectionId: string; path: string; value: Record<string, unknown> };
+        if (typeof sectionId !== 'string' || typeof path !== 'string' || !value || typeof value !== 'object') return;
+        const current = sectionsRef.current.find(s => s.id === sectionId);
+        if (!current) return;
+        const base = (pendingChanges.current.get(sectionId) ?? current.data ?? {}) as Record<string, unknown>;
+        const segments = path.split('.').filter(Boolean);
+        if (segments.length === 0) return;
+        const setNested = (obj: unknown, segs: string[], val: unknown): Record<string, unknown> | unknown[] => {
+          const [head, ...rest] = segs;
+          const isIndex = /^\d+$/.test(head);
+          if (rest.length === 0) {
+            if (Array.isArray(obj)) {
+              const copy = [...obj];
+              copy[Number(head)] = val;
+              return copy;
+            }
+            return { ...(obj as Record<string, unknown> | null ?? {}), [head]: val };
+          }
+          if (Array.isArray(obj)) {
+            const copy = [...obj];
+            const idx = Number(head);
+            copy[idx] = setNested(copy[idx], rest, val);
+            return copy;
+          }
+          const container = (obj as Record<string, unknown> | null) ?? {};
+          const childExisting = container[head];
+          const childContainer = isIndex
+            ? (Array.isArray(childExisting) ? childExisting : [])
+            : (typeof childExisting === 'object' && childExisting !== null ? childExisting : {});
+          return { ...container, [head]: setNested(childContainer, rest, val) };
+        };
+        const next = setNested(base, segments, value) as Record<string, unknown>;
+        handleSectionChangeRef.current?.(sectionId, next);
+      }
+      // Color-edit from live-preview overlay: replaces the section's
+      // styleOverrides wholesale (the overlay sends the merged object).
+      if (e.data?.type === 'flamingo-color-edit') {
+        const { sectionId, overrides } = e.data as { sectionId: string; overrides: Record<string, string> };
+        if (typeof sectionId !== 'string' || !overrides || typeof overrides !== 'object') return;
+        handleSaveColorOverridesRef.current?.(sectionId, overrides);
+      }
     }
     window.addEventListener('message', onMsg);
     return () => window.removeEventListener('message', onMsg);
@@ -80,7 +308,19 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   function handleAddSection(type: string) {
     startTransition(async () => {
       const section = await addSectionAction(page.id, type);
-      if (section) setSections(prev => [...prev, section as Section]);
+      if (section) {
+        setSections(prev => {
+          const next = [...prev, section as Section];
+          // Push to live preview synchronously — don't wait for the
+          // useEffect tick, which sometimes misses the first paint when a
+          // brand-new section is added back-to-back with field edits.
+          if (preview.isOpen) {
+            const liveSections = buildLiveSections(next, pendingChanges.current);
+            preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale, collections });
+          }
+          return next;
+        });
+      }
       toast.success('Sektion hinzugefügt');
     });
   }
@@ -111,9 +351,18 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
     setSaved(false);
     if (preview.isOpen) {
       const liveSections = buildLiveSections(sectionsRef.current, pendingChanges.current, { sectionId, data: saveData });
-      preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale });
+      // Always include collections so collection-driven sections (lists,
+      // featured products, …) keep rendering when an unrelated field is
+      // edited. Earlier this field was omitted and the iframe sometimes
+      // reset to an "empty" state until a full refresh.
+      preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale, collections });
     }
-  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, i18n, activeLocale]);
+  }, [preview.isOpen, preview.sendLiveData, industry, styleVariant, i18n, activeLocale, collections]);
+
+  // Keep the ref in sync so the postMessage listener (declared earlier) can
+  // call the latest handler.
+  handleSectionChangeRef.current = handleSectionChange;
+  handleSaveColorOverridesRef.current = handleSaveColorOverrides;
 
   async function handleSaveAll() {
     setSaving(true);
@@ -124,6 +373,9 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       const entries = Array.from(pendingChanges.current.entries());
       const results = await Promise.all([
         ...entries.map(([sectionId, data]) => updateSectionAction(sectionId, data, page.id)),
+        ...sections
+          .filter(section => section.styleOverrides !== undefined)
+          .map(section => updateSectionMetaAction(section.id, { styleOverrides: section.styleOverrides ?? null }, page.id)),
         seoRef.current?.save(),
       ]);
       const errors = results.filter(r => r && 'error' in r);
@@ -158,7 +410,18 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
   const colorDebounceRef = useRef<Record<string, NodeJS.Timeout>>({});
 
   function handleSaveColorOverrides(sectionId: string, overrides: Record<string, unknown> | null) {
-    setSections(prev => prev.map(s => s.id === sectionId ? { ...s, styleOverrides: overrides } : s));
+    setSections(prev => {
+      const next = prev.map(s => s.id === sectionId ? { ...s, styleOverrides: overrides } : s);
+      // Push the updated section (with new overrides) to the live preview
+      // synchronously so colour changes show up on the next frame instead
+      // of after the parent's useEffect tick — which the user reported as
+      // "colors only appear after iframe reload".
+      if (preview.isOpen) {
+        const liveSections = buildLiveSections(next, pendingChanges.current);
+        preview.sendLiveData({ sections: liveSections, industry, styleVariant, locale: activeLocale, collections });
+      }
+      return next;
+    });
     // Debounce server save + toast per section
     if (colorDebounceRef.current[sectionId]) clearTimeout(colorDebounceRef.current[sectionId]);
     colorDebounceRef.current[sectionId] = setTimeout(() => {
@@ -186,8 +449,6 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
       setPublishing(false);
     }
   }
-
-  const previewUrl = `/preview/${page.slug === 'home' ? '' : page.slug}?token=preview`;
 
   const sectionAnchors = sections.map(s => ({ id: s.id, type: s.type, anchorId: s.anchorId || null }));
 
@@ -223,12 +484,12 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         onReorder={handleReorder}
         onAddSection={handleAddSection}
         renderSection={(section) => (
+          <div data-section-card-id={section.id} className="transition-shadow rounded-lg">
           <SectionEditorCard
             key={section.id}
             section={section}
             industry={industry}
             sectionTypes={sectionTypes}
-            styleVariant={styleVariant}
             resolvedVars={resolvedVars}
             iframeRef={preview.iframeRef}
             onDelete={() => handleDeleteSection(section.id)}
@@ -239,6 +500,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
             activeLocale={activeLocale}
             i18n={i18n}
           />
+          </div>
         )}
       />
       <EditorActionBar
@@ -246,7 +508,7 @@ export function PageEditor({ page: initialPage, sections: initialSections, indus
         saved={saved}
         saving={saving}
         publishing={publishing}
-        onTogglePreview={() => { preview.isOpen ? preview.close() : preview.open('/live-preview'); }}
+        onTogglePreview={() => { preview.isOpen ? preview.close() : preview.open(); }}
         onSave={handleSaveAll}
         onPublish={handlePublish}
       />

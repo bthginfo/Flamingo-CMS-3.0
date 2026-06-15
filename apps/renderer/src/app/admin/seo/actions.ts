@@ -2,7 +2,7 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { seoGlobal, seoPage, seoItem } from '@flamingo/db';
+import { globalSettings, seoGlobal, seoPage, seoItem } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -18,6 +18,43 @@ export async function getSeoGlobalAction() {
   const db = getDb();
   const [row] = await db.select().from(seoGlobal).where(eq(seoGlobal.tenantId, session.tenantId)).limit(1);
   return row ?? null;
+}
+
+export async function getLocalSeoAction() {
+  const session = await requireSession();
+  const db = getDb();
+  const [row] = await db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1);
+  const brand = (row?.brand as Record<string, unknown>) || {};
+  return (brand.localSeo as Record<string, unknown> | undefined) || {};
+}
+
+export async function saveLocalSeoAction(data: {
+  businessType: string;
+  priceRange: string;
+  serviceArea: string;
+  googleBusinessUrl: string;
+  sameAsText: string;
+}) {
+  const session = await requireSession();
+  const db = getDb();
+  const [row] = await db.select({ id: globalSettings.id, brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1);
+  const brand = (row?.brand as Record<string, unknown>) || {};
+  const localSeo = {
+    businessType: data.businessType.trim(),
+    priceRange: data.priceRange.trim(),
+    serviceArea: data.serviceArea.trim(),
+    googleBusinessUrl: data.googleBusinessUrl.trim(),
+    sameAs: data.sameAsText.split('\n').map(line => line.trim()).filter(Boolean),
+  };
+
+  if (row) {
+    await db.update(globalSettings).set({ brand: { ...brand, localSeo }, updatedAt: new Date() }).where(eq(globalSettings.id, row.id));
+  } else {
+    await db.insert(globalSettings).values({ tenantId: session.tenantId, brand: { localSeo } });
+  }
+
+  revalidatePath('/admin/seo');
+  revalidatePath('/', 'layout');
 }
 
 export async function saveSeoGlobalAction(data: {

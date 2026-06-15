@@ -2,8 +2,8 @@
 
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
-import { collections, collectionItems, tenants, globalSettings, pages, pageSections } from '@flamingo/db';
-import { eq, and, asc, desc } from 'drizzle-orm';
+import { collections, collectionItems, tenants, globalSettings, pages, pageSections, tenantAddons } from '@flamingo/db';
+import { eq, and, asc, desc, or } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -60,11 +60,20 @@ export async function ensureDefaultCollections() {
   }
 }
 
+const DEFAULT_COLLECTIONS: Record<string, string> = { news: 'News & Blog' };
+
 export async function getCollectionByKeyAction(key: string) {
   const session = await requireSession();
   const db = getDb();
   const [collection] = await db.select().from(collections).where(and(eq(collections.tenantId, session.tenantId), eq(collections.key, key)));
-  return collection ?? null;
+  if (collection) return collection;
+
+  // Auto-create known default collections on first access
+  if (DEFAULT_COLLECTIONS[key]) {
+    const [created] = await db.insert(collections).values({ tenantId: session.tenantId, key, label: DEFAULT_COLLECTIONS[key] }).returning();
+    return created ?? null;
+  }
+  return null;
 }
 
 // ─── Collection Items ──────────────────────────────────────────────
@@ -137,11 +146,23 @@ export async function getItemWithIndustryAction(itemId: string) {
     i18nLocales: tenants.i18nLocales,
     i18nDefaultLocale: tenants.i18nDefaultLocale,
   }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1);
-  const [brandResult] = await db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1);
+  const [brandResult, shopAddonResult, bookingAddonResult] = await Promise.all([
+    db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1),
+    db.select({ active: tenantAddons.active }).from(tenantAddons).where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'shop'))).limit(1),
+    db.select({ active: tenantAddons.active }).from(tenantAddons).where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'booking'))).limit(1),
+  ]);
   const i18n = tenant?.i18nEnabled
     ? { enabled: true, locales: (tenant.i18nLocales || 'de').split(','), defaultLocale: tenant.i18nDefaultLocale || 'de' }
     : undefined;
-  return { item, industry: tenant?.industry ?? 'tradesman', styleVariant: tenant?.activeStyle ?? 'classic', brand: (brandResult?.brand as Record<string, string>) || {}, i18n };
+  return {
+    item,
+    industry: tenant?.industry ?? 'tradesman',
+    styleVariant: 'classic',
+    brand: (brandResult[0]?.brand as Record<string, string>) || {},
+    hasShop: !!shopAddonResult[0]?.active,
+    hasBooking: !!bookingAddonResult[0]?.active,
+    i18n,
+  };
 }
 
 // ─── Collection Overview Page ──────────────────────────────────────
@@ -150,8 +171,12 @@ export async function getOrCreateOverviewPageAction(collectionKey: string): Prom
   const db = getDb();
 
   // Check if an overview page already exists for this collection (by type + slug or by type + matching collectionKey in section data)
+  const overviewSlug = `${collectionKey}-uebersicht`;
   const existing = await db.select({ id: pages.id }).from(pages)
-    .where(and(eq(pages.tenantId, session.tenantId), eq(pages.type, 'collection_overview'), eq(pages.slug, collectionKey)))
+    .where(and(
+      eq(pages.tenantId, session.tenantId),
+      or(eq(pages.slug, collectionKey), eq(pages.slug, overviewSlug))
+    ))
     .limit(1);
 
   if (existing[0]) return existing[0].id;
@@ -161,7 +186,7 @@ export async function getOrCreateOverviewPageAction(collectionKey: string): Prom
     .where(and(eq(pages.tenantId, session.tenantId), eq(pages.slug, collectionKey)))
     .limit(1);
 
-  const slug = slugTaken[0] ? `${collectionKey}-uebersicht` : collectionKey;
+  const slug = slugTaken[0] ? overviewSlug : collectionKey;
 
   // Get collection label for the page title
   const [col] = await db.select({ label: collections.label }).from(collections)
@@ -189,4 +214,12 @@ export async function getOrCreateOverviewPageAction(collectionKey: string): Prom
 
   revalidatePath('/admin/pages');
   return page.id;
+}
+
+// Lightweight action returning just keys+labels for dropdowns
+export async function getCollectionKeysAction(): Promise<{ key: string; label: string }[]> {
+  const session = await requireSession();
+  const db = getDb();
+  const cols = await db.select({ key: collections.key, label: collections.label }).from(collections).where(eq(collections.tenantId, session.tenantId)).orderBy(asc(collections.key));
+  return cols;
 }

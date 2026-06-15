@@ -3,10 +3,13 @@
 import { getDb } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { validateSectionData } from '@/lib/validate-section';
-import { pages, pageSections, tenants, globalSettings, tenantAddons } from '@flamingo/db';
+import { pages, pageSections, tenants, globalSettings, tenantAddons, collections, collectionItems } from '@flamingo/db';
 import { eq, and, asc, desc } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { BOOKING_SECTION_TYPES } from '@/lib/booking-core';
+import { SECTION_PREVIEW_DATA } from '@/lib/section-preview-data';
+import { SECTION_EDITOR_FIELD_DEFAULTS } from '@/lib/section-editor-field-defaults';
 
 async function requireSession() {
   const session = await getSession();
@@ -32,6 +35,25 @@ export async function ensureDefaultPages() {
   for (const d of defaults) {
     if (!slugs.has(d.slug)) {
       await db.insert(pages).values({ tenantId: session.tenantId, title: d.title, slug: d.slug, type: 'free', status: 'draft', visible: true, sortOrder: 99 });
+    }
+  }
+
+  // Auto-create shop pages if shop addon is active
+  const [shopAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'shop')))
+    .limit(1);
+  if (shopAddon?.active) {
+    for (const def of SHOP_PAGE_DEFS) {
+      if (!slugs.has(def.slug)) {
+        const [page] = await db.insert(pages).values({
+          tenantId: session.tenantId, title: def.title, slug: def.slug, type: 'system', status: 'published', visible: true, sortOrder: def.sortOrder,
+        }).returning({ id: pages.id });
+        for (const section of def.sections) {
+          await db.insert(pageSections).values({
+            tenantId: session.tenantId, pageId: page.id, type: section.type, data: section.data, sortOrder: 0, locked: true, titleInternal: `[Shop] ${def.title}`,
+          });
+        }
+      }
     }
   }
 }
@@ -71,31 +93,57 @@ export async function updatePageAction(pageId: string, data: { title?: string; s
 export async function getPageWithSectionsAction(pageId: string) {
   const session = await requireSession();
   const db = getDb();
-  const [pageResult, sectionsResult, tenantResult, brandResult, shopAddonResult] = await Promise.all([
+  const [pageResult, sectionsResult, tenantResult, brandResult, shopAddonResult, bookingAddonResult, collectionsResult] = await Promise.all([
     db.select().from(pages).where(and(eq(pages.id, pageId), eq(pages.tenantId, session.tenantId))),
     db.select().from(pageSections).where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).orderBy(asc(pageSections.sortOrder)),
     db.select({ industry: tenants.industry, activeStyle: tenants.activeStyle, i18nEnabled: tenants.i18nEnabled, i18nLocales: tenants.i18nLocales, i18nDefaultLocale: tenants.i18nDefaultLocale }).from(tenants).where(eq(tenants.id, session.tenantId)).limit(1),
     db.select({ brand: globalSettings.brand }).from(globalSettings).where(eq(globalSettings.tenantId, session.tenantId)).limit(1),
     db.select({ active: tenantAddons.active }).from(tenantAddons).where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'shop'))).limit(1),
+    db.select({ active: tenantAddons.active }).from(tenantAddons).where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'booking'))).limit(1),
+    db.select().from(collections).where(eq(collections.tenantId, session.tenantId)),
   ]);
   const page = pageResult[0];
   if (!page) return null;
   const tenant = tenantResult[0];
   const i18n = tenant?.i18nEnabled ? { enabled: true, locales: (tenant.i18nLocales || 'de').split(','), defaultLocale: tenant.i18nDefaultLocale || 'de' } : undefined;
-  return { page, sections: sectionsResult, industry: tenant?.industry ?? 'tradesman', styleVariant: tenant?.activeStyle ?? 'classic', brand: (brandResult[0]?.brand as Record<string, string>) || {}, hasShop: !!shopAddonResult[0]?.active, i18n };
+  // Build collections with items for live preview
+  const colIds = collectionsResult.map(c => c.id);
+  const allItems = colIds.length > 0
+    ? await db.select().from(collectionItems).where(and(eq(collectionItems.tenantId, session.tenantId), eq(collectionItems.published, true))).orderBy(asc(collectionItems.priority))
+    : [];
+  const previewCollections = collectionsResult.map(c => ({
+    key: c.key, label: c.label,
+    items: allItems.filter(i => i.collectionId === c.id).map(i => ({ id: i.id, title: i.title, slug: i.slug, data: i.data })),
+  }));
+  return { page, sections: sectionsResult, industry: tenant?.industry ?? 'tradesman', styleVariant: 'classic', brand: (brandResult[0]?.brand as Record<string, string>) || {}, hasShop: !!shopAddonResult[0]?.active, hasBooking: !!bookingAddonResult[0]?.active, i18n, collections: previewCollections };
 }
 
 export async function addSectionAction(pageId: string, type: string) {
   const session = await requireSession();
   const db = getDb();
+  if (BOOKING_SECTION_TYPES.has(type)) {
+    const [bookingAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
+      .where(and(eq(tenantAddons.tenantId, session.tenantId), eq(tenantAddons.addonKey, 'booking')))
+      .limit(1);
+    if (!bookingAddon?.active) return null;
+  }
   // Get max sort order
   const existing = await db.select({ sortOrder: pageSections.sortOrder }).from(pageSections).where(and(eq(pageSections.pageId, pageId), eq(pageSections.tenantId, session.tenantId))).orderBy(desc(pageSections.sortOrder)).limit(1);
   const nextOrder = (existing[0]?.sortOrder ?? -1) + 1;
+  // Seed new sections with realistic preview data so the live preview shows
+  // visible content the moment a section is added (some templates short-
+  // circuit on empty arrays / missing fields and would otherwise render
+  // nothing). Defaults are merged from both sources; SECTION_PREVIEW_DATA
+  // wins when both are present so the user sees richer demo content.
+  const seedData: Record<string, unknown> = {
+    ...(SECTION_EDITOR_FIELD_DEFAULTS[type] || {}),
+    ...(SECTION_PREVIEW_DATA[type] || {}),
+  };
   const [section] = await db.insert(pageSections).values({
     tenantId: session.tenantId,
     pageId,
     type,
-    data: {},
+    data: seedData,
     sortOrder: nextOrder,
   }).returning();
   revalidatePath(`/admin/pages/${pageId}`);

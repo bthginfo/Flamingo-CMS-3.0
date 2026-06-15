@@ -36,14 +36,14 @@ function generateId() {
   return crypto.randomUUID();
 }
 
-export function ItemEditor({ item: initial, collectionKey, industry, styleVariant = 'classic', brand = {}, i18n }: { item: Item; collectionKey: string; industry: string; styleVariant?: string; brand?: Record<string, string>; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string } }) {
+export function ItemEditor({ item: initial, collectionKey, industry, styleVariant = 'classic', brand = {}, hasShop = false, hasBooking = false, i18n }: { item: Item; collectionKey: string; industry: string; styleVariant?: string; brand?: Record<string, string>; hasShop?: boolean; hasBooking?: boolean; i18n?: { enabled: boolean; locales: string[]; defaultLocale: string } }) {
   const [item, setItem] = useState(initial);
   const [sections, setSections] = useState<Section[]>(
     collectionItemSectionsToEditableSections(initial.data.sections, generateId)
   );
   const [activeLocale, setActiveLocale] = useState(i18n?.defaultLocale || 'de');
   const preview = usePreview();
-  const sectionTypes = getSectionTypesForIndustry(industry);
+  const sectionTypes = getSectionTypesForIndustry(industry, { hasShop, hasBooking });
   const resolvedVars = { ...getStyleCssVars(industry, styleVariant), ...getBrandCssVars(brand) };
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -67,6 +67,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
   // Listen for iframe ready signal to send initial data
   useEffect(() => {
     function onMsg(e: MessageEvent) {
+      if (e.origin !== window.location.origin) return;
       if (e.data?.type === 'flamingo-live-preview-ready') sendPreviewData();
     }
     window.addEventListener('message', onMsg);
@@ -222,7 +223,6 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
                 section={section}
                 industry={industry}
                 sectionTypes={sectionTypes}
-                styleVariant={styleVariant}
                 resolvedVars={resolvedVars}
                 iframeRef={preview.iframeRef}
                 onDelete={() => handleDeleteSection(section.id)}
@@ -240,7 +240,7 @@ export function ItemEditor({ item: initial, collectionKey, industry, styleVarian
           saved={saved}
           saving={saving}
           publishing={publishing}
-          onTogglePreview={() => { preview.isOpen ? preview.close() : preview.open('/live-preview'); }}
+          onTogglePreview={() => { preview.isOpen ? preview.close() : preview.open(); }}
           onSave={handleSaveAll}
           onPublish={handlePublish}
         />

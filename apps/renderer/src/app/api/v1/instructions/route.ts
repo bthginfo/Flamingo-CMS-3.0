@@ -4,20 +4,29 @@ import { getDb } from '@/lib/db';
 import { pages, tenantAddons } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import { getSectionTypesForIndustry } from '@/app/admin/pages/[id]/section-types';
+import { ensureShopPages } from '@/lib/shop-pages';
+import { getAllSectionContracts, SECTION_COLOR_SLOT_DEFINITIONS } from '@/lib/section-contracts';
 
 export async function GET(req: NextRequest) {
   const auth = await validatePat(req.headers.get('authorization'));
   if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const db = getDb();
-  const tenantPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title }).from(pages).where(eq(pages.tenantId, auth.tenantId));
 
   // Check shop addon status
   const [shopAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
     .where(and(eq(tenantAddons.tenantId, auth.tenantId), eq(tenantAddons.addonKey, 'shop')));
   const hasShop = shopAddon?.active === true;
+  const [bookingAddon] = await db.select({ active: tenantAddons.active }).from(tenantAddons)
+    .where(and(eq(tenantAddons.tenantId, auth.tenantId), eq(tenantAddons.addonKey, 'booking')));
+  const hasBooking = bookingAddon?.active === true;
 
-  const sectionTypes = getSectionTypesForIndustry(auth.tenant.industry);
+  // Ensure shop pages exist when shop is active
+  if (hasShop) await ensureShopPages(auth.tenantId);
+
+  const tenantPages = await db.select({ id: pages.id, slug: pages.slug, title: pages.title }).from(pages).where(eq(pages.tenantId, auth.tenantId));
+
+  const sectionTypes = getSectionTypesForIndustry(auth.tenant.industry, { hasShop, hasBooking });
   // Exclude HTML-Block (freeHtml) from AI usage
   const allowedSectionTypes = sectionTypes.filter((s: { type?: string; id?: string }) => {
     const key = s.type || s.id || '';
@@ -28,6 +37,7 @@ export async function GET(req: NextRequest) {
     tenant: auth.tenant,
     tenantId: auth.tenantId,
     hasShopAddon: hasShop,
+    hasBookingAddon: hasBooking,
     i18n: {
       enabled: auth.tenant.i18nEnabled,
       locales: auth.tenant.i18nLocales.split(','),
@@ -36,6 +46,9 @@ export async function GET(req: NextRequest) {
     existingPages: tenantPages,
     availableSectionTypes: allowedSectionTypes,
     sectionDataSchemas: getSectionSchemas(auth.tenant.industry),
+    styleSystem: getStyleSystemInstructions(),
+    sectionStyleContracts: getSectionStyleContracts(allowedSectionTypes),
+    aiContentPlaybook: getAiContentPlaybook(auth.tenant.industry, { hasShop, hasBooking }),
     endpoints: {
       brand: { method: 'PUT', path: '/api/v1/content/brand', description: 'Set brand data (companyName, tagline, primaryColor, logo, etc.)' },
       contact: { method: 'PUT', path: '/api/v1/content/contact', description: 'Set contact info (email, phone, address, whatsapp, whatsappEnabled, whatsappColor)' },
@@ -46,9 +59,9 @@ export async function GET(req: NextRequest) {
       deletePage: { method: 'DELETE', path: '/api/v1/content/pages/:id', description: 'Delete a page' },
       seoGlobal: { method: 'PUT', path: '/api/v1/content/seo', description: 'Set global SEO defaults (titleTemplate, defaultDescription, canonicalBase, locale)' },
       seoPage: { method: 'PUT', path: '/api/v1/content/seo/:pageId', description: 'Set page-level SEO (metaTitle, metaDescription, ogImage, canonical, noindex)' },
-      design: { method: 'PUT', path: '/api/v1/content/design', description: 'Set design overrides (textPrimary, textSecondary, sectionBg, sectionBgAlt, cardBg, badgeBg, badgeText, brand, dividerColor)' },
+      design: { method: 'PUT', path: '/api/v1/content/design', description: 'Set GLOBAL design overrides (single hex string per key). Supported keys: sectionBg, sectionBgAlt, cardBg, cardBorder, badgeBg, badgeText, badgeBorder, brand, accent, heading, subheading, body, muted, icon, btnBg, btnText, dividerColor, eyebrow, statValue, quote, ratingStar, check, onDarkHeading, onDarkBody, onDarkMuted. These cascade as fallbacks for every section. For PER-SECTION colour tuning use section.styleOverrides instead.' },
       formFields: { method: 'PUT', path: '/api/v1/content/form-fields', description: 'Set contact form fields: { fields: [{ name, label, type: "text"|"email"|"tel"|"textarea"|"select", placeholder?, required?, options?, halfWidth? }] }' },
-      openingHours: { method: 'PUT', path: '/api/v1/content/opening-hours', description: 'Set opening hours: { hours: [{ day: string, hours: string }] }' },
+      openingHours: { method: 'PUT', path: '/api/v1/content/opening-hours', description: 'Set opening hours: { hours: [{ type?: "regular"|"special", day?: string, date?: "YYYY-MM-DD", hours?: string, closed?: boolean, note?: string }] }. Use regular rows for weekly hours and special rows for holidays, vacations or one-off changes.' },
       listCollections: { method: 'GET', path: '/api/v1/content/collections', description: 'List all collections' },
       createCollection: { method: 'POST', path: '/api/v1/content/collections', description: 'Create a new collection (key: lowercase-slug, label: display name). Use for repeating content types like services, rooms, news, team members, etc.' },
       createCollectionItem: { method: 'POST', path: '/api/v1/content/collections/:key/items', description: 'Create a collection item (title, slug, data with sections)' },
@@ -57,10 +70,11 @@ export async function GET(req: NextRequest) {
       getCollectionItem: { method: 'GET', path: '/api/v1/content/collections/:key/items/:id', description: 'Get a single collection item with all data' },
       deleteCollectionItem: { method: 'DELETE', path: '/api/v1/content/collections/:key/items/:id', description: 'Delete a collection item' },
       patchPage: { method: 'PATCH', path: '/api/v1/content/pages/:id', description: 'Partially update a page. Send patchSections: [{id, data: {partial fields}}] to merge section data without full replace.' },
-      publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content. Returns warnings for empty sections or missing images.' },
+      publish: { method: 'POST', path: '/api/v1/content/publish', description: 'Publish all current content. Returns warnings (incomplete content) AND colorWarnings (low contrast / malformed colors). Call /validate FIRST.' },
+      validate: { method: 'GET', path: '/api/v1/content/validate', description: 'Pre-publish audit. Returns { readyToPublish, summary, contentIssues, colorIssues }. ALWAYS call before /publish, fix every error + critical warning, repeat until readyToPublish=true.' },
       debug: { method: 'GET', path: '/api/v1/content/debug', description: 'Get raw stored data for all pages, sections, collections and items (for debugging)' },
       socialLinks: { method: 'PUT', path: '/api/v1/content/social-links', description: 'Set social media links: { facebook?: url, instagram?: url, linkedin?: url, youtube?: url, tiktok?: url, xing?: url, google?: url, pinterest?: url, twitter?: url }' },
-      style: { method: 'PUT', path: '/api/v1/content/style', description: 'Set active style variant: { style: "classic"|"modern"|"bold" }' },
+      style: { method: 'PUT', path: '/api/v1/content/style', description: 'Set active style variant. Only { style: "classic" } is supported; old modern/bold values are ignored by the renderer.' },
       upload: { method: 'POST', path: '/api/v1/content/upload', description: 'Upload an image (multipart/form-data with "file" field). Returns { url, filename, size }. Use the returned url in bgImage, image fields etc.' },
       i18nGet: { method: 'GET', path: '/api/v1/content/i18n', description: 'Get i18n config (enabled, locales, defaultLocale), all pages with section data, AND all collections with their items and embedded sections. Use to discover which sections/items need translation.' },
       i18nPut: { method: 'PUT', path: '/api/v1/content/i18n', description: 'Update locale-specific data. Body: { sections?: [{ id, locale, data }], items?: [{ id: "collection-item-id", locale, title?, excerpt?, sections?: [{ id: "section-id-in-item", data }] }] }. Works for both page sections and collection item sections.' },
@@ -85,11 +99,18 @@ export async function GET(req: NextRequest) {
       'Do NOT use section type "freeHtml" or "htmlBlock" — raw HTML is not allowed.',
       'Only use section types listed in availableSectionTypes.',
       'Only fill fields defined in sectionDataSchemas — do not invent custom fields.',
+      'Section colors are NOT normal data fields. Put per-section colors into section.styleOverrides using CSS variables from sectionStyleContracts.',
+      'For every section with an image, dark background or overlay, explicitly set contrasting text/button colors in styleOverrides. Do not rely on global theme colors when contrast is uncertain.',
+      'Never send text and background colors with low contrast. Use dark text on light backgrounds, light text on dark backgrounds, and pair --token-btn-bg with a readable --token-btn-text. WCAG AA requires a contrast ratio of 4.5:1 for body text and 3:1 for large text.',
       'Every section MUST have ALL required fields filled with real content — never leave fields empty or with placeholder text like "Lorem ipsum".',
       'Every array field (items, services, steps, etc.) MUST have at least 3 entries unless the real business has fewer.',
       'The footer MUST contain columns with items arrays. Each item needs text and optionally href. Never send empty columns or columns without items.',
       'Navigation items MUST link to existing pages using their slug (e.g. href: "/leistungen", NOT href: "/services").',
+      'When using section.styleOverrides, the keys MUST be EXACTLY one of the documented --token-* slot names (see point 12 in instructions). Unknown keys are ignored by the renderer.',
+      'Per-section styleOverrides values are CSS colour strings — hex (#rrggbb), rgb() or rgba() are all valid. Do NOT pass slot enums or label names like "primary" — these are not colours.',
+      'BEFORE calling /publish, ALWAYS call GET /api/v1/content/validate. Fix every "error" issue and every contrast warning. Only publish when readyToPublish=true.',
       ...(hasShop ? ['This tenant has the SHOP addon active. Include shop pages (slug: "shop", "warenkorb") with shopProductGrid and shopCart sections. Add a "Shop" / "Produkte" link in the navigation. Create product categories and products via the shop endpoints.'] : ['This tenant does NOT have the shop addon. Do NOT create shop pages or use shop section types.']),
+      ...(hasBooking ? ['This tenant has the BOOKING addon active. You may use bookingWidget, bookingSlotPicker, bookingDateRange, availabilityCalendar, resourceBookingShowcase and bookingCtaPro sections where they make sense. Use bookingSlotPicker for restaurants/cafes/salons/appointments where the visitor chooses a day and sees available times. Use bookingDateRange for hotels, apartments, locations, rooms and multi-day requests. The actual booking logic is configured in Admin > Funktionen > Buchungen.'] : ['This tenant does NOT have the booking addon. Do NOT use bookingWidget, bookingSlotPicker, bookingDateRange, availabilityCalendar, resourceBookingShowcase or bookingCtaPro. Keep simple reservation/contact sections if needed.']),
     ],
     instructions: `Du bist ein AI-Assistent der eine "${auth.tenant.industry}"-Website für "${auth.tenant.name}" mit deutschsprachigem Content füllt.
 
@@ -174,6 +195,66 @@ PFLICHT-CHECKLISTE (alles MUSS erstellt werden):
 
 8. PUBLISH (POST /api/v1/content/publish):
    - IMMER als letzter Schritt aufrufen!
+   - VORHER: Call GET /api/v1/content/validate. Wenn readyToPublish=false → fixe ALLE contentIssues mit severity "error" und ALLE colorIssues mit code "INVALID_COLOR_FORMAT" oder severity "error". Wiederhole bis readyToPublish=true.
+   - Beachte auch die "warnings" (z.B. LOW_CONTRAST). Setze passende styleOverrides damit Texte lesbar werden, dann erneut /validate aufrufen.
+
+═══════════════════════════════════════════
+FARB- & KONTRAST-PFLICHTREGELN (verhindert "weiß auf weiß" / "dunkel auf dunkel"):
+═══════════════════════════════════════════
+
+A) JEDES Background+Text-Paar MUSS WCAG AA erfüllen:
+   - Body-Text auf Hintergrund:  Kontrastverhältnis ≥ 4.5:1
+   - Headlines (groß, ≥18pt):    Kontrastverhältnis ≥ 3.0:1
+   - Button-Text auf Button-Bg:  ≥ 4.5:1
+
+B) WENN sectionBg DUNKEL ist (Helligkeit < 50%, also rel. Luminanz < 0.5):
+   MUSST du im SELBEN Section/Design-Payload SETZEN:
+   - onDarkHeading: "#ffffff"  (oder ähnlich hell)
+   - onDarkBody:    "rgba(255,255,255,0.85)"
+   - onDarkMuted:   "rgba(255,255,255,0.6)"
+   ANSONSTEN bleibt der Default-Dark-Text aktiv → unsichtbar auf dunklem Hintergrund.
+
+   Beispiel (Dark CTA-Band):
+   {
+     "type": "ctaBand",
+     "data": { "headline": "...", "subline": "..." },
+     "styleOverrides": {
+       "--token-section-bg": "#0f4c4c",
+       "--token-on-dark-heading": "#ffffff",
+       "--token-on-dark-body": "rgba(255,255,255,0.88)",
+       "--token-on-dark-muted": "rgba(255,255,255,0.65)",
+       "--token-btn-bg": "#f5e8d8",
+       "--token-btn-text": "#0f4c4c"
+     }
+   }
+
+C) BUTTONS: Wenn du --token-btn-bg setzt, MUSST du --token-btn-text mitsetzen.
+   Ebenso für Sekundär-Buttons.
+
+D) BADGES/EYEBROWS: Wenn du --token-badge-bg setzt, MUSST du --token-badge-text mitsetzen.
+
+E) BILD-HEROES mit overlayColor/overlayOpacity:
+   - Bild ist meist hell-bis-mittel → dunkles Overlay (rgba(0,0,0,0.5–0.7)) + hellen Headline-Text.
+   - ODER helles Overlay (rgba(255,255,255,0.85)) + dunklen Headline-Text.
+   - NIE: hell-Overlay + heller Text. NIE: ohne Overlay + heller Text auf hellem Bild.
+
+F) VERBOTENE KOMBINATIONEN (führen zu unsichtbaren Texten in der Live-Vorschau):
+   ❌ sectionBg: #ffffff + heading: #f5f5f5    (weiß-grau auf weiß)
+   ❌ sectionBg: #0a0a0a + heading: #1a1a1a    (fast-schwarz auf schwarz)
+   ❌ btnBg: #ffffff + btnText: #cccccc        (hellgrau auf weiß)
+   ❌ Dunkler Header (#1a1a1a) ohne onDarkHeading gesetzt
+   ❌ Hero mit dunklem Bild ohne overlayOpacity ≥ 0.4 + onDarkHeading
+
+G) SICHERER WORKFLOW:
+   1) Setze JEDES Mal wenn du eine eigene sectionBg setzt AUCH passende Text-Farben.
+   2) Nach allen PUT/POSTs: GET /api/v1/content/validate.
+   3) Fixe alle "colorIssues" bevor /publish aufgerufen wird.
+   4) Der Server filtert ungültige Farben (#xyz, "primary", "blue") und gibt 400 zurück — verwende NUR hex (#rrggbb), #rrggbbaa, rgb() oder rgba().
+
+H) AUTO-FIX: Wenn du PUT /content/design mit einem dunklen sectionBg ohne onDark*-Tokens sendest,
+   setzt der Server automatisch onDarkHeading/Body/Muted auf weiße Defaults. Das ist eine Rettungsleine,
+   keine Erlaubnis — die Response enthält ein "autoFixes"-Array, das du in deinem nächsten Schritt
+   prüfen und ggf. mit besseren Werten überschreiben solltest.
 
 ═══════════════════════════════════════════
 i18n — MEHRSPRACHIGKEIT:
@@ -243,8 +324,46 @@ REIHENFOLGE: Immer NACH dem Erstellen aller Inhalte + VOR dem Publish übersetze
    - Typisch je Branche: Handwerk (Google, Facebook, Instagram), Restaurant (Instagram, Facebook, Google, TripAdvisor), Hotel (Instagram, Facebook, TripAdvisor, Google), Salon (Instagram, Facebook, Google), Medical (Google, Jameda-Link als google), Tourism (Instagram, Facebook, YouTube), Photography (Instagram, Pinterest, Facebook), Wedding (Instagram), Consulting (LinkedIn, Google), Realestate (LinkedIn, Instagram, Google), Cafe (Instagram, Facebook, Google), Retail (Instagram, Facebook, Google, Pinterest)
 
 10. STYLE (PUT /api/v1/content/style):
-    - Wähle den passenden Stil: { style: "classic" } oder "modern" oder "bold"
-    - Empfehlung: Hotels/Restaurants → classic, Handwerk/Medical → modern, Fotografie/Salons → bold
+    - Verwende immer { style: "classic" }.
+    - Es gibt keine alternativen Website-Stile mehr. Unterschiede entstehen über Brand-Farben, globale Design-Farben und section.styleOverrides.
+
+11. DESIGN-FARBEN — GLOBAL (PUT /api/v1/content/design):
+    - Setze die globalen Farbtöne für die gesamte Site. Jeder Wert ist EIN Hex-String (z.B. "#1a5276"):
+      * sectionBg, sectionBgAlt, cardBg, cardBorder
+      * heading, subheading, body, muted
+      * brand, accent, icon
+      * btnBg, btnText
+      * badgeBg, badgeText, badgeBorder
+      * dividerColor
+      * eyebrow, statValue, quote, ratingStar, check  (granulare Slot-Farben)
+      * onDarkHeading, onDarkBody, onDarkMuted  (für Texte auf dunklen Backgrounds, z.B. Hero-Overlays)
+    - Diese Werte gelten als Defaults für ALLE Sections. Für einzelne Sections kannst du sie überschreiben (siehe 12.).
+    - Wichtig: Achte auf WCAG-Kontrast. Bei dunkler sectionBg unbedingt onDarkHeading/Body/Muted setzen, sonst bleiben die Default-Weißtöne aktiv.
+
+12. PER-SECTION FARB-OVERRIDES — section.styleOverrides:
+    - Jede Section kann individuelle CSS-Variablen überschreiben — nutze styleOverrides als zusätzliches Property auf einer section.
+    - Format: { "--token-<slot>": "<hexFarbe>" }
+    - Erlaubte Slot-Variablen (gleicher Namensraum wie unter 11., aber mit --token- prefix und kebab-case):
+      --token-section-bg, --token-section-bg-alt, --token-card-bg, --token-card-border,
+      --token-heading, --token-subheading, --token-body, --token-muted, --token-icon,
+      --token-eyebrow, --token-stat-value, --token-quote, --token-rating-star, --token-check,
+      --token-badge-bg, --token-badge-text, --token-badge-border,
+      --token-btn-bg, --token-btn-text, --token-divider,
+      --token-on-dark-heading, --token-on-dark-body, --token-on-dark-muted
+    - Beispiel:
+      {
+        "type": "ctaBand",
+        "data": { "headline": "...", "subline": "..." },
+        "styleOverrides": {
+          "--token-section-bg": "#0f4c4c",
+          "--token-heading": "#ffffff",
+          "--token-body": "rgba(255,255,255,0.85)",
+          "--token-btn-bg": "#f5e8d8",
+          "--token-btn-text": "#0f4c4c"
+        }
+      }
+    - Nutze styleOverrides SPARSAM und gezielt: typische Einsatzgebiete sind dunkle Hero-Sections, kontrastreiche CTA-Bänder, oder einzelne Karten mit Sonderfarben. Lass sonst die globalen Werte aus DESIGN gewinnen — das hält die Site konsistent.
+    - Setze styleOverrides NUR für Slots die du wirklich ändern willst. Nicht-gesetzte Slots erben automatisch über die Fallback-Kette --token-* → --style-* → --brand-*.
 
 ═══════════════════════════════════════════
 CONTENT-REGELN:
@@ -357,6 +476,253 @@ Workflow: 1) POST /collections → { key, label }  2) POST /collections/:key/ite
   });
 }
 
+function getStyleSystemInstructions() {
+  return {
+    whereToPutSectionColors: 'Set per-section colors on the section object as styleOverrides, not inside section.data.',
+    sectionObjectShape: {
+      type: 'sectionType',
+      data: '{ content fields from sectionDataSchemas }',
+      styleOverrides: {
+        '--token-section-bg': '#ffffff',
+        '--token-heading': '#111111',
+        '--token-body': '#3f3f46',
+        '--token-btn-bg': '#111111',
+        '--token-btn-text': '#ffffff',
+      },
+    },
+    globalVsSection: [
+      'Use /api/v1/content/brand and /api/v1/content/design for global brand defaults.',
+      'Use section.styleOverrides only when a specific section needs its own background, text, card, badge, button or overlay colors.',
+      'Do not place color keys like headingColor, btnBg or cardBg inside data unless that exact field is listed in sectionDataSchemas. Renderer colors are controlled by CSS variables in styleOverrides.',
+    ],
+    contrastRules: [
+      'Every background/text pair must be readable: section/card/image backgrounds must contrast with heading, body and muted text.',
+      'Every primary CTA must define both --token-btn-bg and --token-btn-text when overriding one of them.',
+      'Image sections should use a dark overlay with light text OR a light overlay with dark text. Do not use dark text on dark images.',
+      'Badge colors must pair --token-badge-bg with --token-badge-text.',
+      'If a section has cards on a dark section background, set --token-card-bg and text colors independently so card content remains readable.',
+    ],
+    canonicalSlots: [
+      '--token-section-bg', '--token-section-bg-alt', '--token-card-bg', '--token-card-border',
+      '--token-heading', '--token-subheading', '--token-body', '--token-muted',
+      '--token-icon', '--token-accent', '--token-eyebrow', '--token-stat-value',
+      '--token-quote', '--token-rating-star', '--token-check',
+      '--token-badge-bg', '--token-badge-text', '--token-badge-border',
+      '--token-btn-bg', '--token-btn-text', '--token-divider',
+      '--token-on-dark-heading', '--token-on-dark-body', '--token-on-dark-muted',
+      '--token-image-overlay', '--token-card-radius', '--token-button-radius',
+    ],
+    commonCssVariables: Object.fromEntries(
+      Object.entries(SECTION_COLOR_SLOT_DEFINITIONS).map(([slot, def]) => [slot, {
+        cssVar: def.cssVar,
+        label: def.label,
+        description: def.description,
+        contrastWith: def.contrastWith || [],
+      }])
+    ),
+  };
+}
+
+function getAiContentPlaybook(industry: string, addons: { hasShop: boolean; hasBooking: boolean }) {
+  const industryHints: Record<string, {
+    tone: string;
+    preferredCollectionKeys: string[];
+    preferredSections: string[];
+    avoidPatterns: string[];
+  }> = {
+    tradesman: {
+      tone: 'klar, verlässlich, meisterlich, konkret; Probleme und Ablauf erklären statt nur Versprechen machen',
+      preferredCollectionKeys: ['leistungen', 'referenzen', 'news'],
+      preferredSections: ['hero', 'servicesGrid', 'processSteps', 'serviceDetail', 'portfolio', 'testimonials', 'faq', 'ctaBand'],
+      avoidPatterns: ['Luxus-Sprache ohne Substanz', 'zu viel Lifestyle statt handwerklicher Ablauf', 'Notdienst ohne Kontakt-CTA'],
+    },
+    restaurant: {
+      tone: 'sinnlich, produktnah, gastgeberhaft, kurze Sätze; Herkunft, Saison, Atmosphäre und Reservierung klar machen',
+      preferredCollectionKeys: ['speisekarte', 'events', 'news'],
+      preferredSections: ['hero', 'menu', 'signatureDishes', 'reservation', 'ambience', 'events', 'testimonials', 'gallery', 'contact'],
+      avoidPatterns: ['generische Food-Floskeln', 'Speisekarte ohne Preise oder Kategorien', 'Reservierung ohne Telefon-Alternative'],
+    },
+    hotel: {
+      tone: 'warm, ruhig, gastgeberhaft, ortsverliebt; Zimmer, Lage, Spa und Direktanfrage sauber einordnen',
+      preferredCollectionKeys: ['leistungen', 'angebote', 'news'],
+      preferredSections: ['hero', 'bookingStrip', 'roomShowcase', 'wellness', 'hotelDining', 'location', 'offers', 'testimonials', 'faq'],
+      avoidPatterns: ['Portal-Sprache', 'Zimmer ohne Preis-/Größenhinweise', 'zu laute Superlative'],
+    },
+    salon: {
+      tone: 'modern, persönlich, beratend; Ergebnis, Alltagstauglichkeit, Preislogik und Termin klar machen',
+      preferredCollectionKeys: ['leistungen', 'news'],
+      preferredSections: ['hero', 'priceList', 'packages', 'team', 'gallery', 'expertise', 'beforeAfter', 'testimonials', 'bookingCta'],
+      avoidPatterns: ['Beauty-Floskeln ohne konkrete Beratung', 'Preise ohne Dauer/Hinweis', 'zu viel Weiß-auf-hell bei Foto-Sections'],
+    },
+    tourism: {
+      tone: 'bildreich, lokal, einladend, aber konkret; Routen, Saison, Wetter, Mobilität und Alternativen erklären',
+      preferredCollectionKeys: ['erlebnisse', 'routen', 'news'],
+      preferredSections: ['hero', 'destinationHighlights', 'experienceGrid', 'seasonTeaser', 'tourRoutes', 'placesMap', 'visitorInfo', 'downloadGuides', 'tourismContact'],
+      avoidPatterns: ['beliebige Reiseführer-Sprache', 'Routen ohne Dauer/Schwierigkeit', 'Saisonhinweise ohne konkrete Konsequenz'],
+    },
+    medical: {
+      tone: 'sachlich, vertrauensbildend, ruhig; Datenschutz, klare Abläufe, Terminarten und verständliche Befunde betonen',
+      preferredCollectionKeys: ['leistungen', 'ratgeber', 'team'],
+      preferredSections: ['hero', 'doctorTeam', 'servicesGrid', 'equipmentHighlights', 'downloadForms', 'practiceGallery', 'faq', 'contact'],
+      avoidPatterns: ['Heilsversprechen', 'zu aggressive CTAs', 'medizinische Aussagen ohne Vorsicht'],
+    },
+    wedding: {
+      tone: 'persönlich, emotional, aber nicht kitschig; Ablauf, Ort, RSVP und Gastinfos klar machen',
+      preferredCollectionKeys: ['updates', 'orte', 'news'],
+      preferredSections: ['hero', 'coupleStory', 'eventSchedule', 'venueInfo', 'travelInfo', 'rsvp', 'dresscode', 'weddingMenu', 'faq'],
+      avoidPatterns: ['Kitsch ohne Information', 'RSVP ohne Deadline', 'zu dunkle Overlays mit dunklem Text'],
+    },
+    photography: {
+      tone: 'visuell ruhig, präzise, beobachtend; Bildstil, Ablauf, Pakete und Auswahlprozess zeigen',
+      preferredCollectionKeys: ['leistungen', 'portfolio', 'news'],
+      preferredSections: ['hero', 'portfolioGallery', 'servicesGrid', 'featureShowcase', 'beforeAfterStoryPro', 'testimonials', 'contact'],
+      avoidPatterns: ['zu viel Text vor den Bildern', 'leere Galerie-Kacheln', 'Kontakt ohne Einsatzgebiet'],
+    },
+    consulting: {
+      tone: 'präzise, outcome-orientiert, B2B-tauglich; Probleme, Vorgehen, Ergebnis und Entscheidungslogik zeigen',
+      preferredCollectionKeys: ['leistungen', 'cases', 'news'],
+      preferredSections: ['hero', 'servicesGrid', 'comparisonTable', 'processSteps', 'statsCounter', 'portfolio', 'proofWall', 'ctaBand'],
+      avoidPatterns: ['Berater-Buzzwords ohne Ergebnis', 'Cases ohne Ausgangslage/Resultat', 'CTA ohne Erstgespräch-Kontext'],
+    },
+  };
+
+  const fallback = {
+    tone: 'branchenspezifisch, lokal verankert, klar, hochwertig und ohne generische AI-Floskeln',
+    preferredCollectionKeys: ['leistungen', 'news'],
+    preferredSections: ['hero', 'servicesGrid', 'featureShowcase', 'processSteps', 'bentoGrid', 'statsCounter', 'testimonials', 'faq', 'ctaBand'],
+    avoidPatterns: ['Platzhaltertexte', 'leere Bildfelder', 'wiederholte Section-Reihenfolgen über mehrere Demos'],
+  };
+
+  return {
+    goal: 'Build a full premium demo website that feels custom-made for this exact tenant and industry. Use the API only; do not invent fields or section types.',
+    workflow: [
+      '1. Read tenant, existingPages, hasShopAddon, hasBookingAddon, availableSectionTypes, sectionDataSchemas, sectionStyleContracts.',
+      '2. Design a tenant identity before writing content: company name, city/region, story, tone, brand palette, image world.',
+      '3. Create global brand/contact/design/style/navigation/footer/SEO first.',
+      '4. Create collections before pages when pages link to collection items.',
+      '5. Create pages with complete sections and real content.',
+      '6. Create collection items with embedded sections and stable UUIDs for every item section.',
+      '7. Call /validate before /publish. Fix every error and every contrast warning. Repeat until readyToPublish=true.',
+      '8. Publish only after validation passes, then manually check live pages and collection routes.',
+    ],
+    style: {
+      supportedWebsiteStyle: 'classic',
+      deprecatedStyles: ['modern', 'bold'],
+      rule: 'Always send PUT /api/v1/content/style with { "style": "classic" }. Visual variety must come from brand/design colors, section choice, copy, imagery and layout, not from old style variants.',
+    },
+    minimumContentStandard: {
+      homePage: {
+        minSections: 12,
+        requiredMix: ['hero', 'socialProofBar', 'storytelling/textImage or branch equivalent', 'branch-specific offer/overview section', 'featureShowcase', 'processSteps', 'bentoGrid', 'statsCounter', 'timeline', 'testimonials/proof', 'faq', 'ctaBand'],
+      },
+      overviewPages: {
+        minSections: 6,
+        requiredMix: ['hero/collectionHero', 'branch-specific overview', 'premium section', 'collectionList or cards', 'faq/testimonials', 'ctaBand'],
+      },
+      aboutPage: {
+        minSections: 6,
+        requiredMix: ['hero/collectionHero', 'textImage/story', 'team or values', 'timeline', 'stats/proof', 'ctaBand'],
+      },
+      contactPage: {
+        minSections: 4,
+        requiredMix: ['hero/collectionHero', 'contact or branch contact', 'map/places/additionalLocations', 'visitorInfo/openingHours/faq', 'ctaBand optional'],
+      },
+      collectionItems: {
+        minSections: 4,
+        requiredMix: ['collectionHero with bgImage/backgroundImage', 'textImage or detail section', 'benefits/process/info section', 'faq or proof', 'ctaBand'],
+      },
+      arrays: {
+        cardArraysMinItems: 4,
+        faqMinItems: 4,
+        collectionMinItems: 3,
+        footerLinksPerColumnMin: 2,
+      },
+    },
+    routingRules: [
+      'Page slug values never start with "/". Use "leistungen", not "/leistungen".',
+      'Navigation/footer href values do start with "/". Use "/leistungen".',
+      'Only link to pages and collection items that actually exist.',
+      'Collection detail links use "/c/<collectionKey>/<itemSlug>".',
+      'If the API validation lists a required page, create that exact slug even if the visible nav label differs.',
+    ],
+    contentRules: [
+      'Use real German copy with umlauts and no mojibake.',
+      'Write from the business perspective, not as a neutral directory.',
+      'Avoid generic phrases such as "maßgeschneiderte Lösungen", "Ihre Zufriedenheit ist unser Ziel" unless backed by concrete content.',
+      'Every image field must be filled with a contextually fitting image URL or uploaded media URL.',
+      'Every image should have meaningful alt text when the schema exposes an alt field.',
+      'No placeholder labels like "Mehr erfahren" repeated everywhere; CTAs should be specific to the action.',
+      'Use branch-specific sections before generic shared sections when available.',
+    ],
+    colorRules: [
+      'Global design colors should establish readable defaults for all light sections: sectionBg, cardBg, heading, body, muted, btnBg, btnText, badgeBg, badgeText.',
+      'For every image hero or dark/overlay section, set overlayColor/overlayOpacity and section.styleOverrides for --token-heading, --token-body, --token-muted, --token-on-dark-heading, --token-on-dark-body, --token-on-dark-muted.',
+      'If overriding --token-btn-bg, always set --token-btn-text in the same styleOverrides.',
+      'If overriding --token-badge-bg, always set --token-badge-text.',
+      'If cards sit on a dark section, set --token-card-bg, --token-card-border and readable text tokens. Do NOT use rgba(255,255,255,0.05-0.2) with white heading/body tokens; use a solid dark card bg (for example #0A2A33) with white text, or a solid light card bg with dark text.',
+      'Do not use white text on pale backgrounds or dark text on dark imagery. Validate contrast before publishing.',
+      'Use sectionStyleContracts[type].colorSlots to know which visual parts a section supports.',
+    ],
+    addons: {
+      shop: addons.hasShop
+        ? 'Shop addon is active. It is valid to create shop pages, categories, products and shop sections.'
+        : 'Shop addon is not active. Do not create shop pages/products or use shop sections.',
+      booking: addons.hasBooking
+        ? 'Booking addon is active. Use bookingSlotPicker for time-slot bookings, bookingDateRange for multi-day stays/rooms/locations, availabilityCalendar for availability overview, and resourceBookingShowcase for resources.'
+        : 'Booking addon is not active. Do not use premium booking sections; simple contact/reservation sections are still allowed when listed in availableSectionTypes.',
+    },
+    industry: industryHints[industry] || fallback,
+    finalValidation: [
+      'GET /api/v1/content/validate returns readyToPublish=true.',
+      'No colorIssues warnings remain.',
+      'Every main route returns 200.',
+      'Every collection item linked from nav/cards/footer returns 200.',
+      'Visible content is not repeated mechanically across pages.',
+      'The page would convince a real prospect in this industry.',
+    ],
+  };
+}
+
+function getSectionStyleContracts(sectionTypes: Array<{ type?: string; id?: string; label?: string }>) {
+  const available = new Set(sectionTypes.map(section => section.type || section.id).filter(Boolean));
+  return getAllSectionContracts()
+    .filter(contract => available.has(contract.type))
+    .map(contract => ({
+      type: contract.type,
+      label: contract.label,
+      category: contract.category,
+      defaultTheme: contract.defaultTheme || 'auto',
+      colorSlots: contract.colorSlots.map(slot => ({
+        slot,
+        ...SECTION_COLOR_SLOT_DEFINITIONS[slot],
+        contrastWith: SECTION_COLOR_SLOT_DEFINITIONS[slot]?.contrastWith || [],
+      })),
+      recommendedMinimum: getRecommendedMinimumStyle(contract.colorSlots),
+    }));
+}
+
+function getRecommendedMinimumStyle(colorSlots: string[]) {
+  const slots = new Set(colorSlots);
+  const style: Record<string, string> = {};
+  if (slots.has('sectionBg')) style['--token-section-bg'] = 'background color';
+  if (slots.has('cardBg')) style['--token-card-bg'] = 'card background color; on dark sections prefer a solid dark card bg with light text or a solid light card bg with dark text, not translucent white with white text';
+  if (slots.has('headingColor')) style['--token-heading'] = 'readable heading color';
+  if (slots.has('bodyColor')) style['--token-body'] = 'readable body text color';
+  if (slots.has('mutedColor')) style['--token-muted'] = 'dezenter text color';
+  if (slots.has('textPrimary')) style['--token-body'] = 'readable body color';
+  if (slots.has('textSecondary')) style['--token-muted'] = 'readable secondary text color';
+  if (slots.has('imageTextColor')) style['--token-on-dark-heading'] = 'readable text color on image/overlay';
+  if (slots.has('accentColor')) style['--token-accent'] = 'accent color';
+  if (slots.has('iconColor')) style['--token-icon'] = 'icon color';
+  if (slots.has('btnBg')) style['--token-btn-bg'] = 'button background color';
+  if (slots.has('btnText')) style['--token-btn-text'] = 'button text color';
+  if (slots.has('badgeBg')) style['--token-badge-bg'] = 'badge background color';
+  if (slots.has('badgeText')) style['--token-badge-text'] = 'badge text color';
+  if (slots.has('borderColor')) style['--token-card-border'] = 'border color';
+  if (slots.has('overlayColor')) style['--token-image-overlay'] = 'image overlay color';
+  return style;
+}
+
 function getSectionSchemas(industry: string): Record<string, object> {
   const schemas: Record<string, object> = {
     hero: { fields: { headline: 'string', subline: 'string', badgeText: 'string?', badgeIcon: 'lucide-icon-name?', badgeStarsIcon: 'lucide-icon-name? (leer = keine Sterne)', bgImage: 'url?', bgImageMobile: 'url?', bgColor: 'hex? (alternative bg color if no image)', bgMode: '"image"|"color"|"gradient" (default gradient)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', trustItems: 'string[]?', trustStripColor: 'hex?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string? (CSS object-position, e.g. "center 30%")', bgPositionMobile: 'string?', imageEffect: '"none"|"parallax"|"kenBurns"?', imageEffectIntensity: '"subtle"|"medium"|"strong"?' } },
@@ -368,10 +734,17 @@ function getSectionSchemas(industry: string): Record<string, object> {
     textImage: { fields: { headline: 'string', text: 'string (html)', badge: 'string?', image: 'url', imageAlt: 'string?', layout: '"image-right"|"image-left"', items: '{ icon?: lucide-icon-name, title: string, text: string }[]?', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
     collectionHero: { fields: { headline: 'string', subline: 'string?', bgImage: 'url?', category: 'string?', overlayColor: 'hex?', overlayOpacity: '0-1?', bgPosition: 'string?', imageEffect: '"none"|"parallax"|"kenBurns"?', imageEffectIntensity: '"subtle"|"medium"|"strong"?' } },
     noticeBanner: { fields: { headline: 'string', subline: 'string?', text: 'string? (html)', bgColor: 'hex?', textColor: 'hex? (default white)', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?', secondaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
+    popup: { fields: { title: 'string', subtitle: 'string?', text: 'string? (html)', delayMs: 'number? milliseconds until popup opens (1000 = 1 second, default 2500)', frequency: '"once"|"session" (once = after closing, do not show again on same device; session = can appear again in a new browser session)', primaryCta: '{ label?: string, href?: string }?', secondaryCta: '{ label?: string, href?: string }?' } },
+    bookingWidget: { fields: { badge: 'string?', headline: 'string', subline: 'string?', submitLabel: 'string? (leer = automatisch je Booking-Modus: Anfrage senden oder Jetzt buchen)' }, note: 'Premium Booking Add-on Section. Die echte Buchungslogik kommt aus Admin > Funktionen > Buchungen.' },
+    bookingSlotPicker: { fields: { badge: 'string?', headline: 'string', subline: 'string?', submitLabel: 'string?' }, note: 'Premium Booking Add-on Section für Datumsauswahl plus sichtbare Uhrzeit-Slots. Ideal für Restaurant, Café, Salon, Fitness, Praxis, Fotograf-Termin oder Beratung.' },
+    bookingDateRange: { fields: { badge: 'string?', headline: 'string', subline: 'string?', submitLabel: 'string?' }, note: 'Premium Booking Add-on Section für Startdatum + Enddatum. Ideal für Hotel, Apartment, Location, Raum, Fläche, mehrtägige Buchung oder Eventanfrage.' },
+    availabilityCalendar: { fields: { badge: 'string?', headline: 'string', subline: 'string?', submitLabel: 'string?' }, note: 'Premium Booking Add-on Section für Kalender-/Verfügbarkeits-Einstieg.' },
+    resourceBookingShowcase: { fields: { badge: 'string?', headline: 'string', subline: 'string?', submitLabel: 'string?' }, note: 'Premium Booking Add-on Section für Ressourcen/Services als Buchungseinstieg.' },
+    bookingCtaPro: { fields: { badge: 'string?', headline: 'string', subline: 'string?', submitLabel: 'string?' }, note: 'Premium Booking Add-on Section für kompakten Buchungs-CTA.' },
     statsCounter: { fields: { headline: 'string', subline: 'string?', stats: '{ value: number|string, suffix?: string, prefix?: string, label: string }[] (4 items recommended, value can be a number for animated counter OR a string like "seit 2019" for non-numeric facts)' } },
     bentoGrid: { fields: { headline: 'string', subline: 'string?', items: '{ title: string, text: string, icon?: lucide-icon-name, image?: url, span?: "1"|"2" }[] (asymmetric grid with hover spotlight)' } },
     testimonialMarquee: { fields: { headline: 'string?', items: '{ quote: string, name: string, role?: string, image?: url, rating?: 1-5 }[] (min 6 items, auto-scrolling in 2 rows)' } },
-    featureShowcase: { fields: { headline: 'string', subline: 'string?', image: 'url', features: '{ icon?: lucide-icon-name, title: string, text: string }[]', ctaPrimary: '{ label: string, href: string }?' } },
+    featureShowcase: { fields: { headline: 'string', subline: 'string?', badge: 'string?', text: 'string? (html)', image: 'url', features: 'string[] (kurze Feature-Texte; Objekt-Features werden defensiv gerendert, empfohlen ist string[])', ctaLabel: 'string?', ctaHref: 'string?', reversed: 'boolean?' } },
     logoMarquee: { fields: { headline: 'string?', logos: '{ src: url, alt: string, href?: url }[] (min 6 logos, auto-scrolling)' } },
     // Shared section schemas available to all industries
     servicesGrid: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', ctaLabel: 'string?', ctaHref: 'string?', manualCards: '{ title: string, text: string, icon?: lucide-icon-name, image?: url, mediaType?: icon|image, href?: string }[]' } },
@@ -382,6 +755,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
     ctaBand: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', ctaPrimary: '{ label: string, href: string, icon?: lucide-icon-name }' } },
     contact: { fields: { headline: 'string', introText: 'string?', badgeText: 'string?', formEnabled: 'boolean (default true)', submitLabel: 'string?', formFields: '{ name: string, type: "text"|"email"|"tel"|"textarea", required?: boolean }[]?', infoCards: '{ icon: lucide-icon-name, label: string, value: string }[] (z.B. Phone/Mail/Adresse/Öffnungszeiten)' } },
     map: { fields: { headline: 'string?', embedUrl: 'Google Maps Embed-URL (https://www.google.com/maps/embed?pb=...)', height: '"s"|"m"|"l" (default "m")' } },
+    additionalLocations: { fields: { badge: 'string?', headline: 'string?', subline: 'string?', locations: '{ name?: string, address?: string, phone?: string, email?: string, mail?: string, mapEmbedUrl?: Google Maps Embed-URL, openingHours?: string (mehrzeilig möglich), ctaLabel?: string, ctaHref?: string }[] — alle Felder optional, aber pro Standort mindestens ein sichtbares Feld setzen' } },
     team: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', membersHeadline: 'string?', members: '{ name: string, role: string, image?: url, bio?: string }[]', storyHeadline: 'string?', storyText: 'string?', storyImage: 'url?', valuesHeadline: 'string?', values: '{ icon: lucide-icon-name, title: string, text: string }[]?', stats: '{ value: string, label: string }[]?' } },
     stats: { fields: { headline: 'string?', stats: '{ icon?: lucide-icon-name, value: number|string, suffix?: string, prefix?: string, label: string }[] (value: number for animated counter, or string like "seit 2019" for text facts)' } },
     galleryGrid: { fields: { headline: 'string', subline: 'string?', columns: '2|3|4?', images: '{ src: url, alt: string, caption?: string }[]' } },
@@ -394,7 +768,7 @@ function getSectionSchemas(industry: string): Record<string, object> {
     shopFeaturedProducts: { fields: { headline: 'string?', mode: '"latest"|"category"|"manual"?', categorySlug: 'string?', productIds: 'string[]?', count: 'number?', columns: '2|3|4?', basePath: 'string? (default "/shop")' } },
     shopCategoryOverview: { fields: { headline: 'string?', subline: 'string?', columns: '2|3|4?', basePath: 'string? (default "/shop")', shopGridPath: 'string? (default basePath)' } },
     shopCart: { fields: { headline: 'string?', checkoutPath: 'string? (default "/checkout")', continueShoppingPath: 'string? (default "/shop")' } },
-    shopCheckout: { fields: { headline: 'string?', thankYouPath: 'string? (default "/danke")', requirePhone: 'boolean?', showCompanyField: 'boolean?' } },
+    shopCheckout: { fields: { headline: 'string?', thankYouPath: 'string? (default "/danke")', requirePhone: 'boolean?', showCompanyField: 'boolean?', tenantId: 'string? (usually injected by checkout route/page renderer)' } },
     shopThankYou: { fields: { headline: 'string?', subline: 'string?', orderNumberLabel: 'string?', continueShoppingPath: 'string? (default "/shop")', ctaLabel: 'string?' } },
     // Additional shared sections
     timeline: { fields: { badge: 'string?', headline: 'string', subline: 'string?', entries: '{ year: string, title: string, text: string }[]' } },
@@ -431,6 +805,41 @@ function getSectionSchemas(industry: string): Record<string, object> {
     spotlightCards: { fields: { badge: 'string?', headline: 'string', subline: 'string?', cards: '{ title: string, text?: string, icon?: lucide-icon-name, image?: url, href?: string }[]' } },
     scrollStory: { fields: { headline: 'string', subline: 'string?', steps: '{ kicker?: string, title: string, text?: string, image?: url }[]' } },
     premiumComparison: { fields: { badge: 'string?', headline: 'string', subline: 'string?', columns: '{ label: string, note?: string }[]', rows: '{ feature: string, values: (string|boolean)[] }[]', highlightCol: 'number?' } },
+    immersiveCtaBanner: { fields: { badge: 'string?', headline: 'string', subline: 'string?', image: 'url?', overlay: 'rgba()?', primaryCta: '{ label: string, href: string }?', secondaryCta: '{ label: string, href: string }?', metrics: '{ value: string, label: string }[]?' } },
+    proofWall: { fields: { badge: 'string?', headline: 'string', subline: 'string?', proofs: '{ value?: string, label: string, note?: string }[]?', reviews: '{ quote: string, name: string, context?: string, rating?: number }[]?', logos: '{ name: string, image?: url }[]?' } },
+    editorialFeatureRail: { fields: { badge: 'string?', headline: 'string', subline: 'string?', items: '{ kicker?: string, title: string, text?: string, image?: url, ctaLabel?: string, ctaHref?: string }[]' } },
+    offerCampaignStrip: { fields: { badge: 'string?', headline: 'string', subline: 'string?', image: 'url?', offerLabel: 'string?', deadline: 'string?', benefits: 'string[]?', cta: '{ label: string, href: string }?' } },
+    beforeAfterStoryPro: { fields: { badge: 'string?', headline: 'string', problem: 'string?', solution: 'string?', result: 'string?', beforeImage: 'url?', afterImage: 'url?', points: '{ value?: string, label: string }[]?', cta: '{ label: string, href: string }?' } },
+    signatureGrid: { fields: { badge: 'string?', headline: 'string', subline: 'string?', image: 'url?', traits: '{ title: string, text?: string, icon?: lucide-icon-name }[]?', stats: '{ value: string, label: string }[]?' } },
+    comparisonCardsPro: { fields: { badge: 'string?', headline: 'string', subline: 'string?', plans: '{ name: string, price?: string, note?: string, highlighted?: boolean, features?: string[], missing?: string[], ctaLabel?: string, ctaHref?: string }[]' } },
+    templateAdvantage: { fields: { badge: 'string?', headline: 'string', subline: 'string?', bullets: 'string[]?', cards: '{ title?: string, text?: string, image?: url, href?: string, label?: string }[]', cta: '{ label?: string, href?: string }?' } },
+    principlesGrid: { fields: { badge: 'string?', headline: 'string', subline: 'string?', principles: '{ eyebrow?: string, title?: string, text?: string }[]', cta: '{ label?: string, href?: string }?' } },
+    glowHero: { fields: { eyebrow: 'string?', headline: 'string', subline: 'string?', image: 'url?', glowColor: 'CSS color/rgba/hex — Farbe des Mouse-Glow-Effekts', primaryCta: '{ label?: string, href?: string }?', secondaryCta: '{ label?: string, href?: string }?', facts: '{ value?: string, label?: string }[]?' } },
+    floristHero: { fields: { eyebrow: 'string?', headline: 'string', subline: 'string?', image: 'url?', glowColor: 'CSS color/rgba/hex — Farbe des Mouse-Glow-Effekts', primaryCta: '{ label?: string, href?: string }?', secondaryCta: '{ label?: string, href?: string }?', facts: '{ value?: string, label?: string }[]?' } },
+    bouquetShowcase: { fields: { headline: 'string', subline: 'string?', columns: 'string? (2|3|4)', items: '{ image?: url, title: string, price?: string, badge?: string, href?: string, description?: string }[]' } },
+    occasionMosaic: { fields: { headline: 'string', subline: 'string?', items: '{ image?: url, title: string, href?: string, size?: string (large|small) }[]' } },
+    weddingFloristry: { fields: { headline: 'string', subline: 'string?', image: 'url', overlayOpacity: 'number? (0-1)', highlights: '{ title: string, text: string }[]', cta: '{ label: string, href: string }?' } },
+    workshopBooking: { fields: { headline: 'string', subline: 'string?', image: 'url?', services: '{ icon?: lucide-icon-name, title: string, description?: string }[]', cta: '{ label: string, href: string }?' } },
+    seasonalCampaign: { fields: { badge: 'string?', headline: 'string', subline: 'string?', image: 'url?', offerLabel: 'string?', deadline: 'string?', benefits: 'string[]?', cta: '{ label: string, href: string }?' } },
+    floristMaterials: { fields: { headline: 'string', subline: 'string?', categories: 'string[]', items: '{ image?: url, name: string, category?: string }[]' } },
+    fitnessHero: { fields: { eyebrow: 'string?', headline: 'string', subline: 'string?', image: 'url?', glowColor: 'CSS color/rgba/hex — Farbe des Mouse-Glow-Effekts', primaryCta: '{ label?: string, href?: string }?', secondaryCta: '{ label?: string, href?: string }?', facts: '{ value?: string, label?: string }[]?' } },
+    programGrid: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', ctaLabel: 'string?', ctaHref: 'string?', manualCards: '{ title: string, text: string, icon?: lucide-icon-name, image?: url, mediaType?: icon|image, href?: string }[]' } },
+    courseSchedule: { fields: { badge: 'string?', headline: 'string', subline: 'string?', entries: '{ year: string (z.B. "Mo 07:00"), title: string, text: string }[]' } },
+    trainerProfiles: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', members: '{ name: string, role: string, image?: url, bio?: string }[]' } },
+    membershipPlans: { fields: { badge: 'string?', headline: 'string', subline: 'string?', plans: '{ name: string, price?: string, note?: string, highlighted?: boolean, features?: string[], missing?: string[], ctaLabel?: string, ctaHref?: string }[]' } },
+    trialSessionCta: { fields: { badge: 'string?', headline: 'string', subline: 'string?', image: 'url?', overlay: 'rgba()?', primaryCta: '{ label: string, href: string }?', secondaryCta: '{ label: string, href: string }?', metrics: '{ value: string, label: string }[]?' } },
+    transformationStories: { fields: { badge: 'string?', headline: 'string', problem: 'string?', solution: 'string?', result: 'string?', beforeImage: 'url?', afterImage: 'url?', points: '{ value?: string, label: string }[]?', cta: '{ label: string, href: string }?' } },
+    studioAmenities: { fields: { headline: 'string?', subline: 'string?', badge: 'string?', items: '{ title: string, description?: string, icon?: lucide-icon-name, size?: "sm"|"md"|"lg" }[]' } },
+    locationHero: { fields: { eyebrow: 'string?', headline: 'string', subline: 'string?', image: 'url?', videoUrl: 'url?', overlay: 'rgba()?', align: '"left"|"center"?', primaryCta: '{ label: string, href: string }?', secondaryCta: '{ label: string, href: string }?', facts: '{ value: string, label: string }[]?' } },
+    spaceShowcase: { fields: { headline: 'string', subline: 'string?', columns: 'string? (2|3|4)', items: '{ image?: url, title: string, price?: string, badge?: string, href?: string, description?: string }[]' } },
+    eventTypes: { fields: { headline: 'string', subline: 'string?', items: '{ image?: url, title: string, href?: string, size?: string (large|small) }[]' } },
+    availabilityCta: { fields: { badge: 'string?', headline: 'string', subline: 'string?', image: 'url?', overlay: 'rgba()?', primaryCta: '{ label: string, href: string }?', secondaryCta: '{ label: string, href: string }?', metrics: '{ value: string, label: string }[]?' } },
+    locationPackages: { fields: { badge: 'string?', headline: 'string', subline: 'string?', plans: '{ name: string, price?: string, note?: string, highlighted?: boolean, features?: string[], missing?: string[], ctaLabel?: string, ctaHref?: string }[]' } },
+    amenitiesGrid: { fields: { headline: 'string?', subline: 'string?', badge: 'string?', items: '{ title: string, description?: string, icon?: lucide-icon-name, size?: "sm"|"md"|"lg" }[]' } },
+    floorPlanOverview: { fields: { headline: 'string', text: 'string (html)', badge: 'string?', image: 'url', imageAlt: 'string?', layout: '"image-right"|"image-left"', items: '{ icon?: lucide-icon-name, title: string, text: string }[]?', primaryCta: '{ label: string, href: string, icon?: lucide-icon-name }?' } },
+    galleryMoodboard: { fields: { headline: 'string', subline: 'string?', columns: '2|3|4?', images: '{ src: url, alt: string, caption?: string }[]' } },
+    locationAccess: { fields: { headline: 'string?', embedUrl: 'Google Maps Embed-URL', height: '"s"|"m"|"l"?' } },
+    hostTeam: { fields: { headline: 'string', subline: 'string?', badgeText: 'string?', members: '{ name: string, role: string, image?: url, bio?: string }[]' } },
   };
 
   if (industry === 'wedding') {

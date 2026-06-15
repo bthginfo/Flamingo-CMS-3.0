@@ -17,6 +17,10 @@ const LEGACY_ALIASES: Record<string, string> = {
   Send: 'SendHorizonal', Zap: 'Zap', ZapOff: 'ZapOff',
   Palmtree: 'TreePalm', Flower: 'Flower2',
   Clipboard: 'ClipboardList', ClipboardCheck: 'ClipboardCheck',
+  Towel: 'Bath', Towels: 'Bath', Spa: 'Sparkles', Wellness: 'Sparkles',
+  WineGlass: 'Wine', GlassWine: 'Wine', WineBottle: 'Wine',
+  Train: 'TrainFront', TrainIcon: 'TrainFront',
+  Places: 'Armchair', Seats: 'Armchair', Room: 'House', Rooms: 'House',
 };
 
 /** Convert kebab-case or lowercase to PascalCase for lucide-react lookup */
@@ -47,10 +51,56 @@ function resolveIcon(name: string): LucideIcon | null {
   return null;
 }
 
-export function DynamicIcon({ name, size = 24, className }: { name: string; size?: number; className?: string }) {
+/**
+ * Resolves any icon name (PascalCase, kebab-case, legacy alias) to the
+ * canonical lucide-react PascalCase name. Returns the input unchanged if
+ * the icon cannot be resolved. Useful for normalizing user-entered or
+ * legacy-data icon names before saving them back to the CMS.
+ */
+export function canonicalIconName(name: string): string {
+  if (!name) return '';
+  const iconMap = icons as Record<string, LucideIcon>;
+  if (iconMap[name]) return name;
+  const pascal = toPascalCase(name);
+  if (iconMap[pascal]) return pascal;
+  const parts = name.split(/[-_\s]+/);
+  if (parts.length === 2) {
+    const reversed = parts[1].charAt(0).toUpperCase() + parts[1].slice(1) + parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+    if (iconMap[reversed]) return reversed;
+  }
+  const alias = LEGACY_ALIASES[name] || LEGACY_ALIASES[pascal];
+  if (alias && iconMap[alias]) return alias;
+  return name;
+}
+
+export { resolveIcon };
+
+/**
+ * DynamicIcon — looks up a lucide icon by name and renders it.
+ * If `editPath` is provided, a `data-edit-icon="<path>"` attribute is set
+ * on the SVG so the live-preview overlay can attach a pencil icon and
+ * open the icon picker. The path is relative to the section's data root
+ * (the overlay walks parent `data-edit-collection` markers to prepend
+ * `collection.index.` segments).
+ */
+export function DynamicIcon({
+  name,
+  size = 24,
+  className,
+  editPath,
+}: {
+  name: string;
+  size?: number;
+  className?: string;
+  editPath?: string;
+}) {
   const Icon = resolveIcon(name);
-  if (!Icon) return <span className={className}>{name}</span>;
-  return <Icon size={size} className={className} />;
+  const editAttr = editPath ? ({ 'data-edit-icon': editPath } as Record<string, string>) : null;
+  if (!Icon) {
+    const FallbackIcon = (icons as Record<string, LucideIcon>).Sparkles;
+    return <FallbackIcon size={size} className={className} {...(editAttr ?? {})} />;
+  }
+  return <Icon size={size} className={className} {...(editAttr ?? {})} />;
 }
 
 /**
@@ -93,7 +143,7 @@ export function MediaDisplay({
   }
 
   if (item.icon) {
-    return <DynamicIcon name={item.icon} size={iconSize} className={iconClassName} />;
+    return <DynamicIcon name={item.icon} size={iconSize} className={iconClassName} editPath="icon" />;
   }
 
   return null;

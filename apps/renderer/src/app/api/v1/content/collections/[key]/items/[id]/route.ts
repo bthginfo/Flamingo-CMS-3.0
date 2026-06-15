@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { collectionItems } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
-import { withApiHandlerParams } from '@/lib/api-utils';
+import { normalizeSectionData, normalizeStyleOverrides, withApiHandlerParams } from '@/lib/api-utils';
 import crypto from 'crypto';
 
 export const GET = withApiHandlerParams(async (_req, auth, params) => {
@@ -33,6 +33,8 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
     body.data.sections = body.data.sections.map((s: Record<string, unknown>) => ({
       ...s,
       id: s.id || crypto.randomUUID(),
+      data: normalizeSectionData(String(s.type || ''), (s.data as Record<string, unknown>) || {}),
+      styleOverrides: normalizeStyleOverrides(s.styleOverrides),
     }));
   }
 
@@ -72,6 +74,8 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
       mergedData.sections = (mergedData.sections as Record<string, unknown>[]).map(s => ({
         ...s,
         id: s.id || crypto.randomUUID(),
+        data: normalizeSectionData(String(s.type || ''), (s.data as Record<string, unknown>) || {}),
+        styleOverrides: normalizeStyleOverrides(s.styleOverrides),
       }));
     }
     updates.data = mergedData;

@@ -14,6 +14,13 @@ const INDUSTRY_MAP: Record<string, string> = {
   wedding: 'wedding',
   photography: 'photography',
   consulting: 'consulting',
+  realestate: 'realestate',
+  cafe: 'cafe',
+  tattoo: 'tattoo',
+  retail: 'retail',
+  florist: 'florist',
+  fitness: 'fitness',
+  location: 'location',
 };
 
 export default async function DemoCollectionDetailPage({
@@ -26,7 +33,7 @@ export default async function DemoCollectionDetailPage({
   const dbIndustry = INDUSTRY_MAP[industry];
   if (!dbIndustry) return notFound();
 
-  const tenantId = await resolveDemoTenant(dbIndustry);
+  const tenantId = await resolveDemoTenant(dbIndustry, industry);
   if (!tenantId) return notFound();
 
   const [snapshot, tenantStyle, navData, footerData, brandData] = await Promise.all([

@@ -1,20 +1,24 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { loginAction } from './actions';
 
 export default function LoginPage() {
   const [state, formAction, isPending] = useActionState(loginAction, {});
   const router = useRouter();
+  const [tenant, setTenant] = useState('');
 
   useEffect(() => {
-    if (state && !state.error && !isPending && state !== null && Object.keys(state).length === 0) {
-      // Check if this is after a successful login (empty object returned, no error)
-      // Only redirect if we've actually submitted (not initial state)
-      router.push('/admin');
-    }
+    const urlTenant = new URLSearchParams(window.location.search).get('tenant') || '';
+    const cookieTenant = document.cookie.match(/flamingo_login_tenant=([^;]+)/)?.[1] || '';
+    setTenant(urlTenant || cookieTenant);
+    // Clear the hint cookie after reading
+    if (cookieTenant) document.cookie = 'flamingo_login_tenant=; path=/admin; max-age=0';
+  }, []);
+
+  useEffect(() => {
+    if (state?.success && !isPending) router.push('/admin');
   }, [state, isPending, router]);
 
   return (
@@ -29,6 +33,7 @@ export default function LoginPage() {
         </div>
 
         <form action={formAction} className="admin-card p-6 space-y-4">
+          {tenant && <input type="hidden" name="tenant" value={tenant} />}
           <div>
             <label htmlFor="password" className="admin-label">Passwort</label>
             <input

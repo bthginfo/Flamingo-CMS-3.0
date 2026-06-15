@@ -1,10 +1,49 @@
+import ReactDOM from 'react-dom';
 import { notFound } from 'next/navigation';
 import { resolveDemoTenant, resolveDemoTenantBySlug, getActiveSnapshot } from '@/lib/snapshot';
-import type { SnapshotSection } from '@/lib/snapshot';
+import type { SnapshotSection, SnapshotCollection, SnapshotCollectionItem } from '@/lib/snapshot';
 import { getTenantStyle, getTenantNav, getTenantFooter, getTenantBrand } from '@/lib/tenant-data';
 import { DemoPageShell } from '../../demo-page-shell';
 import { getDemoSite } from '../../pages';
 import { getDemoSiteData, type IndustryKey } from '../../demo-data';
+
+// Default Next.js `deviceSizes` (next.config has no override). Must stay in
+// sync with next/image so the browser picks our preloaded variant instead of
+// fetching a different one.
+const NEXT_DEVICE_SIZES = [640, 750, 828, 1080, 1200, 1920, 2048, 3840];
+
+/**
+ * Preload the LCP hero image at HTML-parse time so the browser starts the
+ * fetch BEFORE React/JS executes. Without this, next/image's `priority` only
+ * adds `fetchpriority="high"` to the `<img>` tag — discovered far too late.
+ *
+ * Works universally across all industry templates because every hero uses the
+ * same `data.bgImage` (and optional `data.bgImageMobile`) convention.
+ */
+function preloadHeroImages(sections: SnapshotSection[]): void {
+  const first = sections.find(s => isHeroSection(s.type));
+  if (!first) return;
+  const bg = (first.data?.bgImage as string | undefined) || undefined;
+  const bgMobile = (first.data?.bgImageMobile as string | undefined) || undefined;
+  if (bg) preloadOptimizedImage(bg, bgMobile ? '(min-width: 768px) 100vw' : '100vw');
+  if (bgMobile) preloadOptimizedImage(bgMobile, '(max-width: 767px) 100vw');
+}
+
+function preloadOptimizedImage(rawUrl: string, sizes: string): void {
+  if (!rawUrl || rawUrl.startsWith('data:')) return;
+  // Match next/image's URL shape exactly so the browser deduplicates.
+  const srcSet = NEXT_DEVICE_SIZES
+    .map(w => `/_next/image?url=${encodeURIComponent(rawUrl)}&w=${w}&q=75 ${w}w`)
+    .join(', ');
+  // Use the largest variant as the canonical href fallback.
+  const href = `/_next/image?url=${encodeURIComponent(rawUrl)}&w=${NEXT_DEVICE_SIZES[NEXT_DEVICE_SIZES.length - 1]}&q=75`;
+  ReactDOM.preload(href, {
+    as: 'image',
+    fetchPriority: 'high',
+    imageSrcSet: srcSet,
+    imageSizes: sizes,
+  });
+}
 
 // Map URL keys to DB industry enum values
 const INDUSTRY_MAP: Record<string, string> = {
@@ -21,9 +60,17 @@ const INDUSTRY_MAP: Record<string, string> = {
   cafe: 'cafe',
   tattoo: 'tattoo',
   showcase: 'tradesman',
-  shop: 'restaurant',
+  shop: 'ecommerce',
   retail: 'retail',
+  florist: 'florist',
+  fitness: 'fitness',
+  location: 'location',
 };
+
+function isHeroSection(type?: string | null): boolean {
+  if (!type) return false;
+  return type === 'hero' || type.endsWith('Hero') || type.startsWith('hero');
+}
 
 /** Recursively prefix internal hrefs in section data with the demo path */
 function prefixSectionHrefs(data: Record<string, unknown>, prefix: string): Record<string, unknown> {
@@ -43,6 +90,39 @@ function prefixSections(sections: SnapshotSection[], prefix: string): SnapshotSe
   }));
 }
 
+/** Extract best image from a collection item */
+function extractItemImage(item: SnapshotCollectionItem): string | undefined {
+  if (item.data.image) return item.data.image as string;
+  const sections = item.data.sections as Array<{ type: string; data: Record<string, unknown> }> | undefined;
+  if (sections) {
+    const hero = sections.find(s => s.type === 'hero' || s.type === 'collectionHero');
+    if (hero?.data) return (hero.data.backgroundImage as string) || (hero.data.bgImage as string) || (hero.data.image as string) || undefined;
+  }
+  return undefined;
+}
+
+/** Inject collection items into collectionList/newsPreview/newsGrid sections server-side */
+function injectCollections(sections: SnapshotSection[], collections: SnapshotCollection[] | undefined, linkPrefix: string): SnapshotSection[] {
+  if (!collections) return sections;
+  return sections.map(section => {
+    if (section.type === 'newsPreview' || section.type === 'newsGrid') {
+      const key = (section.data.collectionKey as string) || 'news';
+      const col = collections.find(c => c.key === key);
+      if (col) {
+        return { ...section, data: { ...section.data, items: col.items.slice(0, 3).map(item => ({ title: item.title, slug: item.slug, image: extractItemImage(item), excerpt: (item.data.excerpt as string) || undefined, date: item.createdAt })) } };
+      }
+    }
+    if (section.type === 'collectionList') {
+      const key = (section.data.collectionKey as string) || '';
+      const col = collections.find(c => c.key === key);
+      if (col) {
+        return { ...section, data: { ...section.data, items: col.items.map(item => ({ title: item.title, slug: item.slug, image: extractItemImage(item), excerpt: (item.data.excerpt as string) || undefined, date: item.createdAt, priority: item.priority })), collectionBasePath: `${linkPrefix}/c/${key}` } };
+      }
+    }
+    return section;
+  });
+}
+
 export default async function DemoPage({ params }: { params: Promise<{ industry: string; slug?: string[] }> }) {
   const { industry, slug } = await params;
 
@@ -55,7 +135,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
   try {
     tenantId = SLUG_MAP[industry]
       ? await resolveDemoTenantBySlug(SLUG_MAP[industry])
-      : await resolveDemoTenant(dbIndustry);
+      : await resolveDemoTenant(dbIndustry, industry);
   } catch {
     // DB enum may not include this industry yet — fall through to static
   }
@@ -71,9 +151,11 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
     if (!page) return notFound();
     const siteData = getDemoSiteData(industry as IndustryKey);
     const demoPrefix = `/demo/${industry}`;
+    const staticSections = prefixSections(page.sections.filter(s => s.visible) as SnapshotSection[], demoPrefix);
+    preloadHeroImages(staticSections);
     return (
       <DemoPageShell
-        sections={prefixSections(page.sections.filter(s => s.visible) as SnapshotSection[], demoPrefix)}
+        sections={staticSections}
         industry={staticSite.industry}
         industryKey={industry}
         defaultStyle={staticSite.defaultStyle}
@@ -85,7 +167,7 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
           socialLinks: siteData.socialLinks,
           footer: siteData.footer,
         }}
-        darkBg={page.sections[0]?.type === 'hero'}
+        darkBg={isHeroSection(page.sections[0]?.type)}
       />
     );
   }
@@ -164,11 +246,14 @@ export default async function DemoPage({ params }: { params: Promise<{ industry:
 
   if (!page) return notFound();
 
-  const firstIsHero = page.sections[0]?.type === 'hero';
+  const firstIsHero = isHeroSection(page.sections[0]?.type);
+  const sectionsNeedingTenantId = new Set(['bookingWidget', 'bookingSlotPicker', 'bookingDateRange', 'availabilityCalendar', 'resourceBookingShowcase', 'bookingCtaPro']);
+  const finalSections = injectCollections(prefixSections(page.sections.filter(s => s.visible).map(s => (s.type.startsWith('shop') || sectionsNeedingTenantId.has(s.type)) ? { ...s, data: { ...s.data, tenantId, ...(s.type.startsWith('shop') ? { basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}) } : {}) } } : s), demoPrefix), snapshot.collections, demoPrefix);
+  preloadHeroImages(finalSections);
 
   return (
     <DemoPageShell
-      sections={prefixSections(page.sections.filter(s => s.visible).map(s => s.type.startsWith('shop') ? { ...s, data: { ...s.data, tenantId, basePath: demoPrefix, ...(s.type === 'shopCategoryOverview' ? { shopGridPath: `${demoPrefix}/shop` } : {}) } } : s), demoPrefix)}
+      sections={finalSections}
       industry={tenantStyle.industry}
       industryKey={industry}
       defaultStyle={tenantStyle.activeStyle}

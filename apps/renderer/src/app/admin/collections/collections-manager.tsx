@@ -65,9 +65,18 @@ export function CollectionsManager({ collections }: { collections: Collection[] 
       )}
 
       {collections.length === 0 && !showCreate ? (
-        <div className="admin-card text-center py-16">
-          <FolderOpen className="mx-auto mb-4 text-zinc-300" size={48} />
-          <p className="text-zinc-500">Noch keine Collections vorhanden.</p>
+        <div className="admin-card text-center py-16 px-6">
+          <div className="mx-auto mb-4 w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center">
+            <FolderOpen className="text-blue-500" size={28} />
+          </div>
+          <h3 className="text-base font-semibold text-zinc-900 mb-1">Noch keine Collections</h3>
+          <p className="text-sm text-zinc-500 max-w-md mx-auto mb-5">
+            Collections sind wiederverwendbare Listen — Mitarbeiter, Leistungen, News, Events.
+            Lege eine Collection an, füge Einträge hinzu, und nutze sie in jeder Sektion.
+          </p>
+          <button onClick={() => setShowCreate(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 text-white text-sm font-medium hover:bg-blue-600 transition-colors">
+            + Erste Collection anlegen
+          </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

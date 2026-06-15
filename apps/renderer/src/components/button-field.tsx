@@ -80,7 +80,7 @@ export function ButtonField({ label: fieldLabel, value, onChange }: { label: str
           </button>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <label className="block">
           <span className="text-gray-500 text-[10px]">Button-Text</span>
           <input

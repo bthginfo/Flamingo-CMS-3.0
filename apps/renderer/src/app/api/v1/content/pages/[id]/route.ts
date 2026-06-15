@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { pages, pageSections } from '@flamingo/db';
 import { eq, and, asc } from 'drizzle-orm';
 import crypto from 'crypto';
-import { withApiHandlerParams, normalizeSlug, validateSections, normalizeSectionData } from '@/lib/api-utils';
+import { withApiHandlerParams, normalizeSlug, validateSections, normalizeSectionData, normalizeStyleOverrides } from '@/lib/api-utils';
 
 export const GET = withApiHandlerParams(async (_req, auth, params) => {
   const { id } = params;
@@ -17,7 +17,7 @@ export const GET = withApiHandlerParams(async (_req, auth, params) => {
     title: page.title,
     status: page.status,
     visible: page.visible,
-    sections: sections.map(s => ({ id: s.id, type: s.type, data: s.data, variant: s.variant, visible: s.visible, sortOrder: s.sortOrder })),
+    sections: sections.map(s => ({ id: s.id, type: s.type, data: s.data, variant: s.variant, visible: s.visible, sortOrder: s.sortOrder, styleOverrides: s.styleOverrides })),
   });
 });
 
@@ -52,6 +52,7 @@ export const PUT = withApiHandlerParams(async (req, auth, params) => {
           spacingTop: s.spacingTop || 'm',
           spacingBottom: s.spacingBottom || 'm',
           anchorId: s.anchorId || null,
+          styleOverrides: normalizeStyleOverrides(s.styleOverrides),
           sortOrder: i,
         }))
       );
@@ -89,7 +90,13 @@ export const PATCH = withApiHandlerParams(async (req, auth, params) => {
       const sectionUpdates: Record<string, unknown> = { data: mergedData };
       if (patch.visible != null) sectionUpdates.visible = patch.visible;
       if (patch.variant != null) sectionUpdates.variant = patch.variant;
-      await db.update(pageSections).set(sectionUpdates).where(eq(pageSections.id, patch.id));
+      if (patch.styleOverrides !== undefined) {
+        sectionUpdates.styleOverrides = normalizeStyleOverrides({
+          ...((existing.styleOverrides as Record<string, string> | null) || {}),
+          ...(patch.styleOverrides || {}),
+        });
+      }
+      await db.update(pageSections).set(sectionUpdates).where(and(eq(pageSections.id, patch.id), eq(pageSections.tenantId, auth.tenantId)));
     }
   }
 

@@ -3,13 +3,16 @@ export type SectionTypeDefinition = {
   label: string;
   description: string;
   category?: string;
+  requiresAddon?: 'shop' | 'booking';
+  locked?: boolean;
+  lockReason?: string;
 };
 
 // Shared sections available to all templates
 const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild', category: 'Inhalt' },
   { type: 'freeText', label: 'Freitext', description: 'Formatierter Text mit Editor', category: 'Inhalt' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)', category: 'Inhalt' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.', category: 'Inhalt' },
   { type: 'legalContent', label: 'Rechtliche Inhalte', description: 'Strukturierte Abschnitte für Impressum / Datenschutz', category: 'Inhalt' },
   { type: 'videoEmbed', label: 'Video', description: 'YouTube / Vimeo Video einbetten', category: 'Inhalt' },
   { type: 'embed', label: 'Embed / Integration', description: 'Externe Dienste einbinden (Buchung, Bewertungen, Karten, etc.)', category: 'Inhalt' },
@@ -27,6 +30,7 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionList', label: 'Collection-Liste', description: 'Einträge einer Collection als Übersicht anzeigen', category: 'Medien' },
   { type: 'contact', label: 'Kontakt', description: 'Kontaktformular', category: 'Kontakt' },
   { type: 'map', label: 'Karte', description: 'Google Maps Einbettung', category: 'Kontakt' },
+  { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Mehrere Standorte als Karten mit optionaler Karte, Adresse, Kontakt und Öffnungszeiten', category: 'Kontakt' },
   { type: 'team', label: 'Team', description: 'Team-Mitglieder', category: 'Team & Personen' },
   { type: 'servicesGrid', label: 'Leistungen', description: 'Leistungs-Grid', category: 'Leistungen' },
   { type: 'processSteps', label: 'Ablauf', description: 'Prozess-Schritte Timeline', category: 'Leistungen' },
@@ -35,6 +39,7 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten', category: 'Inhalt' },
   { type: 'servicePackages', label: 'Pakete & Preise', description: 'Leistungspakete mit Features und Preisen', category: 'Leistungen' },
   { type: 'noticeBanner', label: 'Hinweisbanner', description: 'Auffälliges Banner für wichtige Hinweise (Urlaub, Aktionen etc.)', category: 'Marketing' },
+  { type: 'popup', label: 'Popup', description: 'Zeitgesteuertes Modal mit Overlay, Text und bis zu zwei Buttons', category: 'Marketing' },
   { type: 'comparisonTable', label: 'Vergleichstabelle', description: 'Pakete/Optionen im Vergleich darstellen', category: 'Marketing' },
   { type: 'socialProofBar', label: 'Social-Proof-Leiste', description: 'Kennzahlen, Bewertungen & Partner kompakt', category: 'Social Proof' },
   { type: 'timeline', label: 'Zeitleiste', description: 'Chronologischer Verlauf (Geschichte, Meilensteine)', category: 'Inhalt' },
@@ -43,12 +48,18 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'testimonialMarquee', label: 'Bewertungs-Marquee', description: 'Endlos-scrollende Bewertungskarten in 2 Reihen', category: 'Social Proof' },
   { type: 'featureShowcase', label: 'Feature-Showcase', description: 'Großbild mit Parallax + Feature-Liste + CTA', category: 'Marketing' },
   { type: 'logoMarquee', label: 'Logo-Marquee', description: 'Endlos-scrollende Partner/Kunden-Logos', category: 'Social Proof' },
-  { type: 'shopProductGrid', label: 'Shop: Produkte', description: 'Produktübersicht mit Kategorie-Filter & Suche', category: 'Shop' },
-  { type: 'shopProductDetail', label: 'Shop: Produkt-Detail', description: 'Einzelprodukt mit Galerie, Varianten & Warenkorb', category: 'Shop' },
-  { type: 'shopCart', label: 'Shop: Warenkorb', description: 'Warenkorb-Übersicht mit Mengen & Coupon', category: 'Shop' },
-  { type: 'shopCheckout', label: 'Shop: Checkout', description: 'Multi-Step Kasse (Kontakt, Versand, Zahlung)', category: 'Shop' },
-  { type: 'shopThankYou', label: 'Shop: Danke-Seite', description: 'Bestellbestätigung nach Kauf', category: 'Shop' },
-  { type: 'shopFeaturedProducts', label: 'Shop: Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben', category: 'Shop' },
+  { type: 'shopProductGrid', label: 'Shop: Produkte', description: 'Produktübersicht mit Kategorie-Filter & Suche', category: 'Shop', requiresAddon: 'shop' },
+  { type: 'shopProductDetail', label: 'Shop: Produkt-Detail', description: 'Einzelprodukt mit Galerie, Varianten & Warenkorb', category: 'Shop', requiresAddon: 'shop' },
+  { type: 'shopCart', label: 'Shop: Warenkorb', description: 'Warenkorb-Übersicht mit Mengen & Coupon', category: 'Shop', requiresAddon: 'shop' },
+  { type: 'shopCheckout', label: 'Shop: Checkout', description: 'Multi-Step Kasse (Kontakt, Versand, Zahlung)', category: 'Shop', requiresAddon: 'shop' },
+  { type: 'shopThankYou', label: 'Shop: Danke-Seite', description: 'Bestellbestätigung nach Kauf', category: 'Shop', requiresAddon: 'shop' },
+  { type: 'shopFeaturedProducts', label: 'Shop: Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben', category: 'Shop', requiresAddon: 'shop' },
+  { type: 'bookingWidget', label: 'Booking: Buchungsformular', description: 'Universeller Flow für Anfrage oder Direktbuchung mit Leistung, Ressource, Datum, Zusatzfragen und Kundendaten', category: 'Booking', requiresAddon: 'booking' },
+  { type: 'bookingSlotPicker', label: 'Booking: Tages-Slots', description: 'Ideal für Restaurant, Café, Salon, Training oder Beratung: Tag wählen, freie Uhrzeiten sehen, Anfrage senden', category: 'Booking', requiresAddon: 'booking' },
+  { type: 'bookingDateRange', label: 'Booking: Zeitraum', description: 'Für Hotel, Appartement, Location, Raum oder Fotograf: Start- und Enddatum mit Ressource und Anfrageformular', category: 'Booking', requiresAddon: 'booking' },
+  { type: 'availabilityCalendar', label: 'Booking: Verfügbarkeitskalender', description: 'Kompakter Monatskalender als Teaser für freie Slots, ganze Tage oder verfügbare Zeiträume', category: 'Booking', requiresAddon: 'booking' },
+  { type: 'resourceBookingShowcase', label: 'Booking: Ressourcen', description: 'Räume, Tische, Mitarbeiter, Zimmer oder Flächen erklären und in den Buchungsflow führen', category: 'Booking', requiresAddon: 'booking' },
+  { type: 'bookingCtaPro', label: 'Booking: CTA', description: 'Schlanker Call-to-Action für Seiten, auf denen das Booking-Modul beworben oder verlinkt wird', category: 'Booking', requiresAddon: 'booking' },
   { type: 'verticalTimeline', label: 'Prozess-Timeline', description: 'Vertikale Scroll-Timeline mit nummerierten Steps und Progress-Linie', category: 'Inhalt' },
   { type: 'beforeAfterSlider', label: 'Vorher/Nachher-Slider', description: 'Draggbarer Vergleichs-Slider für zwei Bilder', category: 'Medien' },
   { type: 'horizontalScrollShowcase', label: 'Horizontal-Scroll Showcase', description: 'Sticky Fullscreen-Panels die per Scroll horizontal gleiten', category: 'Marketing' },
@@ -64,6 +75,18 @@ const SHARED_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'spotlightCards', label: 'Spotlight Cards', description: 'Interaktive Premium-Karten mit Hover-Spotlight', category: 'Premium' },
   { type: 'scrollStory', label: 'Scroll Story', description: 'Sticky Storytelling-Sektion mit Progress und Bildkarten', category: 'Premium' },
   { type: 'premiumComparison', label: 'Premium-Vergleich', description: 'Hochwertige Vergleichsmatrix für Pakete, Leistungen oder Angebote', category: 'Premium' },
+  { type: 'immersiveCtaBanner', label: 'Immersive CTA Banner', description: 'Fullwidth CTA mit Bild, Parallax-Gefühl, Kennzahlen und starken CTAs', category: 'Premium' },
+  { type: 'proofWall', label: 'Proof Wall', description: 'Trust-Wand mit Bewertungen, Logos, Zertifikaten und Kennzahlen', category: 'Premium' },
+  { type: 'editorialFeatureRail', label: 'Editorial Feature Rail', description: 'Horizontale Premium-Story für Cases, Leistungen und Markenwelten', category: 'Premium' },
+  { type: 'offerCampaignStrip', label: 'Offer Campaign Strip', description: 'Kampagnenbanner mit Angebot, Bild, Benefits, Deadline und CTA', category: 'Premium' },
+  { type: 'beforeAfterStoryPro', label: 'Before/After Story Pro', description: 'Vorher/Nachher-Case mit Problem, Lösung, Ergebnis und Kennzahlen', category: 'Premium' },
+  { type: 'signatureGrid', label: 'Signature Grid', description: 'Premium-Grid mit starkem Bild, Markenmerkmalen und Proof-Daten', category: 'Premium' },
+  { type: 'comparisonCardsPro', label: 'Comparison Cards Pro', description: 'Hochwertige Paketkarten mit Empfehlung, Features und CTA', category: 'Premium' },
+  { type: 'templateAdvantage', label: 'Template Advantage', description: 'Editoriale Template-/Vorteils-Section mit Bildkarten, Benefits und CTA', category: 'Premium' },
+  { type: 'principlesGrid', label: 'Principles Grid', description: 'Hochwertige Werte- oder Prinzipien-Section mit konsistentem Headline-Stil', category: 'Premium' },
+  { type: 'glowHero', label: 'Glow Hero', description: 'Interaktiver Premium-Hero mit Mouse-Glow, Bild, Fakten und CTAs', category: 'Premium' },
+  { type: 'instagramFeed', label: 'Instagram-Feed', description: 'Live-Feed deines Instagram-Business-Accounts (Posts, Reels, Carousels) — direkt im Editor verbinden', category: 'Social Proof' },
+  { type: 'menuCard', label: 'Speisekarte', description: 'Gerichte als Karten mit Kategorien als Tabs, optional mit Bild', category: 'Inhalt' },
 ];
 
 export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
@@ -86,7 +109,7 @@ export const TRADESMAN_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'portfolio', label: 'Portfolio', description: 'Referenzprojekte-Galerie' },
   { type: 'team', label: 'Team', description: 'Team-Mitglieder' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'headerBanner', label: 'Header-Banner', description: 'Obere Hinweisleiste' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
@@ -100,7 +123,7 @@ export const RESTAURANT_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'ambience', label: 'Ambiente', description: 'Atmosphäre, Bilder und Highlights' },
   { type: 'events', label: 'Events', description: 'Themenabende, Feiern und Buchungs-CTAs' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -119,7 +142,7 @@ export const HOTEL_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'faq', label: 'FAQ', description: 'Check-in, Parken, Buchung, Storno' },
   { type: 'contact', label: 'Kontakt', description: 'Kontaktformular, Infokarten und Route' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -136,10 +159,10 @@ export const TOURISM_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'visitorInfo', label: 'Besucherinfo', description: 'Anreise, Parken, ÖPNV und Barrierefreiheit' },
   { type: 'downloadGuides', label: 'Downloads', description: 'Karten, Broschüren und PDF-Guides' },
   { type: 'gallery', label: 'Galerie', description: 'Destinationsbilder mit Kategorien und Captions' },
-  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen fuer Besucher' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen für Besucher' },
   { type: 'tourismContact', label: 'Tourismus-Kontakt', description: 'Tourismusbuero, Formular, Infokarten und CTAs' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -159,7 +182,7 @@ export const SALON_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'locationContact', label: 'Kontakt & Standort', description: 'Adresse, Karte, Formular und CTAs' },
   { type: 'faq', label: 'FAQ', description: 'Häufige Fragen' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -183,7 +206,7 @@ export const MEDICAL_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'locationContact', label: 'Kontakt & Anfahrt', description: 'Adresse, Karte, Formular und Kontaktkarten' },
   { type: 'faq', label: 'FAQ', description: 'Häufige Patientenfragen' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -201,7 +224,7 @@ export const WEDDING_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'faq', label: 'FAQ', description: 'Häufige Fragen der Gäste' },
   { type: 'gallery', label: 'Galerie', description: 'Fotos vom Paar / Engagement-Shooting' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -219,7 +242,7 @@ export const PHOTOGRAPHY_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'uspStrip', label: 'USP-Leiste', description: 'Einzigartige Verkaufsargumente' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt mit Text und Bild' },
   { type: 'newsPreview', label: 'News-Vorschau', description: 'Aktuelle Beiträge' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -238,14 +261,14 @@ export const CONSULTING_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'stats', label: 'Zahlen & Fakten', description: 'Animierte Kennzahlen der Kanzlei' },
   { type: 'map', label: 'Karte', description: 'Standort der Kanzlei' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt (z.B. Kanzleigeschichte)' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
 export const REALESTATE_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'hero', label: 'Immobilien-Hero', description: 'Premium-Hero mit Overlay, Trust-Elementen und Such-CTA' },
   { type: 'propertyShowcase', label: 'Immobilien-Showcase', description: 'Karten mit Bild, Preis, Fläche, Zimmer und Lage' },
-  { type: 'propertySearch', label: 'Immobiliensuche', description: 'Suchformular mit Filtern (Typ, Ort, Preis)' },
+  { type: 'propertySearch', label: 'Immobiliensuche', description: 'Kategorie-Karten mit Icons und CTA zur Objektübersicht' },
   { type: 'marketReport', label: 'Marktbericht', description: 'Regionale Marktdaten, Statistiken und Trends' },
   { type: 'agentTeam', label: 'Makler-Team', description: 'Makler mit Foto, Spezialisierung und Kontakt' },
   { type: 'valuationCta', label: 'Bewertungs-CTA', description: '"Was ist Ihre Immobilie wert?" — Bewertungsanfrage' },
@@ -256,7 +279,7 @@ export const REALESTATE_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'testimonials', label: 'Kundenstimmen', description: 'Bewertungen von Käufern und Verkäufern' },
   { type: 'stats', label: 'Zahlen & Fakten', description: 'Vermittelte Objekte, Erfahrung, Vermarktungszeit' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt (z.B. Über uns, Philosophie)' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -274,7 +297,7 @@ export const CAFE_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'team', label: 'Team', description: 'Barista-Team und Köche' },
   { type: 'galleryGrid', label: 'Galerie', description: 'Bildergalerie mit Lightbox' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt (z.B. Story, Philosophie)' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (Impressum, Datenschutz etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r Impressum, Datenschutz etc.' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
@@ -294,18 +317,18 @@ export const TATTOO_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'processSteps', label: 'Ablauf', description: 'Beratung → Entwurf → Session → Nachsorge' },
   { type: 'team', label: 'Team', description: 'Studio-Team' },
   { type: 'textImage', label: 'Text & Bild', description: 'Zweispaltiger Abschnitt' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
 export const ECOMMERCE_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'hero', label: 'Shop-Hero', description: 'Hauptbanner mit Produkthighlight oder Aktion' },
-  { type: 'shopProductGrid', label: 'Produkte', description: 'Produktübersicht mit Kategorie-Filter & Suche' },
-  { type: 'shopFeaturedProducts', label: 'Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben' },
-  { type: 'shopProductDetail', label: 'Produkt-Detail', description: 'Einzelprodukt mit Galerie, Varianten & Warenkorb' },
-  { type: 'shopCart', label: 'Warenkorb', description: 'Warenkorb-Übersicht mit Mengen & Coupon' },
-  { type: 'shopCheckout', label: 'Checkout', description: 'Multi-Step Kasse (Kontakt, Versand, Zahlung)' },
-  { type: 'shopThankYou', label: 'Danke-Seite', description: 'Bestellbestätigung nach Kauf' },
+  { type: 'shopProductGrid', label: 'Produkte', description: 'Produktübersicht mit Kategorie-Filter & Suche', requiresAddon: 'shop' },
+  { type: 'shopFeaturedProducts', label: 'Highlight-Produkte', description: 'Ausgewählte Produkte hervorheben', requiresAddon: 'shop' },
+  { type: 'shopProductDetail', label: 'Produkt-Detail', description: 'Einzelprodukt mit Galerie, Varianten & Warenkorb', requiresAddon: 'shop' },
+  { type: 'shopCart', label: 'Warenkorb', description: 'Warenkorb-Übersicht mit Mengen & Coupon', requiresAddon: 'shop' },
+  { type: 'shopCheckout', label: 'Checkout', description: 'Multi-Step Kasse (Kontakt, Versand, Zahlung)', requiresAddon: 'shop' },
+  { type: 'shopThankYou', label: 'Danke-Seite', description: 'Bestellbestätigung nach Kauf', requiresAddon: 'shop' },
   { type: 'shopCategoryOverview', label: 'Kategorien', description: 'Kategorieübersicht mit Bildern' },
   { type: 'uspStrip', label: 'USP-Leiste', description: 'Versand, Retoure, Zahlung — Vertrauens-Icons' },
   { type: 'ctaBand', label: 'CTA-Band', description: 'Aktionsbanner / Sale-Hinweis' },
@@ -318,7 +341,7 @@ export const ECOMMERCE_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'newsPreview', label: 'Blog / News', description: 'Aktuelle Beiträge' },
   { type: 'galleryGrid', label: 'Galerie', description: 'Produkt-Lifestyle Bilder' },
   { type: 'team', label: 'Team', description: 'Über das Team' },
-  { type: 'richText', label: 'HTML-Block', description: 'Eigener HTML-Code (AGB, Widerruf etc.)' },
+  { type: 'richText', label: 'Textblock', description: 'Formatierter Text f?r AGB, Widerruf etc.' },
   { type: 'legalContent', label: 'Rechtliche Inhalte', description: 'Impressum / Datenschutz / Widerruf' },
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
@@ -349,6 +372,58 @@ export const RETAIL_SECTION_TYPES: SectionTypeDefinition[] = [
   { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
 ];
 
+export const FITNESS_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'fitnessHero', label: 'Fitness-Hero', description: 'Starker Einstieg mit Studio-Bild, Fakten und Probetraining-CTA' },
+  { type: 'programGrid', label: 'Programme', description: 'Trainingsbereiche, Kurse und Coaching-Angebote als Karten' },
+  { type: 'courseSchedule', label: 'Kursplan', description: 'Kurse, Zeiten, Level und Trainer kompakt darstellen' },
+  { type: 'trainerProfiles', label: 'Trainer', description: 'Trainerprofile mit Rollen, Bildern und Schwerpunkten' },
+  { type: 'membershipPlans', label: 'Mitgliedschaften', description: 'Pakete, Preise, Leistungen und Empfehlungskarte' },
+  { type: 'trialSessionCta', label: 'Probetraining-CTA', description: 'Bildstarker CTA für Probetraining oder Beratung' },
+  { type: 'transformationStories', label: 'Transformationen', description: 'Kundenstory mit Ausgangslage, Loesung, Ergebnis und Bildern' },
+  { type: 'studioAmenities', label: 'Studio-Ausstattung', description: 'Ausstattung, Vorteile und Besonderheiten im modernen Bento-Grid' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Mitgliederstimmen und Social Proof' },
+  { type: 'faq', label: 'FAQ', description: 'Haeufige Fragen zu Probetraining, Kursen und Mitgliedschaften' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular und Studio-Kontaktdaten' },
+  { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Mehrere Studios oder Trainingsorte' },
+  { type: 'galleryGrid', label: 'Galerie', description: 'Studio- und Trainingsbilder' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const FLORIST_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'floristHero', label: 'Floristik-Hero', description: 'Emotionaler Einstieg mit Atelier-Bild, Anlass und Beratungs-CTA' },
+  { type: 'bouquetShowcase', label: 'Sträuße & Produkte', description: 'Bouquets, Pflanzen und florale Produkte als hochwertige Karten' },
+  { type: 'occasionMosaic', label: 'Anlässe', description: 'Hochzeit, Trauer, Geschenk, Event oder Saison als Bildmosaik' },
+  { type: 'weddingFloristry', label: 'Hochzeitsfloristik', description: 'Immersiver Banner für Brautstrauß, Deko und Eventfloristik' },
+  { type: 'workshopBooking', label: 'Workshops', description: 'Workshop- oder Beratungsangebote mit CTA' },
+  { type: 'seasonalCampaign', label: 'Saison-Kampagne', description: 'Muttertag, Advent, Valentinstag oder saisonale Angebote' },
+  { type: 'floristMaterials', label: 'Blumen & Materialien', description: 'Blumen, Farben, Stile oder Materialien filterbar zeigen' },
+  { type: 'deliveryTimeline', label: 'Bestellung & Lieferung', description: 'Ablauf von Anfrage bis Abholung oder Lieferung' },
+  { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Ateliers, Filialen oder Abholorte' },
+  { type: 'galleryGrid', label: 'Galerie', description: 'Bouquets, Events und Atelierbilder' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Kundenstimmen und Social Proof' },
+  { type: 'faq', label: 'FAQ', description: 'Häufige Fragen zu Bestellung, Lieferung und Hochzeiten' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular und Atelier-Kontaktdaten' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
+export const LOCATION_SECTION_TYPES: SectionTypeDefinition[] = [
+  { type: 'locationHero', label: 'Location-Hero', description: 'Filmischer Einstieg für Hochzeitslocations, Eventräume und Coworking' },
+  { type: 'spaceShowcase', label: 'Räume & Flächen', description: 'Räume mit Bild, Kapazität, Preis oder Details' },
+  { type: 'eventTypes', label: 'Eventarten', description: 'Hochzeiten, Workshops, Tagungen, Coworking und Feiern' },
+  { type: 'availabilityCta', label: 'Anfrage-CTA', description: 'Starker CTA für Datum, Personenanzahl und Eventtyp' },
+  { type: 'locationPackages', label: 'Location-Pakete', description: 'Pakete und Optionen im hochwertigen Vergleich' },
+  { type: 'amenitiesGrid', label: 'Ausstattung', description: 'Technik, Catering, Parken, WLAN und Services im Bento-Grid' },
+  { type: 'floorPlanOverview', label: 'Grundriss & Setup', description: 'Text-Bild-Section für Grundrisse, Downloads oder Setups' },
+  { type: 'galleryMoodboard', label: 'Mood-Galerie', description: 'Bildergalerie für Räume, Setups und Atmosphäre' },
+  { type: 'locationAccess', label: 'Anfahrt & Umgebung', description: 'Adresse, Karte, Parken, ÖPNV und Umgebung' },
+  { type: 'hostTeam', label: 'Ansprechpartner', description: 'Team oder Gastgeber der Location' },
+  { type: 'testimonials', label: 'Bewertungen', description: 'Gaestestimmen und Veranstalter-Feedback' },
+  { type: 'faq', label: 'FAQ', description: 'Fragen zu Catering, Sperrstunde, Technik, Deko und Storno' },
+  { type: 'contact', label: 'Kontakt', description: 'Kontaktformular und Location-Kontaktdaten' },
+  { type: 'additionalLocations', label: 'Weitere Standorte', description: 'Weitere Locations oder Räume' },
+  { type: 'collectionHero', label: 'Collection-Hero', description: 'Blog/Artikel-Hero für Detail-Seiten' },
+];
+
 const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   tradesman: TRADESMAN_SECTION_TYPES,
   photography: PHOTOGRAPHY_SECTION_TYPES,
@@ -364,6 +439,9 @@ const ALL_INDUSTRY_SECTIONS: Record<string, SectionTypeDefinition[]> = {
   tattoo: TATTOO_SECTION_TYPES,
   ecommerce: ECOMMERCE_SECTION_TYPES,
   retail: RETAIL_SECTION_TYPES,
+  florist: FLORIST_SECTION_TYPES,
+  fitness: FITNESS_SECTION_TYPES,
+  location: LOCATION_SECTION_TYPES,
 };
 
 const INDUSTRY_LABELS: Record<string, string> = {
@@ -381,19 +459,17 @@ const INDUSTRY_LABELS: Record<string, string> = {
   tattoo: 'Tattoo Studio',
   ecommerce: 'E-Commerce',
   retail: 'Einzelhandel & Weitere',
+  florist: 'Floristik',
+  fitness: 'Fitnessstudio',
+  location: 'Location',
 };
 
-export function getSectionTypesForIndustry(industry: string, options?: { hasShop?: boolean }): SectionTypeDefinition[] {
+export function getSectionTypesForIndustry(industry: string, options?: { hasShop?: boolean; hasBooking?: boolean }): SectionTypeDefinition[] {
   const specific = ALL_INDUSTRY_SECTIONS[industry] ?? TRADESMAN_SECTION_TYPES;
 
   // Merge: industry-specific first, then shared (skip duplicates)
   const types = new Set(specific.map(s => s.type));
-  let shared = SHARED_SECTION_TYPES.filter(s => !types.has(s.type));
-
-  // Hide shop sections if tenant doesn't have shop addon
-  if (!options?.hasShop) {
-    shared = shared.filter(s => s.category !== 'Shop');
-  }
+  const shared = SHARED_SECTION_TYPES.filter(s => !types.has(s.type)).map(section => withAddonLock(section, options));
 
   // Collect foreign sections from other industries
   const foreign: SectionTypeDefinition[] = [];
@@ -407,4 +483,14 @@ export function getSectionTypesForIndustry(industry: string, options?: { hasShop
   }
 
   return [...specific, ...shared, ...foreign];
+}
+
+function withAddonLock(section: SectionTypeDefinition, options?: { hasShop?: boolean; hasBooking?: boolean }): SectionTypeDefinition {
+  if (section.requiresAddon === 'shop' && !options?.hasShop) {
+    return { ...section, locked: true, lockReason: 'Shop-Addon erforderlich' };
+  }
+  if (section.requiresAddon === 'booking' && !options?.hasBooking) {
+    return { ...section, locked: true, lockReason: 'Booking-Addon erforderlich' };
+  }
+  return section;
 }

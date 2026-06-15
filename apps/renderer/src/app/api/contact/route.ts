@@ -3,16 +3,41 @@ import { getDb } from '@/lib/db';
 import { formSubmissions, globalSettings } from '@flamingo/db';
 import { eq } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 import nodemailer from 'nodemailer';
+import { getEffectiveSmtp } from '@/lib/smtp';
 
 const MAX_FIELD_LENGTH = 5000;
 const MAX_FIELDS = 20;
 
+/**
+ * HTML-escape a string so user-supplied form values can't break out of the
+ * notification/auto-response email templates (XSS / phishing-link injection).
+ * Encodes &, <, >, ", ' — sufficient for text in element bodies and attributes.
+ */
+function escapeHtml(value: unknown): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export async function POST(req: NextRequest) {
   try {
+    // Anti-spam: 5 submissions / 10 min per IP+tenant
     const tenantId = await resolveTenant();
     if (!tenantId) {
       return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
+    }
+    const ip = getClientIp(req);
+    const rl = rateLimit(`contact:${tenantId}:${ip}`, 5, 10 * 60 * 1000);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: 'Zu viele Anfragen. Bitte später erneut versuchen.' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetMs / 1000)) } },
+      );
     }
 
     const body = await req.json();
@@ -64,20 +89,13 @@ export async function POST(req: NextRequest) {
     // Load SMTP + auto-response settings
     try {
       const [settings] = await db
-        .select({ smtp: globalSettings.smtp, autoResponse: globalSettings.autoResponse })
+        .select({ autoResponse: globalSettings.autoResponse })
         .from(globalSettings)
         .where(eq(globalSettings.tenantId, tenantId))
         .limit(1);
 
-      const smtp = settings?.smtp as { host: string; port: number; user: string; pass: string; from: string } | null;
       const autoResponse = settings?.autoResponse as { enabled: boolean; subject: string; body: string; notificationEmail?: string } | null;
-
-      // Use tenant SMTP if configured, otherwise fall back to platform SMTP from env
-      const effectiveSmtp = (smtp?.host && smtp?.user && smtp?.pass && smtp?.from)
-        ? smtp
-        : (process.env.PLATFORM_SMTP_HOST && process.env.PLATFORM_SMTP_USER && process.env.PLATFORM_SMTP_PASS && process.env.PLATFORM_SMTP_FROM)
-          ? { host: process.env.PLATFORM_SMTP_HOST, port: Number(process.env.PLATFORM_SMTP_PORT) || 587, user: process.env.PLATFORM_SMTP_USER, pass: process.env.PLATFORM_SMTP_PASS, from: process.env.PLATFORM_SMTP_FROM }
-          : null;
+      const effectiveSmtp = await getEffectiveSmtp(tenantId);
 
       if (effectiveSmtp) {
         const transporter = nodemailer.createTransport({
@@ -87,9 +105,11 @@ export async function POST(req: NextRequest) {
           auth: { user: effectiveSmtp.user, pass: effectiveSmtp.pass },
         });
 
-        // Build HTML field rows for notification
+        // Build HTML field rows for notification — every interpolation is
+        // HTML-escaped to prevent injected markup from form submissions
+        // executing in the admin's email client.
         const fieldRows = Object.entries(sanitizedFields)
-          .map(([key, val]) => `<tr><td style="padding:8px 12px;font-weight:600;color:#374151;border-bottom:1px solid #f3f4f6;white-space:nowrap">${key}</td><td style="padding:8px 12px;color:#1f2937;border-bottom:1px solid #f3f4f6">${String(val).replace(/\n/g, '<br>')}</td></tr>`)
+          .map(([key, val]) => `<tr><td style="padding:8px 12px;font-weight:600;color:#374151;border-bottom:1px solid #f3f4f6;white-space:nowrap">${escapeHtml(key)}</td><td style="padding:8px 12px;color:#1f2937;border-bottom:1px solid #f3f4f6">${escapeHtml(val).replace(/\n/g, '<br>')}</td></tr>`)
           .join('');
 
         const notificationHtml = `
@@ -102,7 +122,7 @@ export async function POST(req: NextRequest) {
     <div style="padding:24px 32px">
       <p style="margin:0 0 16px;color:#6b7280;font-size:14px">Sie haben eine neue Nachricht über Ihre Website erhalten:</p>
       <table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;background:#f9fafb">${fieldRows}</table>
-      ${_page ? `<p style="margin:16px 0 0;color:#9ca3af;font-size:12px">Gesendet von: ${_page}</p>` : ''}
+      ${_page ? `<p style="margin:16px 0 0;color:#9ca3af;font-size:12px">Gesendet von: ${escapeHtml(_page)}</p>` : ''}
     </div>
     <div style="padding:16px 32px;background:#f9fafb;border-top:1px solid #e5e7eb">
       <p style="margin:0;color:#9ca3af;font-size:11px">Diese E-Mail wurde automatisch von Ihrem Kontaktformular generiert.</p>
@@ -121,15 +141,17 @@ export async function POST(req: NextRequest) {
           html: notificationHtml,
         });
 
-        // 2) Auto-response email to sender
-        if (autoResponse?.enabled && autoResponse.subject && autoResponse.body && email) {
-          const responseBody = autoResponse.body.replace(/\{name\}/g, name || '');
+        if (autoResponse?.enabled && autoResponse.subject && autoResponse.body) {
+          // Replace {name} with the escaped name so an attacker can't smuggle
+          // HTML/JS via their submitted name. Body itself is admin-authored,
+          // so we treat it as trusted template content (kept as-is).
+          const responseBody = autoResponse.body.replace(/\{name\}/g, escapeHtml(name || ''));
           const autoResponseHtml = `
 <!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb">
 <div style="max-width:600px;margin:0 auto;padding:32px 16px">
   <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
     <div style="background:linear-gradient(135deg,#1a5276,#2e86c1);padding:24px 32px">
-      <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:600">${autoResponse.subject}</h1>
+      <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:600">${escapeHtml(autoResponse.subject)}</h1>
     </div>
     <div style="padding:24px 32px">
       <p style="margin:0;color:#374151;font-size:15px;line-height:1.6;white-space:pre-line">${responseBody}</p>

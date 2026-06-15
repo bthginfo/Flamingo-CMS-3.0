@@ -1,6 +1,7 @@
 'use client';
 
 import { MonitorPlay, Rocket, Save } from 'lucide-react';
+import { PreviewNudge } from '@/components/admin/preview-nudge';
 
 type Props = {
   previewOpen: boolean;
@@ -29,20 +30,23 @@ export function EditorActionBar({
   onPublish,
   saveDisabled = false,
   saveLabel = 'Speichern',
-  savingLabel = 'Speichert…',
+  savingLabel = 'Speichert...',
   publishLabel = 'Veröffentlichen',
-  publishingLabel = 'Wird veröffentlicht…',
+  publishingLabel = 'Wird veröffentlicht...',
 }: Props) {
   const showPublish = publishable && saved && onPublish;
 
   return (
     <div className="fixed bottom-6 right-6 flex items-center gap-3 z-50">
-      <button
-        onClick={onTogglePreview}
-        className={`flex items-center gap-2 px-4 py-2.5 border rounded-full shadow-lg text-sm font-medium transition-colors ${previewOpen ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
-      >
-        <MonitorPlay size={16} /> Vorschau
-      </button>
+      <div className="relative">
+        <button
+          onClick={onTogglePreview}
+          className={`flex items-center gap-2 px-4 py-2.5 border rounded-full shadow-lg text-sm font-medium transition-colors ${previewOpen ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'}`}
+        >
+          <MonitorPlay size={16} /> Vorschau
+        </button>
+        <PreviewNudge variant="top-right" />
+      </div>
       {!showPublish ? (
         <button
           onClick={onSave}

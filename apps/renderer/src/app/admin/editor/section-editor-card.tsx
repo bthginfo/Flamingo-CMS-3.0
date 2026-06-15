@@ -16,7 +16,6 @@ type Props = {
   section: EditableSection;
   industry: string;
   sectionTypes: SectionTypeDefinition[];
-  styleVariant: string;
   resolvedVars: Record<string, string>;
   iframeRef: RefObject<HTMLIFrameElement | null>;
   onDelete: () => void;
@@ -32,7 +31,6 @@ export function SectionEditorCard({
   section,
   industry,
   sectionTypes,
-  styleVariant,
   resolvedVars,
   iframeRef,
   onDelete,
@@ -85,11 +83,11 @@ export function SectionEditorCard({
       </div>
       {expanded && (
         <div className="p-4">
-          <IndustrySectionDataEditor industry={industry} type={section.type} data={editorData} onChange={stableOnChange} />
-          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} resolvedVars={resolvedVars} iframeRef={iframeRef} sectionId={section.id} />
+          <IndustrySectionDataEditor industry={industry} type={section.type} data={editorData} onChange={stableOnChange} sectionId={section.id} />
+          <SectionColorEditor value={(section.styleOverrides as Record<string, string>) || null} onChange={onSaveColorOverrides} sectionType={section.type} industry={industry} resolvedVars={resolvedVars} iframeRef={iframeRef} sectionId={section.id} />
           <details className="mt-4">
             <summary className="text-xs text-gray-500 cursor-pointer flex items-center gap-1"><Settings2 size={12} /> Erweiterte Einstellungen</summary>
-            <SectionMetaEditor section={section} styleVariant={styleVariant} onSave={onSaveMeta} />
+            <SectionMetaEditor section={section} onSave={onSaveMeta} />
           </details>
         </div>
       )}
@@ -97,7 +95,7 @@ export function SectionEditorCard({
   );
 }
 
-function SectionMetaEditor({ section, styleVariant, onSave }: { section: EditableSection; styleVariant: string; onSave: (meta: Partial<EditableSection>) => void }) {
+function SectionMetaEditor({ section, onSave }: { section: EditableSection; onSave: (meta: Partial<EditableSection>) => void }) {
   const [meta, setMeta] = useState({
     titleInternal: section.titleInternal || '',
     variant: section.variant || '',
@@ -113,17 +111,6 @@ function SectionMetaEditor({ section, styleVariant, onSave }: { section: Editabl
         <span className="text-gray-600 text-xs">Interner Titel</span>
         <input className="admin-input mt-1" value={meta.titleInternal} onChange={(event) => setMeta({ ...meta, titleInternal: event.target.value })} />
       </label>
-      {styleVariant === 'individual' && (
-        <label className="block">
-          <span className="text-gray-600 text-xs">Stil dieser Sektion</span>
-          <select className="admin-input mt-1" value={meta.variant} onChange={(event) => setMeta({ ...meta, variant: event.target.value })}>
-            <option value="">Standard (Classic)</option>
-            <option value="classic">Classic</option>
-            <option value="modern">Modern</option>
-            <option value="bold">Bold</option>
-          </select>
-        </label>
-      )}
       <label className="block">
         <span className="text-gray-600 text-xs">Container</span>
         <select className="admin-input mt-1" value={meta.container} onChange={(event) => setMeta({ ...meta, container: event.target.value })}>

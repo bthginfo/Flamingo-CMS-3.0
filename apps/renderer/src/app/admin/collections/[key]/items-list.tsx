@@ -18,8 +18,17 @@ export function CollectionItemsList({ items, collectionKey, deleteAction }: { it
 
   if (items.length === 0) {
     return (
-      <div className="admin-card text-center py-12">
-        <p className="text-gray-500">Noch keine Einträge in dieser Collection.</p>
+      <div className="admin-card text-center py-16 px-6">
+        <div className="mx-auto mb-4 w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center">
+          <span className="text-emerald-500 text-2xl">✨</span>
+        </div>
+        <h3 className="text-base font-semibold text-zinc-900 mb-1">Noch keine Einträge</h3>
+        <p className="text-sm text-zinc-500 max-w-sm mx-auto mb-5">
+          Füge oben einen Titel ein und klicke „Erstellen“. Anschließend kannst du Felder, Bilder und Inhalte pflegen.
+        </p>
+        <button type="button" onClick={() => document.querySelector<HTMLInputElement>('input[name="title"]')?.focus()} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 text-white text-sm font-medium hover:bg-emerald-600 transition-colors">
+          + Ersten Eintrag anlegen
+        </button>
       </div>
     );
   }

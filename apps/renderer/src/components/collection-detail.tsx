@@ -6,18 +6,29 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { SnapshotCollectionItem, SnapshotCollection, SnapshotSection } from '@/lib/snapshot';
 import { SectionRenderer } from './section-renderer';
+import { sanitizeHtml } from '@/lib/sanitize-html';
 
 type Props = {
   item: SnapshotCollectionItem;
   collection: SnapshotCollection;
   collections?: SnapshotCollection[];
   backHrefPrefix?: string;
+  linkPrefix?: string;
   styleVariant?: string;
   industry?: string;
+  locale?: string;
+  defaultLocale?: string;
 };
 
-export function CollectionDetail({ item, collection, collections, backHrefPrefix = '', styleVariant, industry }: Props) {
+export function CollectionDetail({ item, collection, collections, backHrefPrefix = '', linkPrefix = '', styleVariant, industry, locale, defaultLocale }: Props) {
   const data = item.data;
+  // Resolve the item title from the localised `_titles` map when available so
+  // the heading reflects the active locale instead of the default-locale value
+  // stored on the row.
+  const titles = (data._titles as Record<string, string> | undefined) || undefined;
+  const localisedTitle = titles && locale ? titles[locale] : undefined;
+  const fallbackTitle = titles && defaultLocale ? titles[defaultLocale] : undefined;
+  const itemTitle = localisedTitle || fallbackTitle || item.title;
   const sections = data.sections as SnapshotSection[] | undefined;
 
   // If the item has sections (page builder), render them
@@ -31,7 +42,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
         {/* Hero sections with overlapping back button */}
         <div className="relative">
           {heroSections.map((section) => (
-            <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} />
+            <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} linkPrefix={linkPrefix} locale={locale} defaultLocale={defaultLocale} />
           ))}
           {/* Back button — overlaps hero bottom edge */}
           <div className="absolute bottom-0 left-0 z-30 translate-y-1/2 ml-6 md:ml-10">
@@ -43,7 +54,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
         </div>
         {/* Remaining sections (CTA bands, etc.) */}
         {otherSections.map((section) => (
-          <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} />
+          <SectionRenderer key={section.id} section={section} collections={collections} styleVariant={styleVariant} industry={industry} linkPrefix={linkPrefix} locale={locale} defaultLocale={defaultLocale} />
         ))}
       </div>
     );
@@ -51,13 +62,21 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
 
   // Legacy flat data rendering (backward compatibility)
   const image = data.image as string | undefined;
-  const description = data.description as string | undefined;
+  // Resolve localised description/excerpt when admin has provided per-locale
+  // variants via the `_excerpts` / `_descriptions` maps.
+  const excerpts = (data._excerpts as Record<string, string> | undefined) || undefined;
+  const descriptions = (data._descriptions as Record<string, string> | undefined) || undefined;
+  const description = (descriptions && locale && descriptions[locale])
+    || (descriptions && defaultLocale && descriptions[defaultLocale])
+    || (data.description as string | undefined);
   const content = data.content as string | undefined;
   const features = data.features as string[] | undefined;
   const gallery = data.gallery as string[] | undefined;
   const price = data.price as string | undefined;
   const cta = data.cta as { label: string; href: string } | undefined;
-  const excerpt = data.excerpt as string | undefined;
+  const excerpt = (excerpts && locale && excerpts[locale])
+    || (excerpts && defaultLocale && excerpts[defaultLocale])
+    || (data.excerpt as string | undefined);
 
   return (
     <div className="py-10 md:py-20">
@@ -78,7 +97,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
             transition={{ duration: 0.5 }}
             className="relative w-full aspect-[21/9] rounded-xl overflow-hidden mb-10"
           >
-            <Image src={image} alt={item.title} fill className="object-cover" />
+            <Image src={image} alt={itemTitle} fill className="object-cover" />
           </motion.div>
         )}
 
@@ -90,7 +109,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl font-bold tracking-tight"
           >
-            {item.title}
+            {itemTitle}
           </motion.h1>
           {price && (
             <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="text-2xl font-semibold text-brand-primary shrink-0">
@@ -114,7 +133,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
             className="text-lg text-gray-600 leading-relaxed mb-8 rt-content"
-            dangerouslySetInnerHTML={{ __html: (description || excerpt)! }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml((description || excerpt)!) }}
           />
         )}
 
@@ -145,7 +164,7 @@ export function CollectionDetail({ item, collection, collections, backHrefPrefix
             animate={{ opacity: 1 }}
             transition={{ delay: 0.35 }}
             className="prose prose-lg max-w-none mb-10"
-            dangerouslySetInnerHTML={{ __html: content }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }}
           />
         )}
 

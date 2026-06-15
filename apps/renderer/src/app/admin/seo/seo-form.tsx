@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { toast } from 'sonner';
 import { useSaveState, useRegisterSave } from '@/components/save-context';
-import { getSeoGlobalAction, saveSeoGlobalAction } from './actions';
+import { getLocalSeoAction, getSeoGlobalAction, saveLocalSeoAction, saveSeoGlobalAction } from './actions';
 
 export function SeoForm() {
   const [pending, startTransition] = useTransition();
@@ -18,6 +18,13 @@ export function SeoForm() {
     locale: 'de_DE',
     robots: 'index,follow',
   });
+  const [localSeo, setLocalSeo] = useState({
+    businessType: 'LocalBusiness',
+    priceRange: '',
+    serviceArea: '',
+    googleBusinessUrl: '',
+    sameAsText: '',
+  });
 
   useEffect(() => {
     getSeoGlobalAction().then(row => {
@@ -31,13 +38,23 @@ export function SeoForm() {
         robots: row.robots,
       });
     });
+    getLocalSeoAction().then(row => {
+      setLocalSeo({
+        businessType: typeof row.businessType === 'string' && row.businessType ? row.businessType : 'LocalBusiness',
+        priceRange: typeof row.priceRange === 'string' ? row.priceRange : '',
+        serviceArea: typeof row.serviceArea === 'string' ? row.serviceArea : '',
+        googleBusinessUrl: typeof row.googleBusinessUrl === 'string' ? row.googleBusinessUrl : '',
+        sameAsText: Array.isArray(row.sameAs) ? row.sameAs.filter(Boolean).join('\n') : '',
+      });
+    });
   }, []);
 
-  useEffect(() => { if (mounted.current >= 2) markDirty(); else mounted.current++; }, [data]);
+  useEffect(() => { if (mounted.current >= 2) markDirty(); else mounted.current++; }, [data, localSeo]);
 
   function handleSave() {
     startTransition(async () => {
       await saveSeoGlobalAction(data);
+      await saveLocalSeoAction(localSeo);
       toast.success('SEO-Einstellungen gespeichert');
       markSaved();
     });
@@ -66,6 +83,27 @@ export function SeoForm() {
       )}
       {opts?.hint && <p className="text-xs text-zinc-400 mt-1">{opts.hint}</p>}
       {opts?.maxLength && <p className="text-xs text-zinc-400 mt-0.5 text-right">{data[key].length}/{opts.maxLength}</p>}
+    </div>
+  );
+  const localField = (label: string, key: keyof typeof localSeo, opts?: { placeholder?: string; hint?: string; multiline?: boolean }) => (
+    <div>
+      <label className="admin-label">{label}</label>
+      {opts?.multiline ? (
+        <textarea
+          className="admin-input min-h-[84px]"
+          value={localSeo[key]}
+          onChange={e => setLocalSeo(d => ({ ...d, [key]: e.target.value }))}
+          placeholder={opts.placeholder}
+        />
+      ) : (
+        <input
+          className="admin-input"
+          value={localSeo[key]}
+          onChange={e => setLocalSeo(d => ({ ...d, [key]: e.target.value }))}
+          placeholder={opts?.placeholder}
+        />
+      )}
+      {opts?.hint && <p className="text-xs text-zinc-400 mt-1">{opts.hint}</p>}
     </div>
   );
 
@@ -97,6 +135,40 @@ export function SeoForm() {
           {field('Canonical-Basis-URL', 'canonicalBase', { placeholder: 'https://www.mueller-soehne.de' })}
           {field('Locale', 'locale', { placeholder: 'de_DE' })}
           {field('Robots', 'robots', { placeholder: 'index,follow', hint: 'z.B. index,follow oder noindex,nofollow' })}
+        </div>
+      </div>
+
+      <div className="admin-card p-6 space-y-5">
+        <div>
+          <h2 className="font-semibold text-lg">Local SEO</h2>
+          <p className="mt-1 text-sm text-zinc-500">
+            Diese Angaben helfen Suchmaschinen, das Unternehmen lokal besser einzuordnen. Öffnungszeiten und Adresse pflegst du weiterhin unter Kontakt & Zeiten.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div>
+            <label className="admin-label">Schema.org-Typ</label>
+            <select className="admin-input" value={localSeo.businessType} onChange={e => setLocalSeo(d => ({ ...d, businessType: e.target.value }))}>
+              <option value="LocalBusiness">LocalBusiness</option>
+              <option value="Restaurant">Restaurant</option>
+              <option value="MedicalBusiness">MedicalBusiness</option>
+              <option value="Store">Store</option>
+              <option value="LodgingBusiness">LodgingBusiness</option>
+              <option value="HealthAndBeautyBusiness">HealthAndBeautyBusiness</option>
+              <option value="HomeAndConstructionBusiness">HomeAndConstructionBusiness</option>
+              <option value="ProfessionalService">ProfessionalService</option>
+              <option value="Florist">Florist</option>
+              <option value="EventVenue">EventVenue</option>
+              <option value="SportsActivityLocation">SportsActivityLocation</option>
+            </select>
+            <p className="text-xs text-zinc-400 mt-1">Wenn du unsicher bist: LocalBusiness ist ein sicherer Standard.</p>
+          </div>
+          {localField('Preisbereich', 'priceRange', { placeholder: 'z.B. €, €€, ab 80 € oder 10-25 €', hint: 'Optional. Wird als priceRange im LocalBusiness-Schema genutzt.' })}
+          {localField('Einzugsgebiet', 'serviceArea', { placeholder: 'z.B. Innsbruck, München, Ingolstadt und Umgebung', hint: 'Optional. Relevant für lokale Dienstleistungen und regionale Sichtbarkeit.' })}
+          {localField('Google-Business-Link', 'googleBusinessUrl', { placeholder: 'https://g.page/...' })}
+          <div className="sm:col-span-2">
+            {localField('Weitere Profile', 'sameAsText', { placeholder: 'https://www.instagram.com/...\nhttps://www.linkedin.com/company/...', hint: 'Eine URL pro Zeile. Wird als sameAs im strukturierten Datenmodell ausgegeben.', multiline: true })}
+          </div>
         </div>
       </div>
     </div>

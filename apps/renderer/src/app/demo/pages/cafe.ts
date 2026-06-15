@@ -6,7 +6,7 @@ const SECTION = { visible: true, container: 'default', spacingTop: 'l', spacingB
 export const cafeSite: DemoSite = {
   industry: 'cafe',
   industryKey: 'cafe',
-  defaultStyle: 'modern',
+  defaultStyle: 'classic',
   pages: [
     {
       slug: '',

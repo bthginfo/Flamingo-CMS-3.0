@@ -3,14 +3,24 @@ import { getTenantNav, getTenantFooter, getTenantBrand, getTenantStyle } from '@
 import { getStyleCssVars } from '@/lib/styles';
 import { getBrandCssVars } from '@/lib/brand-colors';
 import { getDesignCssVars } from '@/lib/design-vars';
+import { getSession } from '@/lib/session';
+import { redirect } from 'next/navigation';
 import { LivePreviewClient } from './client';
 
 export const dynamic = 'force-dynamic';
 
 export default async function LivePreviewPage({ searchParams }: { searchParams: Promise<{ tenant?: string }> }) {
+  // Live preview is an admin-only view of unpublished CMS data and must never
+  // be reachable anonymously. Middleware enforces a cookie, this is the
+  // defence-in-depth JWT check.
+  const session = await getSession();
+  if (!session) redirect('/admin/login');
+
   try {
     const { tenant: tenantParam } = await searchParams;
-    const tenantId = tenantParam || await resolveTenant();
+    // Honor explicit ?tenant= only if it matches the session tenant — never
+    // let an authenticated admin peek into another tenant's drafts.
+    const tenantId = tenantParam && tenantParam === session.tenantId ? tenantParam : session.tenantId;
     if (!tenantId) {
       return <LivePreviewClient initialData={{}} />;
     }
@@ -48,7 +58,15 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
   const cssVars = { ...styleCssVars, ...brandCssVars, ...fontCssVars, ...designOverrides };
 
   return (
-    <LivePreviewClient
+    <>
+      {/* Expose the active tenant ID to client sections (e.g. InstagramFeed)
+          that need to call session-gated APIs from inside the live preview. */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `window.__FLAMINGO_TENANT_ID__=${JSON.stringify(tenantId)};`,
+        }}
+      />
+      <LivePreviewClient
       initialData={{
         industry: tenantStyle.industry,
         styleVariant: tenantStyle.activeStyle,
@@ -63,6 +81,7 @@ export default async function LivePreviewPage({ searchParams }: { searchParams: 
         sections: initialSections,
       }}
     />
+    </>
   );
   } catch (err) {
     console.error('[live-preview] Error loading tenant data:', err);

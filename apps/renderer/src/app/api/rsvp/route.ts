@@ -2,12 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { rsvpResponses } from '@flamingo/db';
 import { resolveTenant } from '@/lib/snapshot';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
   try {
     const tenantId = await resolveTenant();
     if (!tenantId) {
       return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
+    }
+    const ip = getClientIp(req);
+    const rl = rateLimit(`rsvp:${tenantId}:${ip}`, 5, 10 * 60 * 1000);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: 'Zu viele Anfragen. Bitte später erneut versuchen.' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetMs / 1000)) } },
+      );
     }
 
     const body = await req.json();

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { logoutAction } from '@/app/admin/actions';
 import { usePreview } from '@/components/admin/preview-context';
+import { PreviewNudge } from '@/components/admin/preview-nudge';
 import { MonitorPlay } from 'lucide-react';
 
 const NAV: { href: string; label: string; icon: typeof LayoutDashboard; tour?: string; industry?: string }[] = [
@@ -38,15 +39,23 @@ const NAV: { href: string; label: string; icon: typeof LayoutDashboard; tour?: s
 const RENDERER_URL = '';
 
 export function Sidebar({ tenantId, industry }: { tenantId: string; industry: string }) {
-  const filteredNav = NAV.filter(item => !item.industry || item.industry === industry);
   const pathname = usePathname();
   const router = useRouter();
   const preview = usePreview();
   const [open, setOpen] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window === 'undefined') return false;
     return localStorage.getItem('sidebar-collapsed') === '1';
   });
+  const filteredNav = NAV.filter(item => {
+    if (isDemo && item.href === '/admin/ai-api') return false;
+    return !item.industry || item.industry === industry;
+  });
+
+  useEffect(() => {
+    setIsDemo(document.cookie.split(';').some((cookie) => cookie.trim() === `flamingo_public_demo=${tenantId}`));
+  }, [tenantId]);
 
   function toggleCollapse() {
     const next = !collapsed;
@@ -148,11 +157,14 @@ export function Sidebar({ tenantId, industry }: { tenantId: string; industry: st
 
         {/* Footer */}
         <div className={`py-4 border-t border-sidebar-border space-y-1 ${collapsed ? 'px-2' : 'px-3'}`}>
-          <button onClick={() => { preview.isOpen ? preview.close() : preview.open(); }} title={collapsed ? 'Vorschau' : undefined}
-            className={`flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'}`}>
-            <MonitorPlay size={18} />
-            {!collapsed && 'Vorschau'}
-          </button>
+          <div className="relative">
+            <button onClick={() => { preview.isOpen ? preview.close() : preview.open(); }} title={collapsed ? 'Vorschau — Texte direkt in der Vorschau bearbeiten' : undefined}
+              className={`flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'}`}>
+              <MonitorPlay size={18} />
+              {!collapsed && 'Vorschau'}
+            </button>
+            {!collapsed && <PreviewNudge variant="right" compact />}
+          </div>
           <button onClick={async () => { await logoutAction(); router.push('/admin/login'); }} title={collapsed ? 'Abmelden' : undefined}
             className={`flex items-center gap-3 rounded-lg text-sm text-sidebar-muted hover:text-white hover:bg-white/5 transition-colors w-full ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'}`}>
             <LogOut size={18} />

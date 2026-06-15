@@ -89,9 +89,18 @@ export function PagesList({ pages, deleteAction, hasShop, shopPages, addShopPage
 
   if (pages.length === 0) {
     return (
-      <div className="admin-card text-center py-12">
-        <FileText className="mx-auto mb-3 text-gray-400" size={48} />
-        <p className="text-gray-500">Noch keine Seiten erstellt.</p>
+      <div className="admin-card text-center py-16 px-6">
+        <div className="mx-auto mb-4 w-14 h-14 rounded-2xl bg-pink-50 flex items-center justify-center">
+          <FileText className="text-pink-500" size={28} />
+        </div>
+        <h3 className="text-base font-semibold text-zinc-900 mb-1">Noch keine Seiten</h3>
+        <p className="text-sm text-zinc-500 max-w-sm mx-auto mb-5">
+          Lege deine erste Seite an. Du kannst Titel, Sektionen und SEO später jederzeit anpassen.
+          Standardseiten (Startseite, Impressum, Datenschutz) werden automatisch erzeugt.
+        </p>
+        <a href="#new-page-input" onClick={(e) => { e.preventDefault(); document.querySelector<HTMLInputElement>('input[name="title"]')?.focus(); }} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-pink-500 text-white text-sm font-medium hover:bg-pink-600 transition-colors">
+          + Erste Seite anlegen
+        </a>
       </div>
     );
   }

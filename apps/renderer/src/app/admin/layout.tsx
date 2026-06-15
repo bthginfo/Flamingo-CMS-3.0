@@ -34,7 +34,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   const cookieStore = await cookies();
-  const isDemo = cookieStore.get('flamingo_demo')?.value === '1';
+  const isDemo = cookieStore.get('flamingo_public_demo')?.value === session.tenantId;
 
   return (
     <SaveProvider>

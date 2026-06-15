@@ -16,6 +16,9 @@ const INDUSTRIES = [
   { key: 'tattoo', label: 'Tattoo Studio' },
   { key: 'ecommerce', label: 'E-Commerce' },
   { key: 'retail', label: 'Retail' },
+  { key: 'florist', label: 'Floristik' },
+  { key: 'fitness', label: 'Fitness' },
+  { key: 'location', label: 'Location' },
 ] as const;
 
 function toShowcaseSection(section: SectionTypeDefinition, industry: string, industryLabel: string): ShowcaseSection {

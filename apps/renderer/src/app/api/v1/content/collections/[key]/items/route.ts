@@ -4,6 +4,7 @@ import { getDb } from '@/lib/db';
 import { collections, collectionItems } from '@flamingo/db';
 import { eq, and } from 'drizzle-orm';
 import crypto from 'crypto';
+import { normalizeSectionData, normalizeStyleOverrides } from '@/lib/api-utils';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ key: string }> }) {
   try {
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
     const [collection] = await db.select().from(collections).where(and(eq(collections.tenantId, auth.tenantId), eq(collections.key, key)));
     if (!collection) return NextResponse.json({ error: 'Collection not found' }, { status: 404 });
 
-    const { title, slug, data, published } = await req.json();
+    const { title, slug, data, published, priority } = await req.json();
     if (!title) return NextResponse.json({ error: 'title required' }, { status: 400 });
 
     const itemSlug = slug || title.toLowerCase().replace(/[^a-z0-9äöüß]+/g, '-').replace(/(^-|-$)/g, '');
@@ -28,9 +29,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
       itemData.sections = itemData.sections.map((s: Record<string, unknown>) => ({
         ...s,
         id: s.id || crypto.randomUUID(),
+        data: normalizeSectionData(String(s.type || ''), (s.data as Record<string, unknown>) || {}),
+        styleOverrides: normalizeStyleOverrides(s.styleOverrides),
       }));
     }
 
+    const now = new Date();
     await db.insert(collectionItems).values({
       id,
       tenantId: auth.tenantId,
@@ -39,12 +43,18 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ key
       slug: itemSlug,
       data: itemData,
       published: published ?? false,
+      priority: Number.isFinite(Number(priority)) ? Number(priority) : 0,
+      createdAt: now,
+      updatedAt: now,
     });
 
     return NextResponse.json({ id, slug: itemSlug }, { status: 201 });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error('POST /collections/:key/items error:', message);
+    console.error('POST /collections/:key/items error:', {
+      message,
+      name: err instanceof Error ? err.name : undefined,
+    });
     if (message.includes('unique') || message.includes('duplicate')) {
       return NextResponse.json({ error: 'Item with this slug already exists' }, { status: 409 });
     }

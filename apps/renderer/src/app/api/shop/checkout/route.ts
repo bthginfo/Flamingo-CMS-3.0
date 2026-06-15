@@ -4,13 +4,105 @@ import { orders, products, productVariants, shopSettings, customers, orderStatus
 import { eq, and, sql } from 'drizzle-orm';
 import { resolveTenant } from '@/lib/snapshot';
 import { sendOrderEmails } from '@/lib/shop-email';
+import { rateLimit, getClientIp } from '@/lib/rate-limit';
+import { getTaxRate } from '@/lib/tax';
 import Stripe from 'stripe';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function resolveExplicitTenant(queryTenantId: unknown) {
+  const fixedTenantId = process.env.FIXED_TENANT_ID;
+  if (typeof queryTenantId !== 'string' || !UUID_RE.test(queryTenantId)) return null;
+  if (fixedTenantId) return queryTenantId === fixedTenantId ? queryTenantId : null;
+  return queryTenantId;
+}
+
+// Tax rate resolution is provided by lib/tax (DB-backed tax_rates table
+// with per-class defaults). The local fallback below is kept inline only as
+// a safety net for the unlikely case where the DB lookup fails synchronously.
+
+type OrderItem = {
+  productId: string;
+  variantId?: string;
+  title: string;
+  variantName?: string;
+  quantity: number;
+  priceCents: number;
+  taxRate: number;
+};
+
+type ReservedItem = Pick<OrderItem, 'productId' | 'variantId' | 'quantity'>;
+
+async function releaseReservedStock(db: ReturnType<typeof getDb>, tenantId: string, reservedItems: ReservedItem[]) {
+  for (const reserved of reservedItems) {
+    if (reserved.variantId) {
+      await db.execute(sql`UPDATE product_variants SET stock = stock + ${reserved.quantity} WHERE id = ${reserved.variantId} AND tenant_id = ${tenantId}`);
+    } else {
+      await db.execute(sql`UPDATE products SET stock = stock + ${reserved.quantity} WHERE id = ${reserved.productId} AND tenant_id = ${tenantId} AND track_stock = true`);
+    }
+  }
+}
+
+async function releaseCouponUsage(db: ReturnType<typeof getDb>, couponId: string | null) {
+  if (!couponId) return;
+  await db.execute(sql`UPDATE coupons SET used_count = GREATEST(used_count - 1, 0) WHERE id = ${couponId}`);
+}
+
+async function cancelOrder(db: ReturnType<typeof getDb>, tenantId: string, orderId: string, oldStatus: string, note: string) {
+  await db.update(orders)
+    .set({ status: 'cancelled', updatedAt: new Date() })
+    .where(and(eq(orders.id, orderId), eq(orders.tenantId, tenantId)));
+  await db.insert(orderStatusHistory).values({
+    orderId,
+    oldStatus,
+    newStatus: 'cancelled',
+    note,
+  });
+}
+
+async function rollbackCheckoutFailure(
+  db: ReturnType<typeof getDb>,
+  tenantId: string,
+  orderId: string,
+  oldStatus: string,
+  reservedItems: ReservedItem[],
+  couponId: string | null,
+  note: string
+) {
+  await releaseReservedStock(db, tenantId, reservedItems);
+  await releaseCouponUsage(db, couponId);
+  await cancelOrder(db, tenantId, orderId, oldStatus, note);
+}
+
+async function reserveOrderNumber(db: ReturnType<typeof getDb>, tenantId: string, fallbackPrefix: string) {
+  const result = await db.execute(sql`
+    UPDATE shop_settings
+    SET next_order_number = next_order_number + 1
+    WHERE tenant_id = ${tenantId}
+    RETURNING order_prefix, next_order_number
+  `);
+  const row = result.rows?.[0] as { order_prefix?: string; next_order_number?: number } | undefined;
+  const reservedNumber = Number(row?.next_order_number ?? 2) - 1;
+  const prefix = row?.order_prefix || fallbackPrefix;
+  return `${prefix}-${String(reservedNumber).padStart(4, '0')}`;
+}
+
 export async function POST(req: NextRequest) {
-  const tenantId = await resolveTenant();
+  const body = await req.json();
+  const tenantId = resolveExplicitTenant(body.tenantId) || await resolveTenant();
   if (!tenantId) return NextResponse.json({ error: 'Tenant not found' }, { status: 404 });
 
-  const body = await req.json();
+  // Rate limit: 10 checkout attempts / 10 min per IP+tenant. Slows down both
+  // card-testing bots and accidental double-submits.
+  const ip = getClientIp(req);
+  const rl = rateLimit(`checkout:${tenantId}:${ip}`, 10, 10 * 60 * 1000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: 'Zu viele Bestellversuche. Bitte sp\u00e4ter erneut versuchen.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil(rl.resetMs / 1000)) } },
+    );
+  }
+
   const { name, email, phone, street, city, zip, country, company, paymentMethod, customerNotes, items, shippingMethod: shippingMethodId, couponCode, idempotencyKey } = body;
 
   if (!name || !email || !items?.length) {
@@ -34,15 +126,34 @@ export async function POST(req: NextRequest) {
   const [settings] = await db.select().from(shopSettings).where(eq(shopSettings.tenantId, tenantId)).limit(1);
   if (!settings) return NextResponse.json({ error: 'Shop not configured' }, { status: 400 });
 
+  const externalPaymentMethods = new Set(['stripe', 'paypal', 'sumup']);
+  const isExternalPayment = externalPaymentMethods.has(paymentMethod);
+  if (isExternalPayment) {
+    const configured =
+      (paymentMethod === 'stripe' && settings.stripeSecretKey) ||
+      (paymentMethod === 'paypal' && settings.paypalClientId && settings.paypalSecret) ||
+      (paymentMethod === 'sumup' && settings.sumupApiKey && settings.sumupMerchantCode);
+    if (!configured) {
+      return NextResponse.json({ error: 'Diese Zahlungsart ist nicht vollständig konfiguriert.' }, { status: 400 });
+    }
+  }
+
   // Resolve product prices and build order items
-  const orderItems: { productId: string; variantId?: string; title: string; variantName?: string; quantity: number; priceCents: number; taxRate: number }[] = [];
+  const orderItems: OrderItem[] = [];
+  const missingProducts: string[] = [];
   let subtotalCents = 0;
 
   for (const item of items) {
     const [product] = await db.select().from(products)
       .where(and(eq(products.id, item.productId), eq(products.tenantId, tenantId)))
       .limit(1);
-    if (!product) continue;
+    if (!product) {
+      // Customer's cart referenced a product that no longer exists / belongs
+      // to a different tenant. Never silently drop — refuse the order so the
+      // displayed cart total cannot diverge from what gets charged.
+      missingProducts.push(String(item.productId));
+      continue;
+    }
 
     let priceCents = product.priceCents;
     let variantName: string | undefined;
@@ -80,13 +191,19 @@ export async function POST(req: NextRequest) {
       variantName,
       quantity,
       priceCents,
-      taxRate: 19,
+      taxRate: await getTaxRate(tenantId, product.taxClass),
     });
     subtotalCents += priceCents * quantity;
   }
 
   if (orderItems.length === 0) {
     return NextResponse.json({ error: 'No valid items' }, { status: 400 });
+  }
+  if (missingProducts.length > 0) {
+    return NextResponse.json({
+      error: 'Einige Artikel in deinem Warenkorb sind nicht mehr verf\u00fcgbar. Bitte Warenkorb aktualisieren.',
+      missingProductIds: missingProducts,
+    }, { status: 409 });
   }
 
   // Server-side shipping cost validation
@@ -103,7 +220,11 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const taxCents = Math.round(subtotalCents * 19 / 119); // 19% included
+  // Calculate tax per item (supports mixed rates: 19%, 7%, 0%)
+  const taxCents = orderItems.reduce((sum, item) => {
+    const itemTotal = item.priceCents * item.quantity;
+    return sum + Math.round(itemTotal * item.taxRate / (100 + item.taxRate));
+  }, 0);
 
   // Server-side discount calculation (never trust client discount)
   let discountCents = 0;
@@ -140,8 +261,8 @@ export async function POST(req: NextRequest) {
   // Ensure total never goes negative
   const totalCents = Math.max(0, subtotalCents + shippingCents - discountCents);
 
-  // Generate order number
-  const orderNumber = `${settings.orderPrefix}-${String(settings.nextOrderNumber).padStart(4, '0')}`;
+  // Reserve the next order number atomically so parallel checkouts do not collide.
+  const orderNumber = await reserveOrderNumber(db, tenantId, settings.orderPrefix);
 
   // Create order
   const initialStatus = (paymentMethod === 'stripe' || paymentMethod === 'paypal' || paymentMethod === 'sumup') ? 'awaiting_payment' : paymentMethod === 'pickup' ? 'processing' : 'pending';
@@ -164,11 +285,6 @@ export async function POST(req: NextRequest) {
     customerNotes: customerNotes || null,
     idempotencyKey: idempotencyKey || null,
   }).returning({ id: orders.id });
-
-  // Increment order number
-  await db.update(shopSettings)
-    .set({ nextOrderNumber: settings.nextOrderNumber + 1 })
-    .where(eq(shopSettings.tenantId, tenantId));
 
   // Add status history
   await db.insert(orderStatusHistory).values({
@@ -196,17 +312,56 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // Reduce stock atomically
+  // Reserve stock atomically. Neon HTTP does not provide interactive transactions here,
+  // so each stock mutation guards against concurrent overselling and rolls back earlier reservations on failure.
+  const reservedItems: ReservedItem[] = [];
   for (const item of orderItems) {
+    let result: { rows?: unknown[] };
     if (item.variantId) {
-      await db.execute(sql`UPDATE product_variants SET stock = GREATEST(0, stock - ${item.quantity}) WHERE id = ${item.variantId}`);
+      result = await db.execute(sql`
+        UPDATE product_variants
+        SET stock = stock - ${item.quantity}
+        WHERE id = ${item.variantId}
+          AND tenant_id = ${tenantId}
+          AND stock >= ${item.quantity}
+        RETURNING id
+      `);
     } else {
-      await db.execute(sql`UPDATE products SET stock = GREATEST(0, stock - ${item.quantity}) WHERE id = ${item.productId} AND track_stock = true`);
+      result = await db.execute(sql`
+        UPDATE products
+        SET stock = stock - ${item.quantity}
+        WHERE id = ${item.productId}
+          AND tenant_id = ${tenantId}
+          AND track_stock = true
+          AND stock >= ${item.quantity}
+        RETURNING id
+      `);
+      if (!result.rows?.length) {
+        const [untracked] = await db.select({ trackStock: products.trackStock }).from(products)
+          .where(and(eq(products.id, item.productId), eq(products.tenantId, tenantId)))
+          .limit(1);
+        if (untracked && !untracked.trackStock) {
+          reservedItems.push(item);
+          continue;
+        }
+      }
     }
+
+    if (!result.rows?.length) {
+      await releaseReservedStock(db, tenantId, reservedItems);
+      await releaseCouponUsage(db, appliedCouponId);
+      await db.update(orders).set({ status: 'cancelled', updatedAt: new Date() }).where(and(eq(orders.id, order.id), eq(orders.tenantId, tenantId)));
+      return NextResponse.json({
+        error: 'Der Bestand hat sich gerade geändert. Bitte Warenkorb prüfen und erneut versuchen.',
+        outOfStock: true,
+        productId: item.productId,
+      }, { status: 409 });
+    }
+    reservedItems.push(item);
   }
 
   // Send order confirmation emails (fire-and-forget) — only for immediate methods (not stripe/paypal/sumup which confirm async)
-  if (paymentMethod !== 'stripe' && paymentMethod !== 'paypal' && paymentMethod !== 'sumup') {
+  if (!isExternalPayment) {
     sendOrderEmails(tenantId, {
       orderNumber,
       customerName: name,
@@ -259,8 +414,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, orderNumber, orderId: order.id, stripeUrl: session.url });
     } catch (e: any) {
       console.error('[Checkout] Stripe session error:', e);
-      // Cancel the order since payment couldn't be initiated
-      await db.update(orders).set({ status: 'cancelled' }).where(eq(orders.id, order.id));
+      await rollbackCheckoutFailure(db, tenantId, order.id, initialStatus, reservedItems, appliedCouponId, 'Stripe checkout session could not be created.');
       return NextResponse.json({ error: 'Zahlung konnte nicht gestartet werden. Bitte versuchen Sie es erneut.', stripeError: e.message }, { status: 502 });
     }
   }
@@ -316,8 +470,13 @@ export async function POST(req: NextRequest) {
         await db.update(orders).set({ paymentId: ppOrder.id }).where(eq(orders.id, order.id));
         return NextResponse.json({ success: true, orderNumber, orderId: order.id, paypalUrl: approveLink });
       }
+      console.error('[Checkout] PayPal approval link missing:', ppOrder);
+      await rollbackCheckoutFailure(db, tenantId, order.id, initialStatus, reservedItems, appliedCouponId, 'PayPal approval link missing.');
+      return NextResponse.json({ error: 'PayPal-Zahlung konnte nicht gestartet werden.' }, { status: 502 });
     } catch (e: any) {
       console.error('[Checkout] PayPal order error:', e);
+      await rollbackCheckoutFailure(db, tenantId, order.id, initialStatus, reservedItems, appliedCouponId, 'PayPal order could not be created.');
+      return NextResponse.json({ error: 'PayPal-Zahlung konnte nicht gestartet werden.', paypalError: e.message }, { status: 502 });
     }
   }
 
@@ -353,10 +512,19 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ success: true, orderNumber, orderId: order.id, sumupUrl });
       } else {
         console.error('[Checkout] SumUp create error:', checkout);
+        await rollbackCheckoutFailure(db, tenantId, order.id, initialStatus, reservedItems, appliedCouponId, 'SumUp checkout response did not contain an id.');
+        return NextResponse.json({ error: 'SumUp-Zahlung konnte nicht gestartet werden.' }, { status: 502 });
       }
     } catch (e: any) {
       console.error('[Checkout] SumUp checkout error:', e);
+      await rollbackCheckoutFailure(db, tenantId, order.id, initialStatus, reservedItems, appliedCouponId, 'SumUp checkout could not be created.');
+      return NextResponse.json({ error: 'SumUp-Zahlung konnte nicht gestartet werden.', sumupError: e.message }, { status: 502 });
     }
+  }
+
+  if (isExternalPayment) {
+    await rollbackCheckoutFailure(db, tenantId, order.id, initialStatus, reservedItems, appliedCouponId, 'External payment method reached fallback without payment URL.');
+    return NextResponse.json({ error: 'Zahlung konnte nicht gestartet werden. Bitte prüfen Sie die Zahlungsart.' }, { status: 502 });
   }
 
   return NextResponse.json({ success: true, orderNumber, orderId: order.id });
