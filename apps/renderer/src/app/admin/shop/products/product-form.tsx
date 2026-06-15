@@ -9,6 +9,7 @@ import { EditorActionBar } from '@/app/admin/editor/editor-action-bar';
 import { ImageUploadField } from '@/components/image-upload-field';
 import { usePreview } from '@/components/admin/preview-context';
 import { createProduct, updateProduct } from '../actions';
+import { RichTextEditorField } from '@/components/rich-text-editor';
 
 type Category = { id: string; name: string };
 
@@ -166,14 +167,7 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-zinc-500 mb-1">Beschreibung</label>
-          <textarea
-            value={data.description}
-            onChange={e => set('description', e.target.value)}
-            rows={4}
-            className="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 resize-y"
-            placeholder="Ausführliche Produktbeschreibung"
-          />
+          <RichTextEditorField label="Beschreibung" value={data.description} onChange={v => set('description', v)} />
         </div>
       </div>
 
