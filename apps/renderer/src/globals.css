@@ -443,9 +443,9 @@ html {
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 text-base;
     border-radius: var(--style-button-radius, 0.75rem);
-    background: var(--token-btn-secondary-bg, var(--brand-btn-secondary-bg, transparent));
-    color: var(--token-btn-secondary-text, var(--brand-btn-secondary-text, white));
-    border: 2px solid var(--token-btn-secondary-border, var(--brand-btn-secondary-border, rgba(255,255,255,0.2)));
+    background: var(--brand-btn-secondary-bg, transparent);
+    color: var(--brand-btn-secondary-text, white);
+    border: 2px solid var(--brand-btn-secondary-border, rgba(255,255,255,0.2));
   }
 
   .btn-outline {
@@ -683,10 +683,7 @@ html {
 @layer base {
   .rt-content p + p { margin-top: 0.5em; }
   .rt-content a { text-decoration: underline; text-underline-offset: 2px; }
-  .rt-content b,
   .rt-content strong { font-weight: 700; }
-  .rt-content i,
-  .rt-content em { font-style: italic; }
   .rt-content strong { color: currentColor; }
 }
 
