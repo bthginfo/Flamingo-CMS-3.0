@@ -3582,7 +3582,7 @@ function MenuCardEditor({ data, onChange }: EditorProps) {
         {categories.map((cat, ci) => (
           <details key={ci} className="border rounded mb-3 overflow-hidden" open={categories.length === 1}>
             <summary className="flex items-center justify-between px-3 py-2 bg-gray-50 cursor-pointer text-sm font-medium">
-              <span>{cat.label || Kategorie }</span>
+              <span>{cat.label || "Kategorie " + (ci + 1)}</span>
               <button onClick={(e) => { e.preventDefault(); removeCategory(ci); }} className="text-red-400 hover:text-red-600 text-xs ml-2">Entfernen</button>
             </summary>
             <div className="p-3 space-y-3">
