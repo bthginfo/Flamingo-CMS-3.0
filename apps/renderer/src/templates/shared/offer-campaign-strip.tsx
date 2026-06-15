@@ -14,7 +14,19 @@ export function OfferCampaignStripSection({ data }: Props) {
   const image = (data.image as string) || '';
   const offerLabel = (data.offerLabel as string) || '';
   const deadline = (data.deadline as string) || '';
-  const benefits = (data.benefits as string[]) || [];
+  const rawBenefits = data.benefits;
+  const benefits: string[] = Array.isArray(rawBenefits)
+    ? rawBenefits.map((b: unknown) => {
+        if (typeof b === 'string') return plain(b);
+        if (b && typeof b === 'object') {
+          const obj = b as Record<string, unknown>;
+          return plain((obj.text as string) || (obj.title as string) || (obj.label as string) || '');
+        }
+        return '';
+      }).filter(Boolean)
+    : typeof rawBenefits === 'string'
+      ? rawBenefits.split(/\n|<br\s*\/?>|<\/p>\s*<p>/).map(s => plain(s)).filter(Boolean)
+      : [];
   const cta = (data.cta as Cta) || {};
 
   return (
@@ -39,7 +51,7 @@ export function OfferCampaignStripSection({ data }: Props) {
               {benefits.map((benefit, index) => (
                 <motion.div key={index} initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.04 }} className="flex items-center gap-2 text-sm text-[color:var(--token-card-body,var(--token-body))]" data-edit-collection="benefits" data-edit-index={index}>
                   <Check size={16} className="text-[color:var(--token-accent)]" />
-                  {benefit}
+                  <span data-edit-path="text">{benefit}</span>
                 </motion.div>
               ))}
             </div>
