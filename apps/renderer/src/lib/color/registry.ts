@@ -205,6 +205,9 @@ export type ColorSlot = keyof typeof COLOR_TOKENS;
 /** A fully-resolved appearance object — every slot has a concrete color value. */
 export type Appearance = Readonly<Record<ColorSlot, string>>;
 
+/** Brand-level palette — partial slot values derived from tenant brand config. */
+export type BrandPalette = Partial<Record<ColorSlot, string | undefined>>;
+
 /** Ordered list of all slot keys (stable iteration order). */
 export const ALL_SLOTS = Object.keys(COLOR_TOKENS) as ColorSlot[];
 
