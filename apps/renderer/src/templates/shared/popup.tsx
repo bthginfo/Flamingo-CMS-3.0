@@ -79,7 +79,7 @@ export function PopupSection({ data }: SectionProps) {
               </a>
             )}
             {secondaryCta.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center rounded-[var(--token-button-radius)] border border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-card-bg)_70%,transparent)] px-5 py-3 text-sm font-bold text-[color:var(--token-heading)] transition hover:bg-[var(--token-card-bg)]" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} onClick={close} className="inline-flex items-center justify-center rounded-[var(--token-button-radius)] border border-[var(--token-card-border)] bg-[color-mix(in_srgb,var(--token-card-bg)_70%,transparent)] px-5 py-3 text-sm font-bold text-[color:var(--token-heading)] transition hover:bg-[var(--token-btn-bg)]" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}
