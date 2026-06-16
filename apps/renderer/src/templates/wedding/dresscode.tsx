@@ -22,7 +22,7 @@ type P = { badge: string; headline: string; text: string; colors: string[]; hint
 
 function Classic({ badge, headline, text, colors, hints }: P) {
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-card-bg)]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
       <div className="max-w-3xl mx-auto text-center">
         <span className="section-badge" data-edit-path="badge">{badge}</span>
         <h2 className="section-headline" data-edit-path="headline">{headline}</h2>

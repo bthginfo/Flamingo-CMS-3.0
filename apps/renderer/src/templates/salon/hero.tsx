@@ -96,7 +96,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, bgImage, bgImage
 /* ─── MODERN: Split layout (text left / image right), clean minimalist, dusty-rose accents ─── */
 function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta, bookingHint, ratingText, bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
-    <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-card-bg)]">
+    <section className="relative min-h-screen overflow-hidden -mt-[112px] pt-[112px] bg-[var(--token-section-bg)]">
       {(bgMode === 'image' && bgImage) ? (
         <>
           <Image data-edit-image="bgImage" src={bgImage} alt="" fill className={`object-cover lg:left-1/2 lg:w-1/2${bgImageMobile ? ' hidden md:block' : ''}`} priority sizes="50vw" />

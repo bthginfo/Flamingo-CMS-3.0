@@ -76,7 +76,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
       {/* SVG grain texture */}
       <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC43IiBudW1PY3RhdmVzPSI0IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI24pIi8+PC9zdmc+')] bg-repeat" />
       {/* Warm spotlight */}
-      <div className="absolute top-1/4 left-1/3 h-[700px] w-[700px] animate-pulse rounded-full bg-[color:color-mix(in_srgb,var(--token-btn-bg)_12%,transparent)] blur-[150px]" style={{ animationDuration: '6s' }} />
+      <div className="absolute top-1/4 left-1/3 h-[700px] w-[700px] animate-pulse rounded-full bg-[color-mix(in_srgb,var(--token-badge-bg)_45%,transparent)] blur-[150px]" style={{ animationDuration: '6s' }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20">
         <div className="max-w-4xl mx-auto text-center">
@@ -149,7 +149,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
 /* ─── MODERN: Split layout, text left / image right, minimalist, generous whitespace ─── */
 function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, bgImage, bgImageMobile, bgColor, bgMode, trustItems, primaryCta, secondaryCta , bgPosition, bgPositionMobile, imageEffect, imageEffectIntensity}: HeroProps) {
   return (
-    <section className="relative min-h-screen flex items-center -mt-[112px] pt-[112px] bg-[var(--token-card-bg)]">
+    <section className="relative min-h-screen flex items-center -mt-[112px] pt-[112px] bg-[var(--token-section-bg)]">
       <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center py-12 md:py-20">
         {/* Text side */}
         <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>

@@ -86,7 +86,7 @@ function BookingModern({ headline, subline, badgeText, submitCta, secondaryCta, 
 function BookingBold({ headline, subline, badgeText, submitCta, secondaryCta, bookingNote, trustItems }: Props) {
   return (
     <div className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_#111827] text-center">
-      {badgeText && <p className="inline-block bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
+      {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-icon)]" data-edit-path="badgeText">{badgeText}</p>}
       <h2 className="mt-3 text-2xl font-black uppercase text-[color:var(--token-heading)] sm:text-3xl" data-edit-path="headline">{headline}</h2>
       {subline && <div className="mx-auto mt-2 max-w-lg text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       {trustItems.length > 0 && (

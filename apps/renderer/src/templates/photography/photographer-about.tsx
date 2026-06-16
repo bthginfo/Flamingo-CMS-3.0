@@ -96,7 +96,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
   }
 
   return (
-    <section className="py-12 md:py-24 px-4 md:px-6 bg-[var(--token-card-bg)]">
+    <section className="py-12 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-5 gap-8 md:gap-12 lg:gap-16 items-start">
           {image && (
@@ -124,7 +124,7 @@ export function PhotographerAboutSection({ data, styleVariant }: Props) {
             {values.length > 0 && (
               <div className="mt-8 grid sm:grid-cols-2 gap-4">
                 {values.map((v, i) => (
-                  <div key={i} className="p-4 rounded-xl bg-[color-mix(in_srgb,var(--token-btn-bg)_3%,transparent)] border border-[color-mix(in_srgb,var(--token-card-border)_10%,transparent)]" data-edit-collection="values" data-edit-index={i}>
+                  <div key={i} className="p-4 rounded-xl bg-[color-mix(in_srgb,var(--token-badge-bg)_35%,transparent)] border border-[color-mix(in_srgb,var(--token-card-border)_10%,transparent)]" data-edit-collection="values" data-edit-index={i}>
                     <h4 className="font-semibold text-[color:var(--token-heading)] text-sm" data-edit-path="title">{v.title}</h4>
                     <div className="text-[color:var(--token-muted)] text-sm mt-1 rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />
                   </div>
