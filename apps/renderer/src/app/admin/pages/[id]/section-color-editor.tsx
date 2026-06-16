@@ -303,51 +303,45 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
 };
 
 /* ─── FIELD SELECTION ─── */
-// Show ONLY the color fields defined in the section's contract.
-// However, ALWAYS include sectionBg so every section can have its background changed.
-// This prevents accidental overrides of unrelated color properties while ensuring
-// foundational controls are always available.
-export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
-  // Determine which fields are defined for this section (from the contract)
+type SectionColorContractSource = 'industry' | 'generic' | 'none';
+
+export function resolveColorContractForSection(
+  sectionType: string,
+  industry?: string,
+): { fields: ColorFieldKey[]; source: SectionColorContractSource } {
   const industryKey = industry
     ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
     : null;
   const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
   const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
-  const contractFields = (Array.isArray(industrySpecific) && industrySpecific.length > 0)
-    ? industrySpecific as ColorFieldKey[]
-    : (Array.isArray(generic) && generic.length > 0 ? generic as ColorFieldKey[] : []);
-
-  // ALWAYS include these foundational fields, even if not in contract
-  const requiredFields: ColorFieldKey[] = ['sectionBg'];
-  const allFields = new Set([...contractFields, ...requiredFields]);
-
-  // If no contract found, show primary categories as fallback
-  if (contractFields.length === 0) {
-    return sortColorFields([
-      'sectionBg',
-      'cardBg',
-      'headingColor',
-      'bodyColor',
-      'mutedColor',
-      'iconColor',
-      'accentColor',
-      'btnBg',
-      'btnText',
-      'badgeBg',
-      'borderColor',
-    ]);
+  if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
+    return {
+      source: 'industry',
+      fields: sortColorFields(Array.from(new Set<ColorFieldKey>([...industrySpecific as ColorFieldKey[], 'sectionBg']))),
+    };
   }
+  if (Array.isArray(generic) && generic.length > 0) {
+    return {
+      source: 'generic',
+      fields: sortColorFields(Array.from(new Set<ColorFieldKey>([...generic as ColorFieldKey[], 'sectionBg']))),
+    };
+  }
+  return {
+    source: 'none',
+    fields: ['sectionBg'],
+  };
+}
 
-  // Return contract fields + always-required fields, sorted by render order
-  return sortColorFields(Array.from(allFields));
+export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
+  return resolveColorContractForSection(sectionType, industry).fields;
 }
 
 
 export function SectionColorEditor({ value, onChange, sectionType, industry, resolvedVars, iframeRef, sectionId }: { value: ColorOverrides | null; onChange: (overrides: ColorOverrides | null) => void; sectionType?: string; industry?: string; resolvedVars?: Record<string, string>; iframeRef?: React.RefObject<HTMLIFrameElement | null>; sectionId?: string }) {
   const probeRef = useRef<HTMLDivElement>(null);
   const overrides = migrateLegacyOverrides<ColorOverrides>(value);
-  const rawFields = sectionType ? getFieldsForSection(sectionType, industry) : Object.keys(FIELD_DEFS) as ColorFieldKey[];
+  const contractInfo = sectionType ? resolveColorContractForSection(sectionType, industry) : null;
+  const rawFields = sectionType ? contractInfo.fields : Object.keys(FIELD_DEFS) as ColorFieldKey[];
   // Only count overrides that are actually used by this section (filter out legacy/copied values)
   const relevantCSSVars = new Set(rawFields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean));
   const activeCount = Object.entries(overrides).filter(([k, v]) => relevantCSSVars.has(k as string) && v).length;
@@ -543,6 +537,11 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
         <span>Farben anpassen</span>
         {activeCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-blue-200 text-blue-800 rounded-full text-[10px] font-bold">{activeCount} Farben</span>}
       </summary>
+      {sectionType && contractInfo?.source === 'none' && (
+        <div className="mt-3 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+          Kein Farbvertrag fuer <strong>{sectionType}</strong> gefunden. Es ist nur Hintergrund aktiv, bis die Section-Contracts regeneriert wurden.
+        </div>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-3 border-t border-blue-100">
         {colorFields.map(renderColorField)}
       </div>

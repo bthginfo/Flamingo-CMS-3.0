@@ -69,6 +69,36 @@ function parseImportNames(raw) {
   }).filter(Boolean);
 }
 
+function extractConstObjectBody(src, constName) {
+  const header = new RegExp(`const\\s+${constName}\\s*:[^=]*=\\s*\\{`, 'm');
+  const m = header.exec(src);
+  if (!m) return null;
+
+  const openBraceIdx = m.index + m[0].length - 1;
+  let depth = 1;
+  let i = openBraceIdx + 1;
+  while (depth > 0 && i < src.length) {
+    const ch = src[i];
+    if (ch === '{') depth++;
+    else if (ch === '}') depth--;
+    i++;
+  }
+  return src.slice(openBraceIdx + 1, i - 1);
+}
+
+function parseFlatTemplateMap(src, constName) {
+  const body = extractConstObjectBody(src, constName);
+  if (!body) return [];
+
+  const entries = [];
+  const entryRe = /^\s*([a-zA-Z][\w]*)\s*:\s*([A-Z][A-Za-z0-9]+),?\s*$/gm;
+  let m;
+  while ((m = entryRe.exec(body)) !== null) {
+    entries.push({ type: m[1], componentName: m[2] });
+  }
+  return entries;
+}
+
 function loadTemplateRegistry() {
   const src = fs.readFileSync(TEMPLATES_INDEX, 'utf8');
   const componentToFile = new Map();
@@ -135,7 +165,9 @@ function loadTemplateRegistry() {
     }
   }
 
-  return { componentToFile, industryTypeComponent };
+  const sharedTypeComponent = parseFlatTemplateMap(src, 'SHARED_TEMPLATES');
+
+  return { componentToFile, industryTypeComponent, sharedTypeComponent };
 }
 
 // ----------------------------------------------------------------------
@@ -222,17 +254,24 @@ const LEGACY_ALIASES = new Map([
 
 function build() {
   const cssVarToField = loadFieldDefs();
-  const { componentToFile, industryTypeComponent } = loadTemplateRegistry();
+  const { componentToFile, industryTypeComponent, sharedTypeComponent } = loadTemplateRegistry();
 
   const perIndustry = {};   // 'heroSalon' ? ColorFieldKey[]
   const perType = {};       // 'hero' ? ColorFieldKey[] (union)
-  const stats = { entries: 0, resolved: 0, missing: [] };
+  const stats = {
+    industryEntries: 0,
+    industryResolved: 0,
+    industryMissing: [],
+    sharedEntries: sharedTypeComponent.length,
+    sharedResolved: 0,
+    sharedMissing: [],
+  };
 
   for (const { industry, type, componentName } of industryTypeComponent) {
-    stats.entries++;
+    stats.industryEntries++;
     const file = componentToFile.get(componentName);
-    if (!file) { stats.missing.push(`${industry}.${type} (${componentName})`); continue; }
-    stats.resolved++;
+    if (!file) { stats.industryMissing.push(`${industry}.${type} (${componentName})`); continue; }
+    stats.industryResolved++;
 
     const tokens = extractTokenVars(file);
     const fieldSet = new Set();
@@ -250,6 +289,21 @@ function build() {
     if (!perType[type]) perType[type] = new Set();
     for (const f of fields) perType[type].add(f);
   }
+
+  for (const { type, componentName } of sharedTypeComponent) {
+    const file = componentToFile.get(componentName);
+    if (!file) { stats.sharedMissing.push(`${type} (${componentName})`); continue; }
+    stats.sharedResolved++;
+
+    const tokens = extractTokenVars(file);
+    if (!perType[type]) perType[type] = new Set();
+    perType[type].add('sectionBg');
+    for (const t of tokens) {
+      const field = cssVarToField.get(t);
+      if (field) perType[type].add(field);
+    }
+  }
+
   // Materialize unions in canonical order
   const perTypeArr = {};
   for (const [t, set] of Object.entries(perType)) {
@@ -305,10 +359,14 @@ function main() {
   const out = render(perIndustry, perType);
   fs.writeFileSync(OUTPUT_FILE, out);
 
-  console.log(`Industry entries scanned:  ${stats.entries}`);
-  console.log(`Resolved (template found): ${stats.resolved}`);
-  console.log(`Missing:                   ${stats.missing.length}`);
-  if (stats.missing.length) stats.missing.slice(0, 10).forEach((m) => console.log('  - ' + m));
+  console.log(`Industry entries scanned:  ${stats.industryEntries}`);
+  console.log(`Industry resolved:         ${stats.industryResolved}`);
+  console.log(`Industry missing:          ${stats.industryMissing.length}`);
+  if (stats.industryMissing.length) stats.industryMissing.slice(0, 10).forEach((m) => console.log('  - ' + m));
+  console.log(`Shared entries scanned:    ${stats.sharedEntries}`);
+  console.log(`Shared resolved:           ${stats.sharedResolved}`);
+  console.log(`Shared missing:            ${stats.sharedMissing.length}`);
+  if (stats.sharedMissing.length) stats.sharedMissing.slice(0, 10).forEach((m) => console.log('  - ' + m));
   console.log(`Per-industry keys written: ${Object.keys(perIndustry).length}`);
   console.log(`Per-type keys written:     ${Object.keys(perType).length}`);
   console.log(`Wrote ${path.relative(ROOT, OUTPUT_FILE)}`);
