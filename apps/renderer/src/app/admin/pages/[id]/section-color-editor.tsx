@@ -341,7 +341,7 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
   const probeRef = useRef<HTMLDivElement>(null);
   const overrides = migrateLegacyOverrides<ColorOverrides>(value);
   const contractInfo = sectionType ? resolveColorContractForSection(sectionType, industry) : null;
-  const rawFields = sectionType ? contractInfo.fields : Object.keys(FIELD_DEFS) as ColorFieldKey[];
+  const rawFields = contractInfo?.fields ?? Object.keys(FIELD_DEFS) as ColorFieldKey[];
   // Only count overrides that are actually used by this section (filter out legacy/copied values)
   const relevantCSSVars = new Set(rawFields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean));
   const activeCount = Object.entries(overrides).filter(([k, v]) => relevantCSSVars.has(k as string) && v).length;
