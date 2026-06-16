@@ -10,10 +10,10 @@ export function NoticeBannerSection({ data }: Props) {
   const headline = (data.headline as string) || '';
   const subline = (data.subline as string) || '';
   const text = (data.text as string) || '';
-  const bgColor = (data.bgColor as string) || 'var(--token-section-bg, var(--brand-primary, #2563eb))';
+  const bgColor = (data.bgColor as string) || 'var(--token-section-bg, #2563eb)';
   const textColor = (data.textColor as string) || 'var(--token-body, #ffffff)';
-  const btnBg = (data.btnBg as string) || (data.accentColor as string) || 'var(--token-btn-bg, var(--brand-btn-bg, #111827))';
-  const btnText = (data.btnText as string) || 'var(--token-btn-text, var(--brand-btn-text, #ffffff))';
+  const btnBg = (data.btnBg as string) || (data.accentColor as string) || 'var(--token-btn-bg, #111827)';
+  const btnText = (data.btnText as string) || 'var(--token-btn-text, #ffffff)';
   const primaryCta = data.primaryCta as { label: string; href: string; icon?: string } | undefined;
   const secondaryCta = data.secondaryCta as { label: string; href: string; icon?: string } | undefined;
 
