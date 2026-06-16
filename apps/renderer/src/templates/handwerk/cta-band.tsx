@@ -67,7 +67,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
         {subline && <motion.p initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="rt-content mx-auto mb-10 max-w-2xl text-lg leading-8 sm:text-xl" style={{ color: CTA_CARD_BODY }} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         {cta?.label && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.5 }}>
-          <a data-edit-link="cta" href={cta.href} className="group inline-flex items-center gap-2.5 rounded-full bg-[var(--token-card-bg,#fff)] px-8 py-4 font-semibold text-[color:var(--token-heading,#0f172a)] transition-all hover:-translate-y-0.5 hover:brightness-110">
+          <a data-edit-link="cta" href={cta.href} className="group inline-flex items-center gap-2.5 rounded-full bg-[var(--token-btn-bg,var(--brand-btn-bg,#111827))] px-8 py-4 font-semibold text-[color:var(--token-btn-text,var(--brand-btn-text,#ffffff))] transition-all hover:-translate-y-0.5 hover:brightness-110">
               <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon editPath="cta.icon" name={cta.icon} size={18} className="group-hover:translate-x-1 transition-transform" />}
             </a>
           </motion.div>
