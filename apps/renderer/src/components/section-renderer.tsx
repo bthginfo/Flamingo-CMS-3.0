@@ -468,8 +468,7 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
 [data-section-id="${section.id}"][data-style] [data-edit-collection] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]),[data-section-id="${section.id}"][data-style] [data-card] :is(h1,h2,h3,h4,h5,h6):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardHeadingColorVar} !important; }
 [data-section-id="${section.id}"][data-style] [data-edit-collection] :is(p,li):not([class*="text-white"]):not([class*="text-black"]),[data-section-id="${section.id}"][data-style] [data-card] :is(p,li):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardBodyColorVar} !important; }
 [data-section-id="${section.id}"][data-style] [data-edit-collection] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]),[data-section-id="${section.id}"][data-style] [data-card] :is(small,figcaption,[class*="text-muted"],[class*="text-zinc"],[class*="text-gray"]):not([class*="text-white"]):not([class*="text-black"]) { color: ${cardMutedColorVar} !important; }
-[data-section-id="${section.id}"][data-style] .section-badge { color: var(--style-badge-text, var(--style-accent-color, inherit)) !important; background-color: var(--style-badge-bg, transparent) !important; }
-[data-section-id="${section.id}"][data-style] [class*="brand-btn"] { color: var(--brand-btn-text, inherit) !important; background-color: var(--brand-btn-bg, transparent) !important; }
+[data-section-id="${section.id}"][data-style] .section-badge { color: var(--token-badge-text, var(--style-badge-text, var(--style-accent-color, inherit))) !important; background-color: var(--token-badge-bg, var(--style-badge-bg, transparent)) !important; }
 `
     : '';
   const sectionOverlayCss = buildImageOverlayCss(section);
