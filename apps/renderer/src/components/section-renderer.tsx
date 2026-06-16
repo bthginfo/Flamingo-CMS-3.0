@@ -430,48 +430,46 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     : undefined;
   const sectionStyle = withBookingStyleAliases(section.type, normalizeSectionStyle(overrideStyle));
 
-  // Global bridge: inject CSS var overrides into section.data as props so that
-  // templates reading data.bgColor / data.textColor / data.accentColor also
-  // respond to the CMS color editor (not just var()-based templates).
+  // Global bridge: strict 1:1 CSS var → data prop mapping.
+  // NO cross-token fallbacks. Each token maps to exactly ONE data property.
+  // This ensures CMS fields don't interfere with unrelated component color properties.
+  // Also provides legacy prop aliases (bgColor for sectionBg, textColor for bodyColor, etc)
+  // for templates that haven't migrated to new token-based prop names.
   if (sectionStyle) {
     const s = sectionStyle as Record<string, string>;
     const injected: Record<string, unknown> = {};
-    if (s['--token-section-bg'] && !section.data.bgColor) injected.bgColor = s['--token-section-bg'];
-    else if (s['--style-section-bg'] && !section.data.bgColor) injected.bgColor = s['--style-section-bg'];
 
-    if (s['--token-on-dark-heading'] && !section.data.textColor) injected.textColor = s['--token-on-dark-heading'];
-    else if (s['--token-on-dark-body'] && !section.data.textColor) injected.textColor = s['--token-on-dark-body'];
-    else if (s['--token-body'] && !section.data.textColor) injected.textColor = s['--token-body'];
-    else if (s['--token-heading'] && !section.data.textColor) injected.textColor = s['--token-heading'];
-
+    // STRICT 1:1 MAPPINGS + legacy aliases: each token to ONE prop, NO FALLBACKS ACROSS TOKENS
+    if (s['--token-section-bg'] && !section.data.sectionBg) {
+      injected.sectionBg = s['--token-section-bg'];
+      injected.bgColor = s['--token-section-bg']; // Legacy alias
+    }
+    if (s['--token-section-bg-alt'] && !section.data.sectionBgAlt) injected.sectionBgAlt = s['--token-section-bg-alt'];
+    if (s['--token-card-bg'] && !section.data.cardBg) injected.cardBg = s['--token-card-bg'];
+    if (s['--token-heading'] && !section.data.headingColor) injected.headingColor = s['--token-heading'];
+    if (s['--token-card-heading'] && !section.data.cardHeadingColor) injected.cardHeadingColor = s['--token-card-heading'];
+    if (s['--token-subheading'] && !section.data.subheadingColor) injected.subheadingColor = s['--token-subheading'];
+    if (s['--token-body'] && !section.data.bodyColor) {
+      injected.bodyColor = s['--token-body'];
+      injected.textColor = s['--token-body']; // Legacy alias
+    }
+    if (s['--token-card-body'] && !section.data.cardBodyColor) injected.cardBodyColor = s['--token-card-body'];
+    if (s['--token-muted'] && !section.data.mutedColor) injected.mutedColor = s['--token-muted'];
+    if (s['--token-icon'] && !section.data.iconColor) injected.iconColor = s['--token-icon'];
+    if (s['--token-card-icon'] && !section.data.cardIconColor) injected.cardIconColor = s['--token-card-icon'];
+    if (s['--token-eyebrow'] && !section.data.eyebrowColor) injected.eyebrowColor = s['--token-eyebrow'];
     if (s['--token-accent'] && !section.data.accentColor) injected.accentColor = s['--token-accent'];
-    else if (s['--style-accent-color'] && !section.data.accentColor) injected.accentColor = s['--style-accent-color'];
-    else if (s['--token-icon'] && !section.data.accentColor) injected.accentColor = s['--token-icon'];
-    else if (s['--token-eyebrow'] && !section.data.accentColor) injected.accentColor = s['--token-eyebrow'];
-    else if (s['--token-btn-bg'] && !section.data.accentColor) injected.accentColor = s['--token-btn-bg'];
-
+    if (s['--token-stat-value'] && !section.data.statValue) injected.statValue = s['--token-stat-value'];
+    if (s['--token-on-dark-heading'] && !section.data.onDarkHeading) injected.onDarkHeading = s['--token-on-dark-heading'];
+    if (s['--token-on-dark-body'] && !section.data.onDarkBody) injected.onDarkBody = s['--token-on-dark-body'];
+    if (s['--token-on-dark-muted'] && !section.data.onDarkMuted) injected.onDarkMuted = s['--token-on-dark-muted'];
     if (s['--token-btn-bg'] && !section.data.btnBg) injected.btnBg = s['--token-btn-bg'];
-    else if (s['--brand-btn-bg'] && !section.data.btnBg) injected.btnBg = s['--brand-btn-bg'];
-
     if (s['--token-btn-text'] && !section.data.btnText) injected.btnText = s['--token-btn-text'];
-    else if (s['--brand-btn-text'] && !section.data.btnText) injected.btnText = s['--brand-btn-text'];
-
     if (s['--token-badge-bg'] && !section.data.badgeBg) injected.badgeBg = s['--token-badge-bg'];
     if (s['--token-badge-text'] && !section.data.badgeText) injected.badgeText = s['--token-badge-text'];
-    if (s['--token-icon'] && !section.data.iconColor) injected.iconColor = s['--token-icon'];
-    if (s['--token-eyebrow'] && !section.data.eyebrowColor) injected.eyebrowColor = s['--token-eyebrow'];
-    if (s['--token-card-bg'] && !section.data.cardBg) injected.cardBg = s['--token-card-bg'];
-    if (s['--token-body'] && !section.data.bodyColor) injected.bodyColor = s['--token-body'];
-    if (s['--token-on-dark-body'] && !section.data.bodyColor) injected.bodyColor = s['--token-on-dark-body'];
-    if (s['--token-muted'] && !section.data.mutedColor) injected.mutedColor = s['--token-muted'];
     if (s['--token-card-border'] && !section.data.borderColor) injected.borderColor = s['--token-card-border'];
-    else if (s['--style-border-color'] && !section.data.borderColor) injected.borderColor = s['--style-border-color'];
-
     if (s['--token-divider'] && !section.data.dividerColor) injected.dividerColor = s['--token-divider'];
-    else if (s['--style-divider-color'] && !section.data.dividerColor) injected.dividerColor = s['--style-divider-color'];
-
     if (s['--token-divider'] && !section.data.lineColor) injected.lineColor = s['--token-divider'];
-    else if (s['--style-divider-color'] && !section.data.lineColor) injected.lineColor = s['--style-divider-color'];
 
     if (Object.keys(injected).length > 0) {
       section = { ...section, data: { ...section.data, ...injected } };

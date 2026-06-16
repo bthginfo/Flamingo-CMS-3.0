@@ -303,28 +303,40 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
 };
 
 /* ─── FIELD SELECTION ─── */
-// Show ALL color fields for every section type. This ensures that every
-// section can be fully styled regardless of whether its template uses CSS
-// vars or data props. The codegen contracts determine field ORDER only
-// (primary fields shown first).
+// Show ONLY the color fields defined in the section's contract.
+// This prevents accidental overrides of unrelated color properties.
+// Example: ctaBandSalon should ONLY show [sectionBg, cardBg, headingColor, iconColor, accentColor, btnBg, btnText, borderColor],
+// NOT every field in FIELD_DEFS.
 export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
-  // All editable fields except sectionBgAlt (internal-only)
-  const ALL_EDITABLE: ColorFieldKey[] = (Object.keys(FIELD_DEFS) as ColorFieldKey[]).filter(f => f !== 'sectionBgAlt');
-
-  // Determine which fields are "primary" for ordering
+  // Determine which fields are defined for this section (from the contract)
   const industryKey = industry
     ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
     : null;
   const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
   const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
-  const primary = (Array.isArray(industrySpecific) && industrySpecific.length > 0)
+  const contractFields = (Array.isArray(industrySpecific) && industrySpecific.length > 0)
     ? industrySpecific as ColorFieldKey[]
     : (Array.isArray(generic) && generic.length > 0 ? generic as ColorFieldKey[] : []);
 
-  // Primary fields first, then remaining (de-duped)
-  const primarySet = new Set(primary);
-  const rest = ALL_EDITABLE.filter(f => !primarySet.has(f));
-  return [...primary.filter(f => f !== 'sectionBgAlt'), ...rest];
+  // If no contract found, show primary categories (section, card, text, button) as fallback
+  if (contractFields.length === 0) {
+    return sortColorFields([
+      'sectionBg',
+      'cardBg',
+      'headingColor',
+      'bodyColor',
+      'mutedColor',
+      'iconColor',
+      'accentColor',
+      'btnBg',
+      'btnText',
+      'badgeBg',
+      'borderColor',
+    ]);
+  }
+
+  // Return ONLY the fields defined in the contract, sorted by render order
+  return sortColorFields(contractFields.filter(f => f !== 'sectionBgAlt'));
 }
 
 
