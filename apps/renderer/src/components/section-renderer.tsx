@@ -429,6 +429,35 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     ? Object.fromEntries(Object.entries(section.styleOverrides).filter(([, v]) => v)) as React.CSSProperties
     : undefined;
   const sectionStyle = withBookingStyleAliases(section.type, normalizeSectionStyle(overrideStyle));
+
+  // Global bridge: inject CSS var overrides into section.data as props so that
+  // templates reading data.bgColor / data.textColor / data.accentColor also
+  // respond to the CMS color editor (not just var()-based templates).
+  if (sectionStyle) {
+    const s = sectionStyle as Record<string, string>;
+    const injected: Record<string, unknown> = {};
+    if (s['--token-section-bg'] && !section.data.bgColor) injected.bgColor = s['--token-section-bg'];
+    if (s['--token-on-dark-heading'] && !section.data.textColor) injected.textColor = s['--token-on-dark-heading'];
+    else if (s['--token-heading'] && !section.data.textColor) injected.textColor = s['--token-heading'];
+    if (s['--token-accent'] && !section.data.accentColor) injected.accentColor = s['--token-accent'];
+    else if (s['--token-eyebrow'] && !section.data.accentColor) injected.accentColor = s['--token-eyebrow'];
+    else if (s['--token-btn-bg'] && !section.data.accentColor) injected.accentColor = s['--token-btn-bg'];
+    if (s['--token-btn-bg'] && !section.data.btnBg) injected.btnBg = s['--token-btn-bg'];
+    if (s['--token-btn-text'] && !section.data.btnText) injected.btnText = s['--token-btn-text'];
+    if (s['--token-badge-bg'] && !section.data.badgeBg) injected.badgeBg = s['--token-badge-bg'];
+    if (s['--token-badge-text'] && !section.data.badgeText) injected.badgeText = s['--token-badge-text'];
+    if (s['--token-icon'] && !section.data.iconColor) injected.iconColor = s['--token-icon'];
+    if (s['--token-eyebrow'] && !section.data.eyebrowColor) injected.eyebrowColor = s['--token-eyebrow'];
+    if (s['--token-card-bg'] && !section.data.cardBg) injected.cardBg = s['--token-card-bg'];
+    if (s['--token-body'] && !section.data.bodyColor) injected.bodyColor = s['--token-body'];
+    if (s['--token-on-dark-body'] && !section.data.bodyColor) injected.bodyColor = s['--token-on-dark-body'];
+    if (s['--token-muted'] && !section.data.mutedColor) injected.mutedColor = s['--token-muted'];
+    if (s['--token-card-border'] && !section.data.borderColor) injected.borderColor = s['--token-card-border'];
+    if (s['--token-divider'] && !section.data.dividerColor) injected.dividerColor = s['--token-divider'];
+    if (Object.keys(injected).length > 0) {
+      section = { ...section, data: { ...section.data, ...injected } };
+    }
+  }
   const sectionColorCss = sectionStyle
     ? `
 [data-section-id="${section.id}"][data-style] { --_card-h:${cardHeadingColorVar}; --_card-b:${cardBodyColorVar}; --_card-m:${cardMutedColorVar}; }

@@ -302,39 +302,29 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
   dangerBg:            { cssVar: '--token-danger-bg',            label: 'Warnung-Hintergrund',    description: 'Hintergrund für Sale-Badges / Warnhinweise', group: 'special' },
 };
 
-/* ─── SINGLE SOURCE OF TRUTH ─── */
-// The editor reads ONLY the codegen output. The codegen scans each
-// industry-specific template file for var(--token-*) references and
-// reverse-maps them to ColorFieldKey via FIELD_DEFS. Regenerate with:
-//   node scripts/generate-section-color-contracts.cjs
+/* ─── FIELD SELECTION ─── */
+// Show ALL color fields for every section type. This ensures that every
+// section can be fully styled regardless of whether its template uses CSS
+// vars or data props. The codegen contracts determine field ORDER only
+// (primary fields shown first).
 export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
-  const ensureSecondaryButtonFields = (fields: ColorFieldKey[]): ColorFieldKey[] => {
-    const next = new Set(fields);
-    // Some templates (e.g. tattoo hero) reference secondary CTA token vars only
-    // inside inline style objects, which codegen can miss. If a section exposes
-    // primary button tokens, or is a hero section, we also expose secondary
-    // button controls.
-    if (next.has('btnBg') || next.has('btnText') || sectionType === 'hero') {
-      next.add('btnSecondaryBg');
-      next.add('btnSecondaryText');
-      next.add('btnSecondaryBorder');
-    }
-    return Array.from(next);
-  };
+  // All editable fields except sectionBgAlt (internal-only)
+  const ALL_EDITABLE: ColorFieldKey[] = (Object.keys(FIELD_DEFS) as ColorFieldKey[]).filter(f => f !== 'sectionBgAlt');
 
+  // Determine which fields are "primary" for ordering
   const industryKey = industry
     ? `${sectionType}${industry.charAt(0).toUpperCase()}${industry.slice(1)}`
     : null;
   const industrySpecific = industryKey ? SECTION_COLOR_CONTRACTS_GENERATED[industryKey] : undefined;
-  if (Array.isArray(industrySpecific) && industrySpecific.length > 0) {
-    return ensureSecondaryButtonFields(industrySpecific as ColorFieldKey[]);
-  }
   const generic = SECTION_COLOR_CONTRACTS_GENERIC[sectionType];
-  if (Array.isArray(generic) && generic.length > 0) {
-    return ensureSecondaryButtonFields(generic as ColorFieldKey[]);
-  }
-  // No codegen entry → minimal safe set. Re-run the generator to fix.
-  return ensureSecondaryButtonFields(['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'accentColor', 'btnBg', 'btnText']);
+  const primary = (Array.isArray(industrySpecific) && industrySpecific.length > 0)
+    ? industrySpecific as ColorFieldKey[]
+    : (Array.isArray(generic) && generic.length > 0 ? generic as ColorFieldKey[] : []);
+
+  // Primary fields first, then remaining (de-duped)
+  const primarySet = new Set(primary);
+  const rest = ALL_EDITABLE.filter(f => !primarySet.has(f));
+  return [...primary.filter(f => f !== 'sectionBgAlt'), ...rest];
 }
 
 
@@ -355,13 +345,7 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
   // Split into color fields and design token fields
   const colorFields = sortColorFields(allFields.filter(f => FIELD_DEFS[f]?.type !== 'size'));
   const designFields = allFields.filter(f => FIELD_DEFS[f]?.type === 'size');
-  // Split color fields by visibility group so the editor isn't overwhelming:
-  //  - core:     always visible (the obvious 6–12 knobs)
-  //  - special:  collapsed by default (eyebrow / stat / quote / rating / overlay…)
-  //  - advanced: collapsed by default (legacy --style-* / --brand-* duplicates)
-  const coreFields     = colorFields.filter(f => (FIELD_DEFS[f]?.group ?? 'core') === 'core');
-  const specialFields  = colorFields.filter(f =>  FIELD_DEFS[f]?.group === 'special');
-  const advancedFields = colorFields.filter(f =>  FIELD_DEFS[f]?.group === 'advanced');
+  // No grouping — show all color fields flat in one grid.
 
   // All CSS vars we need to read (token-only after Phase 3 cleanup)
   const allVarKeys = allFields.map(f => FIELD_DEFS[f]?.cssVar).filter(Boolean);
@@ -544,28 +528,8 @@ export function SectionColorEditor({ value, onChange, sectionType, industry, res
         {activeCount > 0 && <span className="ml-1 px-1.5 py-0.5 bg-blue-200 text-blue-800 rounded-full text-[10px] font-bold">{activeCount} Farben</span>}
       </summary>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-3 border-t border-blue-100">
-        {coreFields.map(renderColorField)}
+        {colorFields.map(renderColorField)}
       </div>
-      {specialFields.length > 0 && (
-        <details className="mt-3 pt-3 border-t border-zinc-100">
-          <summary className="text-xs font-medium text-zinc-600 cursor-pointer flex items-center gap-1 mb-2 hover:text-zinc-900 transition-colors">
-            <ChevronDown size={12} /> Spezial-Felder ({specialFields.length})
-          </summary>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-            {specialFields.map(renderColorField)}
-          </div>
-        </details>
-      )}
-      {advancedFields.length > 0 && (
-        <details className="mt-3 pt-3 border-t border-zinc-100">
-          <summary className="text-xs font-medium text-zinc-600 cursor-pointer flex items-center gap-1 mb-2 hover:text-zinc-900 transition-colors">
-            <ChevronDown size={12} /> Erweitert – Legacy / Marken-Variablen ({advancedFields.length})
-          </summary>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-            {advancedFields.map(renderColorField)}
-          </div>
-        </details>
-      )}
       {designFields.length > 0 && (
         <div className="mt-3 pt-3 border-t border-zinc-100">
           <button type="button" className="text-xs font-medium text-zinc-600 flex items-center gap-1 mb-2 hover:text-zinc-900 transition-colors" onClick={() => setShowAdvanced(!showAdvanced)}>
