@@ -27,12 +27,12 @@ export function CtaBandSection({ data, styleVariant }: Props) {
 
 type ColorOverrides = { bgColor?: string; textColor?: string; accentColor?: string };
 type CProps = { headline: string; subline: string; badgeText: string; cta?: { label: string; href: string; icon?: string }; colors?: ColorOverrides };
-const CTA_CARD_BG = 'linear-gradient(135deg, color-mix(in srgb, var(--token-btn-bg, #0f172a) 92%, #000) 0%, color-mix(in srgb, var(--token-accent, #f59e0b) 30%, var(--token-btn-bg, #0f172a)) 100%)';
-const CTA_CARD_HEADING = 'var(--token-btn-text, #fff)';
-const CTA_CARD_BODY = 'color-mix(in srgb, var(--token-btn-text, #fff) 82%, transparent)';
-const CTA_CARD_BADGE_BG = 'color-mix(in srgb, var(--token-btn-text, #fff) 14%, transparent)';
-const CTA_CARD_BADGE_TEXT = 'var(--token-btn-text, #fff)';
-const CTA_CARD_BADGE_BORDER = 'color-mix(in srgb, var(--token-btn-text, #fff) 24%, transparent)';
+const CTA_CARD_BG = 'linear-gradient(135deg, color-mix(in srgb, var(--token-card-bg, #0f172a) 92%, #000) 0%, color-mix(in srgb, var(--token-accent, #f59e0b) 30%, var(--token-card-bg, #0f172a)) 100%)';
+const CTA_CARD_HEADING = 'var(--token-heading, #fff)';
+const CTA_CARD_BODY = 'color-mix(in srgb, var(--token-on-dark-body, rgba(255,255,255,0.78)) 82%, transparent)';
+const CTA_CARD_BADGE_BG = 'color-mix(in srgb, var(--token-on-dark-body, rgba(255,255,255,0.78)) 14%, transparent)';
+const CTA_CARD_BADGE_TEXT = 'var(--token-on-dark-body, rgba(255,255,255,0.78))';
+const CTA_CARD_BADGE_BORDER = 'color-mix(in srgb, var(--token-on-dark-body, rgba(255,255,255,0.78)) 24%, transparent)';
 
 /* ─── CLASSIC: Gradient bg, centered, pill cta, floating orbs ─── */
 function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {

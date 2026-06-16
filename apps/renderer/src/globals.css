@@ -237,7 +237,17 @@ html {
     background-color: var(--style-section-bg, #171717) !important;
   }
 
-  /* ─── CTA / accent button color overrides — use brand primary ─── */
+  /* ─── CTA / button color overrides — use TOKEN-AWARE system ─── */
+  /* When section has token-btn-bg override, apply to ALL buttons within it */
+  [data-style][style*="--token-btn-bg"] a,
+  [data-style][style*="--token-btn-bg"] button,
+  [data-style][style*="--token-btn-bg"] a[class*="bg-"],
+  [data-style][style*="--token-btn-bg"] button[class*="bg-"] {
+    background-color: var(--token-btn-bg, var(--brand-btn-bg, var(--brand-primary))) !important;
+    color: var(--token-btn-text, var(--brand-btn-text, white)) !important;
+  }
+
+  /* Fallback: CTA / accent button color overrides — use brand primary (legacy Tailwind classes) */
   [data-style] a[class*="bg-amber-"],
   [data-style] button[class*="bg-amber-"],
   [data-style] a[class*="bg-red-6"],
