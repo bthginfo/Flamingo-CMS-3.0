@@ -29,6 +29,8 @@ jobs:
       # (see docs/section-color-system.md).
       - run: pnpm check:section-colors
       - run: pnpm check:tokens
+      - run: pnpm audit:crosstalk
+      - run: pnpm check:hardcoded-colors
 
       - run: pnpm --filter @flamingo/admin build
         env:

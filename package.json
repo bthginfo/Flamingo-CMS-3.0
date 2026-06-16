@@ -9,6 +9,7 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "audit:crosstalk": "node scripts/audit-token-crosstalk.cjs",
+    "check:hardcoded-colors": "node scripts/check-hardcoded-colors-regression.cjs",
     "typecheck": "turbo typecheck",
     "audit:tenant": "tsx scripts/audit-tenant-content.ts",
     "audit:tenant:diff": "tsx scripts/compare-tenant-audits.ts",
