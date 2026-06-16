@@ -516,7 +516,7 @@ export const SECTION_COLOR_CONTRACTS_GENERIC: Partial<Record<string, ColorFieldK
   signatureGrid: ['sectionBg', 'sectionBgAlt', 'cardBg', 'headingColor', 'cardHeadingColor', 'bodyColor', 'cardBodyColor', 'iconColor', 'onDarkHeading', 'statValue', 'badgeText', 'borderColor'],
   socialProofBar: ['sectionBg', 'cardBg', 'headingColor', 'bodyColor', 'cardBodyColor', 'accentColor', 'ratingStar', 'badgeText', 'borderColor'],
   spaceShowcase: ['sectionBg', 'sectionBgAlt', 'cardBg', 'bodyColor', 'cardBodyColor', 'iconColor', 'btnText', 'borderColor', 'cardRadius', 'cardShadow', 'headingWeight', 'headingTracking'],
-  spotlightCards: ['sectionBg', 'cardBg', 'headingColor', 'cardHeadingColor', 'bodyColor', 'cardBodyColor', 'iconColor', 'borderColor', 'cardRadius'],
+  spotlightCards: ['sectionBg', 'cardBg', 'headingColor', 'cardHeadingColor', 'bodyColor', 'cardBodyColor', 'iconColor', 'accentColor', 'borderColor', 'cardRadius'],
   stats: ['sectionBg', 'cardBg', 'bodyColor', 'iconColor', 'statValue', 'borderColor'],
   statsCounter: ['sectionBg', 'cardBg', 'headingColor', 'cardHeadingColor', 'bodyColor', 'cardBodyColor', 'accentColor', 'statValue', 'badgeBg', 'badgeText', 'borderColor', 'dividerColor'],
   story: ['sectionBg', 'sectionBgAlt', 'cardBg', 'headingColor', 'bodyColor', 'mutedColor', 'iconColor', 'onDarkHeading', 'eyebrow', 'btnBg', 'btnText', 'badgeBg', 'badgeText', 'borderColor'],
