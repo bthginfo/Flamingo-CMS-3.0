@@ -329,12 +329,12 @@ html {
     box-shadow: var(--style-card-shadow, 0 4px 20px rgba(0,0,0,0.06));
   }
 
-  [data-style] main > section:nth-child(even) {
+  [data-style] main > section:nth-child(even):not([data-theme="dark"]):not([style*="--token-section-bg"]):not([style*="--style-section-bg"]) {
     background-color: var(--style-section-bg-alt, #f8fafc);
     color: var(--style-text-on-section-alt, var(--style-text-primary, inherit));
   }
 
-  [data-style] main > section:nth-child(odd) {
+  [data-style] main > section:nth-child(odd):not([data-theme="dark"]):not([style*="--token-section-bg"]):not([style*="--style-section-bg"]) {
     background-color: var(--style-section-bg, #ffffff);
     color: var(--style-text-on-section, var(--style-text-primary, inherit));
   }
@@ -421,23 +421,23 @@ html {
   [data-style] button.bg-brand-primary,
   [data-style] a[class*="bg-brand-primary"],
   [data-style] button[class*="bg-brand-primary"] {
-    background-color: var(--brand-btn-bg, var(--brand-primary)) !important;
-    color: var(--brand-btn-text, white) !important;
+    background-color: var(--token-btn-bg, var(--brand-btn-bg, var(--brand-primary))) !important;
+    color: var(--token-btn-text, var(--brand-btn-text, white)) !important;
   }
 
   /* Hero/CTA buttons using bg-brand-accent also respect custom button colors */
   [data-style] a[class*="bg-brand-accent"],
   [data-style] button[class*="bg-brand-accent"] {
-    background-color: var(--brand-btn-bg, var(--brand-accent)) !important;
-    color: var(--brand-btn-text, #1a1a1a) !important;
+    background-color: var(--token-btn-bg, var(--brand-btn-bg, var(--brand-accent))) !important;
+    color: var(--token-btn-text, var(--brand-btn-text, #1a1a1a)) !important;
   }
 
   /* Bold-style buttons (bg-[#111827]) also respect custom button colors when set */
   [data-style] a[class*="bg-[#111827]"],
   [data-style] button[class*="bg-[#111827]"] {
-    background-color: var(--brand-btn-bg, #111827) !important;
-    color: var(--brand-btn-text, white) !important;
-    border-color: var(--brand-btn-bg, #111827) !important;
+    background-color: var(--token-btn-bg, var(--brand-btn-bg, #111827)) !important;
+    color: var(--token-btn-text, var(--brand-btn-text, white)) !important;
+    border-color: var(--token-btn-bg, var(--brand-btn-bg, #111827)) !important;
   }
 
   .btn-secondary {
@@ -602,10 +602,10 @@ html {
 }
 
 /* Section backgrounds */
-[data-style] section:nth-child(odd) {
+[data-style] section:nth-child(odd):not([data-theme="dark"]):not([style*="--token-section-bg"]):not([style*="--style-section-bg"]) {
   background-color: var(--style-section-bg, #ffffff);
 }
-[data-style] section:nth-child(even) {
+[data-style] section:nth-child(even):not([data-theme="dark"]):not([style*="--token-section-bg"]):not([style*="--style-section-bg"]) {
   background-color: var(--style-section-bg-alt, #f8fafc);
 }
 

@@ -2896,6 +2896,10 @@ function BeforeAfterEditor({ data, onChange }: EditorProps) {
 function VerticalTimelineEditor({ data, onChange }: EditorProps) {
   const [headline, setHeadline] = useState((data.headline as string) || '');
   const [subline, setSubline] = useState((data.subline as string) || '');
+  const [bgColor, setBgColor] = useState((data.bgColor as string) || '');
+  const [textColor, setTextColor] = useState((data.textColor as string) || '');
+  const [accentColor, setAccentColor] = useState((data.accentColor as string) || '');
+  const [lineColor, setLineColor] = useState((data.lineColor as string) || '');
   const [steps, setSteps] = useState<{ number: string; timeLabel: string; title: string; text: string; checkmarks: string[] }[]>(
     ((data.steps as any[]) || []).map((step) => ({
       number: step.number || '',
@@ -2905,7 +2909,7 @@ function VerticalTimelineEditor({ data, onChange }: EditorProps) {
       checkmarks: Array.isArray(step.checkmarks) ? step.checkmarks : [],
     }))
   );
-  useReport({ headline, subline, steps }, onChange);
+  useReport({ headline, subline, bgColor, textColor, accentColor, lineColor, steps }, onChange);
   function addStep() { setSteps([...steps, { number: String(steps.length + 1).padStart(2, '0'), timeLabel: '', title: '', text: '', checkmarks: [] }]); }
   function removeStep(i: number) { setSteps(steps.filter((_, idx) => idx !== i)); }
   function updateStep(i: number, field: string, value: string | string[]) { setSteps(steps.map((step, idx) => idx === i ? { ...step, [field]: value } : step)); }
@@ -2913,6 +2917,12 @@ function VerticalTimelineEditor({ data, onChange }: EditorProps) {
     <div className="space-y-4">
       <Field label={fieldLabel('headline')} value={headline} onChange={setHeadline}  />
       <Field label={fieldLabel('subline')} value={subline} onChange={setSubline} multiline  />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <ColorField label={fieldLabel('bgColor')} value={bgColor} onChange={setBgColor} />
+        <ColorField label={fieldLabel('textColor')} value={textColor} onChange={setTextColor} />
+        <ColorField label={fieldLabel('accentColor')} value={accentColor} onChange={setAccentColor} />
+        <ColorField label={fieldLabel('lineColor')} value={lineColor} onChange={setLineColor} />
+      </div>
       {steps.map((step, i) => (
         <div key={i} className="border rounded-lg p-3 space-y-2 relative">
           <button type="button" onClick={() => removeStep(i)} className="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs">×</button>

@@ -437,13 +437,25 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     const s = sectionStyle as Record<string, string>;
     const injected: Record<string, unknown> = {};
     if (s['--token-section-bg'] && !section.data.bgColor) injected.bgColor = s['--token-section-bg'];
+    else if (s['--style-section-bg'] && !section.data.bgColor) injected.bgColor = s['--style-section-bg'];
+
     if (s['--token-on-dark-heading'] && !section.data.textColor) injected.textColor = s['--token-on-dark-heading'];
+    else if (s['--token-on-dark-body'] && !section.data.textColor) injected.textColor = s['--token-on-dark-body'];
+    else if (s['--token-body'] && !section.data.textColor) injected.textColor = s['--token-body'];
     else if (s['--token-heading'] && !section.data.textColor) injected.textColor = s['--token-heading'];
+
     if (s['--token-accent'] && !section.data.accentColor) injected.accentColor = s['--token-accent'];
+    else if (s['--style-accent-color'] && !section.data.accentColor) injected.accentColor = s['--style-accent-color'];
+    else if (s['--token-icon'] && !section.data.accentColor) injected.accentColor = s['--token-icon'];
     else if (s['--token-eyebrow'] && !section.data.accentColor) injected.accentColor = s['--token-eyebrow'];
     else if (s['--token-btn-bg'] && !section.data.accentColor) injected.accentColor = s['--token-btn-bg'];
+
     if (s['--token-btn-bg'] && !section.data.btnBg) injected.btnBg = s['--token-btn-bg'];
+    else if (s['--brand-btn-bg'] && !section.data.btnBg) injected.btnBg = s['--brand-btn-bg'];
+
     if (s['--token-btn-text'] && !section.data.btnText) injected.btnText = s['--token-btn-text'];
+    else if (s['--brand-btn-text'] && !section.data.btnText) injected.btnText = s['--brand-btn-text'];
+
     if (s['--token-badge-bg'] && !section.data.badgeBg) injected.badgeBg = s['--token-badge-bg'];
     if (s['--token-badge-text'] && !section.data.badgeText) injected.badgeText = s['--token-badge-text'];
     if (s['--token-icon'] && !section.data.iconColor) injected.iconColor = s['--token-icon'];
@@ -453,7 +465,14 @@ export function SectionRenderer({ section, collections, styleVariant: _styleVari
     if (s['--token-on-dark-body'] && !section.data.bodyColor) injected.bodyColor = s['--token-on-dark-body'];
     if (s['--token-muted'] && !section.data.mutedColor) injected.mutedColor = s['--token-muted'];
     if (s['--token-card-border'] && !section.data.borderColor) injected.borderColor = s['--token-card-border'];
+    else if (s['--style-border-color'] && !section.data.borderColor) injected.borderColor = s['--style-border-color'];
+
     if (s['--token-divider'] && !section.data.dividerColor) injected.dividerColor = s['--token-divider'];
+    else if (s['--style-divider-color'] && !section.data.dividerColor) injected.dividerColor = s['--style-divider-color'];
+
+    if (s['--token-divider'] && !section.data.lineColor) injected.lineColor = s['--token-divider'];
+    else if (s['--style-divider-color'] && !section.data.lineColor) injected.lineColor = s['--style-divider-color'];
+
     if (Object.keys(injected).length > 0) {
       section = { ...section, data: { ...section.data, ...injected } };
     }
