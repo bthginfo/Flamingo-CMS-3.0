@@ -304,9 +304,9 @@ export const FIELD_DEFS: Record<ColorFieldKey, { cssVar: string; label: string; 
 
 /* ─── FIELD SELECTION ─── */
 // Show ONLY the color fields defined in the section's contract.
-// This prevents accidental overrides of unrelated color properties.
-// Example: ctaBandSalon should ONLY show [sectionBg, cardBg, headingColor, iconColor, accentColor, btnBg, btnText, borderColor],
-// NOT every field in FIELD_DEFS.
+// However, ALWAYS include sectionBg so every section can have its background changed.
+// This prevents accidental overrides of unrelated color properties while ensuring
+// foundational controls are always available.
 export function getFieldsForSection(sectionType: string, industry?: string): ColorFieldKey[] {
   // Determine which fields are defined for this section (from the contract)
   const industryKey = industry
@@ -318,7 +318,11 @@ export function getFieldsForSection(sectionType: string, industry?: string): Col
     ? industrySpecific as ColorFieldKey[]
     : (Array.isArray(generic) && generic.length > 0 ? generic as ColorFieldKey[] : []);
 
-  // If no contract found, show primary categories (section, card, text, button) as fallback
+  // ALWAYS include these foundational fields, even if not in contract
+  const requiredFields: ColorFieldKey[] = ['sectionBg'];
+  const allFields = new Set([...contractFields, ...requiredFields]);
+
+  // If no contract found, show primary categories as fallback
   if (contractFields.length === 0) {
     return sortColorFields([
       'sectionBg',
@@ -335,8 +339,8 @@ export function getFieldsForSection(sectionType: string, industry?: string): Col
     ]);
   }
 
-  // Return ONLY the fields defined in the contract, sorted by render order
-  return sortColorFields(contractFields.filter(f => f !== 'sectionBgAlt'));
+  // Return contract fields + always-required fields, sorted by render order
+  return sortColorFields(Array.from(allFields).filter(f => f !== 'sectionBgAlt'));
 }
 
 
