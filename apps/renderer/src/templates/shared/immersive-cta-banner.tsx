@@ -43,12 +43,12 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
 
       <div className="relative z-10 mx-auto grid min-h-[620px] max-w-7xl items-end gap-10 px-6 py-16 md:grid-cols-[1.1fr_0.9fr] md:py-24">
         <div>
-          {badge && <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_24%,transparent)] bg-[var(--token-badge-bg)] px-4 py-2 text-xs font-bold uppercase text-[color:var(--token-badge-text)] backdrop-blur"><Sparkles size={14} /><span data-edit-path="badge">{badge}</span></div>}
+          {badge && <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_24%,transparent)] bg-[var(--token-badge-bg)] px-4 py-2 text-xs font-bold uppercase text-[color:var(--token-badge-text)] backdrop-blur"><Sparkles size={14} /><span data-edit-path="badge">{badge}</span></div>}
           {headline && <h2 className="max-w-4xl text-4xl font-black leading-none md:text-6xl lg:text-7xl" style={{ color: headingColor }} data-edit-path="headline">{headline}</h2>}
           {subline && <p className="mt-6 max-w-2xl text-base leading-8 md:text-xl" style={{ color: bodyColor }} data-edit-path="subline">{plain(subline)}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
             {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="btn-primary inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[color:var(--token-btn-text)] shadow-2xl transition hover:brightness-110"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
-            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="btn-secondary inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_28%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_10%,transparent)] px-6 py-3 text-sm font-bold backdrop-blur transition hover:brightness-110" style={{ color: headingColor }} data-edit-path="label">{secondaryCta.label}</a>}
+            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="btn-secondary inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_28%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_10%,transparent)] px-6 py-3 text-sm font-bold backdrop-blur transition hover:brightness-110" style={{ color: headingColor }} data-edit-path="label">{secondaryCta.label}</a>}
           </div>
         </div>
 

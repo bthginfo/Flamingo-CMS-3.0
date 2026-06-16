@@ -48,7 +48,7 @@ function PriceClassic({ headline, subline, badgeText, categories, footnote, ctaP
         ))}
       </div>
       {footnote && <p className="mt-6 text-sm text-[color:var(--token-muted)]">{footnote}</p>}
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -78,7 +78,7 @@ function PriceModern({ headline, subline, badgeText, categories, footnote, ctaPr
         ))}
       </div>
       {footnote && <p className="mt-6 text-sm font-light text-[color:var(--token-muted)]">{footnote}</p>}
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border border-[var(--token-card-border)] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -93,7 +93,7 @@ function PriceBold({ headline, subline, badgeText, categories, footnote, ctaPrim
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
         {categories.map((cat, ci) => (
-          <article key={`$<span data-edit-path="title">{cat.title}</span>-${ci}`} className="border-2 border-[#111827] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="categories" data-edit-index={ci}>
+          <article key={`$<span data-edit-path="title">{cat.title}</span>-${ci}`} className="border-2 border-[var(--token-card-border)] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="categories" data-edit-index={ci}>
             <h3 className="text-2xl font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="title">{cat.title || ''}</h3>
             {cat.text && <div className="mt-2 text-sm text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: cat.text }} />}
             <div className="mt-5 divide-y-2 divide-[#111827]">

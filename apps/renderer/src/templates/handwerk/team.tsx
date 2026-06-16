@@ -158,7 +158,7 @@ function TeamBold({ headline, subline, badgeText, storyHeadline, storyText, stor
       </motion.div>
       {(storyHeadline || storyText) && (
         <div className="flex flex-col lg:flex-row gap-8 items-start mb-10 md:mb-16">
-          {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] overflow-hidden border-3 border-[var(--token-card-border)] shadow-[6px_6px_0_var(--token-body)]"><Image data-edit-image="storyImage" src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
+          {storyImage && <div className="w-full lg:w-1/2"><div className="relative aspect-[4/3] overflow-hidden border-3 border-[var(--token-card-border)] shadow-[6px_6px_0_var(--token-shadow,var(--token-card-border))]"><Image data-edit-image="storyImage" src={storyImage} alt="" fill className="object-cover" sizes="50vw" /></div></div>}
           <div className={storyImage ? 'w-full lg:w-1/2' : 'max-w-2xl'}>
             {storyHeadline && <h3 className="mb-3 text-xl font-bold uppercase text-[color:var(--token-heading)]">{storyHeadline}</h3>}
             {storyText && <div className="rt-content whitespace-pre-line leading-relaxed text-[color:var(--token-body)]" data-edit-rich="storyText" dangerouslySetInnerHTML={{ __html: storyText }} />}

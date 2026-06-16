@@ -53,7 +53,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
           </motion.article>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -103,7 +103,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`$<span data-edit-path="name">{item.name}</span>-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="items" data-edit-index={index}>
+          <article key={`$<span data-edit-path="name">{item.name}</span>-${index}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="items" data-edit-index={index}>
             <div className="flex gap-1 text-[color:var(--token-icon)]">{Array.from({ length: item.rating || 5 }).map((_, i) => <Star key={i} size={14} fill="currentColor"  data-edit-collection="rating" data-edit-index={i}/>)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-[color:var(--token-heading)] rt-content" data-edit-rich="quote" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="name">{item.name || ''}</p>
@@ -111,7 +111,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }

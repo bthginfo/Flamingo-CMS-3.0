@@ -71,7 +71,7 @@ function Bold({ header, seasons }: Props) {
       </div>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {seasons.map((season, index) => (
-          <article key={`$<span data-edit-path="title">{season.title}</span>-${index}`} className="group overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg)] shadow-[4px_4px_0_#111827]" data-edit-collection="seasons" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{season.title}</span>-${index}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="seasons" data-edit-index={index}>
             {season.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={season.image} alt={season.title || ''} fill className="object-cover" sizes="25vw" /></div>}
             <div className="p-5">
               <p className="text-xs font-black uppercase tracking-widest text-orange-500">{[season.category, season.periodLabel].filter(Boolean).join(' / ')}</p>

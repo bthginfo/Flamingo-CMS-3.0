@@ -38,7 +38,7 @@ function TeamClassic({ headline, subline, badgeText, members }: Props) {
               <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="name">{m.name || ''}</h3>
               {m.bio && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="bio" dangerouslySetInnerHTML={{ __html: m.bio }} />}
               {asList<string>(m.specialties).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-muted)]">{asList<string>(m.specialties).join(' / ')}</p>}
-              {m.bookingCta?.label && <a href={m.bookingCta.href || '#'} className="mt-5 inline-flex rounded-full bg-[#111827] px-5 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{m.bookingCta.label}</a>}
+              {m.bookingCta?.label && <a href={m.bookingCta.href || '#'} className="mt-5 inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{m.bookingCta.label}</a>}
             </div>
           </motion.article>
         ))}
@@ -83,7 +83,7 @@ function TeamBold({ headline, subline, badgeText, members }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {members.map((m, i) => (
-          <article key={`$<span data-edit-path="name">{m.name}</span>-${i}`} className="group overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="members" data-edit-index={i}>
+          <article key={`$<span data-edit-path="name">{m.name}</span>-${i}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="members" data-edit-index={i}>
             {m.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={m.image} alt={m.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               {m.role && <span className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="role">{m.role}</span>}

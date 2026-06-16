@@ -66,7 +66,7 @@ function Bold({ header, items }: Props) {
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {items.map((item, index) => (
-          <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="items" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="items" data-edit-index={index}>
             <Download size={22} className="text-teal-400" />
             {item.metaLabel && <p className="mt-4 text-xs font-black uppercase tracking-widest text-teal-500">{item.metaLabel}</p>}
             <h3 className="mt-2 text-xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>

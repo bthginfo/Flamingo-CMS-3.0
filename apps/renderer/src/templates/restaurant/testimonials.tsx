@@ -75,14 +75,14 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex border-b-2 border-[var(--token-card-border)] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
 
 function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCount, items, ctaPrimary }: Props) {
   return (
-    <div className="bg-[#111827] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
+    <div className="bg-[var(--token-btn-bg)] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase" data-edit-path="headline">{headline}</h2>

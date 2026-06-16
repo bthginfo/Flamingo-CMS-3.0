@@ -113,7 +113,7 @@ function ServicesModern({ headline, subline, badgeText, cards, ctaLabel, ctaHref
       </div>
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="mt-16">
-          <Link href={ctaHref} className="inline-flex items-center gap-2 border-b border-[var(--token-accent)] pb-1 text-sm font-medium text-[color:var(--token-accent)] transition-colors hover:border-[var(--token-body)] hover:text-[color:var(--token-body)]">
+          <Link href={ctaHref} className="inline-flex items-center gap-2 border-b border-[var(--token-accent)] pb-1 text-sm font-medium text-[color:var(--token-accent)] transition-colors hover:border-[var(--token-card-border)] hover:text-[color:var(--token-body)]">
             {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={14} />}
           </Link>
         </motion.div>
@@ -162,7 +162,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="group border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-body)] transition-all hover:border-[var(--token-accent)] hover:shadow-[-4px_4px_0_var(--token-accent)]"
+              className="group border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-shadow,var(--token-card-border))] transition-all hover:border-[var(--token-accent)] hover:shadow-[-4px_4px_0_var(--token-accent)]"
             >
               {card.href ? <Link href={card.href} className="block">{inner}</Link> : inner}
             </motion.div>
@@ -171,7 +171,7 @@ function ServicesBold({ headline, subline, badgeText, cards, ctaLabel, ctaHref, 
       </div>
       {ctaLabel && ctaHref && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4 }} className="mt-10">
-          <Link href={ctaHref} className="inline-flex items-center gap-2 border-3 border-[var(--token-body)] bg-[var(--token-btn-bg)] px-8 py-3.5 font-bold uppercase tracking-wide text-[color:var(--token-btn-text)] shadow-[4px_4px_0_var(--token-accent)] transition-all hover:shadow-[-4px_4px_0_var(--token-accent)]">
+          <Link href={ctaHref} className="inline-flex items-center gap-2 border-3 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-8 py-3.5 font-bold uppercase tracking-wide text-[color:var(--token-btn-text)] shadow-[4px_4px_0_var(--token-accent)] transition-all hover:shadow-[-4px_4px_0_var(--token-accent)]">
             {ctaLabel} {ctaIcon && <DynamicIcon name={ctaIcon} size={16} />}
           </Link>
         </motion.div>

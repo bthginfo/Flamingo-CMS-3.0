@@ -51,7 +51,7 @@ function StoryClassic(p: Props) {
               {p.founderRole && <p className="text-xs text-[color:var(--token-muted)]">{p.founderRole}</p>}
             </blockquote>
           )}
-          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{p.ctaPrimary.label}</a>}
+          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{p.ctaPrimary.label}</a>}
         </motion.div>
         <div className="grid gap-4">
           {p.imagePrimary && <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative aspect-[16/10] overflow-hidden rounded-xl shadow-lg"><Image data-edit-image="imagePrimary" src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></motion.div>}
@@ -169,17 +169,17 @@ function StoryBold(p: Props) {
               {p.founderRole && <p className="text-xs font-bold text-[color:var(--token-muted)]">{p.founderRole}</p>}
             </div>
           )}
-          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{p.ctaPrimary.label}</a>}
+          {p.ctaPrimary.label && <a href={p.ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{p.ctaPrimary.label}</a>}
         </div>
         <div className="grid gap-2">
-          {p.imagePrimary && <div className="relative aspect-[16/10] overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image data-edit-image="imagePrimary" src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-          {p.imageSecondary && <div className="relative aspect-[16/9] overflow-hidden border-2 border-[#111827]"><Image data-edit-image="imageSecondary" src={p.imageSecondary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {p.imagePrimary && <div className="relative aspect-[16/10] overflow-hidden border-2 border-[var(--token-card-border)] shadow-[4px_4px_0_var(--token-card-border)]"><Image data-edit-image="imagePrimary" src={p.imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {p.imageSecondary && <div className="relative aspect-[16/9] overflow-hidden border-2 border-[var(--token-card-border)]"><Image data-edit-image="imageSecondary" src={p.imageSecondary} alt="" fill className="object-cover" sizes="50vw" /></div>}
         </div>
       </div>
       {p.stats.length > 0 && (
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-4 md:grid-cols-4">
           {p.stats.map((s, i) => (
-            <div key={`$<span data-edit-path="label">{s.label}</span>-${i}`} className="border-2 border-[#111827] p-5 text-center shadow-[4px_4px_0_var(--token-icon)]" data-edit-collection="stats" data-edit-index={i}>
+            <div key={`$<span data-edit-path="label">{s.label}</span>-${i}`} className="border-2 border-[var(--token-card-border)] p-5 text-center shadow-[4px_4px_0_var(--token-icon)]" data-edit-collection="stats" data-edit-index={i}>
               <p className="text-3xl font-black text-[color:var(--token-heading)]" data-edit-path="value">{s.value || ''}</p>
               <p className="mt-1 text-xs font-bold uppercase tracking-widest text-[color:var(--token-muted)]" data-edit-path="label">{s.label || ''}</p>
             </div>
@@ -189,7 +189,7 @@ function StoryBold(p: Props) {
       {p.values.length > 0 && (
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {p.values.map((v, i) => (
-            <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="values" data-edit-index={i}>
+            <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-2 border-[var(--token-card-border)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="values" data-edit-index={i}>
               <DynamicIcon editPath="icon" name={v.icon || 'heart'} size={20} className="text-[color:var(--token-icon)]" />
               <h3 className="mt-2 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>
               {v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}
@@ -200,7 +200,7 @@ function StoryBold(p: Props) {
       {p.milestones.length > 0 && (
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {p.milestones.map((m, i) => (
-            <div key={`${m.year}-${i}`} className="border-2 border-[#111827] p-5" data-edit-collection="milestones" data-edit-index={i}>
+            <div key={`${m.year}-${i}`} className="border-2 border-[var(--token-card-border)] p-5" data-edit-collection="milestones" data-edit-index={i}>
               {m.year && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-icon)]">{m.year}</p>}
               <h3 className="mt-1 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{m.title || ''}</h3>
               {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}

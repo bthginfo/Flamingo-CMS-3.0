@@ -77,7 +77,7 @@ function SignatureDishesModern({ headline, subline, badgeText, dishes }: Signatu
               </div>
               {dish.description && <div className="mt-3 text-sm font-light leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: dish.description }} />}
               {asList<string>(dish.ingredients).length > 0 && <p className="mt-4 text-xs font-light text-[color:var(--token-muted)]">{asList<string>(dish.ingredients).join(' / ')}</p>}
-              {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 border-b border-[#111827] pb-0.5 text-sm font-medium text-[color:var(--token-heading)]"><span data-edit-path="label">{dish.cta.label}</span><ArrowRight size={16} /></a>}
+              {dish.cta?.label && <a href={dish.cta.href || '#'} className="mt-5 inline-flex items-center gap-2 border-b border-[var(--token-card-border)] pb-0.5 text-sm font-medium text-[color:var(--token-heading)]"><span data-edit-path="label">{dish.cta.label}</span><ArrowRight size={16} /></a>}
             </div>
           </article>
         ))}
@@ -88,7 +88,7 @@ function SignatureDishesModern({ headline, subline, badgeText, dishes }: Signatu
 
 function SignatureDishesBold({ headline, subline, badgeText, dishes }: SignatureDishesViewProps) {
   return (
-    <div className="bg-[#111827] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
+    <div className="bg-[var(--token-btn-bg)] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-4 text-3xl font-black uppercase sm:text-3xl md:text-5xl" data-edit-path="headline">{headline}</h2>

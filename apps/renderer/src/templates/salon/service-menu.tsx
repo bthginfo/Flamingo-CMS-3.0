@@ -39,12 +39,12 @@ function ServiceClassic({ headline, subline, badgeText, categories, ctaPrimary }
               <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {asList<string>(item.services).length > 0 && <p className="mt-2 text-sm text-[color:var(--token-muted)]">{asList<string>(item.services).join(' / ')}</p>}
-              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex rounded-full bg-[#111827] px-5 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{item.cta.label}</a>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{item.cta.label}</a>}
             </div>
           </motion.article>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -71,7 +71,7 @@ function ServiceModern({ headline, subline, badgeText, categories, ctaPrimary }:
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border border-[var(--token-card-border)] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -86,7 +86,7 @@ function ServiceBold({ headline, subline, badgeText, categories, ctaPrimary }: P
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {categories.map((item, i) => (
-          <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="group overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="categories" data-edit-index={i}>
+          <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="categories" data-edit-index={i}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               {item.category && <span className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="category">{item.category}</span>}

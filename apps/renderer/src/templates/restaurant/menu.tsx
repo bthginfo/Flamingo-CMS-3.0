@@ -85,7 +85,7 @@ function MenuModern(props: MenuViewProps) {
 
 function MenuBold(props: MenuViewProps) {
   return (
-    <div className="bg-[#111827] text-[color:var(--token-on-dark-heading)] p-6 sm:p-10 shadow-sm">
+    <div className="bg-[var(--token-btn-bg)] text-[color:var(--token-on-dark-heading)] p-6 sm:p-10 shadow-sm">
       <MenuHeader {...props} align="left" inverted />
       <div className="grid gap-5">
         {props.categories.map((category, index) => (

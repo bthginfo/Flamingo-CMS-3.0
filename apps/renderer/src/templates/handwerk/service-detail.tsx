@@ -100,7 +100,7 @@ function ServiceModern({ headline, subline, badgeText, items }: SProps) {
                 </div>
               )}
               {item.ctaLabel && item.ctaHref && (
-                <a href={item.ctaHref} className="inline-flex items-center gap-2 text-[color:var(--token-body)] font-medium mt-6 border-b border-[var(--token-body)] pb-0.5 hover:border-[var(--token-icon)] hover:text-[color:var(--token-icon)] transition-colors">
+                <a href={item.ctaHref} className="inline-flex items-center gap-2 text-[color:var(--token-body)] font-medium mt-6 border-b border-[var(--token-card-border)] pb-0.5 hover:border-[var(--token-icon)] hover:text-[color:var(--token-icon)] transition-colors">
                   <span data-edit-path="ctaLabel">{item.ctaLabel}</span>{item.icon && <DynamicIcon editPath="icon" name={item.icon} size={14} />}
                 </a>
               )}
@@ -127,7 +127,7 @@ function ServiceBold({ headline, subline, badgeText, items }: SProps) {
       <div className="space-y-6">
         {items.map((item, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="flex flex-col lg:flex-row gap-6 p-6 border-3 border-[var(--token-card-border)] shadow-[4px_4px_0_var(--token-body)] bg-[var(--token-card-bg)]" data-edit-collection="items" data-edit-index={i}>
+            className="flex flex-col lg:flex-row gap-6 p-6 border-3 border-[var(--token-card-border)] shadow-[4px_4px_0_var(--token-shadow,var(--token-card-border))] bg-[var(--token-card-bg)]" data-edit-collection="items" data-edit-index={i}>
             {item.mediaType === 'image' && item.image && (
               <div className="relative w-full lg:w-64 aspect-[4/3] lg:aspect-square shrink-0 overflow-hidden">
                 <Image data-edit-image="image" src={item.image} alt={item.title} fill className="object-cover" sizes="256px" />

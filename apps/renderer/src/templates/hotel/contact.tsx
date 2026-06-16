@@ -56,7 +56,7 @@ function ContactClassic({ headline, subline, badgeText, introText, submitLabel, 
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {contactCta.label && <a data-edit-link="contactCta" href={contactCta.href || '#'} className="rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{contactCta.label}</a>}
+          {contactCta.label && <a data-edit-link="contactCta" href={contactCta.href || '#'} className="rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{contactCta.label}</a>}
           {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="rounded-xl border border-black/15 px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{routeCta.label}</a>}
         </div>
       </div>
@@ -113,18 +113,18 @@ function ContactBold({ headline, subline, badgeText, introText, submitLabel, for
         {introText && <div className="text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">
           {infoCards.map((card, index) => (
-            <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
+            <div key={`$<span data-edit-path="label">{card.label}</span>-${index}`} className="flex gap-4 border-t-2 border-[var(--token-card-border)] pt-4" data-edit-collection="infoCards" data-edit-index={index}>
               <div className="text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} /></div>
               <div><p className="text-xs font-bold uppercase text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="font-black text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div>
             </div>
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {contactCta.label && <a data-edit-link="contactCta" href={contactCta.href || '#'} className="border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{contactCta.label}</a>}
-          {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="border-2 border-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="label">{routeCta.label}</a>}
+          {contactCta.label && <a data-edit-link="contactCta" href={contactCta.href || '#'} className="border-2 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{contactCta.label}</a>}
+          {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="border-2 border-[var(--token-card-border)] px-5 py-3 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="label">{routeCta.label}</a>}
         </div>
       </div>
-      <div className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]">
+      <div className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}
       </div>

@@ -37,7 +37,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
           </motion.details>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -58,7 +58,7 @@ function FaqModern({ headline, subline, badgeText, items, ctaPrimary }: Props) {
           </details>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border border-[var(--token-card-border)] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -71,7 +71,7 @@ function FaqBold({ headline, subline, badgeText, items, ctaPrimary }: Props) {
         <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 font-bold text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      <div className="divide-y-2 divide-[#111827] border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]">
+      <div className="divide-y-2 divide-[#111827] border-2 border-[var(--token-card-border)] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]">
         {items.map((item, i) => (
           <details key={`$<span data-edit-path="question">{item.question}</span>-${i}`} className="p-5" data-edit-collection="items" data-edit-index={i}>
             <summary className="cursor-pointer font-black uppercase text-[color:var(--token-on-dark-heading)]">{item.question || ''}</summary>

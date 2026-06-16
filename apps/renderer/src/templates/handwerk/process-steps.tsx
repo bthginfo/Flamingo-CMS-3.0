@@ -28,7 +28,7 @@ function ProcessClassic({ headline, badgeText, steps }: PProps) {
   return (
     <div ref={ref} className="relative">
       <div className="absolute inset-0 bg-[radial-gradient(var(--token-muted)_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.15] rounded-4xl" />
-      <div className="relative rounded-4xl p-8 sm:p-12 lg:p-20" style={{ background: 'var(--token-card-bg)', borderColor: 'color-mix(in srgb, var(--token-body) 8%, transparent)', borderWidth: '1px' }}>
+      <div className="relative rounded-4xl p-8 sm:p-12 lg:p-20" style={{ background: 'var(--token-card-bg)', borderColor: 'color-mix(in srgb, var(--token-card-border) 36%, transparent)', borderWidth: '1px' }}>
         <motion.div initial={{ opacity: 0, y: 30 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }} className="text-center mb-10 md:mb-16">
           {badgeText && <div className="section-badge"><span data-edit-path="badgeText">{badgeText}</span></div>}
           {headline && <h2 className="section-headline" data-edit-path="headline">{headline}</h2>}
@@ -99,7 +99,7 @@ function ProcessBold({ headline, badgeText, steps }: PProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {steps.map((step, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="relative border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-body)]" data-edit-collection="steps" data-edit-index={i}>
+            className="relative border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-shadow,var(--token-card-border))]" data-edit-collection="steps" data-edit-index={i}>
             <div className="absolute left-0 top-0 flex h-8 w-8 items-center justify-center bg-[var(--token-accent)] text-sm font-black text-[color:var(--token-badge-text)]">
               {i + 1}
             </div>

@@ -54,7 +54,7 @@ function DiningClassic({ headline, subline, badgeText, introText, image, opening
             </motion.article>
           ))}
         </div>
-        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-lg"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
       </div>
       <div className="space-y-4">
         {image && <div className="relative aspect-[4/3] overflow-hidden rounded-xl shadow-md"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
@@ -126,7 +126,7 @@ function DiningBold({ headline, subline, badgeText, introText, image, openingTex
         {openingText && <p className="mt-4 text-sm font-black uppercase text-[color:var(--token-heading)]">{openingText}</p>}
         <div className="mt-6 grid gap-4">
           {menus.map((menu, index) => (
-            <article key={`$<span data-edit-path="title">{menu.title}</span>-${index}`} className="border-t-2 border-[#111827] pt-4" data-edit-collection="menus" data-edit-index={index}>
+            <article key={`$<span data-edit-path="title">{menu.title}</span>-${index}`} className="border-t-2 border-[var(--token-card-border)] pt-4" data-edit-collection="menus" data-edit-index={index}>
               <div className="flex justify-between gap-4"><h3 className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{menu.title || ''}</h3><span className="text-sm font-bold text-[color:var(--token-muted)]" data-edit-path="priceLabel">{menu.priceLabel || ''}</span></div>
               {menu.description && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: menu.description }} />}
               {menu.timeLabel && <p className="mt-2 text-xs font-bold text-[color:var(--token-muted)]">{menu.timeLabel}</p>}
@@ -134,13 +134,13 @@ function DiningBold({ headline, subline, badgeText, introText, image, openingTex
             </article>
           ))}
         </div>
-        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
       </div>
       <div className="space-y-4">
-        {image && <div className="relative aspect-[4/3] overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {image && <div className="relative aspect-[4/3] overflow-hidden border-2 border-[var(--token-card-border)] shadow-[4px_4px_0_var(--token-card-border)]"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         <div className="grid gap-4 sm:grid-cols-2">
           {highlights.map((item, index) => (
-            <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-4 shadow-[4px_4px_0_#111827]" data-edit-collection="highlights" data-edit-index={index}>
+            <article key={`$<span data-edit-path="title">{item.title}</span>-${index}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-4 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="highlights" data-edit-index={index}>
               {item.image && <div className="relative mb-3 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               <h3 className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}

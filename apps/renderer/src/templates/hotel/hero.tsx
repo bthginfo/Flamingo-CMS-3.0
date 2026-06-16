@@ -94,7 +94,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
       <motion.div style={{ opacity, y }} className="relative z-10 max-w-7xl mx-auto px-6 w-full py-12 md:py-20 text-center">
         {badgeText && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
-            className="inline-flex items-center gap-2.5 rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_26%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_12%,transparent)] px-5 py-2.5 text-sm text-[color:var(--token-on-dark-heading)] backdrop-blur-md mb-6">
+            className="inline-flex items-center gap-2.5 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_26%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_12%,transparent)] px-5 py-2.5 text-sm text-[color:var(--token-on-dark-heading)] backdrop-blur-md mb-6">
             <DynamicIcon name={badgeIcon} size={14} className="fill-white text-[color:var(--token-on-dark-heading)]" />
             <span className="font-medium" data-edit-path="badgeText">{badgeText}</span>
           </motion.div>
@@ -120,7 +120,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
             </a>
           )}
           {secondaryCta.label && (
-            <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center justify-center rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_8%,transparent)] px-7 py-4 font-semibold text-[color:var(--token-on-dark-heading)] transition-colors hover:border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_62%,transparent)]" data-edit-path="label">
+            <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center justify-center rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_34%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_8%,transparent)] px-7 py-4 font-semibold text-[color:var(--token-on-dark-heading)] transition-colors hover:border-[color:color-mix(in_srgb,var(--token-card-border)_62%,transparent)]" data-edit-path="label">
               {secondaryCta.label}
             </a>
           )}
@@ -128,7 +128,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, trustItems, bgIm
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1.2 }}
           className="mt-10 flex flex-wrap items-center justify-center gap-4 text-sm text-[color:var(--token-on-dark-muted)]">
           {ratingText && <span className="inline-flex items-center gap-2"><Star size={14} className="text-[color:var(--token-on-dark-body)]" />{ratingText}</span>}
-          {availabilityHint && <span className="rounded-full border border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_22%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_8%,transparent)] px-3 py-1 text-[color:var(--token-on-dark-heading)]">{availabilityHint}</span>}
+          {availabilityHint && <span className="rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_22%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_8%,transparent)] px-3 py-1 text-[color:var(--token-on-dark-heading)]">{availabilityHint}</span>}
           {trustItems.map((item) => (
             <span key={item} className="flex items-center gap-2"><CheckCircle size={14} className="text-[color:var(--token-on-dark-body)]" />{item}</span>
           ))}
@@ -230,12 +230,12 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, trustItems, bgImage
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta.label && (
-              <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)] w-full sm:w-auto">
+              <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 bg-[var(--token-btn-bg)] text-[color:var(--token-btn-text)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow,var(--token-card-border))_20%,transparent)] w-full sm:w-auto">
                 <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={18} />}
               </a>
             )}
             {secondaryCta.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-on-dark-heading)_34%,transparent)] text-[color:var(--token-on-dark-heading)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-on-dark-heading)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.1)]" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_34%,transparent)] text-[color:var(--token-on-dark-heading)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-card-border)] transition-colors shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow,var(--token-card-border))_10%,transparent)]" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

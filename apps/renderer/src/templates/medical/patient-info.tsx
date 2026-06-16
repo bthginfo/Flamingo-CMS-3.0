@@ -79,7 +79,7 @@ function Bold({ header, introText, cards }: Props) {
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {cards.map((card, index) => (
-          <article key={`$<span data-edit-path="title">{card.title}</span>-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="cards" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{card.title}</span>-${index}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="cards" data-edit-index={index}>
             <IconRows items={[card]} />
             <div className="mt-4 flex flex-wrap gap-2">{asList<string>(card.items).map((item) => <span key={item} className="border border-teal-400 px-3 py-1 text-xs font-bold uppercase text-teal-600">{item}</span>)}</div>
           </article>

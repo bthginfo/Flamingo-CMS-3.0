@@ -66,7 +66,7 @@ function Bold({ header, images }: Props) {
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((image, index) => (
-          <article key={`${image.src}-${index}`} className="group overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg)] shadow-[4px_4px_0_#111827]" data-edit-collection="images" data-edit-index={index}>
+          <article key={`${image.src}-${index}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="images" data-edit-index={index}>
             {image.src && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="src" src={image.src} alt={image.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-4">
               {image.category && <p className="text-xs font-black uppercase tracking-widest text-orange-500" data-edit-path="category">{image.category}</p>}

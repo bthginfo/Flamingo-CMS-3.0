@@ -52,7 +52,7 @@ function LocationClassic({ headline, subline, badgeText, addressText, mapEmbedUr
             </motion.div>
           ))}
         </div>
-        {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-lg"><span data-edit-path="label">{routeCta.label}</span><ArrowRight size={16} /></a>}
+        {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-lg"><span data-edit-path="label">{routeCta.label}</span><ArrowRight size={16} /></a>}
       </div>
       <div className="space-y-5">
         {image && <div className="relative aspect-[16/10] overflow-hidden rounded-xl shadow-md"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
@@ -124,20 +124,20 @@ function LocationBold({ headline, subline, badgeText, addressText, mapEmbedUrl, 
         {addressText && <p className="font-bold text-[color:var(--token-muted)]">{addressText}</p>}
         <div className="mt-6 grid gap-3">
           {transportItems.map((item, index) => (
-            <div key={`$<span data-edit-path="label">{item.label}</span>-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4" data-edit-collection="transportItems" data-edit-index={index}>
+            <div key={`$<span data-edit-path="label">{item.label}</span>-${index}`} className="flex gap-4 border-t-2 border-[var(--token-card-border)] pt-4" data-edit-collection="transportItems" data-edit-index={index}>
               <div className="text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={item.icon || 'map-pin'} size={20} /></div>
               <div><h3 className="font-black text-[color:var(--token-heading)]"><span data-edit-path="label">{item.label || ''}</span> <span data-edit-path="value">{item.value || ''}</span></h3>{item.text && <div className="text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}</div>
             </div>
           ))}
         </div>
-        {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{routeCta.label}</span><ArrowRight size={16} /></a>}
+        {routeCta.label && <a data-edit-link="routeCta" href={routeCta.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{routeCta.label}</span><ArrowRight size={16} /></a>}
       </div>
       <div className="space-y-5">
-        {image && <div className="relative aspect-[16/10] overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
-        {mapEmbedUrl && <iframe title={headline} src={mapEmbedUrl} className="h-72 w-full border-2 border-[#111827]" loading="lazy" />}
+        {image && <div className="relative aspect-[16/10] overflow-hidden border-2 border-[var(--token-card-border)] shadow-[4px_4px_0_var(--token-card-border)]"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
+        {mapEmbedUrl && <iframe title={headline} src={mapEmbedUrl} className="h-72 w-full border-2 border-[var(--token-card-border)]" loading="lazy" />}
         <div className="grid gap-4 sm:grid-cols-2">
           {nearbyItems.map((item, index) => (
-            <article key={`${item.title}-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-4 shadow-[4px_4px_0_#111827]" data-edit-collection="nearbyItems" data-edit-index={index}>
+            <article key={`${item.title}-${index}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-4 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="nearbyItems" data-edit-index={index}>
               {item.image && <div className="relative mb-3 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               <h3 className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
               {item.distanceLabel && <p className="text-xs font-bold text-[color:var(--token-muted)]">{item.distanceLabel}</p>}

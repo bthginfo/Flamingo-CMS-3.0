@@ -41,7 +41,7 @@ function BeforeAfterClassic({ headline, subline, badgeText, items }: Props) {
               <h3 className="mt-2 text-xl font-bold text-[color:var(--token-heading)]" data-edit-path="title">{item.title || ''}</h3>
               {item.text && <div className="mt-3 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: item.text }} />}
               {item.caption && <p className="mt-2 text-xs text-[color:var(--token-muted)]" data-edit-path="caption">{item.caption}</p>}
-              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex rounded-full bg-[#111827] px-5 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading)]" data-edit-path="label">{item.cta.label}</a>}
+              {item.cta?.label && <a href={item.cta.href || '#'} className="mt-5 inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-2 text-sm font-semibold text-[color:var(--token-on-dark-heading)]" data-edit-path="label">{item.cta.label}</a>}
             </div>
           </motion.article>
         ))}
@@ -88,7 +88,7 @@ function BeforeAfterBold({ headline, subline, badgeText, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-2">
         {items.map((item, i) => (
-          <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="items" data-edit-index={i}>
+          <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="overflow-hidden border-2 border-[var(--token-card-border)] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="items" data-edit-index={i}>
             <div className="grid grid-cols-2">
               {item.beforeImage && <div className="relative aspect-square"><Image data-edit-image="beforeImage" src={item.beforeImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}
               {item.afterImage && <div className="relative aspect-square"><Image data-edit-image="afterImage" src={item.afterImage} alt={item.title || ''} fill className="object-cover" sizes="25vw" /></div>}

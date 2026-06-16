@@ -52,7 +52,7 @@ function BookingModern({ headline, subline, badgeText, introText, onlineCta, pho
       </div>
       {introText && <div className="max-w-2xl font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
       <div className="mt-8 flex flex-wrap gap-3">
-        {onlineCta.label && <a data-edit-link="onlineCta" href={onlineCta.href || '#'} className="inline-flex items-center gap-2 border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]"><CalendarDays size={16} /><span data-edit-path="label">{onlineCta.label}</span></a>}
+        {onlineCta.label && <a data-edit-link="onlineCta" href={onlineCta.href || '#'} className="inline-flex items-center gap-2 border border-[var(--token-card-border)] px-6 py-3 font-light text-[color:var(--token-heading)]"><CalendarDays size={16} /><span data-edit-path="label">{onlineCta.label}</span></a>}
         {phoneCta.label && <a data-edit-link="phoneCta" href={phoneCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted)]"><Phone size={16} /><span data-edit-path="label">{phoneCta.label}</span></a>}
         {whatsappCta.label && <a data-edit-link="whatsappCta" href={whatsappCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted)]" data-edit-path="label">{whatsappCta.label}</a>}
       </div>
@@ -63,7 +63,7 @@ function BookingModern({ headline, subline, badgeText, introText, onlineCta, pho
 
 function BookingBold({ headline, subline, badgeText, introText, onlineCta, phoneCta, whatsappCta, notes }: Props) {
   return (
-    <div className="border-2 border-[#111827] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow)] sm:p-10">
+    <div className="border-2 border-[var(--token-card-border)] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow)] sm:p-10">
       <div className="mb-10 max-w-3xl">
         {badgeText && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow)]" data-edit-path="badgeText">{badgeText}</p>}
         <h2 className="mt-3 text-3xl font-black uppercase sm:text-3xl md:text-5xl text-[color:var(--token-on-dark-heading)]" data-edit-path="headline">{headline}</h2>

@@ -43,7 +43,7 @@ function ContactClassic({ headline, subline, badgeText, introText, image, mapEmb
         {introText && <div className="text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-3">{infoCards.map((card, i) => <div key={`$<span data-edit-path="label">{card.label}</span>-${i}`} className="flex gap-4 border-t border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] pt-4" data-edit-collection="infoCards" data-edit-index={i}><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} className="text-[color:var(--token-eyebrow)]" /><div><p className="text-xs text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="font-semibold text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{primaryCta.label}</a>}
+          {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{primaryCta.label}</a>}
           {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex rounded-full border border-[color-mix(in_srgb,var(--token-icon)_30%,transparent)] px-5 py-3 font-semibold text-[color:var(--token-heading)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
@@ -68,7 +68,7 @@ function ContactModern({ headline, subline, badgeText, introText, image, mapEmbe
         {introText && <div className="font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-6 grid gap-4">{infoCards.map((card, i) => <div key={`$<span data-edit-path="label">{card.label}</span>-${i}`} className="flex gap-4 border-t border-black/10 pt-4" data-edit-collection="infoCards" data-edit-index={i}><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={18} className="text-[color:var(--token-eyebrow)]" /><div><p className="text-xs font-light text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="font-light text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{primaryCta.label}</a>}
+          {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex border border-[var(--token-card-border)] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{primaryCta.label}</a>}
           {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex px-6 py-3 font-light text-[color:var(--token-muted)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
@@ -91,13 +91,13 @@ function ContactBold({ headline, subline, badgeText, introText, image, mapEmbedU
           {subline && <div className="mt-4 font-bold text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {introText && <div className="font-bold text-[color:var(--token-muted)] rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
-        <div className="mt-6 grid gap-3">{infoCards.map((card, i) => <div key={`$<span data-edit-path="label">{card.label}</span>-${i}`} className="flex gap-4 border-t-2 border-[#111827] pt-4" data-edit-collection="infoCards" data-edit-index={i}><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} className="text-[color:var(--token-eyebrow)]" /><div><p className="text-xs font-bold uppercase text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="font-black text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div></div>)}</div>
+        <div className="mt-6 grid gap-3">{infoCards.map((card, i) => <div key={`$<span data-edit-path="label">{card.label}</span>-${i}`} className="flex gap-4 border-t-2 border-[var(--token-card-border)] pt-4" data-edit-collection="infoCards" data-edit-index={i}><DynamicIcon editPath="icon" name={card.icon || 'mail'} size={20} className="text-[color:var(--token-eyebrow)]" /><div><p className="text-xs font-bold uppercase text-[color:var(--token-muted)]" data-edit-path="label">{card.label || ''}</p><p className="font-black text-[color:var(--token-heading)]" data-edit-path="value">{card.value || ''}</p></div></div>)}</div>
         <div className="mt-8 flex flex-wrap gap-3">
           {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex bg-[var(--token-badge-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{primaryCta.label}</a>}
-          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex border-2 border-[#111827] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-path="label">{secondaryCta.label}</a>}
+          {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex border-2 border-[var(--token-card-border)] px-6 py-3 font-black uppercase text-[color:var(--token-heading)] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
-      <div className="border-2 border-[#111827] bg-[#111] p-5 shadow-[4px_4px_0_var(--token-eyebrow)]">
+      <div className="border-2 border-[var(--token-card-border)] bg-[#111] p-5 shadow-[4px_4px_0_var(--token-eyebrow)]">
         {image && <div className="relative mb-5 aspect-[16/10] overflow-hidden"><Image data-edit-image="image" src={image} alt="" fill className="object-cover" sizes="50vw" /></div>}
         {mapEmbedUrl && <iframe src={mapEmbedUrl} className="mb-5 h-56 w-full" loading="lazy" />}
         {formEnabled && <DynamicContactForm fields={formFields} submitLabel={submitLabel} />}

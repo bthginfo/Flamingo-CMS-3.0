@@ -108,7 +108,7 @@ function TestimonialsBold({ headline, badgeText, ratingValue, ratingCount, items
             initial={{ opacity: 0, x: 30 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.4, delay: i * 0.1 }}
-            className="w-[320px] shrink-0 snap-start border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-body)]"
+            className="w-[320px] shrink-0 snap-start border-3 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-6 shadow-[4px_4px_0_var(--token-shadow,var(--token-card-border))]"
            data-edit-collection="items" data-edit-index={i}>
             <Quote size={24} className="mb-3 text-[color:var(--token-accent)]" />
             <div className="rt-content font-medium leading-relaxed text-[color:var(--token-body)]" data-edit-rich="quote" dangerouslySetInnerHTML={{ __html: item.quote }} />

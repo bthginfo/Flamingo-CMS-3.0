@@ -131,21 +131,21 @@ function WellnessBold({ headline, subline, badgeText, introText, imagePrimary, i
         {introText && <div className="text-[color:var(--token-muted)] leading-7 rt-content" data-edit-rich="introText" dangerouslySetInnerHTML={{ __html: introText }} />}
         <div className="mt-8 grid gap-4">
           {features.map((feature, index) => (
-            <div key={`$<span data-edit-path="title">{feature.title}</span>-${index}`} className="flex gap-4 border-t-2 border-[#111827] pt-4" data-edit-collection="features" data-edit-index={index}>
+            <div key={`$<span data-edit-path="title">{feature.title}</span>-${index}`} className="flex gap-4 border-t-2 border-[var(--token-card-border)] pt-4" data-edit-collection="features" data-edit-index={index}>
               <div className="text-[color:var(--token-icon)]"><DynamicIcon editPath="icon" name={feature.icon || 'heart'} size={20} /></div>
               <div><h3 className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{feature.title || ''}</h3>{feature.text && <div className="text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: feature.text }} />}</div>
             </div>
           ))}
         </div>
-        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 border-2 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
       </div>
       <div className="space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image data-edit-image="imagePrimary" src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-          {imageSecondary && <div className="relative aspect-square overflow-hidden border-2 border-[#111827] shadow-[4px_4px_0_#111827]"><Image data-edit-image="imageSecondary" src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
+          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border-2 border-[var(--token-card-border)] shadow-[4px_4px_0_var(--token-card-border)]"><Image data-edit-image="imagePrimary" src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {imageSecondary && <div className="relative aspect-square overflow-hidden border-2 border-[var(--token-card-border)] shadow-[4px_4px_0_var(--token-card-border)]"><Image data-edit-image="imageSecondary" src={imageSecondary} alt="" fill className="object-cover" sizes="25vw" /></div>}
         </div>
         {treatments.map((treatment, index) => (
-          <article key={`$<span data-edit-path="title">{treatment.title}</span>-${index}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="treatments" data-edit-index={index}>
+          <article key={`$<span data-edit-path="title">{treatment.title}</span>-${index}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="treatments" data-edit-index={index}>
             {treatment.image && <div className="relative mb-4 aspect-[16/9] overflow-hidden"><Image data-edit-image="image" src={treatment.image} alt={treatment.title || ''} fill className="object-cover" sizes="50vw" /></div>}
             <div className="flex justify-between gap-4"><h3 className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{treatment.title || ''}</h3><span className="text-sm font-bold text-[color:var(--token-muted)]" data-edit-path="priceLabel">{treatment.priceLabel || ''}</span></div>
             {treatment.text && <div className="mt-2 text-sm text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: treatment.text }} />}

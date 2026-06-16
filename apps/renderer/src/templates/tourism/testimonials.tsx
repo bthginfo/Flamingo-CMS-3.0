@@ -46,7 +46,7 @@ function Classic({ headline, subline, badgeText, ratingValue, ratingCount, items
           </motion.article>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex items-center gap-2 rounded-lg bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -66,7 +66,7 @@ function Mod({ headline, subline, badgeText, ratingValue, ratingCount, items, ct
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 rounded-lg border border-[#111827] px-5 py-3 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 rounded-lg border border-[var(--token-card-border)] px-5 py-3 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -78,17 +78,17 @@ function Bold({ headline, subline, badgeText, ratingValue, ratingCount, items, c
       {(ratingValue || ratingCount) && <p className="mb-6 text-sm font-bold uppercase text-[color:var(--token-muted)]">{[ratingValue, ratingCount].filter(Boolean).join(' · ')}</p>}
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
-          <article key={`$<span data-edit-path="name">{item.name}</span>-${i}`} className="border-2 border-[#111827] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_#111827]" data-edit-collection="items" data-edit-index={i}>
+          <article key={`$<span data-edit-path="name">{item.name}</span>-${i}`} className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] p-5 shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="items" data-edit-index={i}>
             <div className="text-[color:var(--token-eyebrow))]"><Stars count={item.rating || 5} /></div>
             {item.quote && <p className="mt-4 text-sm leading-6 text-[color:var(--token-heading)]">&ldquo;<span data-edit-path="quote">{plain(item.quote)}</span>&rdquo;</p>}
-            <div className="mt-4 border-t-2 border-[#111827] pt-3">
+            <div className="mt-4 border-t-2 border-[var(--token-card-border)] pt-3">
               <p className="font-black uppercase text-[color:var(--token-heading)]" data-edit-path="name">{item.name || ''}</p>
               <p className="text-xs font-bold text-[color:var(--token-muted)]">{[item.context, item.sourceLabel].filter(Boolean).join(' · ')}</p>
             </div>
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }

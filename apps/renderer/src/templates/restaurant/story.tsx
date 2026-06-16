@@ -102,7 +102,7 @@ function StoryModern({ headline, subline, badgeText, storyText, imagePrimary, im
               {founderRole && <p className="text-xs font-light text-[color:var(--token-muted)]">{founderRole}</p>}
             </blockquote>
           )}
-          {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+          {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex border-b-2 border-[var(--token-card-border)] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border border-black/5"><Image data-edit-image="imagePrimary" src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
@@ -155,14 +155,14 @@ function StoryBold({ headline, subline, badgeText, storyText, imagePrimary, imag
           {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex bg-[var(--token-badge-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{ctaPrimary.label}</a>}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border-2 border-[#111827]"><Image data-edit-image="imagePrimary" src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
-          {imageSecondary && <div className="relative col-span-2 aspect-[16/9] overflow-hidden border-2 border-[#111827]"><Image data-edit-image="imageSecondary" src={imageSecondary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden border-2 border-[var(--token-card-border)]"><Image data-edit-image="imagePrimary" src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}
+          {imageSecondary && <div className="relative col-span-2 aspect-[16/9] overflow-hidden border-2 border-[var(--token-card-border)]"><Image data-edit-image="imageSecondary" src={imageSecondary} alt="" fill className="object-cover" sizes="50vw" /></div>}
         </div>
       </div>
       {values.length > 0 && (
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {values.map((v, i) => (
-            <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-2 border-[#111827] p-5 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="values" data-edit-index={i}>
+            <div key={`$<span data-edit-path="title">{v.title}</span>-${i}`} className="border-2 border-[var(--token-card-border)] p-5 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="values" data-edit-index={i}>
               <DynamicIcon editPath="icon" name={v.icon || 'heart'} size={20} className="text-[color:var(--token-eyebrow)]" />
               <h3 className="mt-2 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{v.title || ''}</h3>
               {v.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: v.text }} />}
@@ -173,7 +173,7 @@ function StoryBold({ headline, subline, badgeText, storyText, imagePrimary, imag
       {milestones.length > 0 && (
         <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {milestones.map((m, i) => (
-            <div key={`${m.year}-${i}`} className="border-2 border-[#111827] p-5" data-edit-collection="milestones" data-edit-index={i}>
+            <div key={`${m.year}-${i}`} className="border-2 border-[var(--token-card-border)] p-5" data-edit-collection="milestones" data-edit-index={i}>
               {m.year && <p className="text-xs font-black uppercase tracking-widest text-[color:var(--token-eyebrow)]">{m.year}</p>}
               <h3 className="mt-1 font-black uppercase text-[color:var(--token-heading)]" data-edit-path="title">{m.title || ''}</h3>
               {m.text && <div className="mt-1 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="text" dangerouslySetInnerHTML={{ __html: m.text }} />}

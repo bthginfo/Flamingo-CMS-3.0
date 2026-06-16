@@ -117,7 +117,7 @@ function HeroBold({ headline, subline, bgImage, bgImageMobile, overlayOpacity, p
         {subline && <p className="mt-6 text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_50%,transparent)] text-lg max-w-lg mx-auto" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
           {primaryCta && <a data-edit-link="primaryCta" href={primaryCta.href} className="px-10 py-4 font-black uppercase tracking-wider text-sm transition-colors shadow-[4px_4px_0_rgba(0,0,0,1)]" style={{ background: 'var(--token-btn-bg)', color: 'var(--token-btn-text)' }} data-edit-path="label">{primaryCta.label}</a>}
-          {secondaryCta && <a data-edit-link="secondaryCta" href={secondaryCta.href} className="px-10 py-4 border-2 border-[color:var(--token-card-border)] text-[color:var(--token-on-dark-heading)] font-black uppercase tracking-wider text-sm hover:bg-[var(--token-card-bg)] hover:text-[color:var(--token-heading)] transition-colors shadow-[4px_4px_0_rgba(255,255,255,0.2)]" data-edit-path="label">{secondaryCta.label}</a>}
+          {secondaryCta && <a data-edit-link="secondaryCta" href={secondaryCta.href} className="px-10 py-4 border-2 border-[color:var(--token-card-border)] text-[color:var(--token-on-dark-heading)] font-black uppercase tracking-wider text-sm hover:bg-[var(--token-card-bg)] hover:text-[color:var(--token-heading)] transition-colors shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow,var(--token-card-border))_20%,transparent)]" data-edit-path="label">{secondaryCta.label}</a>}
         </div>
       </div>
     </section>

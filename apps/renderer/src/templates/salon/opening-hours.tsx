@@ -33,7 +33,7 @@ function HoursClassic({ headline, subline, badgeText, days, bookingNote, ctaPrim
           {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {bookingNote && <p className="text-sm leading-6 text-[color:var(--token-muted)]">{bookingNote}</p>}
-        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
       </div>
       <div className="rounded-xl border border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)] bg-[var(--token-card-bg)] shadow-md">
         {days.map((day, i) => (
@@ -57,7 +57,7 @@ function HoursModern({ headline, subline, badgeText, days, bookingNote, ctaPrima
           {subline && <div className="mt-4 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         {bookingNote && <p className="text-sm font-light leading-6 text-[color:var(--token-muted)]">{bookingNote}</p>}
-        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex border border-[var(--token-card-border)] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
       </div>
       <div className="border-y border-black/10">
         {days.map((day, i) => (
@@ -83,9 +83,9 @@ function HoursBold({ headline, subline, badgeText, days, bookingNote, ctaPrimary
         {bookingNote && <p className="text-sm font-bold leading-6 text-[color:var(--token-muted)]">{bookingNote}</p>}
         {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex bg-[var(--token-badge-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_rgba(0,0,0,0.8)]" data-edit-path="label">{ctaPrimary.label}</a>}
       </div>
-      <div className="border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]">
+      <div className="border-2 border-[var(--token-card-border)] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]">
         {days.map((day, i) => (
-          <div key={`$<span data-edit-path="label">{day.label}</span>-${i}`} className="flex items-center justify-between gap-4 border-b-2 border-[#111827] px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={i}>
+          <div key={`$<span data-edit-path="label">{day.label}</span>-${i}`} className="flex items-center justify-between gap-4 border-b-2 border-[var(--token-card-border)] px-5 py-4 last:border-b-0" data-edit-collection="days" data-edit-index={i}>
             <div className="flex items-center gap-3"><Clock size={17} className="text-[color:var(--token-eyebrow)]" /><div><p className="font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="label">{day.label || ''}</p>{day.note && <p className="text-xs text-[color:color-mix(in_srgb,var(--token-on-dark-heading)_60%,transparent)]" data-edit-path="note">{day.note}</p>}</div></div>
             <p className="text-sm font-black uppercase text-[color:var(--token-on-dark-heading)]">{day.closed ? (day.note || '') : day.hours}</p>
           </div>

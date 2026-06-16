@@ -43,7 +43,7 @@ function TestimonialsClassic({ headline, subline, badgeText, ratingValue, rating
           </motion.article>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-full bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-full bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -67,7 +67,7 @@ function TestimonialsModern({ headline, subline, badgeText, ratingValue, ratingC
           </article>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border border-[var(--token-card-border)] px-6 py-3 font-light text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -83,7 +83,7 @@ function TestimonialsBold({ headline, subline, badgeText, ratingValue, ratingCou
       <div className="mb-6 flex flex-wrap gap-3 text-sm font-bold uppercase text-[color:var(--token-muted)]">{ratingValue && <span>{ratingValue}</span>}{ratingCount && <span>{ratingCount}</span>}</div>
       <div className="grid gap-5 md:grid-cols-3">
         {items.map((item, i) => (
-          <article key={`$<span data-edit-path="name">{item.name}</span>-${i}`} className="border-2 border-[#111827] bg-[#111] p-5 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="items" data-edit-index={i}>
+          <article key={`$<span data-edit-path="name">{item.name}</span>-${i}`} className="border-2 border-[var(--token-card-border)] bg-[#111] p-5 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="items" data-edit-index={i}>
             <div className="flex gap-1 text-[color:var(--token-eyebrow)]">{Array.from({ length: item.rating || 5 }).map((_, si) => <Star key={si} size={14}  data-edit-collection="rating" data-edit-index={si}/>)}</div>
             {item.quote && <div className="mt-4 text-sm leading-6 text-[color:var(--token-on-dark-heading)] rt-content" data-edit-rich="quote" dangerouslySetInnerHTML={{ __html: item.quote }} />}
             <p className="mt-4 font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="name">{item.name || ''}</p>

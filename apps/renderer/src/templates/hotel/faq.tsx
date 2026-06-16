@@ -42,7 +42,7 @@ function FaqClassic({ headline, subline, badgeText, items, ctaPrimary }: Props) 
           </motion.details>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex rounded-xl bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)] shadow-md" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -78,15 +78,15 @@ function FaqBold({ headline, subline, badgeText, items, ctaPrimary }: Props) {
         <h2 className="mt-4 text-3xl sm:text-3xl md:text-5xl font-black uppercase text-[color:var(--token-heading)]" data-edit-path="headline">{headline}</h2>
         {subline && <div className="mt-4 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      <div className="border-2 border-[#111827] bg-[var(--token-card-bg)] shadow-[4px_4px_0_#111827]">
+      <div className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]">
         {items.map((item, index) => (
-          <details key={`$<span data-edit-path="question">{item.question}</span>-${index}`} className="group border-b-2 border-[#111827] p-5 last:border-b-0" data-edit-collection="items" data-edit-index={index}>
+          <details key={`$<span data-edit-path="question">{item.question}</span>-${index}`} className="group border-b-2 border-[var(--token-card-border)] p-5 last:border-b-0" data-edit-collection="items" data-edit-index={index}>
             <summary className="cursor-pointer font-black uppercase text-[color:var(--token-heading)]">{item.question || ''}</summary>
             {item.answer && <div className="mt-3 text-sm leading-6 text-[color:var(--token-muted)] rt-content" data-edit-rich="answer" dangerouslySetInnerHTML={{ __html: item.answer }} />}
           </details>
         ))}
       </div>
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[#111827] bg-[#111827] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-8 inline-flex border-2 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-5 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-icon)]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }

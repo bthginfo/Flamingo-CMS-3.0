@@ -108,7 +108,7 @@ function HeroClassic({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, 
               className="inline-flex items-center gap-2.5 rounded-full border px-5 py-2.5 text-sm shadow-sm backdrop-blur-md mt-6"
               style={{
                 background: 'var(--token-badge-bg, color-mix(in srgb, var(--token-on-dark-heading) 14%, transparent))',
-                borderColor: 'var(--token-badge-border, color-mix(in srgb, var(--token-on-dark-heading) 24%, transparent))',
+                borderColor: 'var(--token-badge-border, color-mix(in srgb, var(--token-card-border) 24%, transparent))',
                 color: 'var(--token-badge-text,var(--token-on-dark-heading))',
               }}>
               <DynamicIcon name={badgeIcon} size={15} className="text-[color:var(--token-icon,var(--token-badge-text))]" />
@@ -246,7 +246,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 mt-12">
             {primaryCta?.label && (
-              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto bg-[var(--token-btn-bg,var(--token-badge-bg))] text-[color:var(--token-btn-text,var(--token-badge-text,var(--token-on-dark-heading)))] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_rgba(255,255,255,0.2)]">
+              <a data-edit-link="primaryCta" href={primaryCta.href} className="inline-flex items-center justify-between sm:justify-center sm:gap-3 w-full sm:w-auto bg-[var(--token-btn-bg,var(--token-badge-bg))] text-[color:var(--token-btn-text,var(--token-badge-text,var(--token-on-dark-heading)))] font-bold uppercase tracking-wider px-8 py-4 text-base hover:translate-x-1 transition-transform shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow,var(--token-card-border))_20%,transparent)]">
                 <span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={18} />}
               </a>
             )}

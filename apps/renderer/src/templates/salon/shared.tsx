@@ -23,7 +23,7 @@ export function SectionHeader({ headline, subline, badgeText }: { headline: stri
 
 export function CtaButton({ cta }: { cta: ButtonValue }) {
   if (!cta.label) return null;
-  return <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-[#111827] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>;
+  return <a data-edit-link="cta" href={cta.href || '#'} className="inline-flex items-center gap-2 rounded-lg bg-[var(--token-btn-bg)] px-5 py-3 font-semibold text-[color:var(--token-on-dark-heading)]"><span data-edit-path="label">{cta.label}</span><ArrowRight size={16} /></a>;
 }
 
 export function ImageCard({ image, title, text, meta, cta }: { image?: string; title?: string; text?: string; meta?: string; cta?: ButtonValue }) {

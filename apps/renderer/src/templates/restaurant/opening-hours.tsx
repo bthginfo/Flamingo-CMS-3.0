@@ -75,7 +75,7 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
         {kitchenHoursHeadline && <h3 className="mt-8 font-medium text-[color:var(--token-heading)]">{kitchenHoursHeadline}</h3>}
         {kitchenHoursText && <p className="mt-2 text-sm font-light leading-6 text-[color:var(--token-muted)]">{kitchenHoursText}</p>}
         {holidayNote && <p className="mt-4 text-xs font-light text-[color:var(--token-muted)]">{holidayNote}</p>}
-        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-6 inline-flex border-b-2 border-[var(--token-card-border)] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
       </div>
       <div className="border border-black/5">
         {days.map((day, index) => (
@@ -97,7 +97,7 @@ function OpeningHoursModern({ headline, subline, badgeText, days, kitchenHoursHe
 
 function OpeningHoursBold({ headline, subline, badgeText, days, kitchenHoursHeadline, kitchenHoursText, holidayNote, ctaPrimary }: OpeningHoursViewProps) {
   return (
-    <div className="bg-[#111827] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
+    <div className="bg-[var(--token-btn-bg)] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
       <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
           {badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{badgeText}</p>}

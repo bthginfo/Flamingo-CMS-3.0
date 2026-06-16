@@ -115,7 +115,7 @@ function RoomBold({ headline, subline, badgeText, rooms, footerText }: Props) {
       </div>
       <div className="grid gap-4 lg:grid-cols-3">
         {rooms.map((room, index) => (
-          <article key={`$<span data-edit-path="name">{room.name}</span>-${index}`} className={`overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg)] shadow-[4px_4px_0_#111827] ${room.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="rooms" data-edit-index={index}>
+          <article key={`$<span data-edit-path="name">{room.name}</span>-${index}`} className={`overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)] ${room.highlighted ? 'ring-2 ring-[var(--token-icon)]' : ''}`} data-edit-collection="rooms" data-edit-index={index}>
             {room.image && <div className="relative aspect-[4/3]"><Image data-edit-image="image" src={room.image} alt={room.name || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-5">
               <div className="flex items-start justify-between gap-3">

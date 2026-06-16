@@ -89,7 +89,7 @@ function AmbienceModern({ headline, subline, badgeText, imagePrimary, imageSecon
             </div>
           ))}
         </div>
-        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
+        {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex items-center gap-2 border-b-2 border-[var(--token-card-border)] pb-1 font-medium text-[color:var(--token-heading)]"><span data-edit-path="label">{ctaPrimary.label}</span><ArrowRight size={16} /></a>}
       </div>
     </div>
   );
@@ -97,7 +97,7 @@ function AmbienceModern({ headline, subline, badgeText, imagePrimary, imageSecon
 
 function AmbienceBold({ headline, subline, badgeText, imagePrimary, imageSecondary, imageTertiary, highlights, ctaPrimary }: AmbienceViewProps) {
   return (
-    <div className="bg-[#111827] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
+    <div className="bg-[var(--token-btn-bg)] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
       <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {imagePrimary && <div className="relative col-span-2 aspect-[16/10] overflow-hidden rounded-none border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)]"><Image data-edit-image="imagePrimary" src={imagePrimary} alt="" fill className="object-cover" sizes="50vw" /></div>}

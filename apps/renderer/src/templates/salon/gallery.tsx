@@ -77,7 +77,7 @@ function GalleryBold({ headline, subline, badgeText, images }: Props) {
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {images.map((img, i) => (
-          <article key={`${img.src}-${i}`} className="group overflow-hidden border-2 border-[#111827] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="images" data-edit-index={i}>
+          <article key={`${img.src}-${i}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[#111] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="images" data-edit-index={i}>
             {img.src && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="src" src={img.src} alt={img.alt || ''} fill className="object-cover" sizes="33vw" /></div>}
             <div className="p-4">
               {img.category && <span className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]" data-edit-path="category">{img.category}</span>}

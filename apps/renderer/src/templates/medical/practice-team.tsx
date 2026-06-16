@@ -69,7 +69,7 @@ function Bold({ header, members }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {members.map((item, index) => (
-          <article key={`$<span data-edit-path="name">{item.name}</span>-${index}`} className="group overflow-hidden border-2 border-[#111827] bg-[var(--token-card-bg)] shadow-[4px_4px_0_#111827]" data-edit-collection="members" data-edit-index={index}>
+          <article key={`$<span data-edit-path="name">{item.name}</span>-${index}`} className="group overflow-hidden border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] shadow-[4px_4px_0_var(--token-card-border)]" data-edit-collection="members" data-edit-index={index}>
             {item.image && <div className="relative aspect-[4/3] overflow-hidden"><Image data-edit-image="image" src={item.image} alt={item.name || ''} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="33vw" /></div>}
             <div className="p-5">
               {item.role && <p className="text-xs font-black uppercase tracking-widest text-teal-500" data-edit-path="role">{item.role}</p>}

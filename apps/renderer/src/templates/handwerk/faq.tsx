@@ -128,7 +128,7 @@ function FaqBold({ headline, badgeText, items, expandFirst }: FProps) {
 function FaqItemBold({ question, answer, defaultOpen, num }: { question: string; answer: string; defaultOpen: boolean; num: number }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className={cn('border-3 border-[var(--token-card-border)] transition-all', open ? 'shadow-[4px_4px_0_var(--token-accent)]' : 'shadow-[4px_4px_0_var(--token-body)]')}>
+    <div className={cn('border-3 border-[var(--token-card-border)] transition-all', open ? 'shadow-[4px_4px_0_var(--token-accent)]' : 'shadow-[4px_4px_0_var(--token-shadow,var(--token-card-border))]')}>
       <button onClick={() => setOpen(!open)} className="flex w-full items-center gap-4 px-6 py-5 text-left text-sm font-bold uppercase tracking-wide text-[color:var(--token-heading)]">
         <span className="flex h-7 w-7 shrink-0 items-center justify-center bg-[var(--token-body)] text-xs font-black text-[color:var(--token-btn-text)]">{num}</span>
         <span className="flex-1" data-edit-path="question">{question}</span>

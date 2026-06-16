@@ -149,7 +149,7 @@ function ReservationModern(props: ReservationViewProps) {
         {props.subline && <div className="font-light leading-relaxed text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: props.subline }} />}
         {props.introText && <p className="font-light leading-7 text-[color:var(--token-muted)]">{plain(props.introText)}</p>}
         <div className="flex flex-wrap gap-4">
-          {props.externalBookingCta.label && <a href={props.externalBookingCta.href || '#'} className="inline-flex items-center gap-2 border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]"><CalendarDays size={17} /><span data-edit-path="label">{props.externalBookingCta.label}</span></a>}
+          {props.externalBookingCta.label && <a href={props.externalBookingCta.href || '#'} className="inline-flex items-center gap-2 border-b-2 border-[var(--token-card-border)] pb-1 font-medium text-[color:var(--token-heading)]"><CalendarDays size={17} /><span data-edit-path="label">{props.externalBookingCta.label}</span></a>}
           {props.phoneCta.label && <a href={props.phoneCta.href || '#'} className="inline-flex items-center gap-2 font-light text-[color:var(--token-muted)]"><Phone size={17} /><span data-edit-path="label">{props.phoneCta.label}</span></a>}
         </div>
         {props.timeHint && <p className="text-sm font-light text-[color:var(--token-muted)]">{props.timeHint}</p>}
@@ -165,7 +165,7 @@ function ReservationModern(props: ReservationViewProps) {
 
 function ReservationBold(props: ReservationViewProps) {
   return (
-    <div className="bg-[#111827] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
+    <div className="bg-[var(--token-btn-bg)] p-6 text-[color:var(--token-on-dark-heading)] sm:p-10">
       <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr]">
         <div className="space-y-6">
           {props.badgeText && <p className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase tracking-widest text-[color:var(--token-heading)]" data-edit-path="badgeText">{props.badgeText}</p>}

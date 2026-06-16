@@ -112,7 +112,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, bgImage, bgImageM
           {subline && <div className="mt-7 max-w-lg text-lg font-light leading-8 text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
           <div className="mt-3 h-px w-16 bg-[var(--token-badge-bg)]" />
           <div className="mt-8 flex flex-wrap gap-3">
-            {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border border-[#111827] px-6 py-3 font-light text-[color:var(--token-heading)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={16} />}</a>}
+            {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="inline-flex items-center gap-2 border border-[var(--token-card-border)] px-6 py-3 font-light text-[color:var(--token-heading)]"><span data-edit-path="label">{primaryCta.label}</span>{primaryCta.icon && <DynamicIcon editPath="primaryCta.icon" name={primaryCta.icon} size={16} />}</a>}
             {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="inline-flex items-center gap-2 px-6 py-3 font-light text-[color:var(--token-muted)]" data-edit-path="label">{secondaryCta.label}</a>}
           </div>
           <div className="mt-10 flex flex-wrap gap-3 text-sm text-[color:var(--token-muted)]">

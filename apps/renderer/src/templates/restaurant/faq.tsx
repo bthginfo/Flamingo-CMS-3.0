@@ -30,7 +30,7 @@ function Accordion({ items, variant }: { items: FaqItem[]; variant: 'classic' | 
       {items.map((item, i) => {
         const isOpen = open === i;
         return (
-          <div key={`${item.question}-${i}`} className={variant === 'bold' ? 'border-b-2 border-[#111827]' : variant === 'modern' ? 'border-b border-black/10' : 'border-b border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)]'}>
+          <div key={`${item.question}-${i}`} className={variant === 'bold' ? 'border-b-2 border-[var(--token-card-border)]' : variant === 'modern' ? 'border-b border-black/10' : 'border-b border-[color-mix(in_srgb,var(--token-icon)_20%,transparent)]'}>
             <button onClick={() => setOpen(isOpen ? null : i)} className={`flex w-full items-center justify-between py-5 text-left ${variant === 'bold' ? 'font-black uppercase text-[color:var(--token-heading)]' : variant === 'modern' ? 'font-medium text-[color:var(--token-heading)]' : 'font-semibold text-[color:var(--token-heading)]'}`}>
               <span data-edit-path="question">{item.question || ''}</span>
               <ChevronDown size={18} className={`shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -75,7 +75,7 @@ function FaqModern({ headline, subline, badgeText, items, ctaPrimary }: Props) {
         {subline && <div className="mt-6 font-light text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       <Accordion items={items} variant="modern" />
-      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex border-b-2 border-[#111827] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
+      {ctaPrimary.label && <a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="mt-10 inline-flex border-b-2 border-[var(--token-card-border)] pb-1 font-medium text-[color:var(--token-heading)]" data-edit-path="label">{ctaPrimary.label}</a>}
     </div>
   );
 }
@@ -89,10 +89,10 @@ function FaqBold({ headline, subline, badgeText, items, ctaPrimary }: Props) {
         <div className="mt-2 h-1.5 w-20 bg-[var(--token-badge-bg)]" />
         {subline && <div className="mt-4 font-bold text-[color:var(--token-muted)] rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
-      <div className="border-2 border-[#111827] bg-[var(--token-card-bg)] px-6 shadow-[4px_4px_0_#111827]">
+      <div className="border-2 border-[var(--token-card-border)] bg-[var(--token-card-bg)] px-6 shadow-[4px_4px_0_var(--token-card-border)]">
         <Accordion items={items} variant="bold" />
       </div>
-      {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex border-2 border-[#111827] bg-[#111827] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-path="label">{ctaPrimary.label}</a></div>}
+      {ctaPrimary.label && <div className="mt-8"><a data-edit-link="ctaPrimary" href={ctaPrimary.href || '#'} className="inline-flex border-2 border-[var(--token-card-border)] bg-[var(--token-btn-bg)] px-6 py-3 font-black uppercase text-[color:var(--token-on-dark-heading)] shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-path="label">{ctaPrimary.label}</a></div>}
     </div>
   );
 }

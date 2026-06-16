@@ -32,7 +32,7 @@ const CTA_CARD_HEADING = 'var(--token-heading, #fff)';
 const CTA_CARD_BODY = 'color-mix(in srgb, var(--token-on-dark-body, rgba(255,255,255,0.78)) 82%, transparent)';
 const CTA_CARD_BADGE_BG = 'color-mix(in srgb, var(--token-on-dark-body, rgba(255,255,255,0.78)) 14%, transparent)';
 const CTA_CARD_BADGE_TEXT = 'var(--token-on-dark-body, rgba(255,255,255,0.78))';
-const CTA_CARD_BADGE_BORDER = 'color-mix(in srgb, var(--token-on-dark-body, rgba(255,255,255,0.78)) 24%, transparent)';
+const CTA_CARD_BADGE_BORDER = 'color-mix(in srgb, var(--token-card-border, rgba(255,255,255,0.22)) 24%, transparent)';
 
 /* ─── CLASSIC: Gradient bg, centered, pill cta, floating orbs ─── */
 function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
@@ -44,7 +44,7 @@ function CtaClassic({ headline, subline, badgeText, cta, colors }: CProps) {
   const wrapStyle: React.CSSProperties = {
     background: colors?.bgColor ?? CTA_CARD_BG,
     border: '1px solid var(--token-card-border, rgba(15,23,42,0.08))',
-    boxShadow: '0 24px 70px color-mix(in srgb, var(--token-heading, #0f172a) 12%, transparent), inset 0 1px 0 color-mix(in srgb, #fff 60%, transparent)',
+    boxShadow: '0 24px 70px color-mix(in srgb, var(--token-shadow, var(--token-card-border)) 12%, transparent), inset 0 1px 0 color-mix(in srgb, #fff 60%, transparent)',
   };
   if (colors?.textColor) wrapStyle.color = colors.textColor;
 
@@ -85,7 +85,7 @@ function CtaModern({ headline, subline, cta, colors }: CProps) {
   const wrapStyle: React.CSSProperties = {
     background: colors?.bgColor ?? CTA_CARD_BG,
     border: '1px solid var(--token-card-border, rgba(15,23,42,0.08))',
-    boxShadow: '0 18px 50px color-mix(in srgb, var(--token-heading, #0f172a) 8%, transparent)',
+    boxShadow: '0 18px 50px color-mix(in srgb, var(--token-shadow, var(--token-card-border)) 8%, transparent)',
   };
   if (colors?.textColor) wrapStyle.color = colors.textColor;
 
@@ -113,7 +113,7 @@ function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
   const wrapStyle: React.CSSProperties = {
     background: colors?.bgColor ?? CTA_CARD_BG,
     border: '1px solid var(--token-card-border, rgba(15,23,42,0.08))',
-    boxShadow: '0 18px 50px color-mix(in srgb, var(--token-heading, #0f172a) 8%, transparent)',
+    boxShadow: '0 18px 50px color-mix(in srgb, var(--token-shadow, var(--token-card-border)) 8%, transparent)',
   };
   if (colors?.textColor) wrapStyle.color = colors.textColor;
 
@@ -126,7 +126,7 @@ function CtaBold({ headline, subline, badgeText, cta, colors }: CProps) {
         {subline && <div className="rt-content mt-3 max-w-xl font-medium" style={{ color: CTA_CARD_BODY }} data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
       </div>
       {cta?.label && (
-        <a data-edit-link="cta" href={cta.href} className="inline-flex w-full shrink-0 items-center justify-between bg-[var(--token-btn-bg)] px-8 py-4 text-base font-bold uppercase tracking-wider text-[color:var(--token-btn-text)] shadow-[4px_4px_0_rgba(255,255,255,0.2)] transition-transform hover:translate-x-1 lg:w-auto lg:justify-center lg:gap-3">
+        <a data-edit-link="cta" href={cta.href} className="inline-flex w-full shrink-0 items-center justify-between bg-[var(--token-btn-bg)] px-8 py-4 text-base font-bold uppercase tracking-wider text-[color:var(--token-btn-text)] shadow-[4px_4px_0_color-mix(in_srgb,var(--token-shadow,var(--token-card-border))_20%,transparent)] transition-transform hover:translate-x-1 lg:w-auto lg:justify-center lg:gap-3">
           <span data-edit-path="label">{cta.label}</span>{cta.icon && <DynamicIcon editPath="cta.icon" name={cta.icon} size={18} />}
         </a>
       )}

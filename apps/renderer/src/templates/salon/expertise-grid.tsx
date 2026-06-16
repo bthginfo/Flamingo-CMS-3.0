@@ -83,7 +83,7 @@ function ExpertiseBold({ headline, subline, badgeText, items }: Props) {
       </div>
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((item, i) => (
-          <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="border-2 border-[#111827] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="items" data-edit-index={i}>
+          <article key={`$<span data-edit-path="title">{item.title}</span>-${i}`} className="border-2 border-[var(--token-card-border)] bg-[#111] p-6 shadow-[4px_4px_0_var(--token-eyebrow)]" data-edit-collection="items" data-edit-index={i}>
             {item.metaLabel && <span className="inline-block bg-[var(--token-badge-bg)] px-3 py-1 text-xs font-black uppercase text-[color:var(--token-on-dark-heading)]">{item.metaLabel}</span>}
             <div className="mt-4 flex gap-4">
               <DynamicIcon editPath="icon" name={item.icon || 'sparkles'} size={20} className="text-[color:var(--token-eyebrow)]" />
