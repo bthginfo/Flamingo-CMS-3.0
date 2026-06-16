@@ -340,7 +340,7 @@ export function getFieldsForSection(sectionType: string, industry?: string): Col
   }
 
   // Return contract fields + always-required fields, sorted by render order
-  return sortColorFields(Array.from(allFields).filter(f => f !== 'sectionBgAlt'));
+  return sortColorFields(Array.from(allFields));
 }
 
 

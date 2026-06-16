@@ -147,7 +147,7 @@ export function WeddingRsvpSection({ data, styleVariant }: Props) {
   }
 
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-[color-mix(in_srgb,var(--token-btn-bg)_2%,transparent)]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
       <div className="max-w-lg mx-auto">
         <div className="text-center mb-12">
           <span className="section-badge" data-edit-path="badge">{badge}</span>

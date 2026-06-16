@@ -22,14 +22,14 @@ type P = { badge: string; headline: string; events: Event[] };
 
 function ScheduleClassic({ badge, headline, events }: P) {
   return (
-    <section className="py-16 md:py-24 px-4 md:px-6 bg-[color-mix(in_srgb,var(--token-btn-bg)_2%,transparent)]">
+    <section className="py-16 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
           <h2 className="section-headline" data-edit-path="headline">{headline}</h2>
         </div>
         <div className="relative">
-          <div className="absolute left-[23px] md:left-1/2 top-0 bottom-0 w-px bg-[color-mix(in_srgb,var(--token-btn-bg)_15%,transparent)]" />
+          <div className="absolute left-[23px] md:left-1/2 top-0 bottom-0 w-px bg-[var(--token-divider)]" />
           <div className="space-y-12">
             {events.map((event, i) => {
               const Icon = ICONS[(event.icon || 'heart').toLowerCase()] || Heart;
@@ -41,7 +41,7 @@ function ScheduleClassic({ badge, headline, events }: P) {
                     {event.description && <div className="text-[color:var(--token-muted)] mt-1 rt-content" data-edit-rich="description" dangerouslySetInnerHTML={{ __html: event.description }} />}
                     {event.location && <p className="text-sm text-[color:var(--token-muted)] mt-2 flex items-center gap-1"><MapPin className="w-3 h-3" /><span data-edit-path="location">{event.location}</span></p>}
                   </div>
-                  <div className="relative z-10 w-12 h-12 rounded-full bg-[color-mix(in_srgb,var(--token-btn-bg)_10%,transparent)] flex items-center justify-center shrink-0">
+                  <div className="relative z-10 w-12 h-12 rounded-full bg-[var(--token-section-bg-alt)] flex items-center justify-center shrink-0">
                     <Icon className="w-5 h-5 text-[color:var(--token-icon)]" />
                   </div>
                   <div className="flex-1 md:hidden">

@@ -75,7 +75,7 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
   }
 
   return (
-    <section className="py-12 md:py-24 px-4 md:px-6 bg-[color-mix(in_srgb,var(--token-btn-bg)_2%,transparent)]">
+    <section className="py-12 md:py-24 px-4 md:px-6 bg-[var(--token-section-bg)]">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10 md:mb-16">
           <span className="section-badge" data-edit-path="badge">{badge}</span>
@@ -83,7 +83,7 @@ export function ShootingProcessSection({ data, styleVariant }: Props) {
           {subline && <div className="section-subline rt-content" data-edit-rich="subline" dangerouslySetInnerHTML={{ __html: subline }} />}
         </div>
         <div className="relative">
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-[color-mix(in_srgb,var(--token-btn-bg)_15%,transparent)]" />
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-[var(--token-divider)]" />
           <div className="space-y-10 md:space-y-16">
             {steps.map((step, i) => {
               const Icon = ICONS[(step.icon || 'camera').toLowerCase()] || Camera;
