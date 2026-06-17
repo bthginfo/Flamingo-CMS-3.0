@@ -55,7 +55,7 @@ export function CafeHeroSection({ data }: Props) {
               </a>
             )}
             {secondaryCta && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] hover:bg-[color-mix(in_srgb,var(--token-card-bg)_20%,transparent)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] backdrop-blur-sm transition-all" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-7 py-3.5 bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] hover:bg-[color-mix(in_srgb,var(--token-card-bg)_20%,transparent)] text-[color:var(--token-btn-secondary-text,var(--token-on-dark-heading,var(--token-heading)))] font-semibold rounded-full border border-[color:var(--token-btn-secondary-border,var(--token-card-border))] backdrop-blur-sm transition-all" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

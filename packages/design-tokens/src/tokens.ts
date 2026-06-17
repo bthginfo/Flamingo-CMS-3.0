@@ -77,6 +77,7 @@ export const DESIGN_TOKENS = {
   btnText:         { cssVar: '--token-btn-text',        kind: 'color', default: '#ffffff',          description: 'Primary button text' },
   btnSecondaryBg:  { cssVar: '--token-btn-secondary-bg',   kind: 'color', default: '#f1f5f9',       description: 'Secondary / outline button background' },
   btnSecondaryText:{ cssVar: '--token-btn-secondary-text', kind: 'color', default: '#0f172a',       description: 'Secondary / outline button text' },
+  btnSecondaryBorder:{ cssVar: '--token-btn-secondary-border', kind: 'color', default: 'rgba(15,23,42,0.20)', description: 'Secondary / outline button border' },
 
   // ─── Stats ────────────────────────────────────────────────────────────────────
   statValue:       { cssVar: '--token-stat-value',      kind: 'color', default: '#dc2626',          description: 'Large stat number color' },

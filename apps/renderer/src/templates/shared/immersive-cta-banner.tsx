@@ -48,7 +48,7 @@ export function ImmersiveCtaBannerSection({ data }: Props) {
           {subline && <p className="mt-6 max-w-2xl text-base leading-8 md:text-xl" style={{ color: bodyColor }} data-edit-path="subline">{plain(subline)}</p>}
           <div className="mt-9 flex flex-wrap gap-3">
             {primaryCta.label && <a data-edit-link="primaryCta" href={primaryCta.href || '#'} className="btn-primary inline-flex items-center gap-2 rounded-full bg-[var(--token-btn-bg)] px-6 py-3 text-sm font-bold text-[color:var(--token-btn-text)] shadow-2xl transition hover:brightness-110"><span data-edit-path="label">{primaryCta.label}</span><ArrowRight size={16} /></a>}
-            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="btn-secondary inline-flex items-center gap-2 rounded-full border border-[color:color-mix(in_srgb,var(--token-card-border)_28%,transparent)] bg-[color:color-mix(in_srgb,var(--token-on-dark-heading)_10%,transparent)] px-6 py-3 text-sm font-bold backdrop-blur transition hover:brightness-110" style={{ color: headingColor }} data-edit-path="label">{secondaryCta.label}</a>}
+            {secondaryCta.label && <a data-edit-link="secondaryCta" href={secondaryCta.href || '#'} className="btn-secondary inline-flex items-center gap-2 rounded-full border border-[color:var(--token-btn-secondary-border,var(--token-card-border))] bg-[var(--token-btn-secondary-bg,transparent)] px-6 py-3 text-sm font-bold backdrop-blur transition hover:brightness-110" style={{ color: "var(--token-btn-secondary-text,var(--token-on-dark-heading,var(--token-heading)))" }} data-edit-path="label">{secondaryCta.label}</a>}
           </div>
         </div>
 

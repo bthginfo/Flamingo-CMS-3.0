@@ -52,7 +52,7 @@ export function RealestateHeroSection({ data }: Props) {
               </a>
             )}
             {secondaryCta && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] hover:bg-[color-mix(in_srgb,var(--token-card-bg)_20%,transparent)] text-[color:var(--token-on-dark-heading)] font-semibold rounded-lg border border-[color:color-mix(in_srgb,var(--token-card-border)_20%,transparent)] transition-all backdrop-blur-sm" data-edit-path="label">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 px-8 py-4 bg-[color-mix(in_srgb,var(--token-card-bg)_10%,transparent)] hover:bg-[color-mix(in_srgb,var(--token-card-bg)_20%,transparent)] text-[color:var(--token-btn-secondary-text,var(--token-on-dark-heading,var(--token-heading)))] font-semibold rounded-lg border border-[color:var(--token-btn-secondary-border,var(--token-card-border))] transition-all backdrop-blur-sm" data-edit-path="label">
                 {secondaryCta.label}
               </a>
             )}

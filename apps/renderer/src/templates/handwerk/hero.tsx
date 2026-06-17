@@ -182,7 +182,7 @@ function HeroModern({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, t
               </a>
             )}
             {secondaryCta?.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-card-border)] px-7 py-3 text-[color:var(--token-muted)] hover:text-[color:var(--token-muted)] hover:border-[color:var(--token-card-border)] transition-colors text-sm w-full sm:w-auto">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--token-btn-secondary-border,var(--token-card-border))] px-7 py-3 text-[color:var(--token-muted)] hover:text-[color:var(--token-muted)] hover:border-[color:var(--token-btn-secondary-border,var(--token-card-border))] transition-colors text-sm w-full sm:w-auto">
                 <Phone size={14} /><span data-edit-path="label">{secondaryCta.label}</span>
               </a>
             )}
@@ -251,7 +251,7 @@ function HeroBold({ headline, subline, badgeText, badgeIcon, badgeStarsIcon, tru
               </a>
             )}
             {secondaryCta?.label && (
-              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 border-2 border-[color:color-mix(in_srgb,var(--token-card-border)_30%,transparent)] text-[color:var(--token-on-dark-heading)] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-card-border)] transition-colors">
+              <a data-edit-link="secondaryCta" href={secondaryCta.href} className="inline-flex items-center gap-2 border-2 border-[color:var(--token-btn-secondary-border,var(--token-card-border))] text-[color:var(--token-btn-secondary-text,var(--token-on-dark-heading,var(--token-heading)))] font-bold uppercase tracking-wider px-8 py-4 text-base hover:border-[color:var(--token-btn-secondary-border,var(--token-card-border))] transition-colors">
                 <Phone size={16} /><span data-edit-path="label">{secondaryCta.label}</span>
               </a>
             )}
